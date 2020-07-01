@@ -1,0 +1,54 @@
+version: "2.4"
+services:
+
+  reverse_proxy:
+    image: sirius_reverse_proxy
+    container_name: sirius_reverse_proxy
+    build:
+      context: reverse_proxy
+    mem_limit: 256m
+    restart: unless-stopped
+    ports:
+      - 80:80
+    networks:
+      - sirius_network
+    depends_on:
+      - server
+      - ui
+
+  ui:
+    image: sirius_ui
+    container_name: sirius_ui
+    build:
+      context: ui
+    mem_limit: 256m
+    networks:
+      - sirius_network
+    depends_on:
+      - server
+
+  server:
+    image: sirius_server
+    container_name: sirius_server
+    build:
+      context: server
+    mem_limit: 1g
+    restart: unless-stopped
+    networks:
+      - sirius_network
+    depends_on:
+      - mongodb
+    environment:
+      - SIRIUS_MONGODB_URI=mongodb://mongodb:27017/sirius?retryWrites=true&w=majority
+
+  mongodb:
+    image: mongo:4.2.6-bionic
+    container_name: sirius_mongodb
+    mem_limit: 1g
+    restart: unless-stopped
+    networks:
+      - sirius_network
+
+networks:
+  sirius_network:
+    name: sirius_network
