@@ -1,19 +1,16 @@
 import React from "react";
-import { Grid, Row, Col, Box } from "./common/FlexboxGrid";
+import { Grid, Box, Item } from "./common/FlexboxGrid";
+import Questionnaire from "./Questionnaire";
 
 function App() {
   return (
     <div className="App">
       <Grid>
-        <Row around={true}>
-          <Col>Sirius</Col>
-          <Col>
-            <Box between={true}>
-              <div>titi</div>
-              <div>tata</div>
-            </Box>
-          </Col>
-        </Row>
+        <Box>
+          <Item>
+            <Questionnaire />
+          </Item>
+        </Box>
       </Grid>
     </div>
   );
