@@ -18,6 +18,7 @@
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "3.1.4",
+    "faker": "4.1.0",
     "mocha": "8.0.1",
     "prettier": "2.0.5"
   },
@@ -27,6 +28,7 @@
     "trailingComma": "es5"
   },
   "dependencies": {
+    "@hapi/joi": "17.1.1",
     "body-parser": "1.19.0",
     "boom": "7.3.0",
     "bunyan": "1.8.14",

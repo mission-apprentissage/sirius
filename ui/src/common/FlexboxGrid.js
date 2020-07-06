@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Grid as FlexboxGrid, Col as FlexboxCol, Row as FlexboxRow } from "react-flexbox-grid";
 import "flexboxgrid2";
-import "../../node_modules/react-flexbox-grid/dist/react-flexbox-grid.css";
 
 export const Grid = FlexboxGrid;
 

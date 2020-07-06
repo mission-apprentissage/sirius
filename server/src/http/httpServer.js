@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const Joi = require("@hapi/joi");
+const Boom = require("boom");
 const logger = require("../common/logger");
 const logMiddleware = require("./middlewares/logMiddleware");
 const errorMiddleware = require("./middlewares/errorMiddleware");
@@ -35,6 +37,25 @@ module.exports = async (components) => {
         healthcheck: {
           mongodb: mongodbStatus,
         },
+      });
+    })
+  );
+
+  app.get(
+    "/api/questionnaire",
+    tryCatch(async (req, res) => {
+      let { token } = await Joi.object({
+        token: Joi.string().required(),
+      }).validateAsync(req.query, { abortEarly: false });
+
+      let apprenti = await db.collection("apprentis").findOne({ token });
+
+      if (!apprenti) {
+        throw Boom.badRequest("Token invalide");
+      }
+
+      res.json({
+        prenom: apprenti.prenom,
       });
     })
   );
