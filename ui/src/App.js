@@ -4,14 +4,12 @@ import Questionnaire from "./questionnaire/Questionnaire";
 
 function App() {
   return (
-    <div className="App">
-      <Router>
-        <Switch>
-          <Route exact path="/questionnaire" component={Questionnaire} />
-          <Redirect to="/questionnaire" />
-        </Switch>
-      </Router>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/questionnaire" component={Questionnaire} />
+        <Redirect to="/questionnaire" />
+      </Switch>
+    </Router>
   );
 }
 

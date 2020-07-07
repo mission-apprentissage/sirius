@@ -19,15 +19,25 @@ export default createGlobalStyle`
   cite {font-style:normal;}
   fieldset{border-width:0; padding:0; margin:0;}
   
+  //*,*:focus,*:hover{
+   // outline:none;
+  //}
+
   /****** Typography *******/
   html{ 
+   height: 100vh;
    font-size: 1px;/*for using REM units*/
   }
   body{
+    height: 100vh;
     font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     font-size: 16rem;
     font-weight: 400;
     line-height: 1.3;
     color: #222;
+  }
+  
+  #root {
+    height: 100vh;
   }
 `;

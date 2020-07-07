@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
+import { primary } from "./colors";
 
 export const opacity = keyframes`
   0% { opacity: .2; }
@@ -8,6 +9,8 @@ export const opacity = keyframes`
 `;
 
 const Animation = styled.span`
+  font-size: 40rem;
+  color: ${primary};
   animation: ${opacity} 1.4s infinite both;
   animation-delay: ${(props) => props.delay};
 `;
