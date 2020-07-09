@@ -1,6 +1,6 @@
 # Sirius
 
-Collecte et restitue les avis des apprentis
+Service permettant la collecte et la restitution des avis des apprentis
 
 ## Développement
 
@@ -18,3 +18,5 @@ docker-compose up --build
 
 Cette commande démarre les containers définis dans le fichier `docker-compose.yml`
 L'application est accessible à l'url [http://localhost](http://localhost)
+
+![](https://avatars1.githubusercontent.com/u/63645182?s=200&v=4)
