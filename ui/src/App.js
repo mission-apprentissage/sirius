@@ -1,18 +1,15 @@
 import React from "react";
-import { Grid, Box, Item } from "./common/FlexboxGrid";
-import Questionnaire from "./Questionnaire";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import Questionnaire from "./questionnaire/Questionnaire";
 
 function App() {
   return (
-    <div className="App">
-      <Grid>
-        <Box>
-          <Item>
-            <Questionnaire />
-          </Item>
-        </Box>
-      </Grid>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/questionnaire" component={Questionnaire} />
+        <Redirect to="/questionnaire" />
+      </Switch>
+    </Router>
   );
 }
 

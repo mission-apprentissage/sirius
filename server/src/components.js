@@ -7,5 +7,6 @@ module.exports = async (options = {}) => {
   return {
     db: options.db || client.db(),
     config: options.config || config,
+    close: () => client.close(),
   };
 };
