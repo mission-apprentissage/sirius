@@ -1,0 +1,121 @@
+<mjml>
+    <mj-head>
+        <mj-title>Sirius</mj-title>
+        <mj-font name="Public Sans"
+                 href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,600;0,900;1,400"/>
+        <mj-style inline="inline">
+            .link-nostyle { color: inherit;}
+        </mj-style>
+        <mj-attributes>
+            <mj-text
+                    color="#ffffff"
+                    font-family="Public Sans,sans-serif"
+                    font-size="16px"
+                    line-height="23px"
+            />
+        </mj-attributes>
+    </mj-head>
+
+    <mj-body background-color="#e5e5e5">
+
+        <mj-section background-color="#f3f6f7">
+            <mj-column width="60%" padding-right="0">
+                <mj-image align="left" width="42px" src="/logo.png"/>
+                <mj-text align="left" padding="25px 0 25px 25px" font-size="36px" font-weight="900" line-height="33px"
+                         color="#5222D0">Aidez les futurs apprentis à choisir leur formation
+                </mj-text>
+            </mj-column>
+            <mj-column width="40%" vertical-align="bottom" padding-left="0">
+                <mj-image align="right" height="150px" src="/avatar.png"/>
+            </mj-column>
+        </mj-section>
+
+        <mj-section padding-bottom="20px" padding-top="10px" background-color="#5222d0">
+            <mj-column>
+                <mj-text align="center" padding-top="50px" color="#ffffff">Bonjour <%= data.prenom %>,</mj-text>
+                <mj-text align="center" padding="10px 25px" color="#ffffff">
+                    Vous suivez le formation de
+                    <strong><%= data.formation.intitule %></strong>
+                </mj-text>
+
+                <mj-button background-color="#ec615b" align="center"
+                           font-size="16px" font-weight="600"
+                           padding="25px 25px 0 25px"
+                           border-radius="50px" font-family="Helvetica"
+                           line-height="23px"
+                           href="<%= utils.getPublicUrl(`/questionnaire?token=${data.token }`) %>" >
+                    Je donne mon avis en 1 minute
+                </mj-button>
+
+                <mj-text align="center" font-style="italic" font-size="14px">
+                    Avis 100% anonyme
+                </mj-text>
+
+                <mj-text align="center" font-weight="600" padding="25px">
+                    Aidez les prochains à faire les bons choix Dites leur tout sur l’apprentissage
+                </mj-text>
+
+                <mj-text align="center" padding="25px">
+                    Votre avis sera publié sur
+                    <img width="100px" src="/logo-lba.png"/>
+                </mj-text>
+
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#5222d0">
+            <mj-column>
+                <mj-divider border-width="2px" border-color="lightgrey"/>
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#5222d0" padding-top="0">
+            <mj-column padding-top="0">
+                <mj-text align="left" font-size="12px" line-height="20px">
+                    Sirius traite vos données à caractère personnel (données professionnelles, données de contact) pour
+                    les besoins de la réalisation d’une enquête de satisfaction. Cette enquête est facultative. Sirius a
+                    obtenu vos données directement par votre CFA. 
+                </mj-text>
+                <mj-text align="left" font-size="12px" line-height="20px">
+                    Vos données seront conservées pendant la durée de
+                    l’enquête, pour les apprentis n’ayant pas consenti à être contacté, ou jusqu’à la révocation du
+                    consentement et au maximum 3 ans pour les stagiaires ayant consentis à être contactés. 
+                </mj-text>
+                <mj-text align="left" font-size="12px" line-height="20px">
+                    Conformément aux articles 12 à 23 du règlement général (UE) sur la protection des données n°2016/679
+                    du 27 avril
+                    2016 et à la loi Informatique et libertés n°78-17 du 6 janvier 1978 modifiée, vous bénéficiez
+                    notamment d’un droit d’accès, de rectification, d’effacement et le droit de porter une réclamation
+                    devant la Commission nationale de l’informatique et des libertés pour les données vous concernant.
+                    Pour exercer vos droits, vous pouvez vous adresser à votre agence ou au délégué à la protection des
+                    données de Pôle emploi (1 avenue du Docteur Gley, 75987 Paris cedex 20 ;
+                    courriers-cnil@pole-emploi.fr).
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#000000" padding-bottom="0">
+            <mj-column padding-top="0">
+                <mj-text align="left" font-size="14px" line-height="23px">
+                    Cet email a été envoyé à <%= data.email %>
+                    <br/>
+                    Vous avez reçu cet email parce que votre CFA nous a transmis votre email.
+                    <br/>
+                    Pour vous déinscrire,
+                    <a href="#" class="link-nostyle">cliquez ici XXXX</a>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#000000" padding-top="0">
+            <mj-column>
+                <mj-text align="center" color="#ffffff" font-size="14px" line-height="23px">
+                    <a href="#" class="link-nostyle">Voir cet email dans votre navigateur XXXX</a>
+                </mj-text>
+                <mj-image align="center" width="76px" src="/marianne.png"/>
+            </mj-column>
+        </mj-section>
+
+    </mj-body>
+
+</mjml>

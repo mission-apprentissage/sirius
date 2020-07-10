@@ -1,12 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const _ = require("lodash");
 const Joi = require("@hapi/joi");
 const Boom = require("boom");
 const logger = require("../common/logger");
 const logMiddleware = require("./middlewares/logMiddleware");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 const tryCatch = require("./middlewares/tryCatchMiddleware");
-const packageJson = require("../../package.json");
+const emailsRouter = require("./routers/emailsRouter");
+const { version } = require("../../package.json");
 
 module.exports = async (components) => {
   const { db, config } = components;
@@ -14,6 +16,7 @@ module.exports = async (components) => {
 
   app.use(bodyParser.json());
   app.use(logMiddleware());
+  app.use(emailsRouter(components));
 
   //Routes
   app.get(
@@ -32,7 +35,7 @@ module.exports = async (components) => {
         });
 
       return res.json({
-        version: packageJson.version,
+        version,
         env: config.env,
         healthcheck: {
           mongodb: mongodbStatus,
@@ -54,9 +57,7 @@ module.exports = async (components) => {
         throw Boom.badRequest("Token invalide");
       }
 
-      res.json({
-        prenom: apprenti.prenom,
-      });
+      res.json(_.pick(apprenti, ["prenom", "nom", "formation"]));
     })
   );
 

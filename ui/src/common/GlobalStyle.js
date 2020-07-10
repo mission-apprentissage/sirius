@@ -30,7 +30,7 @@ export default createGlobalStyle`
   }
   body{
     height: 100vh;
-    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-family: 'Public Sans',sans-serif;
     font-size: 16rem;
     font-weight: 400;
     line-height: 1.3;
@@ -39,5 +39,9 @@ export default createGlobalStyle`
   
   #root {
     height: 100vh;
+  }
+  
+  .pt-1 {
+  padding-top: 10rem;
   }
 `;

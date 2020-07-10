@@ -1,6 +1,6 @@
 const mongodb = require("mongodb");
 const logger = require("./logger");
-const config = require("../config");
+const defaults = require("../config");
 
 const connectToMongoDB = (uri) => {
   return new Promise((resolve, reject) => {
@@ -25,4 +25,4 @@ const connectToMongoDB = (uri) => {
   });
 };
 
-module.exports = (uri = config.mongodbUri) => connectToMongoDB(uri);
+module.exports = (uri = defaults.mongodbUri) => connectToMongoDB(uri);

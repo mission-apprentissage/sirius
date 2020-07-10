@@ -1,7 +1,7 @@
 import React from "react";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
-import { Grid, Row, Col } from "../common/FlexboxGrid";
+import { Col, Grid, Row } from "../common/FlexboxGrid";
 import { useGet } from "../common/hooks/useGet";
 import styled from "styled-components";
 import Questions from "./questions/Questions";
@@ -9,13 +9,19 @@ import questionsErreur from "./erreur";
 import questionsFinAnnee from "./finAnnee";
 import { primary } from "../common/colors";
 import logo from "../common/logo.svg";
+import Loading from "../common/Loading";
 
 const Header = styled.div`
   padding: 10px;
   border-bottom: 1px solid ${primary};
-  color: #ffffff;
-  margin-left: -16px;
-  margin-right: -16px;
+  color: ${primary};
+  margin-left: -8px;
+  margin-right: -8px;
+`;
+
+const Title = styled.span`
+  padding-left: 20px;
+  font-weight: 600;
 `;
 
 const ChatGrid = styled(Grid).attrs(() => ({ className: "chat-grid" }))`
@@ -23,6 +29,17 @@ const ChatGrid = styled(Grid).attrs(() => ({ className: "chat-grid" }))`
   flex-direction: column;
   justify-content: space-between;
   height: 100vh;
+  min-width: 320px;
+  box-shadow: 0 5px 40px rgba(0, 0, 0, 0.16) !important;
+
+  @media (min-width: 576px) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px;
+    max-height: 900px;
+  }
 `;
 
 const ChatRow = styled(Row).attrs(() => ({ className: "chat-row" }))`
@@ -32,7 +49,7 @@ const ChatRow = styled(Row).attrs(() => ({ className: "chat-row" }))`
 `;
 
 const ChatCol = styled(Col).attrs(() => ({ className: "chat-col" }))`
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column-reverse;
@@ -58,21 +75,28 @@ export default () => {
   let location = useLocation();
   let { token } = queryString.parse(location.search);
   let [apprenti, loading, error] = useGet(`/api/questionnaire?token=${token}`);
-  let questions = error ? questionsErreur() : questionsFinAnnee(apprenti);
 
   return (
-    <ChatGrid fluid={true}>
+    <ChatGrid>
       <Row>
         <Col xs={12}>
           <Header>
-            <img src={logo} />
+            <img src={logo} alt={"logo"} />
+            <Title>Aidez les futurs apprentis à choisir leur formation</Title>
           </Header>
         </Col>
       </Row>
 
       <ChatRow>
         <ChatCol xs={12}>
-          <Questions questions={questions} onChange={(data) => console.log(data)} />
+          {loading ? (
+            <Loading />
+          ) : (
+            <Questions
+              questions={error ? questionsErreur() : questionsFinAnnee(apprenti)}
+              onChange={(data) => console.log(data)}
+            />
+          )}
         </ChatCol>
       </ChatRow>
     </ChatGrid>
