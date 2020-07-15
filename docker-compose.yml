@@ -49,6 +49,18 @@ services:
     networks:
       - sirius_network
 
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: sirius_jenkins
+    mem_limit: 256m
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:8080:8080
+    networks:
+      - sirius_network
+    depends_on:
+      - server
+
 networks:
   sirius_network:
     name: sirius_network

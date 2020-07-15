@@ -37,6 +37,10 @@ services:
     volumes:
       - .local/mongodb:/data
 
+  jenkins:
+    volumes:
+      - .local/jenkins:/var/jenkins_home
+
   smtp:
     image: mailhog/mailhog
     container_name: sirius_smtp
