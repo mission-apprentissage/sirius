@@ -5,6 +5,8 @@ services:
   reverse_proxy:
     volumes:
       - .local/nginx:/data
+    depends_on:
+      - smtp
 
   ui:
     command: yarn start
@@ -23,9 +25,25 @@ services:
     environment:
       - SIRIUS_ENV=dev
       - SIRIUS_LOG_LEVEL=debug
+      - SIRIUS_SMTP_HOST=smtp
+      - SIRIUS_SMTP_PORT=1025
+      - SIRIUS_SMTP_SECURE=false
+    depends_on:
+      - smtp
 
   mongodb:
     ports:
       - "127.0.0.1:27017:27017"
     volumes:
       - .local/mongodb:/data
+
+  smtp:
+    image: mailhog/mailhog
+    container_name: sirius_smtp
+    mem_limit: 128m
+    ports:
+      - 1025:1025
+    networks:
+      - sirius_network
+    environment:
+      - MH_UI_WEB_PATH=smtp

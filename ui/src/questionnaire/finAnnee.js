@@ -16,20 +16,18 @@ const Tips = styled.div`
 `;
 
 export default (apprenti) => {
-  let { prenom } = apprenti;
-
   return [
     {
       id: "accord",
       message: (
         <Bubble>
           <p>
-            Bonjour <b>{prenom}</b> !
+            Bonjour <b>{apprenti.prenom}</b> !
           </p>
-          <p>
-            Merci de rejoindre la communauté des apprentis en <b>intitulé de la formation</b>
+          <p className={"pt-1"}>
+            Merci de rejoindre la communauté des apprentis en <b>{apprenti.formation.intitule}</b>
           </p>
-          <p>
+          <p className={"pt-1"}>
             Vous êtes désormais <b>5 000</b> à avoir rejoint Sirius, bonne nouvelle ! Plus vous êtes nombreux, plus les
             informations sont utiles.
           </p>
@@ -52,7 +50,7 @@ export default (apprenti) => {
         <Bubble>
           <p>Alors Léo, comment s’est passée votre année ?</p>
 
-          <p>
+          <p className={"pt-1"}>
             L’apprentissage, c’est surtout la vie en entreprise : les relations avec le Maître d’Apprentissage, les
             collègues, le nouveau rythme de vie… et c’est important d’être suivi par le CFA pour s’assurer que tout se
             passe bien.
@@ -187,7 +185,7 @@ export default (apprenti) => {
             Mais sur le chemin, il y a aussi des obstacles : les partager, ça peut aider les autres à se sentir moins
             seul quand ça arrive
           </p>
-          <Highlight>{prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
+          <Highlight>{apprenti.prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
         </Bubble>
       ),
       input: (
@@ -393,8 +391,8 @@ export default (apprenti) => {
       end: true,
       message: (
         <Bubble>
-          Merci {prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous souhaitons un
-          apprentissage riche en expériences professionnelles et humaine
+          Merci {apprenti.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
+          souhaitons un apprentissage riche en expériences professionnelles et humaine
         </Bubble>
       ),
     },

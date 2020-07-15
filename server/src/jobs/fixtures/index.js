@@ -15,6 +15,9 @@ runScript(async ({ db }) => {
         nom: faker.name.lastName(),
         email: faker.internet.email(),
         token: faker.random.uuid(),
+        formation: {
+          intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat - IRFMA de l'Aude",
+        },
       });
     })
   );

@@ -3,7 +3,7 @@ import { _get } from "../../utils/httpClient";
 
 export function useGet(url) {
   const [response, setResponse] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const sendRequest = useCallback(async () => {

@@ -1,12 +1,17 @@
 const connectToMongoDB = require("./common/connectToMongoDB");
-const config = require("./config");
+const mailer = require("./common/emails/mailer");
+const logger = require("./common/logger");
+const defaults = require("./config");
 
 module.exports = async (options = {}) => {
   let client = await connectToMongoDB();
 
+  let config = options.config || defaults;
   return {
     db: options.db || client.db(),
-    config: options.config || config,
+    config,
+    logger,
+    mailer: mailer(config),
     close: () => client.close(),
   };
 };
