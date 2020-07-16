@@ -18,8 +18,31 @@ jobs:
       - slack/status:
           fail_only: true
           webhook: ${SLACK_WEBHOOK}
+  deploy:
+    machine:
+      #see https://circleci.com/docs/2.0/configuration-reference/#available-machine-images
+      image: ubuntu-1604:202004-01
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "e9:f0:2d:3c:72:09:42:22:d7:44:2e:bd:7f:f8:07:16"
+      - checkout
+      - run:
+          name: Deploy app
+          command: |
+            docker run --rm \
+              -v ${HOME}/project:/project \
+              -v ${HOME}/.ssh/id_rsa_e9f02d3c72094222d7442ebd7ff80716:/root/.ssh/id_rsa:ro \
+              willhallonline/ansible:2.9-ubuntu bash -c \
+              "ANSIBLE_HOST_KEY_CHECKING=False bash /project/.infra/deploy.sh recette --user circleci"
+      - slack/notify:
+          message: Branch ${CIRCLE_BRANCH} has been deployed.
+          webhook: ${SLACK_WEBHOOK}
 
 workflows:
   continuous-integration:
     jobs:
       - test
+      - deploy:
+          requires:
+            - test
