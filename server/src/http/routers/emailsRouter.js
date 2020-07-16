@@ -25,7 +25,7 @@ module.exports = ({ db, mailer }) => {
       }).validateAsync({ ...req.query, ...req.params }, { abortEarly: false });
 
       let apprenti = await db.collection("apprentis").findOne({ token });
-      const html = await renderEmail(templateName, { apprenti: apprenti || anonymous });
+      const html = await renderEmail(templateName, apprenti || anonymous);
 
       res.set("Content-Type", "text/html");
       res.send(Buffer.from(html));

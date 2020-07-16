@@ -1,13 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const _ = require("lodash");
-const Joi = require("@hapi/joi");
-const Boom = require("boom");
 const logger = require("../common/logger");
 const logMiddleware = require("./middlewares/logMiddleware");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 const tryCatch = require("./middlewares/tryCatchMiddleware");
 const emailsRouter = require("./routers/emailsRouter");
+const questionnnairesRouter = require("./routers/questionnnairesRouter");
 const { version } = require("../../package.json");
 
 module.exports = async (components) => {
@@ -17,6 +15,7 @@ module.exports = async (components) => {
   app.use(bodyParser.json());
   app.use(logMiddleware());
   app.use(emailsRouter(components));
+  app.use(questionnnairesRouter(components));
 
   //Routes
   app.get(
@@ -41,23 +40,6 @@ module.exports = async (components) => {
           mongodb: mongodbStatus,
         },
       });
-    })
-  );
-
-  app.get(
-    "/api/questionnaire",
-    tryCatch(async (req, res) => {
-      let { token } = await Joi.object({
-        token: Joi.string().required(),
-      }).validateAsync(req.query, { abortEarly: false });
-
-      let apprenti = await db.collection("apprentis").findOne({ token });
-
-      if (!apprenti) {
-        throw Boom.badRequest("Token invalide");
-      }
-
-      res.json(_.pick(apprenti, ["prenom", "nom", "formation"]));
     })
   );
 
