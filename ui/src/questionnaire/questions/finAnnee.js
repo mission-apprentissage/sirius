@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { Bubble } from "./toolkit";
-import Options from "./input/Options";
-import MultiChoice from "./input/MultiChoice";
+import { Bubble } from "../toolkit";
+import Options from "../input/Options";
+import MultiChoice from "../input/MultiChoice";
 
 const Highlight = styled.p`
   margin-top: 10rem;

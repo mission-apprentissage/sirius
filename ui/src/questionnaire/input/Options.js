@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import React from "react";
 import PropTypes from "prop-types";
-import { appear } from "../animations";
+import { appear } from "../../common/animations";
 import { Box } from "../../common/Flexbox";
 import { primary } from "../../common/colors";
 

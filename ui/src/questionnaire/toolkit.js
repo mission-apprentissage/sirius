@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Box } from "../common/Flexbox";
-import { appear } from "./animations";
+import { appear } from "../common/animations";
 import { primary } from "../common/colors";
 
 export const Entry = styled(Box)`

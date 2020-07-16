@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { ChatBotIcon } from "../../common/Icons";
-import { Entry, Avatar, Bubble } from "../toolkit";
-import Loading from "../../common/Loading";
+import { ChatBotIcon } from "../common/Icons";
+import { Entry, Avatar, Bubble } from "./toolkit";
+import Loading from "../common/Loading";
 import styled from "styled-components";
-import { primary } from "../../common/colors";
+import { primary } from "../common/colors";
 
 const UserMessage = styled(Bubble)`
   border: 1px solid ${primary};

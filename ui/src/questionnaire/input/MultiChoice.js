@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { appear } from "../animations";
+import { appear } from "../../common/animations";
 import { Box } from "../../common/Flexbox";
 import { ArrowRightIcon } from "../../common/Icons";
 import { primary } from "../../common/colors";
