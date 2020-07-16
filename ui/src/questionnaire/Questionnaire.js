@@ -74,7 +74,7 @@ const Input = styled.input.attrs(() => ({ type: "text" }))`
 export default () => {
   let location = useLocation();
   let { token } = queryString.parse(location.search);
-  let [apprenti, loading, error] = useGet(`/api/questionnaire?token=${token}`);
+  let [apprenti, loading, error] = useGet(`/api/questionnaires/${token}`);
 
   return (
     <ChatGrid>
