@@ -6,7 +6,7 @@ let createStreams = () => {
   const jsonStream = () => {
     return {
       name: "json",
-      level: config.logLevel,
+      level: config.log.level,
       stream: process.stdout,
     };
   };
@@ -16,12 +16,12 @@ let createStreams = () => {
     pretty.pipe(process.stdout);
     return {
       name: "console",
-      level: config.logLevel,
+      level: config.log.level,
       stream: pretty,
     };
   };
 
-  return [config.logType === "console" ? consoleStream() : jsonStream()];
+  return [config.log.type === "console" ? consoleStream() : jsonStream()];
 };
 
 module.exports = bunyan.createLogger({

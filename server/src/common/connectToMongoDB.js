@@ -25,4 +25,4 @@ const connectToMongoDB = (uri) => {
   });
 };
 
-module.exports = (uri = defaults.mongodbUri) => connectToMongoDB(uri);
+module.exports = (uri = defaults.mongodb.uri) => connectToMongoDB(uri);
