@@ -31,7 +31,7 @@ export default (apprenti) => {
             Vous êtes désormais <b>5 000</b> à avoir rejoint Sirius, bonne nouvelle ! Plus vous êtes nombreux, plus les
             informations sont utiles.
           </p>
-          <Highlight>Vous voulez bien répondre à quelques questions ? Ca prendra moins de 3 minutes ?</Highlight>
+          <Highlight>Vous voulez bien répondre à quelques questions ? Ca prendra moins de 3 minutes </Highlight>
         </Bubble>
       ),
       next: "suivi",
@@ -63,7 +63,7 @@ export default (apprenti) => {
       input: (
         <Options
           options={[
-            { value: 1, label: "J’ai été bien suivi " },
+            { value: 1, label: "J’ai été bien suivi.e " },
             { value: 2, label: "Peut s’améliorer" },
             { value: 3, label: "Aucun suivi" },
             { value: 4, label: "J’ai quitté mon entreprise", next: "nouvelleEntreprise" },
@@ -84,7 +84,7 @@ export default (apprenti) => {
             { value: 3, label: "Pas encore, mais j’ai de l’aide" },
             {
               value: 4,
-              label: "Pas encore et je me sens seul pour cherche",
+              label: "Pas encore et je me sens seul.e pour chercher",
               next: "nouvelleEntrepriseAlerteCfa",
             },
           ]}
@@ -115,19 +115,19 @@ export default (apprenti) => {
       input: (
         <MultiChoice
           options={[
-            { value: 1, label: "Simple cahier de liaison ou reporting" },
+            { value: 1, label: "Cahier de liaison ou reporting" },
             {
               value: 2,
-              label: "Echanges réguliers entre mon MA et mon référent CFA",
+              label: "Echanges réguliers entre mon MA et mon tuteur",
             },
             {
               value: 3,
               label: "Réunion des Maîtres d’Apprentissage au CFA",
             },
-            { value: 4, label: "Visites en entreprise du référent CFA" },
+            { value: 4, label: "Visites en entreprise du tuteur" },
             {
               value: 5,
-              label: "Pas encore et je me sens seul pour cherche",
+              label: "Pas encore et je me sens seul.e pour chercher",
             },
           ]}
         />
@@ -141,7 +141,7 @@ export default (apprenti) => {
             L’apprentissage, c’est une période au cours de laquelle on acquiert des compétences professionnelles et
             sociales
           </p>
-          <Highlight>Qu’est-ce qui vous a rendu fier cette année ?</Highlight>
+          <Highlight>Qu’est-ce qui vous a rendu fier.e cette année ?</Highlight>
           <Tips>(plusieurs réponse possibles)</Tips>
         </Bubble>
       ),
@@ -155,7 +155,7 @@ export default (apprenti) => {
             },
             {
               value: 2,
-              label: "J’ai été félicité pour mon travail XXXXX",
+              label: "J’ai été félicité.e pour mon travail XXXXX",
             },
             {
               value: 3,
@@ -183,7 +183,7 @@ export default (apprenti) => {
         <Bubble>
           <p>
             Mais sur le chemin, il y a aussi des obstacles : les partager, ça peut aider les autres à se sentir moins
-            seul quand ça arrive
+            seul.e quand ça arrive
           </p>
           <Highlight>{apprenti.prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
         </Bubble>
@@ -216,7 +216,7 @@ export default (apprenti) => {
         <Bubble>
           <p>
             C’est fréquent lors d’une première expérience professionnelle. L’idée de cette communauté c’est aussi de
-            partager les difficultés, on se sent moins seul, et ça peut donner des pistes de solution aux autres.
+            partager les difficultés, on se sent moins seul.e, et ça peut donner des pistes de solution aux autres.
           </p>
           <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés étaient liées à :</Highlight>
           <Tips>(plusieurs réponse possibles)</Tips>
@@ -284,11 +284,11 @@ export default (apprenti) => {
             },
             {
               value: 2,
-              label: "J’en ai parlé à mon référent CFA et il m’a aidé",
+              label: "J’en ai parlé à mon tuteur",
             },
             {
               value: 3,
-              label: "J’en ai parlé au médiateur de l’apprentissage et il m’a aidé",
+              label: "J’en ai parlé au médiateur de l’apprentissage",
             },
             {
               value: 4,
@@ -317,7 +317,7 @@ export default (apprenti) => {
         <Bubble>
           <p>
             C’est fréquent lors d’une première expérience professionnelle. L’idée de cette communauté c’est aussi de
-            partager les difficultés, on se sent moins seul, et ça peut donner des pistes de solution aux autres.
+            partager les difficultés, on se sent moins seul.e, et ça peut donner des pistes de solution aux autres.
           </p>
           <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés sont liées à :</Highlight>
         </Bubble>
