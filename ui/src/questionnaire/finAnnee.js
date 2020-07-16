@@ -65,7 +65,7 @@ export default (apprenti) => {
           options={[
             { value: 1, label: "J’ai été bien suivi.e " },
             { value: 2, label: "Peut s’améliorer" },
-            { value: 3, label: "Aucun suivi" },
+            { value: 3, label: "Aucun suivi", next: "fierte" },
             { value: 4, label: "J’ai quitté mon entreprise", next: "nouvelleEntreprise" },
           ]}
         />
@@ -108,7 +108,7 @@ export default (apprenti) => {
       id: "suiviPrecisions",
       message: (
         <Bubble>
-          En ce qui concerne le suivi, pourriez-vous préciser ? <Tips>(plusieurs réponse possibles)</Tips>
+          En ce qui concerne le suivi, pourriez-vous préciser ? <Tips>(plusieurs réponses possibles)</Tips>
         </Bubble>
       ),
       next: "fierte",
@@ -125,10 +125,6 @@ export default (apprenti) => {
               label: "Réunion des Maîtres d’Apprentissage au CFA",
             },
             { value: 4, label: "Visites en entreprise du tuteur" },
-            {
-              value: 5,
-              label: "Pas encore et je me sens seul.e pour chercher",
-            },
           ]}
         />
       ),
@@ -142,7 +138,7 @@ export default (apprenti) => {
             sociales
           </p>
           <Highlight>Qu’est-ce qui vous a rendu fier.e cette année ?</Highlight>
-          <Tips>(plusieurs réponse possibles)</Tips>
+          <Tips>(plusieurs réponses possibles)</Tips>
         </Bubble>
       ),
       next: "difficultes",
@@ -219,7 +215,7 @@ export default (apprenti) => {
             partager les difficultés, on se sent moins seul.e, et ça peut donner des pistes de solution aux autres.
           </p>
           <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés étaient liées à :</Highlight>
-          <Tips>(plusieurs réponse possibles)</Tips>
+          <Tips>(plusieurs réponses possibles)</Tips>
         </Bubble>
       ),
       next: "difficultesPasseesSolutions",
@@ -273,10 +269,15 @@ export default (apprenti) => {
     },
     {
       id: "difficultesPasseesSolutions",
-      message: <Bubble>Comment avez-vous fait pour régler le problème ?</Bubble>,
+      message: (
+        <Bubble>
+          <p>Comment avez-vous fait pour régler le problème ?</p>
+          <Tips>(plusieurs réponses possibles)</Tips>
+        </Bubble>
+      ),
       next: "difficultesPasseesTexte",
       input: (
-        <Options
+        <MultiChoice
           options={[
             {
               value: 1,
@@ -320,11 +321,12 @@ export default (apprenti) => {
             partager les difficultés, on se sent moins seul.e, et ça peut donner des pistes de solution aux autres.
           </p>
           <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés sont liées à :</Highlight>
+          <Tips>(plusieurs réponses possibles)</Tips>
         </Bubble>
       ),
       next: "difficultesAlerteCfa",
       input: (
-        <Options
+        <MultiChoice
           options={[
             {
               value: 1,

@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { ChatBotIcon } from "../../common/Icons";
-import { Entry, Avatar } from "../toolkit";
+import { Entry, Avatar, Bubble } from "../toolkit";
 import Loading from "../../common/Loading";
-import Response from "./Response";
+import styled from "styled-components";
+import { primary } from "../../common/colors";
+
+const UserMessage = styled(Bubble)`
+  border: 1px solid ${primary};
+  background-color: ${primary};
+  border-radius: 10px;
+  color: #fff;
+`;
 
 const Question = ({ message, input, active, onResponse = () => ({}) }) => {
   let [showMessage, setShowMessage] = useState(false);
@@ -35,7 +43,11 @@ const Question = ({ message, input, active, onResponse = () => ({}) }) => {
         <Entry justify={"center"}>{React.cloneElement(input, { onResponse: showResponse })}</Entry>
       )}
 
-      {response && <Response>{response}</Response>}
+      {response && (
+        <Entry direction={"row"} justify={"end"} align={"end"} width={"50%"} offset={"50%"}>
+          <UserMessage>{response}</UserMessage>
+        </Entry>
+      )}
     </>
   );
 };
