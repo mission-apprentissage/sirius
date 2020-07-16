@@ -13,5 +13,9 @@ module.exports = {
     host: env.get("SIRIUS_SMTP_HOST").asString(),
     port: env.get("SIRIUS_SMTP_PORT").asString(),
     secure: env.get("SIRIUS_SMTP_SECURE").default("false").asBoolStrict(),
+    auth: {
+      user: env.get("SIRIUS_SMTP_AUTH_USER").asString(),
+      pass: env.get("SIRIUS_SMTP_AUTH_PASS").asString(),
+    },
   },
 };

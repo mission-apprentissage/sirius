@@ -18,9 +18,9 @@
 
     <mj-body background-color="#e5e5e5">
 
-        <mj-section background-url="/header-email.png" padding-bottom="45px">
+        <mj-section background-url="<%= utils.getPublicUrl(`/images/header-email.png`) %>" padding-bottom="45px">
             <mj-column width="60%" padding-right="0">
-                <mj-image align="left" width="42px" src="/logo.png"/>
+                <mj-image align="left" width="42px" src="<%= utils.getPublicUrl(`/images/logo.png`) %>"/>
                 <mj-text align="left" padding="25px 0 25px 25px" font-size="36px" font-weight="900" line-height="33px"
                          color="#5222D0">Aidez les futurs apprentis à choisir leur formation
                 </mj-text>
@@ -42,7 +42,7 @@
                            padding="25px 25px 0 25px"
                            border-radius="50px" font-family="Helvetica"
                            line-height="23px"
-                           href="<%= utils.getPublicUrl(`/questionnaires?token=${data.token }`) %>" >
+                           href="<%= utils.getPublicUrl(`/questionnaire?token=${data.token }`) %>" >
                     Je donne mon avis en 1 minute
                 </mj-button>
 
@@ -58,7 +58,7 @@
 
                 <mj-text align="center" padding="25px">
                     Votre avis sera publié sur
-                    <img width="100px" src="/logo-lba.png"/>
+                    <img width="100px" src="<%= utils.getPublicUrl(`/images/logo-lba.png`) %>"/>
                 </mj-text>
 
             </mj-column>
@@ -103,7 +103,7 @@
                     Vous avez reçu cet email parce que votre CFA nous a transmis votre email.
                     <br/>
                     Pour vous déinscrire,
-                    <a href="#" class="link-nostyle">cliquez ici XXXX</a>
+                    <a href="<%= utils.getPublicUrl(`/unsubscribe?token=${data.token }`) %>" class="link-nostyle">cliquez ici</a>
                 </mj-text>
             </mj-column>
         </mj-section>
@@ -113,7 +113,7 @@
                 <mj-text align="center" color="#ffffff" font-size="14px" line-height="20px">
                     <a href="#" class="link-nostyle">Voir cet email dans votre navigateur XXXX</a>
                 </mj-text>
-                <mj-image align="center" width="76px" src="/marianne.png"/>
+                <mj-image align="center" width="76px" src="<%= utils.getPublicUrl(`/images/marianne.png`) %>"/>
             </mj-column>
         </mj-section>
 

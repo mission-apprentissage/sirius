@@ -13,7 +13,7 @@ runScript(async ({ db }) => {
       return db.collection("apprentis").insertOne({
         prenom: faker.name.firstName(),
         nom: faker.name.lastName(),
-        email: faker.internet.email(),
+        email: "bguerout@yonoma.com",
         token: faker.random.uuid(),
         formation: {
           intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
