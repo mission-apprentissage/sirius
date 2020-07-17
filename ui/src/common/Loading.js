@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
-import { primary } from "./colors";
+import { primary } from "./utils/colors";
 
 export const opacity = keyframes`
   0% { opacity: .2; }

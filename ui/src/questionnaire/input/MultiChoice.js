@@ -1,10 +1,11 @@
 import styled from "styled-components";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
-import { appear } from "../../common/animations";
+import { primary, secondary } from "../../common/utils/colors";
+import { appear } from "../../common/utils/animations";
 import { Box } from "../../common/Flexbox";
-import { ArrowRightIcon } from "../../common/Icons";
-import { primary } from "../../common/colors";
+import { ChevronIcon } from "../../common/FontAwesome";
+import ResponseContext from "../ResponseContext";
 
 const Option = styled(({ children, className, selected, ...rest }) => {
   let clazz = `${className} ${selected ? "selected" : ""}`;
@@ -14,10 +15,10 @@ const Option = styled(({ children, className, selected, ...rest }) => {
     </button>
   );
 })`
-  animation: ${appear} 0.5s ease forwards;
+  animation: ${appear} 0.3s ease forwards;
   padding: 10px;
   margin: 5px;
-  border-radius: 10px;
+  border-radius: 35px;
   border: 1px solid ${primary};
   color: ${primary};
   &.selected {
@@ -30,20 +31,32 @@ const Option = styled(({ children, className, selected, ...rest }) => {
     border: 1px solid ${primary};
     outline: none;
   }
-  :disabled {
-    border: 1px solid grey;
-    color: grey;
+`;
+
+const Next = styled(Option)`
+  background-color: ${secondary};
+  border: 1px solid ${secondary};
+  color: white;
+
+  &:active,
+  &:focus {
+    border: 1px solid ${secondary};
   }
-  input {
-    padding-left: 10rem;
+
+  :disabled {
+    background-color: #dedede;
+    border: 1px solid #dedede;
+    color: grey;
   }
 `;
 
-const MultiChoice = ({ options, onResponse = () => ({}) }) => {
+const MultiChoice = ({ options }) => {
+  let { onResponse } = useContext(ResponseContext);
   let [choices, setChoices] = useState([]);
+
   return (
     <div className={"MultiChoise"}>
-      <Box justify={"center"} wrap={"wrap"}>
+      <Box justify={"center"} wrap={"wrap"} direction={"column"}>
         {options.map((option) => {
           return (
             <Option
@@ -66,23 +79,25 @@ const MultiChoice = ({ options, onResponse = () => ({}) }) => {
           );
         })}
       </Box>
-      {choices.length > 0 && (
-        <Box justify={"start"}>
-          <Option
-            onClick={() => {
-              let results = choices.map((c) => {
-                return options.find((o) => o.value === c);
-              });
-              return onResponse({
-                value: results.map((o) => o.value),
-                label: `${results[0].label} ${results.length > 1 ? "..." : ""}`,
-              });
-            }}
-          >
-            Suivant <ArrowRightIcon />
-          </Option>
-        </Box>
-      )}
+      <Box justify={"end"}>
+        <Next
+          disabled={choices.length === 0}
+          onClick={() => {
+            let results = choices.map((c) => {
+              return options.find((o) => o.value === c);
+            });
+            return onResponse({
+              value: results.map((o) => o.value),
+              label: `${results[0].label} ${results.length > 1 ? "..." : ""}`,
+            });
+          }}
+        >
+          <Box justify={"between"} align={"center"}>
+            <span>Suivant</span>
+            <ChevronIcon right />
+          </Box>
+        </Next>
+      </Box>
     </div>
   );
 };

@@ -21,6 +21,7 @@
     "lodash-es": "4.17.15",
     "query-string": "6.13.1",
     "react": "16.13.1",
+    "react-app-polyfill": "1.0.6",
     "react-dom": "16.13.1",
     "react-flexbox-grid": "2.1.2",
     "react-hooks-global-state": "1.0.0",

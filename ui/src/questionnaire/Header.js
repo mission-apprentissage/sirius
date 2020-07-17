@@ -1,19 +1,19 @@
 import styled from "styled-components";
-import { Col, Grid, Row } from "../common/FlexboxGrid";
-import { ChatBotIcon } from "../common/Icons";
+import { Col, Container, Row } from "../common/FlexboxGrid";
+import { ChatBotIcon } from "../common/FontAwesome";
 import React from "react";
 import PropTypes from "prop-types";
 
 const Header = styled(() => {
   return (
-    <Grid fluid={true}>
+    <Container fluid={true}>
       <Row>
         <Col xs={12}>
           <ChatBotIcon left />
           Sirius
         </Col>
       </Row>
-    </Grid>
+    </Container>
   );
 })`
   padding: 10px;

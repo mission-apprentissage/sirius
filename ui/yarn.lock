@@ -1097,6 +1097,13 @@
   resolved "https://registry.yarnpkg.com/@blakeembrey/deque/-/deque-1.0.5.tgz#f4fa17fc5ee18317ec01a763d355782c7b395eaf"
   integrity sha512-6xnwtvp9DY1EINIKdTfvfeAtCYw4OqBZJhtiqkT3ivjnEfa25VQ3TsKvaFfKm8MyGIEfE95qLe+bNEt3nB0Ylg==
 
+"@brianmcallister/react-auto-scroll@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@brianmcallister/react-auto-scroll/-/react-auto-scroll-1.0.5.tgz#246900ea2e19f558870eb8aa70870356964bc04c"
+  integrity sha512-1eiDTLFQDyqxOU3HocDavL2DWl2TjsLQnTUqusUbNmx58Om9+Al2EPDCodilGpbM6hCMO2nfIkBzGlK9C4MJKA==
+  dependencies:
+    classnames "^2"
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.4.tgz#f864ae85004d0fcab6f50be9141c4da368d1656a"
@@ -3027,6 +3034,11 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
+
+classnames@^2:
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
+  integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
 
 clean-css@^4.2.3:
   version "4.2.3"
@@ -9491,7 +9503,7 @@ raw-body@^2.3.3:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
-react-app-polyfill@^1.0.6:
+react-app-polyfill@1.0.6, react-app-polyfill@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/react-app-polyfill/-/react-app-polyfill-1.0.6.tgz#890f8d7f2842ce6073f030b117de9130a5f385f0"
   integrity sha512-OfBnObtnGgLGfweORmdZbyEz+3dgVePQBb3zipiaDsMHV1NpWm0rDFYIVXFV/AK+x4VIIfWHhrdMIeoTLyRr2g==
@@ -9532,6 +9544,11 @@ react-dev-utils@^10.2.1:
     shell-quote "1.7.2"
     strip-ansi "6.0.0"
     text-table "0.2.0"
+
+react-div-100vh@0.3.8:
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/react-div-100vh/-/react-div-100vh-0.3.8.tgz#54e4c32d0286a65e92367fc0a07cc3f2f00739d8"
+  integrity sha512-1kDFW+HXYpfac1tfJ4BcQmgTSeTtLVs2FO2ZNHcwLIga+oVluexUEISCBJvr9xq98DK8tcygY3259EvIy5O+3g==
 
 react-dom@16.13.1, react-dom@^16.4.1:
   version "16.13.1"

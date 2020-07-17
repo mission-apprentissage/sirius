@@ -1,26 +1,14 @@
 import React from "react";
-import styled from "styled-components";
-import { Bubble } from "../toolkit";
+import { Highlight, Message, Tips } from "../toolkit";
 import Options from "../input/Options";
 import MultiChoice from "../input/MultiChoice";
-
-const Highlight = styled.p`
-  margin-top: 10rem;
-  font-weight: bolder;
-`;
-
-const Tips = styled.div`
-  font-size: 12rem;
-  font-style: italic;
-  color: #4c4c4c;
-`;
 
 export default (apprenti) => {
   return [
     {
       id: "accord",
       message: (
-        <Bubble>
+        <Message>
           <p>
             Bonjour <b>{apprenti.prenom}</b> !
           </p>
@@ -32,32 +20,26 @@ export default (apprenti) => {
             informations sont utiles.
           </p>
           <Highlight>Vous voulez bien répondre à quelques questions ? Ca prendra moins de 3 minutes </Highlight>
-        </Bubble>
+        </Message>
       ),
       next: "suivi",
-      input: (
-        <Options
-          options={[
-            { value: true, label: "Ok c’est parti !" },
-            { value: false, label: "Une autre fois", next: "désaccord" },
-          ]}
-        />
-      ),
+      input: <Options options={[{ value: true, label: "Ok c’est parti !" }]} />,
     },
     {
       id: "suivi",
       message: (
-        <Bubble>
-          <p>Alors Léo, comment s’est passée votre année ?</p>
+        <Message>
+          <p>
+            Alors <b>{apprenti.prenom}</b>, comment s’est passée votre année ?
+          </p>
 
           <p className={"pt-1"}>
-            L’apprentissage, c’est surtout la vie en entreprise : les relations avec le tuteur, les
-            collègues… et c’est important d’être suivi par le CFA pour s’assurer que tout se
-            passe bien.
+            L’apprentissage, c’est surtout la vie en entreprise : les relations avec le tuteur, les collègues… et c’est
+            important d’être suivi par le CFA pour s’assurer que tout se passe bien.
           </p>
 
           <Highlight>Sur le suivi en entreprise par le référent du CFA, vous diriez :</Highlight>
-        </Bubble>
+        </Message>
       ),
       next: "suiviPrecisions",
       input: (
@@ -74,7 +56,7 @@ export default (apprenti) => {
 
     {
       id: "nouvelleEntreprise",
-      message: <Bubble>Avez-vous trouvé une nouvelle entreprise ?</Bubble>,
+      message: <div>Avez-vous trouvé une nouvelle entreprise ?</div>,
       next: "suiviPrecisions",
       input: (
         <Options
@@ -93,7 +75,7 @@ export default (apprenti) => {
     },
     {
       id: "nouvelleEntrepriseAlerteCfa",
-      message: <Bubble>Souhaitez-vous que cette information soit envoyée au CFA ?</Bubble>,
+      message: <div>Souhaitez-vous que cette information soit envoyée au CFA ?</div>,
       next: "suiviPrecisions",
       input: (
         <Options
@@ -107,9 +89,9 @@ export default (apprenti) => {
     {
       id: "suiviPrecisions",
       message: (
-        <Bubble>
+        <Message>
           En ce qui concerne le suivi, pourriez-vous préciser ? <Tips>(plusieurs réponses possibles)</Tips>
-        </Bubble>
+        </Message>
       ),
       next: "fierte",
       input: (
@@ -118,13 +100,13 @@ export default (apprenti) => {
             { value: 1, label: "Cahier de liaison ou rapport périodique" },
             {
               value: 2,
-              label: "Le CFA et mon tuteur sont en contact"
+              label: "Le CFA et mon tuteur sont en contact",
             },
             {
               value: 3,
               label: "Le CFA a réuni les tuteurs",
             },
-            { value: 4, label: "Le CFA est venu en entreprise"
+            { value: 4, label: "Le CFA est venu en entreprise" },
           ]}
         />
       ),
@@ -132,14 +114,11 @@ export default (apprenti) => {
     {
       id: "fierte",
       message: (
-        <Bubble>
-          <p>
-            Durant l'apprentissage, on acquiert des compétences professionnelles et
-            sociales
-          </p>
+        <Message>
+          <p>Durant l'apprentissage, on acquiert des compétences professionnelles et sociales</p>
           <Highlight>Qu’est-ce qui vous a rendu fier.e cette année ?</Highlight>
           <Tips>(plusieurs réponses possibles)</Tips>
-        </Bubble>
+        </Message>
       ),
       next: "difficultes",
       input: (
@@ -176,13 +155,13 @@ export default (apprenti) => {
     {
       id: "difficultes",
       message: (
-        <Bubble>
+        <Message>
           <p>
             Mais sur le chemin, il y a aussi des obstacles : les partager, ça peut aider les autres à se sentir moins
             seul.e.
           </p>
-          <Highlight>{apprenti.prenom}, Avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
-        </Bubble>
+          <Highlight>{apprenti.prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
+        </Message>
       ),
       input: (
         <Options
@@ -209,14 +188,14 @@ export default (apprenti) => {
     {
       id: "difficultesPasseesOrigines",
       message: (
-        <Bubble>
+        <Message>
           <p>
-            Ca arrive. L’idée de cette communauté c’est aussi de
-            partager les difficultés, ça peut donner des pistes de solution aux autres.
+            Ca arrive. L’idée de cette communauté c’est aussi de partager les difficultés, ça peut donner des pistes de
+            solution aux autres.
           </p>
           <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés étaient liées à :</Highlight>
           <Tips>(plusieurs réponses possibles)</Tips>
-        </Bubble>
+        </Message>
       ),
       next: "difficultesPasseesSolutions",
       input: (
@@ -270,10 +249,10 @@ export default (apprenti) => {
     {
       id: "difficultesPasseesSolutions",
       message: (
-        <Bubble>
+        <Message>
           <p>Comment avez-vous fait pour régler le problème ?</p>
           <Tips>(plusieurs réponses possibles)</Tips>
-        </Bubble>
+        </Message>
       ),
       next: "difficultesPasseesTexte",
       input: (
@@ -309,20 +288,20 @@ export default (apprenti) => {
     },
     {
       id: "difficultesPasseesTexte",
-      message: <Bubble>Souhaitez-vous dire quelque chose à la communauté sur ce sujet ?</Bubble>,
+      message: <div>Souhaitez-vous dire quelque chose à la communauté sur ce sujet ?</div>,
       next: "fin",
     },
     {
       id: "difficultesOrigines",
       message: (
-        <Bubble>
+        <Message>
           <p>
-            Ca arrive. L’idée de cette communauté c’est aussi de
-            partager les difficultés, ça peut donner des pistes de solution aux autres.
+            Ca arrive. L’idée de cette communauté c’est aussi de partager les difficultés, ça peut donner des pistes de
+            solution aux autres.
           </p>
           <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés sont liées à :</Highlight>
           <Tips>(plusieurs réponses possibles)</Tips>
-        </Bubble>
+        </Message>
       ),
       next: "difficultesAlerteCfa",
       input: (
@@ -364,7 +343,7 @@ export default (apprenti) => {
     {
       id: "difficultesAlerteCfa",
       message: (
-        <Bubble>Souhaitez-vous que cette information soit envoyée au CFA pour qu’il vous propose de l'aide ?</Bubble>
+        <Message>Souhaitez-vous que cette information soit envoyée au CFA pour qu’il vous propose de l'aide ?</Message>
       ),
       input: (
         <Options
@@ -385,17 +364,17 @@ export default (apprenti) => {
     },
     {
       id: "désaccord",
-      message: <Bubble>OK, pas de souci, je reviendrai un peu plus tard. A bientôt !</Bubble>,
-      end: true,
+      message: <Message>OK, pas de souci, je reviendrai un peu plus tard. A bientôt !</Message>,
+      last: true,
     },
     {
       id: "fin",
-      end: true,
+      last: true,
       message: (
-        <Bubble>
+        <div>
           Merci {apprenti.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
           souhaitons un apprentissage riche en expériences professionnelles et humaines.
-        </Bubble>
+        </div>
       ),
     },
   ];
