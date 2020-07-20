@@ -51,8 +51,8 @@ export default (apprenti) => {
           <p>Alors Léo, comment s’est passée votre année ?</p>
 
           <p className={"pt-1"}>
-            L’apprentissage, c’est surtout la vie en entreprise : les relations avec le Maître d’Apprentissage, les
-            collègues, le nouveau rythme de vie… et c’est important d’être suivi par le CFA pour s’assurer que tout se
+            L’apprentissage, c’est surtout la vie en entreprise : les relations avec le tuteur, les
+            collègues… et c’est important d’être suivi par le CFA pour s’assurer que tout se
             passe bien.
           </p>
 
@@ -115,16 +115,16 @@ export default (apprenti) => {
       input: (
         <MultiChoice
           options={[
-            { value: 1, label: "Cahier de liaison ou reporting" },
+            { value: 1, label: "Cahier de liaison ou rapport périodique" },
             {
               value: 2,
-              label: "Echanges réguliers entre mon MA et mon tuteur",
+              label: "Le CFA et mon tuteur sont en contact"
             },
             {
               value: 3,
-              label: "Réunion des Maîtres d’Apprentissage au CFA",
+              label: "Le CFA a réuni les tuteurs",
             },
-            { value: 4, label: "Visites en entreprise du tuteur" },
+            { value: 4, label: "Le CFA est venu en entreprise"
           ]}
         />
       ),
@@ -134,7 +134,7 @@ export default (apprenti) => {
       message: (
         <Bubble>
           <p>
-            L’apprentissage, c’est une période au cours de laquelle on acquiert des compétences professionnelles et
+            Durant l'apprentissage, on acquiert des compétences professionnelles et
             sociales
           </p>
           <Highlight>Qu’est-ce qui vous a rendu fier.e cette année ?</Highlight>
@@ -179,9 +179,9 @@ export default (apprenti) => {
         <Bubble>
           <p>
             Mais sur le chemin, il y a aussi des obstacles : les partager, ça peut aider les autres à se sentir moins
-            seul.e quand ça arrive
+            seul.e.
           </p>
-          <Highlight>{apprenti.prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
+          <Highlight>{apprenti.prenom}, Avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
         </Bubble>
       ),
       input: (
@@ -211,8 +211,8 @@ export default (apprenti) => {
       message: (
         <Bubble>
           <p>
-            C’est fréquent lors d’une première expérience professionnelle. L’idée de cette communauté c’est aussi de
-            partager les difficultés, on se sent moins seul.e, et ça peut donner des pistes de solution aux autres.
+            Ca arrive. L’idée de cette communauté c’est aussi de
+            partager les difficultés, ça peut donner des pistes de solution aux autres.
           </p>
           <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés étaient liées à :</Highlight>
           <Tips>(plusieurs réponses possibles)</Tips>
@@ -228,7 +228,7 @@ export default (apprenti) => {
             },
             {
               value: 2,
-              label: "mon Maître d’Apprentissage",
+              label: "mon tuteur",
             },
             {
               value: 3,
@@ -281,15 +281,15 @@ export default (apprenti) => {
           options={[
             {
               value: 1,
-              label: "J’en ai parlé à mon Maître d’Apprentissage",
-            },
-            {
-              value: 2,
               label: "J’en ai parlé à mon tuteur",
             },
             {
+              value: 2,
+              label: "J’en ai parlé à un formateur",
+            },
+            {
               value: 3,
-              label: "J’en ai parlé au médiateur de l’apprentissage",
+              label: "J’en ai parlé au médiateur",
             },
             {
               value: 4,
@@ -317,8 +317,8 @@ export default (apprenti) => {
       message: (
         <Bubble>
           <p>
-            C’est fréquent lors d’une première expérience professionnelle. L’idée de cette communauté c’est aussi de
-            partager les difficultés, on se sent moins seul.e, et ça peut donner des pistes de solution aux autres.
+            Ca arrive. L’idée de cette communauté c’est aussi de
+            partager les difficultés, ça peut donner des pistes de solution aux autres.
           </p>
           <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés sont liées à :</Highlight>
           <Tips>(plusieurs réponses possibles)</Tips>
@@ -330,7 +330,7 @@ export default (apprenti) => {
           options={[
             {
               value: 1,
-              label: "mon MA",
+              label: "mon tuteur",
             },
             {
               value: 2,
@@ -394,7 +394,7 @@ export default (apprenti) => {
       message: (
         <Bubble>
           Merci {apprenti.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
-          souhaitons un apprentissage riche en expériences professionnelles et humaine
+          souhaitons un apprentissage riche en expériences professionnelles et humaines.
         </Bubble>
       ),
     },
