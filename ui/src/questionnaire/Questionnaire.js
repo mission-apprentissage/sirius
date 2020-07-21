@@ -4,13 +4,14 @@ import styled from "styled-components";
 import { useLocation } from "react-router-dom";
 import { primary } from "../common/utils/colors";
 import { useGet } from "../common/hooks/useGet";
-import Questions from "./Questions";
-import questionsErreur from "./questions/erreur";
-import questionsFinAnnee from "./questions/finAnnee";
+import Chat from "./Chat";
+import questionsErreur from "./questionnaires/erreur";
+import questionsFinAnnee from "./questionnaires/finAnnee";
 import Loading from "../common/Loading";
 import Layout from "./Layout";
 import { Box } from "../common/Flexbox";
 import background from "./icons/background.svg";
+import { _put } from "../utils/httpClient";
 
 const Pitch = styled("div")`
   position: absolute;
@@ -37,19 +38,29 @@ const Background = styled("img").attrs(() => ({ src: background, alt: "backgroun
 export default () => {
   let location = useLocation();
   let { token } = queryString.parse(location.search);
-  let [apprenti, loading, error] = useGet(`/api/questionnaires/${token}`);
+  let [result, loading, error] = useGet(`/api/questionnaires/${token}`);
 
-  let onChange = (data) => {
-    console.log(data);
-  };
+  if (loading) {
+    return (
+      <Layout>
+        <Loading />
+      </Layout>
+    );
+  }
+
+  let questions = error ? questionsErreur(error) : questionsFinAnnee(result.meta.apprenti);
   return (
     <Layout>
       <Box justify={"center"} height={"100%"}>
-        {loading ? (
-          <Loading />
-        ) : (
-          <Questions questions={error ? questionsErreur() : questionsFinAnnee(apprenti)} onChange={onChange} />
-        )}
+        <Chat
+          questions={questions}
+          onReponse={async (reponse) => {
+            await _put(`/api/questionnaires/${token}/reponse`, reponse);
+          }}
+          onEnd={async () => {
+            await _put(`/api/questionnaires/${token}/close`);
+          }}
+        />
         <Background className={"hide-sm"} />
       </Box>
     </Layout>

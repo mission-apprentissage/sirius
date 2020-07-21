@@ -11,6 +11,8 @@ let connectToMongoForTests = async () => {
 
 module.exports = {
   connectToMongoForTests,
-  cleanAll: () => {},
+  cleanAll: () => {
+    return clientHolder.db().dropDatabase();
+  },
   randomize: (value) => `${value}-${Math.random().toString(36).substring(7)}`,
 };

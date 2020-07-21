@@ -4,11 +4,11 @@ const logger = require("./common/logger");
 const defaults = require("./config");
 
 module.exports = async (options = {}) => {
-  let client = await connectToMongoDB();
+  let client = options.client || (await connectToMongoDB());
 
   let config = options.config || defaults;
   return {
-    db: options.db || client.db(),
+    db: client.db(),
     config,
     logger,
     mailer: mailer(config),

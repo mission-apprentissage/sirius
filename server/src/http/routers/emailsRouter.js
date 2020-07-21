@@ -6,7 +6,6 @@ let anonymous = {
   prenom: "Marie",
   nom: "Louise",
   email: "ml@apprentissage.fr",
-  token: "123456789",
   formation: {
     intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
   },
@@ -25,7 +24,7 @@ module.exports = ({ db, mailer }) => {
       }).validateAsync({ ...req.query, ...req.params }, { abortEarly: false });
 
       let apprenti = await db.collection("apprentis").findOne({ token });
-      const html = await renderEmail(templateName, apprenti || anonymous);
+      const html = await renderEmail(templateName, { token: "123456789", apprenti: apprenti || anonymous });
 
       res.set("Content-Type", "text/html");
       res.send(Buffer.from(html));

@@ -15,7 +15,7 @@ export function useGet(url) {
       setResponse(response);
       setLoading(false);
     } catch (error) {
-      setError(error);
+      setError(error.json);
       setLoading(false);
     }
   }, [url]);

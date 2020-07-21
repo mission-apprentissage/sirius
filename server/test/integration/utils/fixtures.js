@@ -7,10 +7,11 @@ module.exports = {
         prenom: "Marie",
         nom: "Louise",
         email: "ml@apprentissage.fr",
-        token: "123456789",
         formation: {
           intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
         },
+        creationDate: new Date(),
+        questionnaires: [],
       },
       custom
     );

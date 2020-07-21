@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import { delay } from "lodash-es";
 import { Entry, Avatar, Bubble } from "./toolkit";
 import Loading from "../common/Loading";
-import ResponseContext from "./ResponseContext";
+import InputContext from "./input/InputContext";
 
-const Question = ({ message, input, active, onResponse = () => ({}) }) => {
+const Question = ({ message, input, active, onData = () => ({}) }) => {
   let [showMessage, setShowMessage] = useState(!active);
   let showInput = !!(active && input);
 
@@ -21,7 +21,7 @@ const Question = ({ message, input, active, onResponse = () => ({}) }) => {
       {showMessage ? (
         <Bubble>
           {message}
-          {showInput && <ResponseContext.Provider value={{ onResponse }}>{input}</ResponseContext.Provider>}
+          {showInput && <InputContext.Provider value={{ onData }}>{input}</InputContext.Provider>}
         </Bubble>
       ) : (
         <Loading />
@@ -34,7 +34,7 @@ Question.propTypes = {
   message: PropTypes.node.isRequired,
   active: PropTypes.bool,
   input: PropTypes.node,
-  onResponse: PropTypes.func,
+  onData: PropTypes.func,
 };
 
 export default Question;

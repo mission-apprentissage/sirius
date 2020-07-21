@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const _ = require("lodash");
 const htmlToText = require("nodemailer-html-to-text").htmlToText;
 const mjml = require("mjml");
 const path = require("path");
@@ -9,8 +10,8 @@ const renderFile = promisify(ejs.renderFile);
 module.exports = (config) => {
   let { smtp, publicUrl } = config;
   let transporter = nodemailer.createTransport({
-    ...smtp,
-    ...(smtp.auth && smtp.auth.user ? smtp.auth : {}),
+    ..._.omit(smtp, ["auth"]),
+    ...(smtp.auth.user ? smtp.auth : {}),
   });
   transporter.use("compile", htmlToText({ ignoreImage: true }));
 

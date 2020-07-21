@@ -32,6 +32,7 @@ const WrapperBox = styled(Box)`
   margin: 17rem;
 
   input {
+    font-size: 16rem;
     flex-grow: 1;
     background-color: #ececec;
     padding: 10px 20px;
@@ -73,7 +74,7 @@ const WrapperBox = styled(Box)`
   }
 `;
 
-const InputText = (props) => {
+const InputText = ({ onText, disabled }) => {
   let [value, setValue] = useState("");
   let [speaking, setSpeaking] = useState(false);
   let [recognition, setRecognition] = useState(null);
@@ -81,14 +82,14 @@ const InputText = (props) => {
 
   const handleClick = () => {
     if (value) {
-      props.onText({ value, label: value });
+      onText({ value, label: value });
       setValue("");
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && value) {
-      props.onText({ value, label: value });
+      onText({ value, label: value });
       setValue("");
     }
   };
@@ -102,7 +103,7 @@ const InputText = (props) => {
       recognition.stop();
     } else {
       let recorder = createRecognition(
-        (transcript) => props.onText({ value: transcript, label: transcript }),
+        (transcript) => onText({ value: transcript, label: transcript }),
         () => setSpeaking(false)
       );
 
@@ -115,16 +116,17 @@ const InputText = (props) => {
   return (
     <WrapperBox>
       <input
+        disabled={disabled}
         type={"text"}
-        placeholder={speaking ? "A vous de parlez..." : "Tapez votre message ici"}
+        placeholder={speaking ? "A vous de parler..." : "A tout moment exprimez-vous ici..."}
         value={value}
         onKeyPress={handleKeyPress}
         onChange={(e) => setValue(e.target.value)}
       />
-      <button onClick={handleClick} disabled={!value}>
+      <button onClick={handleClick} disabled={disabled || !value}>
         <SendIcon left right />
       </button>
-      <button onClick={recognize} disabled={!isRecognitionAvailable}>
+      <button onClick={recognize} disabled={disabled || !isRecognitionAvailable}>
         <MicroIcon left right className={speaking ? "fading" : ""} />
       </button>
     </WrapperBox>
@@ -132,6 +134,7 @@ const InputText = (props) => {
 };
 InputText.propTypes = {
   options: PropTypes.array,
+  disabled: PropTypes.bool,
   onText: PropTypes.func,
 };
 

@@ -31,10 +31,10 @@
 
         <mj-section padding-bottom="20px" padding-top="10px" background-color="#5222d0">
             <mj-column>
-                <mj-text align="center" padding-top="50px" color="#ffffff">Bonjour <%= data.prenom %>,</mj-text>
+                <mj-text align="center" padding-top="50px" color="#ffffff">Bonjour <%= data.apprenti.prenom %>,</mj-text>
                 <mj-text align="center" padding="10px 25px" color="#ffffff">
                     Vous suivez la formation de
-                    <strong><%= data.formation.intitule %></strong>
+                    <strong><%= data.apprenti.formation.intitule %></strong>
                 </mj-text>
 
                 <mj-button background-color="#ec615b" align="center"
@@ -73,9 +73,9 @@
         <mj-section background-color="#5222d0" padding-top="0">
             <mj-column padding-top="0">
                 <mj-text align="left" font-size="12px" line-height="20px">
-                    Sirius est un service développé par la Mission Intermnistérielle qui vise à faciliter les entrées en apprentissage. 
+                    Sirius est un service développé par la Mission Intermnistérielle qui vise à faciliter les entrées en apprentissage.
                     Vous trouverez toutes les informations sur : https://app.gitbook.com/@mission-apprentissage/s/general/les-nouveaux-services/anotea-apprentissage
-                    
+
                     Sirius traite vos données à caractère personnel (données professionnelles, données de contact) pour
                     les besoins de la réalisation d’une enquête de satisfaction. Cette enquête est facultative. Sirius a
                     obtenu vos données directement par votre CFA. 
@@ -99,7 +99,7 @@
         <mj-section background-color="#5222d0" padding-bottom="0">
             <mj-column padding-top="0">
                 <mj-text align="left" font-size="14px" line-height="20px">
-                    Cet email a été envoyé à <%= data.email %>
+                    Cet email a été envoyé à <%= data.apprenti.email %>
                     <br/>
                     Vous avez reçu cet email parce que votre CFA nous a transmis votre email.
                     <br/>

@@ -8,16 +8,18 @@ faker.locale = "fr";
 runScript(async ({ db }) => {
   let nbApprentis = 10;
 
+  await db.collection("apprentis").removeMany({});
   await Promise.all(
     _.range(0, nbApprentis).map(() => {
       return db.collection("apprentis").insertOne({
         prenom: faker.name.firstName(),
         nom: faker.name.lastName(),
-        email: "bguerout@yonoma.com",
-        token: faker.random.uuid(),
+        email: faker.internet.email(),
         formation: {
           intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
         },
+        creationDate: new Date(),
+        questionnaires: [],
       });
     })
   );

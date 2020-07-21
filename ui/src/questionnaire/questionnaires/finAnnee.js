@@ -57,7 +57,7 @@ export default (apprenti) => {
     {
       id: "nouvelleEntreprise",
       message: <div>Avez-vous trouvé une nouvelle entreprise ?</div>,
-      next: "suiviPrecisions",
+      next: "fierte",
       input: (
         <Options
           options={[
@@ -130,7 +130,7 @@ export default (apprenti) => {
             },
             {
               value: 2,
-              label: "J’ai été félicité.e pour mon travail XXXXX",
+              label: "J’ai été félicité.e pour mon travail",
             },
             {
               value: 3,
@@ -215,31 +215,19 @@ export default (apprenti) => {
             },
             {
               value: 4,
-              label: "Mes horaires, heures sup",
-            },
-            {
-              value: 5,
-              label: "Ma santé",
-            },
-            {
-              value: 6,
               label: "Le rythme vie pro / vie perso",
             },
             {
-              value: 7,
-              label: "Les congés",
-            },
-            {
-              value: 8,
+              value: 5,
               label: "Logement, transport",
             },
             {
-              value: 9,
+              value: 6,
               label: "Difficultés financières",
             },
             {
-              value: 10,
-              label: "Je ne souhaite pas en dire plus (passer à la fin du questionnaire)",
+              value: 7,
+              label: "Je passe",
               next: "fin",
             },
           ]}
@@ -317,23 +305,11 @@ export default (apprenti) => {
             },
             {
               value: 3,
-              label: "Mes horaires",
-            },
-            {
-              value: 4,
-              label: "Ma santé",
-            },
-            {
-              value: 5,
               label: "Le rythme vie pro / vie perso",
             },
             {
-              value: 6,
-              label: "Les congés",
-            },
-            {
-              value: 8,
-              label: "Je ne souhaite pas en dire plus (passer à la fin du questionnaire)",
+              value: 4,
+              label: "Je passe",
               next: "fin",
             },
           ]}

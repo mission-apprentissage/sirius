@@ -5,7 +5,7 @@ import { primary, secondary } from "../../common/utils/colors";
 import { appear } from "../../common/utils/animations";
 import { Box } from "../../common/Flexbox";
 import { ChevronIcon } from "../../common/FontAwesome";
-import ResponseContext from "../ResponseContext";
+import InputContext from "./InputContext";
 
 const Option = styled(({ children, className, selected, ...rest }) => {
   let clazz = `${className} ${selected ? "selected" : ""}`;
@@ -51,7 +51,7 @@ const Next = styled(Option)`
 `;
 
 const MultiChoice = ({ options }) => {
-  let { onResponse } = useContext(ResponseContext);
+  let { onData } = useContext(InputContext);
   let [choices, setChoices] = useState([]);
 
   return (
@@ -64,7 +64,7 @@ const MultiChoice = ({ options }) => {
               selected={choices.includes(option.value)}
               onClick={() => {
                 if (option.next) {
-                  return onResponse(option);
+                  return onData(option);
                 }
 
                 if (choices.includes(option.value)) {
@@ -86,15 +86,15 @@ const MultiChoice = ({ options }) => {
             let results = choices.map((c) => {
               return options.find((o) => o.value === c);
             });
-            return onResponse({
+            return onData({
               value: results.map((o) => o.value),
-              label: `${results[0].label} ${results.length > 1 ? "..." : ""}`,
+              label: `${results.map((r) => r.label).join(", ")}`,
             });
           }}
         >
           <Box justify={"between"} align={"center"}>
             <span>Suivant</span>
-            <ChevronIcon right />
+            <ChevronIcon left />
           </Box>
         </Next>
       </Box>
@@ -104,7 +104,7 @@ const MultiChoice = ({ options }) => {
 MultiChoice.propTypes = {
   options: PropTypes.array,
   next: PropTypes.string,
-  onResponse: PropTypes.func,
+  onData: PropTypes.func,
 };
 
 export default MultiChoice;

@@ -7,7 +7,7 @@ let startServer = async (options = {}) => {
   let client = await connectToMongoForTests();
 
   let components = await createComponents({
-    db: client.db(),
+    client,
     ...options,
   });
 

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { appear } from "../../common/utils/animations";
 import { Box } from "../../common/Flexbox";
 import { primary } from "../../common/utils/colors";
-import ResponseContext from "../ResponseContext";
+import InputContext from "./InputContext";
 
 const Option = styled.button`
   animation: ${appear} 0.3s ease forwards;
@@ -27,12 +27,12 @@ const Option = styled.button`
 `;
 
 const Options = ({ options }) => {
-  let { onResponse } = useContext(ResponseContext);
+  let { onData } = useContext(InputContext);
   return (
     <Box className={"options"} justify={"center"} direction={"column"} wrap={"wrap"}>
       {options.map((option) => {
         return (
-          <Option key={option.value} onClick={() => onResponse(option)}>
+          <Option key={option.value} onClick={() => onData(option)}>
             {option.label}
           </Option>
         );
@@ -42,7 +42,7 @@ const Options = ({ options }) => {
 };
 Options.propTypes = {
   options: PropTypes.array,
-  onResponse: PropTypes.func,
+  onData: PropTypes.func,
 };
 
 export default Options;

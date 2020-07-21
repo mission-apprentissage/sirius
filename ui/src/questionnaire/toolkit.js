@@ -18,12 +18,12 @@ export const Avatar = styled.img.attrs(() => ({ src: avatar, alt: "logo" }))`
 `;
 
 export const Bubble = styled.div.attrs(() => ({ className: "question" }))`
+  font-size: 16rem;
   animation: ${appear} 0.3s ease forwards;
   background-color: #f8f8f8;
   padding: 20px;
   border-radius: 35px 35px 35px 10px;
   line-height: 30rem;
-  font-size: 14rem;
   color: #455a64;
 `;
 
@@ -31,7 +31,7 @@ export const Message = styled.div`
   margin-bottom: 18rem;
 `;
 
-export const Response = styled(Bubble)`
+export const Reponse = styled(Bubble)`
   margin-right: 10px;
   border: 1px solid ${primary};
   background-color: ${primary};
@@ -45,7 +45,7 @@ export const Highlight = styled.p`
 `;
 
 export const Tips = styled.div`
-  font-size: 12rem;
+  font-size: 10rem;
   font-style: italic;
   font-weight: 300;
   color: #4c4c4c;

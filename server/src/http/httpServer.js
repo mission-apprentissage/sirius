@@ -5,7 +5,7 @@ const logMiddleware = require("./middlewares/logMiddleware");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 const tryCatch = require("./middlewares/tryCatchMiddleware");
 const emailsRouter = require("./routers/emailsRouter");
-const questionnnairesRouter = require("./routers/questionnnairesRouter");
+const questionnnairesRouter = require("./routers/questionnairesRouter");
 const { version } = require("../../package.json");
 
 module.exports = async (components) => {
