@@ -76,7 +76,7 @@ const WrapperBox = styled(Box)`
   }
 `;
 
-const InputText = ({ onText, disabled }) => {
+const InputText = React.forwardRef(({ onText, disabled }, ref) => {
   let [value, setValue] = useState("");
   let [speaking, setSpeaking] = useState(false);
   let [recognition, setRecognition] = useState(null);
@@ -116,7 +116,7 @@ const InputText = ({ onText, disabled }) => {
   };
 
   return (
-    <WrapperBox>
+    <WrapperBox ref={ref}>
       <input
         disabled={disabled}
         type={"text"}
@@ -133,7 +133,7 @@ const InputText = ({ onText, disabled }) => {
       </button>
     </WrapperBox>
   );
-};
+});
 InputText.propTypes = {
   options: PropTypes.array,
   disabled: PropTypes.bool,

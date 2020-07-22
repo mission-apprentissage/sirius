@@ -10,9 +10,8 @@ import { breakpoints } from "../../common/FlexboxGrid";
 import QuestionContext from "./question/QuestionContext";
 
 const noop = () => ({});
-
-const scrollToRef = (ref) => {
-  ref.current.scrollIntoView({ block: "end", behavior: "smooth" });
+const scrollTo = (ref, timeout = 0, options = { block: "end", behavior: "smooth" }) => {
+  delay((values) => ref.current.scrollIntoView(values), timeout, options);
 };
 
 const WrapperBox = styled(Box).attrs(() => ({ className: "WrapperBox" }))`
@@ -41,6 +40,7 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
   let inputTextHeight = 80;
   let bottomRef = useRef(null);
   let wrapperRef = useRef(null);
+  let inputRef = useRef(null);
 
   let handleInput = (question, data) => {
     let reponse = { id: question.id, data: omit(data, ["next"]) };
@@ -56,8 +56,7 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
     setHistory([...history, nextQuestionId]);
     setHeight(wrapperRef.current.offsetHeight - inputTextHeight);
 
-    delay(scrollToRef, 1000, bottomRef);
-    delay(scrollToRef, 1500, bottomRef);
+    scrollTo(bottomRef, 1500);
   };
 
   return (
@@ -91,6 +90,7 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
       </Questions>
 
       <InputText
+        ref={inputRef}
         disabled={currentQuestion.last}
         onText={(text) => {
           let question = questions.find((q) => q.id === currentQuestionId);
