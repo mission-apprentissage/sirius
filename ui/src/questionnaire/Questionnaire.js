@@ -1,8 +1,7 @@
 import React from "react";
 import { isEmpty } from "lodash-es";
-import queryString from "query-string";
 import styled from "styled-components";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { primary } from "../common/utils/colors";
 import { usePut } from "../common/hooks/useHttp";
 import Chat from "./chat/Chat";
@@ -37,11 +36,10 @@ const Background = styled("img").attrs(() => ({ src: background, alt: "backgroun
 `;
 
 export default () => {
-  let location = useLocation();
-  let { token } = queryString.parse(location.search);
-  let [questionnaire, loading, error] = usePut(`/api/questionnaires/${token}/open`);
+  let { token } = useParams();
+  let [questionnaireContext, loading, error] = usePut(`/api/questionnaires/${token}/open`);
 
-  if (loading || isEmpty(questionnaire)) {
+  if (loading || isEmpty(questionnaireContext)) {
     return (
       <Layout>
         <Loading />
@@ -49,7 +47,7 @@ export default () => {
     );
   }
 
-  let questions = error ? questionsErreur(error) : questionsFinAnnee(questionnaire);
+  let questions = error ? questionsErreur(error) : questionsFinAnnee(questionnaireContext);
   return (
     <Layout>
       <Box justify={"center"} height={"100%"}>

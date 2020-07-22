@@ -1,6 +1,7 @@
 const connectToMongoDB = require("./core/connectToMongoDB");
 const createMailer = require("./core/mailer");
 const createQuestionnaires = require("./questionnaires/questionnaires");
+const createContrats = require("./contrats/contrats");
 const logger = require("./core/logger");
 const defaults = require("./config");
 
@@ -9,6 +10,7 @@ module.exports = async (options = {}) => {
   let config = options.config || defaults;
   let db = client.db();
   let mailer = createMailer(config);
+  let contrats = options.contrats || createContrats(db, mailer);
 
   return {
     db,
@@ -16,6 +18,7 @@ module.exports = async (options = {}) => {
     logger,
     mailer,
     close: () => client.close(),
-    questionnaires: options.questionnaires || createQuestionnaires(db, mailer),
+    contrats,
+    questionnaires: options.questionnaires || createQuestionnaires(db, mailer, contrats),
   };
 };

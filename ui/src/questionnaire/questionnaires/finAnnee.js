@@ -3,7 +3,7 @@ import { Highlight, Message, Tips } from "../toolkit";
 import Options from "../chat/question/Options";
 import MultiChoice from "../chat/question/MultiChoice";
 
-export default ({ meta: { apprenti } }) => {
+export default ({ apprenti, formation }) => {
   return [
     {
       id: "accord",
@@ -13,7 +13,7 @@ export default ({ meta: { apprenti } }) => {
             Bonjour <b>{apprenti.prenom}</b> !
           </p>
           <p className={"pt-1"}>
-            Merci de rejoindre la communauté des apprentis en <b>{apprenti.formation.intitule}</b>
+            Merci de rejoindre la communauté des apprentis en <b>{formation.intitule}</b>
           </p>
           <p className={"pt-1"}>
             Vous êtes désormais <b>5 000</b> à avoir rejoint Sirius, bonne nouvelle ! Plus vous êtes nombreux, plus les

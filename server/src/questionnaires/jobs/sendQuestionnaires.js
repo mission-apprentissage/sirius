@@ -3,6 +3,7 @@ const faker = require("faker");
 const env = require("env-var");
 const { oleoduc, writeObject, filterObject } = require("oleoduc");
 const runScript = require("../../core/runScript");
+const { delay } = require("../../core/asyncUtils");
 
 faker.locale = "fr";
 
@@ -16,14 +17,16 @@ runScript(async ({ db, logger, questionnaires }) => {
   };
 
   await oleoduc(
-    db.collection("apprentis").find({ "questionnaires.type": { $ne: type } }),
-    filterObject(() => stats.total <= limit),
+    db.collection("contrats").find({ "questionnaires.type": { $ne: type } }),
+    filterObject(() => {
+      return ++stats.total <= limit;
+    }),
     writeObject(
-      async (apprenti) => {
+      async (contrat) => {
         try {
-          stats.total++;
-          logger.info(`Sending questionnaire ${type} to ${apprenti.email}`);
-          await questionnaires.send(type, apprenti);
+          logger.info(`Sending questionnaire ${type} to ${contrat.apprenti.email}`);
+          await delay(100);
+          await questionnaires.send(type, contrat);
 
           stats.sent++;
         } catch (e) {

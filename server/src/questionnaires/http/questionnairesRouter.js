@@ -1,16 +1,6 @@
 const express = require("express");
-const { pick } = require("lodash");
 const tryCatch = require("../../core/http/tryCatchMiddleware");
 const Joi = require("@hapi/joi");
-
-const anonymous = {
-  prenom: "Marie",
-  nom: "Louise",
-  email: "ml@apprentissage.fr",
-  formation: {
-    intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
-  },
-};
 
 module.exports = ({ questionnaires }) => {
   const router = express.Router(); // eslint-disable-line new-cap
@@ -20,9 +10,7 @@ module.exports = ({ questionnaires }) => {
     tryCatch(async (req, res) => {
       let { token } = req.params;
 
-      let questionnaire = await questionnaires.open(token);
-
-      res.json(pick(questionnaire, ["type", "meta"]));
+      res.json(await questionnaires.open(token));
     })
   );
 
@@ -58,7 +46,7 @@ module.exports = ({ questionnaires }) => {
     tryCatch(async (req, res) => {
       let { token } = req.params;
 
-      const html = await questionnaires.previewEmail(token, { anonymous });
+      const html = await questionnaires.previewEmail(token);
 
       res.set("Content-Type", "text/html");
       res.send(Buffer.from(html));

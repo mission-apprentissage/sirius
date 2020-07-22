@@ -1,13 +1,20 @@
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newApprenti } = require("../utils/fixtures");
+const { newContrat } = require("../utils/fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut démarrer un questionnaire", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("apprentis").insertOne(
-      newApprenti({
+    await db.collection("contrats").insertOne(
+      newContrat({
+        apprenti: {
+          prenom: "Robert",
+          nom: "Doe",
+        },
+        formation: {
+          intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
+        },
         questionnaires: [
           {
             type: "finAnnee",
@@ -23,15 +30,12 @@ httpTests(__filename, ({ startServer }) => {
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, {
-      type: "finAnnee",
-      meta: {
-        apprenti: {
-          prenom: "Marie",
-          nom: "Louise",
-          formation: {
-            intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
-          },
-        },
+      apprenti: {
+        prenom: "Robert",
+        nom: "Doe",
+      },
+      formation: {
+        intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
       },
     });
   });
@@ -39,8 +43,8 @@ httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut réinitialiser un questionnaire", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("apprentis").insertOne(
-      newApprenti({
+    await db.collection("contrats").insertOne(
+      newContrat({
         questionnaires: [
           {
             type: "finAnnee",
@@ -55,7 +59,7 @@ httpTests(__filename, ({ startServer }) => {
     let response = await httpClient.put("/api/questionnaires/123456/open");
 
     assert.strictEqual(response.status, 200);
-    let found = await db.collection("apprentis").findOne({ "questionnaires.token": "123456" });
+    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
     let finAnnee = found.questionnaires[0];
     assert.deepStrictEqual(finAnnee.reponses, []);
   });
@@ -63,8 +67,8 @@ httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on ne peut pas démarrer un questionnaire avec un token invalide", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("apprentis").insertOne(
-      newApprenti({
+    await db.collection("contrats").insertOne(
+      newContrat({
         questionnaires: [
           {
             type: "finAnnee",
@@ -89,8 +93,8 @@ httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut ajouter une réponse", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("apprentis").insertOne(
-      newApprenti({
+    await db.collection("contrats").insertOne(
+      newContrat({
         questionnaires: [
           {
             token: "123456",
@@ -109,7 +113,7 @@ httpTests(__filename, ({ startServer }) => {
 
     assert.strictEqual(response.status, 200);
 
-    let found = await db.collection("apprentis").findOne({ "questionnaires.token": "123456" });
+    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
     let finAnnee = found.questionnaires[0];
     assert.ok(finAnnee.updateDate);
     assert.deepStrictEqual(finAnnee.reponses, [{ id: "début", data: { value: 1, label: "ok" } }]);
@@ -118,8 +122,8 @@ httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on ne peut pas ajouter une réponse à un questionnaire closed", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("apprentis").insertOne(
-      newApprenti({
+    await db.collection("contrats").insertOne(
+      newContrat({
         questionnaires: [
           {
             token: "123456",
@@ -147,8 +151,8 @@ httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut modifier une réponse", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("apprentis").insertOne(
-      newApprenti({
+    await db.collection("contrats").insertOne(
+      newContrat({
         questionnaires: [
           {
             type: "finAnnee",
@@ -166,7 +170,7 @@ httpTests(__filename, ({ startServer }) => {
     });
 
     assert.strictEqual(response.status, 200);
-    let found = await db.collection("apprentis").findOne({ "questionnaires.token": "123456" });
+    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
     let finAnnee = found.questionnaires[0];
     assert.deepStrictEqual(finAnnee.reponses, [{ id: "début", data: { value: 2, label: "ko" } }]);
     assert.deepStrictEqual(finAnnee.status, "inprogress");
@@ -175,8 +179,8 @@ httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut terminer un questionnaire", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("apprentis").insertOne(
-      newApprenti({
+    await db.collection("contrats").insertOne(
+      newContrat({
         questionnaires: [
           {
             type: "finAnnee",
@@ -191,16 +195,16 @@ httpTests(__filename, ({ startServer }) => {
 
     assert.strictEqual(response.status, 200);
 
-    let found = await db.collection("apprentis").findOne({ "questionnaires.token": "123456" });
+    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
     let finAnnee = found.questionnaires[0];
     assert.deepStrictEqual(finAnnee.status, "closed");
   });
 
-  it("Vérifie qu'on peut prévisualiser l'email", async () => {
+  it.only("Vérifie qu'on peut prévisualiser l'email", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("apprentis").insertOne(
-      newApprenti({
+    await db.collection("contrats").insertOne(
+      newContrat({
         questionnaires: [
           {
             type: "finAnnee",

@@ -35,4 +35,7 @@ module.exports = {
 
     return Promise.all(promises);
   },
+  delay: (milliseconds) => {
+    return new Promise((resolve) => setTimeout(() => resolve(), milliseconds));
+  },
 };

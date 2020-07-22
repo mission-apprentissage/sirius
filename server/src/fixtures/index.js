@@ -2,25 +2,17 @@
 const faker = require("faker");
 const _ = require("lodash");
 const runScript = require("../core/runScript");
+const { newContrat } = require("../../test/integration/utils/fixtures");
 
 faker.locale = "fr";
 
 runScript(async ({ db }) => {
   let nbApprentis = 10;
 
-  await db.collection("apprentis").removeMany({});
+  await db.collection("contrats").removeMany({});
   await Promise.all(
     _.range(0, nbApprentis).map(() => {
-      return db.collection("apprentis").insertOne({
-        prenom: faker.name.firstName(),
-        nom: faker.name.lastName(),
-        email: faker.internet.email(),
-        formation: {
-          intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
-        },
-        creationDate: new Date(),
-        questionnaires: [],
-      });
+      return db.collection("contrats").insertOne(newContrat());
     })
   );
   return { inserted: nbApprentis };

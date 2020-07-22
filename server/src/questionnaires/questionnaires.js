@@ -2,49 +2,31 @@ const Boom = require("boom");
 const uuid = require("uuid");
 const path = require("path");
 
-module.exports = (db, mailer) => {
-  const getQuestionnaire = async (token) => {
-    let apprenti = await db.collection("apprentis").findOne({ "questionnaires.token": token });
-    if (!apprenti) {
-      throw Boom.badRequest("Le lien n'est pas valide");
-    }
-
-    let questionnaire = apprenti.questionnaires.find((q) => q.token === token);
-    return {
-      ...questionnaire,
-      meta: {
-        apprenti: {
-          prenom: apprenti.prenom,
-          nom: apprenti.nom,
-          formation: apprenti.formation,
-        },
-      },
-    };
-  };
-
+module.exports = (db, mailer, contrats) => {
   const getEmail = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
 
   return {
-    getQuestionnaire,
-    previewEmail: async (token, { anonymous = {} }) => {
-      let questionnaire = await getQuestionnaire(token);
+    previewEmail: async (token) => {
+      let contrat = await contrats.getContratByToken(token);
+      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
+
       return mailer.renderEmail(getEmail(questionnaire.type), {
-        token: "123456789",
-        apprenti: questionnaire.meta.apprenti || anonymous,
+        token,
+        contrat,
       });
     },
-    send: async (type, apprenti) => {
+    send: async (type, contrat) => {
       let token = uuid.v4();
 
       await mailer.sendEmail(
-        apprenti.email,
-        `Que pensez-vous de votre formation ${apprenti.formation.intitule}`,
+        contrat.apprenti.email,
+        `Que pensez-vous de votre formation ${contrat.formation.intitule}`,
         getEmail(type),
-        { apprenti, token }
+        { contrat, token }
       );
 
-      return db.collection("apprentis").updateOne(
-        { _id: apprenti._id },
+      return db.collection("contrats").updateOne(
+        { _id: contrat._id },
         {
           $push: {
             questionnaires: {
@@ -58,12 +40,14 @@ module.exports = (db, mailer) => {
       );
     },
     open: async (token) => {
-      let questionnaire = await getQuestionnaire(token);
+      let contrat = await contrats.getContratByToken(token);
+      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
+
       if (questionnaire.status === "closed") {
         throw Boom.badRequest("Le questionnaire n'est plus disponible");
       }
 
-      let { value: apprenti } = await db.collection("apprentis").findOneAndUpdate(
+      let { value: newContrat } = await db.collection("contrats").findOneAndUpdate(
         { "questionnaires.token": token },
         {
           $set: {
@@ -75,21 +59,30 @@ module.exports = (db, mailer) => {
         { returnOriginal: false }
       );
 
-      if (!apprenti) {
+      if (!newContrat) {
         throw Boom.badRequest("Questionnaire inconnu");
       }
-
-      return questionnaire;
+      return {
+        formation: {
+          intitule: contrat.formation.intitule,
+        },
+        apprenti: {
+          prenom: contrat.apprenti.prenom,
+          nom: contrat.apprenti.nom,
+          formation: contrat.apprenti.formation,
+        },
+      };
     },
     addReponse: async (token, reponse) => {
-      let questionnaire = await getQuestionnaire(token);
+      let contrat = await contrats.getContratByToken(token);
+      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
+      let reponses = [...questionnaire.reponses.filter((r) => r.id !== reponse.id), reponse];
+
       if (questionnaire.status === "closed") {
         throw Boom.badRequest("Le questionnaire n'est plus disponible");
       }
 
-      let reponses = [...questionnaire.reponses.filter((r) => r.id !== reponse.id), reponse];
-
-      let { value } = await db.collection("apprentis").findOneAndUpdate(
+      let { value: newContrat } = await db.collection("contrats").findOneAndUpdate(
         { "questionnaires.token": token },
         {
           $set: {
@@ -101,12 +94,12 @@ module.exports = (db, mailer) => {
         { returnOriginal: false }
       );
 
-      if (!value) {
+      if (!newContrat) {
         throw Boom.badRequest("Questionnaire inconnu");
       }
     },
     close: async (token) => {
-      let { value } = await db.collection("apprentis").findOneAndUpdate(
+      let { value: newContrat } = await db.collection("contrats").findOneAndUpdate(
         { "questionnaires.token": token },
         {
           $set: {
@@ -117,7 +110,7 @@ module.exports = (db, mailer) => {
         { returnOriginal: false }
       );
 
-      if (!value) {
+      if (!newContrat) {
         throw Boom.badRequest("Questionnaire inconnu");
       }
     },
