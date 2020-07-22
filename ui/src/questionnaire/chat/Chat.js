@@ -17,9 +17,8 @@ const scrollToRef = (ref) => {
 
 const WrapperBox = styled(Box).attrs(() => ({ className: "WrapperBox" }))`
   background-color: white;
-  overflow-y: auto;
-  overflow-x: hidden;
   max-width: 600px;
+  min-width: 320px;
   @media (min-width: ${breakpoints.md.min}) {
     box-shadow: 0 5px 40px rgba(0, 0, 0, 0.16) !important;
     height: 700px;
@@ -28,12 +27,20 @@ const WrapperBox = styled(Box).attrs(() => ({ className: "WrapperBox" }))`
   }
 `;
 
+const Questions = styled("div").attrs(() => ({ className: "Questions" }))`
+  overflow-y: auto;
+  overflow-x: hidden;
+`;
+
 const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
   let [history, setHistory] = useState([questions[0].id]);
+  let [height, setHeight] = useState("100%");
   let [reponses, setReponses] = useState([]);
   let currentQuestionId = history[history.length - 1];
   let currentQuestion = questions.find((q) => q.id === currentQuestionId);
+  let inputTextHeight = 80;
   let bottomRef = useRef(null);
+  let wrapperRef = useRef(null);
 
   let handleInput = (question, data) => {
     let reponse = { id: question.id, data: omit(data, ["next"]) };
@@ -47,47 +54,49 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
     }
 
     setHistory([...history, nextQuestionId]);
+    setHeight(wrapperRef.current.offsetHeight - inputTextHeight);
 
     delay(scrollToRef, 1000, bottomRef);
     delay(scrollToRef, 1500, bottomRef);
   };
 
   return (
-    <WrapperBox direction={"column"} justify={"between"} height={"100%"}>
-      {questions
-        .filter((q) => history.includes(q.id))
-        .map((question) => {
-          let { id, message, input } = question;
-          let isActive = id === currentQuestionId;
-          let allReponses = reponses.filter((r) => r.id === id);
+    <WrapperBox direction={"column"} justify={"between"} height={"100%"} ref={wrapperRef}>
+      <Questions style={{ height }}>
+        {questions
+          .filter((q) => history.includes(q.id))
+          .map((question) => {
+            let { id, message, input } = question;
+            let isActive = id === currentQuestionId;
+            let allReponses = reponses.filter((r) => r.id === id);
 
-          return (
-            <div key={id}>
-              <QuestionContext.Provider value={{ onData: (data) => handleInput(question, data) }}>
-                <Question active={isActive} message={message} input={input} />
-              </QuestionContext.Provider>
+            return (
+              <div key={id}>
+                <QuestionContext.Provider value={{ onData: (data) => handleInput(question, data) }}>
+                  <Question active={isActive} message={message} input={input} />
+                </QuestionContext.Provider>
 
-              {allReponses.length > 0 &&
-                allReponses.map((response, index) => {
-                  return (
-                    <Entry key={index} direction={"row"} justify={"end"} align={"end"} width={"50%"} offset={"50%"}>
-                      <Reponse>{response.data.label}</Reponse>
-                    </Entry>
-                  );
-                })}
-            </div>
-          );
-        })}
-      <div>
-        <InputText
-          disabled={currentQuestion.last}
-          onText={(text) => {
-            let question = questions.find((q) => q.id === currentQuestionId);
-            handleInput(question, text);
-          }}
-        />
+                {allReponses.length > 0 &&
+                  allReponses.map((response, index) => {
+                    return (
+                      <Entry key={index} direction={"row"} justify={"end"} align={"end"} width={"50%"} offset={"50%"}>
+                        <Reponse>{response.data.label}</Reponse>
+                      </Entry>
+                    );
+                  })}
+              </div>
+            );
+          })}
         <div className={"bottom"} ref={bottomRef} />
-      </div>
+      </Questions>
+
+      <InputText
+        disabled={currentQuestion.last}
+        onText={(text) => {
+          let question = questions.find((q) => q.id === currentQuestionId);
+          handleInput(question, text);
+        }}
+      />
     </WrapperBox>
   );
 };

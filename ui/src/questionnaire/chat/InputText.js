@@ -30,6 +30,8 @@ const createRecognition = (resultCallback, endCallback) => {
 
 const WrapperBox = styled(Box)`
   margin: 17rem;
+  height: 45rem;
+  max-height: 45rem;
 
   input {
     font-size: 16rem;

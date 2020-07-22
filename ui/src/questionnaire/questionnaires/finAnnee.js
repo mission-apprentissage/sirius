@@ -264,7 +264,7 @@ export default (context) => {
             },
             {
               value: 6,
-              label: "Autre (Mission Locale, Anaf, Amis) : texte libre XXXXX",
+              label: "Autre (Mission Locale, Anaf, Amis)",
             },
           ]}
         />
