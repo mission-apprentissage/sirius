@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { delay } from "lodash-es";
-import { Entry, Avatar, Bubble } from "./toolkit";
-import Loading from "../common/Loading";
-import InputContext from "./input/InputContext";
+import { Entry, Avatar, Bubble } from "../../toolkit";
+import Loading from "../../../common/Loading";
 
 const Question = ({ message, input, active, onData = () => ({}) }) => {
   let [showMessage, setShowMessage] = useState(!active);
@@ -21,7 +20,7 @@ const Question = ({ message, input, active, onData = () => ({}) }) => {
       {showMessage ? (
         <Bubble>
           {message}
-          {showInput && <InputContext.Provider value={{ onData }}>{input}</InputContext.Provider>}
+          {showInput && input}
         </Bubble>
       ) : (
         <Loading />

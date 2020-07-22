@@ -21,6 +21,7 @@ module.exports = (config) => {
       data,
     });
     let { html } = mjml(buffer.toString(), { minify: true });
+    console.log(html);
     return html;
   };
 

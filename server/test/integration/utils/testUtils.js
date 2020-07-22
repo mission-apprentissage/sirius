@@ -1,4 +1,4 @@
-const connectToMongoDB = require("../../../src/common/connectToMongoDB");
+const connectToMongoDB = require("../../../src/core/connectToMongoDB");
 const config = require("../../../src/config");
 
 let clientHolder = null;

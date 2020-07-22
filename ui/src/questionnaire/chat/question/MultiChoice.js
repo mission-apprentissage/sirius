@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
-import { primary, secondary } from "../../common/utils/colors";
-import { appear } from "../../common/utils/animations";
-import { Box } from "../../common/Flexbox";
-import { ChevronIcon } from "../../common/FontAwesome";
-import InputContext from "./InputContext";
+import { primary, secondary } from "../../../common/utils/colors";
+import { appear } from "../../../common/utils/animations";
+import { Box } from "../../../common/Flexbox";
+import { ChevronIcon } from "../../../common/FontAwesome";
+import InputContext from "./QuestionContext";
 
 const Option = styled(({ children, className, selected, ...rest }) => {
   let clazz = `${className} ${selected ? "selected" : ""}`;
@@ -33,7 +33,7 @@ const Option = styled(({ children, className, selected, ...rest }) => {
   }
 `;
 
-const Next = styled(Option)`
+const Button = styled(Option)`
   background-color: ${secondary};
   border: 1px solid ${secondary};
   color: white;
@@ -52,7 +52,7 @@ const Next = styled(Option)`
 
 const MultiChoice = ({ options }) => {
   let { onData } = useContext(InputContext);
-  let [choices, setChoices] = useState([]);
+  let [values, setValues] = useState([]);
 
   return (
     <div className={"MultiChoise"}>
@@ -61,16 +61,16 @@ const MultiChoice = ({ options }) => {
           return (
             <Option
               key={option.value}
-              selected={choices.includes(option.value)}
+              selected={values.includes(option.value)}
               onClick={() => {
                 if (option.next) {
                   return onData(option);
                 }
 
-                if (choices.includes(option.value)) {
-                  setChoices(choices.filter((v) => v !== option.value));
+                if (values.includes(option.value)) {
+                  setValues(values.filter((v) => v !== option.value));
                 } else {
-                  setChoices([...choices, option.value]);
+                  setValues([...values, option.value]);
                 }
               }}
             >
@@ -80,12 +80,16 @@ const MultiChoice = ({ options }) => {
         })}
       </Box>
       <Box justify={"end"}>
-        <Next
-          disabled={choices.length === 0}
+        <Button
+          disabled={values.length === 0}
           onClick={() => {
-            let results = choices.map((c) => {
+            let results = values.map((c) => {
               return options.find((o) => o.value === c);
             });
+
+            if (results.find((r) => r.extra === "text")) {
+            }
+
             return onData({
               value: results.map((o) => o.value),
               label: `${results.map((r) => r.label).join(", ")}`,
@@ -96,7 +100,7 @@ const MultiChoice = ({ options }) => {
             <span>Suivant</span>
             <ChevronIcon left />
           </Box>
-        </Next>
+        </Button>
       </Box>
     </div>
   );

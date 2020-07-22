@@ -1,13 +1,12 @@
 // eslint-disable-next-line node/no-unpublished-require
 const faker = require("faker");
 const env = require("env-var");
-const uuid = require("uuid");
 const { oleoduc, writeObject, filterObject } = require("oleoduc");
 const runScript = require("../runScript");
 
 faker.locale = "fr";
 
-runScript(async ({ db, mailer, logger }) => {
+runScript(async ({ db, logger, questionnaires }) => {
   const limit = env.get("LIMIT").default(0).asInt();
   let type = "finAnnee";
   let stats = {
@@ -23,24 +22,9 @@ runScript(async ({ db, mailer, logger }) => {
       async (apprenti) => {
         try {
           stats.total++;
-          let token = uuid.v4();
+          logger.info(`Sending email ${type} to ${apprenti.email}`);
+          await questionnaires.send(apprenti, type);
 
-          await db.collection("apprentis").updateOne(
-            { _id: apprenti._id },
-            {
-              $push: {
-                questionnaires: {
-                  type,
-                  token,
-                  status: "send",
-                  reponses: [],
-                },
-              },
-            }
-          );
-
-          logger.info(`Sending email ${type} to ${apprenti.email}/${token}`);
-          await mailer.sendEmail(apprenti.email, apprenti.formation.intitule, type, { apprenti, token });
           stats.sent++;
         } catch (e) {
           logger.error(e);

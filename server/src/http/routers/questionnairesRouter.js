@@ -1,104 +1,45 @@
 const express = require("express");
 const tryCatch = require("../middlewares/tryCatchMiddleware");
 const Joi = require("@hapi/joi");
-const Boom = require("boom");
 
-module.exports = ({ db }) => {
+module.exports = ({ questionnaires }) => {
   const router = express.Router(); // eslint-disable-line new-cap
-  const serializeQuestionnaire = (questionnaire, apprenti) => {
-    return {
-      type: questionnaire.type,
-      meta: {
-        apprenti: {
-          prenom: apprenti.prenom,
-          nom: apprenti.nom,
-          formation: apprenti.formation,
-        },
-      },
-    };
-  };
-  const validateToken = tryCatch(async (req, res, next) => {
-    let { token } = req.params;
 
-    let apprenti = await db.collection("apprentis").findOne({ "questionnaires.token": token });
-    if (!apprenti) {
-      throw Boom.badRequest("Le lien n'est pas valide");
-    }
-
-    let questionnaire = apprenti.questionnaires.find((q) => q.token === token);
-    if (questionnaire.status === "closed") {
-      throw Boom.badRequest("Le questionnaire n'est plus disponible");
-    }
-
-    req.token = token;
-    req.apprenti = apprenti;
-    req.questionnaire = questionnaire;
-    next();
-  });
-
-  router.get(
-    "/api/questionnaires/:token",
-    validateToken,
+  router.put(
+    "/api/questionnaires/:token/open",
     tryCatch(async (req, res) => {
-      let { apprenti, questionnaire } = req;
+      let { token } = req.params;
 
-      res.json(serializeQuestionnaire(questionnaire, apprenti));
+      let meta = await questionnaires.open(token);
+
+      res.json(meta);
     })
   );
 
   router.put(
-    "/api/questionnaires/:token/reponse",
-    validateToken,
+    "/api/questionnaires/:token/addReponse",
     tryCatch(async (req, res) => {
-      let { questionnaire, token } = req;
+      let { token } = req.params;
       let reponse = await Joi.object({
         id: Joi.string().required(),
         data: Joi.any().required(),
       }).validateAsync(req.body, { abortEarly: false });
 
-      let { value: newApprenti } = await db.collection("apprentis").findOneAndUpdate(
-        { "questionnaires.token": token },
-        {
-          $set: {
-            "questionnaires.$.updateDate": new Date(),
-            "questionnaires.$.status": "inprogress",
-            "questionnaires.$.reponses": [...questionnaire.reponses.filter((r) => r.id !== reponse.id), reponse],
-          },
-        },
-        { returnOriginal: false }
-      );
+      await questionnaires.addReponse(token, reponse);
 
-      if (!newApprenti) {
-        throw Boom.badRequest("Questionnaire inconnu");
-      }
-
-      res.json(serializeQuestionnaire(req.questionnaire, newApprenti));
+      res.json({});
     })
   );
 
   router.put(
     "/api/questionnaires/:token/close",
-    validateToken,
     tryCatch(async (req, res) => {
-      let { token } = req;
+      let { token } = req.params;
       await Joi.object({}).validateAsync(req.body, { abortEarly: false });
 
-      let { value: newApprenti } = await db.collection("apprentis").findOneAndUpdate(
-        { "questionnaires.token": token },
-        {
-          $set: {
-            "questionnaires.$.updateDate": new Date(),
-            "questionnaires.$.status": "closed",
-          },
-        },
-        { returnOriginal: false }
-      );
+      await questionnaires.close(token);
 
-      if (!newApprenti) {
-        throw Boom.badRequest("Questionnaire inconnu");
-      }
-
-      res.json(serializeQuestionnaire(req.questionnaire, newApprenti));
+      res.json({});
     })
   );
 

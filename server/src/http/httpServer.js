@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const logger = require("../common/logger");
+const logger = require("../core/logger");
 const logMiddleware = require("./middlewares/logMiddleware");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 const tryCatch = require("./middlewares/tryCatchMiddleware");

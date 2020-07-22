@@ -45,7 +45,7 @@ export const Highlight = styled.p`
 `;
 
 export const Tips = styled.div`
-  font-size: 10rem;
+  font-size: 12rem;
   font-style: italic;
   font-weight: 300;
   color: #4c4c4c;

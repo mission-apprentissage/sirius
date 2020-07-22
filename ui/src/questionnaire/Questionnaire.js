@@ -1,10 +1,11 @@
 import React from "react";
+import { isEmpty } from "lodash-es";
 import queryString from "query-string";
 import styled from "styled-components";
 import { useLocation } from "react-router-dom";
 import { primary } from "../common/utils/colors";
-import { useGet } from "../common/hooks/useGet";
-import Chat from "./Chat";
+import { usePut } from "../common/hooks/useHttp";
+import Chat from "./chat/Chat";
 import questionsErreur from "./questionnaires/erreur";
 import questionsFinAnnee from "./questionnaires/finAnnee";
 import Loading from "../common/Loading";
@@ -38,9 +39,9 @@ const Background = styled("img").attrs(() => ({ src: background, alt: "backgroun
 export default () => {
   let location = useLocation();
   let { token } = queryString.parse(location.search);
-  let [result, loading, error] = useGet(`/api/questionnaires/${token}`);
+  let [result, loading, error] = usePut(`/api/questionnaires/${token}/open`);
 
-  if (loading) {
+  if (loading || isEmpty(result)) {
     return (
       <Layout>
         <Loading />
@@ -48,14 +49,14 @@ export default () => {
     );
   }
 
-  let questions = error ? questionsErreur(error) : questionsFinAnnee(result.meta.apprenti);
+  let questions = error ? questionsErreur(error) : questionsFinAnnee(result);
   return (
     <Layout>
       <Box justify={"center"} height={"100%"}>
         <Chat
           questions={questions}
           onReponse={async (reponse) => {
-            await _put(`/api/questionnaires/${token}/reponse`, reponse);
+            await _put(`/api/questionnaires/${token}/addReponse`, reponse);
           }}
           onEnd={async () => {
             await _put(`/api/questionnaires/${token}/close`);

@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import React, { useContext } from "react";
 import PropTypes from "prop-types";
-import { appear } from "../../common/utils/animations";
-import { Box } from "../../common/Flexbox";
-import { primary } from "../../common/utils/colors";
-import InputContext from "./InputContext";
+import { appear } from "../../../common/utils/animations";
+import { Box } from "../../../common/Flexbox";
+import { primary } from "../../../common/utils/colors";
+import InputContext from "./QuestionContext";
 
 const Option = styled.button`
   animation: ${appear} 0.3s ease forwards;

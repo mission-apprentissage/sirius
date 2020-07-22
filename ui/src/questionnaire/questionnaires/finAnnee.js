@@ -1,19 +1,19 @@
 import React from "react";
 import { Highlight, Message, Tips } from "../toolkit";
-import Options from "../input/Options";
-import MultiChoice from "../input/MultiChoice";
+import Options from "../chat/question/Options";
+import MultiChoice from "../chat/question/MultiChoice";
 
-export default (apprenti) => {
+export default (context) => {
   return [
     {
       id: "accord",
       message: (
         <Message>
           <p>
-            Bonjour <b>{apprenti.prenom}</b> !
+            Bonjour <b>{context.prenom}</b> !
           </p>
           <p className={"pt-1"}>
-            Merci de rejoindre la communauté des apprentis en <b>{apprenti.formation.intitule}</b>
+            Merci de rejoindre la communauté des apprentis en <b>{context.formation.intitule}</b>
           </p>
           <p className={"pt-1"}>
             Vous êtes désormais <b>5 000</b> à avoir rejoint Sirius, bonne nouvelle ! Plus vous êtes nombreux, plus les
@@ -30,12 +30,12 @@ export default (apprenti) => {
       message: (
         <Message>
           <p>
-            Alors <b>{apprenti.prenom}</b>, comment s’est passée votre année ?
+            Alors <b>{context.prenom}</b>, comment s’est passée votre année ?
           </p>
 
           <p className={"pt-1"}>
-            L’apprentissage, c’est surtout la vie en entreprise : les relations avec le tuteur, les collègues… et c’est
-            important d’être suivi par le CFA pour s’assurer que tout se passe bien.
+            L’apprentissage, c’est surtout la vie en entreprise : les relations avec le tuteur, les collègues... et
+            c’est important d’être suivi par le CFA pour s’assurer que tout se passe bien.
           </p>
 
           <Highlight>Sur le suivi en entreprise par le référent du CFA, vous diriez :</Highlight>
@@ -144,10 +144,6 @@ export default (apprenti) => {
               value: 5,
               label: "Je me suis fait un beau cadeau grâce à mon salaire",
             },
-            {
-              value: 6,
-              label: "Autre texte libre XXXXXX",
-            },
           ]}
         />
       ),
@@ -160,7 +156,7 @@ export default (apprenti) => {
             Mais sur le chemin, il y a aussi des obstacles : les partager, ça peut aider les autres à se sentir moins
             seul.e.
           </p>
-          <Highlight>{apprenti.prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
+          <Highlight>{context.prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
         </Message>
       ),
       input: (
@@ -169,7 +165,7 @@ export default (apprenti) => {
             {
               value: 1,
               label: "Non, tout s’est bien passé",
-              next: "fin",
+              next: "ambiance",
             },
             {
               value: 2,
@@ -310,7 +306,7 @@ export default (apprenti) => {
             {
               value: 4,
               label: "Je passe",
-              next: "fin",
+              next: "ambiance",
             },
           ]}
         />
@@ -327,12 +323,82 @@ export default (apprenti) => {
             {
               value: false,
               label: "Non merci",
-              next: "fin",
+              next: "ambiance",
             },
             {
               value: true,
               label: "Oui",
-              next: "fin",
+              next: "ambiance",
+            },
+          ]}
+        />
+      ),
+    },
+    {
+      id: "ambiance",
+      message: <Message>Que diriez-vous de l’ambiance au CFA</Message>,
+      next: "ateliers",
+      input: (
+        <Options
+          options={[
+            {
+              value: 1,
+              label: "Bonne",
+            },
+            {
+              value: 2,
+              label: "Sans plus",
+            },
+          ]}
+        />
+      ),
+    },
+    {
+      id: "ateliers",
+      message: <Message>Que diriez-vous des ateliers / plateaux ?</Message>,
+      next: "communauté",
+      input: (
+        <MultiChoice
+          options={[
+            {
+              value: 1,
+              label: "Matériel récent",
+            },
+            {
+              value: 2,
+              label: "Matériel en nombre suffisant",
+            },
+            {
+              value: 3,
+              label: "Matériel usagé",
+            },
+            {
+              value: 4,
+              label: "Matériel en nombre insuffisant",
+            },
+          ]}
+        />
+      ),
+    },
+    {
+      id: "communauté",
+      message: (
+        <Message>
+          Accepteriez-vous de répondre aux questions posées par les futurs apprentis à la communauté ? (anonymat
+          préservé) ?
+        </Message>
+      ),
+      next: "fin",
+      input: (
+        <Options
+          options={[
+            {
+              value: true,
+              label: "Pourquoi pas",
+            },
+            {
+              value: false,
+              label: "Non merci",
             },
           ]}
         />
@@ -348,7 +414,7 @@ export default (apprenti) => {
       last: true,
       message: (
         <div>
-          Merci {apprenti.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
+          Merci {context.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
           souhaitons un apprentissage riche en expériences professionnelles et humaines.
         </div>
       ),
