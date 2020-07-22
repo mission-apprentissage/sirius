@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Box } from "../../../common/Flexbox";
 import { ChevronIcon } from "../../../common/FontAwesome";
 import InputContext from "./QuestionContext";
-import { ButtonOption, Option } from "../../toolkit";
+import { ChoiceButton, Option } from "../../toolkit";
 
 const MultiChoice = ({ options }) => {
   let { onData } = useContext(InputContext);
@@ -35,7 +35,7 @@ const MultiChoice = ({ options }) => {
         })}
       </Box>
       <Box justify={"end"}>
-        <ButtonOption
+        <ChoiceButton
           disabled={values.length === 0}
           onClick={() => {
             let results = values.map((c) => {
@@ -55,7 +55,7 @@ const MultiChoice = ({ options }) => {
             <span>Suivant</span>
             <ChevronIcon left />
           </Box>
-        </ButtonOption>
+        </ChoiceButton>
       </Box>
     </div>
   );

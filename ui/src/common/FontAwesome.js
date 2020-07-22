@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMicrophoneAlt } from "@fortawesome/free-solid-svg-icons";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faMicrophoneAlt, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faHandPointDown } from "@fortawesome/free-regular-svg-icons";
 import styled from "styled-components";
 import { fade } from "./utils/animations";
 import { primary, secondary } from "./utils/colors";
@@ -24,3 +24,7 @@ export const MicroIcon = styled(wrapSVG(faMicrophoneAlt))`
 `;
 
 export const ChevronIcon = wrapSVG(faChevronRight);
+export const HandDownIcon = styled(wrapSVG(faHandPointDown))`
+  color: ${primary};
+  font-size: 25rem;
+`;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Box } from "../common/Flexbox";
 import { appear } from "../common/utils/animations";
-import {primary, secondary} from "../common/utils/colors";
+import { primary, secondary} from "../common/utils/colors";
 import avatar from "./icons/avatar.svg";
 import React from "react";
 
@@ -78,7 +78,7 @@ export const Option = styled(({ children, className, selected, ...rest }) => {
   }
 `;
 
-export const ButtonOption = styled(Option)`
+export const ChoiceButton = styled(Option)`
   background-color: ${secondary};
   border: 1px solid ${secondary};
   color: white;

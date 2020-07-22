@@ -1,16 +1,23 @@
 import React, { useContext } from "react";
+import styled from "styled-components";
 import PropTypes from "prop-types";
 import { Box } from "../../../common/Flexbox";
-import { ChevronIcon } from "../../../common/FontAwesome";
+import { ChevronIcon, HandDownIcon } from "../../../common/FontAwesome";
 import InputContext from "./QuestionContext";
-import { ButtonOption } from "../../toolkit";
+import { ChoiceButton } from "../../toolkit";
+import { moveUpToDown } from "../../../common/utils/animations";
+
+const AnimatedIcon = styled(HandDownIcon)`
+  animation: ${moveUpToDown} 1s infinite alternate;
+`;
 
 const Skip = () => {
   let { onData } = useContext(InputContext);
 
   return (
-    <Box justify={"end"}>
-      <ButtonOption
+    <Box justify={"between"} align={"end"}>
+      <AnimatedIcon />
+      <ChoiceButton
         onClick={() => {
           return onData({
             value: "skip",
@@ -22,7 +29,7 @@ const Skip = () => {
           <span>Passer</span>
           <ChevronIcon left />
         </Box>
-      </ButtonOption>
+      </ChoiceButton>
     </Box>
   );
 };
