@@ -1,16 +1,16 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Sirius",
+  "name": "Sirius",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64",
+      "sizes": "128x119",
       "type": "image/x-icon"
     },
     {
-      "src": "user-astronaut-solid.png",
+      "src": "avatar.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "128x119"
     }
   ],
   "start_url": ".",

@@ -1,4 +1,4 @@
-const connectToMongoDB = require("../../../src/common/connectToMongoDB");
+const connectToMongoDB = require("../../../src/core/connectToMongoDB");
 const config = require("../../../src/config");
 
 let clientHolder = null;
@@ -11,6 +11,8 @@ let connectToMongoForTests = async () => {
 
 module.exports = {
   connectToMongoForTests,
-  cleanAll: () => {},
+  cleanAll: () => {
+    return clientHolder.db().dropDatabase();
+  },
   randomize: (value) => `${value}-${Math.random().toString(36).substring(7)}`,
 };

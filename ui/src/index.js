@@ -1,3 +1,5 @@
+import "react-app-polyfill/ie11";
+import "react-app-polyfill/stable";
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
@@ -15,7 +17,7 @@ ReactDOM.render(
 
 WebFont.load({
   google: {
-    families: ["Public+Sans:ital,wght@0,400;0,600;0,900;1,400"],
+    families: ["Public+Sans:ital,wght@0,400;0,600;0,900;1,400;1,300"],
   },
 });
 

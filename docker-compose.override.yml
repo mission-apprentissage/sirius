@@ -27,7 +27,6 @@ services:
       - SIRIUS_LOG_LEVEL=debug
       - SIRIUS_SMTP_HOST=smtp
       - SIRIUS_SMTP_PORT=1025
-      - SIRIUS_SMTP_SECURE=false
     depends_on:
       - smtp
 
