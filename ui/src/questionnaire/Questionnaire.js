@@ -39,9 +39,9 @@ const Background = styled("img").attrs(() => ({ src: background, alt: "backgroun
 export default () => {
   let location = useLocation();
   let { token } = queryString.parse(location.search);
-  let [result, loading, error] = usePut(`/api/questionnaires/${token}/open`);
+  let [questionnaire, loading, error] = usePut(`/api/questionnaires/${token}/open`);
 
-  if (loading || isEmpty(result)) {
+  if (loading || isEmpty(questionnaire)) {
     return (
       <Layout>
         <Loading />
@@ -49,7 +49,7 @@ export default () => {
     );
   }
 
-  let questions = error ? questionsErreur(error) : questionsFinAnnee(result);
+  let questions = error ? questionsErreur(error) : questionsFinAnnee(questionnaire);
   return (
     <Layout>
       <Box justify={"center"} height={"100%"}>

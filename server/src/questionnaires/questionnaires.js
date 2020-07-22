@@ -1,5 +1,6 @@
 const Boom = require("boom");
 const uuid = require("uuid");
+const path = require("path");
 
 module.exports = (db, mailer) => {
   const getQuestionnaire = async (token) => {
@@ -21,15 +22,24 @@ module.exports = (db, mailer) => {
     };
   };
 
+  const getEmail = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
+
   return {
     getQuestionnaire,
-    send: async (apprenti, type) => {
+    previewEmail: async (token, { anonymous = {} }) => {
+      let questionnaire = await getQuestionnaire(token);
+      return mailer.renderEmail(getEmail(questionnaire.type), {
+        token: "123456789",
+        apprenti: questionnaire.meta.apprenti || anonymous,
+      });
+    },
+    send: async (type, apprenti) => {
       let token = uuid.v4();
 
       await mailer.sendEmail(
         apprenti.email,
         `Que pensez-vous de votre formation ${apprenti.formation.intitule}`,
-        type,
+        getEmail(type),
         { apprenti, token }
       );
 
@@ -69,11 +79,7 @@ module.exports = (db, mailer) => {
         throw Boom.badRequest("Questionnaire inconnu");
       }
 
-      return {
-        prenom: apprenti.prenom,
-        nom: apprenti.nom,
-        formation: apprenti.formation,
-      };
+      return questionnaire;
     },
     addReponse: async (token, reponse) => {
       let questionnaire = await getQuestionnaire(token);

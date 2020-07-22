@@ -2,7 +2,7 @@
 const faker = require("faker");
 const env = require("env-var");
 const { oleoduc, writeObject, filterObject } = require("oleoduc");
-const runScript = require("../runScript");
+const runScript = require("../../core/runScript");
 
 faker.locale = "fr";
 
@@ -22,8 +22,8 @@ runScript(async ({ db, logger, questionnaires }) => {
       async (apprenti) => {
         try {
           stats.total++;
-          logger.info(`Sending email ${type} to ${apprenti.email}`);
-          await questionnaires.send(apprenti, type);
+          logger.info(`Sending questionnaire ${type} to ${apprenti.email}`);
+          await questionnaires.send(type, apprenti);
 
           stats.sent++;
         } catch (e) {

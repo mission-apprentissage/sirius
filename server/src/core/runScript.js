@@ -1,5 +1,5 @@
 const moment = require("moment");
-const logger = require("../core/logger");
+const logger = require("./logger");
 const createComponents = require("../components");
 
 process.on("unhandledRejection", (e) => console.log(e));

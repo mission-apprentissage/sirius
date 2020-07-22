@@ -3,17 +3,17 @@ import { Highlight, Message, Tips } from "../toolkit";
 import Options from "../chat/question/Options";
 import MultiChoice from "../chat/question/MultiChoice";
 
-export default (context) => {
+export default ({ meta: { apprenti } }) => {
   return [
     {
       id: "accord",
       message: (
         <Message>
           <p>
-            Bonjour <b>{context.prenom}</b> !
+            Bonjour <b>{apprenti.prenom}</b> !
           </p>
           <p className={"pt-1"}>
-            Merci de rejoindre la communauté des apprentis en <b>{context.formation.intitule}</b>
+            Merci de rejoindre la communauté des apprentis en <b>{apprenti.formation.intitule}</b>
           </p>
           <p className={"pt-1"}>
             Vous êtes désormais <b>5 000</b> à avoir rejoint Sirius, bonne nouvelle ! Plus vous êtes nombreux, plus les
@@ -30,7 +30,7 @@ export default (context) => {
       message: (
         <Message>
           <p>
-            Alors <b>{context.prenom}</b>, comment s’est passée votre année ?
+            Alors <b>{apprenti.prenom}</b>, comment s’est passée votre année ?
           </p>
 
           <p className={"pt-1"}>
@@ -156,7 +156,7 @@ export default (context) => {
             Mais sur le chemin, il y a aussi des obstacles : les partager, ça peut aider les autres à se sentir moins
             seul.e.
           </p>
-          <Highlight>{context.prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
+          <Highlight>{apprenti.prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
         </Message>
       ),
       input: (
@@ -414,7 +414,7 @@ export default (context) => {
       last: true,
       message: (
         <div>
-          Merci {context.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
+          Merci {apprenti.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
           souhaitons un apprentissage riche en expériences professionnelles et humaines.
         </div>
       ),

@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const logger = require("../../core/logger");
+const logger = require("../logger");
 
 module.exports = () => {
   return (req, res, next) => {

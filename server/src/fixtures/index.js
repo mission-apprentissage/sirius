@@ -1,7 +1,7 @@
 // eslint-disable-next-line node/no-unpublished-require
 const faker = require("faker");
 const _ = require("lodash");
-const runScript = require("../runScript");
+const runScript = require("../core/runScript");
 
 faker.locale = "fr";
 

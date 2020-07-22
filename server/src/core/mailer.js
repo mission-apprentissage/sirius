@@ -2,7 +2,6 @@ const nodemailer = require("nodemailer");
 const _ = require("lodash");
 const htmlToText = require("nodemailer-html-to-text").htmlToText;
 const mjml = require("mjml");
-const path = require("path");
 const { promisify } = require("util");
 const ejs = require("ejs");
 const renderFile = promisify(ejs.renderFile);
@@ -15,8 +14,8 @@ module.exports = (config) => {
   });
   transporter.use("compile", htmlToText({ ignoreImage: true }));
 
-  let renderEmail = async (templateName, data = {}) => {
-    let buffer = await renderFile(path.join(__dirname, `${templateName}.mjml.ejs`), {
+  let renderEmail = async (template, data = {}) => {
+    let buffer = await renderFile(template, {
       utils: { getPublicUrl: (path) => `${publicUrl}${path}` },
       data,
     });
@@ -27,12 +26,12 @@ module.exports = (config) => {
 
   return {
     renderEmail,
-    sendEmail: async (to, subject, templateName, data) => {
+    sendEmail: async (to, subject, template, data) => {
       return transporter.sendMail({
         from: "sirius@apprentissage.beta.gouv.fr",
         to,
         subject,
-        html: await renderEmail(templateName, data),
+        html: await renderEmail(template, data),
         list: {
           //help: getPublicUrl("/faq"),
           //unsubscribe: utils.getUnsubscribeLink(stagiaire.token),

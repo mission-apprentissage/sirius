@@ -1,6 +1,16 @@
 const express = require("express");
-const tryCatch = require("../middlewares/tryCatchMiddleware");
+const { pick } = require("lodash");
+const tryCatch = require("../../core/http/tryCatchMiddleware");
 const Joi = require("@hapi/joi");
+
+const anonymous = {
+  prenom: "Marie",
+  nom: "Louise",
+  email: "ml@apprentissage.fr",
+  formation: {
+    intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
+  },
+};
 
 module.exports = ({ questionnaires }) => {
   const router = express.Router(); // eslint-disable-line new-cap
@@ -10,9 +20,9 @@ module.exports = ({ questionnaires }) => {
     tryCatch(async (req, res) => {
       let { token } = req.params;
 
-      let meta = await questionnaires.open(token);
+      let questionnaire = await questionnaires.open(token);
 
-      res.json(meta);
+      res.json(pick(questionnaire, ["type", "meta"]));
     })
   );
 
@@ -40,6 +50,18 @@ module.exports = ({ questionnaires }) => {
       await questionnaires.close(token);
 
       res.json({});
+    })
+  );
+
+  router.get(
+    "/api/questionnaires/:token/email",
+    tryCatch(async (req, res) => {
+      let { token } = req.params;
+
+      const html = await questionnaires.previewEmail(token, { anonymous });
+
+      res.set("Content-Type", "text/html");
+      res.send(Buffer.from(html));
     })
   );
 

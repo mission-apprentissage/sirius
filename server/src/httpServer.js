@@ -1,12 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const logger = require("../core/logger");
-const logMiddleware = require("./middlewares/logMiddleware");
-const errorMiddleware = require("./middlewares/errorMiddleware");
-const tryCatch = require("./middlewares/tryCatchMiddleware");
-const emailsRouter = require("./routers/emailsRouter");
-const questionnnairesRouter = require("./routers/questionnairesRouter");
-const { version } = require("../../package.json");
+const logger = require("./core/logger");
+const logMiddleware = require("./core/http/logMiddleware");
+const errorMiddleware = require("./core/http/errorMiddleware");
+const tryCatch = require("./core/http/tryCatchMiddleware");
+const questionnnairesRouter = require("./questionnaires/http/questionnairesRouter");
+const { version } = require("../package.json");
 
 module.exports = async (components) => {
   const { db, config } = components;
@@ -14,7 +13,6 @@ module.exports = async (components) => {
 
   app.use(bodyParser.json());
   app.use(logMiddleware());
-  app.use(emailsRouter(components));
   app.use(questionnnairesRouter(components));
 
   //Routes

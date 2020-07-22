@@ -1,6 +1,6 @@
 const connectToMongoDB = require("./core/connectToMongoDB");
-const createMailer = require("./core/emails/mailer");
-const createQuestionnaires = require("./core/questionnaires");
+const createMailer = require("./core/mailer");
+const createQuestionnaires = require("./questionnaires/questionnaires");
 const logger = require("./core/logger");
 const defaults = require("./config");
 

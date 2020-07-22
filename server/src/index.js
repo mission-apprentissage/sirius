@@ -1,4 +1,4 @@
-const httpServer = require("./http/httpServer");
+const httpServer = require("./httpServer");
 const logger = require("./core/logger");
 const createComponents = require("./components");
 
