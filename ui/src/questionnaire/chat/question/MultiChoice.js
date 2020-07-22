@@ -1,54 +1,9 @@
-import styled from "styled-components";
 import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
-import { primary, secondary } from "../../../common/utils/colors";
-import { appear } from "../../../common/utils/animations";
 import { Box } from "../../../common/Flexbox";
 import { ChevronIcon } from "../../../common/FontAwesome";
 import InputContext from "./QuestionContext";
-
-const Option = styled(({ children, className, selected, ...rest }) => {
-  let clazz = `${className} ${selected ? "selected" : ""}`;
-  return (
-    <button className={clazz} {...rest}>
-      {children}
-    </button>
-  );
-})`
-  animation: ${appear} 0.3s ease forwards;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 35px;
-  border: 1px solid ${primary};
-  color: ${primary};
-  &.selected {
-    border: 1px solid ${primary};
-    background-color: ${primary};
-    color: #fff;
-  }
-  &:active,
-  &:focus {
-    border: 1px solid ${primary};
-    outline: none;
-  }
-`;
-
-const Button = styled(Option)`
-  background-color: ${secondary};
-  border: 1px solid ${secondary};
-  color: white;
-
-  &:active,
-  &:focus {
-    border: 1px solid ${secondary};
-  }
-
-  :disabled {
-    background-color: #dedede;
-    border: 1px solid #dedede;
-    color: grey;
-  }
-`;
+import { ButtonOption, Option } from "../../toolkit";
 
 const MultiChoice = ({ options }) => {
   let { onData } = useContext(InputContext);
@@ -80,7 +35,7 @@ const MultiChoice = ({ options }) => {
         })}
       </Box>
       <Box justify={"end"}>
-        <Button
+        <ButtonOption
           disabled={values.length === 0}
           onClick={() => {
             let results = values.map((c) => {
@@ -100,7 +55,7 @@ const MultiChoice = ({ options }) => {
             <span>Suivant</span>
             <ChevronIcon left />
           </Box>
-        </Button>
+        </ButtonOption>
       </Box>
     </div>
   );

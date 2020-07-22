@@ -1,7 +1,8 @@
 import React from "react";
 import { Highlight, Message, Tips } from "../toolkit";
-import Options from "../chat/question/Options";
+import SingleChoice from "../chat/question/SingleChoice";
 import MultiChoice from "../chat/question/MultiChoice";
+import Skip from "../chat/question/Skip";
 
 export default ({ apprenti, formation }) => {
   return [
@@ -23,7 +24,7 @@ export default ({ apprenti, formation }) => {
         </Message>
       ),
       next: "suivi",
-      input: <Options options={[{ value: true, label: "Ok c’est parti !" }]} />,
+      input: <SingleChoice options={[{ value: true, label: "Ok c’est parti !" }]} />,
     },
     {
       id: "suivi",
@@ -43,7 +44,7 @@ export default ({ apprenti, formation }) => {
       ),
       next: "suiviPrecisions",
       input: (
-        <Options
+        <SingleChoice
           options={[
             { value: 1, label: "J’ai été bien suivi.e " },
             { value: 2, label: "Peut s’améliorer" },
@@ -59,7 +60,7 @@ export default ({ apprenti, formation }) => {
       message: <div>Avez-vous trouvé une nouvelle entreprise ?</div>,
       next: "fierte",
       input: (
-        <Options
+        <SingleChoice
           options={[
             { value: 1, label: "Oui, le CFA m’a aidé" },
             { value: 2, label: "Pas encore mais le CFA m’aide" },
@@ -78,7 +79,7 @@ export default ({ apprenti, formation }) => {
       message: <div>Souhaitez-vous que cette information soit envoyée au CFA ?</div>,
       next: "suiviPrecisions",
       input: (
-        <Options
+        <SingleChoice
           options={[
             { value: false, label: "Non merci" },
             { value: true, label: "Oui" },
@@ -160,7 +161,7 @@ export default ({ apprenti, formation }) => {
         </Message>
       ),
       input: (
-        <Options
+        <SingleChoice
           options={[
             {
               value: 1,
@@ -224,7 +225,7 @@ export default ({ apprenti, formation }) => {
             {
               value: 7,
               label: "Je passe",
-              next: "fin",
+              next: "ambiance",
             },
           ]}
         />
@@ -273,7 +274,8 @@ export default ({ apprenti, formation }) => {
     {
       id: "difficultesPasseesTexte",
       message: <div>Souhaitez-vous dire quelque chose à la communauté sur ce sujet ?</div>,
-      next: "fin",
+      next: "ambiance",
+      input: <Skip />,
     },
     {
       id: "difficultesOrigines",
@@ -318,7 +320,7 @@ export default ({ apprenti, formation }) => {
         <Message>Souhaitez-vous que cette information soit envoyée au CFA pour qu’il vous propose de l'aide ?</Message>
       ),
       input: (
-        <Options
+        <SingleChoice
           options={[
             {
               value: false,
@@ -339,7 +341,7 @@ export default ({ apprenti, formation }) => {
       message: <Message>Que diriez-vous de l’ambiance au CFA</Message>,
       next: "ateliers",
       input: (
-        <Options
+        <SingleChoice
           options={[
             {
               value: 1,
@@ -390,7 +392,7 @@ export default ({ apprenti, formation }) => {
       ),
       next: "fin",
       input: (
-        <Options
+        <SingleChoice
           options={[
             {
               value: true,

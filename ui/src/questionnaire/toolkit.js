@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { Box } from "../common/Flexbox";
 import { appear } from "../common/utils/animations";
-import { primary } from "../common/utils/colors";
+import {primary, secondary} from "../common/utils/colors";
 import avatar from "./icons/avatar.svg";
+import React from "react";
 
 export const Entry = styled(Box)`
   padding-top: 10rem;
@@ -49,4 +50,47 @@ export const Tips = styled.div`
   font-style: italic;
   font-weight: 300;
   color: #4c4c4c;
+`;
+
+export const Option = styled(({ children, className, selected, ...rest }) => {
+  let clazz = `${className} ${selected ? "selected" : ""}`;
+  return (
+    <button className={clazz} {...rest}>
+      {children}
+    </button>
+  );
+})`
+  animation: ${appear} 0.3s ease forwards;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 35px;
+  border: 1px solid ${primary};
+  color: ${primary};
+  &.selected {
+    border: 1px solid ${primary};
+    background-color: ${primary};
+    color: #fff;
+  }
+  &:active,
+  &:focus {
+    border: 1px solid ${primary};
+    outline: none;
+  }
+`;
+
+export const ButtonOption = styled(Option)`
+  background-color: ${secondary};
+  border: 1px solid ${secondary};
+  color: white;
+
+  &:active,
+  &:focus {
+    border: 1px solid ${secondary};
+  }
+
+  :disabled {
+    background-color: #dedede;
+    border: 1px solid #dedede;
+    color: grey;
+  }
 `;
