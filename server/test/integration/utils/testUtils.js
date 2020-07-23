@@ -5,7 +5,8 @@ const config = require("../../../src/config");
 let clientHolder = null;
 let connectToMongoForTests = async () => {
   if (!clientHolder) {
-    clientHolder = await connectToMongoDB({ uri: config.mongodb.uri.split("sirius").join("sirius_test") });
+    let uri = config.mongodb.uri.split("sirius").join("sirius_test");
+    clientHolder = await connectToMongoDB({ uri });
   }
   return clientHolder;
 };

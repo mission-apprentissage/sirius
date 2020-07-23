@@ -7,13 +7,9 @@ const defaults = require("./config");
 
 module.exports = async (options = {}) => {
   let config = options.config || defaults;
-  let logger = options.logger || createLogger(config);
-  let client =
-    options.client ||
-    (await connectToMongoDB((err, delay) => {
-      logger.error(`Failed to connect to MongoDB - retrying in ${delay} sec`, err.message);
-    }));
+  let client = options.client || (await connectToMongoDB(config.mongodb));
   let db = client.db();
+  let logger = options.logger || createLogger(config.env, config.log, { db, slackWebhookUrl: config.slackWebhookUrl });
   let mailer = createMailer(config);
   let contrats = options.contrats || createContrats(db, mailer);
 
