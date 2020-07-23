@@ -15,15 +15,12 @@ module.exports = (db, mailer, contrats) => {
         contrat,
       });
     },
-    send: async (type, contrat) => {
+    create: async (type, contrat) => {
       let token = uuid.v4();
 
-      await mailer.sendEmail(
-        contrat.apprenti.email,
-        `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`,
-        getEmail(type),
-        { contrat, token }
-      );
+      if (contrat.questionnaires[type]) {
+        throw Boom.badRequest(`Le contrat possède déjà un questionnaire du type ${type}`);
+      }
 
       await db.collection("contrats").updateOne(
         { _id: contrat._id },
@@ -38,6 +35,19 @@ module.exports = (db, mailer, contrats) => {
             },
           },
         }
+      );
+
+      return token;
+    },
+    send: async (token) => {
+      let contrat = await contrats.getContratByToken(token);
+      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
+
+      await mailer.sendEmail(
+        contrat.apprenti.email,
+        `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`,
+        getEmail(questionnaire.type),
+        { contrat, token }
       );
     },
     open: async (token) => {

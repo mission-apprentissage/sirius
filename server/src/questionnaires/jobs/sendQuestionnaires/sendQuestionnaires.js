@@ -1,15 +1,9 @@
-// eslint-disable-next-line node/no-unpublished-require
-const faker = require("faker");
-const env = require("env-var");
 const { oleoduc, writeObject, filterObject } = require("oleoduc");
-const runScript = require("../../core/runScript");
-const { delay } = require("../../core/asyncUtils");
+const { delay } = require("../../../core/asyncUtils");
 
-faker.locale = "fr";
-
-runScript(async ({ db, logger, questionnaires }) => {
-  const limit = env.get("LIMIT").default(0).asInt();
+module.exports = async (db, logger, questionnaires, options = {}) => {
   let type = "finAnnee";
+  let limit = options.limit || 1;
   let stats = {
     total: 0,
     sent: 0,
@@ -25,8 +19,10 @@ runScript(async ({ db, logger, questionnaires }) => {
       async (contrat) => {
         try {
           logger.info(`Sending questionnaire ${type} to ${contrat.apprenti.email}`);
+          let token = await questionnaires.create(type, contrat);
+
           await delay(100);
-          await questionnaires.send(type, contrat);
+          await questionnaires.send(token);
 
           stats.sent++;
         } catch (e) {
@@ -39,4 +35,4 @@ runScript(async ({ db, logger, questionnaires }) => {
   );
 
   return stats;
-});
+};

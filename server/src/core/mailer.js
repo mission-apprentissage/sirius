@@ -6,12 +6,16 @@ const { promisify } = require("util");
 const ejs = require("ejs");
 const renderFile = promisify(ejs.renderFile);
 
-module.exports = (config) => {
-  let { smtp, publicUrl } = config;
+const createTransporter = (smtp) => {
   let needsAuthentication = !!smtp.auth.user;
-  let utils = { getPublicUrl: (path) => `${publicUrl}${path}` };
+
   let transporter = nodemailer.createTransport(needsAuthentication ? smtp : omit(smtp, ["auth"]));
   transporter.use("compile", htmlToText({ ignoreImage: true }));
+  return transporter;
+};
+
+module.exports = (config, transporter = createTransporter(config.smtp)) => {
+  let utils = { getPublicUrl: (path) => `${config.publicUrl}${path}` };
 
   let renderEmail = async (template, data = {}) => {
     let buffer = await renderFile(template, {
