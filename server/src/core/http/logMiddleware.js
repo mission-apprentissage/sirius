@@ -1,7 +1,6 @@
 const _ = require("lodash");
-const logger = require("../logger");
 
-module.exports = () => {
+module.exports = (logger) => {
   return (req, res, next) => {
     let relativeUrl = (req.baseUrl || "") + (req.url || "");
     let startTime = new Date().getTime();

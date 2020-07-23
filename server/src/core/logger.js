@@ -1,12 +1,11 @@
 const bunyan = require("bunyan");
 const PrettyStream = require("bunyan-prettystream");
-const config = require("../config");
 
-let createStreams = () => {
+let createStreams = (conf) => {
   const jsonStream = () => {
     return {
       name: "json",
-      level: config.log.level,
+      level: conf.level,
       stream: process.stdout,
     };
   };
@@ -16,16 +15,17 @@ let createStreams = () => {
     pretty.pipe(process.stdout);
     return {
       name: "console",
-      level: config.log.level,
+      level: conf.level,
       stream: pretty,
     };
   };
 
-  return [config.log.type === "console" ? consoleStream() : jsonStream()];
+  return [conf.type === "console" ? consoleStream() : jsonStream()];
 };
 
-module.exports = bunyan.createLogger({
-  name: "sirius",
-  serializers: bunyan.stdSerializers,
-  streams: createStreams(),
-});
+module.exports = (conf) =>
+  bunyan.createLogger({
+    name: "sirius",
+    serializers: bunyan.stdSerializers,
+    streams: createStreams(conf),
+  });

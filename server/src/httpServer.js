@@ -1,6 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const logger = require("./core/logger");
 const logMiddleware = require("./core/http/logMiddleware");
 const errorMiddleware = require("./core/http/errorMiddleware");
 const tryCatch = require("./core/http/tryCatchMiddleware");
@@ -9,11 +8,12 @@ const contratsRouter = require("./contrats/http/contratsRouter");
 const { version } = require("../package.json");
 
 module.exports = async (components) => {
-  const { db, config } = components;
+  const { db, config, logger } = components;
+
   const app = express();
 
   app.use(bodyParser.json());
-  app.use(logMiddleware());
+  app.use(logMiddleware(logger));
   app.use(questionnnairesRouter(components));
   app.use(contratsRouter(components));
 
