@@ -1,9 +1,9 @@
 import React from "react";
-import { breakpoints } from "../common/FlexboxGrid";
+import { breakpoints } from "./FlexboxGrid";
 import styled from "styled-components";
-import { primary, secondary } from "../common/utils/colors";
-import Logo from "../common/Logo";
-import { Box } from "../common/Flexbox";
+import { primary, secondary } from "./utils/colors";
+import Logo from "./Logo";
+import { Box } from "./Flexbox";
 
 const LayoutBox = styled(Box).attrs(() => ({ className: "layout" }))`
   height: 100vh;
@@ -21,6 +21,7 @@ const Header = styled(Box).attrs(() => ({ className: "header" }))`
 
 const Main = styled("div").attrs(() => ({ className: "main" }))`
   height: 100%;
+  position: relative;
   @media (min-width: ${breakpoints.md.min}) {
     margin-top: 56rem;
     margin-bottom: 56rem;
