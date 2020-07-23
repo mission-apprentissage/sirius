@@ -9,16 +9,16 @@ const renderFile = promisify(ejs.renderFile);
 module.exports = (config) => {
   let { smtp, publicUrl } = config;
   let needsAuthentication = !!smtp.auth.user;
+  let utils = { getPublicUrl: (path) => `${publicUrl}${path}` };
   let transporter = nodemailer.createTransport(needsAuthentication ? smtp : omit(smtp, ["auth"]));
   transporter.use("compile", htmlToText({ ignoreImage: true }));
 
   let renderEmail = async (template, data = {}) => {
     let buffer = await renderFile(template, {
-      utils: { getPublicUrl: (path) => `${publicUrl}${path}` },
+      utils,
       data,
     });
     let { html } = mjml(buffer.toString(), { minify: true });
-    console.log(html);
     return html;
   };
 
@@ -31,8 +31,8 @@ module.exports = (config) => {
         subject,
         html: await renderEmail(template, data),
         list: {
-          //help: getPublicUrl("/faq"),
-          //unsubscribe: utils.getUnsubscribeLink(stagiaire.token),
+          help: "https://app.gitbook.com/@mission-apprentissage/s/general/les-nouveaux-services/anotea-apprentissage",
+          unsubscribe: utils.getPublicUrl(`/api/contrats/${data.contrat._id}/unsubscribe`),
         },
       });
     },

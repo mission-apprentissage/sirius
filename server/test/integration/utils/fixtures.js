@@ -2,6 +2,7 @@
 const faker = require("faker");
 const moment = require("moment");
 const _ = require("lodash");
+const ObjectID = require("mongodb").ObjectID;
 
 faker.locale = "fr";
 
@@ -9,6 +10,7 @@ module.exports = {
   newContrat: (custom = {}) => {
     return _.merge(
       {
+        _id: new ObjectID(),
         apprenti: {
           prenom: faker.name.firstName(),
           nom: faker.name.lastName(),
@@ -43,6 +45,7 @@ module.exports = {
           },
         },
         questionnaires: [],
+        unsubscribe: false,
       },
       custom
     );

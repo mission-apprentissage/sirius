@@ -25,7 +25,7 @@ module.exports = (db, mailer, contrats) => {
         { contrat, token }
       );
 
-      return db.collection("contrats").updateOne(
+      await db.collection("contrats").updateOne(
         { _id: contrat._id },
         {
           $push: {

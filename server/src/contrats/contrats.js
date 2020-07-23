@@ -10,5 +10,8 @@ module.exports = (db) => {
 
       return contrat;
     },
+    unsubscribe: (id) => {
+      return db.collection("contrats").updateOne({ _id: id }, { $set: { unsubscribe: true } });
+    },
   };
 };

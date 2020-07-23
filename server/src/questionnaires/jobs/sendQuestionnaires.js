@@ -17,7 +17,7 @@ runScript(async ({ db, logger, questionnaires }) => {
   };
 
   await oleoduc(
-    db.collection("contrats").find({ "questionnaires.type": { $ne: type } }),
+    db.collection("contrats").find({ "questionnaires.type": { $ne: type }, unsubscribe: false }),
     filterObject(() => {
       return ++stats.total <= limit;
     }),
