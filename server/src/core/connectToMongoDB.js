@@ -1,10 +1,8 @@
 const mongodb = require("mongodb");
-const defaults = require("../config");
 
-module.exports = (options) =>
+module.exports = ({ uri }) =>
   new Promise((resolve, reject) => {
     let retries = 0;
-    let uri = options.uri || defaults.mongodb.uri;
 
     const retry = (delay, maxRetries) => {
       mongodb.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
@@ -13,9 +11,7 @@ module.exports = (options) =>
             reject(err);
           }
 
-          if (options.onRetry) {
-            options.onRetry(err, { delay });
-          }
+          console.log(`Failed to connect to MongoDB - retrying in ${delay} sec`, err.message);
 
           retries++;
           setTimeout(() => retry(1000, 120), delay);

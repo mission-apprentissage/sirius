@@ -387,6 +387,14 @@ bunyan-prettystream@0.1.3:
   resolved "https://registry.yarnpkg.com/bunyan-prettystream/-/bunyan-prettystream-0.1.3.tgz#6c3b713266f6ad32007c7b6ab1e998a245349d98"
   integrity sha1-bDtxMmb2rTIAfHtqsemYokU0nZg=
 
+bunyan-slack@0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/bunyan-slack/-/bunyan-slack-0.0.10.tgz#20f00932e812fcf6419e77e151e82e13ea1b4610"
+  integrity sha1-IPAJMugS/PZBnnfhUeguE+obRhA=
+  dependencies:
+    extend.js "0.0.2"
+    request "^2.51.0"
+
 bunyan@1.8.14:
   version "1.8.14"
   resolved "https://registry.yarnpkg.com/bunyan/-/bunyan-1.8.14.tgz#3d8c1afea7de158a5238c7cb8a66ab6b38dd45b4"
@@ -1223,6 +1231,11 @@ express@4.17.1:
     type-is "~1.6.18"
     utils-merge "1.0.1"
     vary "~1.1.2"
+
+extend.js@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/extend.js/-/extend.js-0.0.2.tgz#0f9c7a81a1f208b703eb0c3131fe5716ac6ecd15"
+  integrity sha1-D5x6gaHyCLcD6wwxMf5XFqxuzRU=
 
 extend@~3.0.2:
   version "3.0.2"
@@ -3154,7 +3167,7 @@ relateurl@0.2.x:
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
   integrity sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=
 
-request@^2.88.0:
+request@^2.51.0, request@^2.88.0:
   version "2.88.2"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.2.tgz#d73c918731cb5a87da047e207234146f664d12b3"
   integrity sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==
