@@ -338,7 +338,12 @@ export default ({ apprenti, formation }) => {
     },
     {
       id: "ambiance",
-      message: <Message>Que diriez-vous de l’ambiance au CFA</Message>,
+      message: (
+        <Message>
+          <p>3 questions rapides pour terminer</p>
+          <Highlight>Que diriez-vous de l’ambiance au CFA ?</Highlight>
+        </Message>
+      ),
       next: "ateliers",
       input: (
         <SingleChoice
