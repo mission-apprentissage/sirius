@@ -31,6 +31,7 @@ module.exports = (db, mailer, contrats) => {
           $push: {
             questionnaires: {
               type,
+              sentDate: new Date(),
               token,
               status: "sent",
               reponses: [],
