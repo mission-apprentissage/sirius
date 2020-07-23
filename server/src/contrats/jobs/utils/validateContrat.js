@@ -41,6 +41,7 @@ let schema = Joi.object({
     }).allow(null),
   },
   questionnaires: Joi.array().required(),
+  unsubscribe: Joi.boolean().required(),
 });
 
 module.exports = (contrat) => {

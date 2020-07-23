@@ -39,7 +39,7 @@ export default () => {
   let { token } = useParams();
   let [questionnaireContext, loading, error] = usePut(`/api/questionnaires/${token}/open`);
 
-  if (loading || isEmpty(questionnaireContext)) {
+  if (loading) {
     return (
       <Layout>
         <Loading />

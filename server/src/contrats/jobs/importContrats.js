@@ -5,7 +5,7 @@ const moment = require("moment");
 const { createReadStream } = require("fs");
 const { oleoduc, writeObject } = require("oleoduc");
 const runScript = require("../../core/runScript");
-const validateContrat = require("../validateContrat");
+const validateContrat = require("./utils/validateContrat");
 
 let sanitize = (value) => {
   let res = value.replace(/[ .,]/g, "").replace(/[^\x00-\xA0]/g, "");
@@ -76,6 +76,7 @@ runScript(async ({ db, logger }) => {
                   : null,
             },
             questionnaires: [],
+            unsubscribe: false,
           };
 
           let validated = await validateContrat(contrat);
