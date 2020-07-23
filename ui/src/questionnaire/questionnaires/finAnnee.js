@@ -16,10 +16,6 @@ export default ({ apprenti, formation }) => {
           <p className={"pt-1"}>
             Merci de rejoindre la communauté des apprentis en <b>{formation.intitule}</b>
           </p>
-          <p className={"pt-1"}>
-            Vous êtes désormais <b>5 000</b> à avoir rejoint Sirius, bonne nouvelle ! Plus vous êtes nombreux, plus les
-            informations sont utiles.
-          </p>
           <Highlight>Vous voulez bien répondre à quelques questions ? Ca prendra moins de 3 minutes </Highlight>
         </Message>
       ),

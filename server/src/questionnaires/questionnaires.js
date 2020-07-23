@@ -20,7 +20,7 @@ module.exports = (db, mailer, contrats) => {
 
       await mailer.sendEmail(
         contrat.apprenti.email,
-        `Que pensez-vous de votre formation ${contrat.formation.intitule}`,
+        `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`,
         getEmail(type),
         { contrat, token }
       );
