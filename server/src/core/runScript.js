@@ -1,5 +1,4 @@
 const moment = require("moment");
-const logger = require("./logger");
 const createComponents = require("../components");
 
 process.on("unhandledRejection", (e) => console.log(e));
@@ -20,15 +19,17 @@ const createTimer = () => {
   };
 };
 
-const exit = async (rawError, close) => {
+const exit = async (rawError, components) => {
   let error = rawError;
+  let { logger } = components;
+
   if (rawError) {
     logger.error(rawError.constructor.name === "EnvVarError" ? rawError.message : rawError);
   }
 
   setTimeout(() => {
     //Waiting logger to flush all logs (MongoDB)
-    close().catch((closeError) => {
+    components.close().catch((closeError) => {
       error = closeError;
       console.log(error);
     });
@@ -46,8 +47,8 @@ module.exports = async (job) => {
     let results = await job(components);
 
     timer.stop(results);
-    await exit(null, components.close);
+    await exit(null, components);
   } catch (e) {
-    await exit(e, components.close);
+    await exit(e, components);
   }
 };

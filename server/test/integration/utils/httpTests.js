@@ -1,5 +1,6 @@
 const axiosist = require("axiosist"); // eslint-disable-line node/no-unpublished-require
 const { connectToMongoForTests, cleanAll } = require("./testUtils.js");
+const logger = require("./fakeLogger");
 const createComponents = require("../../../src/components");
 const server = require("../../../src/httpServer");
 
@@ -8,6 +9,7 @@ let startServer = async (options = {}) => {
 
   let components = await createComponents({
     client,
+    logger,
     ...options,
   });
 

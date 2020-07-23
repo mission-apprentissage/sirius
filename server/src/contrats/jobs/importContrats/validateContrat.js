@@ -1,11 +1,11 @@
 const Joi = require("@hapi/joi");
 
 let schema = Joi.object({
+  creationDate: Joi.date().required(),
   apprenti: {
     prenom: Joi.string().required(),
     nom: Joi.string().required(),
     email: Joi.string().required(),
-    creationDate: Joi.date().required(),
     telephones: {
       fixe: Joi.string().allow(null),
       portable: Joi.string().allow(null),
