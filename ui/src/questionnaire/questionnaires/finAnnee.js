@@ -73,7 +73,7 @@ export default ({ apprenti, formation }) => {
     {
       id: "nouvelleEntrepriseAlerteCfa",
       message: <div>Souhaitez-vous que cette information soit envoyée au CFA ?</div>,
-      next: "suiviPrecisions",
+      next: "fierte",
       input: (
         <SingleChoice
           options={[
@@ -315,18 +315,17 @@ export default ({ apprenti, formation }) => {
       message: (
         <Message>Souhaitez-vous que cette information soit envoyée au CFA pour qu’il vous propose de l'aide ?</Message>
       ),
+      next: "ambiance",
       input: (
         <SingleChoice
           options={[
             {
               value: false,
               label: "Non merci",
-              next: "ambiance",
             },
             {
               value: true,
               label: "Oui",
-              next: "ambiance",
             },
           ]}
         />
