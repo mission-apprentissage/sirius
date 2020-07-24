@@ -23,31 +23,37 @@ const consoleStream = (level) => {
 };
 
 const slackStream = (env, slackWebhookUrl) => {
-  let stream = new BunyanSlack(
-    {
-      webhook_url: slackWebhookUrl,
-      customFormatter: (record, levelName) => {
-        if (record.type === "http") {
-          record = {
-            url: record.request.url.relative,
-            statusCode: record.response.statusCode,
-            ...(record.error ? { message: record.error.message } : {}),
-          };
-        }
-        return {
-          text: util.format(`[%s][${env}] %O`, levelName.toUpperCase(), record),
-        };
-      },
-    },
-    (error) => {
-      console.log("Unable to send log to slack", error);
-    }
-  );
-
   return {
     name: "slack",
     level: "error",
-    stream,
+    stream: new BunyanSlack(
+      {
+        webhook_url: slackWebhookUrl,
+        customFormatter: (record, levelName) => {
+          if (record.type === "http") {
+            record = {
+              url: record.request.url.relative,
+              statusCode: record.response.statusCode,
+              ...(record.error ? { message: record.error.message } : {}),
+            };
+          }
+          return {
+            text: util.format(`[SERVER][${env}] %O`, levelName.toUpperCase(), record),
+          };
+        },
+      },
+      (error) => {
+        console.log("Unable to send log to slack", error);
+      }
+    ),
+  };
+};
+
+const mongodbStream = (db, level) => {
+  return {
+    name: "mongodb",
+    level,
+    stream: writeObject((record) => db.collection("logs").insertOne(JSON.parse(record))),
   };
 };
 
@@ -56,20 +62,11 @@ module.exports = (config, options = {}) => {
   let { type, level } = log;
   let { db } = options;
 
-  let streams = [type === "console" ? consoleStream(level) : jsonStream(level)];
-  if (slackWebhookUrl) {
-    streams.push(slackStream(env, slackWebhookUrl));
-  }
-
-  if (db) {
-    streams.push({
-      name: "mongodb",
-      level,
-      stream: writeObject((record) => {
-        return db.collection("logs").insertOne(JSON.parse(record));
-      }),
-    });
-  }
+  let streams = [
+    ...(type === "console" ? [consoleStream(level)] : [jsonStream(level)]),
+    ...(slackWebhookUrl ? [slackStream(env, slackWebhookUrl)] : []),
+    ...(db ? [mongodbStream(db, level)] : []),
+  ];
 
   return bunyan.createLogger({
     name: "sirius",

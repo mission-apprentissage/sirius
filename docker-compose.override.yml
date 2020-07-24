@@ -24,7 +24,6 @@ services:
       - ./server/src:/app/src
     environment:
       - SIRIUS_ENV=dev
-      - SIRIUS_LOG_LEVEL=debug
       - SIRIUS_SMTP_HOST=smtp
       - SIRIUS_SMTP_PORT=1025
     depends_on:
