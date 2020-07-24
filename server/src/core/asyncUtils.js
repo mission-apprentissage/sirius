@@ -1,11 +1,11 @@
 const _ = require("lodash");
 
 module.exports = {
-  promiseAll: async (promises, callback, options = { batchSize: 25 }) => {
-    let chunks = _.chunk(promises, options.batchSize);
-    for (let chunk of chunks) {
-      await Promise.all(chunk.map((data) => callback(data)));
+  promiseAll: async (data) => {
+    if (_.isPlainObject(data)) {
+      return _.zipObject(_.keys(data), await Promise.all(_.values(data)));
     }
+    return Promise.all(data);
   },
   batchCursor: async (cursor, callback, options = { batchSize: 25 }) => {
     let promises = [];
