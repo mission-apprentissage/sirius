@@ -10,6 +10,9 @@ module.exports = {
   mongodb: {
     uri: env.get("SIRIUS_MONGODB_URI").default("mongodb://127.0.0.1:27017/sirius").asString(),
   },
+  auth: {
+    admin: env.get("SIRIUS_AUTH_ADMIN_PASSWORD").default("12345").asString(),
+  },
   smtp: {
     host: env.get("SIRIUS_SMTP_HOST").default("localhost").asString(),
     port: env.get("SIRIUS_SMTP_PORT").default("1025").asString(),
