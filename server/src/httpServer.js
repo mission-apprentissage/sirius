@@ -5,7 +5,6 @@ const errorMiddleware = require("./core/http/errorMiddleware");
 const tryCatch = require("./core/http/tryCatchMiddleware");
 const questionnnairesRouter = require("./questionnaires/http/questionnairesRouter");
 const contratsRouter = require("./contrats/http/contratsRouter");
-const statsRouter = require("./stats/http/statsRouter");
 const { version } = require("../package.json");
 
 module.exports = async (components) => {
@@ -17,7 +16,6 @@ module.exports = async (components) => {
   app.use(logMiddleware(logger));
   app.use(questionnnairesRouter(components));
   app.use(contratsRouter(components));
-  app.use(statsRouter(components));
 
   //Routes
   app.get(

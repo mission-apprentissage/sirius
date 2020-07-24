@@ -1,9 +1,15 @@
 const express = require("express");
 const tryCatch = require("../../core/http/tryCatchMiddleware");
+const { sendHTML } = require("../../core/http/httpUtils");
+const authMiddleware = require("../../core/http/authMiddleware");
+const { sendCSVStream } = require("../../core/http/httpUtils");
+const { promiseAllProps } = require("../../core/asyncUtils");
+const questionnairesCSVStream = require("../../questionnaires/questionnairesCSVStream");
 const Joi = require("@hapi/joi");
 
-module.exports = ({ questionnaires }) => {
+module.exports = ({ db, config, questionnaires }) => {
   const router = express.Router(); // eslint-disable-line new-cap
+  const checkAuth = authMiddleware(config);
 
   router.put(
     "/api/questionnaires/:token/open",
@@ -48,8 +54,30 @@ module.exports = ({ questionnaires }) => {
 
       const html = await questionnaires.previewEmail(token);
 
-      res.set("Content-Type", "text/html");
-      res.send(Buffer.from(html));
+      sendHTML(html, res);
+    })
+  );
+
+  router.get(
+    "/api/questionnaires/stats",
+    checkAuth,
+    tryCatch(async (req, res) => {
+      let json = await promiseAllProps({
+        nbQuestionnaires: db.collection("contrats").count({ "questionnaires.0": { $exists: true } }),
+        ouverts: db.collection("contrats").count({ "questionnaires.status": "opened" }),
+        enCours: db.collection("contrats").count({ "questionnaires.status": "inprogress" }),
+        termines: db.collection("contrats").count({ "questionnaires.status": "closed" }),
+      });
+
+      res.json(json);
+    })
+  );
+
+  router.get(
+    "/api/questionnaires/export",
+    checkAuth,
+    tryCatch(async (req, res) => {
+      sendCSVStream(questionnairesCSVStream(db), res, { encoding: "UTF-8", filename: "questionnaires.csv" });
     })
   );
 
