@@ -3,8 +3,8 @@ const bodyParser = require("body-parser");
 const logMiddleware = require("./core/http/logMiddleware");
 const errorMiddleware = require("./core/http/errorMiddleware");
 const tryCatch = require("./core/http/tryCatchMiddleware");
-const questionnnairesRouter = require("./questionnaires/http/questionnairesRouter");
-const contratsRouter = require("./contrats/http/contratsRouter");
+const questionnairesApi = require("./questionnaires/questionnairesApi");
+const contratsApi = require("./contrats/contratsApi");
 const { version } = require("../package.json");
 
 module.exports = async (components) => {
@@ -14,8 +14,8 @@ module.exports = async (components) => {
 
   app.use(bodyParser.json());
   app.use(logMiddleware(logger));
-  app.use(questionnnairesRouter(components));
-  app.use(contratsRouter(components));
+  app.use(questionnairesApi(components));
+  app.use(contratsApi(components));
 
   //Routes
   app.get(

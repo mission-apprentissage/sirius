@@ -1,5 +1,5 @@
 const express = require("express");
-const tryCatch = require("../../core/http/tryCatchMiddleware");
+const tryCatch = require("../core/http/tryCatchMiddleware");
 const ObjectID = require("mongodb").ObjectID;
 const Boom = require("boom");
 
