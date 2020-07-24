@@ -5,9 +5,9 @@ const logger = require("../utils/fakeLogger");
 const importContrats = require("../../../src/contrats/jobs/importContrats/importContrats");
 const { createStream } = require("../utils/testUtils");
 
-integrationTests(__filename, ({ getContext }) => {
+integrationTests(__filename, ({ getComponents }) => {
   it("Vérifique qu'on peut importer des contrats", async () => {
-    let { db } = await getContext();
+    let { db } = await getComponents();
     let stream = createStream(
       `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"
 "email@apprenti.fr"|||"ROBERT"|"HENRI"|"11111111"|"Licence professionnelle Management"|25/11/2019|13/9/2020||"Entreprise"|11111111100027|||"email@entreprise.fr"|"4651Z"|"HENRI"|"Jacques"|"CFA"|"22222222200014"|"1111111D "|"2222222D "|"31 rue des lilas 75001 Paris"`
@@ -44,7 +44,7 @@ integrationTests(__filename, ({ getContext }) => {
   });
 
   it("Vérifie qu'on ne peut pas importer un contrat en double", async () => {
-    let { db } = await getContext();
+    let { db } = await getComponents();
     let stream = createStream(
       `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"
 "email@apprenti.fr"|||"ROBERT"|"HENRI"|"11111111"|"Licence professionnelle Management"|25/11/2019|13/9/2020||"Entreprise"|11111111100027|||"email@entreprise.fr"|"4651Z"|"HENRI"|"Jacques"|"CFA"|"22222222200014"|"1111111D "|"2222222D "|"31 rue des lilas 75001 Paris"
@@ -63,7 +63,7 @@ integrationTests(__filename, ({ getContext }) => {
   });
 
   it("Vérifie que les lignes invalides sont rejetées", async () => {
-    let { db } = await getContext();
+    let { db } = await getComponents();
     let stream = createStream(
       `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"
 "Invalid"`

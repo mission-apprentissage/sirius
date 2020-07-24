@@ -9,7 +9,6 @@ faker.locale = "fr";
 runScript(async ({ db }) => {
   let nbApprentis = 10;
 
-  await db.collection("contrats").removeMany({});
   await Promise.all(
     _.range(0, nbApprentis).map(() => {
       return db.collection("contrats").insertOne(newContrat());

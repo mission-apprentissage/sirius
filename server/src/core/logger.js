@@ -51,9 +51,10 @@ const slackStream = (env, slackWebhookUrl) => {
   };
 };
 
-module.exports = (env, conf, options = {}) => {
-  let { type, level } = conf;
-  let { db, slackWebhookUrl } = options;
+module.exports = (config, options = {}) => {
+  let { env, slackWebhookUrl, log } = config;
+  let { type, level } = log;
+  let { db } = options;
 
   let streams = [type === "console" ? consoleStream(level) : jsonStream(level)];
   if (slackWebhookUrl) {

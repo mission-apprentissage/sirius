@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon --ignore test/ src/index.js",
     "debug": "nodemon --inspect=0.0.0.0 --signal SIGINT --ignore test/ src/index.js",
-    "test": "mocha --recursive --exit --timeout 5000 test/"
+    "test": "mocha --recursive --exit --timeout 5000 test/",
+    "test:coverage": "nyc --reporter=html --temp-dir .coverage/build --report-dir .coverage mocha --recursive --exit --timeout 500 test/"
   },
   "author": "",
   "license": "ISC",
@@ -44,6 +45,7 @@
     "eslint-plugin-prettier": "3.1.4",
     "faker": "4.1.0",
     "mocha": "8.0.1",
+    "nyc": "15.1.0",
     "prettier": "2.0.5"
   },
   "prettier": {

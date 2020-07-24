@@ -9,9 +9,9 @@ module.exports = async (options = {}) => {
   let config = options.config || defaults;
   let client = options.client || (await connectToMongoDB(config.mongodb));
   let db = client.db();
-  let logger = options.logger || createLogger(config.env, config.log, { db, slackWebhookUrl: config.slackWebhookUrl });
-  let mailer = createMailer(config);
-  let contrats = options.contrats || createContrats(db, mailer);
+  let mailer = options.mailer || createMailer(config);
+  let contrats = options.contrats || createContrats(db);
+  let logger = options.logger || createLogger(config, { db });
 
   return {
     db,
