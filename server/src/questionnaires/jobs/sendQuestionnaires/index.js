@@ -5,5 +5,5 @@ const sendQuestionnaires = require("./sendQuestionnaires");
 runScript(async ({ db, logger, questionnaires }) => {
   const limit = env.get("LIMIT").default(0).asInt();
 
-  return sendQuestionnaires(db, logger, questionnaires, limit);
+  return sendQuestionnaires(db, logger, questionnaires, { limit });
 });
