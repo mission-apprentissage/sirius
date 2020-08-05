@@ -12,9 +12,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
 
   await oleoduc(
     db.collection("contrats").find({ "questionnaires.type": { $ne: type }, unsubscribe: false }),
-    filterObject(() => {
-      return ++stats.total <= limit;
-    }),
+    filterObject(() => ++stats.total <= limit),
     writeObject(
       async (contrat) => {
         try {

@@ -32,10 +32,10 @@ integrationTests(__filename, ({ getComponents }) => {
     let questionnaire = found.questionnaires[0];
     let token = questionnaire.token;
     assert.ok(questionnaire.sentDate);
-    assert.ok(token);
     assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
       type: "finAnnee",
       status: "sent",
+      nbEmailsSent: 1,
       token,
       reponses: [],
     });

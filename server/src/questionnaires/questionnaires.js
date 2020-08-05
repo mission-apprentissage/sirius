@@ -28,9 +28,8 @@ module.exports = (db, mailer, contrats) => {
           $push: {
             questionnaires: {
               type,
-              sentDate: new Date(),
               token,
-              status: "sent",
+              nbEmailsSent: 0,
               reponses: [],
             },
           },
@@ -49,6 +48,24 @@ module.exports = (db, mailer, contrats) => {
         getEmail(questionnaire.type),
         { contrat, token }
       );
+
+      let { value: newContrat } = await db.collection("contrats").findOneAndUpdate(
+        { "questionnaires.token": token },
+        {
+          $set: {
+            "questionnaires.$.status": questionnaire.status || "sent",
+            "questionnaires.$.sentDate": new Date(),
+          },
+          $inc: {
+            "questionnaires.$.nbEmailsSent": 1,
+          },
+        },
+        { returnOriginal: false }
+      );
+
+      if (!newContrat) {
+        throw Boom.badRequest("Questionnaire inconnu");
+      }
     },
     open: async (token) => {
       let contrat = await contrats.getContratByToken(token);
@@ -73,6 +90,7 @@ module.exports = (db, mailer, contrats) => {
       if (!newContrat) {
         throw Boom.badRequest("Questionnaire inconnu");
       }
+
       return {
         formation: {
           intitule: contrat.formation.intitule,
