@@ -6,7 +6,7 @@ const importContrats = require("../../../src/contrats/jobs/importContrats/import
 const { createStream } = require("../utils/testUtils");
 
 integrationTests(__filename, ({ getComponents }) => {
-  it.only("Vérifique qu'on peut importer des contrats", async () => {
+  it("Vérifique qu'on peut importer des contrats", async () => {
     let { db } = await getComponents();
     let stream = createStream(
       `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"
@@ -22,7 +22,6 @@ integrationTests(__filename, ({ getComponents }) => {
       failed: 0,
     });
     assert.ok(found.creationDate);
-    console.log(found.cohorte);
     assert.ok(found.cohorte.startsWith("cohorte_test_q2_2"));
     assert.deepStrictEqual(omit(found, ["_id", "creationDate", "cohorte"]), {
       apprenti: {
