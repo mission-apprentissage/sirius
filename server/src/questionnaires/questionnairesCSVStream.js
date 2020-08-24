@@ -10,7 +10,7 @@ let getReponse = (questionnaire, id) => {
 module.exports = (db, extraColumns) => {
   let stream = db
     .collection("contrats")
-    .aggregate([{ $match: { "questionnaires.0.reponses.0": { $exists: true } } }, { $unwind: "$questionnaires" }])
+    .aggregate([{ $unwind: "$questionnaires" }])
     .stream();
 
   return oleoduc(
