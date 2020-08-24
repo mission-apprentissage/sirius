@@ -8,7 +8,7 @@ module.exports = {
     res.setHeader("Content-disposition", `attachment; filename=${options.filename || "export.csv"}`);
     res.setHeader("Content-Type", `text/csv; charset=${encoding}`);
 
-    return oleoduc([csvStream, encodeStream(encoding), res]);
+    return oleoduc(csvStream, encodeStream(encoding), res);
   },
   sendHTML: (html, res) => {
     res.set("Content-Type", "text/html");

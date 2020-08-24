@@ -1,4 +1,5 @@
 const { oleoduc } = require("oleoduc");
+const moment = require("moment");
 const { transformObjectIntoCSV } = require("../core/streamUtils");
 
 let getReponse = (questionnaire, id) => {
@@ -36,6 +37,15 @@ module.exports = (db, extraColumns) => {
       ambiance: ({ questionnaires }) => getReponse(questionnaires, "ambiance"),
       ateliers: ({ questionnaires }) => getReponse(questionnaires, "ateliers"),
       communauté: ({ questionnaires }) => getReponse(questionnaires, "communauté"),
+      cfaUaiResponsable: ({ cfa }) => cfa.uai_responsable,
+      cfaUaiFormateur: ({ cfa }) => cfa.uai_formateur,
+      formationCodeDiplome: ({ formation }) => formation.code_diplome,
+      formationIntitule: ({ formation }) => formation.intitule,
+      formationAnneePromotion: ({ formation }) => formation.annee_promotion,
+      formationDebut: ({ formation }) => {
+        return formation.periode ? moment(formation.periode.debut).format("YYYY-MM-DD") : null;
+      },
+      formationFin: ({ formation }) => (formation.periode ? moment(formation.periode.fin).format("YYYY-MM-DD") : null),
       ...extraColumns,
     })
   );
