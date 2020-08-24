@@ -11,6 +11,7 @@ const sanitize = (value) => {
 module.exports = (data) => {
   return {
     creationDate: new Date(),
+    cohorte: `cohorte_test_q2_${moment().format("YYYY_MM_DD")}`,
     apprenti: {
       prenom: data.prenom_apprenti,
       nom: data.nom_apprenti,
