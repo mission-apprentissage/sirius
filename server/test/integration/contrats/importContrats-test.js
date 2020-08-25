@@ -22,7 +22,8 @@ integrationTests(__filename, ({ getComponents }) => {
       failed: 0,
     });
     assert.ok(found.creationDate);
-    assert.deepStrictEqual(omit(found, ["_id", "creationDate"]), {
+    assert.ok(found.cohorte.startsWith("cohorte_test_q2_2"));
+    assert.deepStrictEqual(omit(found, ["_id", "creationDate", "cohorte"]), {
       apprenti: {
         prenom: "HENRI",
         nom: "ROBERT",

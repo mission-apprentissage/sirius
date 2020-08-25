@@ -11,11 +11,12 @@ module.exports = {
     return _.merge(
       {
         _id: new ObjectID(),
+        creationDate: new Date(),
+        cohorte: `test_q2_${moment().format("YYYY_MM_DD")}`,
         apprenti: {
           prenom: faker.name.firstName(),
           nom: faker.name.lastName(),
           email: faker.internet.email(),
-          creationDate: new Date(),
           telephones: {
             fixe: faker.phone.phoneNumber("01########"),
             portable: faker.phone.phoneNumber("06########"),
