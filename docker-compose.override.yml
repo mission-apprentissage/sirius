@@ -24,6 +24,8 @@ services:
       - ./server/src:/app/src
     environment:
       - SIRIUS_ENV=dev
+      - SIRIUS_PUBLIC_URL=http://localhost
+      - SIRIUS_AUTH_ADMIN_PASSWORD=12345
       - SIRIUS_SMTP_HOST=smtp
       - SIRIUS_SMTP_PORT=1025
     depends_on:

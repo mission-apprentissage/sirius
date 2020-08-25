@@ -1,7 +1,7 @@
 const env = require("env-var");
 module.exports = {
   env: env.get("SIRIUS_ENV").default("standalone").asString(),
-  publicUrl: env.get("SIRIUS_PUBLIC_URL").default("http://localhost").asString(),
+  publicUrl: env.get("SIRIUS_PUBLIC_URL").default("http://localhost:5000").asString(),
   slackWebhookUrl: env.get("SIRIUS_SLACK_WEBHOOK_URL").asString(),
   log: {
     type: env.get("SIRIUS_LOG_TYPE").default("console").asString(),
