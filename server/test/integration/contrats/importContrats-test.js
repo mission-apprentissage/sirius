@@ -6,7 +6,7 @@ const importContrats = require("../../../src/contrats/jobs/importContrats/import
 const { createStream } = require("../utils/testUtils");
 
 integrationTests(__filename, ({ getComponents }) => {
-  it("Vérifique qu'on peut importer des contrats", async () => {
+  it("Vérifie qu'on peut importer des contrats", async () => {
     let { db } = await getComponents();
     let stream = createStream(
       `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"
@@ -36,7 +36,13 @@ integrationTests(__filename, ({ getComponents }) => {
         annee_promotion: null,
         periode: { debut: new Date("2019-11-25T00:00:00.000Z"), fin: new Date("2020-09-13T00:00:00.000Z") },
       },
-      cfa: { uai_responsable: "1111111D", uai_formateur: "2222222D", adresse: "31 rue des lilas 75001 Paris" },
+      cfa: {
+        nom: "CFA",
+        siret: "22222222200014",
+        uai_responsable: "1111111D",
+        uai_formateur: "2222222D",
+        adresse: "31 rue des lilas 75001 Paris",
+      },
       rupture: null,
       entreprise: { raisonSociale: null, siret: "11111111100027", tuteur: { prenom: "Jacques", nom: "HENRI" } },
       questionnaires: [],
