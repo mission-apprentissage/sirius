@@ -39,6 +39,8 @@ services:
     depends_on:
       - mongodb
     environment:
+      - SIRIUS_LOG_LEVEL=info
+      - SIRIUS_LOG_TYPE=console
       - SIRIUS_MONGODB_URI=mongodb://mongodb:27017/sirius?retryWrites=true&w=majority
 
   mongodb:

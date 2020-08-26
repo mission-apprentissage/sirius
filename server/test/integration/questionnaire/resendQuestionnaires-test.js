@@ -48,7 +48,7 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(email.to, "test@domain.com");
     assert.strictEqual(email.subject, "Que pensez-vous de votre formation CAP Boucher ?");
     assert.ok(email.html.lastIndexOf("Donnez votre avis en 3 minutes") !== -1);
-    assert.ok(email.html.lastIndexOf(`http://localhost/questionnaires/${token}`) !== -1);
+    assert.ok(email.html.lastIndexOf(`http://localhost:5000/questionnaires/${token}`) !== -1);
     assert.strictEqual(emails.length, 1);
   });
 
