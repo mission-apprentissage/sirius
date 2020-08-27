@@ -1,7 +1,7 @@
 const assert = require("assert");
 const { newContrat } = require("../utils/fixtures");
 const integrationTests = require("../utils/integrationTests");
-const updateContrats = require("../../../src/contrats/jobs/importContrats/updateContrats");
+const updateContrats = require("../../../src/contrats/csv/cfa/updateContrats");
 const { createStream } = require("../utils/testUtils");
 
 integrationTests(__filename, ({ getComponents }) => {
