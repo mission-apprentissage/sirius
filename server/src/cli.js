@@ -16,5 +16,9 @@ cli
   });
 
 cli.command("contrats", "Contient les scripts relatifs aux contrats", { executableFile: "contrats/contratsCli" });
+cli.command("questionnaires", "Contient les scripts relatifs aux questionnaires", {
+  executableFile: "questionnaires/questionnairesCli",
+});
+cli.command("misc", "Contient les scripts qui concernent les données", { executableFile: "misc/miscCli" });
 
 cli.parse(process.argv);
