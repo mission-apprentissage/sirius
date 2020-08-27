@@ -96,6 +96,8 @@ module.exports = (db, extraColumns) => {
       ateliers_6: ({ questionnaires }) => getReponse(questionnaires, "ateliers", 6),
       ateliers_7: ({ questionnaires }) => getReponse(questionnaires, "ateliers", 7),
       communauté: ({ questionnaires }) => getReponse(questionnaires, "communauté"),
+      cfaNom: ({ cfa }) => cfa.nom,
+      cfaSiret: ({ cfa }) => cfa.siret,
       cfaUaiResponsable: ({ cfa }) => cfa.uai_responsable,
       cfaUaiFormateur: ({ cfa }) => cfa.uai_formateur,
       formationCodeDiplome: ({ formation }) => formation.code_diplome,
