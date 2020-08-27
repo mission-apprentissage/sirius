@@ -1,11 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const logMiddleware = require("./core/http/logMiddleware");
-const errorMiddleware = require("./core/http/errorMiddleware");
-const tryCatch = require("./core/http/tryCatchMiddleware");
-const questionnairesApi = require("./questionnaires/questionnairesApi");
-const contratsApi = require("./contrats/contratsApi");
-const { version } = require("../package.json");
+const logMiddleware = require("./logMiddleware");
+const errorMiddleware = require("./errorMiddleware");
+const tryCatch = require("./tryCatchMiddleware");
+const questionnairesHttp = require("../../questionnaires/questionnairesHttp");
+const contratsHttp = require("../../contrats/contratsHttp");
+const { version } = require("../../../package.json");
 
 module.exports = async (components) => {
   const { db, config, logger } = components;
@@ -14,8 +14,8 @@ module.exports = async (components) => {
 
   app.use(bodyParser.json());
   app.use(logMiddleware(logger));
-  app.use(questionnairesApi(components));
-  app.use(contratsApi(components));
+  app.use(questionnairesHttp(components));
+  app.use(contratsHttp(components));
 
   //Routes
   app.get(

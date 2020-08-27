@@ -4,7 +4,7 @@ const integrationTests = require("../utils/integrationTests");
 const logger = require("../utils/fakeLogger");
 const createFakeMailer = require("../utils/fakeMailer");
 const { newContrat } = require("../utils/fixtures");
-const resendQuestionnaires = require("../../../src/questionnaires/jobs/resendQuestionnaires/resendQuestionnaires");
+const resendQuestionnaires = require("../../../src/questionnaires/emails/resendQuestionnaires");
 
 integrationTests(__filename, ({ getComponents }) => {
   it("Vérifie qu'on peut renvoyer un questionnaire", async () => {

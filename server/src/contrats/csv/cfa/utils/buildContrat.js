@@ -34,6 +34,8 @@ module.exports = (data) => {
           : null,
     },
     cfa: {
+      nom: sanitize(data["etablissement/site_cfa"]),
+      siret: sanitize(data.siret),
       uai_responsable: sanitize(data.code_uai_cfa),
       uai_formateur: sanitize(data.code_uai_site),
       adresse: data.adresse_postale_cfa,

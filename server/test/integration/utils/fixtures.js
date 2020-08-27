@@ -32,6 +32,8 @@ module.exports = {
           },
         },
         cfa: {
+          nom: faker.company.companyName(),
+          siret: faker.helpers.replaceSymbols("#########00015"),
           uai_responsable: faker.helpers.replaceSymbols("#######?"),
           uai_formateur: faker.helpers.replaceSymbols("#######?"),
           adresse: `${faker.address.streetAddress()} ${faker.address.zipCode()} ${faker.address.city()}`,

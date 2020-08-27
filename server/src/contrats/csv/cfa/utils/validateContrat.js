@@ -22,6 +22,10 @@ let schema = Joi.object({
     }).allow(null),
   },
   cfa: {
+    nom: Joi.string().allow(null),
+    siret: Joi.string()
+      .pattern(/^[0-9]{9,14}$/)
+      .allow(null),
     uai_responsable: Joi.string()
       .pattern(/^[0-9]{7}[A-Z]$/)
       .allow(null),

@@ -1,16 +1,21 @@
 const { oleoduc, writeObject } = require("oleoduc");
+const { getNbModifiedDocuments } = require("../../core/mongoUtils");
 
 module.exports = async (db) => {
+  let stats = {
+    updated: 0,
+  };
+
   let inputStream = db
     .collection("contrats")
     .find()
     .stream({ "apprenti.creationDate": { $exists: true } });
 
-  oleoduc(
+  await oleoduc(
     inputStream,
     writeObject(
-      (doc) => {
-        db.collection("contrats").updateOne({ _id: doc._id }, [
+      async (doc) => {
+        let results = await db.collection("contrats").updateOne({ _id: doc._id }, [
           {
             $set: {
               creationDate: "$apprenti.creationDate",
@@ -19,8 +24,11 @@ module.exports = async (db) => {
           },
           { $unset: ["apprenti.creationDate"] },
         ]);
+        stats.updated += getNbModifiedDocuments(results);
       },
       { parallel: 10 }
     )
   );
+
+  return stats;
 };

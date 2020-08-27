@@ -1,5 +1,5 @@
 const { oleoduc, writeObject, filterObject } = require("oleoduc");
-const { delay } = require("../../../core/asyncUtils");
+const { delay } = require("../../core/asyncUtils");
 
 module.exports = async (db, logger, questionnaires, options = {}) => {
   let type = "finAnnee";
