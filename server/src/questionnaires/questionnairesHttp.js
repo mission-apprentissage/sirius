@@ -1,11 +1,10 @@
 const express = require("express");
-const tryCatch = require("../core/http/tryCatchMiddleware");
-const { sendHTML } = require("../core/http/httpUtils");
-const authMiddleware = require("../core/http/authMiddleware");
-const { sendCSVStream } = require("../core/http/httpUtils");
-const { promiseAllProps } = require("../core/asyncUtils");
-const questionnairesCSVStream = require("./questionnairesCSVStream");
 const Joi = require("@hapi/joi");
+const { oleoduc, jsonStream } = require("oleoduc");
+const { transformObjectIntoCSV } = require("../core/streamUtils");
+const tryCatch = require("../core/http/tryCatchMiddleware");
+const { sendHTML, sendJsonStream, sendCSVStream } = require("../core/http/httpUtils");
+const authMiddleware = require("../core/http/authMiddleware");
 
 module.exports = ({ db, config, questionnaires }) => {
   const router = express.Router(); // eslint-disable-line new-cap
@@ -59,17 +58,50 @@ module.exports = ({ db, config, questionnaires }) => {
   );
 
   router.get(
-    "/api/questionnaires/stats",
+    "/api/questionnaires/stats.:type",
     checkAuth,
     tryCatch(async (req, res) => {
-      let json = await promiseAllProps({
-        nbQuestionnaires: db.collection("contrats").count({ "questionnaires.0": { $exists: true } }),
-        ouverts: db.collection("contrats").count({ "questionnaires.status": "opened" }),
-        enCours: db.collection("contrats").count({ "questionnaires.status": "inprogress" }),
-        termines: db.collection("contrats").count({ "questionnaires.status": "closed" }),
-      });
+      let { type } = await Joi.object({
+        type: Joi.string().required().allow("json", "csv"),
+      }).validateAsync(req.params, { abortEarly: false });
 
-      res.json(json);
+      let resultsStream = db
+        .collection("contrats")
+        .aggregate([
+          { $project: { cohorte: 1, questionnaires: 1 } },
+          { $unwind: "$questionnaires" },
+          {
+            $group: {
+              _id: { cohorte: "$cohorte", status: "$questionnaires.status" },
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              cohorte: "$_id.cohorte",
+              status: "$_id.status",
+              count: 1,
+            },
+          },
+          { $sort: { cohorte: 1, status: -1 } },
+        ])
+        .stream();
+
+      if (type === "csv") {
+        let csvStream = oleoduc(
+          resultsStream,
+          transformObjectIntoCSV({
+            cohorte: (res) => res.cohorte,
+            statut: (res) => res.status,
+            nombre: (res) => res.count,
+          })
+        );
+
+        return sendCSVStream(csvStream, res, { encoding: "UTF-8", filename: "questionnaires-stats.csv" });
+      } else {
+        return sendJsonStream(oleoduc(resultsStream, jsonStream()), res);
+      }
     })
   );
 
@@ -77,7 +109,7 @@ module.exports = ({ db, config, questionnaires }) => {
     "/api/questionnaires/export",
     checkAuth,
     tryCatch(async (req, res) => {
-      sendCSVStream(questionnairesCSVStream(db), res, { encoding: "UTF-8", filename: "questionnaires.csv" });
+      sendCSVStream(transformObjectIntoCSV(db), res, { encoding: "UTF-8", filename: "questionnaires.csv" });
     })
   );
 

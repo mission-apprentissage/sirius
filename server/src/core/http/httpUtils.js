@@ -10,6 +10,10 @@ module.exports = {
 
     return oleoduc(csvStream, encodeStream(encoding), res);
   },
+  sendJsonStream: (stream, res) => {
+    res.setHeader("Content-Type", "application/json");
+    return oleoduc(stream, res);
+  },
   sendHTML: (html, res) => {
     res.set("Content-Type", "text/html");
     res.send(Buffer.from(html));
