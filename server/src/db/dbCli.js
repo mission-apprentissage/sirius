@@ -18,7 +18,7 @@ indexes
     });
   });
 indexes
-  .command("delete")
+  .command("drop")
   .description("Supprime tous les indexes en base")
   .action(() => {
     runScript(async ({ db, logger }) => {
