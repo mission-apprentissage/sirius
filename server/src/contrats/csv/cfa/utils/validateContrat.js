@@ -13,7 +13,7 @@ let schema = Joi.object({
     },
   },
   formation: {
-    code_diplome: Joi.string().required(),
+    code_diplome: Joi.string().allow(null),
     intitule: Joi.string().required(),
     annee_promotion: Joi.string().allow(null),
     periode: Joi.object({
