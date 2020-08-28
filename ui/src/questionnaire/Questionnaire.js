@@ -37,12 +37,8 @@ export default () => {
       <Box justify={"center"} height={"100%"}>
         <Chat
           questions={questions}
-          onReponse={async (reponse) => {
-            await _put(`/api/questionnaires/${token}/addReponse`, reponse);
-          }}
-          onEnd={async () => {
-            await _put(`/api/questionnaires/${token}/close`);
-          }}
+          onReponse={(reponse) => _put(`/api/questionnaires/${token}/addReponse`, reponse)}
+          onEnd={() => _put(`/api/questionnaires/${token}/close`)}
         />
         <Background className={"hide-sm"} />
       </Box>

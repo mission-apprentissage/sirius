@@ -42,15 +42,15 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
   let wrapperRef = useRef(null);
   let inputRef = useRef(null);
 
-  let handleInput = (question, data) => {
+  let handleInput = async (question, data) => {
     let reponse = { id: question.id, data: omit(data, ["next"]) };
     setReponses([...reponses, reponse]);
-    onReponse(reponse);
+    await onReponse(reponse);
 
     let nextQuestionId = data.next || question.next;
     let nextQuestion = questions.find((q) => q.id === nextQuestionId);
     if (nextQuestion.last) {
-      onEnd(question);
+      await onEnd(question);
     }
 
     setHistory([...history, nextQuestionId]);
