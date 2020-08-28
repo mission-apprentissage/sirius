@@ -221,4 +221,36 @@ httpTests(__filename, ({ startServer }) => {
     let html = response.data;
     assert.ok(html.indexOf("Bonjour") !== -1);
   });
+
+  it("Vérifie qu'on peut obtenir les statistiques", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("contrats").insertOne(
+      newContrat({
+        questionnaires: [
+          {
+            token: "123456",
+            type: "finAnnee",
+            status: "closed",
+            reponses: [],
+          },
+        ],
+      })
+    );
+
+    let response = await httpClient.get("/api/questionnaires/stats.json", {
+      headers: {
+        Authorization: `Basic ${Buffer.from("admin:12345").toString("base64")}`,
+      },
+    });
+
+    assert.strictEqual(response.status, 200);
+    assert.deepStrictEqual(response.data, [
+      {
+        cohorte: "test_q2_2020_08_27",
+        count: 1,
+        status: "closed",
+      },
+    ]);
+  });
 });
