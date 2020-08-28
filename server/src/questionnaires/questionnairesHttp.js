@@ -5,6 +5,7 @@ const { transformObjectIntoCSV } = require("../core/streamUtils");
 const tryCatch = require("../core/http/tryCatchMiddleware");
 const { sendHTML, sendJsonStream, sendCSVStream } = require("../core/http/httpUtils");
 const authMiddleware = require("../core/http/authMiddleware");
+const questionnairesCSVStream = require("./questionnairesCSVStream");
 
 module.exports = ({ db, config, questionnaires }) => {
   const router = express.Router(); // eslint-disable-line new-cap
@@ -109,7 +110,7 @@ module.exports = ({ db, config, questionnaires }) => {
     "/api/questionnaires/export",
     checkAuth,
     tryCatch(async (req, res) => {
-      sendCSVStream(transformObjectIntoCSV(db), res, { encoding: "UTF-8", filename: "questionnaires.csv" });
+      sendCSVStream(questionnairesCSVStream(db), res, { encoding: "UTF-8", filename: "questionnaires.csv" });
     })
   );
 
