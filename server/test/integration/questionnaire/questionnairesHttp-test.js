@@ -245,12 +245,9 @@ httpTests(__filename, ({ startServer }) => {
     });
 
     assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.data, [
-      {
-        cohorte: "test_q2_2020_08_27",
-        count: 1,
-        status: "closed",
-      },
-    ]);
+    let first = response.data[0];
+    assert.ok(first.cohorte.startsWith("test_q2_2"));
+    assert.strictEqual(first.count, 1);
+    assert.strictEqual(first.status, "closed");
   });
 });
