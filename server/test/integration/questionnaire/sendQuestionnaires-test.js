@@ -50,4 +50,29 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.ok(email.html.lastIndexOf(`http://localhost:5000/questionnaires/${token}`) !== -1);
     assert.strictEqual(emails.length, 1);
   });
+
+  it("Vérifie qu'on marque un questionnaire qui n'a pas pu être envoyé", async () => {
+    let { db, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ fail: true }),
+    });
+    await db.collection("contrats").insertOne(
+      newContrat({
+        apprenti: {
+          email: "test@domain.com",
+        },
+      })
+    );
+
+    let stats = await sendQuestionnaires(db, logger, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 1,
+      sent: 0,
+      failed: 1,
+    });
+    let found = await db.collection("contrats").findOne();
+    let questionnaire = found.questionnaires[0];
+    assert.ok(questionnaire.sentDate);
+    assert.strictEqual(questionnaire.status, "error");
+  });
 });

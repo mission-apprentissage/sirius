@@ -42,12 +42,29 @@ module.exports = (db, mailer, contrats) => {
       let contrat = await contrats.getContratByToken(token);
       let questionnaire = contrat.questionnaires.find((q) => q.token === token);
 
-      await mailer.sendEmail(
-        contrat.apprenti.email,
-        `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`,
-        getEmail(questionnaire.type),
-        { contrat, token }
-      );
+      if (questionnaire.status === "closed") {
+        throw Boom.badRequest("Le questionnaire n'est plus disponible et ne peut donc pas être envoyé");
+      }
+
+      try {
+        await mailer.sendEmail(
+          contrat.apprenti.email,
+          `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`,
+          getEmail(questionnaire.type),
+          { contrat, token }
+        );
+      } catch (e) {
+        await db.collection("contrats").updateOne(
+          { "questionnaires.token": token },
+          {
+            $set: {
+              "questionnaires.$.status": "error",
+              "questionnaires.$.sentDate": new Date(),
+            },
+          }
+        );
+        throw e;
+      }
 
       let { value: newContrat } = await db.collection("contrats").findOneAndUpdate(
         { "questionnaires.token": token },
