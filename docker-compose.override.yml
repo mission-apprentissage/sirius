@@ -14,9 +14,13 @@ services:
     stdin_open: true
     volumes:
       - ./ui:/app
+    build:
+      args:
+        - SIRIUS_ENV=dev
+        - SIRIUS_HOTJAR_ID=12345
 
   server:
-    command: ["yarn", "debug"]
+    command: yarn debug
     ports:
       - "127.0.0.1:9229:9229" #Allows remote debugging
     volumes:
