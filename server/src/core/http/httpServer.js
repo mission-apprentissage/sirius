@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const rewriteDeprecatedUrlMiddleware = require("./rewriteDeprecatedUrlMiddleware");
 const logMiddleware = require("./logMiddleware");
 const errorMiddleware = require("./errorMiddleware");
 const tryCatch = require("./tryCatchMiddleware");
@@ -14,6 +15,7 @@ module.exports = async (components) => {
 
   app.use(bodyParser.json());
   app.use(logMiddleware(logger));
+  app.use(rewriteDeprecatedUrlMiddleware());
   app.use(questionnairesHttp(components));
   app.use(contratsHttp(components));
 

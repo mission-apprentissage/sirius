@@ -18,7 +18,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
           let results = contrat.questionnaires.filter(({ status }) => status && status !== "closed");
           if (results.length > 0 && ++stats.total <= limit) {
             logger.info(`Resending questionnaire ${type} to ${contrat.apprenti.email}`);
-            await Promise.all(results.map((q) => questionnaires.send(q.token)));
+            await Promise.all(results.map((q) => questionnaires.sendEmail(q.token)));
             await delay(100);
             stats.sent += results.length;
           }

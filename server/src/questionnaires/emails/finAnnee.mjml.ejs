@@ -120,11 +120,13 @@
         <mj-section background-color="#5222d0" padding-top="0">
             <mj-column>
                 <mj-text align="center" color="#ffffff" font-size="14px" line-height="20px">
-                    <a href="<%= utils.getPublicUrl(`/questionnaires/${data.token}/email`) %>" class="link-nostyle">Voir
+                    <a href="<%= utils.getPublicUrl(`/questionnaires/${data.token}/previewEmail`) %>" class="link-nostyle">Voir
                         cet email dans votre navigateur</a>
                 </mj-text>
                 <mj-image align="center" width="76px" alt="Logo République Française Marianne"
                           src="<%= utils.getPublicUrl(`/images/marianne.png`) %>"/>
+                <mj-image width="1px" alt="Pixel"
+                          src="<%= utils.getPublicUrl(`/api/questionnaires/${data.token}/markEmailAsViewed`) %>"/>
             </mj-column>
         </mj-section>
 

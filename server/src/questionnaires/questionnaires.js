@@ -6,15 +6,6 @@ module.exports = (db, mailer, contrats) => {
   const getEmail = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
 
   return {
-    previewEmail: async (token) => {
-      let contrat = await contrats.getContratByToken(token);
-      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
-
-      return mailer.renderEmail(getEmail(questionnaire.type), {
-        token,
-        contrat,
-      });
-    },
     create: async (type, contrat) => {
       let token = uuid.v4();
 
@@ -38,7 +29,7 @@ module.exports = (db, mailer, contrats) => {
 
       return token;
     },
-    send: async (token) => {
+    sendEmail: async (token) => {
       let contrat = await contrats.getContratByToken(token);
       let questionnaire = contrat.questionnaires.find((q) => q.token === token);
 
@@ -83,6 +74,25 @@ module.exports = (db, mailer, contrats) => {
       if (!newContrat) {
         throw Boom.badRequest("Questionnaire inconnu");
       }
+    },
+    previewEmail: async (token) => {
+      let contrat = await contrats.getContratByToken(token);
+      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
+
+      return mailer.renderEmail(getEmail(questionnaire.type), {
+        token,
+        contrat,
+      });
+    },
+    markEmailAsViewed: async (token) => {
+      await db.collection("contrats").updateOne(
+        { "questionnaires.token": token },
+        {
+          $set: {
+            "questionnaires.$.status": "viewed",
+          },
+        }
+      );
     },
     open: async (token) => {
       let contrat = await contrats.getContratByToken(token);

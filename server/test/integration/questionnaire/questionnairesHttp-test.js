@@ -3,6 +3,28 @@ const httpTests = require("../utils/httpTests");
 const { newContrat } = require("../utils/fixtures");
 
 httpTests(__filename, ({ startServer }) => {
+  it("Vérifie qu'on peut prévisualiser l'email", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("contrats").insertOne(
+      newContrat({
+        questionnaires: [
+          {
+            type: "finAnnee",
+            token: "123456",
+            reponses: [{ id: "début", data: { value: 1, label: "ok" } }],
+          },
+        ],
+      })
+    );
+
+    let response = await httpClient.get("/api/questionnaires/123456/previewEmail");
+
+    assert.strictEqual(response.status, 200);
+    let html = response.data;
+    assert.ok(html.indexOf("Bonjour") !== -1);
+  });
+
   it("Vérifie qu'on peut démarrer un questionnaire", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
@@ -38,6 +60,29 @@ httpTests(__filename, ({ startServer }) => {
         intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
       },
     });
+  });
+
+  it("Vérifie qu'on peut marquer un email comme ayant été vu", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("contrats").insertOne(
+      newContrat({
+        questionnaires: [
+          {
+            type: "finAnnee",
+            token: "123456",
+            reponses: [{ id: "début", data: { value: 1, label: "ok" } }],
+          },
+        ],
+      })
+    );
+
+    let response = await httpClient.get("/api/questionnaires/123456/markEmailAsViewed");
+
+    assert.strictEqual(response.status, 200);
+    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
+    let finAnnee = found.questionnaires[0];
+    assert.deepStrictEqual(finAnnee.status, "viewed");
   });
 
   it("Vérifie qu'on peut réinitialiser un questionnaire", async () => {
@@ -198,28 +243,6 @@ httpTests(__filename, ({ startServer }) => {
     let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
     let finAnnee = found.questionnaires[0];
     assert.deepStrictEqual(finAnnee.status, "closed");
-  });
-
-  it("Vérifie qu'on peut prévisualiser l'email", async () => {
-    let { httpClient, components } = await startServer();
-    let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            type: "finAnnee",
-            token: "123456",
-            reponses: [{ id: "début", data: { value: 1, label: "ok" } }],
-          },
-        ],
-      })
-    );
-
-    let response = await httpClient.get("/api/questionnaires/123456/email");
-
-    assert.strictEqual(response.status, 200);
-    let html = response.data;
-    assert.ok(html.indexOf("Bonjour") !== -1);
   });
 
   it("Vérifie qu'on peut obtenir les statistiques", async () => {
