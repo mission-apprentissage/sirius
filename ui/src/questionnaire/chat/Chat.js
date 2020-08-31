@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Question from "./question/Question";
 import { Entry, Reponse } from "../toolkit";
@@ -42,10 +42,12 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
   let wrapperRef = useRef(null);
   let inputRef = useRef(null);
 
-  let handleInput = async (question, data) => {
-    let reponse = { id: question.id, data: omit(data, ["next"]) };
-    setReponses([...reponses, reponse]);
-    await onReponse(reponse);
+  let handleInput = async (question, data = {}) => {
+    if (!question.auto) {
+      let reponse = { id: question.id, data: omit(data, ["next"]) };
+      setReponses([...reponses, reponse]);
+      await onReponse(reponse);
+    }
 
     let nextQuestionId = data.next || question.next;
     let nextQuestion = questions.find((q) => q.id === nextQuestionId);
@@ -58,6 +60,13 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
 
     scrollTo(bottomRef, 1500);
   };
+
+  useEffect(() => {
+    if (currentQuestion.auto) {
+      setTimeout(() => handleInput(currentQuestion), 3000);
+      console.log(currentQuestion);
+    }
+  });
 
   return (
     <WrapperBox direction={"column"} justify={"between"} height={"100%"} ref={wrapperRef}>

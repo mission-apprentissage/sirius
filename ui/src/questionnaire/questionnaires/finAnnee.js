@@ -3,24 +3,70 @@ import { Highlight, Message, Tips } from "../toolkit";
 import SingleChoice from "../chat/question/SingleChoice";
 import MultiChoice from "../chat/question/MultiChoice";
 import Skip from "../chat/question/Skip";
+import siriusFutur from "./sirius-futur.svg";
+import logoLBA from "./logo-lba.svg";
+import { Box } from "../../common/Flexbox";
 
-export default ({ apprenti, formation }) => {
+export default ({ apprenti }) => {
   return [
     {
-      id: "accord",
+      id: "bonjour",
+      auto: true,
       message: (
         <Message>
           <p>
             Bonjour <b>{apprenti.prenom}</b> !
           </p>
-          <p className={"pt-1"}>
-            Merci de rejoindre la communauté des apprentis en <b>{formation.intitule}</b>
+        </Message>
+      ),
+      next: "merci",
+    },
+    {
+      id: "merci",
+      auto: true,
+      message: (
+        <Message>
+          <p>Merci de nous rejoindre.</p>
+          <p>Vous pouvez donner votre avis sur votre formation pour aider les futurs apprentis.</p>
+        </Message>
+      ),
+      next: "anonymat",
+    },
+    {
+      id: "anonymat",
+      message: (
+        <Message>
+          <p>Votre anonymat sera totalement respecté.</p>
+        </Message>
+      ),
+      next: "futur",
+      input: <SingleChoice options={[{ value: true, label: "Ok" }]} />,
+    },
+    {
+      id: "futur",
+      message: (
+        <Message>
+          <p>Les avis seront en ligne en février 2021 et cela ressemblera à ça</p>
+          <p>
+            <Box direction={"column"} align="center">
+              <img src={logoLBA} alt={"Logo du site La Bonne Formation"} width="30%" />
+              <img src={siriusFutur} alt={"Interface graphique de Sirius"} />
+            </Box>
           </p>
-          <Highlight>Vous voulez bien répondre à quelques questions ? Ca prendra moins de 3 minutes </Highlight>
+        </Message>
+      ),
+      input: <SingleChoice options={[{ value: true, label: "Ok" }]} />,
+      next: "départ",
+    },
+    {
+      id: "départ",
+      auto: true,
+      message: (
+        <Message>
+          <Highlight>C'est parti. Ca prendra moins de 3 minutes !</Highlight>
         </Message>
       ),
       next: "suivi",
-      input: <SingleChoice options={[{ value: true, label: "Ok c’est parti !" }]} />,
     },
     {
       id: "suivi",

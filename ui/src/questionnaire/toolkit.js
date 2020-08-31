@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Box } from "../common/Flexbox";
 import { appear } from "../common/utils/animations";
-import { primary, secondary} from "../common/utils/colors";
+import { primary, secondary } from "../common/utils/colors";
 import avatar from "./icons/avatar.svg";
 import React from "react";
 
@@ -21,7 +21,7 @@ export const Avatar = styled.img.attrs(() => ({ src: avatar, alt: "logo" }))`
 export const Bubble = styled.div.attrs(() => ({ className: "question" }))`
   font-size: 16rem;
   animation: ${appear} 0.3s ease forwards;
-  background-color: #f8f8f8;
+  background-color: #f7f3ff;
   padding: 20px;
   border-radius: 35px 35px 35px 10px;
   line-height: 30rem;
@@ -29,7 +29,7 @@ export const Bubble = styled.div.attrs(() => ({ className: "question" }))`
 `;
 
 export const Message = styled.div`
-  margin-bottom: 18rem;
+  //margin-bottom: 18rem;
 `;
 
 export const Reponse = styled(Bubble)`
