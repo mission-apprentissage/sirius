@@ -23,10 +23,10 @@ module.exports = ({ db, config, questionnaires }) => {
   );
 
   router.get(
-    "/api/questionnaires/:token/markEmailAsViewed",
+    "/api/questionnaires/:token/markAsOpened",
     tryCatch(async (req, res) => {
       let { token } = req.params;
-      await questionnaires.markEmailAsViewed(token);
+      await questionnaires.markAsOpened(token);
 
       res.writeHead(200, { "Content-Type": "image/gif" });
       res.end(Buffer.from("R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=", "base64"), "binary");
@@ -34,11 +34,11 @@ module.exports = ({ db, config, questionnaires }) => {
   );
 
   router.put(
-    "/api/questionnaires/:token/open",
+    "/api/questionnaires/:token/markAsClicked",
     tryCatch(async (req, res) => {
       let { token } = req.params;
 
-      res.json(await questionnaires.open(token));
+      res.json(await questionnaires.markAsClicked(token));
     })
   );
 
@@ -84,19 +84,60 @@ module.exports = ({ db, config, questionnaires }) => {
           { $unwind: "$questionnaires" },
           {
             $group: {
-              _id: { cohorte: "$cohorte", status: "$questionnaires.status" },
-              count: { $sum: 1 },
+              _id: { cohorte: "$cohorte" },
+              total: { $sum: 1 },
+              ouverts: {
+                $sum: {
+                  $cond: {
+                    if: { $in: ["$questionnaires.status", ["opened", "clicked", "inprogress", "closed"]] },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
+              cliques: {
+                $sum: {
+                  $cond: {
+                    if: { $in: ["$questionnaires.status", ["clicked", "inprogress", "closed"]] },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
+              enCours: {
+                $sum: {
+                  $cond: {
+                    if: { $eq: ["$questionnaires.status", "inprogress"] },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
+              termines: {
+                $sum: {
+                  $cond: {
+                    if: { $eq: ["$questionnaires.status", "closed"] },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
             },
           },
           {
             $project: {
               _id: 0,
               cohorte: "$_id.cohorte",
-              status: "$_id.status",
-              count: 1,
+              total: 1,
+              ouverts: 1,
+              cliques: 1,
+              status: {
+                enCours: "$enCours",
+                termines: "$termines",
+              },
             },
           },
-          { $sort: { cohorte: 1, status: -1 } },
+          { $sort: { cohorte: 1 } },
         ])
         .stream();
 
@@ -105,8 +146,11 @@ module.exports = ({ db, config, questionnaires }) => {
           resultsStream,
           transformObjectIntoCSV({
             cohorte: (res) => res.cohorte,
-            statut: (res) => res.status,
-            nombre: (res) => res.count,
+            "Nombre de questionnaire envoyés": (res) => res.total,
+            "Emails ouverts": (res) => res.ouverts,
+            "Liens cliqués": (res) => res.cliques,
+            "Nombre de questionnaires en cours": ({ status }) => status.enCours,
+            "Nombre de questionnaires terminés": ({ status }) => status.termines,
           })
         );
 
