@@ -20,7 +20,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
           let token = await questionnaires.create(type, contrat);
 
           await delay(100);
-          await questionnaires.send(token);
+          await questionnaires.sendEmail(token);
 
           stats.sent++;
         } catch (e) {

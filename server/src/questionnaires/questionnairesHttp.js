@@ -11,6 +11,28 @@ module.exports = ({ db, config, questionnaires }) => {
   const router = express.Router(); // eslint-disable-line new-cap
   const checkAuth = authMiddleware(config);
 
+  router.get(
+    "/api/questionnaires/:token/previewEmail",
+    tryCatch(async (req, res) => {
+      let { token } = req.params;
+
+      const html = await questionnaires.previewEmail(token);
+
+      sendHTML(html, res);
+    })
+  );
+
+  router.get(
+    "/api/questionnaires/:token/markEmailAsViewed",
+    tryCatch(async (req, res) => {
+      let { token } = req.params;
+      await questionnaires.markEmailAsViewed(token);
+
+      res.writeHead(200, { "Content-Type": "image/gif" });
+      res.end(Buffer.from("R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=", "base64"), "binary");
+    })
+  );
+
   router.put(
     "/api/questionnaires/:token/open",
     tryCatch(async (req, res) => {
@@ -44,17 +66,6 @@ module.exports = ({ db, config, questionnaires }) => {
       await questionnaires.close(token);
 
       res.json({});
-    })
-  );
-
-  router.get(
-    "/api/questionnaires/:token/email",
-    tryCatch(async (req, res) => {
-      let { token } = req.params;
-
-      const html = await questionnaires.previewEmail(token);
-
-      sendHTML(html, res);
     })
   );
 

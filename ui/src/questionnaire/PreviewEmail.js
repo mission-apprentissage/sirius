@@ -13,7 +13,7 @@ export default () => {
 
   return (
     <Centered>
-      <Preview src={`/api/questionnaires/${token}/email`} width={"600px"} height={"100%"} />
+      <Preview src={`/api/questionnaires/${token}/previewEmail`} width={"600px"} height={"100%"} />
     </Centered>
   );
 };
