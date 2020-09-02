@@ -26,7 +26,8 @@ module.exports = (db, extraColumns) => {
   return oleoduc(
     stream,
     transformObjectIntoCSV({
-      cohorte: ({ cohorte }) => cohorte,
+      id: (contrat) => contrat._id.toString(),
+      cohorte: (contrat) => contrat.cohorte,
       type: ({ questionnaires }) => questionnaires.type,
       statut: ({ questionnaires }) => questionnaires.status,
       accord: ({ questionnaires }) => getReponse(questionnaires, "accord"),
