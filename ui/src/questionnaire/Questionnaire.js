@@ -21,7 +21,7 @@ const Background = styled("img").attrs(() => ({ src: background, alt: "backgroun
 
 export default () => {
   let { token } = useParams();
-  let [questionnaireContext, loading, error] = usePut(`/api/questionnaires/${token}/open`);
+  let [questionnaireContext, loading, error] = usePut(`/api/questionnaires/${token}/markAsClicked`);
 
   if (loading) {
     return (

@@ -6,24 +6,20 @@ module.exports = async (db) => {
     updated: 0,
   };
 
-  let inputStream = db
-    .collection("contrats")
-    .find()
-    .stream({ "apprenti.creationDate": { $exists: true } });
+  let inputStream = db.collection("contrats").find({ "questionnaires.status": "opened" }).stream();
 
   await oleoduc(
     inputStream,
     writeObject(
       async (doc) => {
-        let results = await db.collection("contrats").updateOne({ _id: doc._id }, [
+        let results = await db.collection("contrats").updateOne(
+          { _id: doc._id },
           {
             $set: {
-              creationDate: "$apprenti.creationDate",
-              cohorte: "cohorte_test_q2_2020_07_23",
+              "questionnaires.$[].status": "clicked",
             },
-          },
-          { $unset: ["apprenti.creationDate"] },
-        ]);
+          }
+        );
         stats.updated += getNbModifiedDocuments(results);
       },
       { parallel: 10 }

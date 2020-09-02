@@ -4,7 +4,7 @@ const injectData = require("./dataset/injectData");
 const createIndexes = require("./indexes/createIndexes");
 const dropIndexes = require("./indexes/dropIndexes");
 const capLogs = require("./indexes/capLogs");
-const fixCreationDate = require("./migration/fixCreationDate");
+const changeStatusName = require("./migration/changeStatusName");
 
 let indexes = cli.command("indexes").description("Gestion des indexes");
 indexes
@@ -33,7 +33,7 @@ cli
   .action(() => {
     runScript(async ({ db }) => {
       return {
-        fixCreationDate: await fixCreationDate(db),
+        changeStatusName: await changeStatusName(db),
       };
     });
   });

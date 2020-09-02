@@ -84,17 +84,17 @@ module.exports = (db, mailer, contrats) => {
         contrat,
       });
     },
-    markEmailAsViewed: async (token) => {
+    markAsOpened: async (token) => {
       await db.collection("contrats").updateOne(
         { "questionnaires.token": token },
         {
           $set: {
-            "questionnaires.$.status": "viewed",
+            "questionnaires.$.status": "opened",
           },
         }
       );
     },
-    open: async (token) => {
+    markAsClicked: async (token) => {
       let contrat = await contrats.getContratByToken(token);
       let questionnaire = contrat.questionnaires.find((q) => q.token === token);
 
@@ -107,7 +107,7 @@ module.exports = (db, mailer, contrats) => {
         {
           $set: {
             "questionnaires.$.updateDate": new Date(),
-            "questionnaires.$.status": "opened",
+            "questionnaires.$.status": "clicked",
             "questionnaires.$.reponses": [],
           },
         },

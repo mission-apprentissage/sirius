@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
 const { newContrat } = require("../utils/fixtures");
@@ -48,7 +49,7 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/123456/open");
+    let response = await httpClient.put("/api/questionnaires/123456/markAsClicked");
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, {
@@ -62,7 +63,7 @@ httpTests(__filename, ({ startServer }) => {
     });
   });
 
-  it("Vérifie qu'on peut marquer un email comme ayant été vu", async () => {
+  it("Vérifie qu'on peut marquer un email comme ayant été ouvert", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("contrats").insertOne(
@@ -77,12 +78,12 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.get("/api/questionnaires/123456/markEmailAsViewed");
+    let response = await httpClient.get("/api/questionnaires/123456/markAsOpened");
 
     assert.strictEqual(response.status, 200);
     let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
     let finAnnee = found.questionnaires[0];
-    assert.deepStrictEqual(finAnnee.status, "viewed");
+    assert.deepStrictEqual(finAnnee.status, "opened");
   });
 
   it("Vérifie qu'on peut réinitialiser un questionnaire", async () => {
@@ -94,14 +95,14 @@ httpTests(__filename, ({ startServer }) => {
           {
             type: "finAnnee",
             token: "123456",
-            status: "opened",
+            status: "clicked",
             reponses: [{ id: "début", data: { value: 1, label: "ok" } }],
           },
         ],
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/123456/open");
+    let response = await httpClient.put("/api/questionnaires/123456/markAsClicked");
 
     assert.strictEqual(response.status, 200);
     let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
@@ -125,7 +126,7 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/invalid/open");
+    let response = await httpClient.put("/api/questionnaires/invalid/markAsClicked");
 
     assert.strictEqual(response.status, 400);
     assert.deepStrictEqual(response.data, {
@@ -270,7 +271,14 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 200);
     let first = response.data[0];
     assert.ok(first.cohorte.startsWith("test_q2_2"));
-    assert.strictEqual(first.count, 1);
-    assert.strictEqual(first.status, "closed");
+    assert.deepStrictEqual(_.omit(first, ["cohorte"]), {
+      total: 1,
+      ouverts: 1,
+      cliques: 1,
+      status: {
+        enCours: 0,
+        termines: 1,
+      },
+    });
   });
 });
