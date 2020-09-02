@@ -39,9 +39,7 @@ module.exports = async (db, logger) => {
         let { cfa, formation } = result.contrat;
         if (result.found) {
           stats.found++;
-          logger.info(
-            `Formation ${formation.codeDiplome} dispensée par le cfa ${cfa.siret} trouvée dans le catalogue`
-          );
+          logger.info(`Formation ${formation.codeDiplome} dispensée par le cfa ${cfa.siret} trouvée dans le catalogue`);
         } else {
           logger.warn(
             `Pas de reconciliation pour la formation ${formation.codeDiplome} dispensée par le cfa ${cfa.siret}`

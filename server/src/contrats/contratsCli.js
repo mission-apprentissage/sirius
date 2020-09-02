@@ -3,6 +3,7 @@ const { createReadStream } = require("fs");
 const runScript = require("../core/runScript");
 const importContrats = require("./csv/cfa/importContrats");
 const updateContrats = require("./csv/cfa/updateContrats");
+const reconciliateWithCatalogue = require("./reconciliation/reconciliateWithCatalogue");
 
 cli
   .command("import <csvFile>")
@@ -16,6 +17,13 @@ cli
   .description("Met à jour les contrats en base à partir du fichier")
   .action((csvFile) => {
     runScript(({ db, logger }) => updateContrats(db, logger, createReadStream(csvFile)));
+  });
+
+cli
+  .command("reconciliate")
+  .description("Réconcilie les contrats avec la base catalogue")
+  .action(() => {
+    runScript(({ db, logger }) => reconciliateWithCatalogue(db, logger));
   });
 
 cli.parse(process.argv);
