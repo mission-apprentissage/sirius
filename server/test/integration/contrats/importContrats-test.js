@@ -41,6 +41,7 @@ integrationTests(__filename, ({ getComponents }) => {
         uai_responsable: "1111111D",
         uai_formateur: "2222222D",
         adresse: "31 rue des lilas 75001 Paris",
+        codePostal: "75001",
       },
       rupture: null,
       entreprise: { raisonSociale: null, siret: "11111111100027", tuteur: { prenom: "Jacques", nom: "HENRI" } },

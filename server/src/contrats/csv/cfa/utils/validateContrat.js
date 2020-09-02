@@ -33,6 +33,7 @@ let schema = Joi.object({
       .pattern(/^[0-9]{7}[A-Z]$/)
       .allow(null),
     adresse: Joi.string().required(),
+    codePostal: Joi.string().required(),
   },
   rupture: Joi.date().allow(null),
   entreprise: {

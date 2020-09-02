@@ -20,5 +20,6 @@ cli.command("questionnaires", "Gestion des questionnaires", {
   executableFile: "questionnaires/questionnairesCli",
 });
 cli.command("db", "Manipulation de la base de données", { executableFile: "db/dbCli" });
+cli.command("deca", "Gestion du DECA", { executableFile: "deca/decaCli" });
 
 cli.parse(process.argv);
