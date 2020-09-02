@@ -11,8 +11,8 @@ integrationTests(__filename, ({ getComponents }) => {
       newContrat({
         apprenti: { email: "jean@robert.com" },
         cfa: {
-          uai_responsable: "1111111D",
-          uai_formateur: "2222222D",
+          uaiResponsable: "1111111D",
+          uaiFormateur: "2222222D",
           adresse: "31 rue des lilas 75001 Paris",
         },
       })
@@ -34,8 +34,8 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.deepStrictEqual(found.cfa, {
       nom: "CFA",
       siret: "22222222200014",
-      uai_responsable: "1111111D",
-      uai_formateur: "2222222D",
+      uaiResponsable: "1111111D",
+      uaiFormateur: "2222222D",
       adresse: "31 rue des lilas 75001 Paris",
     });
   });

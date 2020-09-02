@@ -18,12 +18,12 @@ module.exports = async (db, logger) => {
         let response = await axios.get("https://c7a5ujgw35.execute-api.eu-west-3.amazonaws.com/prod/formations", {
           params: {
             query: {
-              educ_nat_code: formation.code_diplome,
+              educ_nat_code: formation.codeDiplome,
               ...(codePostal ? { code_postal: codePostal } : {}),
               $or: [
                 { etablissement_formateur_siret: cfa.siret },
-                { etablissement_formateur_uai: cfa.uai_formateur },
-                { etablissement_responsable_uai: cfa.uai_responsable },
+                { etablissement_formateur_uai: cfa.uaiFormateur },
+                { etablissement_responsable_uai: cfa.uaiResponsable },
                 { etablissement_responsable_siret: cfa.siret },
               ],
             },
@@ -40,11 +40,11 @@ module.exports = async (db, logger) => {
         if (result.found) {
           stats.found++;
           logger.info(
-            `Formation ${formation.code_diplome} dispensée par le cfa ${cfa.siret} trouvée dans le catalogue`
+            `Formation ${formation.codeDiplome} dispensée par le cfa ${cfa.siret} trouvée dans le catalogue`
           );
         } else {
           logger.warn(
-            `Pas de reconciliation pour la formation ${formation.code_diplome} dispensée par le cfa ${cfa.siret}`
+            `Pas de reconciliation pour la formation ${formation.codeDiplome} dispensée par le cfa ${cfa.siret}`
           );
         }
       },

@@ -13,9 +13,9 @@ let schema = Joi.object({
     },
   },
   formation: {
-    code_diplome: Joi.string().allow(null),
+    codeDiplome: Joi.string().allow(null),
     intitule: Joi.string().required(),
-    annee_promotion: Joi.string().allow(null),
+    anneePromotion: Joi.string().allow(null),
     periode: Joi.object({
       debut: Joi.date(),
       fin: Joi.date(),
@@ -26,10 +26,10 @@ let schema = Joi.object({
     siret: Joi.string()
       .pattern(/^[0-9]{9,14}$/)
       .allow(null),
-    uai_responsable: Joi.string()
+    uaiResponsable: Joi.string()
       .pattern(/^[0-9]{7}[A-Z]$/)
       .allow(null),
-    uai_formateur: Joi.string()
+    uaiFormateur: Joi.string()
       .pattern(/^[0-9]{7}[A-Z]$/)
       .allow(null),
     adresse: Joi.string().required(),

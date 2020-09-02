@@ -27,9 +27,9 @@ module.exports = (data) => {
       },
     },
     formation: {
-      code_diplome: sanitize(data.code_diplome),
+      codeDiplome: sanitize(data.code_diplome),
       intitule: data.app_diplome,
-      annee_promotion: data.annee_promotion || null,
+      anneePromotion: data.annee_promotion || null,
       periode:
         data.date_debut && data.date_fin
           ? {
@@ -41,8 +41,8 @@ module.exports = (data) => {
     cfa: {
       nom: data["etablissement/site_cfa"],
       siret: sanitize(data.siret),
-      uai_responsable: sanitize(data.code_uai_cfa),
-      uai_formateur: sanitize(data.code_uai_site),
+      uaiResponsable: sanitize(data.code_uai_cfa),
+      uaiFormateur: sanitize(data.code_uai_site),
       adresse: data.adresse_postale_cfa,
       codePostal: getCodePostal(data.adresse_postale_cfa),
     },
