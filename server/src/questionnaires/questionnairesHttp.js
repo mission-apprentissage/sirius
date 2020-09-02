@@ -29,7 +29,7 @@ module.exports = ({ db, config, questionnaires }) => {
       await questionnaires.markAsOpened(token);
 
       res.writeHead(200, { "Content-Type": "image/gif" });
-      res.end(Buffer.from("R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=", "base64"), "binary");
+      res.end(Buffer.from("R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==", "base64"), "binary");
     })
   );
 
