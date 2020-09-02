@@ -4,10 +4,8 @@ const path = require("path");
 const _ = require("lodash");
 const csv = require("csv-parser");
 const { Readable } = require("stream");
-const env = require("env-var");
 const { oleoduc, transformObject, writeObject, filterObject } = require("oleoduc");
 const { findTableName, findPrimaryKey } = require("./primaryKeys");
-const runScipt = require("../common/runScipt");
 
 const isCsvWithSemicolon = (filename) => {
   return [
@@ -72,19 +70,25 @@ let innerJoinAll = (row, primaryKey, descriptors) => {
   };
 };
 
-runScipt(async ({ db }) => {
-  const decaDir = env.get("DECA_DIR").required().asString();
+module.exports = async (db, decaDir) => {
   let descriptors = await loadDescriptors(decaDir);
+  let stats = {
+    total: 0,
+    imported: 0,
+    failed: 0,
+  };
 
+  await db.collection("deca").removeMany({});
   await oleoduc(
     fs.createReadStream(path.join(decaDir, "details_contrat.csv"), { encoding: "UTF-8" }),
     csv(),
     writeObject(
-      (row) => {
+      async (row) => {
         let contrat = innerJoinAll(row, findPrimaryKey("details_contrat"), descriptors);
-        return db.collection("deca").insertOne(contrat);
+        await db.collection("deca").insertOne(contrat);
+        stats.imported++;
       },
       { parallel: 25 }
     )
   );
-});
+};
