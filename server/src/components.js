@@ -1,5 +1,6 @@
 const connectToMongoDB = require("./core/connectToMongoDB");
 const createMailer = require("./core/mailer");
+const httpClient = require("./core/httpClient");
 const createQuestionnaires = require("./questionnaires/questionnaires");
 const createContrats = require("./contrats/contrats");
 const createLogger = require("./core/logger");
@@ -21,5 +22,6 @@ module.exports = async (options = {}) => {
     close: () => client.close(),
     contrats,
     questionnaires: options.questionnaires || createQuestionnaires(db, mailer, contrats),
+    httpClient: options.httpClient || httpClient(logger),
   };
 };

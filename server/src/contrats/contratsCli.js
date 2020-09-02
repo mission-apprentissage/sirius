@@ -27,7 +27,7 @@ cli
   .command("reconciliate")
   .description("Réconcilie les contrats avec la base catalogue")
   .action(() => {
-    runScript(({ db, logger }) => reconciliateWithCatalogue(db, logger));
+    runScript(({ db, logger, httpClient }) => reconciliateWithCatalogue(db, logger, httpClient));
   });
 
 cli.parse(process.argv);

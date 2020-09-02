@@ -1,7 +1,6 @@
-const axios = require("axios");
 const { oleoduc, transformObject, writeObject } = require("oleoduc");
 
-module.exports = async (db, logger) => {
+module.exports = async (db, logger, httpClient) => {
   let stream = db.collection("contrats").find().stream();
   let stats = { total: 0, found: 0 };
 
@@ -15,7 +14,7 @@ module.exports = async (db, logger) => {
         let matched = cfa.adresse.match(/([0-9]{5})|([0-9]{2} [0-9]{3})/);
         let codePostal = matched && matched.length > 0 ? matched[0].replace(/ /g, "") : null;
 
-        let response = await axios.get("https://c7a5ujgw35.execute-api.eu-west-3.amazonaws.com/prod/formations", {
+        let response = await httpClient.get("https://c7a5ujgw35.execute-api.eu-west-3.amazonaws.com/prod/formations", {
           params: {
             query: {
               educ_nat_code: formation.codeDiplome,
@@ -24,7 +23,6 @@ module.exports = async (db, logger) => {
                 { etablissement_formateur_siret: cfa.siret },
                 { etablissement_formateur_uai: cfa.uaiFormateur },
                 { etablissement_responsable_uai: cfa.uaiResponsable },
-                { etablissement_responsable_siret: cfa.siret },
               ],
             },
           },
