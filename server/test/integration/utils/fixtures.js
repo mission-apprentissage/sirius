@@ -23,9 +23,9 @@ module.exports = {
           },
         },
         formation: {
-          code_diplome: faker.helpers.replaceSymbols("########"),
+          codeDiplome: faker.helpers.replaceSymbols("########"),
           intitule: "CAP Boucher",
-          annee_promotion: `${new Date().getFullYear() - 1}/${new Date().getFullYear()}`,
+          anneePromotion: `${new Date().getFullYear() - 1}/${new Date().getFullYear()}`,
           periode: {
             debut: moment().subtract(1, "years").toDate(),
             fin: moment().toDate(),
@@ -34,8 +34,8 @@ module.exports = {
         cfa: {
           nom: faker.company.companyName(),
           siret: faker.helpers.replaceSymbols("#########00015"),
-          uai_responsable: faker.helpers.replaceSymbols("#######?"),
-          uai_formateur: faker.helpers.replaceSymbols("#######?"),
+          uaiResponsable: faker.helpers.replaceSymbols("#######?"),
+          uaiFormateur: faker.helpers.replaceSymbols("#######?"),
           adresse: `${faker.address.streetAddress()} ${faker.address.zipCode()} ${faker.address.city()}`,
         },
         rupture: null,

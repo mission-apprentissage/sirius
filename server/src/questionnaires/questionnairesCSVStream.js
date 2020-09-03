@@ -99,11 +99,11 @@ module.exports = (db, extraColumns) => {
       communauté: ({ questionnaires }) => getReponse(questionnaires, "communauté"),
       cfaNom: ({ cfa }) => cfa.nom,
       cfaSiret: ({ cfa }) => cfa.siret,
-      cfaUaiResponsable: ({ cfa }) => cfa.uai_responsable,
-      cfaUaiFormateur: ({ cfa }) => cfa.uai_formateur,
-      formationCodeDiplome: ({ formation }) => formation.code_diplome,
+      cfaUaiResponsable: ({ cfa }) => cfa.uaiResponsable,
+      cfaUaiFormateur: ({ cfa }) => cfa.uaiFormateur,
+      formationCodeDiplome: ({ formation }) => formation.codeDiplome,
       formationIntitule: ({ formation }) => formation.intitule,
-      formationAnneePromotion: ({ formation }) => formation.annee_promotion,
+      formationAnneePromotion: ({ formation }) => formation.anneePromotion,
       formationDebut: ({ formation }) => {
         return formation.periode ? moment(formation.periode.debut).format("YYYY-MM-DD") : null;
       },
