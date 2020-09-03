@@ -13,7 +13,9 @@ let schema = Joi.object({
     },
   },
   formation: {
-    codeDiplome: Joi.string().allow(null),
+    codeDiplome: Joi.string()
+      .pattern(/^[0-9A-Z]{8}$/)
+      .allow(null),
     intitule: Joi.string().required(),
     anneePromotion: Joi.string().allow(null),
     periode: Joi.object({
