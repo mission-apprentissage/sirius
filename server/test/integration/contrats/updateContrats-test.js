@@ -37,6 +37,7 @@ integrationTests(__filename, ({ getComponents }) => {
       uaiResponsable: "1111111D",
       uaiFormateur: "2222222D",
       adresse: "31 rue des lilas 75001 Paris",
+      codePostal: "75001",
     });
   });
 });

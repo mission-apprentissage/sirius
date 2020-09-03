@@ -11,6 +11,7 @@ module.exports = async (db, logger, csvStream) => {
         $set: {
           "cfa.nom": contrat.cfa.nom,
           "cfa.siret": contrat.cfa.siret,
+          "cfa.codePostal": contrat.cfa.codePostal,
         },
       }
     );
