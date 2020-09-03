@@ -1,47 +1,60 @@
 const { oleoduc, transformObject, writeObject } = require("oleoduc");
 
 module.exports = async (db, logger, httpClient) => {
-  let stream = db.collection("contrats").find().stream();
+  let stream = db
+    .collection("contrats")
+    .aggregate([
+      {
+        $group: {
+          _id: {
+            codeDiplome: "$formation.codeDiplome",
+            uaiResponsable: "$cfa.uaiResponsable",
+            uaiFormateur: "$cfa.uaiFormateur",
+            siretFormateur: "$cfa.siret",
+            codePostal: "$cfa.codePostal",
+          },
+          nbContrats: { $sum: 1 },
+        },
+      },
+    ])
+    .stream();
   let stats = { total: 0, found: 0 };
 
   await oleoduc(
     stream,
     transformObject(
-      async (contrat) => {
-        let { cfa, formation } = contrat;
+      async (res) => {
+        let { codeDiplome, uaiResponsable, uaiFormateur, siretFormateur, codePostal } = res._id;
         stats.total++;
-
-        let matched = cfa.adresse.match(/([0-9]{5})|([0-9]{2} [0-9]{3})/);
-        let codePostal = matched && matched.length > 0 ? matched[0].replace(/ /g, "") : null;
 
         let response = await httpClient.get("https://c7a5ujgw35.execute-api.eu-west-3.amazonaws.com/prod/formations", {
           params: {
             query: {
-              educ_nat_code: formation.codeDiplome,
-              ...(codePostal ? { code_postal: codePostal } : {}),
+              educ_nat_code: { $regex: `^${codeDiplome}`, $options: "ix" },
+              //...(codePostal ? { code_postal: codePostal } : {}),
+              ...(codePostal ? { num_departement: codePostal.substring(0, 2) } : {}),
               $or: [
-                { etablissement_formateur_siret: cfa.siret },
-                { etablissement_formateur_uai: cfa.uaiFormateur },
-                { etablissement_responsable_uai: cfa.uaiResponsable },
+                { etablissement_formateur_uai: uaiFormateur },
+                { etablissement_formateur_siret: siretFormateur },
+                { etablissement_responsable_siret: siretFormateur },
+                { etablissement_responsable_uai: uaiResponsable },
               ],
             },
           },
         });
 
-        return { contrat, found: response.data.pagination.total > 0 };
+        return { res, found: response.data.pagination.total > 0 };
       },
       { parallel: 10 }
     ),
     writeObject(
-      (result) => {
-        let { cfa, formation } = result.contrat;
-        if (result.found) {
+      ({ res, found }) => {
+        let { codeDiplome, uaiResponsable, uaiFormateur, siretFormateur, codePostal } = res._id;
+        if (found) {
           stats.found++;
-          logger.info(`Formation ${formation.codeDiplome} dispensée par le cfa ${cfa.siret} trouvée dans le catalogue`);
+          logger.info(`[OK] ${codeDiplome} ${uaiResponsable} ${uaiFormateur} ${siretFormateur} ${codePostal}`);
         } else {
-          logger.warn(
-            `Pas de reconciliation pour la formation ${formation.codeDiplome} dispensée par le cfa ${cfa.siret}`
-          );
+          logger.warn(`[KO] ${codeDiplome} ${uaiResponsable} ${uaiFormateur} ${siretFormateur} ${codePostal}`);
         }
       },
       { parallel: 10 }
