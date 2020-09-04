@@ -275,10 +275,8 @@ httpTests(__filename, ({ startServer }) => {
       total: 1,
       ouverts: 1,
       cliques: 1,
-      status: {
-        enCours: 0,
-        termines: 1,
-      },
+      enCours: 0,
+      termines: 1,
     });
   });
 });

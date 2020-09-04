@@ -2,7 +2,7 @@ const { program: cli } = require("commander");
 const runScript = require("../core/runScript");
 const sendQuestionnaires = require("./emails/sendQuestionnaires");
 const resendQuestionnaires = require("./emails/resendQuestionnaires");
-const exportQuestionnaires = require("./export/exportQuestionnaires");
+const exportQuestionnairesWithApprentis = require("./export/exportQuestionnairesWithApprentis");
 
 cli
   .command("send")
@@ -27,8 +27,8 @@ cli
 cli
   .command("export [outputFile]")
   .description("Export les questionnaires")
-  .action((outputFile) => {
-    runScript(({ db, logger }) => exportQuestionnaires(db, logger, outputFile));
+  .action((outputFile = "questionnaires.csv") => {
+    runScript(({ db, logger }) => exportQuestionnairesWithApprentis(db, logger, outputFile));
   });
 
 cli.parse(process.argv);
