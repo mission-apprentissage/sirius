@@ -1,10 +1,6 @@
-const { createWriteStream } = require("fs");
 const { oleoduc, transformObject } = require("oleoduc");
-const { encodeIntoUTF8, transformObjectIntoCSV } = require("../../core/streamUtils");
 
-module.exports = (db, logger, outputFile) => {
-  logger.info(`Generating CSV file ${outputFile}...`);
-
+module.exports = (db) => {
   let stream = db.collection("contrats").aggregate([
     { $match: { "questionnaires.status": "closed" } },
     { $unwind: "$questionnaires" },
@@ -41,8 +37,5 @@ module.exports = (db, logger, outputFile) => {
         nbReponses: result.nbReponses,
       };
     }),
-    transformObjectIntoCSV(),
-    encodeIntoUTF8(),
-    createWriteStream(outputFile),
   ]);
 };

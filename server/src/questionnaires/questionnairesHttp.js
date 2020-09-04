@@ -4,7 +4,8 @@ const { oleoduc, transformObject } = require("oleoduc");
 const tryCatch = require("../core/http/tryCatchMiddleware");
 const { sendHTML, sendJsonStream, sendCSVStream } = require("../core/http/httpUtils");
 const authMiddleware = require("../core/http/authMiddleware");
-const questionnairesStream = require("./questionnairesStream");
+const questionnairesStream = require("./streams/questionnairesStream");
+const reponsesStream = require("./streams/reponsesStream");
 
 module.exports = ({ db, config, questionnaires }) => {
   const router = express.Router(); // eslint-disable-line new-cap
@@ -138,7 +139,9 @@ module.exports = ({ db, config, questionnaires }) => {
         ])
         .stream();
 
-      if (type === "csv") {
+      if (type === "json") {
+        return sendJsonStream(stream, res);
+      } else {
         let csvStream = oleoduc(
           stream,
           transformObject((res) => {
@@ -154,8 +157,6 @@ module.exports = ({ db, config, questionnaires }) => {
         );
 
         return sendCSVStream(csvStream, res, { encoding: "UTF-8", filename: "questionnaires-stats.csv" });
-      } else {
-        return sendJsonStream(stream, res);
       }
     })
   );
@@ -169,15 +170,31 @@ module.exports = ({ db, config, questionnaires }) => {
       }).validateAsync(req.params, { abortEarly: false });
 
       let stream = questionnairesStream(db);
+      return type === "json"
+        ? sendJsonStream(stream, res)
+        : sendCSVStream(stream, res, {
+            encoding: "UTF-8",
+            filename: "questionnaires.csv",
+          });
+    })
+  );
 
-      if (type === "csv") {
-        sendCSVStream(stream, res, {
-          encoding: "UTF-8",
-          filename: "questionnaires.csv",
-        });
-      } else {
-        return sendJsonStream(stream, res);
-      }
+  router.get(
+    "/api/questionnaires/export-reponses.:type",
+    checkAuth,
+    tryCatch(async (req, res) => {
+      let { type } = await Joi.object({
+        type: Joi.string().required().allow("json", "csv"),
+      }).validateAsync(req.params, { abortEarly: false });
+
+      let stream = reponsesStream(db);
+
+      return type === "json"
+        ? sendJsonStream(stream, res)
+        : sendCSVStream(stream, res, {
+            encoding: "UTF-8",
+            filename: "reponses.csv",
+          });
     })
   );
 

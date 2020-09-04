@@ -1,7 +1,7 @@
 const { createWriteStream } = require("fs");
 const { oleoduc } = require("oleoduc");
 const { encodeIntoUTF8, transformObjectIntoCSV } = require("../../core/streamUtils");
-const questionnairesStream = require("../questionnairesStream");
+const questionnairesStream = require("../streams/questionnairesStream");
 
 module.exports = (db, logger, outputFile) => {
   logger.info(`Generating CSV file ${outputFile}...`);
