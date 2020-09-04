@@ -1,5 +1,5 @@
-const { oleoduc } = require("oleoduc");
-const { encodeStream } = require("../streamUtils");
+const { oleoduc, jsonStream } = require("oleoduc");
+const { encodeStream, transformObjectIntoCSV } = require("../streamUtils");
 
 module.exports = {
   sendCSVStream: (csvStream, res, options = {}) => {
@@ -8,11 +8,11 @@ module.exports = {
     res.setHeader("Content-disposition", `attachment; filename=${options.filename || "export.csv"}`);
     res.setHeader("Content-Type", `text/csv; charset=${encoding}`);
 
-    return oleoduc(csvStream, encodeStream(encoding), res);
+    return oleoduc(csvStream, transformObjectIntoCSV(), encodeStream(encoding), res);
   },
   sendJsonStream: (stream, res) => {
     res.setHeader("Content-Type", "application/json");
-    return oleoduc(stream, res);
+    return oleoduc(stream, jsonStream(), res);
   },
   sendHTML: (html, res) => {
     res.set("Content-Type", "text/html");

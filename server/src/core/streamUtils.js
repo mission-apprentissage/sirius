@@ -4,7 +4,7 @@ const { encodeStream } = require("iconv-lite");
 module.exports = {
   encodeStream,
   encodeIntoUTF8: () => encodeStream("UTF-8"),
-  transformObjectIntoCSV: (columns, options = {}) => {
+  transformObjectIntoCSV: (options = {}) => {
     let lines = 0;
     let separator = options.separator || ";";
     return new Transform({
@@ -12,12 +12,11 @@ module.exports = {
       transform: function (chunk, encoding, callback) {
         try {
           if (lines++ === 0) {
-            this.push(`${Object.keys(columns).join(separator)}\n`);
+            let columnNames = Object.keys(chunk).join(separator);
+            this.push(`${columnNames}\n`);
           }
 
-          let line = Object.keys(columns)
-            .map((key) => columns[key](chunk))
-            .join(separator);
+          let line = Object.values(chunk).join(separator);
           this.push(`${line}\n`);
           callback();
         } catch (e) {
