@@ -3,6 +3,7 @@ const runScript = require("../core/runScript");
 const sendQuestionnaires = require("./emails/sendQuestionnaires");
 const resendQuestionnaires = require("./emails/resendQuestionnaires");
 const exportQuestionnairesWithApprentis = require("./export/exportQuestionnairesWithApprentis");
+const exportReponses = require("./export/exportReponses");
 
 cli
   .command("send")
@@ -24,11 +25,19 @@ cli
     });
   });
 
-cli
-  .command("export [outputFile]")
-  .description("Export les questionnaires")
+let exportCmd = cli.command("export").description("Export des données du questionnaire");
+exportCmd
+  .command("all [outputFile]")
+  .description("Exporte toutes les données du questionnaire")
   .action((outputFile = "questionnaires.csv") => {
     runScript(({ db, logger }) => exportQuestionnairesWithApprentis(db, logger, outputFile));
+  });
+
+exportCmd
+  .command("reponses [outputFile]")
+  .description("Exporte les réponses regroupées par organisme de formation")
+  .action((outputFile = "reponses.csv") => {
+    runScript(({ db, logger }) => exportReponses(db, logger, outputFile));
   });
 
 cli.parse(process.argv);
