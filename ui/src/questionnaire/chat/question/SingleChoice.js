@@ -3,14 +3,23 @@ import PropTypes from "prop-types";
 import { Box } from "../../../common/Flexbox";
 import InputContext from "./QuestionContext";
 import { Option } from "../../toolkit";
+import { pick } from "lodash-es";
 
 const SingleChoice = ({ options }) => {
-  let { onData } = useContext(InputContext);
+  let { question, onReponse } = useContext(InputContext);
   return (
     <Box className={"options"} justify={"center"} direction={"column"} wrap={"wrap"}>
-      {options.map((option) => {
+      {options.map((option, index) => {
         return (
-          <Option key={option.value} onClick={() => onData(option)}>
+          <Option
+            key={index}
+            onClick={() => {
+              return onReponse({
+                id: question.id,
+                results: [pick(option, ["id", "label", "satisfaction"])],
+              });
+            }}
+          >
             {option.label}
           </Option>
         );
@@ -20,7 +29,7 @@ const SingleChoice = ({ options }) => {
 };
 SingleChoice.propTypes = {
   options: PropTypes.array,
-  onData: PropTypes.func,
+  onReponse: PropTypes.func,
 };
 
 export default SingleChoice;

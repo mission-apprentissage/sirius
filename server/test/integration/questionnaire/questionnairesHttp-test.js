@@ -154,7 +154,7 @@ httpTests(__filename, ({ startServer }) => {
 
     let response = await httpClient.put("/api/questionnaires/123456/addReponse", {
       id: "début",
-      data: { value: 1, label: "ok" },
+      results: [{ id: 1, label: "ok" }],
     });
 
     assert.strictEqual(response.status, 200);
@@ -162,7 +162,7 @@ httpTests(__filename, ({ startServer }) => {
     let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
     let finAnnee = found.questionnaires[0];
     assert.ok(finAnnee.updateDate);
-    assert.deepStrictEqual(finAnnee.reponses, [{ id: "début", data: { value: 1, label: "ok" } }]);
+    assert.deepStrictEqual(finAnnee.reponses, [{ id: "début", results: [{ id: 1, label: "ok" }] }]);
   });
 
   it("Vérifie qu'on ne peut pas ajouter une réponse à un questionnaire closed", async () => {
@@ -183,7 +183,7 @@ httpTests(__filename, ({ startServer }) => {
 
     let response = await httpClient.put("/api/questionnaires/123456/addReponse", {
       id: "début",
-      data: { value: 1, label: "ok" },
+      results: [{ id: 1, label: "ko" }],
     });
 
     assert.strictEqual(response.status, 400);
@@ -204,7 +204,7 @@ httpTests(__filename, ({ startServer }) => {
             type: "finAnnee",
             token: "123456",
             status: "inprogress",
-            reponses: [{ id: "début", data: { value: 1, label: "ok" } }],
+            reponses: [{ id: "début", results: [{ id: 1, label: "ok" }] }],
           },
         ],
       })
@@ -212,13 +212,13 @@ httpTests(__filename, ({ startServer }) => {
 
     let response = await httpClient.put("/api/questionnaires/123456/addReponse", {
       id: "début",
-      data: { value: 2, label: "ko" },
+      results: [{ id: 1, label: "other" }],
     });
 
     assert.strictEqual(response.status, 200);
     let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
     let finAnnee = found.questionnaires[0];
-    assert.deepStrictEqual(finAnnee.reponses, [{ id: "début", data: { value: 2, label: "ko" } }]);
+    assert.deepStrictEqual(finAnnee.reponses, [{ id: "début", results: [{ id: 1, label: "other" }] }]);
     assert.deepStrictEqual(finAnnee.status, "inprogress");
   });
 

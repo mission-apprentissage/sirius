@@ -4,13 +4,13 @@ import { delay } from "lodash-es";
 import { Entry, Avatar, Bubble } from "../../toolkit";
 import Loading from "../../../common/Loading";
 
-const Question = ({ message, input, active, onData = () => ({}) }) => {
+const Question = ({ message, input, active }) => {
   let [showMessage, setShowMessage] = useState(!active);
   let showInput = !!(active && input);
 
   useEffect(() => {
     if (!showMessage) {
-      delay(setShowMessage, 1000, true);
+      delay(setShowMessage, 1500, true);
     }
   }, [showMessage]);
 
@@ -18,7 +18,7 @@ const Question = ({ message, input, active, onData = () => ({}) }) => {
     <Entry align={"end"} width={"90%"} className={"Question"}>
       <Avatar />
       {showMessage ? (
-        <Bubble>
+        <Bubble animated={active}>
           {message}
           {showInput && input}
         </Bubble>

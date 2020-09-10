@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Question from "./question/Question";
 import { Entry, Reponse } from "../toolkit";
 import InputText from "./InputText";
-import { delay, omit } from "lodash-es";
+import { delay } from "lodash-es";
 import styled from "styled-components";
 import { Box } from "../../common/Flexbox";
 import { breakpoints } from "../../common/FlexboxGrid";
@@ -26,84 +26,73 @@ const WrapperBox = styled(Box).attrs(() => ({ className: "WrapperBox" }))`
   }
 `;
 
-const Questions = styled("div").attrs(() => ({ className: "Questions" }))`
+const Questions = styled(Box).attrs(() => ({ className: "Questions" }))`
   overflow-y: auto;
   overflow-x: hidden;
 `;
 
 const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
-  let [history, setHistory] = useState([questions[0].id]);
+  let [currentQuestion, setCurrentQuestion] = useState(questions[0]);
+  let [history, setHistory] = useState([]);
   let [height, setHeight] = useState("100%");
-  let [reponses, setReponses] = useState([]);
-  let currentQuestionId = history[history.length - 1];
-  let currentQuestion = questions.find((q) => q.id === currentQuestionId);
   let inputTextHeight = 80;
   let bottomRef = useRef(null);
   let wrapperRef = useRef(null);
-  let inputRef = useRef(null);
 
-  let handleInput = async (question, data = {}) => {
-    if (!question.auto) {
-      let reponse = { id: question.id, data: omit(data, ["next"]) };
-      setReponses([...reponses, reponse]);
+  let handleReponse = async (reponse, options = {}) => {
+    if (!!reponse.results) {
       await onReponse(reponse);
     }
 
-    let nextQuestionId = data.next || question.next;
-    let nextQuestion = questions.find((q) => q.id === nextQuestionId);
+    let nextQuestion = questions.find((q) => {
+      let nextQuestionId = options.next || currentQuestion.next;
+      return q.id === nextQuestionId;
+    });
+
     if (nextQuestion.last) {
-      await onEnd(question);
+      await onEnd(currentQuestion);
     }
 
-    setHistory([...history, nextQuestionId]);
+    setCurrentQuestion(nextQuestion);
+    setHistory([...history, reponse]);
     setHeight(wrapperRef.current.offsetHeight - inputTextHeight);
-
-    scrollTo(bottomRef, 1500);
+    //scrollTo(bottomRef, 4000);
   };
-
-  useEffect(() => {
-    if (currentQuestion.auto) {
-      setTimeout(() => handleInput(currentQuestion), 3000);
-      console.log(currentQuestion);
-    }
-  });
 
   return (
     <WrapperBox direction={"column"} justify={"between"} height={"100%"} ref={wrapperRef}>
-      <Questions style={{ height }}>
+      <Questions style={{ height }} direction={"column"} reverse={true}>
         {questions
-          .filter((q) => history.includes(q.id))
+          .filter((q) => q.id === currentQuestion.id || history.find((h) => h.id === q.id))
+          .reverse()
           .map((question) => {
             let { id, message, input } = question;
-            let isActive = id === currentQuestionId;
-            let allReponses = reponses.filter((r) => r.id === id);
+            let isActive = id === currentQuestion.id;
+            let previous = history.find((h) => h.id === id);
 
             return (
               <div key={id}>
-                <QuestionContext.Provider value={{ onData: (data) => handleInput(question, data) }}>
+                <QuestionContext.Provider value={{ question, onReponse: handleReponse }}>
                   <Question active={isActive} message={message} input={input} />
                 </QuestionContext.Provider>
 
-                {allReponses.length > 0 &&
-                  allReponses.map((response, index) => {
-                    return (
-                      <Entry key={index} direction={"row"} justify={"end"} align={"end"} width={"50%"} offset={"50%"}>
-                        <Reponse>{response.data.label}</Reponse>
-                      </Entry>
-                    );
-                  })}
+                {previous && previous.results && (
+                  <Entry direction={"row"} justify={"end"} align={"end"} width={"50%"} offset={"50%"}>
+                    <Reponse>{previous.results.map((r) => r.label).join(", ")}</Reponse>
+                  </Entry>
+                )}
               </div>
             );
           })}
         <div className={"bottom"} ref={bottomRef} />
       </Questions>
-
       <InputText
-        ref={inputRef}
         disabled={currentQuestion.last}
         onText={(text) => {
-          let question = questions.find((q) => q.id === currentQuestionId);
-          handleInput(question, text);
+          return handleReponse({
+            id: currentQuestion.id,
+            results: [{ id: 0, label: text }],
+          });
         }}
       />
     </WrapperBox>

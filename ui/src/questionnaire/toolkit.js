@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Box } from "../common/Flexbox";
 import { appear } from "../common/utils/animations";
 import { primary, secondary } from "../common/utils/colors";
@@ -18,9 +18,14 @@ export const Avatar = styled.img.attrs(() => ({ src: avatar, alt: "logo" }))`
   color: ${primary};
 `;
 
+const makeElementAppear = () =>
+  css`
+    ${appear} 0.3s ease forwards;
+  `;
+
 export const Bubble = styled.div.attrs(() => ({ className: "question" }))`
   font-size: 16rem;
-  animation: ${appear} 0.3s ease forwards;
+  animation: ${(props) => (props.animated ? makeElementAppear : "none")};
   background-color: #f7f3ff;
   padding: 20px;
   border-radius: 35px 35px 35px 10px;

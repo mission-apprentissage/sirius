@@ -48,7 +48,15 @@ module.exports = ({ db, config, questionnaires }) => {
       let { token } = req.params;
       let reponse = await Joi.object({
         id: Joi.string().required(),
-        data: Joi.any().required(),
+        results: Joi.array()
+          .items(
+            Joi.object({
+              id: Joi.number().required(),
+              satisfaction: Joi.string().allow("BON", "MOYEN", "MAUVAIS"),
+              label: Joi.string().required(),
+            })
+          )
+          .required(),
       }).validateAsync(req.body, { abortEarly: false });
 
       await questionnaires.addReponse(token, reponse);
