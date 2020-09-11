@@ -64,7 +64,7 @@ export default ({ apprenti }) => {
           <Highlight>C'est parti. Ca prendra moins de 3 minutes !</Highlight>
         </Message>
       ),
-      input: <Auto timeout={1000} />,
+      input: <Auto />,
       next: "fierteMessage1",
     },
     {

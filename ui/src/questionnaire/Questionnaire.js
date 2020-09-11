@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
-import { usePut } from "../common/hooks/useHttp";
+import { usePut } from "../common/hooks/httpHooks";
 import Chat from "./chat/Chat";
 import questionsErreur from "./questionnaires/erreur";
 import questionsFinAnnee from "./questionnaires/finAnnee";

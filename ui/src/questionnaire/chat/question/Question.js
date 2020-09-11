@@ -1,27 +1,15 @@
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { delay } from "lodash-es";
 import { Entry, Avatar, Bubble } from "../../toolkit";
 import Loading from "../../../common/Loading";
-
-const scrollTo = (ref, timeout = 0, options = { block: "end", behavior: "smooth" }) => {
-  delay((values) => ref.current.scrollIntoView(values), timeout, options);
-};
-function useHookWithRefCallback() {
-  const ref = useRef(null);
-  const setRef = useCallback((node) => {
-    if (node) {
-      ref.current = node;
-    }
-  }, []);
-
-  return [ref, setRef];
-}
+import { useRefCallback } from "../../../common/hooks/refHooks";
+import scrollToElement from "../../../common/utils/scrollToElement";
 
 const Question = ({ message, input, active }) => {
   let [showMessage, setShowMessage] = useState(!active);
   let showInput = !!(active && input);
-  const [ref, setRef] = useHookWithRefCallback();
+  const [ref, setRef] = useRefCallback();
 
   useEffect(() => {
     if (!showMessage) {
@@ -31,7 +19,7 @@ const Question = ({ message, input, active }) => {
 
   useEffect(() => {
     if (active && ref) {
-      scrollTo(ref, 100);
+      scrollToElement(ref.current, 100);
     }
   }, [active, ref, showMessage]);
 
