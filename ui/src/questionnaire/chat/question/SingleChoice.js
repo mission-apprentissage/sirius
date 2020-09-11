@@ -14,10 +14,13 @@ const SingleChoice = ({ options }) => {
           <Option
             key={index}
             onClick={() => {
-              return onReponse({
-                id: question.id,
-                results: [pick(option, ["id", "label", "satisfaction"])],
-              });
+              return onReponse(
+                {
+                  id: question.id,
+                  results: [pick(option, ["id", "label", "satisfaction"])],
+                },
+                { next: option.next }
+              );
             }}
           >
             {option.label}

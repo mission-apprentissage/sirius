@@ -215,7 +215,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "difficultesPrecisionsMessage1",
-      message: <Message>Merci pour partage.</Message>,
+      message: <Message>Merci pour le partage.</Message>,
       input: <Auto />,
       next: "difficultesPrecisionsMessage2",
     },
