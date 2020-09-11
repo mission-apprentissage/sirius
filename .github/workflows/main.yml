@@ -1,0 +1,48 @@
+name: CI
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.18.2
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.3.0
+        with:
+          mongodb-version: 4.2.6
+
+      - run: yarn --cwd server install
+      - run: yarn --cwd server test
+
+      - uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+        if: failure()
+
+  trigger_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current branch name
+        uses: mdecoleman/pr-branch-name@1.0.0
+        id: vars
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          repository: mission-apprentissage/sirius-infra
+          token: ${{ secrets.DEVOPS_ACCESS_TOKEN }}
+          event-type: deploy
+          client-payload: '{"envName": "recette", "branchName":"${{ steps.vars.outputs.branch }}"}'
+        if: github.ref == 'ref/head/develop'
