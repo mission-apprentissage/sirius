@@ -6,10 +6,11 @@ on:
     branches: [ master, develop ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout project
+        uses: actions/checkout@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v1
@@ -24,25 +25,26 @@ jobs:
       - run: yarn --cwd server install
       - run: yarn --cwd server test
 
-      - uses: act10ns/slack@v1
+      - name: Send slack notification
+        uses: act10ns/slack@v1
         with:
           status: ${{ job.status }}
         if: failure()
 
-  trigger_deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Get current branch name
-        uses: mdecoleman/pr-branch-name@1.0.0
-        id: vars
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout project
+        uses: actions/checkout@v2
 
-      - name: Repository Dispatch
+      - name: Check output
+        run: echo ${{ github.head_ref }}
+
+      - name: Request deployment
         uses: peter-evans/repository-dispatch@v1
         with:
           repository: mission-apprentissage/sirius-infra
           token: ${{ secrets.DEVOPS_ACCESS_TOKEN }}
           event-type: deploy
-          client-payload: '{"envName": "recette", "branchName":"${{ steps.vars.outputs.branch }}"}'
+          client-payload: '{"envName": "recette", "branchName":"${{ github.head_ref }}"}'
         if: github.ref == 'ref/head/develop'
