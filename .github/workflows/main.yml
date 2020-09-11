@@ -37,8 +37,14 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v2
 
+      - shell: bash
+        run: echo '::set-env name=SIRIUS_HEAD_REF::${{ github.head_ref }}'
+
+      - shell: bash
+        run: echo '::set-env name=SIRIUS_REF::${{ github.ref }}'
+
       - name: Check output
-        run: echo ${{ github.head_ref }}
+        run: echo ${SIRIUS_HEAD_REF:-${SIRIUS_REF##*/}}
 
       - name: Request deployment
         uses: peter-evans/repository-dispatch@v1
