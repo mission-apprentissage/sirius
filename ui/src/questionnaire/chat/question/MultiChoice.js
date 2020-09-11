@@ -18,7 +18,6 @@ const MultiChoice = ({ options }) => {
             <Option
               key={index}
               selected={selectedOptions.filter((o) => o.id === option.id).length > 0}
-              selected={selectedOptions.filter((o) => o.id === option.id).length > 0}
               onClick={() => {
                 if (option.next) {
                   return onReponse(
