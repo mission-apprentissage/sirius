@@ -80,10 +80,10 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
       </Questions>
       <InputText
         disabled={currentQuestion.last}
-        onText={(text) => {
+        onText={(value) => {
           return handleReponse({
             id: currentQuestion.id,
-            results: [{ id: 0, label: text }],
+            results: [{ id: 0, label: value }],
           });
         }}
       />
