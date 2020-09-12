@@ -37,12 +37,17 @@ jobs:
       - shell: bash
         run: echo '::set-env name=SIRIUS_HEAD_REF::${{ github.head_ref }}'
 
+      - name: Get the current branch name
+        shell: bash
+        run: echo "::set-output name=branchName::${SIRIUS_HEAD_REF:-${GITHUB_REF##*/}}"
+        id: vars
+
       - shell: bash
-        run: echo '::set-env name=SIRIUS_REF::${{ github.ref }}'
+        run: echo "${{steps.vars.outputs.branchName}}"
 
       - name: Checkout project
         uses: actions/checkout@v2
-        if: github.ref == 'ref/head/develop'
+        if: github.ref == 'refs/heads/develop'
 
       - name: Request deployment
         uses: peter-evans/repository-dispatch@v1
@@ -50,5 +55,5 @@ jobs:
           repository: mission-apprentissage/sirius-infra
           token: ${{ secrets.DEVOPS_ACCESS_TOKEN }}
           event-type: deploy
-          client-payload: '{"envName": "recette", "branchName":"${SIRIUS_HEAD_REF:-${SIRIUS_REF##*/}}"}'
-        if: github.ref == 'ref/head/develop'
+          client-payload: '{"envName": "recette", "branchName":"${{ steps.vars.outputs.branchName }}"}'
+        if: github.ref == 'refs/heads/develop'
