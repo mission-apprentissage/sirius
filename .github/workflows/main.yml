@@ -34,17 +34,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout project
-        uses: actions/checkout@v2
-
       - shell: bash
         run: echo '::set-env name=SIRIUS_HEAD_REF::${{ github.head_ref }}'
 
       - shell: bash
         run: echo '::set-env name=SIRIUS_REF::${{ github.ref }}'
 
-      - name: Check output
-        run: echo ${SIRIUS_HEAD_REF:-${SIRIUS_REF##*/}}
+      - name: Checkout project
+        uses: actions/checkout@v2
+        if: github.ref == 'ref/head/develop'
 
       - name: Request deployment
         uses: peter-evans/repository-dispatch@v1
@@ -52,5 +50,5 @@ jobs:
           repository: mission-apprentissage/sirius-infra
           token: ${{ secrets.DEVOPS_ACCESS_TOKEN }}
           event-type: deploy
-          client-payload: '{"envName": "recette", "branchName":"${{ github.head_ref }}"}'
+          client-payload: '{"envName": "recette", "branchName":"${SIRIUS_HEAD_REF:-${SIRIUS_REF##*/}}"}'
         if: github.ref == 'ref/head/develop'
