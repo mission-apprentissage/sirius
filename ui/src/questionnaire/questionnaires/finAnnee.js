@@ -241,46 +241,39 @@ export default ({ apprenti }) => {
             {
               id: 1000,
               label: "mon CFA",
-              next: "difficultesConseil",
             },
             {
               id: 3000,
               label: "Mes collègues de travail",
-              next: "difficultesConseil",
             },
             {
               id: 2500,
               label: "Les congés",
-              next: "difficultesConseil",
             },
             {
               id: 5000,
               label: "Les transports",
-              next: "difficultesConseil",
             },
             {
               id: 2000,
               label: "mon tuteur",
-              next: "difficultesAlerteCfa",
             },
             {
               id: 4000,
               label: "Le rythme vie pro / vie perso",
-              next: "difficultesAlerteCfa",
             },
             {
               id: 6000,
               label: "Difficultés financières",
-              next: "difficultesAlerteCfa",
             },
             {
               id: 7000,
               label: "Le logement",
-              next: "difficultesAlerteCfa",
             },
           ]}
         />
       ),
+      next: "difficultesConseil",
     },
     {
       id: "difficultesConseil",
@@ -327,32 +320,7 @@ export default ({ apprenti }) => {
       input: <Skip />,
     },
     {
-      id: "difficultesAlerteCfa",
-      message: <Message>Souhaitez-vous que ces informations soient transmises au CFA pour avoir de l'aide ?</Message>,
-      input: (
-        <SingleChoice
-          options={[
-            {
-              id: 1000,
-              label: "Non merci",
-            },
-            {
-              id: 2000,
-              label: "Oui",
-            },
-          ]}
-        />
-      ),
-      next: "ambianceMessage1",
-    },
-    {
       id: "ambianceMessage1",
-      message: <Message>Merci pour eux</Message>,
-      input: <Auto />,
-      next: "ambianceMessage2",
-    },
-    {
-      id: "ambianceMessage2",
       message: <Message>C'est presque terminé ! 4 questions rapides pour finir</Message>,
       input: <Auto />,
       next: "ambiance",
