@@ -16,16 +16,16 @@ const AnimatedIcon = styled(HandDownIcon)`
 `;
 
 const Skip = () => {
-  let { onData } = useContext(InputContext);
+  let { question, onReponse } = useContext(InputContext);
 
   return (
     <Box justify={"between"} align={"end"}>
       <AnimatedIcon />
       <ChoiceButton
         onClick={() => {
-          return onData({
-            value: "skip",
-            label: "Non merci",
+          return onReponse({
+            id: question.id,
+            results: [{ id: 1000, label: "Non merci" }],
           });
         }}
       >
@@ -38,7 +38,7 @@ const Skip = () => {
   );
 };
 Skip.propTypes = {
-  onData: PropTypes.func,
+  onReponse: PropTypes.func,
 };
 
 export default Skip;
