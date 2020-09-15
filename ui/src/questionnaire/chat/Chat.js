@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { Box } from "../../common/Flexbox";
 import { breakpoints } from "../../common/FlexboxGrid";
 import QuestionContext from "./question/QuestionContext";
+import { isEmpty } from "lodash-es";
 
 const noop = () => ({});
 
@@ -27,16 +28,18 @@ const Questions = styled(Box).attrs(() => ({ className: "Questions" }))`
   overflow-x: hidden;
 `;
 
-const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
+const Chat = ({ questions, onResults = noop, onEnd = noop }) => {
   let [currentQuestion, setCurrentQuestion] = useState(questions[0]);
-  let [history, setHistory] = useState([]);
+  let [history, setHistory] = useState({});
   let [height, setHeight] = useState("100%");
   let inputTextHeight = 80;
   let wrapperRef = useRef(null);
 
-  let handleReponse = async (reponse, options = {}) => {
-    if (!!reponse.results) {
-      await onReponse(reponse);
+  let handleNext = async (data, options = {}) => {
+    let reponses = Array.isArray(data) ? data : data ? [data] : null;
+
+    if (!isEmpty(reponses)) {
+      await onResults(currentQuestion.id, reponses);
     }
 
     let nextQuestion = questions.find((q) => {
@@ -49,7 +52,7 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
     }
 
     setCurrentQuestion(nextQuestion);
-    setHistory([...history, reponse]);
+    setHistory({ ...history, [currentQuestion.id]: reponses });
     setHeight(wrapperRef.current.offsetHeight - inputTextHeight);
   };
 
@@ -57,43 +60,34 @@ const Chat = ({ questions, onReponse = noop, onEnd = noop }) => {
     <WrapperBox direction={"column"} justify={"between"} height={"100%"} ref={wrapperRef}>
       <Questions style={{ height }} direction={"column"}>
         {questions
-          .filter((q) => q.id === currentQuestion.id || history.find((h) => h.id === q.id))
+          .filter((question) => question.id === currentQuestion.id || question.id in history)
           .map((question) => {
-            let { id, message, input } = question;
-            let isActive = id === currentQuestion.id;
-            let previous = history.find((h) => h.id === id);
+            let isActive = question.id === currentQuestion.id;
+            let previous = question.id in history;
 
             return (
-              <div key={id}>
-                <QuestionContext.Provider value={{ question, onReponse: handleReponse }}>
-                  <Question active={isActive} message={message} input={input} />
+              <div key={question.id}>
+                <QuestionContext.Provider value={{ question, next: handleNext }}>
+                  <Question active={isActive} message={question.message} input={question.input} />
                 </QuestionContext.Provider>
 
-                {previous && previous.results && (
+                {previous && previous.reponses && (
                   <Entry direction={"row"} justify={"end"} align={"end"} width={"50%"} offset={"50%"}>
-                    <Reponse>{previous.results.map((r) => r.label).join(", ")}</Reponse>
+                    <Reponse>{previous.reponses.map((r) => r.label).join(", ")}</Reponse>
                   </Entry>
                 )}
               </div>
             );
           })}
       </Questions>
-      <InputText
-        disabled={currentQuestion.last}
-        onText={(value) => {
-          return handleReponse({
-            id: currentQuestion.id,
-            results: [{ id: 0, label: value }],
-          });
-        }}
-      />
+      <InputText disabled={currentQuestion.last} onText={(value) => handleNext({ id: 0, label: value })} />
     </WrapperBox>
   );
 };
 
 Chat.propTypes = {
   questions: PropTypes.array.isRequired,
-  onReponse: PropTypes.func,
+  onResults: PropTypes.func,
   onEnd: PropTypes.func,
 };
 

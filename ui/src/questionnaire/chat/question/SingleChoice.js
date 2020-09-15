@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import { Box } from "../../../common/Flexbox";
-import InputContext from "./QuestionContext";
+import QuestionContext from "./QuestionContext";
 import { Option } from "../../toolkit";
 import { pick } from "lodash-es";
 
 const SingleChoice = ({ options }) => {
-  let { question, onReponse } = useContext(InputContext);
+  let { next } = useContext(QuestionContext);
   return (
     <Box className={"options"} justify={"center"} direction={"column"} wrap={"wrap"}>
       {options.map((option, index) => {
@@ -14,13 +14,8 @@ const SingleChoice = ({ options }) => {
           <Option
             key={index}
             onClick={() => {
-              return onReponse(
-                {
-                  id: question.id,
-                  results: [pick(option, ["id", "label", "satisfaction"])],
-                },
-                { next: option.next }
-              );
+              let reponse = pick(option, ["id", "label", "satisfaction"]);
+              return next(reponse, { next: option.next });
             }}
           >
             {option.label}

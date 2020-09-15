@@ -21,7 +21,7 @@ module.exports = (db, mailer, contrats) => {
               type,
               token,
               nbEmailsSent: 0,
-              reponses: [],
+              questions: [],
             },
           },
         }
@@ -108,7 +108,7 @@ module.exports = (db, mailer, contrats) => {
           $set: {
             "questionnaires.$.updateDate": new Date(),
             "questionnaires.$.status": "clicked",
-            "questionnaires.$.reponses": [],
+            "questionnaires.$.questions": [],
           },
         },
         { returnOriginal: false }
@@ -129,10 +129,9 @@ module.exports = (db, mailer, contrats) => {
         },
       };
     },
-    addReponse: async (token, reponse) => {
+    answerToQuestion: async (token, questionId, reponses) => {
       let contrat = await contrats.getContratByToken(token);
       let questionnaire = contrat.questionnaires.find((q) => q.token === token);
-      let reponses = [...questionnaire.reponses.filter((r) => r.id !== reponse.id), reponse];
 
       if (questionnaire.status === "closed") {
         throw Boom.badRequest("Le questionnaire n'est plus disponible");
@@ -144,7 +143,13 @@ module.exports = (db, mailer, contrats) => {
           $set: {
             "questionnaires.$.updateDate": new Date(),
             "questionnaires.$.status": "inprogress",
-            "questionnaires.$.reponses": reponses,
+            "questionnaires.$.questions": [
+              ...questionnaire.questions.filter((q) => q.id !== questionId),
+              {
+                id: questionId,
+                reponses,
+              },
+            ],
           },
         },
         { returnOriginal: false }

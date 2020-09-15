@@ -37,8 +37,8 @@ export default () => {
       <Box justify={"center"} height={"100%"}>
         <Chat
           questions={questions}
-          onReponse={(reponse) => {
-            return _put(`/api/questionnaires/${token}/addReponse`, reponse);
+          onResults={(questionId, reponses) => {
+            return _put(`/api/questionnaires/${token}/questions/${questionId}`, reponses);
           }}
           onEnd={() => _put(`/api/questionnaires/${token}/close`)}
         />

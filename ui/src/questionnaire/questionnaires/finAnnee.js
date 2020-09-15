@@ -267,7 +267,7 @@ export default ({ apprenti }) => {
               label: "Difficultés financières",
             },
             {
-              id: 7000,
+              id: 5500,
               label: "Le logement",
             },
           ]}
@@ -291,7 +291,7 @@ export default ({ apprenti }) => {
               label: "J’en ai parlé à mon tuteur",
             },
             {
-              id: 2000,
+              id: 3000,
               satisfaction: "BON",
               label: "J’en ai parlé au médiateur",
             },
@@ -300,7 +300,7 @@ export default ({ apprenti }) => {
               label: "Je n’ai rien dit à personne",
             },
             {
-              id: 3000,
+              id: 2500,
               satisfaction: "BON",
               label: "J’en ai parlé au CFA",
             },
@@ -402,16 +402,12 @@ export default ({ apprenti }) => {
               label: "Récents",
             },
             {
-              id: 2000,
-              label: "Equivalents à ceux de l' entreprise",
-            },
-            {
               id: 3000,
               label: "Inadaptés",
             },
             {
-              id: 4000,
-              label: "Différents du matériel utilisé en entreprise",
+              id: 3500,
+              label: "Equivalents à ceux de l'entreprise",
             },
           ]}
         />

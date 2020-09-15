@@ -2,12 +2,12 @@ import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import { Box } from "../../../common/Flexbox";
 import { ChevronIcon } from "../../../common/FontAwesome";
-import InputContext from "./QuestionContext";
+import QuestionContext from "./QuestionContext";
 import { ChoiceButton, Option } from "../../toolkit";
 import { pick } from "lodash-es";
 
 const MultiChoice = ({ options }) => {
-  let { question, onReponse } = useContext(InputContext);
+  let { next } = useContext(QuestionContext);
   let [selectedOptions, setOptionsSelected] = useState([]);
 
   return (
@@ -20,13 +20,8 @@ const MultiChoice = ({ options }) => {
               selected={selectedOptions.filter((o) => o.id === option.id).length > 0}
               onClick={() => {
                 if (option.next) {
-                  return onReponse(
-                    {
-                      id: question.id,
-                      results: [pick(option, ["id", "label", "satisfaction"])],
-                    },
-                    { next: option.next }
-                  );
+                  let reponse = pick(option, ["id", "label", "satisfaction"]);
+                  return next(reponse, { next: option.next });
                 }
 
                 let isAlreadySelected = selectedOptions.find((o) => o.id === option.id);
@@ -46,10 +41,8 @@ const MultiChoice = ({ options }) => {
         <ChoiceButton
           disabled={selectedOptions.length === 0}
           onClick={() => {
-            return onReponse({
-              id: question.id,
-              results: selectedOptions.map((option) => pick(option, ["id", "label", "satisfaction"])),
-            });
+            let reponses = selectedOptions.map((option) => pick(option, ["id", "label", "satisfaction"]));
+            return next(reponses);
           }}
         >
           <Box justify={"between"} align={"center"}>

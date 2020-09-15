@@ -43,23 +43,21 @@ module.exports = ({ db, config, questionnaires }) => {
   );
 
   router.put(
-    "/api/questionnaires/:token/addReponse",
+    "/api/questionnaires/:token/questions/:questionId",
     tryCatch(async (req, res) => {
-      let { token } = req.params;
-      let reponse = await Joi.object({
-        id: Joi.string().required(),
-        results: Joi.array()
-          .items(
-            Joi.object({
-              id: Joi.number().required(),
-              satisfaction: Joi.string().allow("BON", "MOYEN", "MAUVAIS"),
-              label: Joi.string().required(),
-            })
-          )
-          .required(),
-      }).validateAsync(req.body, { abortEarly: false });
+      let { token, questionId } = req.params;
+      let reponses = await Joi.array()
+        .items(
+          Joi.object({
+            id: Joi.number().required(),
+            satisfaction: Joi.string().allow("BON", "MOYEN", "MAUVAIS"),
+            label: Joi.string().required(),
+          })
+        )
+        .required()
+        .validateAsync(req.body, { abortEarly: false });
 
-      await questionnaires.addReponse(token, reponse);
+      await questionnaires.answerToQuestion(token, questionId, reponses);
 
       res.json({});
     })

@@ -4,7 +4,7 @@ const injectData = require("./dataset/injectData");
 const createIndexes = require("./indexes/createIndexes");
 const dropIndexes = require("./indexes/dropIndexes");
 const capLogs = require("./indexes/capLogs");
-const renameKebabCase = require("./migration/renameKebabCase");
+const reworkQuestionnaires = require("./migration/reworkQuestionnaires");
 
 let indexes = cli.command("indexes").description("Gestion des indexes");
 indexes
@@ -33,7 +33,7 @@ cli
   .action(() => {
     runScript(async ({ db }) => {
       return {
-        renameKebabCase: await renameKebabCase(db),
+        reworkQuestionnaires: await reworkQuestionnaires(db),
       };
     });
   });

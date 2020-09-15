@@ -1,13 +1,13 @@
 import React, { useContext, useEffect } from "react";
 import { delay } from "lodash-es";
-import InputContext from "./QuestionContext";
+import QuestionContext from "./QuestionContext";
 
 const Auto = ({ timeout = 3000 }) => {
-  let { question, onReponse } = useContext(InputContext);
+  let { next } = useContext(QuestionContext);
 
   useEffect(() => {
-    delay(() => onReponse({ id: question.id }), timeout, true);
-  }, [timeout, onReponse, question.id]);
+    delay(() => next(), timeout, true);
+  }, [next, timeout]);
 
   return <div className={"Auto"} />;
 };
