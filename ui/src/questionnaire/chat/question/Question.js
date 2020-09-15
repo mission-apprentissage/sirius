@@ -13,7 +13,7 @@ const Question = ({ message, input, active }) => {
 
   useEffect(() => {
     if (!showMessage) {
-      delay(setShowMessage, 1000, true);
+      delay(setShowMessage, 1500, true);
     }
   }, [showMessage]);
 
