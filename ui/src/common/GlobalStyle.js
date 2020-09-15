@@ -88,6 +88,10 @@ export default createGlobalStyle`
   .pt-1 {
     padding-top: 10rem;
   }
+  
+  .pb-1 {
+    padding-bottom: 10rem;
+  }
 
   .hide-sm {
     @media (max-width: ${breakpoints.sm.max}) {

@@ -50,7 +50,7 @@ export default ({ apprenti }) => {
           <p>Les avis seront en ligne en février 2021 et cela ressemblera à ça</p>
           <Box direction={"column"} align="center">
             <img src={logoLBA} alt={"Logo du site La Bonne Formation"} width="30%" />
-            <img src={siriusFutur} alt={"Interface graphique de Sirius"} />
+            <img src={siriusFutur} className="pb-1" alt={"Interface graphique de Sirius"} />
           </Box>
         </Message>
       ),
