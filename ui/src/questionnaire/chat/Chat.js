@@ -63,7 +63,7 @@ const Chat = ({ questions, onResults = noop, onEnd = noop }) => {
           .filter((question) => question.id === currentQuestion.id || question.id in history)
           .map((question) => {
             let isActive = question.id === currentQuestion.id;
-            let previous = question.id in history;
+            let previousReponses = history[question.id];
 
             return (
               <div key={question.id}>
@@ -71,9 +71,9 @@ const Chat = ({ questions, onResults = noop, onEnd = noop }) => {
                   <Question active={isActive} message={question.message} input={question.input} />
                 </QuestionContext.Provider>
 
-                {previous && previous.reponses && (
+                {previousReponses && previousReponses && (
                   <Entry direction={"row"} justify={"end"} align={"end"} width={"50%"} offset={"50%"}>
-                    <Reponse>{previous.reponses.map((r) => r.label).join(", ")}</Reponse>
+                    <Reponse>{previousReponses.map((r) => r.label).join(", ")}</Reponse>
                   </Entry>
                 )}
               </div>
