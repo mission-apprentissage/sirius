@@ -393,7 +393,12 @@ export default ({ apprenti }) => {
     },
     {
       id: "ateliers",
-      message: <Message>Diriez-vous que les ateliers/plateaux techniques sont : </Message>,
+      message: (
+        <Message>
+          <Highlight>Diriez-vous que les ateliers/plateaux techniques sont : </Highlight>
+          <Tips>(plusieurs réponses possibles)</Tips>
+        </Message>
+      ),
       input: (
         <MultiChoice
           options={[
