@@ -152,7 +152,7 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/123456/questions/début", [{ id: 1, label: "ok" }]);
+    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", [{ id: 1, label: "ok" }]);
 
     assert.strictEqual(response.status, 200);
 
@@ -178,7 +178,7 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/123456/questions/début", [{ id: 1, label: "ko" }]);
+    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", [{ id: 1, label: "ko" }]);
 
     assert.strictEqual(response.status, 400);
     assert.deepStrictEqual(response.data, {
@@ -204,7 +204,7 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/123456/questions/début", [{ id: 1, label: "other" }]);
+    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", [{ id: 1, label: "other" }]);
 
     assert.strictEqual(response.status, 200);
     let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });

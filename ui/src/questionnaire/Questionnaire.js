@@ -38,7 +38,7 @@ export default () => {
         <Chat
           questions={questions}
           onResults={(questionId, reponses) => {
-            return _put(`/api/questionnaires/${token}/questions/${questionId}`, reponses);
+            return _put(`/api/questionnaires/${token}/answerToQuestion/${questionId}`, reponses);
           }}
           onEnd={() => _put(`/api/questionnaires/${token}/close`)}
         />

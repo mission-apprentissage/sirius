@@ -43,7 +43,7 @@ module.exports = ({ db, config, questionnaires }) => {
   );
 
   router.put(
-    "/api/questionnaires/:token/questions/:questionId",
+    "/api/questionnaires/:token/answerToQuestion/:questionId",
     tryCatch(async (req, res) => {
       let { token, questionId } = req.params;
       let reponses = await Joi.array()
