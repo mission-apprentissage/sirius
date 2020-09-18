@@ -37,7 +37,7 @@ integrationTests(__filename, ({ getComponents }) => {
       status: "sent",
       nbEmailsSent: 1,
       token,
-      reponses: [],
+      questions: [],
     });
 
     //Check emails

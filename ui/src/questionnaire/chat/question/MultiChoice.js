@@ -2,30 +2,33 @@ import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import { Box } from "../../../common/Flexbox";
 import { ChevronIcon } from "../../../common/FontAwesome";
-import InputContext from "./QuestionContext";
+import QuestionContext from "./QuestionContext";
 import { ChoiceButton, Option } from "../../toolkit";
+import { pick } from "lodash-es";
 
 const MultiChoice = ({ options }) => {
-  let { onData } = useContext(InputContext);
-  let [values, setValues] = useState([]);
+  let { next } = useContext(QuestionContext);
+  let [selectedOptions, setOptionsSelected] = useState([]);
 
   return (
     <div className={"MultiChoise"}>
       <Box justify={"center"} wrap={"wrap"} direction={"column"}>
-        {options.map((option) => {
+        {options.map((option, index) => {
           return (
             <Option
-              key={option.value}
-              selected={values.includes(option.value)}
+              key={index}
+              selected={selectedOptions.filter((o) => o.id === option.id).length > 0}
               onClick={() => {
                 if (option.next) {
-                  return onData(option);
+                  let reponse = pick(option, ["id", "label", "satisfaction"]);
+                  return next(reponse, { next: option.next });
                 }
 
-                if (values.includes(option.value)) {
-                  setValues(values.filter((v) => v !== option.value));
+                let isAlreadySelected = selectedOptions.find((o) => o.id === option.id);
+                if (isAlreadySelected) {
+                  setOptionsSelected(selectedOptions.filter((o) => o.id !== option.id));
                 } else {
-                  setValues([...values, option.value]);
+                  setOptionsSelected([...selectedOptions, option]);
                 }
               }}
             >
@@ -36,19 +39,10 @@ const MultiChoice = ({ options }) => {
       </Box>
       <Box justify={"end"}>
         <ChoiceButton
-          disabled={values.length === 0}
+          disabled={selectedOptions.length === 0}
           onClick={() => {
-            let results = values.map((c) => {
-              return options.find((o) => o.value === c);
-            });
-
-            if (results.find((r) => r.extra === "text")) {
-            }
-
-            return onData({
-              value: results.map((o) => o.value),
-              label: `${results.map((r) => r.label).join(", ")}`,
-            });
+            let reponses = selectedOptions.map((option) => pick(option, ["id", "label", "satisfaction"]));
+            return next(reponses);
           }}
         >
           <Box justify={"between"} align={"center"}>
@@ -63,7 +57,7 @@ const MultiChoice = ({ options }) => {
 MultiChoice.propTypes = {
   options: PropTypes.array,
   next: PropTypes.string,
-  onData: PropTypes.func,
+  onReponse: PropTypes.func,
 };
 
 export default MultiChoice;

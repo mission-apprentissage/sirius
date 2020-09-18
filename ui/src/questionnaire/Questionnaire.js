@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
-import { usePut } from "../common/hooks/useHttp";
+import { usePut } from "../common/hooks/httpHooks";
 import Chat from "./chat/Chat";
 import questionsErreur from "./questionnaires/erreur";
 import questionsFinAnnee from "./questionnaires/finAnnee";
@@ -37,7 +37,9 @@ export default () => {
       <Box justify={"center"} height={"100%"}>
         <Chat
           questions={questions}
-          onReponse={(reponse) => _put(`/api/questionnaires/${token}/addReponse`, reponse)}
+          onResults={(questionId, reponses) => {
+            return _put(`/api/questionnaires/${token}/answerToQuestion/${questionId}`, reponses);
+          }}
           onEnd={() => _put(`/api/questionnaires/${token}/close`)}
         />
         <Background className={"hide-sm"} />

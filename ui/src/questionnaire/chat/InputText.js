@@ -84,14 +84,14 @@ const InputText = React.forwardRef(({ onText, disabled }, ref) => {
 
   const handleClick = () => {
     if (value) {
-      onText({ value, label: value });
+      onText(value);
       setValue("");
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && value) {
-      onText({ value, label: value });
+      onText(value);
       setValue("");
     }
   };
