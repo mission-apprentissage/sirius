@@ -2,7 +2,6 @@ const { oleoduc, writeObject } = require("oleoduc");
 const { delay } = require("../../core/asyncUtils");
 
 module.exports = async (db, logger, questionnaires, options = {}) => {
-  let type = "finAnnee";
   let limit = options.limit || 1;
   let stats = {
     total: 0,
@@ -11,14 +10,20 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
   };
 
   await oleoduc(
-    db.collection("contrats").find({ unsubscribe: false, "questionnaires.nbEmailsSent": { $lt: 2 } }),
+    db.collection("contrats").find({ unsubscribe: false }),
     writeObject(
       async (contrat) => {
         try {
-          let results = contrat.questionnaires.filter(({ status }) => status && status !== "closed");
-          if (results.length > 0 && ++stats.total <= limit) {
-            logger.info(`Resending questionnaire ${type} to ${contrat.apprenti.email}`);
-            await Promise.all(results.map((q) => questionnaires.sendEmail(q.token)));
+          let results = contrat.questionnaires.filter((q) => q.status && q.status !== "closed" && q.nbEmailsSent < 2);
+          stats.total += results.length;
+
+          if (results.length > 0 && stats.sent <= limit) {
+            await Promise.all(
+              results.map((q) => {
+                logger.info(`Resending questionnaire ${q.type} to ${contrat.apprenti.email}`);
+                return questionnaires.sendEmail(q.token);
+              })
+            );
             await delay(100);
             stats.sent += results.length;
           }
