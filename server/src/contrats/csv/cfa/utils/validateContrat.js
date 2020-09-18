@@ -19,9 +19,9 @@ let schema = Joi.object({
     intitule: Joi.string().required(),
     anneePromotion: Joi.string().allow(null),
     periode: Joi.object({
-      debut: Joi.date(),
-      fin: Joi.date(),
-    }).allow(null),
+      debut: Joi.date().required(),
+      fin: Joi.date().required(),
+    }).required(),
   },
   cfa: {
     nom: Joi.string().allow(null),

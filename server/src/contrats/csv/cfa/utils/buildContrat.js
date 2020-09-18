@@ -30,13 +30,10 @@ module.exports = (data) => {
       codeDiplome: sanitize(data.code_diplome),
       intitule: data.app_diplome,
       anneePromotion: data.annee_promotion || null,
-      periode:
-        data.date_debut && data.date_fin
-          ? {
-              debut: data.date_debut ? parseDate(data.date_debut) : null,
-              fin: data.date_fin ? parseDate(data.date_fin) : null,
-            }
-          : null,
+      periode: {
+        debut: parseDate(data.date_debut),
+        fin: parseDate(data.date_fin),
+      },
     },
     cfa: {
       nom: data["etablissement/site_cfa"],
