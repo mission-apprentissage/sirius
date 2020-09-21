@@ -12,13 +12,13 @@ const findNextQuestionnaireType = (contrat) => {
     return null;
   }
 
-  if (moment(periode.debut).add(1, "years").isBefore(moment()) && contrat.questionnaires.length === 0) {
-    return "finAnnee";
-  } else if (
-    moment(periode.fin).isBefore(moment()) &&
-    contrat.questionnaires.filter((q) => q.type === "finFormation").length === 0
-  ) {
+  if (moment(periode.fin).isBefore(moment()) && !contrat.questionnaires.find((q) => q.type === "finFormation")) {
     return "finFormation";
+  } else if (
+    moment(periode.debut).add(1, "years").isBefore(moment()) &&
+    !contrat.questionnaires.find((q) => q.type === "finAnnee")
+  ) {
+    return "finAnnee";
   }
 
   return null;

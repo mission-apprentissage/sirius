@@ -19,8 +19,10 @@ integrationTests(__filename, ({ getComponents }) => {
           email: "apprenti@domain.fr",
         },
         formation: {
-          debut: moment().subtract(1, "years").toDate(),
-          fin: moment().add(2, "years").toDate(),
+          periode: {
+            debut: moment().subtract(2, "years").toDate(),
+            fin: moment().add(2, "years").toDate(),
+          },
         },
       })
     );
@@ -68,8 +70,10 @@ integrationTests(__filename, ({ getComponents }) => {
           email: "apprenti@domain.fr",
         },
         formation: {
-          debut: moment().subtract(2, "years").toDate(),
-          fin: moment().subtract(1, "days").toDate(),
+          periode: {
+            debut: moment().subtract(2, "years").toDate(),
+            fin: moment().subtract(1, "days").toDate(),
+          },
         },
         questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] }],
       })
@@ -174,8 +178,10 @@ integrationTests(__filename, ({ getComponents }) => {
           email: "apprenti@domain.fr",
         },
         formation: {
-          debut: moment().subtract(1, "years").toDate(),
-          fin: moment().add(2, "years").toDate(),
+          periode: {
+            debut: moment().subtract(1, "years").toDate(),
+            fin: moment().add(2, "years").toDate(),
+          },
         },
       })
     );
@@ -185,8 +191,10 @@ integrationTests(__filename, ({ getComponents }) => {
           email: "other@domain.com",
         },
         formation: {
-          debut: moment().subtract(1, "years").toDate(),
-          fin: moment().add(2, "years").toDate(),
+          periode: {
+            debut: moment().subtract(1, "years").toDate(),
+            fin: moment().add(2, "years").toDate(),
+          },
         },
       })
     );
@@ -213,8 +221,10 @@ integrationTests(__filename, ({ getComponents }) => {
           email: "apprenti@domain.fr",
         },
         formation: {
-          debut: moment().subtract(1, "years").toDate(),
-          fin: moment().add(2, "years").toDate(),
+          periode: {
+            debut: moment().subtract(1, "years").toDate(),
+            fin: moment().add(2, "years").toDate(),
+          },
         },
       })
     );
