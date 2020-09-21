@@ -20,10 +20,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto timeout={1000} />,
-      next: "merci",
+      next: "présentation du service",
     },
     {
-      id: "merci",
+      id: "présentation du service",
       message: (
         <Message>
           <p>Merci de nous rejoindre.</p>
@@ -65,10 +65,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto />,
-      next: "fierteMessage1",
+      next: "résumé des compétences acquises",
     },
     {
-      id: "fierteMessage1",
+      id: "résumé des compétences acquises",
       message: (
         <Message>En apprentissage on acquiert des compétences professionnelles et sociales, on grandit.</Message>
       ),
@@ -109,10 +109,10 @@ export default ({ apprenti }) => {
           ]}
         />
       ),
-      next: "suiviMessage1",
+      next: "la vie en entreprise",
     },
     {
-      id: "suiviMessage1",
+      id: "la vie en entreprise",
       message: (
         <Message>
           C'est aussi la découverte de la vie en entreprise : les relations avec le tuteur, les collègues, le nouveau
@@ -120,10 +120,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto />,
-      next: "suiviMessage2",
+      next: "importance du suivi",
     },
     {
-      id: "suiviMessage2",
+      id: "importance du suivi",
       message: <Message>C’est important d’être suivi par le CFA pour s’assurer que tout se passe bien.</Message>,
       input: <Auto />,
       next: "suivi",
@@ -140,7 +140,7 @@ export default ({ apprenti }) => {
           options={[
             { id: 1000, satisfaction: "BON", label: "Bon suivi" },
             { id: 2000, satisfaction: "MOYEN", label: "Peut s’améliorer" },
-            { id: 3000, satisfaction: "MAUVAIS", label: "Aucun suivi", next: "difficultesMessage1" },
+            { id: 3000, satisfaction: "MAUVAIS", label: "Aucun suivi", next: "partage des difficultés" },
           ]}
         />
       ),
@@ -171,10 +171,10 @@ export default ({ apprenti }) => {
           ]}
         />
       ),
-      next: "difficultesMessage1",
+      next: "partage des difficultés",
     },
     {
-      id: "difficultesMessage1",
+      id: "partage des difficultés",
       message: (
         <Message>
           Nous vous proposons maintenant de partager les difficultés que vous avez pu rencontrer, pour aider les
@@ -197,30 +197,30 @@ export default ({ apprenti }) => {
             {
               id: 1000,
               label: "Non, tout s’est bien passé",
-              next: "ambianceMessage1",
+              next: "encore quelques questions",
             },
             {
               id: 2000,
               label: "Oui mais ça va mieux",
-              next: "difficultesPrecisionsMessage1",
+              next: "merci pour le partage",
             },
             {
               id: 3000,
               label: "Oui et j’en ai encore",
-              next: "difficultesPrecisionsMessage1",
+              next: "merci pour le partage",
             },
           ]}
         />
       ),
     },
     {
-      id: "difficultesPrecisionsMessage1",
+      id: "merci pour le partage",
       message: <Message>Merci pour le partage.</Message>,
       input: <Auto />,
-      next: "difficultesPrecisionsMessage2",
+      next: "en dire plus",
     },
     {
-      id: "difficultesPrecisionsMessage2",
+      id: "en dire plus",
       message: (
         <Message>N'oubliez pas que toutes vos réponses sont anonymes. Pouvez-vous nous en dire un peu plus ?</Message>
       ),
@@ -316,11 +316,11 @@ export default ({ apprenti }) => {
     {
       id: "difficultesConseilTexte",
       message: <div>Vous avez la possibilité de poster un message libre, un conseil... juste en dessous</div>,
-      next: "ambianceMessage1",
+      next: "encore quelques questions",
       input: <Skip />,
     },
     {
-      id: "ambianceMessage1",
+      id: "encore quelques questions",
       message: <Message>C'est presque terminé ! 4 questions rapides pour finir</Message>,
       input: <Auto />,
       next: "ambiance",
@@ -369,7 +369,7 @@ export default ({ apprenti }) => {
             {
               id: 2000,
               satisfaction: "BON",
-              label: "Ils nous aident à reussir",
+              label: "Ils nous aident à réussir",
             },
             {
               id: 3000,
@@ -405,14 +405,22 @@ export default ({ apprenti }) => {
             {
               id: 1000,
               label: "Récents",
+              satisfaction: "BON",
             },
             {
-              id: 3000,
-              label: "Inadaptés",
+              id: 2500,
+              label: "Equivalents à ceux de l'entreprise",
+              satisfaction: "BON",
             },
             {
               id: 3500,
-              label: "Equivalents à ceux de l'entreprise",
+              label: "Inadaptés",
+              satisfaction: "MAUVAIS",
+            },
+            {
+              id: 4000,
+              label: "En nombre insuffisant",
+              satisfaction: "MAUVAIS",
             },
           ]}
         />

@@ -21,7 +21,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
           stats.ignored++;
         } else {
           logger.info(`Sending questionnaire ${next.type} with token ${next.token}`);
-          await questionnaires.sendEmail(next.token);
+          await questionnaires.sendQuestionnaire(next.token);
           await delay(100);
           stats.sent++;
         }

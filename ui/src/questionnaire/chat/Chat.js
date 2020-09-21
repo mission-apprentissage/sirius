@@ -42,10 +42,8 @@ const Chat = ({ questions, onResults = noop, onEnd = noop }) => {
       await onResults(currentQuestion.id, reponses);
     }
 
-    let nextQuestion = questions.find((q) => {
-      let nextQuestionId = options.next || currentQuestion.next;
-      return q.id === nextQuestionId;
-    });
+    let nextQuestionId = options.next || currentQuestion.next;
+    let nextQuestion = questions.find((q) => q.id === nextQuestionId);
 
     if (nextQuestion.last) {
       await onEnd(currentQuestion);

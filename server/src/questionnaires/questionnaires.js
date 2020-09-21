@@ -50,7 +50,7 @@ module.exports = (db, mailer, contrats) => {
         return { type, token };
       }
     },
-    sendEmail: async (token) => {
+    sendQuestionnaire: async (token) => {
       let contrat = await contrats.getContratByToken(token);
       let questionnaire = contrat.questionnaires.find((q) => q.token === token);
 

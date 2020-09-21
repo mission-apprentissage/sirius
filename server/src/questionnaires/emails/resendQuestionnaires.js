@@ -21,7 +21,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
             await Promise.all(
               results.map((q) => {
                 logger.info(`Resending questionnaire ${q.type} to ${contrat.apprenti.email}`);
-                return questionnaires.sendEmail(q.token);
+                return questionnaires.sendQuestionnaire(q.token);
               })
             );
             await delay(100);

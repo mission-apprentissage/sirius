@@ -20,10 +20,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto timeout={1000} />,
-      next: "merci",
+      next: "présentation du service",
     },
     {
-      id: "merci",
+      id: "présentation du service",
       message: (
         <Message>
           <p>Merci de nous rejoindre.</p>
@@ -65,130 +65,120 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto />,
-      next: "fierteMessage1",
+      next: "diplome",
     },
     {
-      id: "fierteMessage1",
-      message: (
-        <Message>En apprentissage on acquiert des compétences professionnelles et sociales, on grandit.</Message>
-      ),
-      input: <Auto />,
-      next: "fierte",
-    },
-    {
-      id: "fierte",
+      id: "diplome",
       message: (
         <Message>
-          <Highlight>Qu’est-ce qui vous a rendu fier.e cette année ?</Highlight>
-          <Tips>(plusieurs réponses possibles)</Tips>
-        </Message>
-      ),
-      input: (
-        <MultiChoice
-          options={[
-            {
-              id: 1000,
-              label: "Je communique mieux",
-            },
-            {
-              id: 2000,
-              label: "J’ai été félicité.e pour mon travail",
-            },
-            {
-              id: 3000,
-              label: "Je suis plus autonome dans la vie de tous les jours",
-            },
-            {
-              id: 4000,
-              label: "J'ai trouvé ma voie, je me sens à ma place",
-            },
-            {
-              id: 5000,
-              label: "Je me suis fait un beau cadeau grâce à mon salaire",
-            },
-          ]}
-        />
-      ),
-      next: "suiviMessage1",
-    },
-    {
-      id: "suiviMessage1",
-      message: (
-        <Message>
-          C'est aussi la découverte de la vie en entreprise : les relations avec le tuteur, les collègues, le nouveau
-          rythme de vie...
-        </Message>
-      ),
-      input: <Auto />,
-      next: "suiviMessage2",
-    },
-    {
-      id: "suiviMessage2",
-      message: <Message>C’est important d’être suivi par le CFA pour s’assurer que tout se passe bien.</Message>,
-      input: <Auto />,
-      next: "suivi",
-    },
-    {
-      id: "suivi",
-      message: (
-        <Message>
-          <Highlight>Sur le suivi en entreprise par le CFA, vous diriez :</Highlight>
+          Alors <b>{apprenti.prenom}</b>, ça y est, vous êtes diplômé ?
         </Message>
       ),
       input: (
         <SingleChoice
           options={[
-            { id: 1000, satisfaction: "BON", label: "Bon suivi" },
-            { id: 2000, satisfaction: "MOYEN", label: "Peut s’améliorer" },
-            { id: 3000, satisfaction: "MAUVAIS", label: "Aucun suivi", next: "difficultesMessage1" },
+            {
+              id: 1000,
+              label: "Oui",
+              satisfaction: "BON",
+              next: "diplome obtenu",
+            },
+            {
+              id: 2000,
+              label: "Je ne sais pas encore",
+              next: "diplome en attente",
+            },
+            {
+              id: 3000,
+              label: "Malheureusement, non",
+              satisfaction: "MAUVAIS",
+              next: "diplome non obtenu",
+            },
           ]}
         />
       ),
-      next: "suiviPrecisions",
     },
     {
-      id: "suiviPrecisions",
+      id: "diplome obtenu",
+      message: <Message>Félicitations</Message>,
+      input: <Auto />,
+      next: "à propos de la coordination",
+    },
+    {
+      id: "diplome en attente",
+      message: <Message>Ok. On vous recontacte plus tard.</Message>,
+      last: true,
+    },
+    {
+      id: "diplome non obtenu",
+      message: <Message>L'important c'est de rebondir sur un projet. On en reparle un peu plus loin</Message>,
+      input: <Auto />,
+      next: "à propos de la coordination",
+    },
+    {
+      id: "à propos de la coordination",
+      message: (
+        <Message>
+          Pour se préparer à l'examen, la coordination et les échanges entre le CFA et votre tuteur permettent de
+          s’assurer que vous mettez en pratique en entreprise des gestes ou connaissances qui vous seront demandés à
+          l’examen. C’est important pour être prêt !
+        </Message>
+      ),
+      input: <Auto />,
+      next: "coordination",
+    },
+    {
+      id: "coordination",
+      message: <Message>Que diriez-vous de la coordination CFA-Entreprise pour vous préparer à l’examen ?</Message>,
+      input: (
+        <SingleChoice
+          options={[
+            { id: 1000, satisfaction: "BON", label: "Bon suivi" },
+            { id: 2000, satisfaction: "MOYEN", label: "Peut s’améliorer" },
+            { id: 3000, satisfaction: "MAUVAIS", label: "Aucune à ma connaissance", next: "preparationExamen" },
+          ]}
+        />
+      ),
+      next: "coordinationPrecisions",
+    },
+    {
+      id: "coordinationPrecisions",
       message: (
         <Message>
           Pourriez-vous préciser ? <Tips>(plusieurs réponses possibles)</Tips>
         </Message>
       ),
       input: (
-        <MultiChoice
+        <SingleChoice
           options={[
-            { id: 4000, satisfaction: "BON", label: "Le CFA est venu en entreprise" },
             {
-              id: 3000,
+              id: 1000,
               satisfaction: "BON",
-              label: "Le CFA a réuni les tuteurs",
+              label: "Mon tuteur était au clair sur les épreuves, il m'a aidé à me préparer",
             },
             {
               id: 2000,
-              satisfaction: "BON",
-              label: "Le CFA et mon tuteur sont en contact régulier",
+              satisfaction: "MOYEN",
+              label: "Mon tuteur avait un peu d'informations, il ne m'en a pas beaucoup parlé",
             },
-            { id: 1000, satisfaction: "MOYEN", label: "Je fais un rapport périodique" },
           ]}
         />
       ),
-      next: "difficultesMessage1",
+      next: "preparationExamenTexte",
     },
     {
-      id: "difficultesMessage1",
-      message: (
-        <Message>
-          Nous vous proposons maintenant de partager les difficultés que vous avez pu rencontrer, pour aider les
-          prochains apprentis à trouver des solutions
-        </Message>
-      ),
-      input: <Auto />,
-      next: "difficultes",
+      id: "preparationExamenTexte",
+      message: <div>Dites-nous en plus ci-dessous, pour aider les CFA à s'améliorer</div>,
+      next: "preparationExamen",
+      input: <Skip />,
     },
     {
-      id: "difficultes",
+      id: "preparationExamen",
       message: (
         <Message>
-          <Highlight>Avez -vous rencontré des difficultés au cours de cette année ?</Highlight>
+          <Highlight>
+            Considérez-vous avoir été bien informé par le CFA du contenu de l'examen, type d'épreuves... ?
+          </Highlight>
         </Message>
       ),
       input: (
@@ -196,134 +186,29 @@ export default ({ apprenti }) => {
           options={[
             {
               id: 1000,
-              label: "Non, tout s’est bien passé",
-              next: "ambianceMessage1",
+              label: "Oui, tout à fait",
+              satisfaction: "BON",
             },
             {
               id: 2000,
-              label: "Oui mais ça va mieux",
-              next: "difficultesPrecisionsMessage1",
+              label: "En partie seulement, j'ai été surpris par 1 ou plusieurs épreuves",
+              satisfaction: "MOYEN",
             },
             {
               id: 3000,
-              label: "Oui et j’en ai encore",
-              next: "difficultesPrecisionsMessage1",
+              label: "Non. Je ne m'attendais pas du tout à çà",
+              satisfaction: "MAUVAIS",
             },
           ]}
         />
       ),
+      next: "à propos du cfa",
     },
     {
-      id: "difficultesPrecisionsMessage1",
-      message: <Message>Merci pour le partage.</Message>,
+      id: "à propos du cfa",
+      message: <Message>Plus généralement, concernant le CFA...</Message>,
       input: <Auto />,
       next: "difficultesPrecisionsMessage2",
-    },
-    {
-      id: "difficultesPrecisionsMessage2",
-      message: (
-        <Message>N'oubliez pas que toutes vos réponses sont anonymes. Pouvez-vous nous en dire un peu plus ?</Message>
-      ),
-      input: <Auto />,
-      next: "difficultesPrecisions",
-    },
-    {
-      id: "difficultesPrecisions",
-      message: (
-        <Message>
-          <Highlight>Ces difficultés étaient liées à :</Highlight>
-          <Tips>(plusieurs réponses possibles)</Tips>
-        </Message>
-      ),
-      input: (
-        <MultiChoice
-          options={[
-            {
-              id: 1000,
-              label: "mon CFA",
-            },
-            {
-              id: 3000,
-              label: "Mes collègues de travail",
-            },
-            {
-              id: 2500,
-              label: "Les congés",
-            },
-            {
-              id: 5000,
-              label: "Les transports",
-            },
-            {
-              id: 2000,
-              label: "mon tuteur",
-            },
-            {
-              id: 4000,
-              label: "Le rythme vie pro / vie perso",
-            },
-            {
-              id: 6000,
-              label: "Difficultés financières",
-            },
-            {
-              id: 5500,
-              label: "Le logement",
-            },
-          ]}
-        />
-      ),
-      next: "difficultesConseil",
-    },
-    {
-      id: "difficultesConseil",
-      message: (
-        <Message>
-          <p>Auprès de qui avez-vous demandé conseil ?</p>
-          <Tips>(plusieurs réponses possibles)</Tips>
-        </Message>
-      ),
-      input: (
-        <MultiChoice
-          options={[
-            {
-              id: 1000,
-              label: "J’en ai parlé à mon tuteur",
-            },
-            {
-              id: 3000,
-              satisfaction: "BON",
-              label: "J’en ai parlé au médiateur",
-            },
-            {
-              id: 5000,
-              label: "Je n’ai rien dit à personne",
-            },
-            {
-              id: 2500,
-              satisfaction: "BON",
-              label: "J’en ai parlé au CFA",
-            },
-            {
-              id: 4000,
-              label: "J'en ai parlé à mes parents",
-            },
-          ]}
-        />
-      ),
-      next: "difficultesConseilTexte",
-    },
-    {
-      id: "difficultesConseilTexte",
-      message: <div>Vous avez la possibilité de poster un message libre, un conseil... juste en dessous</div>,
-      next: "ambianceMessage1",
-      input: <Skip />,
-    },
-    {
-      id: "ambianceMessage1",
-      message: <Message>C'est presque terminé ! 4 questions rapides pour finir</Message>,
-      input: <Auto />,
-      next: "ambiance",
     },
     {
       id: "ambiance",
@@ -369,7 +254,7 @@ export default ({ apprenti }) => {
             {
               id: 2000,
               satisfaction: "BON",
-              label: "Ils nous aident à reussir",
+              label: "Ils nous aident à réussir",
             },
             {
               id: 3000,
@@ -405,18 +290,197 @@ export default ({ apprenti }) => {
             {
               id: 1000,
               label: "Récents",
-            },
-            {
-              id: 3000,
-              label: "Inadaptés",
+              satisfaction: "BON",
             },
             {
               id: 3500,
               label: "Equivalents à ceux de l'entreprise",
+              satisfaction: "BON",
+            },
+            {
+              id: 3000,
+              label: "Inadaptés",
+              satisfaction: "MAUVAIS",
+            },
+            {
+              id: 4000,
+              label: "En nombre insuffisant",
+              satisfaction: "MAUVAIS",
             },
           ]}
         />
       ),
+      next: "pour terminer",
+    },
+    {
+      id: "pour terminer",
+      message: (
+        <Message>
+          Pour terminer, parlons de vous <b>{apprenti.prenom}</b>
+        </Message>
+      ),
+      input: <Auto />,
+      next: "fierte",
+    },
+    {
+      id: "fierte",
+      message: (
+        <Message>
+          <Highlight>Qu’est-ce qui vous a rendu fier.e cette année ?</Highlight>
+          <Tips>(plusieurs réponses possibles)</Tips>
+        </Message>
+      ),
+      input: (
+        <MultiChoice
+          options={[
+            {
+              id: 1000,
+              label: "Je communique mieux",
+            },
+            {
+              id: 2000,
+              label: "J’ai été félicité.e pour mon travail",
+            },
+            {
+              id: 3000,
+              label: "Je suis plus autonome dans la vie de tous les jours",
+            },
+            {
+              id: 4000,
+              label: "J'ai trouvé ma voie, je me sens à ma place",
+            },
+            {
+              id: 5000,
+              label: "Je me suis fait un beau cadeau grâce à mon salaire",
+            },
+          ]}
+        />
+      ),
+      next: "hésitations",
+    },
+    {
+      id: "hésitations",
+      message: (
+        <Message>
+          Je ne sais pas si c'était votre cas avant, mais beaucoup de jeunes hésitent à choisir l'apprentissage car ils
+          se posent des questions sur les débouchés. Rassurez-les ;-)
+        </Message>
+      ),
+      input: <Auto />,
+      next: "suite",
+    },
+    {
+      id: "suite",
+      message: (
+        <Message>
+          <Highlight>La suite pour vous c'est... ?</Highlight>
+        </Message>
+      ),
+      input: (
+        <SingleChoice
+          options={[
+            {
+              id: 1000,
+              label: "Je suis recruté par mon entreprise d'apprentissage",
+              next: "recruté par l'entreprise",
+            },
+            {
+              id: 2000,
+              label: "Je suis recruté dans une autre entreprise",
+              next: "recruté par une autre entreprise",
+            },
+            {
+              id: 3000,
+              label: "Je poursuis mes études",
+              next: "poursuite des études",
+            },
+            {
+              id: 4000,
+              label: "Je pars à l'étranger",
+              next: "départ étranger",
+            },
+            {
+              id: 5000,
+              label: "Je recherche un emploi",
+              next: "recherche emploi",
+            },
+            {
+              id: 5000,
+              label: "Je change de voie",
+              next: "changement de voie",
+            },
+          ]}
+        />
+      ),
+    },
+    {
+      id: "recruté par l'entreprise",
+      message: <Message>Félicitations !!! Vous tirez un bénéfice direct d'avoir choisi l'apprentissage</Message>,
+      input: <Auto />,
+      next: "merci",
+    },
+    {
+      id: "recruté par une autre entreprise",
+      message: <Message>Bravo ! Est-ce que vous voulez bien préciser sur quel poste ?</Message>,
+      input: <Skip />,
+      next: "merci",
+    },
+    {
+      id: "poursuite des études",
+      message: <Message>Bravo ! Est-ce que vous voulez bien préciser sur quelle formation?</Message>,
+      input: <Skip />,
+      next: "merci",
+    },
+    {
+      id: "Je pars à l'étranger",
+      message: <Message>Génial ! Vous y allez... ?</Message>,
+      input: (
+        <SingleChoice
+          options={[
+            {
+              id: 1000,
+              label: "Pour travailler",
+            },
+            {
+              id: 2000,
+              label: "Pour étudier",
+            },
+          ]}
+        />
+      ),
+      next: "merci",
+    },
+    {
+      id: "recherche emploi",
+      message: <Message>Parfait ! Est-ce que le CFA vous propose de l'aide ?</Message>,
+      input: (
+        <SingleChoice
+          options={[
+            {
+              id: 1000,
+              satisfaction: "BON",
+              label: "Oui",
+            },
+            {
+              id: 2000,
+              satisfaction: "MAUVAIS",
+              label: "Non",
+            },
+          ]}
+        />
+      ),
+      next: "merci",
+    },
+    {
+      id: "changement de voie",
+      message: <Message> Intéressant ! Vers quelle formation allez-vous ?</Message>,
+      input: <Skip />,
+      next: "merci",
+    },
+    {
+      id: "merci",
+      message: <Message>Merci pour toutes ces informations</Message>,
+      input: <Auto />,
       next: "communauté",
     },
     {
@@ -445,8 +509,9 @@ export default ({ apprenti }) => {
       last: true,
       message: (
         <div>
-          Merci {apprenti.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
-          souhaitons un apprentissage riche en expériences professionnelles et humaines
+          Merci {apprenti.prenom}, toutes ces informations sont utiles pour ceux qui se posent des questions sur
+          l’apprentissage. Nous aimerions continuer à suivre votre parcours, nous reviendrons dans quelques mois pour
+          savoir où vous en êtes. Bonne route !
         </div>
       ),
     },

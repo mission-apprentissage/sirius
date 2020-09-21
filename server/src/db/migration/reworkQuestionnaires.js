@@ -146,18 +146,22 @@ module.exports = async (db) => {
                   {
                     id: 1000,
                     label: "Récents",
+                    satisfaction: "BON",
                   },
                   {
                     id: 2500,
-                    label: "Equivalents à ceux de l' entreprise",
-                  },
-                  {
-                    id: 3000,
-                    label: "Inadaptés",
+                    label: "Equivalents à ceux de l'entreprise",
+                    satisfaction: "BON",
                   },
                   {
                     id: 3500,
-                    label: "Différents du matériel utilisé en entreprise",
+                    label: "Inadaptés",
+                    satisfaction: "MAUVAIS",
+                  },
+                  {
+                    id: 4000,
+                    label: "En nombre insuffisant",
+                    satisfaction: "MAUVAIS",
                   },
                 ];
               } else if (reponseId === "fierte") {
