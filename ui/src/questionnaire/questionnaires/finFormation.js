@@ -208,7 +208,7 @@ export default ({ apprenti }) => {
       id: "à propos du cfa",
       message: <Message>Plus généralement, concernant le CFA...</Message>,
       input: <Auto />,
-      next: "difficultesPrecisionsMessage2",
+      next: "ambiance",
     },
     {
       id: "ambiance",
