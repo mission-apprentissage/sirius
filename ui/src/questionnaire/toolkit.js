@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Box } from "../common/Flexbox";
 import { appear } from "../common/utils/animations";
 import { primary, secondary } from "../common/utils/colors";
-import avatar from "./icons/avatar.svg";
+import avatar from "./icons/miley.svg";
 import React from "react";
 
 export const Entry = styled(Box)`
