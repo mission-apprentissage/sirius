@@ -14,14 +14,15 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
     db.collection("contrats").find({ unsubscribe: false }),
     writeObject(async (contrat) => {
       try {
-        let next = await questionnaires.generateNextQuestionnaire(contrat);
-
+        let next = questionnaires.findNext(contrat);
         stats.total++;
-        if (stats.sent >= limit || !next || (options.type && next.type !== options.type)) {
+
+        if (stats.sent >= limit || !next || (options.type && next !== options.type)) {
           stats.ignored++;
         } else {
-          logger.info(`Sending questionnaire ${next.type} with token ${next.token}`);
-          await questionnaires.sendQuestionnaire(next.token);
+          let newQuestionnaire = await questionnaires.create(contrat, next);
+          logger.info(`Sending questionnaire ${newQuestionnaire.type} with token ${newQuestionnaire.token}`);
+          await questionnaires.sendQuestionnaire(newQuestionnaire.token);
           await delay(100);
           stats.sent++;
         }

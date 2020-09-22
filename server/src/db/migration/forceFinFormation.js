@@ -11,10 +11,10 @@ module.exports = async (db, questionnaires) => {
     db.collection("contrats").find({ "formation.periode.fin": { $lte: new Date() } }),
     writeObject(
       async (contrat) => {
-        let next = await questionnaires.generateNextQuestionnaire(contrat);
-        if (next) {
+        let newQuestionnaire = await questionnaires.create(contrat, "finFormation");
+        if (newQuestionnaire) {
           let results = await db.collection("contrats").updateOne(
-            { "questionnaires.token": next.token },
+            { "questionnaires.token": newQuestionnaire.token },
             {
               $set: {
                 "questionnaires.$.status": "error",

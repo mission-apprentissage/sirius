@@ -4,7 +4,7 @@ const path = require("path");
 const moment = require("moment");
 
 const getEmail = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
-const findNextQuestionnaireType = (contrat) => {
+const findNext = (contrat) => {
   let periode = contrat.formation.periode;
 
   if (!periode) {
@@ -14,10 +14,7 @@ const findNextQuestionnaireType = (contrat) => {
 
   if (moment(periode.fin).isBefore(moment()) && !contrat.questionnaires.find((q) => q.type === "finFormation")) {
     return "finFormation";
-  } else if (
-    moment(periode.debut).add(1, "years").isBefore(moment()) &&
-    !contrat.questionnaires.find((q) => q.type === "finAnnee")
-  ) {
+  } else if (moment(periode.debut).add(1, "years").isBefore(moment()) && contrat.questionnaires.length === 0) {
     return "finAnnee";
   }
 
@@ -26,29 +23,25 @@ const findNextQuestionnaireType = (contrat) => {
 
 module.exports = (db, mailer, contrats) => {
   return {
-    generateNextQuestionnaire: async (contrat) => {
-      let type = findNextQuestionnaireType(contrat);
-      if (!type) {
-        return null;
-      } else {
-        let token = uuid.v4();
+    findNext,
+    create: async (contrat, type) => {
+      let questionnaire = {
+        type,
+        token: uuid.v4(),
+        nbEmailsSent: 0,
+        questions: [],
+      };
 
-        await db.collection("contrats").updateOne(
-          { _id: contrat._id },
-          {
-            $push: {
-              questionnaires: {
-                type,
-                token,
-                nbEmailsSent: 0,
-                questions: [],
-              },
-            },
-          }
-        );
+      await db.collection("contrats").updateOne(
+        { _id: contrat._id },
+        {
+          $push: {
+            questionnaires: questionnaire,
+          },
+        }
+      );
 
-        return { type, token };
-      }
+      return questionnaire;
     },
     sendQuestionnaire: async (token) => {
       let contrat = await contrats.getContratByToken(token);

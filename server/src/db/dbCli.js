@@ -46,7 +46,7 @@ cli
   .command("dataset")
   .description("Injecte un jeu de données dans la base")
   .action(() => {
-    runScript(({ db }) => injectData(db));
+    runScript(({ db, questionnaires }) => injectData(db, questionnaires));
   });
 
 cli.parse(process.argv);
