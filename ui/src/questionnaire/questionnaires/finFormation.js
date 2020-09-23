@@ -61,7 +61,7 @@ export default ({ apprenti }) => {
       id: "départ",
       message: (
         <Message>
-          <Highlight>C'est parti. Ca prendra moins de 3 minutes !</Highlight>
+          <Highlight>C'est parti. Cela prendra moins de 3 minutes !</Highlight>
         </Message>
       ),
       input: <Auto />,
@@ -106,7 +106,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "diplome en attente",
-      message: <Message>Ok. On vous recontacte plus tard.</Message>,
+      message: <Message>Ok. Nous reviendrons vers vous dans un mois. A bientôt !.</Message>,
       last: true,
     },
     {
@@ -119,9 +119,8 @@ export default ({ apprenti }) => {
       id: "à propos de la coordination",
       message: (
         <Message>
-          Pour se préparer à l'examen, la coordination et les échanges entre le CFA et votre tuteur permettent de
-          s’assurer que vous mettez en pratique en entreprise des gestes ou connaissances qui vous seront demandés à
-          l’examen. C’est important pour être prêt !
+          Pour se préparer à l'examen, les échanges entre le CFA et votre tuteur permettent de
+          s’assurer que vous mettez en pratique en entreprise des connaissances ou gestes attendus. C’est important pour être prêt !
         </Message>
       ),
       input: <Auto />,
@@ -129,26 +128,8 @@ export default ({ apprenti }) => {
     },
     {
       id: "coordination",
-      message: <Message>Que diriez-vous de la coordination CFA-Entreprise pour vous préparer à l’examen ?</Message>,
-      input: (
-        <SingleChoice
-          options={[
-            { id: 1000, satisfaction: "BON", label: "Bon suivi" },
-            { id: 2000, satisfaction: "MOYEN", label: "Peut s’améliorer" },
-            { id: 3000, satisfaction: "MAUVAIS", label: "Aucune à ma connaissance", next: "preparationExamen" },
-          ]}
-        />
-      ),
-      next: "coordinationPrecisions",
-    },
-    {
-      id: "coordinationPrecisions",
-      message: (
-        <Message>
-          Pourriez-vous préciser ? <Tips>(plusieurs réponses possibles)</Tips>
-        </Message>
-      ),
-      input: (
+      message: <Message> Dans votre cas, vous diriez ?</Message>,
+        input: (
         <SingleChoice
           options={[
             {
@@ -427,7 +408,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "poursuite des études",
-      message: <Message>Bravo ! Est-ce que vous voulez bien préciser sur quelle formation?</Message>,
+      message: <Message>Bravo ! Est-ce que vous voulez bien préciser sur quelle formation ?</Message>,
       input: <Skip />,
       next: "merci",
     },
