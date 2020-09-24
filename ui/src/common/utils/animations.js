@@ -5,7 +5,7 @@ const appearSequence = keyframes`
   100% { transform: scale(1); }
 `;
 export const appear = css`
-  animation: ${appearSequence} 0.3s ease forwards;
+  animation: ${appearSequence} 0.5s ease forwards;
 `;
 
 const fadeSequence = keyframes`
