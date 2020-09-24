@@ -20,10 +20,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto timeout={1000} />,
-      next: "présentation du service",
+      next: "présentationDuService",
     },
     {
-      id: "présentation du service",
+      id: "présentationDuService",
       message: (
         <Message>
           <p>Merci de nous rejoindre.</p>
@@ -65,10 +65,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto />,
-      next: "résumé des compétences acquises",
+      next: "résuméDesCompétencesAcquises",
     },
     {
-      id: "résumé des compétences acquises",
+      id: "résuméDesCompétencesAcquises",
       message: (
         <Message>En apprentissage on acquiert des compétences professionnelles et sociales, on grandit.</Message>
       ),
@@ -109,10 +109,10 @@ export default ({ apprenti }) => {
           ]}
         />
       ),
-      next: "la vie en entreprise",
+      next: "vieEnEntreprise",
     },
     {
-      id: "la vie en entreprise",
+      id: "vieEnEntreprise",
       message: (
         <Message>
           C'est aussi la découverte de la vie en entreprise : les relations avec le tuteur, les collègues, le nouveau
@@ -120,10 +120,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto />,
-      next: "importance du suivi",
+      next: "importanceDuSuivi",
     },
     {
-      id: "importance du suivi",
+      id: "importanceDuSuivi",
       message: <Message>C’est important d’être suivi par le CFA pour s’assurer que tout se passe bien.</Message>,
       input: <Auto />,
       next: "suivi",
@@ -140,7 +140,7 @@ export default ({ apprenti }) => {
           options={[
             { id: 1000, satisfaction: "BON", label: "Bon suivi" },
             { id: 2000, satisfaction: "MOYEN", label: "Peut s’améliorer" },
-            { id: 3000, satisfaction: "MAUVAIS", label: "Aucun suivi", next: "partage des difficultés" },
+            { id: 3000, satisfaction: "MAUVAIS", label: "Aucun suivi", next: "partageDesDifficultés" },
           ]}
         />
       ),
@@ -171,10 +171,10 @@ export default ({ apprenti }) => {
           ]}
         />
       ),
-      next: "partage des difficultés",
+      next: "partageDesDifficultés",
     },
     {
-      id: "partage des difficultés",
+      id: "partageDesDifficultés",
       message: (
         <Message>
           Nous vous proposons maintenant de partager les difficultés que vous avez pu rencontrer, pour aider les
@@ -182,10 +182,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto />,
-      next: "difficultes",
+      next: "difficultés",
     },
     {
-      id: "difficultes",
+      id: "difficultés",
       message: (
         <Message>
           <Highlight>Avez -vous rencontré des difficultés au cours de cette année ?</Highlight>
@@ -197,30 +197,30 @@ export default ({ apprenti }) => {
             {
               id: 1000,
               label: "Non, tout s’est bien passé",
-              next: "encore quelques questions",
+              next: "encoreQuelquesQuestions",
             },
             {
               id: 2000,
               label: "Oui mais ça va mieux",
-              next: "merci pour le partage",
+              next: "merciPourLePartage",
             },
             {
               id: 3000,
               label: "Oui et j’en ai encore",
-              next: "merci pour le partage",
+              next: "merciPourLePartage",
             },
           ]}
         />
       ),
     },
     {
-      id: "merci pour le partage",
+      id: "merciPourLePartage",
       message: <Message>Merci pour le partage.</Message>,
       input: <Auto />,
-      next: "en dire plus",
+      next: "enDirePlus",
     },
     {
-      id: "en dire plus",
+      id: "enDirePlus",
       message: (
         <Message>N'oubliez pas que toutes vos réponses sont anonymes. Pouvez-vous nous en dire un peu plus ?</Message>
       ),
@@ -316,11 +316,11 @@ export default ({ apprenti }) => {
     {
       id: "difficultesConseilTexte",
       message: <div>Vous avez la possibilité de poster un message libre, un conseil... juste en dessous</div>,
-      next: "encore quelques questions",
       input: <Skip />,
+      next: "encoreQuelquesQuestions",
     },
     {
-      id: "encore quelques questions",
+      id: "encoreQuelquesQuestions",
       message: <Message>C'est presque terminé ! 4 questions rapides pour finir</Message>,
       input: <Auto />,
       next: "ambiance",
@@ -450,13 +450,13 @@ export default ({ apprenti }) => {
     },
     {
       id: "fin",
-      last: true,
       message: (
         <div>
           Merci {apprenti.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
           souhaitons un apprentissage riche en expériences professionnelles et humaines
         </div>
       ),
+      last: true,
     },
   ];
 };

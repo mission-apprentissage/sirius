@@ -20,10 +20,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto timeout={1000} />,
-      next: "présentation du service",
+      next: "présentationDuService",
     },
     {
-      id: "présentation du service",
+      id: "présentationDuService",
       message: (
         <Message>
           <p>Merci de nous rejoindre.</p>
@@ -40,8 +40,8 @@ export default ({ apprenti }) => {
           <p>Votre anonymat sera totalement respecté.</p>
         </Message>
       ),
-      next: "interfaceLBA",
       input: <SingleChoice options={[{ id: 1000, label: "Ok" }]} />,
+      next: "interfaceLBA",
     },
     {
       id: "interfaceLBA",
@@ -81,46 +81,46 @@ export default ({ apprenti }) => {
               id: 1000,
               label: "Oui",
               satisfaction: "BON",
-              next: "diplome obtenu",
+              next: "diplomeObtenu",
             },
             {
               id: 2000,
               label: "Je ne sais pas encore",
-              next: "diplome en attente",
+              next: "diplomeEnAttente",
             },
             {
               id: 3000,
               label: "Malheureusement, non",
               satisfaction: "MAUVAIS",
-              next: "diplome non obtenu",
+              next: "diplomeNonObtenu",
             },
           ]}
         />
       ),
     },
     {
-      id: "diplome obtenu",
+      id: "diplomeObtenu",
       message: <Message>Félicitations</Message>,
       input: <Auto />,
-      next: "à propos de la coordination",
+      next: "àProposDeLaCoordination",
     },
     {
-      id: "diplome en attente",
+      id: "diplomeEnAttente",
       message: <Message>Ok. Nous reviendrons vers vous dans un mois. A bientôt !.</Message>,
       last: true,
     },
     {
-      id: "diplome non obtenu",
+      id: "diplomeNonObtenu",
       message: <Message>L'important c'est de rebondir sur un projet. On en reparle un peu plus loin</Message>,
       input: <Auto />,
-      next: "à propos de la coordination",
+      next: "àProposDeLaCoordination",
     },
     {
-      id: "à propos de la coordination",
+      id: "àProposDeLaCoordination",
       message: (
         <Message>
-          Pour se préparer à l'examen, les échanges entre le CFA et votre tuteur permettent de
-          s’assurer que vous mettez en pratique en entreprise des connaissances ou gestes attendus. C’est important pour être prêt !
+          Pour se préparer à l'examen, les échanges entre le CFA et votre tuteur permettent de s’assurer que vous mettez
+          en pratique en entreprise des connaissances ou gestes attendus. C’est important pour être prêt !
         </Message>
       ),
       input: <Auto />,
@@ -129,7 +129,7 @@ export default ({ apprenti }) => {
     {
       id: "coordination",
       message: <Message> Dans votre cas, vous diriez ?</Message>,
-        input: (
+      input: (
         <SingleChoice
           options={[
             {
@@ -183,10 +183,10 @@ export default ({ apprenti }) => {
           ]}
         />
       ),
-      next: "à propos du cfa",
+      next: "àProposDuCfa",
     },
     {
-      id: "à propos du cfa",
+      id: "àProposDuCfa",
       message: <Message>Plus généralement, concernant le CFA...</Message>,
       input: <Auto />,
       next: "ambiance",
@@ -291,10 +291,10 @@ export default ({ apprenti }) => {
           ]}
         />
       ),
-      next: "pour terminer",
+      next: "pourTerminer",
     },
     {
-      id: "pour terminer",
+      id: "pourTerminer",
       message: (
         <Message>
           Pour terminer, parlons de vous <b>{apprenti.prenom}</b>
@@ -348,10 +348,10 @@ export default ({ apprenti }) => {
         </Message>
       ),
       input: <Auto />,
-      next: "suite",
+      next: "suiteApprentissage",
     },
     {
-      id: "suite",
+      id: "suiteApprentissage",
       message: (
         <Message>
           <Highlight>La suite pour vous c'est... ?</Highlight>
@@ -363,57 +363,57 @@ export default ({ apprenti }) => {
             {
               id: 1000,
               label: "Je suis recruté par mon entreprise d'apprentissage",
-              next: "recruté par l'entreprise",
+              next: "recrutéParEntreprise",
             },
             {
               id: 2000,
               label: "Je suis recruté dans une autre entreprise",
-              next: "recruté par une autre entreprise",
+              next: "recrutéParUneAutreEntreprise",
             },
             {
               id: 3000,
               label: "Je poursuis mes études",
-              next: "poursuite des études",
+              next: "poursuiteDesEtudes",
             },
             {
               id: 4000,
               label: "Je pars à l'étranger",
-              next: "départ étranger",
+              next: "départEtranger",
             },
             {
               id: 5000,
               label: "Je recherche un emploi",
-              next: "recherche emploi",
+              next: "rechercheEmploi",
             },
             {
               id: 5000,
               label: "Je change de voie",
-              next: "changement de voie",
+              next: "changementDeVoie",
             },
           ]}
         />
       ),
     },
     {
-      id: "recruté par l'entreprise",
+      id: "recrutéParEntreprise",
       message: <Message>Félicitations !!! Vous tirez un bénéfice direct d'avoir choisi l'apprentissage</Message>,
       input: <Auto />,
       next: "merci",
     },
     {
-      id: "recruté par une autre entreprise",
+      id: "recrutéParUneAutreEntreprise",
       message: <Message>Bravo ! Est-ce que vous voulez bien préciser sur quel poste ?</Message>,
       input: <Skip />,
       next: "merci",
     },
     {
-      id: "poursuite des études",
+      id: "poursuiteDesEtudes",
       message: <Message>Bravo ! Est-ce que vous voulez bien préciser sur quelle formation ?</Message>,
       input: <Skip />,
       next: "merci",
     },
     {
-      id: "Je pars à l'étranger",
+      id: "départEtranger",
       message: <Message>Génial ! Vous y allez... ?</Message>,
       input: (
         <SingleChoice
@@ -432,7 +432,7 @@ export default ({ apprenti }) => {
       next: "merci",
     },
     {
-      id: "recherche emploi",
+      id: "rechercheEmploi",
       message: <Message>Parfait ! Est-ce que le CFA vous propose de l'aide ?</Message>,
       input: (
         <SingleChoice
@@ -453,7 +453,7 @@ export default ({ apprenti }) => {
       next: "merci",
     },
     {
-      id: "changement de voie",
+      id: "changementDeVoie",
       message: <Message> Intéressant ! Vers quelle formation allez-vous ?</Message>,
       input: <Skip />,
       next: "merci",
@@ -487,7 +487,6 @@ export default ({ apprenti }) => {
     },
     {
       id: "fin",
-      last: true,
       message: (
         <div>
           Merci {apprenti.prenom}, toutes ces informations sont utiles pour ceux qui se posent des questions sur
@@ -495,6 +494,7 @@ export default ({ apprenti }) => {
           savoir où vous en êtes. Bonne route !
         </div>
       ),
+      last: true,
     },
   ];
 };
