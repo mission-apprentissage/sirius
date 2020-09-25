@@ -47,7 +47,7 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(email.from, "sirius@apprentissage.beta.gouv.fr");
     assert.strictEqual(email.to, "test@domain.com");
     assert.strictEqual(email.subject, "Que pensez-vous de votre formation CAP Boucher ?");
-    assert.ok(email.html.lastIndexOf("Donnez votre avis en 3 minutes") !== -1);
+    assert.ok(email.html.lastIndexOf("Donnez votre avis") !== -1);
     assert.ok(email.html.lastIndexOf(`http://localhost:5000/questionnaires/${token}`) !== -1);
   });
 
@@ -91,7 +91,7 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(email.from, "sirius@apprentissage.beta.gouv.fr");
     assert.strictEqual(email.to, "test@domain.com");
     assert.strictEqual(email.subject, "Que pensez-vous de votre formation CAP Boucher ?");
-    assert.ok(email.html.lastIndexOf("Donnez votre avis en 3 minutes") !== -1);
+    assert.ok(email.html.lastIndexOf("Donnez votre avis") !== -1);
     assert.ok(email.html.lastIndexOf(`http://localhost:5000/questionnaires/${token}`) !== -1);
   });
 

@@ -18,14 +18,23 @@
 
     <mj-body background-color="#e5e5e5">
 
-        <mj-section background-url="<%= utils.getPublicUrl(`/images/header-email.png`) %>" padding-bottom="50px">
+        <mj-section background-color="#F3F6F7">
             <mj-column width="60%" padding-right="0">
-                <mj-image align="left" width="42px" alt="Logo de Sirius" src="<%= utils.getPublicUrl(`/images/logo.png`) %>"/>
-                <mj-text align="left" padding="10px 0 25px 25px" font-size="34px" font-weight="900" line-height="33px"
+                <mj-image align="left" width="42px" alt="Logo de Sirius"
+                          src="<%= utils.getPublicUrl(`/images/logo.png`) %>"/>
+                <mj-text align="left" padding="10px 0 25px 25px" font-size="22px" font-weight="900" line-height="26px"
                          color="#5222D0">Aidez les futurs apprentis à choisir leur formation
                 </mj-text>
+                <mj-button background-color="#ec615b" align="center"
+                           font-size="14px" font-weight="600" line-height="14px"
+                           padding="10px" border-radius="50px" font-family="Helvetica"
+                           href="<%= utils.getPublicUrl(`/questionnaires/${data.token}`) %>">
+                    Donnez votre avis sur votre CFA
+                </mj-button>
             </mj-column>
-            <mj-column width="40%" vertical-align="bottom" padding-left="0">
+            <mj-column width="40%">
+                <mj-image padding="10px 0" alt="Logo"
+                          src="<%= utils.getPublicUrl(`/images/header-email-v2.png`) %>"/>
             </mj-column>
         </mj-section>
 
@@ -40,12 +49,10 @@
                 </mj-text>
 
                 <mj-button background-color="#ec615b" align="center"
-                           font-size="16px" font-weight="600"
-                           padding="25px 25px 0 25px"
-                           border-radius="50px" font-family="Helvetica"
-                           line-height="23px"
+                           font-size="14px" font-weight="600" line-height="14px"
+                           padding="10px" border-radius="50px" font-family="Helvetica"
                            href="<%= utils.getPublicUrl(`/questionnaires/${data.token}`) %>">
-                    Donnez votre avis en 3 minutes
+                    Donnez votre avis sur votre CFA en moins de 3 minutes
                 </mj-button>
 
                 <mj-text align="center" font-style="italic" font-size="14px">
@@ -84,12 +91,12 @@
                     <br>
                     Sirius traite vos données à caractère personnel (données professionnelles, données de contact) pour
                     les besoins de la réalisation d’une enquête de satisfaction. Cette enquête est facultative. Sirius a
-                    obtenu vos données directement par votre CFA. 
+                    obtenu vos données directement par votre CFA.
                 </mj-text>
                 <mj-text align="left" font-size="12px" line-height="20px">
                     Vos données seront conservées pendant la durée de
                     l’enquête, ou jusqu’à la révocation du
-                    consentement et au maximum 3 ans pour les apprentis ayant répondu au questionnaire. 
+                    consentement et au maximum 3 ans pour les apprentis ayant répondu au questionnaire.
                 </mj-text>
                 <mj-text align="left" font-size="12px" line-height="20px">
                     Conformément aux articles 12 à 23 du règlement général (UE) sur la protection des données n°2016/679
@@ -120,7 +127,8 @@
         <mj-section background-color="#5222d0" padding-top="0">
             <mj-column>
                 <mj-text align="center" color="#ffffff" font-size="14px" line-height="20px">
-                    <a href="<%= utils.getPublicUrl(`/questionnaires/${data.token}/previewEmail`) %>" class="link-nostyle">Voir
+                    <a href="<%= utils.getPublicUrl(`/questionnaires/${data.token}/previewEmail`) %>"
+                       class="link-nostyle">Voir
                         cet email dans votre navigateur</a>
                 </mj-text>
                 <mj-image align="center" width="76px" alt="Logo République Française Marianne"
