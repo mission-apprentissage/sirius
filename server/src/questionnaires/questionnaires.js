@@ -1,35 +1,49 @@
 const Boom = require("boom");
 const uuid = require("uuid");
 const path = require("path");
+const moment = require("moment");
+
+const getEmail = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
+const findNext = (contrat) => {
+  let periode = contrat.formation.periode;
+
+  if (!periode) {
+    //FIXME
+    return null;
+  }
+
+  if (moment(periode.fin).isBefore(moment()) && !contrat.questionnaires.find((q) => q.type === "finFormation")) {
+    return "finFormation";
+  } else if (moment(periode.debut).add(1, "years").isBefore(moment()) && contrat.questionnaires.length === 0) {
+    return "finAnnee";
+  }
+
+  return null;
+};
 
 module.exports = (db, mailer, contrats) => {
-  const getEmail = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
-
   return {
-    create: async (type, contrat) => {
-      let token = uuid.v4();
-
-      if (contrat.questionnaires[type]) {
-        throw Boom.badRequest(`Le contrat possède déjà un questionnaire du type ${type}`);
-      }
+    findNext,
+    create: async (contrat, type) => {
+      let questionnaire = {
+        type,
+        token: uuid.v4(),
+        nbEmailsSent: 0,
+        questions: [],
+      };
 
       await db.collection("contrats").updateOne(
         { _id: contrat._id },
         {
           $push: {
-            questionnaires: {
-              type,
-              token,
-              nbEmailsSent: 0,
-              questions: [],
-            },
+            questionnaires: questionnaire,
           },
         }
       );
 
-      return token;
+      return questionnaire;
     },
-    sendEmail: async (token) => {
+    sendQuestionnaire: async (token) => {
       let contrat = await contrats.getContratByToken(token);
       let questionnaire = contrat.questionnaires.find((q) => q.token === token);
 
@@ -38,12 +52,8 @@ module.exports = (db, mailer, contrats) => {
       }
 
       try {
-        await mailer.sendEmail(
-          contrat.apprenti.email,
-          `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`,
-          getEmail(questionnaire.type),
-          { contrat, token }
-        );
+        let titre = `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`;
+        await mailer.sendEmail(contrat.apprenti.email, titre, getEmail(questionnaire.type), { contrat, token });
       } catch (e) {
         await db.collection("contrats").updateOne(
           { "questionnaires.token": token },
@@ -119,6 +129,7 @@ module.exports = (db, mailer, contrats) => {
       }
 
       return {
+        type: questionnaire.type,
         formation: {
           intitule: contrat.formation.intitule,
         },

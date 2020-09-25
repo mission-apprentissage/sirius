@@ -8,7 +8,7 @@ import { ChoiceButton } from "../../toolkit";
 
 const moveUpToDown = keyframes`
   0% { transform: translateY(10rem); }
-  100% { transform: translateY(30rem); }
+  100% { transform: translateY(20rem); }
 `;
 
 const AnimatedIcon = styled(HandDownIcon)`

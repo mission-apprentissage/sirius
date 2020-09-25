@@ -19,7 +19,7 @@ const Question = ({ message, input, active }) => {
 
   useEffect(() => {
     if (active && ref) {
-      scrollToElement(ref.current, 100);
+      scrollToElement(ref.current, 300);
     }
   }, [active, ref, showMessage]);
 

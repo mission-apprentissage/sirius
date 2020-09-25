@@ -10,10 +10,11 @@ const questionnairesStream = require("./streams/questionnairesStream");
 cli
   .command("send")
   .option("--limit <number>", "Nombre maximum d'emails envoyés", parseInt)
+  .option("--type <string>", "Le type de questionnaire à envoyer")
   .description("Envoie les questionnaires aux apprentis")
   .action((options) => {
     runScript(({ db, logger, questionnaires }) => {
-      return sendQuestionnaires(db, logger, questionnaires, { limit: options.limit });
+      return sendQuestionnaires(db, logger, questionnaires, { limit: options.limit, type: options.type });
     });
   });
 

@@ -4,18 +4,18 @@ module.exports = (db) => {
   let stream = db.collection("contrats").aggregate([
     { $match: { "questionnaires.status": "closed" } },
     { $unwind: "$questionnaires" },
-    { $unwind: "$questionnaires.reponses" },
-    { $unwind: "$questionnaires.reponses.results" },
+    { $unwind: "$questionnaires.questions" },
+    { $unwind: "$questionnaires.questions.reponses" },
     {
       $group: {
         _id: {
           cfa: "$cfa.siret",
-          reponse: "$questionnaires.reponses.id",
-          result: "$questionnaires.reponses.result.id",
+          question: "$questionnaires.questions.id",
+          reponses: "$questionnaires.questions.reponses.id",
         },
         cfa: { $first: "$cfa" },
-        reponse: { $first: "$questionnaires.reponses.id" },
-        label: { $first: "$questionnaires.reponses.results.label" },
+        reponse: { $first: "$questionnaires.questions.id" },
+        label: { $first: "$questionnaires.questions.reponses.label" },
         nbReponses: { $sum: 1 },
       },
     },

@@ -53,6 +53,7 @@ httpTests(__filename, ({ startServer }) => {
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, {
+      type: "finAnnee",
       apprenti: {
         prenom: "Robert",
         nom: "Doe",
@@ -204,7 +205,9 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", [{ id: 1, label: "other" }]);
+    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", [
+      { id: 1, label: "other" },
+    ]);
 
     assert.strictEqual(response.status, 200);
     let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
