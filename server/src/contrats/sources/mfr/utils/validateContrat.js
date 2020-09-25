@@ -1,8 +1,6 @@
 const Joi = require("@hapi/joi");
 
 let schema = Joi.object({
-  creationDate: Joi.date().required(),
-  cohorte: Joi.string().required(),
   apprenti: {
     prenom: Joi.string().required(),
     nom: Joi.string().required(),
@@ -46,8 +44,6 @@ let schema = Joi.object({
       nom: Joi.string(),
     }).allow(null),
   },
-  questionnaires: Joi.array().required(),
-  unsubscribe: Joi.boolean().required(),
 });
 
 module.exports = (contrat) => {
