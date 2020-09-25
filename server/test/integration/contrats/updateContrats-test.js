@@ -27,7 +27,7 @@ integrationTests(__filename, ({ getComponents }) => {
     let found = await db.collection("contrats").findOne();
     assert.deepStrictEqual(stats, {
       total: 1,
-      imported: 1,
+      updated: 1,
       failed: 0,
     });
     assert.strictEqual(found.apprenti.email, "jean@robert.com");

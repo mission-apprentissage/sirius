@@ -46,6 +46,4 @@ let schema = Joi.object({
   },
 });
 
-module.exports = (contrat) => {
-  return schema.validateAsync(contrat, { abortEarly: false });
-};
+module.exports = (contrat) => schema.validate(contrat, { abortEarly: false });

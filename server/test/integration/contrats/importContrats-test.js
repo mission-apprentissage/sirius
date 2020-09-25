@@ -18,10 +18,11 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.deepStrictEqual(stats, {
       total: 1,
       imported: 1,
-      failed: 0,
+      invalid: 0,
+      ignored: 0,
     });
     assert.ok(found.creationDate);
-    assert.ok(found.cohorte.startsWith("cohorte_test_q2_2"));
+    assert.ok(found.cohorte.startsWith("cohorte_test_2"));
     assert.deepStrictEqual(omit(found, ["_id", "creationDate", "cohorte"]), {
       apprenti: {
         prenom: "HENRI",
@@ -65,7 +66,8 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.deepStrictEqual(stats, {
       total: 2,
       imported: 1,
-      failed: 1,
+      invalid: 0,
+      ignored: 1,
     });
   });
 
@@ -83,7 +85,8 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.deepStrictEqual(stats, {
       total: 1,
       imported: 0,
-      failed: 1,
+      invalid: 1,
+      ignored: 0,
     });
   });
 });
