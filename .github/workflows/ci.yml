@@ -36,16 +36,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - shell: bash
-        run: echo "::set-output name=branchName::${GITHUB_HEAD_REF:-${GITHUB_REF##*/}}"
-        id: vars
-
-      - shell: bash
-        run: echo "${{steps.vars.outputs.branchName}}"
-
       - name: Checkout project
         uses: actions/checkout@v2
-        if: steps.vars.outputs.branchName == 'develop'
+
+      - name: Get current branch name
+        uses: ./.github/actions/branchName
+        id: vars
 
       - name: Request deployment
         uses: peter-evans/repository-dispatch@v1
