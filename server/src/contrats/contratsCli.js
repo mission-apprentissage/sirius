@@ -1,8 +1,8 @@
 const { program: cli } = require("commander");
 const { createReadStream } = require("fs");
 const runScript = require("../core/runScript");
-const importContrats = require("./csv/cfa/importContrats");
-const updateContrats = require("./csv/cfa/updateContrats");
+const importContrats = require("./sources/mfr/importContrats");
+const updateContrats = require("./sources/mfr/updateContrats");
 const reconciliateWithCatalogue = require("./reconciliation/reconciliateWithCatalogue");
 
 cli

@@ -1,6 +1,5 @@
 const moment = require("moment");
 const { isEmpty } = require("lodash");
-
 const parseDate = (value) => new Date(moment(value, "DD/MM/YYYY").format("YYYY-MM-DD") + "Z");
 
 const sanitize = (value) => {

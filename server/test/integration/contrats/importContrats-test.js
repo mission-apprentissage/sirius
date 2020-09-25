@@ -1,7 +1,7 @@
 const assert = require("assert");
 const { omit } = require("lodash");
 const integrationTests = require("../utils/integrationTests");
-const importContrats = require("../../../src/contrats/csv/cfa/importContrats");
+const importContrats = require("../../../src/contrats/sources/mfr/importContrats");
 const { createStream } = require("../utils/testUtils");
 
 integrationTests(__filename, ({ getComponents }) => {

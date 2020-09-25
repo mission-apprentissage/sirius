@@ -1,7 +1,7 @@
 const csv = require("csv-parser");
 const { oleoduc, writeObject } = require("oleoduc");
 const buildContrat = require("./buildContrat");
-const shouldBeImported = require("./shouldBeImported");
+const validateApprenti = require("./validateContrat");
 
 module.exports = async (logger, inputStream, callback) => {
   let stats = {
@@ -27,10 +27,10 @@ module.exports = async (logger, inputStream, callback) => {
           stats.total++;
 
           let contrat = buildContrat(data);
-          if (shouldBeImported(contrat)) {
-            let nbImported = await callback(contrat);
-            stats.imported += nbImported;
-          }
+          await validateApprenti(contrat);
+
+          let nbImported = await callback(contrat);
+          stats.imported += nbImported;
         } catch (e) {
           logger.error(`Unable to import ${JSON.stringify(data, null, 2)}`, e);
           stats.failed++;
