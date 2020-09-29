@@ -8,8 +8,8 @@ const sanitize = (value) => {
   return isEmpty(res) ? null : res;
 };
 
-const getCodePostal = (code) => {
-  let matched = code.match(/([0-9]{5})|([0-9]{2} [0-9]{3})/);
+const getCodePostal = (adresse) => {
+  let matched = adresse.replace(/ /g, "").match(/([0-9]{5})|([0-9]{2} [0-9]{3})/);
   return matched && matched.length > 0 ? matched[0].replace(/ /g, "") : null;
 };
 
