@@ -4,7 +4,7 @@ const { newContrat } = require("../utils/fixtures");
 const ObjectID = require("mongodb").ObjectID;
 
 httpTests(__filename, ({ startServer }) => {
-  it("Vérifie qu'on peut se désinscrire", async () => {
+  it("Vérifie qu'un apprenti peut se désinscrire", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     let id = new ObjectID();
@@ -15,7 +15,7 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.get(`/api/contrats/${id}/unsubscribe`);
+    let response = await httpClient.get(`/api/apprentis/${id}/unsubscribe`);
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, { message: "Votre demande à bien été prise en compte" });

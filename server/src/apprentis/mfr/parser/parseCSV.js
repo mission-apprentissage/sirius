@@ -1,7 +1,9 @@
 const csv = require("csv-parser");
 const { oleoduc, writeObject } = require("oleoduc");
+const buildApprenti = require("./buildApprenti");
 const buildContrat = require("./buildContrat");
 const validateContrat = require("./validateContrat");
+const validateApprenti = require("./validateApprenti");
 
 module.exports = (inputStream, callback) => {
   return oleoduc(
@@ -16,11 +18,14 @@ module.exports = (inputStream, callback) => {
           .replace(/ /g, "_"),
     }),
     writeObject(async (data) => {
-      let contrat = null;
       try {
-        contrat = buildContrat(data);
+        let contrat = buildContrat(data);
         validateContrat(contrat);
-        return callback(null, contrat);
+
+        let apprenti = buildApprenti(data);
+        validateApprenti(apprenti);
+
+        return callback(null, { apprenti, contrat });
       } catch (e) {
         return callback(e, data);
       }

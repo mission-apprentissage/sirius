@@ -12,12 +12,14 @@ integrationTests(__filename, ({ getComponents }) => {
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
-    await db.collection("contrats").insertOne(
+    await db.collection("apprentis").insertOne(
       newContrat({
-        apprenti: {
-          email: "test@domain.com",
-        },
-        questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] }],
+        email: "test@domain.com",
+        contrats: [
+          {
+            questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] }],
+          },
+        ],
       })
     );
 
@@ -29,8 +31,8 @@ integrationTests(__filename, ({ getComponents }) => {
       failed: 0,
     });
 
-    let found = await db.collection("contrats").findOne();
-    let questionnaire = found.questionnaires[0];
+    let found = await db.collection("apprentis").findOne();
+    let questionnaire = found.contrats[0].questionnaires[0];
     let token = questionnaire.token;
     assert.ok(questionnaire.sentDate);
     assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
@@ -56,12 +58,14 @@ integrationTests(__filename, ({ getComponents }) => {
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
-    await db.collection("contrats").insertOne(
+    await db.collection("apprentis").insertOne(
       newContrat({
-        apprenti: {
-          email: "test@domain.com",
-        },
-        questionnaires: [{ type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] }],
+        email: "test@domain.com",
+        contrats: [
+          {
+            questionnaires: [{ type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] }],
+          },
+        ],
       })
     );
 
@@ -73,8 +77,8 @@ integrationTests(__filename, ({ getComponents }) => {
       failed: 0,
     });
 
-    let found = await db.collection("contrats").findOne();
-    let questionnaire = found.questionnaires[0];
+    let found = await db.collection("apprentis").findOne();
+    let questionnaire = found.contrats[0].questionnaires[0];
     let token = questionnaire.token;
     assert.ok(questionnaire.sentDate);
     assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
@@ -100,14 +104,16 @@ integrationTests(__filename, ({ getComponents }) => {
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
-    await db.collection("contrats").insertOne(
+    await db.collection("apprentis").insertOne(
       newContrat({
-        apprenti: {
-          email: "test@domain.com",
-        },
-        questionnaires: [
-          { type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] },
-          { type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] },
+        email: "test@domain.com",
+        contrats: [
+          {
+            questionnaires: [
+              { type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] },
+              { type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] },
+            ],
+          },
         ],
       })
     );
@@ -129,12 +135,14 @@ integrationTests(__filename, ({ getComponents }) => {
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
-    await db.collection("contrats").insertOne(
+    await db.collection("apprentis").insertOne(
       newContrat({
-        apprenti: {
-          email: "test@domain.com",
-        },
-        questionnaires: [{ type: "finAnnee", nbEmailsSent: 2, status: "sent", token: "12345", reponses: [] }],
+        email: "test@domain.com",
+        contrats: [
+          {
+            questionnaires: [{ type: "finAnnee", nbEmailsSent: 2, status: "sent", token: "12345", reponses: [] }],
+          },
+        ],
       })
     );
 
@@ -153,12 +161,14 @@ integrationTests(__filename, ({ getComponents }) => {
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
-    await db.collection("contrats").insertOne(
+    await db.collection("apprentis").insertOne(
       newContrat({
-        apprenti: {
-          email: "test@domain.com",
-        },
-        questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "closed", token: "12345", reponses: [] }],
+        email: "test@domain.com",
+        contrats: [
+          {
+            questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "closed", token: "12345", reponses: [] }],
+          },
+        ],
       })
     );
 
@@ -174,19 +184,21 @@ integrationTests(__filename, ({ getComponents }) => {
 
   it("Vérifie que lors d'un renvoi le statut est préservé", async () => {
     let { db, questionnaires } = await getComponents();
-    await db.collection("contrats").insertOne(
+    await db.collection("apprentis").insertOne(
       newContrat({
-        apprenti: {
-          email: "test@domain.com",
-        },
-        questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "open", token: "12345", reponses: [] }],
+        email: "test@domain.com",
+        contrats: [
+          {
+            questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "open", token: "12345", reponses: [] }],
+          },
+        ],
       })
     );
 
     await resendQuestionnaires(db, logger, questionnaires);
 
-    let found = await db.collection("contrats").findOne();
-    let questionnaire = found.questionnaires[0];
+    let found = await db.collection("apprentis").findOne();
+    let questionnaire = found.contrats[0].questionnaires[0];
     assert.strictEqual(questionnaire.status, "open");
   });
 });

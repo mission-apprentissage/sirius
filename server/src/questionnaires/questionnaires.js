@@ -1,137 +1,152 @@
 const Boom = require("boom");
-const uuid = require("uuid");
 const path = require("path");
-const moment = require("moment");
 
-const getEmail = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
-const findNext = (contrat) => {
-  let periode = contrat.formation.periode;
-
-  if (!periode) {
-    //FIXME
-    return null;
-  }
-
-  let isFormationTerminée = moment(periode.fin).isBefore(moment());
-  let isPremièreAnnéeTerminée = moment(periode.debut).add(1, "years").isBefore(moment());
-
-  if (isFormationTerminée) {
-    if (!contrat.questionnaires.find((q) => q.type === "finFormation")) {
-      return "finFormation";
+module.exports = (db, mailer) => {
+  const getEmailTemplate = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
+  const getData = async (token) => {
+    let apprenti = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": token });
+    if (!apprenti) {
+      throw Boom.badRequest("Questionnaire inconnu");
     }
-  } else if (isPremièreAnnéeTerminée) {
-    if (contrat.questionnaires.length === 0 && moment(periode.fin).diff(moment(), "months") > 12) {
-      return "finAnnee";
-    }
-  }
 
-  return null;
-};
+    let contrat = apprenti.contrats.find((c) => !!c.questionnaires.find((q) => q.token === token));
+    let questionnaire = contrat.questionnaires.find((q) => q.token === token);
+    return { apprenti, contrat, questionnaire };
+  };
 
-module.exports = (db, mailer, contrats) => {
-  return {
-    findNext,
-    create: async (contrat, type) => {
-      let questionnaire = {
-        type,
-        token: uuid.v4(),
-        nbEmailsSent: 0,
-        questions: [],
-      };
+  const sendEmail = async (apprenti, contrat, questionnaire) => {
+    let { token, type } = questionnaire;
 
-      await db.collection("contrats").updateOne(
-        { _id: contrat._id },
+    try {
+      let titre = `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`;
+      await mailer.sendEmail(apprenti.email, titre, getEmailTemplate(type), { apprenti, contrat, token });
+    } catch (e) {
+      await db.collection("apprentis").updateOne(
+        { "contrats.questionnaires.token": token },
         {
-          $push: {
-            questionnaires: questionnaire,
+          $set: {
+            "contrats.$[c].questionnaires.$[q].status": "error",
+            "contrats.$[c].questionnaires.$[q].sentDate": new Date(),
           },
+        },
+        {
+          arrayFilters: [
+            {
+              "c.questionnaires.token": token,
+            },
+            {
+              "q.token": token,
+            },
+          ],
+        }
+      );
+      throw e;
+    }
+  };
+
+  return {
+    sendQuestionnaire: async (token) => {
+      let { apprenti, contrat, questionnaire } = await getData(token);
+
+      if (questionnaire.status === "closed") {
+        throw Boom.badRequest("Le questionnaire n'est plus fermé et ne peut donc pas être envoyé");
+      }
+
+      await sendEmail(apprenti, contrat, questionnaire);
+
+      let { value: result } = await db.collection("apprentis").findOneAndUpdate(
+        { "contrats.questionnaires.token": token },
+        {
+          $set: {
+            "contrats.$[c].questionnaires.$[q].status": questionnaire.status || "sent",
+            "contrats.$[c].questionnaires.$[q].sentDate": new Date(),
+          },
+          $inc: {
+            "contrats.$[c].questionnaires.$[q].nbEmailsSent": 1,
+          },
+        },
+        {
+          returnOriginal: false,
+          arrayFilters: [
+            {
+              "c.questionnaires.token": token,
+            },
+            {
+              "q.token": token,
+            },
+          ],
         }
       );
 
-      return questionnaire;
-    },
-    sendQuestionnaire: async (token) => {
-      let contrat = await contrats.getContratByToken(token);
-      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
-
-      if (questionnaire.status === "closed") {
-        throw Boom.badRequest("Le questionnaire n'est plus disponible et ne peut donc pas être envoyé");
-      }
-
-      try {
-        let titre = `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`;
-        await mailer.sendEmail(contrat.apprenti.email, titre, getEmail(questionnaire.type), { contrat, token });
-      } catch (e) {
-        await db.collection("contrats").updateOne(
-          { "questionnaires.token": token },
-          {
-            $set: {
-              "questionnaires.$.status": "error",
-              "questionnaires.$.sentDate": new Date(),
-            },
-          }
-        );
-        throw e;
-      }
-
-      let { value: newContrat } = await db.collection("contrats").findOneAndUpdate(
-        { "questionnaires.token": token },
-        {
-          $set: {
-            "questionnaires.$.status": questionnaire.status || "sent",
-            "questionnaires.$.sentDate": new Date(),
-          },
-          $inc: {
-            "questionnaires.$.nbEmailsSent": 1,
-          },
-        },
-        { returnOriginal: false }
-      );
-
-      if (!newContrat) {
+      if (!result) {
         throw Boom.badRequest("Questionnaire inconnu");
       }
     },
     previewEmail: async (token) => {
-      let contrat = await contrats.getContratByToken(token);
-      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
+      let { apprenti, contrat, questionnaire } = await getData(token);
 
-      return mailer.renderEmail(getEmail(questionnaire.type), {
+      return mailer.renderEmail(getEmailTemplate(questionnaire.type), {
+        apprenti,
         token,
         contrat,
       });
     },
     markAsOpened: async (token) => {
-      await db.collection("contrats").updateOne(
-        { "questionnaires.token": token },
-        {
-          $set: {
-            "questionnaires.$.status": "opened",
-          },
-        }
-      );
-    },
-    markAsClicked: async (token) => {
-      let contrat = await contrats.getContratByToken(token);
-      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
+      let { questionnaire } = await getData(token);
 
       if (questionnaire.status === "closed") {
         throw Boom.badRequest("Le questionnaire n'est plus disponible");
       }
 
-      let { value: newContrat } = await db.collection("contrats").findOneAndUpdate(
-        { "questionnaires.token": token },
+      await db.collection("apprentis").updateOne(
+        { "contrats.questionnaires.token": token },
         {
           $set: {
-            "questionnaires.$.updateDate": new Date(),
-            "questionnaires.$.status": "clicked",
-            "questionnaires.$.questions": [],
+            "contrats.$[c].questionnaires.$[q].status": "opened",
           },
         },
-        { returnOriginal: false }
+        {
+          arrayFilters: [
+            {
+              "c.questionnaires.token": token,
+            },
+            {
+              "q.token": token,
+            },
+          ],
+        }
+      );
+    },
+    markAsClicked: async (token) => {
+      let { apprenti, contrat, questionnaire } = await getData(token);
+
+      if (questionnaire.status === "closed") {
+        throw Boom.badRequest("Le questionnaire n'est plus disponible");
+      }
+
+      let { value: result } = await db.collection("apprentis").findOneAndUpdate(
+        { "contrats.questionnaires.token": token },
+        {
+          $set: {
+            "contrats.$[c].questionnaires.$[q].status": "clicked",
+            "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
+            "contrats.$[c].questionnaires.$[q].questions": [],
+          },
+        },
+        {
+          returnOriginal: false,
+          arrayFilters: [
+            {
+              "c.questionnaires.token": token,
+            },
+            {
+              "q.token": token,
+            },
+          ],
+        }
       );
 
-      if (!newContrat) {
+      if (!result) {
         throw Boom.badRequest("Questionnaire inconnu");
       }
 
@@ -141,27 +156,26 @@ module.exports = (db, mailer, contrats) => {
           intitule: contrat.formation.intitule,
         },
         apprenti: {
-          prenom: contrat.apprenti.prenom,
-          nom: contrat.apprenti.nom,
-          formation: contrat.apprenti.formation,
+          prenom: apprenti.prenom,
+          nom: apprenti.nom,
+          formation: apprenti.formation,
         },
       };
     },
     answerToQuestion: async (token, questionId, reponses) => {
-      let contrat = await contrats.getContratByToken(token);
-      let questionnaire = contrat.questionnaires.find((q) => q.token === token);
+      let { questionnaire } = await getData(token);
 
       if (questionnaire.status === "closed") {
         throw Boom.badRequest("Le questionnaire n'est plus disponible");
       }
 
-      let { value: newContrat } = await db.collection("contrats").findOneAndUpdate(
-        { "questionnaires.token": token },
+      let { value: result } = await db.collection("apprentis").findOneAndUpdate(
+        { "contrats.questionnaires.token": token },
         {
           $set: {
-            "questionnaires.$.updateDate": new Date(),
-            "questionnaires.$.status": "inprogress",
-            "questionnaires.$.questions": [
+            "contrats.$[c].questionnaires.$[q].status": "inprogress",
+            "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
+            "contrats.$[c].questionnaires.$[q].questions": [
               ...questionnaire.questions.filter((q) => q.id !== questionId),
               {
                 id: questionId,
@@ -170,26 +184,46 @@ module.exports = (db, mailer, contrats) => {
             ],
           },
         },
-        { returnOriginal: false }
+        {
+          returnOriginal: false,
+          arrayFilters: [
+            {
+              "c.questionnaires.token": token,
+            },
+            {
+              "q.token": token,
+            },
+          ],
+        }
       );
 
-      if (!newContrat) {
+      if (!result) {
         throw Boom.badRequest("Questionnaire inconnu");
       }
     },
     close: async (token) => {
-      let { value: newContrat } = await db.collection("contrats").findOneAndUpdate(
-        { "questionnaires.token": token },
+      let { value: result } = await db.collection("apprentis").findOneAndUpdate(
+        { "contrats.questionnaires.token": token },
         {
           $set: {
-            "questionnaires.$.updateDate": new Date(),
-            "questionnaires.$.status": "closed",
+            "contrats.$[c].questionnaires.$[q].status": "closed",
+            "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
           },
         },
-        { returnOriginal: false }
+        {
+          returnOriginal: false,
+          arrayFilters: [
+            {
+              "c.questionnaires.token": token,
+            },
+            {
+              "q.token": token,
+            },
+          ],
+        }
       );
 
-      if (!newContrat) {
+      if (!result) {
         throw Boom.badRequest("Questionnaire inconnu");
       }
     },

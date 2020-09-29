@@ -84,10 +84,11 @@ module.exports = ({ db, config, questionnaires }) => {
       }).validateAsync(req.params, { abortEarly: false });
 
       let stream = db
-        .collection("contrats")
+        .collection("apprentis")
         .aggregate([
-          { $project: { cohorte: 1, questionnaires: 1 } },
-          { $unwind: "$questionnaires" },
+          { $project: { cohorte: 1, contrats: 1 } },
+          { $unwind: "$contrats" },
+          { $unwind: "$contrats.questionnaires" },
           {
             $group: {
               _id: { cohorte: "$cohorte" },
@@ -95,7 +96,7 @@ module.exports = ({ db, config, questionnaires }) => {
               ouverts: {
                 $sum: {
                   $cond: {
-                    if: { $in: ["$questionnaires.status", ["opened", "clicked", "inprogress", "closed"]] },
+                    if: { $in: ["$contrats.questionnaires.status", ["opened", "clicked", "inprogress", "closed"]] },
                     then: 1,
                     else: 0,
                   },
@@ -104,7 +105,7 @@ module.exports = ({ db, config, questionnaires }) => {
               cliques: {
                 $sum: {
                   $cond: {
-                    if: { $in: ["$questionnaires.status", ["clicked", "inprogress", "closed"]] },
+                    if: { $in: ["$contrats.questionnaires.status", ["clicked", "inprogress", "closed"]] },
                     then: 1,
                     else: 0,
                   },
@@ -113,7 +114,7 @@ module.exports = ({ db, config, questionnaires }) => {
               enCours: {
                 $sum: {
                   $cond: {
-                    if: { $eq: ["$questionnaires.status", "inprogress"] },
+                    if: { $eq: ["$contrats.questionnaires.status", "inprogress"] },
                     then: 1,
                     else: 0,
                   },
@@ -122,7 +123,7 @@ module.exports = ({ db, config, questionnaires }) => {
               termines: {
                 $sum: {
                   $cond: {
-                    if: { $eq: ["$questionnaires.status", "closed"] },
+                    if: { $eq: ["$contrats.questionnaires.status", "closed"] },
                     then: 1,
                     else: 0,
                   },

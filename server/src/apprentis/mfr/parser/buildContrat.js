@@ -13,18 +13,14 @@ const getCodePostal = (adresse) => {
 };
 
 module.exports = (data) => {
+  let codeDiplome = sanitize(data.code_diplome);
+  let siretCfa = sanitize(data.siret);
+  let siretEntreprise = sanitize(data.siret_entreprise);
+
   return {
-    apprenti: {
-      prenom: data.prenom_apprenti,
-      nom: data.nom_apprenti,
-      email: data.email_apprenti.replace(/ /g, ""),
-      telephones: {
-        fixe: sanitize(data.telephone_apprenti),
-        portable: sanitize(data.portable_apprenti),
-      },
-    },
+    questionnaires: [],
     formation: {
-      codeDiplome: sanitize(data.code_diplome),
+      codeDiplome,
       intitule: data.app_diplome,
       anneePromotion: data.annee_promotion || null,
       periode: {
@@ -34,7 +30,7 @@ module.exports = (data) => {
     },
     cfa: {
       nom: data["etablissement/site_cfa"],
-      siret: sanitize(data.siret),
+      siret: siretCfa,
       uaiResponsable: sanitize(data.code_uai_cfa),
       uaiFormateur: sanitize(data.code_uai_site),
       adresse: data.adresse_postale_cfa,
@@ -43,7 +39,7 @@ module.exports = (data) => {
     rupture: data.date_rupture ? parseDate(data.date_rupture) : null,
     entreprise: {
       raisonSociale: isEmpty ? null : data.entreprise,
-      siret: sanitize(data.siret_entreprise),
+      siret: siretEntreprise,
       tuteur:
         data.prenom_tuteur && data.nom_tuteur
           ? {
