@@ -4,7 +4,7 @@ const { omit } = require("lodash");
 const integrationTests = require("../utils/integrationTests");
 const logger = require("../utils/fakeLogger");
 const createFakeMailer = require("../utils/fakeMailer");
-const { newContrat } = require("../utils/fixtures");
+const { newApprenti, newContrat } = require("../utils/fixtures");
 const sendQuestionnaires = require("../../../src/questionnaires/emails/sendQuestionnaires");
 
 integrationTests(__filename, ({ getComponents }) => {
@@ -14,17 +14,17 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "apprenti@domain.fr",
         contrats: [
-          {
+          newContrat({
             formation: {
               periode: {
                 debut: moment().subtract(2, "years").toDate(),
                 fin: moment().add(2, "years").toDate(),
               },
             },
-          },
+          }),
         ],
       })
     );
@@ -67,10 +67,10 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "apprenti@domain.fr",
         contrats: [
-          {
+          newContrat({
             questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] }],
             formation: {
               periode: {
@@ -78,7 +78,7 @@ integrationTests(__filename, ({ getComponents }) => {
                 fin: moment().subtract(1, "days").toDate(),
               },
             },
-          },
+          }),
         ],
       })
     );
@@ -120,17 +120,17 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "apprenti@domain.fr",
         contrats: [
-          {
+          newContrat({
             formation: {
               periode: {
                 debut: moment().subtract(1, "months").toDate(),
                 fin: moment().add(1, "years").toDate(),
               },
             },
-          },
+          }),
         ],
       })
     );
@@ -151,7 +151,7 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ fail: true }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "apprenti@domain.fr",
       })
     );
@@ -176,32 +176,32 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "apprenti@domain.fr",
         contrats: [
-          {
+          newContrat({
             formation: {
               periode: {
                 debut: moment().subtract(1, "years").toDate(),
                 fin: moment().add(2, "years").toDate(),
               },
             },
-          },
+          }),
         ],
       })
     );
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "other@domain.com",
         contrats: [
-          {
+          newContrat({
             formation: {
               periode: {
                 debut: moment().subtract(1, "years").toDate(),
                 fin: moment().add(2, "years").toDate(),
               },
             },
-          },
+          }),
         ],
       })
     );
@@ -223,17 +223,17 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "apprenti@domain.fr",
         contrats: [
-          {
+          newContrat({
             formation: {
               periode: {
                 debut: moment().subtract(1, "years").toDate(),
                 fin: moment().add(2, "years").toDate(),
               },
             },
-          },
+          }),
         ],
       })
     );
@@ -247,5 +247,44 @@ integrationTests(__filename, ({ getComponents }) => {
       failed: 0,
       ignored: 1,
     });
+  });
+
+  it("Vérifie qu'on envoie un email pour le contrat le plus récent", async () => {
+    let emails = [];
+    let { db, apprentis, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        email: "apprenti@domain.fr",
+        contrats: [
+          newContrat({
+            formation: {
+              periode: {
+                debut: moment().subtract(4, "years").toDate(),
+                fin: moment().subtract(3, "years").toDate(),
+              },
+            },
+          }),
+          newContrat({
+            formation: {
+              periode: {
+                debut: moment().subtract(3, "years").toDate(),
+                fin: moment().subtract(1, "years").toDate(),
+              },
+            },
+          }),
+        ],
+      })
+    );
+
+    await sendQuestionnaires(db, logger, apprentis, questionnaires, { type: "finFormation" });
+
+    let found = await db.collection("apprentis").findOne();
+    assert.deepStrictEqual(found.contrats[0].questionnaires.length, 0);
+    assert.deepStrictEqual(found.contrats[1].questionnaires.length, 1);
+
+    //Check emails
+    assert.strictEqual(emails.length, 1);
   });
 });

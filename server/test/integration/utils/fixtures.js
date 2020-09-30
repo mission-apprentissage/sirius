@@ -6,12 +6,43 @@ const ObjectID = require("mongodb").ObjectID;
 
 faker.locale = "fr";
 
-module.exports = {
-  newContrat: (custom = {}) => {
-    let codeDiplome = faker.helpers.replaceSymbols("########");
-    let siretCFA = faker.helpers.replaceSymbols("#########00015");
-    let siretEntreprise = faker.helpers.replaceSymbols("#########00015");
+let newContrat = (custom = {}) => {
+  return _.merge(
+    {
+      questionnaires: [],
+      formation: {
+        codeDiplome: faker.helpers.replaceSymbols("########"),
+        intitule: "CAP Boucher",
+        anneePromotion: `${new Date().getFullYear() - 1}/${new Date().getFullYear()}`,
+        periode: {
+          debut: moment().subtract(1, "years").toDate(),
+          fin: moment().toDate(),
+        },
+      },
+      cfa: {
+        nom: faker.company.companyName(),
+        siret: faker.helpers.replaceSymbols("#########00015"),
+        uaiResponsable: faker.helpers.replaceSymbols("#######?"),
+        uaiFormateur: faker.helpers.replaceSymbols("#######?"),
+        adresse: `${faker.address.streetAddress()} ${faker.address.zipCode()} ${faker.address.city()}`,
+      },
+      rupture: null,
+      entreprise: {
+        raisonSociale: faker.company.companyName(),
+        siret: faker.helpers.replaceSymbols("#########00015"),
+        tuteur: {
+          prenom: faker.name.firstName(),
+          nom: faker.name.lastName(),
+        },
+      },
+    },
+    custom
+  );
+};
 
+module.exports = {
+  newContrat,
+  newApprenti: (custom = {}) => {
     return _.merge(
       {
         _id: new ObjectID(),
@@ -25,36 +56,7 @@ module.exports = {
           portable: faker.phone.phoneNumber("06########"),
         },
         unsubscribe: false,
-        contrats: [
-          {
-            questionnaires: [],
-            formation: {
-              codeDiplome: codeDiplome,
-              intitule: "CAP Boucher",
-              anneePromotion: `${new Date().getFullYear() - 1}/${new Date().getFullYear()}`,
-              periode: {
-                debut: moment().subtract(1, "years").toDate(),
-                fin: moment().toDate(),
-              },
-            },
-            cfa: {
-              nom: faker.company.companyName(),
-              siret: siretCFA,
-              uaiResponsable: faker.helpers.replaceSymbols("#######?"),
-              uaiFormateur: faker.helpers.replaceSymbols("#######?"),
-              adresse: `${faker.address.streetAddress()} ${faker.address.zipCode()} ${faker.address.city()}`,
-            },
-            rupture: null,
-            entreprise: {
-              raisonSociale: faker.company.companyName(),
-              siret: siretEntreprise,
-              tuteur: {
-                prenom: faker.name.firstName(),
-                nom: faker.name.lastName(),
-              },
-            },
-          },
-        ],
+        contrats: [newContrat()],
       },
       custom
     );

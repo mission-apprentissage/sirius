@@ -16,8 +16,17 @@ module.exports = async (logger, apprentis, csvStream) => {
       logger.error(`Unable to import ${JSON.stringify(data, null, 2)}`, err);
       stats.invalid++;
     } else {
-      let { apprenti, contrat } = data;
+      let apprenti = {
+        creationDate: new Date(),
+        cohorte: `cohorte_test_${moment().format("YYYY_MM_DD")}`,
+        unsubscribe: false,
+        ...data.apprenti,
+      };
       let email = apprenti.email;
+      let contrat = {
+        questionnaires: [],
+        ...data.contrat,
+      };
 
       if (await apprentis.exists(email)) {
         if (await apprentis.hasContrat(email, contrat)) {
@@ -27,13 +36,7 @@ module.exports = async (logger, apprentis, csvStream) => {
           stats.updated++;
         }
       } else {
-        await apprentis.create({
-          creationDate: new Date(),
-          cohorte: `cohorte_test_${moment().format("YYYY_MM_DD")}`,
-          unsubscribe: false,
-          contrats: [contrat],
-          ...apprenti,
-        });
+        await apprentis.create({ ...apprenti, contrats: [contrat] });
         stats.created++;
       }
     }

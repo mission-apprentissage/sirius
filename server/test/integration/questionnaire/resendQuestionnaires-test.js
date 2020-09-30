@@ -3,7 +3,7 @@ const { omit } = require("lodash");
 const integrationTests = require("../utils/integrationTests");
 const logger = require("../utils/fakeLogger");
 const createFakeMailer = require("../utils/fakeMailer");
-const { newContrat } = require("../utils/fixtures");
+const { newApprenti, newContrat } = require("../utils/fixtures");
 const resendQuestionnaires = require("../../../src/questionnaires/emails/resendQuestionnaires");
 
 integrationTests(__filename, ({ getComponents }) => {
@@ -13,12 +13,12 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "test@domain.com",
         contrats: [
-          {
+          newContrat({
             questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] }],
-          },
+          }),
         ],
       })
     );
@@ -59,12 +59,12 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "test@domain.com",
         contrats: [
-          {
+          newContrat({
             questionnaires: [{ type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] }],
-          },
+          }),
         ],
       })
     );
@@ -105,15 +105,15 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "test@domain.com",
         contrats: [
-          {
+          newContrat({
             questionnaires: [
               { type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] },
               { type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] },
             ],
-          },
+          }),
         ],
       })
     );
@@ -136,12 +136,12 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "test@domain.com",
         contrats: [
-          {
+          newContrat({
             questionnaires: [{ type: "finAnnee", nbEmailsSent: 2, status: "sent", token: "12345", reponses: [] }],
-          },
+          }),
         ],
       })
     );
@@ -162,12 +162,12 @@ integrationTests(__filename, ({ getComponents }) => {
       mailer: createFakeMailer({ calls: emails }),
     });
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "test@domain.com",
         contrats: [
-          {
+          newContrat({
             questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "closed", token: "12345", reponses: [] }],
-          },
+          }),
         ],
       })
     );
@@ -185,12 +185,12 @@ integrationTests(__filename, ({ getComponents }) => {
   it("Vérifie que lors d'un renvoi le statut est préservé", async () => {
     let { db, questionnaires } = await getComponents();
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "test@domain.com",
         contrats: [
-          {
+          newContrat({
             questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "open", token: "12345", reponses: [] }],
-          },
+          }),
         ],
       })
     );

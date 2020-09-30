@@ -35,7 +35,7 @@ module.exports = (db) => {
     },
     getNextQuestionnaireContext: async (email) => {
       let apprenti = await db.collection("apprentis").findOne({ email });
-      let contrat = sortBy(apprenti.contrats, ["formation.periode.fin"]).reverse().pop();
+      let contrat = sortBy(apprenti.contrats, ["formation.periode.fin"]).pop();
       let periode = contrat.formation.periode;
 
       if (!periode) {

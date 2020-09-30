@@ -1,16 +1,16 @@
 const _ = require("lodash");
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newContrat } = require("../utils/fixtures");
+const { newApprenti, newContrat } = require("../utils/fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut prévisualiser l'email", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         contrats: [
-          {
+          newContrat({
             questionnaires: [
               {
                 type: "finAnnee",
@@ -18,7 +18,7 @@ httpTests(__filename, ({ startServer }) => {
                 questions: [{ id: "début", data: { value: 1, label: "ok" } }],
               },
             ],
-          },
+          }),
         ],
       })
     );
@@ -30,15 +30,42 @@ httpTests(__filename, ({ startServer }) => {
     assert.ok(html.indexOf("Bonjour") !== -1);
   });
 
+  it("Vérifie qu'on peut marquer un email comme ayant été ouvert", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              {
+                type: "finAnnee",
+                token: "123456",
+                questions: [{ id: "début", data: { value: 1, label: "ok" } }],
+              },
+            ],
+          }),
+        ],
+      })
+    );
+
+    let response = await httpClient.get("/api/questionnaires/123456/markAsOpened");
+
+    assert.strictEqual(response.status, 200);
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
+    assert.deepStrictEqual(finAnnee.status, "opened");
+  });
+
   it("Vérifie qu'on peut démarrer un questionnaire", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         prenom: "Robert",
         nom: "Doe",
         contrats: [
-          {
+          newContrat({
             formation: {
               intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
             },
@@ -50,7 +77,7 @@ httpTests(__filename, ({ startServer }) => {
                 questions: [],
               },
             ],
-          },
+          }),
         ],
       })
     );
@@ -68,42 +95,19 @@ httpTests(__filename, ({ startServer }) => {
         intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
       },
     });
-  });
 
-  it("Vérifie qu'on peut marquer un email comme ayant été ouvert", async () => {
-    let { httpClient, components } = await startServer();
-    let { db } = components;
-    await db.collection("apprentis").insertOne(
-      newContrat({
-        contrats: [
-          {
-            questionnaires: [
-              {
-                type: "finAnnee",
-                token: "123456",
-                questions: [{ id: "début", data: { value: 1, label: "ok" } }],
-              },
-            ],
-          },
-        ],
-      })
-    );
-
-    let response = await httpClient.get("/api/questionnaires/123456/markAsOpened");
-
-    assert.strictEqual(response.status, 200);
     let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
     let finAnnee = found.contrats[0].questionnaires[0];
-    assert.deepStrictEqual(finAnnee.status, "opened");
+    assert.deepStrictEqual(finAnnee.status, "clicked");
   });
 
   it("Vérifie qu'on peut réinitialiser un questionnaire", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         contrats: [
-          {
+          newContrat({
             questionnaires: [
               {
                 type: "finAnnee",
@@ -112,7 +116,7 @@ httpTests(__filename, ({ startServer }) => {
                 questions: [{ id: "début", data: { value: 1, label: "ok" } }],
               },
             ],
-          },
+          }),
         ],
       })
     );
@@ -122,6 +126,7 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 200);
     let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
     let finAnnee = found.contrats[0].questionnaires[0];
+    assert.deepStrictEqual(finAnnee.status, "clicked");
     assert.deepStrictEqual(finAnnee.questions, []);
   });
 
@@ -129,9 +134,9 @@ httpTests(__filename, ({ startServer }) => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         contrats: [
-          {
+          newContrat({
             questionnaires: [
               {
                 type: "finAnnee",
@@ -140,7 +145,7 @@ httpTests(__filename, ({ startServer }) => {
                 questions: [],
               },
             ],
-          },
+          }),
         ],
       })
     );
@@ -159,9 +164,9 @@ httpTests(__filename, ({ startServer }) => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         contrats: [
-          {
+          newContrat({
             questionnaires: [
               {
                 token: "123456",
@@ -170,7 +175,7 @@ httpTests(__filename, ({ startServer }) => {
                 questions: [],
               },
             ],
-          },
+          }),
         ],
       })
     );
@@ -189,9 +194,9 @@ httpTests(__filename, ({ startServer }) => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         contrats: [
-          {
+          newContrat({
             questionnaires: [
               {
                 token: "123456",
@@ -200,7 +205,7 @@ httpTests(__filename, ({ startServer }) => {
                 questions: [],
               },
             ],
-          },
+          }),
         ],
       })
     );
@@ -219,9 +224,9 @@ httpTests(__filename, ({ startServer }) => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         contrats: [
-          {
+          newContrat({
             questionnaires: [
               {
                 type: "finAnnee",
@@ -230,7 +235,7 @@ httpTests(__filename, ({ startServer }) => {
                 questions: [{ id: "début", reponses: [{ id: 1, label: "ok" }] }],
               },
             ],
-          },
+          }),
         ],
       })
     );
@@ -250,9 +255,9 @@ httpTests(__filename, ({ startServer }) => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         contrats: [
-          {
+          newContrat({
             questionnaires: [
               {
                 type: "finAnnee",
@@ -260,7 +265,7 @@ httpTests(__filename, ({ startServer }) => {
                 questions: [{ id: "début", data: { value: 1, label: "ok" } }],
               },
             ],
-          },
+          }),
         ],
       })
     );
@@ -278,9 +283,9 @@ httpTests(__filename, ({ startServer }) => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         contrats: [
-          {
+          newContrat({
             questionnaires: [
               {
                 token: "123456",
@@ -289,7 +294,7 @@ httpTests(__filename, ({ startServer }) => {
                 questions: [],
               },
             ],
-          },
+          }),
         ],
       })
     );

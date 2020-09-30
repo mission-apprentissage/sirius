@@ -1,6 +1,6 @@
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newContrat } = require("../utils/fixtures");
+const { newApprenti } = require("../utils/fixtures");
 const ObjectID = require("mongodb").ObjectID;
 
 httpTests(__filename, ({ startServer }) => {
@@ -9,7 +9,7 @@ httpTests(__filename, ({ startServer }) => {
     let { db } = components;
     let id = new ObjectID();
     await db.collection("contrats").insertOne(
-      newContrat({
+      newApprenti({
         _id: id,
         unsubscribe: false,
       })

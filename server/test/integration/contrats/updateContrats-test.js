@@ -1,5 +1,5 @@
 const assert = require("assert");
-const { newContrat } = require("../utils/fixtures");
+const { newApprenti, newContrat } = require("../utils/fixtures");
 const integrationTests = require("../utils/integrationTests");
 const updateContrats = require("../../../src/apprentis/mfr/updateContrats");
 const { createStream } = require("../utils/testUtils");
@@ -8,10 +8,10 @@ integrationTests(__filename, ({ getComponents }) => {
   it("Vérifie qu'on peut mettre à jour les données d'un contrat", async () => {
     let { db, logger } = await getComponents();
     await db.collection("apprentis").insertOne(
-      newContrat({
+      newApprenti({
         email: "jean@robert.com",
         contrats: [
-          {
+          newContrat({
             formation: {
               codeDiplome: "11111111",
             },
@@ -24,7 +24,7 @@ integrationTests(__filename, ({ getComponents }) => {
             entreprise: {
               siret: "11111111100027",
             },
-          },
+          }),
         ],
       })
     );

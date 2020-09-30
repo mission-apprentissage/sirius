@@ -18,7 +18,6 @@ module.exports = (data) => {
   let siretEntreprise = sanitize(data.siret_entreprise);
 
   return {
-    questionnaires: [],
     formation: {
       codeDiplome,
       intitule: data.app_diplome,
