@@ -24,8 +24,8 @@ module.exports = async (logger, apprentis, csvStream) => {
       };
       let email = apprenti.email;
       let contrat = {
-        questionnaires: [],
         ...data.contrat,
+        questionnaires: [],
       };
 
       if (await apprentis.exists(email)) {

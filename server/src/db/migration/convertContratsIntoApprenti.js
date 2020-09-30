@@ -20,11 +20,11 @@ module.exports = async (db) => {
         ...contrat.apprenti,
         contrats: [
           {
-            questionnaires: contrat.questionnaires,
             formation: contrat.formation,
             cfa: contrat.cfa,
             rupture: contrat.rupture,
             entreprise: contrat.entreprise,
+            questionnaires: contrat.questionnaires,
           },
         ],
       };
