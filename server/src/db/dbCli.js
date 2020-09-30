@@ -4,9 +4,7 @@ const injectData = require("./dataset/injectData");
 const createIndexes = require("./indexes/createIndexes");
 const dropIndexes = require("./indexes/dropIndexes");
 const capLogs = require("./indexes/capLogs");
-const reworkQuestionnaires = require("./migration/reworkQuestionnaires");
-const removeFake = require("./migration/removeFake");
-const forceFinFormation = require("./migration/forceFinFormation");
+const convertContratsIntoApprenti = require("./migration/convertContratsIntoApprenti");
 
 let indexes = cli.command("indexes").description("Gestion des indexes");
 indexes
@@ -33,11 +31,9 @@ cli
   .command("migrate")
   .description("Migre les données en base")
   .action(() => {
-    runScript(async ({ db, questionnaires }) => {
+    runScript(async ({ db }) => {
       return {
-        reworkQuestionnaires: await reworkQuestionnaires(db),
-        removeFake: await removeFake(db),
-        forceFinFormation: await forceFinFormation(db, questionnaires),
+        convertContratsIntoApprenti: await convertContratsIntoApprenti(db),
       };
     });
   });

@@ -28,7 +28,6 @@ module.exports = async (db) => {
     writeObject(
       async (contrat) => {
         let results = await db.collection("contrats").replaceOne({ _id: contrat._id }, contrat);
-
         stats.updated += getNbModifiedDocuments(results);
       },
       { parallel: 2 }
