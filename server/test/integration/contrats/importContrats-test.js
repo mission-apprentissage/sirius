@@ -20,7 +20,7 @@ integrationTests(__filename, ({ getComponents }) => {
       created: 1,
       updated: 0,
       invalid: 0,
-      ignored: 0,
+      duplicated: 0,
     });
     assert.ok(found.creationDate);
     assert.ok(found.cohorte.startsWith("cohorte_test_2"));
@@ -70,7 +70,7 @@ integrationTests(__filename, ({ getComponents }) => {
       created: 1,
       updated: 1,
       invalid: 0,
-      ignored: 0,
+      duplicated: 0,
     });
     assert.ok(found.creationDate);
     assert.ok(found.cohorte.startsWith("cohorte_test_2"));
@@ -140,7 +140,7 @@ integrationTests(__filename, ({ getComponents }) => {
       created: 1,
       updated: 0,
       invalid: 0,
-      ignored: 1,
+      duplicated: 1,
     });
   });
 
@@ -160,7 +160,7 @@ integrationTests(__filename, ({ getComponents }) => {
       created: 0,
       updated: 0,
       invalid: 1,
-      ignored: 0,
+      duplicated: 0,
     });
   });
 });
