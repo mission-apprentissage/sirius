@@ -37,6 +37,9 @@ module.exports = (db) => {
       let apprenti = await db.collection("apprentis").findOne({ email });
       let contrat = sortBy(apprenti.contrats, ["formation.periode.fin"]).pop();
       let periode = contrat.formation.periode;
+      let questionnaires = apprenti.contrats.reduce((acc, contrat) => {
+        return [...acc, ...contrat.questionnaires];
+      }, []);
 
       if (!periode) {
         //FIXME
@@ -48,11 +51,11 @@ module.exports = (db) => {
       let isPremièreAnnéeTerminée = moment(periode.debut).add(1, "years").isBefore(moment());
 
       if (isFormationTerminée) {
-        if (!contrat.questionnaires.find((q) => q.type === "finFormation")) {
+        if (!questionnaires.find((q) => q.type === "finFormation")) {
           type = "finFormation";
         }
       } else if (isPremièreAnnéeTerminée) {
-        if (contrat.questionnaires.length === 0 && moment(periode.fin).diff(moment(), "months") > 12) {
+        if (questionnaires.length === 0 && moment(periode.fin).diff(moment(), "months") > 12) {
           type = "finAnnee";
         }
       }

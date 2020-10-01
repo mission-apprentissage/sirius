@@ -3,7 +3,7 @@ const { omit } = require("lodash");
 const integrationTests = require("../utils/integrationTests");
 const logger = require("../utils/fakeLogger");
 const createFakeMailer = require("../utils/fakeMailer");
-const { newApprenti, newContrat } = require("../utils/fixtures");
+const { newApprenti, newContrat, newQuestionnaire } = require("../utils/fixtures");
 const resendQuestionnaires = require("../../../src/questionnaires/emails/resendQuestionnaires");
 
 integrationTests(__filename, ({ getComponents }) => {
@@ -17,7 +17,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] }],
+            questionnaires: [newQuestionnaire({ type: "finAnnee", status: "sent", token: "12345" })],
           }),
         ],
       })
@@ -40,7 +40,7 @@ integrationTests(__filename, ({ getComponents }) => {
       status: "sent",
       token,
       nbEmailsSent: 2,
-      reponses: [],
+      questions: [],
     });
 
     //Check emails
@@ -63,7 +63,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [{ type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] }],
+            questionnaires: [newQuestionnaire({ type: "finFormation", status: "sent", token: "45612" })],
           }),
         ],
       })
@@ -86,7 +86,7 @@ integrationTests(__filename, ({ getComponents }) => {
       status: "sent",
       token,
       nbEmailsSent: 2,
-      reponses: [],
+      questions: [],
     });
 
     //Check emails
@@ -110,8 +110,8 @@ integrationTests(__filename, ({ getComponents }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              { type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] },
-              { type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] },
+              newQuestionnaire({ type: "finAnnee", token: "12345" }),
+              newQuestionnaire({ type: "finFormation", token: "45612" }),
             ],
           }),
         ],
@@ -140,7 +140,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [{ type: "finAnnee", nbEmailsSent: 2, status: "sent", token: "12345", reponses: [] }],
+            questionnaires: [newQuestionnaire({ type: "finAnnee", nbEmailsSent: 2, status: "sent", token: "12345" })],
           }),
         ],
       })
@@ -166,7 +166,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "closed", token: "12345", reponses: [] }],
+            questionnaires: [newQuestionnaire({ type: "finAnnee", status: "closed", token: "12345" })],
           }),
         ],
       })
@@ -189,7 +189,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [{ type: "finAnnee", nbEmailsSent: 1, status: "open", token: "12345", reponses: [] }],
+            questionnaires: [newQuestionnaire({ type: "finAnnee", status: "open" })],
           }),
         ],
       })

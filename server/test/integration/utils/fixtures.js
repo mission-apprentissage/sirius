@@ -42,6 +42,18 @@ let newContrat = (custom = {}) => {
 
 module.exports = {
   newContrat,
+  newQuestionnaire: (custom = {}) => {
+    return _.merge(
+      {
+        type: "finAnnee",
+        token: "12345",
+        nbEmailsSent: 1,
+        status: "sent",
+        questions: [],
+      },
+      custom
+    );
+  },
   newApprenti: (custom = {}) => {
     return _.merge(
       {
