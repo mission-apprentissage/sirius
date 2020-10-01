@@ -9,8 +9,8 @@ cli
   .option("--type <string>", "Le type de questionnaire à envoyer")
   .description("Envoie les questionnaires aux apprentis")
   .action((options) => {
-    runScript(({ db, logger, questionnaires }) => {
-      return sendQuestionnaires(db, logger, questionnaires, { limit: options.limit, type: options.type });
+    runScript(({ db, logger, apprentis, questionnaires }) => {
+      return sendQuestionnaires(db, logger, apprentis, questionnaires, { limit: options.limit, type: options.type });
     });
   });
 
