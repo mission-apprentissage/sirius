@@ -1,7 +1,7 @@
 const moment = require("moment");
 const { isEmpty } = require("lodash");
 
-const parseDate = (value) => new Date(moment(value, "DD-MM-YYYY").format("YYYY-MM-DD") + "Z");
+const parseDate = (value) => new Date(moment(value, "DD/MM/YYYY").format("YYYY-MM-DD") + "Z");
 
 const sanitize = (value) => {
   let res = value.replace(/[ .,]/g, "").replace(/[^\x00-\xA0]/g, "");

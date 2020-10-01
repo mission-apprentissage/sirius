@@ -20,5 +20,5 @@ module.exports = (contrat) => {
   }
 
   let niveau = contrat.formation.codeDiplome.substring(0, 3);
-  return niveaux[niveau] === undefined || niveaux[niveau]++ < 100;
+  return niveaux[niveau] === undefined || niveaux[niveau]++ < 200;
 };

@@ -12,10 +12,17 @@ const findNext = (contrat) => {
     return null;
   }
 
-  if (moment(periode.fin).isBefore(moment()) && !contrat.questionnaires.find((q) => q.type === "finFormation")) {
-    return "finFormation";
-  } else if (moment(periode.debut).add(1, "years").isBefore(moment()) && contrat.questionnaires.length === 0) {
-    return "finAnnee";
+  let isFormationTerminée = moment(periode.fin).isBefore(moment());
+  let isPremièreAnnéeTerminée = moment(periode.debut).add(1, "years").isBefore(moment());
+
+  if (isFormationTerminée) {
+    if (!contrat.questionnaires.find((q) => q.type === "finFormation")) {
+      return "finFormation";
+    }
+  } else if (isPremièreAnnéeTerminée) {
+    if (contrat.questionnaires.length === 0 && moment(periode.fin).diff(moment(), "months") > 12) {
+      return "finAnnee";
+    }
   }
 
   return null;
