@@ -5,10 +5,8 @@ const server = require("../../../src/core/http/httpServer");
 let startServer = async (options) => {
   let components = await getComponents(options);
   let app = await server(components);
-  let httpClient = axiosist(app);
-
   return {
-    httpClient,
+    httpClient: axiosist(app),
     components,
   };
 };

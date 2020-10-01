@@ -13,15 +13,13 @@ let schema = Joi.object({
     },
   },
   formation: {
-    codeDiplome: Joi.string()
-      .pattern(/^[0-9A-Z]{8}$/)
-      .allow(null),
+    codeDiplome: Joi.string().pattern(/^[0-9A-Z]{8}$/),
     intitule: Joi.string().required(),
     anneePromotion: Joi.string().allow(null),
     periode: Joi.object({
-      debut: Joi.date(),
-      fin: Joi.date(),
-    }).allow(null),
+      debut: Joi.date().required(),
+      fin: Joi.date().required(),
+    }).required(),
   },
   cfa: {
     nom: Joi.string().allow(null),

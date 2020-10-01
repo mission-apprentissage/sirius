@@ -1,15 +1,15 @@
 const moment = require("moment");
 const { isEmpty } = require("lodash");
 
-const parseDate = (value) => new Date(moment(value, "DD-MM-YYYY").format("YYYY-MM-DD") + "Z");
+const parseDate = (value) => new Date(moment(value, "DD/MM/YYYY").format("YYYY-MM-DD") + "Z");
 
 const sanitize = (value) => {
   let res = value.replace(/[ .,]/g, "").replace(/[^\x00-\xA0]/g, "");
   return isEmpty(res) ? null : res;
 };
 
-const getCodePostal = (code) => {
-  let matched = code.match(/([0-9]{5})|([0-9]{2} [0-9]{3})/);
+const getCodePostal = (adresse) => {
+  let matched = adresse.replace(/ /g, "").match(/([0-9]{5})|([0-9]{2} [0-9]{3})/);
   return matched && matched.length > 0 ? matched[0].replace(/ /g, "") : null;
 };
 
@@ -30,13 +30,10 @@ module.exports = (data) => {
       codeDiplome: sanitize(data.code_diplome),
       intitule: data.app_diplome,
       anneePromotion: data.annee_promotion || null,
-      periode:
-        data.date_debut && data.date_fin
-          ? {
-              debut: data.date_debut ? parseDate(data.date_debut) : null,
-              fin: data.date_fin ? parseDate(data.date_fin) : null,
-            }
-          : null,
+      periode: {
+        debut: parseDate(data.date_debut),
+        fin: parseDate(data.date_fin),
+      },
     },
     cfa: {
       nom: data["etablissement/site_cfa"],

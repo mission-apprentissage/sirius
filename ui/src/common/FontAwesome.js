@@ -19,7 +19,7 @@ export const MicroIcon = styled(wrapSVG(faMicrophoneAlt))`
   font-size: 25rem;
   &.fading {
     color: ${secondary};
-    animation: ${fade} 1s infinite alternate;
+    ${fade};
   }
 `;
 

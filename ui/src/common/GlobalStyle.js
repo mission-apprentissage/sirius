@@ -88,6 +88,10 @@ export default createGlobalStyle`
   .pt-1 {
     padding-top: 10rem;
   }
+  
+  .pb-1 {
+    padding-bottom: 10rem;
+  }
 
   .hide-sm {
     @media (max-width: ${breakpoints.sm.max}) {
@@ -101,5 +105,9 @@ export default createGlobalStyle`
     bottom: 0;
     left: 0;
     z-index: 1030;
+  }
+  
+  .text-center {
+    text-align: center;
   }
 `;

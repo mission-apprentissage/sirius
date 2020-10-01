@@ -4,7 +4,9 @@ const injectData = require("./dataset/injectData");
 const createIndexes = require("./indexes/createIndexes");
 const dropIndexes = require("./indexes/dropIndexes");
 const capLogs = require("./indexes/capLogs");
-const renameKebabCase = require("./migration/renameKebabCase");
+const reworkQuestionnaires = require("./migration/reworkQuestionnaires");
+const removeFake = require("./migration/removeFake");
+const forceFinFormation = require("./migration/forceFinFormation");
 
 let indexes = cli.command("indexes").description("Gestion des indexes");
 indexes
@@ -31,9 +33,11 @@ cli
   .command("migrate")
   .description("Migre les données en base")
   .action(() => {
-    runScript(async ({ db }) => {
+    runScript(async ({ db, questionnaires }) => {
       return {
-        renameKebabCase: await renameKebabCase(db),
+        reworkQuestionnaires: await reworkQuestionnaires(db),
+        removeFake: await removeFake(db),
+        forceFinFormation: await forceFinFormation(db, questionnaires),
       };
     });
   });
@@ -42,7 +46,7 @@ cli
   .command("dataset")
   .description("Injecte un jeu de données dans la base")
   .action(() => {
-    runScript(({ db }) => injectData(db));
+    runScript(({ db, questionnaires }) => injectData(db, questionnaires));
   });
 
 cli.parse(process.argv);

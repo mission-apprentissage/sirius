@@ -7,7 +7,7 @@ const { newContrat } = require("../utils/fixtures");
 const resendQuestionnaires = require("../../../src/questionnaires/emails/resendQuestionnaires");
 
 integrationTests(__filename, ({ getComponents }) => {
-  it("Vérifie qu'on peut renvoyer un questionnaire", async () => {
+  it("Vérifie qu'on peut renvoyer un questionnaire de fin d'année", async () => {
     let emails = [];
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
@@ -47,9 +47,81 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(email.from, "sirius@apprentissage.beta.gouv.fr");
     assert.strictEqual(email.to, "test@domain.com");
     assert.strictEqual(email.subject, "Que pensez-vous de votre formation CAP Boucher ?");
-    assert.ok(email.html.lastIndexOf("Donnez votre avis en 3 minutes") !== -1);
+    assert.ok(email.html.lastIndexOf("Donnez votre avis") !== -1);
     assert.ok(email.html.lastIndexOf(`http://localhost:5000/questionnaires/${token}`) !== -1);
+  });
+
+  it("Vérifie qu'on peut renvoyer un questionnaire de fin de formation", async () => {
+    let emails = [];
+    let { db, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await db.collection("contrats").insertOne(
+      newContrat({
+        apprenti: {
+          email: "test@domain.com",
+        },
+        questionnaires: [{ type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] }],
+      })
+    );
+
+    let stats = await resendQuestionnaires(db, logger, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 1,
+      sent: 1,
+      failed: 0,
+    });
+
+    let found = await db.collection("contrats").findOne();
+    let questionnaire = found.questionnaires[0];
+    let token = questionnaire.token;
+    assert.ok(questionnaire.sentDate);
+    assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
+      type: "finFormation",
+      status: "sent",
+      token,
+      nbEmailsSent: 2,
+      reponses: [],
+    });
+
+    //Check emails
     assert.strictEqual(emails.length, 1);
+    let email = emails[0];
+    assert.strictEqual(email.from, "sirius@apprentissage.beta.gouv.fr");
+    assert.strictEqual(email.to, "test@domain.com");
+    assert.strictEqual(email.subject, "Que pensez-vous de votre formation CAP Boucher ?");
+    assert.ok(email.html.lastIndexOf("Donnez votre avis") !== -1);
+    assert.ok(email.html.lastIndexOf(`http://localhost:5000/questionnaires/${token}`) !== -1);
+  });
+
+  it("Vérifie qu'on peut renvoyer plusieurs questionnaires de différents types", async () => {
+    let emails = [];
+    let { db, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await db.collection("contrats").insertOne(
+      newContrat({
+        apprenti: {
+          email: "test@domain.com",
+        },
+        questionnaires: [
+          { type: "finAnnee", nbEmailsSent: 1, status: "sent", token: "12345", reponses: [] },
+          { type: "finFormation", nbEmailsSent: 1, status: "sent", token: "45612", reponses: [] },
+        ],
+      })
+    );
+
+    let stats = await resendQuestionnaires(db, logger, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 2,
+      sent: 2,
+      failed: 0,
+    });
+
+    //Check emails
+    assert.strictEqual(emails.length, 2);
   });
 
   it("Vérifie qu'on peut renvoyer qu'une seule fois un questionnaire", async () => {

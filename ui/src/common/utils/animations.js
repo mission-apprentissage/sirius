@@ -1,16 +1,17 @@
-import { keyframes } from "styled-components";
+import { css, keyframes } from "styled-components";
 
-export const appear = keyframes`
+const appearSequence = keyframes`
   0% { transform: scale(0); }
   100% { transform: scale(1); }
 `;
+export const appear = css`
+  animation: ${appearSequence} 0.5s ease forwards;
+`;
 
-export const fade = keyframes`
+const fadeSequence = keyframes`
    0%  { opacity: 0; }
   100% { opacity: 1; }
 `;
-
-export const moveUpToDown = keyframes`
-  0% { transform: translateY(10rem); }
-  100% { transform: translateY(30rem); }
+export const fade = css`
+  animation: ${fadeSequence} 1s infinite alternate;
 `;

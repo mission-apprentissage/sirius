@@ -3,423 +3,460 @@ import { Highlight, Message, Tips } from "../toolkit";
 import SingleChoice from "../chat/question/SingleChoice";
 import MultiChoice from "../chat/question/MultiChoice";
 import Skip from "../chat/question/Skip";
+import siriusFutur from "./sirius-futur.svg";
+import logoLBA from "./logo-lba.svg";
+import { Box } from "../../common/Flexbox";
+import Auto from "../chat/question/Auto";
 
-export default ({ apprenti, formation }) => {
+export default ({ apprenti }) => {
   return [
     {
-      id: "accord",
+      id: "bonjour",
       message: (
         <Message>
           <p>
             Bonjour <b>{apprenti.prenom}</b> !
           </p>
-          <p className={"pt-1"}>
-            Merci de rejoindre la communauté des apprentis en <b>{formation.intitule}</b>
-          </p>
-          <Highlight>Vous voulez bien répondre à quelques questions ? Ca prendra moins de 3 minutes </Highlight>
         </Message>
       ),
-      next: "suivi",
-      input: <SingleChoice options={[{ value: true, label: "Ok c’est parti !" }]} />,
+      input: <Auto timeout={1000} />,
+      next: "présentationDuService",
     },
     {
-      id: "suivi",
+      id: "présentationDuService",
       message: (
         <Message>
-          <p>
-            Alors <b>{apprenti.prenom}</b>, comment s’est passée votre année ?
-          </p>
-
-          <p className={"pt-1"}>
-            L’apprentissage, c’est surtout la vie en entreprise : les relations avec le tuteur, les collègues... et
-            c’est important d’être suivi par le CFA pour s’assurer que tout se passe bien.
-          </p>
-
-          <Highlight>Sur le suivi en entreprise par le référent du CFA, vous diriez :</Highlight>
+          <p>Merci de nous rejoindre.</p>
+          <p>Vous pouvez donner votre avis sur votre formation pour aider les futurs apprentis.</p>
         </Message>
       ),
-      next: "suiviPrecisions",
-      input: (
-        <SingleChoice
-          options={[
-            { value: 1, label: "J’ai été bien suivi.e " },
-            { value: 2, label: "Peut s’améliorer" },
-            { value: 3, label: "Aucun suivi", next: "fierte" },
-            { value: 4, label: "J’ai quitté mon entreprise", next: "nouvelleEntreprise" },
-          ]}
-        />
-      ),
-    },
-
-    {
-      id: "nouvelleEntreprise",
-      message: <div>Avez-vous trouvé une nouvelle entreprise ?</div>,
-      next: "fierte",
-      input: (
-        <SingleChoice
-          options={[
-            { value: 1, label: "Oui, le CFA m’a aidé" },
-            { value: 2, label: "Pas encore mais le CFA m’aide" },
-            { value: 3, label: "Pas encore, mais j’ai de l’aide" },
-            {
-              value: 4,
-              label: "Pas encore et je me sens seul.e pour chercher",
-              next: "nouvelleEntrepriseAlerteCfa",
-            },
-          ]}
-        />
-      ),
+      input: <Auto />,
+      next: "anonymat",
     },
     {
-      id: "nouvelleEntrepriseAlerteCfa",
-      message: <div>Souhaitez-vous que cette information soit envoyée au CFA ?</div>,
-      next: "fierte",
-      input: (
-        <SingleChoice
-          options={[
-            { value: false, label: "Non merci" },
-            { value: true, label: "Oui" },
-          ]}
-        />
-      ),
-    },
-    {
-      id: "suiviPrecisions",
+      id: "anonymat",
       message: (
         <Message>
-          En ce qui concerne le suivi, pourriez-vous préciser ? <Tips>(plusieurs réponses possibles)</Tips>
+          <p>Votre anonymat sera totalement respecté.</p>
         </Message>
       ),
-      next: "fierte",
-      input: (
-        <MultiChoice
-          options={[
-            { value: 1, label: "Cahier de liaison ou rapport périodique" },
-            {
-              value: 2,
-              label: "Le CFA et mon tuteur sont en contact",
-            },
-            {
-              value: 3,
-              label: "Le CFA a réuni les tuteurs",
-            },
-            { value: 4, label: "Le CFA est venu en entreprise" },
-          ]}
-        />
+      next: "interfaceLBA",
+      input: <SingleChoice options={[{ id: 1000, label: "Ok" }]} />,
+    },
+    {
+      id: "interfaceLBA",
+      message: (
+        <Message>
+          <p>Les avis seront en ligne en février 2021 et cela ressemblera à ça</p>
+          <Box direction={"column"} align="center">
+            <img src={logoLBA} alt={"Logo du site La Bonne Formation"} width="30%" />
+            <img src={siriusFutur} className="pb-1" alt={"Interface graphique de Sirius"} />
+          </Box>
+        </Message>
       ),
+      input: <SingleChoice options={[{ id: 1000, label: "Ok" }]} />,
+      next: "départ",
+    },
+    {
+      id: "départ",
+      message: (
+        <Message>
+          <Highlight>C'est parti. Ca prendra moins de 3 minutes !</Highlight>
+        </Message>
+      ),
+      input: <Auto />,
+      next: "résuméDesCompétencesAcquises",
+    },
+    {
+      id: "résuméDesCompétencesAcquises",
+      message: (
+        <Message>En apprentissage on acquiert des compétences professionnelles et sociales, on grandit.</Message>
+      ),
+      input: <Auto />,
+      next: "fierte",
     },
     {
       id: "fierte",
       message: (
         <Message>
-          <p>Durant l'apprentissage, on acquiert des compétences professionnelles et sociales</p>
           <Highlight>Qu’est-ce qui vous a rendu fier.e cette année ?</Highlight>
           <Tips>(plusieurs réponses possibles)</Tips>
         </Message>
       ),
-      next: "difficultes",
       input: (
         <MultiChoice
           options={[
             {
-              value: 1,
-              label: "Je communique mieux (ex : pour parler avec mes collègues ou les clients)",
+              id: 1000,
+              label: "Je communique mieux",
             },
             {
-              value: 2,
+              id: 2000,
               label: "J’ai été félicité.e pour mon travail",
             },
             {
-              value: 3,
+              id: 3000,
               label: "Je suis plus autonome dans la vie de tous les jours",
             },
             {
-              value: 4,
+              id: 4000,
               label: "J'ai trouvé ma voie, je me sens à ma place",
             },
             {
-              value: 5,
+              id: 5000,
               label: "Je me suis fait un beau cadeau grâce à mon salaire",
             },
           ]}
         />
       ),
+      next: "vieEnEntreprise",
     },
     {
-      id: "difficultes",
+      id: "vieEnEntreprise",
       message: (
         <Message>
-          <p>
-            Mais sur le chemin, il y a aussi des obstacles : les partager, ça peut aider les autres à se sentir moins
-            seul.e.
-          </p>
-          <Highlight>{apprenti.prenom}, avez-vous rencontré des difficultés au cours de cette année ?</Highlight>
+          C'est aussi la découverte de la vie en entreprise : les relations avec le tuteur, les collègues, le nouveau
+          rythme de vie...
+        </Message>
+      ),
+      input: <Auto />,
+      next: "importanceDuSuivi",
+    },
+    {
+      id: "importanceDuSuivi",
+      message: <Message>C’est important d’être suivi par le CFA pour s’assurer que tout se passe bien.</Message>,
+      input: <Auto />,
+      next: "suivi",
+    },
+    {
+      id: "suivi",
+      message: (
+        <Message>
+          <Highlight>Sur le suivi en entreprise par le CFA, vous diriez :</Highlight>
+        </Message>
+      ),
+      input: (
+        <SingleChoice
+          options={[
+            { id: 1000, satisfaction: "BON", label: "Bon suivi" },
+            { id: 2000, satisfaction: "MOYEN", label: "Peut s’améliorer" },
+            { id: 3000, satisfaction: "MAUVAIS", label: "Aucun suivi", next: "partageDesDifficultés" },
+          ]}
+        />
+      ),
+      next: "suiviPrecisions",
+    },
+    {
+      id: "suiviPrecisions",
+      message: (
+        <Message>
+          Pourriez-vous préciser ? <Tips>(plusieurs réponses possibles)</Tips>
+        </Message>
+      ),
+      input: (
+        <MultiChoice
+          options={[
+            { id: 4000, satisfaction: "BON", label: "Le CFA est venu en entreprise" },
+            {
+              id: 3000,
+              satisfaction: "BON",
+              label: "Le CFA a réuni les tuteurs",
+            },
+            {
+              id: 2000,
+              satisfaction: "BON",
+              label: "Le CFA et mon tuteur sont en contact régulier",
+            },
+            { id: 1000, satisfaction: "MOYEN", label: "Je fais un rapport périodique" },
+          ]}
+        />
+      ),
+      next: "partageDesDifficultés",
+    },
+    {
+      id: "partageDesDifficultés",
+      message: (
+        <Message>
+          Nous vous proposons maintenant de partager les difficultés que vous avez pu rencontrer, pour aider les
+          prochains apprentis à trouver des solutions
+        </Message>
+      ),
+      input: <Auto />,
+      next: "difficultés",
+    },
+    {
+      id: "difficultés",
+      message: (
+        <Message>
+          <Highlight>Avez -vous rencontré des difficultés au cours de cette année ?</Highlight>
         </Message>
       ),
       input: (
         <SingleChoice
           options={[
             {
-              value: 1,
+              id: 1000,
               label: "Non, tout s’est bien passé",
-              next: "ambiance",
+              next: "encoreQuelquesQuestions",
             },
             {
-              value: 2,
+              id: 2000,
               label: "Oui mais ça va mieux",
-              next: "difficultesPasseesOrigines",
+              next: "merciPourLePartage",
             },
             {
-              value: 3,
+              id: 3000,
               label: "Oui et j’en ai encore",
-              next: "difficultesOrigines",
+              next: "merciPourLePartage",
             },
           ]}
         />
       ),
     },
     {
-      id: "difficultesPasseesOrigines",
+      id: "merciPourLePartage",
+      message: <Message>Merci pour le partage.</Message>,
+      input: <Auto />,
+      next: "enDirePlus",
+    },
+    {
+      id: "enDirePlus",
+      message: (
+        <Message>N'oubliez pas que toutes vos réponses sont anonymes. Pouvez-vous nous en dire un peu plus ?</Message>
+      ),
+      input: <Auto />,
+      next: "difficultesPrecisions",
+    },
+    {
+      id: "difficultesPrecisions",
       message: (
         <Message>
-          <p>
-            Ca arrive. L’idée de cette communauté c’est aussi de partager les difficultés, ça peut donner des pistes de
-            solution aux autres.
-          </p>
-          <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés étaient liées à :</Highlight>
+          <Highlight>Ces difficultés étaient liées à :</Highlight>
           <Tips>(plusieurs réponses possibles)</Tips>
         </Message>
       ),
-      next: "difficultesPasseesSolutions",
       input: (
         <MultiChoice
           options={[
             {
-              value: 1,
+              id: 1000,
               label: "mon CFA",
             },
             {
-              value: 2,
-              label: "mon tuteur",
-            },
-            {
-              value: 3,
+              id: 3000,
               label: "Mes collègues de travail",
             },
             {
-              value: 4,
+              id: 2500,
+              label: "Les congés",
+            },
+            {
+              id: 5000,
+              label: "Les transports",
+            },
+            {
+              id: 2000,
+              label: "mon tuteur",
+            },
+            {
+              id: 4000,
               label: "Le rythme vie pro / vie perso",
             },
             {
-              value: 5,
-              label: "Logement, transport",
-            },
-            {
-              value: 6,
+              id: 6000,
               label: "Difficultés financières",
             },
             {
-              value: 7,
-              label: "Je passe",
-              next: "ambiance",
+              id: 5500,
+              label: "Le logement",
             },
           ]}
         />
       ),
+      next: "difficultesConseil",
     },
     {
-      id: "difficultesPasseesSolutions",
+      id: "difficultesConseil",
       message: (
         <Message>
-          <p>Comment avez-vous fait pour régler le problème ?</p>
+          <p>Auprès de qui avez-vous demandé conseil ?</p>
           <Tips>(plusieurs réponses possibles)</Tips>
         </Message>
       ),
-      next: "difficultesPasseesTexte",
       input: (
         <MultiChoice
           options={[
             {
-              value: 1,
+              id: 1000,
               label: "J’en ai parlé à mon tuteur",
             },
             {
-              value: 2,
-              label: "J’en ai parlé à un formateur",
-            },
-            {
-              value: 3,
+              id: 3000,
+              satisfaction: "BON",
               label: "J’en ai parlé au médiateur",
             },
             {
-              value: 4,
-              label: "J'en ai parlé à mes parents",
-            },
-            {
-              value: 5,
+              id: 5000,
               label: "Je n’ai rien dit à personne",
             },
             {
-              value: 6,
-              label: "Autre (Mission Locale, Anaf, Amis)",
+              id: 2500,
+              satisfaction: "BON",
+              label: "J’en ai parlé au CFA",
+            },
+            {
+              id: 4000,
+              label: "J'en ai parlé à mes parents",
             },
           ]}
         />
       ),
+      next: "difficultesConseilTexte",
     },
     {
-      id: "difficultesPasseesTexte",
-      message: <div>Souhaitez-vous dire quelque chose à la communauté sur ce sujet ?</div>,
-      next: "ambiance",
+      id: "difficultesConseilTexte",
+      message: <div>Vous avez la possibilité de poster un message libre, un conseil... juste en dessous</div>,
       input: <Skip />,
+      next: "encoreQuelquesQuestions",
     },
     {
-      id: "difficultesOrigines",
-      message: (
-        <Message>
-          <p>
-            Ca arrive. L’idée de cette communauté c’est aussi de partager les difficultés, ça peut donner des pistes de
-            solution aux autres.
-          </p>
-          <Highlight>Pouvez-vous nous en dire plus ? Ces difficultés sont liées à :</Highlight>
-          <Tips>(plusieurs réponses possibles)</Tips>
-        </Message>
-      ),
-      next: "difficultesAlerteCfa",
-      input: (
-        <MultiChoice
-          options={[
-            {
-              value: 1,
-              label: "mon tuteur",
-            },
-            {
-              value: 2,
-              label: "Mes collègues de travail",
-            },
-            {
-              value: 3,
-              label: "Le rythme vie pro / vie perso",
-            },
-            {
-              value: 4,
-              label: "Je passe",
-              next: "ambiance",
-            },
-          ]}
-        />
-      ),
-    },
-    {
-      id: "difficultesAlerteCfa",
-      message: (
-        <Message>Souhaitez-vous que cette information soit envoyée au CFA pour qu’il vous propose de l'aide ?</Message>
-      ),
+      id: "encoreQuelquesQuestions",
+      message: <Message>C'est presque terminé ! 4 questions rapides pour finir</Message>,
+      input: <Auto />,
       next: "ambiance",
-      input: (
-        <SingleChoice
-          options={[
-            {
-              value: false,
-              label: "Non merci",
-            },
-            {
-              value: true,
-              label: "Oui",
-            },
-          ]}
-        />
-      ),
     },
     {
       id: "ambiance",
       message: (
         <Message>
-          <p>3 questions rapides pour terminer</p>
-          <Highlight>Que diriez-vous de l’ambiance au CFA ?</Highlight>
+          <Highlight>Que diriez-vous de l'ambiance au CFA ?</Highlight>
         </Message>
       ),
-      next: "ateliers",
       input: (
         <SingleChoice
           options={[
             {
-              value: 1,
+              id: 1000,
+              satisfaction: "BON",
               label: "Bonne",
             },
             {
-              value: 2,
+              id: 2000,
+              satisfaction: "MAUVAIS",
               label: "Sans plus",
             },
           ]}
         />
       ),
+      next: "formateurs",
     },
     {
-      id: "ateliers",
-      message: <Message>Que diriez-vous des ateliers / plateaux ?</Message>,
-      next: "communauté",
+      id: "formateurs",
+      message: (
+        <Message>
+          <Highlight>Que diriez-vous des formateurs ?</Highlight>
+          <Tips>(plusieurs réponses possibles)</Tips>
+        </Message>
+      ),
       input: (
         <MultiChoice
           options={[
             {
-              value: 1,
-              label: "Matériel récent",
+              id: 1000,
+              satisfaction: "BON",
+              label: "Ils sont disponibles pour nous",
             },
             {
-              value: 2,
-              label: "Matériel en nombre suffisant",
+              id: 2000,
+              satisfaction: "BON",
+              label: "Ils nous aident à réussir",
             },
             {
-              value: 3,
-              label: "Matériel usagé",
+              id: 3000,
+              satisfaction: "BON",
+              label: "Ils nous font confiance",
             },
             {
-              value: 4,
-              label: "Matériel en nombre insuffisant",
+              id: 4000,
+              satisfaction: "MOYEN",
+              label: "Ils communiquent peu avec nous",
+            },
+            {
+              id: 5000,
+              satisfaction: "MAUVAIS",
+              label: "Ils sont peut à l'écoute de nos besoins",
             },
           ]}
         />
       ),
+      next: "ateliers",
+    },
+    {
+      id: "ateliers",
+      message: (
+        <Message>
+          <Highlight>Diriez-vous que les ateliers/plateaux techniques sont : </Highlight>
+          <Tips>(plusieurs réponses possibles)</Tips>
+        </Message>
+      ),
+      input: (
+        <MultiChoice
+          options={[
+            {
+              id: 1000,
+              label: "Récents",
+              satisfaction: "BON",
+            },
+            {
+              id: 2500,
+              label: "Equivalents à ceux de l'entreprise",
+              satisfaction: "BON",
+            },
+            {
+              id: 3500,
+              label: "Inadaptés",
+              satisfaction: "MAUVAIS",
+            },
+            {
+              id: 4000,
+              label: "En nombre insuffisant",
+              satisfaction: "MAUVAIS",
+            },
+          ]}
+        />
+      ),
+      next: "communauté",
     },
     {
       id: "communauté",
       message: (
-        <Message>
-          Accepteriez-vous de répondre aux questions posées par les futurs apprentis à la communauté ? (anonymat
-          préservé) ?
-        </Message>
+        <Message>Accepteriez-vous de répondre anonymement aux questions posées par de futurs apprentis ?</Message>
       ),
-      next: "fin",
       input: (
         <SingleChoice
           options={[
             {
-              value: true,
+              id: 1000,
               label: "Pourquoi pas",
             },
             {
-              value: false,
+              id: 2000,
               label: "Non merci",
             },
           ]}
         />
       ),
-    },
-    {
-      id: "désaccord",
-      message: <Message>OK, pas de souci, je reviendrai un peu plus tard. A bientôt !</Message>,
-      last: true,
+      next: "fin",
     },
     {
       id: "fin",
-      last: true,
       message: (
         <div>
           Merci {apprenti.prenom}. Nous reviendrons prendre des nouvelles dans quelques mois, d’ici là nous vous
-          souhaitons un apprentissage riche en expériences professionnelles et humaines.
+          souhaitons un apprentissage riche en expériences professionnelles et humaines
         </div>
       ),
+      last: true,
     },
   ];
 };
