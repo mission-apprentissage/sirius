@@ -10,7 +10,7 @@ mfr
   .description("Importe le fichier CSV dans la base")
   .action((csvFile) => {
     let inputStream = csvFile ? createReadStream(csvFile) : process.stdin;
-    runScript(({ db, logger }) => importContrats(db, logger, inputStream));
+    runScript(({ logger, apprentis }) => importContrats(logger, apprentis, inputStream));
   });
 
 mfr
