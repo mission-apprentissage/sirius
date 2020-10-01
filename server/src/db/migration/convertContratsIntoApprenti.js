@@ -1,7 +1,7 @@
 const { getNbModifiedDocuments } = require("../../core/mongoUtils");
 const { oleoduc, transformObject, writeObject } = require("oleoduc");
-const createIndexes = require("../indexes/createIndexes");
-const dropIndexes = require("../indexes/dropIndexes");
+const createIndexes = require("./indexes/createIndexes");
+const dropIndexes = require("./indexes/dropIndexes");
 
 module.exports = async (db) => {
   let stats = {
