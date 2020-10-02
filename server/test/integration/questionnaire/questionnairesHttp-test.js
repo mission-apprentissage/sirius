@@ -215,7 +215,7 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 400);
     assert.deepStrictEqual(response.data, {
       error: "Bad Request",
-      message: "Le questionnaire n'est plus disponible",
+      message: "Impossible de changer le status du questionnaire en cours car il est 'closed'",
       statusCode: 400,
     });
   });

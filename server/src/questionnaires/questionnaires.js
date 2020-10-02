@@ -2,6 +2,7 @@ const Boom = require("boom");
 const path = require("path");
 
 module.exports = (db, mailer) => {
+  const statuses = { sent: 0, error: 1, opened: 2, clicked: 3, inprogress: 4, closed: 5 };
   const getEmailTemplate = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
   const getData = async (token) => {
     let apprenti = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": token });
@@ -49,7 +50,7 @@ module.exports = (db, mailer) => {
       let { apprenti, contrat, questionnaire } = await getData(token);
 
       if (questionnaire.status === "closed") {
-        throw Boom.badRequest("Le questionnaire n'est plus fermé et ne peut donc pas être envoyé");
+        throw Boom.badRequest("Impossible d'envoyer le questionnaire car il est fermé");
       }
 
       await sendEmail(apprenti, contrat, questionnaire);
@@ -93,9 +94,12 @@ module.exports = (db, mailer) => {
     },
     markAsOpened: async (token) => {
       let { questionnaire } = await getData(token);
+      let currentStatus = statuses[questionnaire.status];
 
-      if (questionnaire.status === "closed") {
-        throw Boom.badRequest("Le questionnaire n'est plus disponible");
+      if (currentStatus > statuses["opened"]) {
+        throw Boom.badRequest(
+          `Impossible de changer le status du questionnaire en ouvert car il est '${questionnaire.status}'`
+        );
       }
 
       await db.collection("apprentis").updateOne(
@@ -119,9 +123,12 @@ module.exports = (db, mailer) => {
     },
     markAsClicked: async (token) => {
       let { apprenti, contrat, questionnaire } = await getData(token);
+      let currentStatus = statuses[questionnaire.status];
 
-      if (questionnaire.status === "closed") {
-        throw Boom.badRequest("Le questionnaire n'est plus disponible");
+      if (currentStatus > statuses["clicked"]) {
+        throw Boom.badRequest(
+          `Impossible de changer le status du questionnaire en cliqué car il est '${questionnaire.status}'`
+        );
       }
 
       let { value: result } = await db.collection("apprentis").findOneAndUpdate(
@@ -164,9 +171,12 @@ module.exports = (db, mailer) => {
     },
     answerToQuestion: async (token, questionId, reponses) => {
       let { questionnaire } = await getData(token);
+      let currentStatus = statuses[questionnaire.status];
 
-      if (questionnaire.status === "closed") {
-        throw Boom.badRequest("Le questionnaire n'est plus disponible");
+      if (currentStatus > statuses["inprogress"]) {
+        throw Boom.badRequest(
+          `Impossible de changer le status du questionnaire en cours car il est '${questionnaire.status}'`
+        );
       }
 
       let { value: result } = await db.collection("apprentis").findOneAndUpdate(
