@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const { newContrat } = require("../../../test/integration/utils/fixtures");
+const { newApprenti } = require("../../../test/integration/utils/fixtures");
 const moment = require("moment");
 // eslint-disable-next-line node/no-unpublished-require
 const faker = require("faker");
@@ -13,7 +13,7 @@ module.exports = async (db, questionnaires) => {
   await Promise.all(
     _.range(0, nbFinAnnee).map(() => {
       return db.collection("contrats").insertOne(
-        newContrat({
+        newApprenti({
           formation: {
             periode: {
               debut: moment().subtract(1, "years").toDate(),
@@ -27,7 +27,7 @@ module.exports = async (db, questionnaires) => {
 
   await Promise.all(
     _.range(0, nbFinFormation).map(async () => {
-      let contrat = newContrat({
+      let contrat = newApprenti({
         formation: {
           periode: {
             debut: moment().subtract(2, "years").toDate(),

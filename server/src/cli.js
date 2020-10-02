@@ -17,7 +17,7 @@ cli
 
 cli.command("db", "Manipulation de la base de données", { executableFile: "db/dbCli" });
 cli.command("deca", "Gestion du DECA", { executableFile: "deca/decaCli" });
-cli.command("contrats", "Gestion des contrats", { executableFile: "contrats/contratsCli" });
+cli.command("apprentis", "Gestion des apprentis", { executableFile: "apprentis/apprentisCli" });
 cli.command("questionnaires", "Gestion des questionnaires", {
   executableFile: "questionnaires/questionnairesCli",
 });

@@ -1,6 +1,6 @@
 const indexes = {
   contrats: (db) => {
-    return Promise.all([db.collection("contrats").createIndex({ "apprenti.email": 1 }, { unique: true })]);
+    return Promise.all([db.collection("apprentis").createIndex({ email: 1 }, { unique: true })]);
   },
 };
 

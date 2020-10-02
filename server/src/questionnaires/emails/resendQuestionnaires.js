@@ -10,22 +10,25 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
   };
 
   await oleoduc(
-    db.collection("contrats").find({ unsubscribe: false }),
+    db
+      .collection("apprentis")
+      .aggregate([
+        { $match: { unsubscribe: false } },
+        { $unwind: "$contrats" },
+        { $unwind: "$contrats.questionnaires" },
+        { $project: { email: "$email", questionnaire: "$contrats.questionnaires" } },
+        { $match: { "questionnaire.status": { $ne: "closed" }, "questionnaire.nbEmailsSent": { $lt: 2 } } },
+      ]),
     writeObject(
-      async (contrat) => {
+      async ({ email, questionnaire }) => {
         try {
-          let results = contrat.questionnaires.filter((q) => q.status && q.status !== "closed" && q.nbEmailsSent < 2);
-          stats.total += results.length;
+          stats.total++;
 
-          if (results.length > 0 && stats.sent <= limit) {
-            await Promise.all(
-              results.map((q) => {
-                logger.info(`Resending questionnaire ${q.type} to ${contrat.apprenti.email}`);
-                return questionnaires.sendQuestionnaire(q.token);
-              })
-            );
+          if (stats.sent <= limit) {
+            logger.info(`Resending questionnaire ${questionnaire.type} to ${email}...`);
+            await questionnaires.sendQuestionnaire(questionnaire.token);
             await delay(100);
-            stats.sent += results.length;
+            stats.sent++;
           }
         } catch (e) {
           logger.error(e);

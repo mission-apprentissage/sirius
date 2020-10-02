@@ -1,19 +1,19 @@
 const { program: cli } = require("commander");
 const { createReadStream } = require("fs");
 const runScript = require("../core/runScript");
-const importContrats = require("./csv/cfa/importContrats");
-const updateContrats = require("./csv/cfa/updateContrats");
-const reconciliateWithCatalogue = require("./reconciliation/reconciliateWithCatalogue");
+const importContrats = require("./mfr/importContrats");
+const updateContrats = require("./mfr/updateContrats");
 
-cli
+let mfr = cli.command("mfr").description("Gestion des apprentis provenant des fichiers MFR");
+mfr
   .command("import [csvFile]")
   .description("Importe le fichier CSV dans la base")
   .action((csvFile) => {
     let inputStream = csvFile ? createReadStream(csvFile) : process.stdin;
-    runScript(({ db, logger }) => importContrats(db, logger, inputStream));
+    runScript(({ logger, apprentis }) => importContrats(logger, apprentis, inputStream));
   });
 
-cli
+mfr
   .command("update [csvFile]")
   .description("Met à jour les contrats en base à partir du fichier")
   .action((csvFile) => {
@@ -21,13 +21,6 @@ cli
       let inputStream = csvFile ? createReadStream(csvFile) : process.stdin;
       return updateContrats(db, logger, inputStream);
     });
-  });
-
-cli
-  .command("reconciliate")
-  .description("Réconcilie les contrats avec la base catalogue")
-  .action(() => {
-    runScript(({ db, logger, httpClient }) => reconciliateWithCatalogue(db, logger, httpClient));
   });
 
 cli.parse(process.argv);

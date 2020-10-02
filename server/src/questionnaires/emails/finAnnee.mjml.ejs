@@ -40,7 +40,7 @@
 
         <mj-section padding-bottom="20px" padding-top="10px" background-color="#5222d0">
             <mj-column>
-                <mj-text align="center" padding-top="50px" color="#ffffff">Bonjour <%= data.contrat.apprenti.prenom %>
+                <mj-text align="center" padding-top="50px" color="#ffffff">Bonjour <%= data.apprenti.prenom %>
                     ,
                 </mj-text>
                 <mj-text align="center" padding="10px 25px" color="#ffffff">
@@ -112,12 +112,12 @@
         <mj-section background-color="#5222d0" padding-bottom="0">
             <mj-column padding-top="0">
                 <mj-text align="left" font-size="14px" line-height="20px">
-                    Cet email a été envoyé à <%= data.contrat.apprenti.email %>
+                    Cet email a été envoyé à <%= data.apprenti.email %>
                     <br/>
                     Vous avez reçu cet email parce que votre CFA nous a transmis votre email.
                     <br/>
                     Pour vous désinscrire,
-                    <a href="<%= utils.getPublicUrl(`/api/contrats/${data.contrat._id}/unsubscribe`) %>"
+                    <a href="<%= utils.getPublicUrl(`/api/apprentis/${data.apprenti._id}/unsubscribe`) %>"
                        class="link-nostyle">cliquez
                         ici</a>
                 </mj-text>

@@ -2,7 +2,7 @@ const connectToMongoDB = require("./core/connectToMongoDB");
 const createMailer = require("./core/mailer");
 const creatHttpClient = require("./core/httpClient");
 const createQuestionnaires = require("./questionnaires/questionnaires");
-const createContrats = require("./contrats/contrats");
+const createApprentis = require("./apprentis/apprentis");
 const createLogger = require("./core/logger");
 const defaults = require("./config");
 
@@ -12,8 +12,8 @@ module.exports = async (options = {}) => {
   let db = client.db();
   let mailer = options.mailer || createMailer(config);
   let logger = options.logger || createLogger(config, { db });
-  let contrats = options.contrats || createContrats(db);
-  let questionnaires = options.questionnaires || createQuestionnaires(db, mailer, contrats);
+  let apprentis = options.apprentis || createApprentis(db);
+  let questionnaires = options.questionnaires || createQuestionnaires(db, mailer, apprentis);
   let httpClient = options.httpClient || creatHttpClient(logger);
 
   return {
@@ -22,8 +22,8 @@ module.exports = async (options = {}) => {
     logger,
     mailer,
     httpClient,
-    contrats,
     questionnaires,
+    apprentis,
     close: () => client.close(),
   };
 };
