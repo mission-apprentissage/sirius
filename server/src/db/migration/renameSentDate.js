@@ -11,7 +11,7 @@ module.exports = async (db) => {
     transformObject((apprenti) => {
       apprenti.contrats = apprenti.contrats.map((c) => {
         c.questionnaires = c.questionnaires.map((q) => {
-          q.sendDate = q.sentDate || new Date("2020-07-24T08:09:48.873Z");
+          q.sendDates = [q.sentDate || new Date("2020-07-24T08:09:48.873Z")];
           delete q.sentDate;
           return q;
         });

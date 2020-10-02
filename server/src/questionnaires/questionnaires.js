@@ -27,7 +27,9 @@ module.exports = (db, mailer) => {
         {
           $set: {
             "contrats.$[c].questionnaires.$[q].status": "error",
-            "contrats.$[c].questionnaires.$[q].sendDate": new Date(),
+          },
+          $push: {
+            "contrats.$[c].questionnaires.$[q].sendDates": new Date(),
           },
         },
         {
@@ -60,7 +62,9 @@ module.exports = (db, mailer) => {
         {
           $set: {
             "contrats.$[c].questionnaires.$[q].status": questionnaire.status || "sent",
-            "contrats.$[c].questionnaires.$[q].sendDate": new Date(),
+          },
+          $push: {
+            "contrats.$[c].questionnaires.$[q].sendDates": new Date(),
           },
           $inc: {
             "contrats.$[c].questionnaires.$[q].nbEmailsSent": 1,
