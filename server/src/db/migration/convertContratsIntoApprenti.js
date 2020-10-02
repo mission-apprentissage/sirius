@@ -8,6 +8,7 @@ module.exports = async (db) => {
     updated: 0,
   };
 
+  await db.collection("apprentis").drop();
   await dropIndexes(db);
   await oleoduc(
     db.collection("contrats").find(),
