@@ -41,8 +41,8 @@ integrationTests(__filename, ({ getComponents }) => {
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[0];
     let token = questionnaire.token;
-    assert.ok(questionnaire.sentDate);
-    assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
+    assert.ok(questionnaire.sendDate);
+    assert.deepStrictEqual(omit(questionnaire, ["sendDate"]), {
       type: "finAnnee",
       status: "sent",
       nbEmailsSent: 1,
@@ -94,8 +94,8 @@ integrationTests(__filename, ({ getComponents }) => {
 
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[1];
-    assert.ok(questionnaire.sentDate);
-    assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
+    assert.ok(questionnaire.sendDate);
+    assert.deepStrictEqual(omit(questionnaire, ["sendDate"]), {
       type: "finFormation",
       status: "sent",
       nbEmailsSent: 1,
@@ -134,7 +134,7 @@ integrationTests(__filename, ({ getComponents }) => {
     });
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[0];
-    assert.ok(questionnaire.sentDate);
+    assert.ok(questionnaire.sendDate);
     assert.strictEqual(questionnaire.status, "error");
   });
 

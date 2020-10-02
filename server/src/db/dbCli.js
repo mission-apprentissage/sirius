@@ -3,6 +3,7 @@ const runScript = require("../core/runScript");
 const injectData = require("./dataset/injectData");
 const convertContratsIntoApprenti = require("./migration/convertContratsIntoApprenti");
 const removeInvalidCharacters = require("./migration/removeInvalidCharacters");
+const renameSentDate = require("./migration/renameSentDate");
 
 cli
   .command("migrate")
@@ -12,6 +13,7 @@ cli
       return {
         convertContratsIntoApprenti: await convertContratsIntoApprenti(db),
         removeInvalidCharacters: await removeInvalidCharacters(db),
+        renameSentDate: await renameSentDate(db),
       };
     });
   });
