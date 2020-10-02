@@ -3,7 +3,19 @@ const { isEmpty } = require("lodash");
 const parseDate = (value) => new Date(moment(value, "DD/MM/YYYY").format("YYYY-MM-DD") + "Z");
 
 const sanitize = (value) => {
-  let res = value.replace(/[ .,]/g, "").replace(/[^\x00-\xA0]/g, "");
+  let res = value
+    .replace(/[ .,]/g, "")
+    .replace(/[^\x00-\xA0]/g, "")
+    .replace(/È/g, "é")
+    .replace(/Ë/g, "è")
+    .replace(/Ù/g, "ô")
+    .replace(/…/g, "É")
+    .replace(/Î/g, "ë")
+    .replace(/Ó/g, "î")
+    .replace(/ª´/g, "")
+    .replace(/b‚t/g, "bât")
+    .replace(/l\?/g, "l'")
+    .replace(/ \? /g, " ");
   return isEmpty(res) ? null : res;
 };
 

@@ -2,6 +2,7 @@ const { program: cli } = require("commander");
 const runScript = require("../core/runScript");
 const injectData = require("./dataset/injectData");
 const convertContratsIntoApprenti = require("./migration/convertContratsIntoApprenti");
+const removeInvalidCharacters = require("./migration/removeInvalidCharacters");
 
 cli
   .command("migrate")
@@ -10,6 +11,7 @@ cli
     runScript(async ({ db }) => {
       return {
         convertContratsIntoApprenti: await convertContratsIntoApprenti(db),
+        removeInvalidCharacters: await removeInvalidCharacters(db),
       };
     });
   });
