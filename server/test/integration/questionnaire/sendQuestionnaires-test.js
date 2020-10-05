@@ -41,11 +41,10 @@ integrationTests(__filename, ({ getComponents }) => {
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[0];
     let token = questionnaire.token;
-    assert.ok(questionnaire.sentDate);
-    assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
+    assert.strictEqual(questionnaire.sendDates.length, 1);
+    assert.deepStrictEqual(omit(questionnaire, ["sendDates"]), {
       type: "finAnnee",
       status: "sent",
-      nbEmailsSent: 1,
       token,
       questions: [],
     });
@@ -94,11 +93,10 @@ integrationTests(__filename, ({ getComponents }) => {
 
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[1];
-    assert.ok(questionnaire.sentDate);
-    assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
+    assert.strictEqual(questionnaire.sendDates.length, 1);
+    assert.deepStrictEqual(omit(questionnaire, ["sendDates"]), {
       type: "finFormation",
       status: "sent",
-      nbEmailsSent: 1,
       token: questionnaire.token,
       questions: [],
     });
@@ -134,7 +132,7 @@ integrationTests(__filename, ({ getComponents }) => {
     });
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[0];
-    assert.ok(questionnaire.sentDate);
+    assert.strictEqual(questionnaire.sendDates.length, 1);
     assert.strictEqual(questionnaire.status, "error");
   });
 

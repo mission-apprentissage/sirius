@@ -8,6 +8,7 @@ const resendQuestionnaires = require("../../../src/questionnaires/emails/resendQ
 
 integrationTests(__filename, ({ getComponents }) => {
   it("Vérifie qu'on peut renvoyer un questionnaire de fin d'année", async () => {
+    let sendDate = new Date();
     let emails = [];
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
@@ -17,7 +18,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [newQuestionnaire({ type: "finAnnee", status: "sent", token: "12345" })],
+            questionnaires: [newQuestionnaire({ type: "finAnnee", status: "sent", sendDates: [sendDate] })],
           }),
         ],
       })
@@ -34,12 +35,12 @@ integrationTests(__filename, ({ getComponents }) => {
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[0];
     let token = questionnaire.token;
-    assert.ok(questionnaire.sentDate);
-    assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
+    assert.deepStrictEqual(questionnaire.sendDates[0], sendDate);
+    assert.strictEqual(questionnaire.sendDates.length, 2);
+    assert.deepStrictEqual(omit(questionnaire, ["sendDates"]), {
       type: "finAnnee",
       status: "sent",
       token,
-      nbEmailsSent: 2,
       questions: [],
     });
 
@@ -63,7 +64,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [newQuestionnaire({ type: "finFormation", status: "sent", token: "45612" })],
+            questionnaires: [newQuestionnaire({ type: "finFormation", status: "sent", sendDates: [new Date()] })],
           }),
         ],
       })
@@ -80,12 +81,11 @@ integrationTests(__filename, ({ getComponents }) => {
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[0];
     let token = questionnaire.token;
-    assert.ok(questionnaire.sentDate);
-    assert.deepStrictEqual(omit(questionnaire, ["sentDate"]), {
+    assert.strictEqual(questionnaire.sendDates.length, 2);
+    assert.deepStrictEqual(omit(questionnaire, ["sendDates"]), {
       type: "finFormation",
       status: "sent",
       token,
-      nbEmailsSent: 2,
       questions: [],
     });
 
@@ -140,7 +140,9 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [newQuestionnaire({ type: "finAnnee", nbEmailsSent: 2, status: "sent", token: "12345" })],
+            questionnaires: [
+              newQuestionnaire({ type: "finAnnee", sendDates: [new Date(), new Date()], status: "sent" }),
+            ],
           }),
         ],
       })
@@ -166,7 +168,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [newQuestionnaire({ type: "finAnnee", status: "closed", token: "12345" })],
+            questionnaires: [newQuestionnaire({ type: "finAnnee", status: "closed" })],
           }),
         ],
       })

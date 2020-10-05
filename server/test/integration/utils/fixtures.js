@@ -47,8 +47,8 @@ module.exports = {
       {
         type: "finAnnee",
         token: "12345",
-        nbEmailsSent: 1,
         status: "sent",
+        sendDates: [new Date()],
         questions: [],
       },
       custom
