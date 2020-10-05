@@ -84,13 +84,31 @@ module.exports = ({ db, config, questionnaires }) => {
       let stream = db
         .collection("apprentis")
         .aggregate([
-          { $project: { cohorte: 1, contrats: 1 } },
+          { $project: { contrats: 1 } },
           { $unwind: "$contrats" },
           { $unwind: "$contrats.questionnaires" },
           {
             $group: {
-              _id: { cohorte: "$cohorte" },
-              total: { $sum: 1 },
+              _id: {
+                date: {
+                  $dateToString: {
+                    format: "%Y-%m-%d",
+                    date: { $arrayElemAt: ["$contrats.questionnaires.sendDates", 0] },
+                  },
+                },
+                type: "$contrats.questionnaires.type",
+              },
+              envoyes: {
+                $sum: {
+                  $cond: {
+                    if: {
+                      $in: ["$contrats.questionnaires.status", ["sent", "opened", "clicked", "inprogress", "closed"]],
+                    },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
               ouverts: {
                 $sum: {
                   $cond: {
@@ -127,20 +145,39 @@ module.exports = ({ db, config, questionnaires }) => {
                   },
                 },
               },
+              erreurs: {
+                $sum: {
+                  $cond: {
+                    if: {
+                      $in: ["$contrats.questionnaires.status", ["error"]],
+                    },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
             },
           },
           {
             $project: {
               _id: 0,
-              cohorte: "$_id.cohorte",
-              total: 1,
+              date: "$_id.date",
+              type: "$_id.type",
+              envoyes: 1,
               ouverts: 1,
               cliques: 1,
               enCours: 1,
               termines: 1,
+              erreurs: 1,
             },
           },
-          { $sort: { cohorte: 1 } },
+          {
+            $group: {
+              _id: "$date",
+              questionnaires: { $push: "$$ROOT" },
+            },
+          },
+          { $sort: { _id: 1 } },
         ])
         .stream();
 

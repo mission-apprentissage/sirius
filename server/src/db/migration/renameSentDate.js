@@ -1,3 +1,4 @@
+const moment = require("moment");
 const { getNbModifiedDocuments } = require("../../core/mongoUtils");
 const { oleoduc, transformObject, writeObject } = require("oleoduc");
 
@@ -11,7 +12,11 @@ module.exports = async (db) => {
     transformObject((apprenti) => {
       apprenti.contrats = apprenti.contrats.map((c) => {
         c.questionnaires = c.questionnaires.map((q) => {
-          q.sendDates = [q.sentDate || new Date("2020-07-24T08:09:48.873Z")];
+          let sendDate = q.nbEmailsSent > 1 || !q.sentDate ? apprenti.creationDate : q.sentDate;
+          if (moment(sendDate).isBefore(moment([2020, 7, 25]))) {
+            sendDate = moment([2020, 7, 24, 18, 0]).toDate();
+          }
+          q.sendDates = [sendDate];
           delete q.sentDate;
           return q;
         });
