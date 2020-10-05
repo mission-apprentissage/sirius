@@ -306,22 +306,16 @@ httpTests(__filename, ({ startServer }) => {
     });
 
     assert.strictEqual(response.status, 200);
-    let first = response.data;
-    assert.deepStrictEqual(first, [
+    assert.deepStrictEqual(response.data, [
       {
-        _id: moment().format("YYYY-MM-DD"),
-        questionnaires: [
-          {
-            envoyes: 1,
-            ouverts: 1,
-            cliques: 1,
-            enCours: 0,
-            termines: 1,
-            erreurs: 0,
-            date: moment().format("YYYY-MM-DD"),
-            type: "finAnnee",
-          },
-        ],
+        envoyes: 1,
+        ouverts: 1,
+        cliques: 1,
+        enCours: 0,
+        termines: 1,
+        erreurs: 0,
+        date: "2020-10-05",
+        type: "finAnnee",
       },
     ]);
   });

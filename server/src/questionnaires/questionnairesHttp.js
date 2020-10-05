@@ -171,12 +171,6 @@ module.exports = ({ db, config, questionnaires }) => {
               erreurs: 1,
             },
           },
-          {
-            $group: {
-              _id: "$date",
-              questionnaires: { $push: "$$ROOT" },
-            },
-          },
           { $sort: { _id: 1 } },
         ])
         .stream();
@@ -188,12 +182,14 @@ module.exports = ({ db, config, questionnaires }) => {
           stream,
           transformObject((res) => {
             return {
-              Cohorte: res.cohorte,
-              "Nombre de questionnaire envoyés": res.total,
+              Date: res.date,
+              "Type de questionnaire": res.type,
+              "Nombre de questionnaire envoyés": res.envoyes,
               "Emails ouverts": res.ouverts,
               "Liens cliqués": res.cliques,
               "Nombre de questionnaires en cours": res.enCours,
               "Nombre de questionnaires terminés": res.termines,
+              "Nombre de questionnaires en erreur": res.erreurs,
             };
           })
         );
