@@ -30,6 +30,7 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 1,
       sent: 1,
       failed: 0,
+      ignored: 0,
     });
 
     let found = await db.collection("apprentis").findOne();
@@ -76,6 +77,7 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 1,
       sent: 1,
       failed: 0,
+      ignored: 0,
     });
 
     let found = await db.collection("apprentis").findOne();
@@ -124,6 +126,7 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 2,
       sent: 2,
       failed: 0,
+      ignored: 0,
     });
 
     //Check emails
@@ -154,6 +157,7 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 0,
       sent: 0,
       failed: 0,
+      ignored: 0,
     });
     assert.strictEqual(emails.length, 0);
   });
@@ -181,6 +185,7 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 0,
       sent: 0,
       failed: 0,
+      ignored: 0,
     });
   });
 
@@ -202,5 +207,27 @@ integrationTests(__filename, ({ getComponents }) => {
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[0];
     assert.strictEqual(questionnaire.status, "open");
+  });
+
+  it("Vérifie qu'on ignore les apprentis qui se sont désinscrits", async () => {
+    let emails = [];
+    let { db, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        email: "apprenti@domain.fr",
+        unsubscribe: true,
+      })
+    );
+
+    let stats = await resendQuestionnaires(db, logger, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 0,
+      sent: 0,
+      failed: 0,
+      ignored: 0,
+    });
   });
 });

@@ -295,6 +295,29 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(emails.length, 0);
   });
 
+  it("Vérifie qu'on ignore les apprentis qui se sont désinscrits", async () => {
+    let emails = [];
+    let { db, apprentis, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        email: "apprenti@domain.fr",
+        unsubscribe: true,
+      })
+    );
+
+    let stats = await sendQuestionnaires(db, logger, apprentis, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 0,
+      sent: 0,
+      failed: 0,
+      ignored: 0,
+    });
+    assert.strictEqual(emails.length, 0);
+  });
+
   it("Vérifie qu'on prend en compte tous les questionnaires pour savoir s'il faut envoyer un email", async () => {
     let emails = [];
     let { db, apprentis, questionnaires } = await getComponents({

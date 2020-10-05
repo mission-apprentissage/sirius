@@ -6,6 +6,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
   let stats = {
     total: 0,
     sent: 0,
+    ignored: 0,
     failed: 0,
   };
 
@@ -29,6 +30,8 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
             await questionnaires.sendQuestionnaire(questionnaire.token);
             await delay(100);
             stats.sent++;
+          } else {
+            stats.ignored++;
           }
         } catch (e) {
           logger.error(e);
