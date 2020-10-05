@@ -45,7 +45,6 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.deepStrictEqual(omit(questionnaire, ["sendDates"]), {
       type: "finAnnee",
       status: "sent",
-      nbEmailsSent: 1,
       token,
       questions: [],
     });
@@ -98,7 +97,6 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.deepStrictEqual(omit(questionnaire, ["sendDates"]), {
       type: "finFormation",
       status: "sent",
-      nbEmailsSent: 1,
       token: questionnaire.token,
       questions: [],
     });

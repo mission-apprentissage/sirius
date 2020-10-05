@@ -67,7 +67,7 @@ module.exports = (db) => {
       let questionnaire = {
         type,
         token: uuid.v4(),
-        nbEmailsSent: 0,
+        sendDates: [],
         questions: [],
       };
 

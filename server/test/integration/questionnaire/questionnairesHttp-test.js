@@ -1,7 +1,7 @@
-const _ = require("lodash");
+const moment = require("moment");
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newApprenti, newContrat } = require("../utils/fixtures");
+const { newApprenti, newContrat, newQuestionnaire } = require("../utils/fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut prévisualiser l'email", async () => {
@@ -12,11 +12,11 @@ httpTests(__filename, ({ startServer }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              {
+              newQuestionnaire({
                 type: "finAnnee",
                 token: "123456",
                 questions: [{ id: "début", data: { value: 1, label: "ok" } }],
-              },
+              }),
             ],
           }),
         ],
@@ -38,11 +38,11 @@ httpTests(__filename, ({ startServer }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              {
+              newQuestionnaire({
                 type: "finAnnee",
                 token: "123456",
                 questions: [{ id: "début", data: { value: 1, label: "ok" } }],
-              },
+              }),
             ],
           }),
         ],
@@ -70,12 +70,12 @@ httpTests(__filename, ({ startServer }) => {
               intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
             },
             questionnaires: [
-              {
+              newQuestionnaire({
                 type: "finAnnee",
                 token: "123456",
                 status: "sent",
                 questions: [],
-              },
+              }),
             ],
           }),
         ],
@@ -109,12 +109,12 @@ httpTests(__filename, ({ startServer }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              {
+              newQuestionnaire({
                 type: "finAnnee",
                 token: "123456",
                 status: "clicked",
                 questions: [{ id: "début", data: { value: 1, label: "ok" } }],
-              },
+              }),
             ],
           }),
         ],
@@ -138,12 +138,12 @@ httpTests(__filename, ({ startServer }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              {
+              newQuestionnaire({
                 type: "finAnnee",
                 token: "123456",
                 status: "sent",
                 questions: [],
-              },
+              }),
             ],
           }),
         ],
@@ -168,12 +168,12 @@ httpTests(__filename, ({ startServer }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              {
+              newQuestionnaire({
                 token: "123456",
                 type: "finAnnee",
                 status: "sent",
                 questions: [],
-              },
+              }),
             ],
           }),
         ],
@@ -198,12 +198,12 @@ httpTests(__filename, ({ startServer }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              {
+              newQuestionnaire({
                 token: "123456",
                 type: "finAnnee",
                 status: "closed",
                 questions: [],
-              },
+              }),
             ],
           }),
         ],
@@ -228,12 +228,12 @@ httpTests(__filename, ({ startServer }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              {
+              newQuestionnaire({
                 type: "finAnnee",
                 token: "123456",
                 status: "inprogress",
                 questions: [{ id: "début", reponses: [{ id: 1, label: "ok" }] }],
-              },
+              }),
             ],
           }),
         ],
@@ -259,11 +259,11 @@ httpTests(__filename, ({ startServer }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              {
+              newQuestionnaire({
                 type: "finAnnee",
                 token: "123456",
                 questions: [{ id: "début", data: { value: 1, label: "ok" } }],
-              },
+              }),
             ],
           }),
         ],
@@ -287,12 +287,12 @@ httpTests(__filename, ({ startServer }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              {
+              newQuestionnaire({
                 token: "123456",
                 type: "finAnnee",
                 status: "closed",
                 questions: [],
-              },
+              }),
             ],
           }),
         ],
@@ -306,14 +306,23 @@ httpTests(__filename, ({ startServer }) => {
     });
 
     assert.strictEqual(response.status, 200);
-    let first = response.data[0];
-    assert.ok(first.cohorte.startsWith("test_q2_2"));
-    assert.deepStrictEqual(_.omit(first, ["cohorte"]), {
-      total: 1,
-      ouverts: 1,
-      cliques: 1,
-      enCours: 0,
-      termines: 1,
-    });
+    let first = response.data;
+    assert.deepStrictEqual(first, [
+      {
+        _id: moment().format("YYYY-MM-DD"),
+        questionnaires: [
+          {
+            envoyes: 1,
+            ouverts: 1,
+            cliques: 1,
+            enCours: 0,
+            termines: 1,
+            erreurs: 0,
+            date: moment().format("YYYY-MM-DD"),
+            type: "finAnnee",
+          },
+        ],
+      },
+    ]);
   });
 });

@@ -16,8 +16,13 @@ module.exports = async (db) => {
           if (moment(sendDate).isBefore(moment([2020, 7, 25]))) {
             sendDate = moment([2020, 7, 24, 18, 0]).toDate();
           }
-          q.sendDates = [sendDate];
+          if (q.nbEmailsSent > 1) {
+            q.sendDates = [sendDate, moment(sendDate).add(7, "days").toDate()];
+          } else {
+            q.sendDates = [sendDate];
+          }
           delete q.sentDate;
+          delete q.nbEmailsSent;
           return q;
         });
         return c;

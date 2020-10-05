@@ -66,9 +66,6 @@ module.exports = (db, mailer) => {
           $push: {
             "contrats.$[c].questionnaires.$[q].sendDates": new Date(),
           },
-          $inc: {
-            "contrats.$[c].questionnaires.$[q].nbEmailsSent": 1,
-          },
         },
         {
           returnOriginal: false,

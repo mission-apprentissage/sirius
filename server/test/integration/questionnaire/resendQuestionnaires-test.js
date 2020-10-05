@@ -41,7 +41,6 @@ integrationTests(__filename, ({ getComponents }) => {
       type: "finAnnee",
       status: "sent",
       token,
-      nbEmailsSent: 2,
       questions: [],
     });
 
@@ -87,7 +86,6 @@ integrationTests(__filename, ({ getComponents }) => {
       type: "finFormation",
       status: "sent",
       token,
-      nbEmailsSent: 2,
       questions: [],
     });
 
@@ -142,7 +140,9 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [newQuestionnaire({ type: "finAnnee", nbEmailsSent: 2, status: "sent" })],
+            questionnaires: [
+              newQuestionnaire({ type: "finAnnee", sendDates: [new Date(), new Date()], status: "sent" }),
+            ],
           }),
         ],
       })

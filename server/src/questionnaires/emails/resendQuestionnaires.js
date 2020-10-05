@@ -17,7 +17,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
         { $unwind: "$contrats" },
         { $unwind: "$contrats.questionnaires" },
         { $project: { email: "$email", questionnaire: "$contrats.questionnaires" } },
-        { $match: { "questionnaire.status": { $ne: "closed" }, "questionnaire.nbEmailsSent": { $lt: 2 } } },
+        { $match: { "questionnaire.status": { $ne: "closed" }, "questionnaire.sendDates.1": { $exists: false } } },
       ]),
     writeObject(
       async ({ email, questionnaire }) => {
