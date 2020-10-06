@@ -1,4 +1,5 @@
 const assert = require("assert");
+const moment = require("moment");
 const { omit } = require("lodash");
 const integrationTests = require("../utils/integrationTests");
 const logger = require("../utils/fakeLogger");
@@ -8,7 +9,7 @@ const resendQuestionnaires = require("../../../src/questionnaires/emails/resendQ
 
 integrationTests(__filename, ({ getComponents }) => {
   it("Vérifie qu'on peut renvoyer un questionnaire de fin d'année", async () => {
-    let sendDate = new Date();
+    let sendDate = moment().subtract(10, "days").toDate();
     let emails = [];
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
@@ -30,6 +31,7 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 1,
       sent: 1,
       failed: 0,
+      ignored: 0,
     });
 
     let found = await db.collection("apprentis").findOne();
@@ -56,6 +58,7 @@ integrationTests(__filename, ({ getComponents }) => {
 
   it("Vérifie qu'on peut renvoyer un questionnaire de fin de formation", async () => {
     let emails = [];
+    let sendDate = moment().subtract(10, "days").toDate();
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
@@ -64,7 +67,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [newQuestionnaire({ type: "finFormation", status: "sent", sendDates: [new Date()] })],
+            questionnaires: [newQuestionnaire({ type: "finFormation", status: "sent", sendDates: [sendDate] })],
           }),
         ],
       })
@@ -76,6 +79,7 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 1,
       sent: 1,
       failed: 0,
+      ignored: 0,
     });
 
     let found = await db.collection("apprentis").findOne();
@@ -101,6 +105,7 @@ integrationTests(__filename, ({ getComponents }) => {
 
   it("Vérifie qu'on peut renvoyer plusieurs questionnaires de différents types", async () => {
     let emails = [];
+    let sendDate = moment().subtract(10, "days").toDate();
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
@@ -110,8 +115,8 @@ integrationTests(__filename, ({ getComponents }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              newQuestionnaire({ type: "finAnnee", token: "12345" }),
-              newQuestionnaire({ type: "finFormation", token: "45612" }),
+              newQuestionnaire({ type: "finAnnee", token: "12345", sendDates: [sendDate] }),
+              newQuestionnaire({ type: "finFormation", token: "45612", sendDates: [sendDate] }),
             ],
           }),
         ],
@@ -124,6 +129,7 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 2,
       sent: 2,
       failed: 0,
+      ignored: 0,
     });
 
     //Check emails
@@ -132,6 +138,7 @@ integrationTests(__filename, ({ getComponents }) => {
 
   it("Vérifie qu'on peut renvoyer qu'une seule fois un questionnaire", async () => {
     let emails = [];
+    let sendDate = moment().subtract(10, "days").toDate();
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
@@ -140,9 +147,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [
-              newQuestionnaire({ type: "finAnnee", sendDates: [new Date(), new Date()], status: "sent" }),
-            ],
+            questionnaires: [newQuestionnaire({ type: "finAnnee", sendDates: [sendDate, sendDate], status: "sent" })],
           }),
         ],
       })
@@ -154,6 +159,35 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 0,
       sent: 0,
       failed: 0,
+      ignored: 0,
+    });
+    assert.strictEqual(emails.length, 0);
+  });
+
+  it("Vérifie qu'on ne renvoie pas avant 10 jours", async () => {
+    let emails = [];
+    let sendDate = moment().subtract(9, "days").toDate();
+    let { db, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        email: "test@domain.com",
+        contrats: [
+          newContrat({
+            questionnaires: [newQuestionnaire({ type: "finAnnee", sendDates: [sendDate], status: "sent" })],
+          }),
+        ],
+      })
+    );
+
+    let stats = await resendQuestionnaires(db, logger, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 0,
+      sent: 0,
+      failed: 0,
+      ignored: 0,
     });
     assert.strictEqual(emails.length, 0);
   });
@@ -181,6 +215,7 @@ integrationTests(__filename, ({ getComponents }) => {
       total: 0,
       sent: 0,
       failed: 0,
+      ignored: 0,
     });
   });
 
@@ -202,5 +237,102 @@ integrationTests(__filename, ({ getComponents }) => {
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[0];
     assert.strictEqual(questionnaire.status, "open");
+  });
+
+  it("Vérifie qu'on ignore les apprentis qui se sont désinscrits", async () => {
+    let emails = [];
+    let { db, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        email: "apprenti@domain.fr",
+        unsubscribe: true,
+      })
+    );
+
+    let stats = await resendQuestionnaires(db, logger, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 0,
+      sent: 0,
+      failed: 0,
+      ignored: 0,
+    });
+  });
+
+  it("Vérifie qu'on attend 30 jours avant de relancer les questionnaires pour les apprentis en attente de diplome", async () => {
+    let emails = [];
+    let { db, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await Promise.all([
+      db.collection("apprentis").insertOne(
+        newApprenti({
+          email: "ok@domain.com",
+          contrats: [
+            newContrat({
+              questionnaires: [
+                newQuestionnaire({
+                  type: "finFormation",
+                  status: "inprogress",
+                  sendDates: [moment().subtract(30, "days").toDate()],
+                  questions: [
+                    {
+                      id: "diplome",
+                      reponses: [
+                        {
+                          id: 2000,
+                          label: "Je ne sais pas encore",
+                        },
+                      ],
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        })
+      ),
+      db.collection("apprentis").insertOne(
+        newApprenti({
+          email: "ko@domain.com",
+          contrats: [
+            newContrat({
+              questionnaires: [
+                newQuestionnaire({
+                  type: "finFormation",
+                  status: "inprogress",
+                  sendDates: [moment().subtract(10, "days").toDate()],
+                  questions: [
+                    {
+                      id: "diplome",
+                      reponses: [
+                        {
+                          id: 2000,
+                          label: "Je ne sais pas encore",
+                        },
+                      ],
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        })
+      ),
+    ]);
+
+    let stats = await resendQuestionnaires(db, logger, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 2,
+      sent: 1,
+      failed: 0,
+      ignored: 1,
+    });
+
+    //Check emails
+    assert.deepStrictEqual(emails[0].to, "ok@domain.com");
   });
 });

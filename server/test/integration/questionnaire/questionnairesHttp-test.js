@@ -314,7 +314,7 @@ httpTests(__filename, ({ startServer }) => {
         enCours: 0,
         termines: 1,
         erreurs: 0,
-        date: "2020-10-05",
+        date: moment().format("YYYY-MM-DD"),
         type: "finAnnee",
       },
     ]);
