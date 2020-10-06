@@ -1,3 +1,4 @@
+const moment = require("moment");
 const { oleoduc, writeObject } = require("oleoduc");
 const { delay } = require("../../core/asyncUtils");
 
@@ -11,15 +12,19 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
   };
 
   await oleoduc(
-    db
-      .collection("apprentis")
-      .aggregate([
-        { $match: { unsubscribe: false } },
-        { $unwind: "$contrats" },
-        { $unwind: "$contrats.questionnaires" },
-        { $project: { email: "$email", questionnaire: "$contrats.questionnaires" } },
-        { $match: { "questionnaire.status": { $ne: "closed" }, "questionnaire.sendDates.1": { $exists: false } } },
-      ]),
+    db.collection("apprentis").aggregate([
+      { $match: { unsubscribe: false } },
+      { $unwind: "$contrats" },
+      { $unwind: "$contrats.questionnaires" },
+      { $project: { email: "$email", questionnaire: "$contrats.questionnaires" } },
+      {
+        $match: {
+          "questionnaire.status": { $ne: "closed" },
+          "questionnaire.sendDates.0": { $lte: moment().subtract(10, "days").toDate() },
+          "questionnaire.sendDates.1": { $exists: false },
+        },
+      },
+    ]),
     writeObject(
       async ({ email, questionnaire }) => {
         try {

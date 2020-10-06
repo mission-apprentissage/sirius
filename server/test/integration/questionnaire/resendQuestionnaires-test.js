@@ -1,4 +1,5 @@
 const assert = require("assert");
+const moment = require("moment");
 const { omit } = require("lodash");
 const integrationTests = require("../utils/integrationTests");
 const logger = require("../utils/fakeLogger");
@@ -8,7 +9,7 @@ const resendQuestionnaires = require("../../../src/questionnaires/emails/resendQ
 
 integrationTests(__filename, ({ getComponents }) => {
   it("Vérifie qu'on peut renvoyer un questionnaire de fin d'année", async () => {
-    let sendDate = new Date();
+    let sendDate = moment().subtract(10, "days").toDate();
     let emails = [];
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
@@ -57,6 +58,7 @@ integrationTests(__filename, ({ getComponents }) => {
 
   it("Vérifie qu'on peut renvoyer un questionnaire de fin de formation", async () => {
     let emails = [];
+    let sendDate = moment().subtract(10, "days").toDate();
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
@@ -65,7 +67,7 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [newQuestionnaire({ type: "finFormation", status: "sent", sendDates: [new Date()] })],
+            questionnaires: [newQuestionnaire({ type: "finFormation", status: "sent", sendDates: [sendDate] })],
           }),
         ],
       })
@@ -103,6 +105,7 @@ integrationTests(__filename, ({ getComponents }) => {
 
   it("Vérifie qu'on peut renvoyer plusieurs questionnaires de différents types", async () => {
     let emails = [];
+    let sendDate = moment().subtract(10, "days").toDate();
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
@@ -112,8 +115,8 @@ integrationTests(__filename, ({ getComponents }) => {
         contrats: [
           newContrat({
             questionnaires: [
-              newQuestionnaire({ type: "finAnnee", token: "12345" }),
-              newQuestionnaire({ type: "finFormation", token: "45612" }),
+              newQuestionnaire({ type: "finAnnee", token: "12345", sendDates: [sendDate] }),
+              newQuestionnaire({ type: "finFormation", token: "45612", sendDates: [sendDate] }),
             ],
           }),
         ],
@@ -135,6 +138,7 @@ integrationTests(__filename, ({ getComponents }) => {
 
   it("Vérifie qu'on peut renvoyer qu'une seule fois un questionnaire", async () => {
     let emails = [];
+    let sendDate = moment().subtract(10, "days").toDate();
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });
@@ -143,9 +147,35 @@ integrationTests(__filename, ({ getComponents }) => {
         email: "test@domain.com",
         contrats: [
           newContrat({
-            questionnaires: [
-              newQuestionnaire({ type: "finAnnee", sendDates: [new Date(), new Date()], status: "sent" }),
-            ],
+            questionnaires: [newQuestionnaire({ type: "finAnnee", sendDates: [sendDate, sendDate], status: "sent" })],
+          }),
+        ],
+      })
+    );
+
+    let stats = await resendQuestionnaires(db, logger, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 0,
+      sent: 0,
+      failed: 0,
+      ignored: 0,
+    });
+    assert.strictEqual(emails.length, 0);
+  });
+
+  it("Vérifie qu'on renvoie pas avant 10 jours", async () => {
+    let emails = [];
+    let sendDate = moment().subtract(9, "days").toDate();
+    let { db, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        email: "test@domain.com",
+        contrats: [
+          newContrat({
+            questionnaires: [newQuestionnaire({ type: "finAnnee", sendDates: [sendDate], status: "sent" })],
           }),
         ],
       })
