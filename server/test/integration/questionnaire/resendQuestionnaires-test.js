@@ -164,7 +164,7 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(emails.length, 0);
   });
 
-  it("Vérifie qu'on renvoie pas avant 10 jours", async () => {
+  it("Vérifie qu'on ne renvoie pas avant 10 jours", async () => {
     let emails = [];
     let sendDate = moment().subtract(9, "days").toDate();
     let { db, questionnaires } = await getComponents({
@@ -259,5 +259,80 @@ integrationTests(__filename, ({ getComponents }) => {
       failed: 0,
       ignored: 0,
     });
+  });
+
+  it("Vérifie qu'on attend 30 jours avant de relancer les questionnaires pour les apprentis en attente de diplome", async () => {
+    let emails = [];
+    let { db, questionnaires } = await getComponents({
+      mailer: createFakeMailer({ calls: emails }),
+    });
+    await Promise.all([
+      db.collection("apprentis").insertOne(
+        newApprenti({
+          email: "ok@domain.com",
+          contrats: [
+            newContrat({
+              questionnaires: [
+                newQuestionnaire({
+                  type: "finFormation",
+                  status: "inprogress",
+                  sendDates: [moment().subtract(30, "days").toDate()],
+                  questions: [
+                    {
+                      id: "diplome",
+                      reponses: [
+                        {
+                          id: 2000,
+                          label: "Je ne sais pas encore",
+                        },
+                      ],
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        })
+      ),
+      db.collection("apprentis").insertOne(
+        newApprenti({
+          email: "ko@domain.com",
+          contrats: [
+            newContrat({
+              questionnaires: [
+                newQuestionnaire({
+                  type: "finFormation",
+                  status: "inprogress",
+                  sendDates: [moment().subtract(10, "days").toDate()],
+                  questions: [
+                    {
+                      id: "diplome",
+                      reponses: [
+                        {
+                          id: 2000,
+                          label: "Je ne sais pas encore",
+                        },
+                      ],
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        })
+      ),
+    ]);
+
+    let stats = await resendQuestionnaires(db, logger, questionnaires);
+
+    assert.deepStrictEqual(stats, {
+      total: 2,
+      sent: 1,
+      failed: 0,
+      ignored: 1,
+    });
+
+    //Check emails
+    assert.deepStrictEqual(emails[0].to, "ok@domain.com");
   });
 });

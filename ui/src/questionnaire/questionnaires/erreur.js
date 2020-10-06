@@ -5,12 +5,7 @@ export default (e) => {
   return [
     {
       id: "erreur",
-      message: (
-        <Message>
-          Désolé une erreur est survenue. <br />
-          {e.message}.
-        </Message>
-      ),
+      message: <Message>Désolé une erreur est survenue.</Message>,
       last: true,
     },
   ];
