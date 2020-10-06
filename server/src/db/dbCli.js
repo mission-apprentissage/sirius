@@ -24,7 +24,7 @@ cli
   .command("dataset")
   .description("Injecte un jeu de données dans la base")
   .action(() => {
-    runScript(({ db, questionnaires }) => injectData(db, questionnaires));
+    runScript(({ db, apprentis }) => injectData(db, apprentis));
   });
 
 cli.parse(process.argv);
