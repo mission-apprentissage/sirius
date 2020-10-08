@@ -12,7 +12,7 @@ module.exports = (db) => {
       return db.collection("apprentis").insertOne(data);
     },
     unsubscribe: (id) => {
-      return db.collection("contrats").updateOne({ _id: id }, { $set: { unsubscribe: true } });
+      return db.collection("apprentis").updateOne({ _id: id }, { $set: { unsubscribe: true } });
     },
     hasContrat: async (email, contrat) => {
       let count = await db.collection("apprentis").countDocuments({

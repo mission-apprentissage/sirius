@@ -8,7 +8,7 @@ httpTests(__filename, ({ startServer }) => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     let id = new ObjectID();
-    await db.collection("contrats").insertOne(
+    await db.collection("apprentis").insertOne(
       newApprenti({
         _id: id,
         unsubscribe: false,
@@ -19,7 +19,7 @@ httpTests(__filename, ({ startServer }) => {
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, { message: "Votre demande à bien été prise en compte" });
-    let found = await db.collection("contrats").findOne({ _id: id });
+    let found = await db.collection("apprentis").findOne({ _id: id });
     assert.strictEqual(found.unsubscribe, true);
   });
 });
