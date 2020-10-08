@@ -87,21 +87,17 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, {
       type: "finAnnee",
+      status: "clicked",
       apprenti: {
         prenom: "Robert",
-        nom: "Doe",
-      },
-      formation: {
-        intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
       },
     });
-
     let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
     let finAnnee = found.contrats[0].questionnaires[0];
     assert.deepStrictEqual(finAnnee.status, "clicked");
   });
 
-  it("Vérifie qu'on peut réinitialiser un questionnaire", async () => {
+  it("Vérifie qu'à chaque ouverture le questionnaire est réinitialisé", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
     await db.collection("apprentis").insertOne(
@@ -152,11 +148,11 @@ httpTests(__filename, ({ startServer }) => {
 
     let response = await httpClient.put("/api/questionnaires/invalid/markAsClicked");
 
-    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.status, 404);
     assert.deepStrictEqual(response.data, {
-      error: "Bad Request",
+      error: "Not Found",
       message: "Questionnaire inconnu",
-      statusCode: 400,
+      statusCode: 404,
     });
   });
 
@@ -215,7 +211,7 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 400);
     assert.deepStrictEqual(response.data, {
       error: "Bad Request",
-      message: "Impossible de changer le status du questionnaire en cours car il est 'closed'",
+      message: "Impossible de répondre à une question pour un questionnaire fermé",
       statusCode: 400,
     });
   });
@@ -262,6 +258,7 @@ httpTests(__filename, ({ startServer }) => {
               newQuestionnaire({
                 type: "finAnnee",
                 token: "123456",
+                status: "inprogress",
                 questions: [{ id: "début", data: { value: 1, label: "ok" } }],
               }),
             ],
@@ -273,10 +270,42 @@ httpTests(__filename, ({ startServer }) => {
     let response = await httpClient.put("/api/questionnaires/123456/close");
 
     assert.strictEqual(response.status, 200);
-
     let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
     let finAnnee = found.contrats[0].questionnaires[0];
     assert.deepStrictEqual(finAnnee.status, "closed");
+  });
+
+  it("Vérifie qu'un questionnaire reste statut terminé même si l'email est ouvert et cliqué", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                type: "finAnnee",
+                token: "123456",
+                status: "closed",
+                questions: [{ id: "début", data: { value: 1, label: "ok" } }],
+              }),
+            ],
+          }),
+        ],
+      })
+    );
+
+    let response = await httpClient.get("/api/questionnaires/123456/markAsOpened");
+
+    assert.strictEqual(response.status, 200);
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    assert.deepStrictEqual(found.contrats[0].questionnaires[0].status, "closed");
+
+    response = await httpClient.put("/api/questionnaires/123456/markAsClicked");
+
+    assert.strictEqual(response.status, 200);
+    found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    assert.deepStrictEqual(found.contrats[0].questionnaires[0].status, "closed");
   });
 
   it("Vérifie qu'on peut obtenir les statistiques", async () => {

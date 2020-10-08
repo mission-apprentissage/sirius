@@ -36,7 +36,9 @@ module.exports = ({ db, config, questionnaires }) => {
     tryCatch(async (req, res) => {
       let { token } = req.params;
 
-      res.json(await questionnaires.markAsClicked(token));
+      await questionnaires.markAsClicked(token);
+
+      res.json(await questionnaires.getQuestionnaireContext(token));
     })
   );
 

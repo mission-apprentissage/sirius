@@ -6,7 +6,9 @@ const questions = { questionsErreur, finAnnee, finFormation };
 
 export default (err, context) => {
   if (err) {
-    return questionsErreur(err);
+    return questionsErreur("Désolé une erreur est survenue.");
+  } else if (context.status === "closed") {
+    return questionsErreur("Vous avez déjà répondu au questionnaire. Encore merci.");
   }
 
   return questions[context.type](context);

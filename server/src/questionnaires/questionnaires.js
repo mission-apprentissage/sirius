@@ -7,7 +7,7 @@ module.exports = (db, mailer) => {
   const getData = async (token) => {
     let apprenti = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": token });
     if (!apprenti) {
-      throw Boom.badRequest("Questionnaire inconnu");
+      throw Boom.notFound("Questionnaire inconnu");
     }
 
     let contrat = apprenti.contrats.find((c) => !!c.questionnaires.find((q) => q.token === token));
@@ -84,6 +84,16 @@ module.exports = (db, mailer) => {
         throw Boom.badRequest("Questionnaire inconnu");
       }
     },
+    getQuestionnaireContext: async (token) => {
+      let { apprenti, questionnaire } = await getData(token);
+      return {
+        type: questionnaire.type,
+        status: questionnaire.status,
+        apprenti: {
+          prenom: apprenti.prenom,
+        },
+      };
+    },
     previewEmail: async (token) => {
       let { apprenti, contrat, questionnaire } = await getData(token);
 
@@ -95,92 +105,64 @@ module.exports = (db, mailer) => {
     },
     markAsOpened: async (token) => {
       let { questionnaire } = await getData(token);
-      let currentStatus = statuses[questionnaire.status];
 
-      if (currentStatus > statuses["opened"]) {
-        throw Boom.badRequest(
-          `Impossible de changer le status du questionnaire en ouvert car il est '${questionnaire.status}'`
+      if (statuses[questionnaire.status] < statuses["opened"]) {
+        await db.collection("apprentis").updateOne(
+          { "contrats.questionnaires.token": token },
+          {
+            $set: {
+              "contrats.$[c].questionnaires.$[q].status": "opened",
+              "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
+            },
+          },
+          {
+            arrayFilters: [
+              {
+                "c.questionnaires.token": token,
+              },
+              {
+                "q.token": token,
+              },
+            ],
+          }
         );
       }
-
-      await db.collection("apprentis").updateOne(
-        { "contrats.questionnaires.token": token },
-        {
-          $set: {
-            "contrats.$[c].questionnaires.$[q].status": "opened",
-          },
-        },
-        {
-          arrayFilters: [
-            {
-              "c.questionnaires.token": token,
-            },
-            {
-              "q.token": token,
-            },
-          ],
-        }
-      );
     },
     markAsClicked: async (token) => {
-      let { apprenti, contrat, questionnaire } = await getData(token);
-      let currentStatus = statuses[questionnaire.status];
+      let { questionnaire } = await getData(token);
 
-      if (currentStatus > statuses["clicked"]) {
-        throw Boom.badRequest(
-          `Impossible de changer le status du questionnaire en cliqué car il est '${questionnaire.status}'`
+      if (statuses[questionnaire.status] <= statuses["inprogress"]) {
+        await db.collection("apprentis").updateOne(
+          { "contrats.questionnaires.token": token },
+          {
+            $set: {
+              "contrats.$[c].questionnaires.$[q].status": "clicked",
+              "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
+              "contrats.$[c].questionnaires.$[q].questions": [],
+            },
+          },
+          {
+            returnOriginal: false,
+            arrayFilters: [
+              {
+                "c.questionnaires.token": token,
+              },
+              {
+                "q.token": token,
+              },
+            ],
+          }
         );
       }
-
-      let { value: result } = await db.collection("apprentis").findOneAndUpdate(
-        { "contrats.questionnaires.token": token },
-        {
-          $set: {
-            "contrats.$[c].questionnaires.$[q].status": "clicked",
-            "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
-            "contrats.$[c].questionnaires.$[q].questions": [],
-          },
-        },
-        {
-          returnOriginal: false,
-          arrayFilters: [
-            {
-              "c.questionnaires.token": token,
-            },
-            {
-              "q.token": token,
-            },
-          ],
-        }
-      );
-
-      if (!result) {
-        throw Boom.badRequest("Questionnaire inconnu");
-      }
-
-      return {
-        type: questionnaire.type,
-        formation: {
-          intitule: contrat.formation.intitule,
-        },
-        apprenti: {
-          prenom: apprenti.prenom,
-          nom: apprenti.nom,
-          formation: apprenti.formation,
-        },
-      };
     },
     answerToQuestion: async (token, questionId, reponses) => {
       let { questionnaire } = await getData(token);
-      let currentStatus = statuses[questionnaire.status];
 
-      if (currentStatus > statuses["inprogress"]) {
-        throw Boom.badRequest(
-          `Impossible de changer le status du questionnaire en cours car il est '${questionnaire.status}'`
-        );
+      if (statuses[questionnaire.status] > statuses["inprogress"]) {
+        throw Boom.badRequest(`Impossible de répondre à une question pour un questionnaire fermé`);
       }
 
-      let { value: result } = await db.collection("apprentis").findOneAndUpdate(
+      await db.collection("apprentis").updateOne(
         { "contrats.questionnaires.token": token },
         {
           $set: {
@@ -207,13 +189,15 @@ module.exports = (db, mailer) => {
           ],
         }
       );
-
-      if (!result) {
-        throw Boom.badRequest("Questionnaire inconnu");
-      }
     },
     close: async (token) => {
-      let { value: result } = await db.collection("apprentis").findOneAndUpdate(
+      let { questionnaire } = await getData(token);
+
+      if (statuses[questionnaire.status] < statuses["inprogress"]) {
+        throw Boom.badRequest(`Impossible de changer le status du questionnaire en '${questionnaire.status}'`);
+      }
+
+      await db.collection("apprentis").updateOne(
         { "contrats.questionnaires.token": token },
         {
           $set: {
@@ -233,10 +217,6 @@ module.exports = (db, mailer) => {
           ],
         }
       );
-
-      if (!result) {
-        throw Boom.badRequest("Questionnaire inconnu");
-      }
     },
   };
 };
