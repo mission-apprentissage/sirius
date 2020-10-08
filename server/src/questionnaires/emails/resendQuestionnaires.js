@@ -38,26 +38,23 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
         },
       },
     ]),
-    writeObject(
-      async ({ email, questionnaire }) => {
-        try {
-          stats.total++;
+    writeObject(async ({ email, questionnaire }) => {
+      try {
+        stats.total++;
 
-          if (stats.sent > limit || shouldBeIgnored(questionnaire)) {
-            stats.ignored++;
-          } else {
-            logger.info(`Resending questionnaire ${questionnaire.type} to ${email}...`);
-            await questionnaires.sendQuestionnaire(questionnaire.token);
-            await delay(100);
-            stats.sent++;
-          }
-        } catch (e) {
-          logger.error(e);
-          stats.failed++;
+        if (stats.sent > limit || shouldBeIgnored(questionnaire)) {
+          stats.ignored++;
+        } else {
+          logger.info(`Resending questionnaire ${questionnaire.type} to ${email}...`);
+          await questionnaires.sendQuestionnaire(questionnaire.token);
+          await delay(100);
+          stats.sent++;
         }
-      },
-      { parallel: 2 }
-    )
+      } catch (e) {
+        logger.error(e);
+        stats.failed++;
+      }
+    })
   );
 
   return stats;
