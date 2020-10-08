@@ -164,9 +164,9 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(emails.length, 0);
   });
 
-  it("Vérifie qu'on ne renvoie pas avant 10 jours", async () => {
+  it("Vérifie qu'on ne renvoie pas avant 7 jours", async () => {
     let emails = [];
-    let sendDate = moment().subtract(9, "days").toDate();
+    let sendDate = moment().subtract(5, "days").toDate();
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
     });

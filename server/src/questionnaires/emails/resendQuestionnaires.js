@@ -33,7 +33,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
       {
         $match: {
           "questionnaire.status": { $ne: "closed" },
-          "questionnaire.sendDates.0": { $lte: moment().subtract(10, "days").toDate() },
+          "questionnaire.sendDates.0": { $lte: moment().subtract(6, "days").toDate() },
           "questionnaire.sendDates.1": { $exists: false },
         },
       },
