@@ -1,20 +1,31 @@
 const assert = require("assert");
-const { newContrat } = require("../utils/fixtures");
+const { newApprenti, newContrat } = require("../utils/fixtures");
 const integrationTests = require("../utils/integrationTests");
-const updateContrats = require("../../../src/contrats/csv/cfa/updateContrats");
+const updateContrats = require("../../../src/apprentis/mfr/updateContrats");
 const { createStream } = require("../utils/testUtils");
 
 integrationTests(__filename, ({ getComponents }) => {
   it("Vérifie qu'on peut mettre à jour les données d'un contrat", async () => {
     let { db, logger } = await getComponents();
-    await db.collection("contrats").insertOne(
-      newContrat({
-        apprenti: { email: "jean@robert.com" },
-        cfa: {
-          uaiResponsable: "1111111D",
-          uaiFormateur: "2222222D",
-          adresse: "31 rue des lilas 75001 Paris",
-        },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        email: "jean@robert.com",
+        contrats: [
+          newContrat({
+            formation: {
+              codeDiplome: "11111111",
+            },
+            cfa: {
+              siret: "22222222200014",
+              uaiResponsable: "1111111D",
+              uaiFormateur: "2222222D",
+              adresse: "31 rue des lilas 75001 Paris",
+            },
+            entreprise: {
+              siret: "11111111100027",
+            },
+          }),
+        ],
       })
     );
     let stream = createStream(
@@ -24,14 +35,13 @@ integrationTests(__filename, ({ getComponents }) => {
 
     let stats = await updateContrats(db, logger, stream);
 
-    let found = await db.collection("contrats").findOne();
+    let found = await db.collection("apprentis").findOne({ email: "jean@robert.com" });
     assert.deepStrictEqual(stats, {
       total: 1,
-      imported: 1,
+      updated: 1,
       failed: 0,
     });
-    assert.strictEqual(found.apprenti.email, "jean@robert.com");
-    assert.deepStrictEqual(found.cfa, {
+    assert.deepStrictEqual(found.contrats[0].cfa, {
       nom: "CFA",
       siret: "22222222200014",
       uaiResponsable: "1111111D",

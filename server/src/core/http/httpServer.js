@@ -5,7 +5,7 @@ const logMiddleware = require("./logMiddleware");
 const errorMiddleware = require("./errorMiddleware");
 const tryCatch = require("./tryCatchMiddleware");
 const questionnairesHttp = require("../../questionnaires/questionnairesHttp");
-const contratsHttp = require("../../contrats/contratsHttp");
+const contratsHttp = require("../../apprentis/apprentisHttp");
 const { version } = require("../../../package.json");
 
 module.exports = async (components) => {

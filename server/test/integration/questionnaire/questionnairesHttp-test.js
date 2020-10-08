@@ -1,20 +1,24 @@
-const _ = require("lodash");
+const moment = require("moment");
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newContrat } = require("../utils/fixtures");
+const { newApprenti, newContrat, newQuestionnaire } = require("../utils/fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut prévisualiser l'email", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            type: "finAnnee",
-            token: "123456",
-            questions: [{ id: "début", data: { value: 1, label: "ok" } }],
-          },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                type: "finAnnee",
+                token: "123456",
+                questions: [{ id: "début", data: { value: 1, label: "ok" } }],
+              }),
+            ],
+          }),
         ],
       })
     );
@@ -26,25 +30,54 @@ httpTests(__filename, ({ startServer }) => {
     assert.ok(html.indexOf("Bonjour") !== -1);
   });
 
+  it("Vérifie qu'on peut marquer un email comme ayant été ouvert", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                type: "finAnnee",
+                token: "123456",
+                questions: [{ id: "début", data: { value: 1, label: "ok" } }],
+              }),
+            ],
+          }),
+        ],
+      })
+    );
+
+    let response = await httpClient.get("/api/questionnaires/123456/markAsOpened");
+
+    assert.strictEqual(response.status, 200);
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
+    assert.deepStrictEqual(finAnnee.status, "opened");
+  });
+
   it("Vérifie qu'on peut démarrer un questionnaire", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        apprenti: {
-          prenom: "Robert",
-          nom: "Doe",
-        },
-        formation: {
-          intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
-        },
-        questionnaires: [
-          {
-            type: "finAnnee",
-            token: "123456",
-            status: "sent",
-            questions: [],
-          },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        prenom: "Robert",
+        nom: "Doe",
+        contrats: [
+          newContrat({
+            formation: {
+              intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
+            },
+            questionnaires: [
+              newQuestionnaire({
+                type: "finAnnee",
+                token: "123456",
+                status: "sent",
+                questions: [],
+              }),
+            ],
+          }),
         ],
       })
     );
@@ -54,51 +87,32 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, {
       type: "finAnnee",
+      status: "clicked",
       apprenti: {
         prenom: "Robert",
-        nom: "Doe",
-      },
-      formation: {
-        intitule: "CAP Boucher à Institut régional de formation des métiers de l'artisanat",
       },
     });
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
+    assert.deepStrictEqual(finAnnee.status, "clicked");
   });
 
-  it("Vérifie qu'on peut marquer un email comme ayant été ouvert", async () => {
+  it("Vérifie qu'à chaque ouverture le questionnaire est réinitialisé", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            type: "finAnnee",
-            token: "123456",
-            questions: [{ id: "début", data: { value: 1, label: "ok" } }],
-          },
-        ],
-      })
-    );
-
-    let response = await httpClient.get("/api/questionnaires/123456/markAsOpened");
-
-    assert.strictEqual(response.status, 200);
-    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
-    let finAnnee = found.questionnaires[0];
-    assert.deepStrictEqual(finAnnee.status, "opened");
-  });
-
-  it("Vérifie qu'on peut réinitialiser un questionnaire", async () => {
-    let { httpClient, components } = await startServer();
-    let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            type: "finAnnee",
-            token: "123456",
-            status: "clicked",
-            questions: [{ id: "début", data: { value: 1, label: "ok" } }],
-          },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                type: "finAnnee",
+                token: "123456",
+                status: "clicked",
+                questions: [{ id: "début", data: { value: 1, label: "ok" } }],
+              }),
+            ],
+          }),
         ],
       })
     );
@@ -106,49 +120,58 @@ httpTests(__filename, ({ startServer }) => {
     let response = await httpClient.put("/api/questionnaires/123456/markAsClicked");
 
     assert.strictEqual(response.status, 200);
-    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
-    let finAnnee = found.questionnaires[0];
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
+    assert.deepStrictEqual(finAnnee.status, "clicked");
     assert.deepStrictEqual(finAnnee.questions, []);
   });
 
   it("Vérifie qu'on ne peut pas démarrer un questionnaire avec un token invalide", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            type: "finAnnee",
-            token: "123456",
-            status: "sent",
-            questions: [],
-          },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                type: "finAnnee",
+                token: "123456",
+                status: "sent",
+                questions: [],
+              }),
+            ],
+          }),
         ],
       })
     );
 
     let response = await httpClient.put("/api/questionnaires/invalid/markAsClicked");
 
-    assert.strictEqual(response.status, 400);
+    assert.strictEqual(response.status, 404);
     assert.deepStrictEqual(response.data, {
-      error: "Bad Request",
-      message: "Le lien n'est pas valide",
-      statusCode: 400,
+      error: "Not Found",
+      message: "Questionnaire inconnu",
+      statusCode: 404,
     });
   });
 
   it("Vérifie qu'on peut ajouter une réponse", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            token: "123456",
-            type: "finAnnee",
-            status: "sent",
-            questions: [],
-          },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                token: "123456",
+                type: "finAnnee",
+                status: "sent",
+                questions: [],
+              }),
+            ],
+          }),
         ],
       })
     );
@@ -157,8 +180,8 @@ httpTests(__filename, ({ startServer }) => {
 
     assert.strictEqual(response.status, 200);
 
-    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
-    let finAnnee = found.questionnaires[0];
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
     assert.ok(finAnnee.updateDate);
     assert.deepStrictEqual(finAnnee.questions, [{ id: "début", reponses: [{ id: 1, label: "ok" }] }]);
   });
@@ -166,15 +189,19 @@ httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on ne peut pas ajouter une réponse à un questionnaire closed", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            token: "123456",
-            type: "finAnnee",
-            status: "closed",
-            questions: [],
-          },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                token: "123456",
+                type: "finAnnee",
+                status: "closed",
+                questions: [],
+              }),
+            ],
+          }),
         ],
       })
     );
@@ -184,7 +211,7 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 400);
     assert.deepStrictEqual(response.data, {
       error: "Bad Request",
-      message: "Le questionnaire n'est plus disponible",
+      message: "Impossible de répondre à une question pour un questionnaire fermé",
       statusCode: 400,
     });
   });
@@ -192,15 +219,19 @@ httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut modifier une réponse", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            type: "finAnnee",
-            token: "123456",
-            status: "inprogress",
-            questions: [{ id: "début", reponses: [{ id: 1, label: "ok" }] }],
-          },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                type: "finAnnee",
+                token: "123456",
+                status: "inprogress",
+                questions: [{ id: "début", reponses: [{ id: 1, label: "ok" }] }],
+              }),
+            ],
+          }),
         ],
       })
     );
@@ -210,8 +241,8 @@ httpTests(__filename, ({ startServer }) => {
     ]);
 
     assert.strictEqual(response.status, 200);
-    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
-    let finAnnee = found.questionnaires[0];
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
     assert.deepStrictEqual(finAnnee.questions, [{ id: "début", reponses: [{ id: 1, label: "other" }] }]);
     assert.deepStrictEqual(finAnnee.status, "inprogress");
   });
@@ -219,14 +250,19 @@ httpTests(__filename, ({ startServer }) => {
   it("Vérifie qu'on peut terminer un questionnaire", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            type: "finAnnee",
-            token: "123456",
-            questions: [{ id: "début", data: { value: 1, label: "ok" } }],
-          },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                type: "finAnnee",
+                token: "123456",
+                status: "inprogress",
+                questions: [{ id: "début", data: { value: 1, label: "ok" } }],
+              }),
+            ],
+          }),
         ],
       })
     );
@@ -234,24 +270,60 @@ httpTests(__filename, ({ startServer }) => {
     let response = await httpClient.put("/api/questionnaires/123456/close");
 
     assert.strictEqual(response.status, 200);
-
-    let found = await db.collection("contrats").findOne({ "questionnaires.token": "123456" });
-    let finAnnee = found.questionnaires[0];
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
     assert.deepStrictEqual(finAnnee.status, "closed");
+  });
+
+  it("Vérifie qu'un questionnaire reste statut terminé même si l'email est ouvert et cliqué", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                type: "finAnnee",
+                token: "123456",
+                status: "closed",
+                questions: [{ id: "début", data: { value: 1, label: "ok" } }],
+              }),
+            ],
+          }),
+        ],
+      })
+    );
+
+    let response = await httpClient.get("/api/questionnaires/123456/markAsOpened");
+
+    assert.strictEqual(response.status, 200);
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    assert.deepStrictEqual(found.contrats[0].questionnaires[0].status, "closed");
+
+    response = await httpClient.put("/api/questionnaires/123456/markAsClicked");
+
+    assert.strictEqual(response.status, 200);
+    found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    assert.deepStrictEqual(found.contrats[0].questionnaires[0].status, "closed");
   });
 
   it("Vérifie qu'on peut obtenir les statistiques", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;
-    await db.collection("contrats").insertOne(
-      newContrat({
-        questionnaires: [
-          {
-            token: "123456",
-            type: "finAnnee",
-            status: "closed",
-            questions: [],
-          },
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                token: "123456",
+                type: "finAnnee",
+                status: "closed",
+                questions: [],
+              }),
+            ],
+          }),
         ],
       })
     );
@@ -263,14 +335,17 @@ httpTests(__filename, ({ startServer }) => {
     });
 
     assert.strictEqual(response.status, 200);
-    let first = response.data[0];
-    assert.ok(first.cohorte.startsWith("test_q2_2"));
-    assert.deepStrictEqual(_.omit(first, ["cohorte"]), {
-      total: 1,
-      ouverts: 1,
-      cliques: 1,
-      enCours: 0,
-      termines: 1,
-    });
+    assert.deepStrictEqual(response.data, [
+      {
+        envoyes: 1,
+        ouverts: 1,
+        cliques: 1,
+        enCours: 0,
+        termines: 1,
+        erreurs: 0,
+        date: moment().format("YYYY-MM-DD"),
+        type: "finAnnee",
+      },
+    ]);
   });
 });

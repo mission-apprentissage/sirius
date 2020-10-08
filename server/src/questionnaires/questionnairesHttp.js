@@ -4,8 +4,6 @@ const { oleoduc, transformObject } = require("oleoduc");
 const tryCatch = require("../core/http/tryCatchMiddleware");
 const { sendHTML, sendJsonStream, sendCSVStream } = require("../core/http/httpUtils");
 const authMiddleware = require("../core/http/authMiddleware");
-const questionnairesStream = require("./streams/questionnairesStream");
-const reponsesStream = require("./streams/reponsesStream");
 
 module.exports = ({ db, config, questionnaires }) => {
   const router = express.Router(); // eslint-disable-line new-cap
@@ -38,7 +36,9 @@ module.exports = ({ db, config, questionnaires }) => {
     tryCatch(async (req, res) => {
       let { token } = req.params;
 
-      res.json(await questionnaires.markAsClicked(token));
+      await questionnaires.markAsClicked(token);
+
+      res.json(await questionnaires.getQuestionnaireContext(token));
     })
   );
 
@@ -84,18 +84,37 @@ module.exports = ({ db, config, questionnaires }) => {
       }).validateAsync(req.params, { abortEarly: false });
 
       let stream = db
-        .collection("contrats")
+        .collection("apprentis")
         .aggregate([
-          { $project: { cohorte: 1, questionnaires: 1 } },
-          { $unwind: "$questionnaires" },
+          { $project: { contrats: 1 } },
+          { $unwind: "$contrats" },
+          { $unwind: "$contrats.questionnaires" },
           {
             $group: {
-              _id: { cohorte: "$cohorte" },
-              total: { $sum: 1 },
+              _id: {
+                date: {
+                  $dateToString: {
+                    format: "%Y-%m-%d",
+                    date: { $arrayElemAt: ["$contrats.questionnaires.sendDates", 0] },
+                  },
+                },
+                type: "$contrats.questionnaires.type",
+              },
+              envoyes: {
+                $sum: {
+                  $cond: {
+                    if: {
+                      $in: ["$contrats.questionnaires.status", ["sent", "opened", "clicked", "inprogress", "closed"]],
+                    },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
               ouverts: {
                 $sum: {
                   $cond: {
-                    if: { $in: ["$questionnaires.status", ["opened", "clicked", "inprogress", "closed"]] },
+                    if: { $in: ["$contrats.questionnaires.status", ["opened", "clicked", "inprogress", "closed"]] },
                     then: 1,
                     else: 0,
                   },
@@ -104,7 +123,7 @@ module.exports = ({ db, config, questionnaires }) => {
               cliques: {
                 $sum: {
                   $cond: {
-                    if: { $in: ["$questionnaires.status", ["clicked", "inprogress", "closed"]] },
+                    if: { $in: ["$contrats.questionnaires.status", ["clicked", "inprogress", "closed"]] },
                     then: 1,
                     else: 0,
                   },
@@ -113,7 +132,7 @@ module.exports = ({ db, config, questionnaires }) => {
               enCours: {
                 $sum: {
                   $cond: {
-                    if: { $eq: ["$questionnaires.status", "inprogress"] },
+                    if: { $eq: ["$contrats.questionnaires.status", "inprogress"] },
                     then: 1,
                     else: 0,
                   },
@@ -122,7 +141,18 @@ module.exports = ({ db, config, questionnaires }) => {
               termines: {
                 $sum: {
                   $cond: {
-                    if: { $eq: ["$questionnaires.status", "closed"] },
+                    if: { $eq: ["$contrats.questionnaires.status", "closed"] },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
+              erreurs: {
+                $sum: {
+                  $cond: {
+                    if: {
+                      $in: ["$contrats.questionnaires.status", ["error"]],
+                    },
                     then: 1,
                     else: 0,
                   },
@@ -133,15 +163,17 @@ module.exports = ({ db, config, questionnaires }) => {
           {
             $project: {
               _id: 0,
-              cohorte: "$_id.cohorte",
-              total: 1,
+              date: "$_id.date",
+              type: "$_id.type",
+              envoyes: 1,
               ouverts: 1,
               cliques: 1,
               enCours: 1,
               termines: 1,
+              erreurs: 1,
             },
           },
-          { $sort: { cohorte: 1 } },
+          { $sort: { date: 1, type: 1 } },
         ])
         .stream();
 
@@ -152,55 +184,20 @@ module.exports = ({ db, config, questionnaires }) => {
           stream,
           transformObject((res) => {
             return {
-              Cohorte: res.cohorte,
-              "Nombre de questionnaire envoyés": res.total,
+              Date: res.date,
+              "Type de questionnaire": res.type,
+              "Nombre de questionnaire envoyés": res.envoyes,
               "Emails ouverts": res.ouverts,
               "Liens cliqués": res.cliques,
               "Nombre de questionnaires en cours": res.enCours,
               "Nombre de questionnaires terminés": res.termines,
+              "Nombre de questionnaires en erreur": res.erreurs,
             };
           })
         );
 
         return sendCSVStream(csvStream, res, { encoding: "UTF-8", filename: "questionnaires-stats.csv" });
       }
-    })
-  );
-
-  router.get(
-    "/api/questionnaires/export.:type",
-    checkAuth,
-    tryCatch(async (req, res) => {
-      let { type } = await Joi.object({
-        type: Joi.string().required().allow("json", "csv"),
-      }).validateAsync(req.params, { abortEarly: false });
-
-      let stream = questionnairesStream(db);
-      return type === "json"
-        ? sendJsonStream(stream, res)
-        : sendCSVStream(stream, res, {
-            encoding: "UTF-8",
-            filename: "questionnaires.csv",
-          });
-    })
-  );
-
-  router.get(
-    "/api/questionnaires/export-reponses.:type",
-    checkAuth,
-    tryCatch(async (req, res) => {
-      let { type } = await Joi.object({
-        type: Joi.string().required().allow("json", "csv"),
-      }).validateAsync(req.params, { abortEarly: false });
-
-      let stream = reponsesStream(db);
-
-      return type === "json"
-        ? sendJsonStream(stream, res)
-        : sendCSVStream(stream, res, {
-            encoding: "UTF-8",
-            filename: "reponses.csv",
-          });
     })
   );
 

@@ -1,7 +1,7 @@
 const { oleoduc, writeObject } = require("oleoduc");
 const { delay } = require("../../core/asyncUtils");
 
-module.exports = async (db, logger, questionnaires, options = {}) => {
+module.exports = async (db, logger, apprentis, questionnaires, options = {}) => {
   let limit = options.limit || 1;
   let stats = {
     total: 0,
@@ -11,18 +11,19 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
   };
 
   await oleoduc(
-    db.collection("contrats").find({ unsubscribe: false }),
-    writeObject(async (contrat) => {
+    db.collection("apprentis").find({ unsubscribe: false }),
+    writeObject(async (apprenti) => {
       try {
-        let next = questionnaires.findNext(contrat);
+        let email = apprenti.email;
+        let context = await apprentis.getNextQuestionnaireContext(email);
         stats.total++;
 
-        if (stats.sent >= limit || !next || (options.type && next !== options.type)) {
+        if (stats.sent >= limit || !context || (options.type && context.type !== options.type)) {
           stats.ignored++;
         } else {
-          let newQuestionnaire = await questionnaires.create(contrat, next);
-          logger.info(`Sending questionnaire ${newQuestionnaire.type} with token ${newQuestionnaire.token}`);
-          await questionnaires.sendQuestionnaire(newQuestionnaire.token);
+          let nextQuestionnaire = await apprentis.generateQuestionnaire(email, context);
+          logger.info(`Sending questionnaire ${nextQuestionnaire.type} with token ${nextQuestionnaire.token}`);
+          await questionnaires.sendQuestionnaire(nextQuestionnaire.token);
           await delay(100);
           stats.sent++;
         }

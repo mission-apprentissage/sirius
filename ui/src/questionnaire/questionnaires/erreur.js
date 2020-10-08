@@ -1,16 +1,11 @@
 import React from "react";
 import { Message } from "../toolkit";
 
-export default (e) => {
+export default (message) => {
   return [
     {
       id: "erreur",
-      message: (
-        <Message>
-          Désolé une erreur est survenue. <br />
-          {e.message}.
-        </Message>
-      ),
+      message: <Message>{message}</Message>,
       last: true,
     },
   ];

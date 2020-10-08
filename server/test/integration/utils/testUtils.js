@@ -1,5 +1,5 @@
 const { Readable } = require("stream");
-const createIndexes = require("../../../src/db/indexes/createIndexes");
+const createIndexes = require("../../../src/db/migration/indexes/createIndexes");
 const connectToMongoDB = require("../../../src/core/connectToMongoDB");
 const config = require("../../../src/config");
 const createComponents = require("../../../src/components");
