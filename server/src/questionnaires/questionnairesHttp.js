@@ -171,7 +171,7 @@ module.exports = ({ db, config, questionnaires }) => {
               erreurs: 1,
             },
           },
-          { $sort: { _id: 1 } },
+          { $sort: { date: 1, type: 1 } },
         ])
         .stream();
 
