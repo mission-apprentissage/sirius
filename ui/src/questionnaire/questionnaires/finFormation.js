@@ -108,6 +108,9 @@ export default ({ apprenti }) => {
       id: "diplomeEnAttente",
       message: <Message>Ok. Nous reviendrons vers vous dans un mois. A bientôt !.</Message>,
       last: true,
+      options: {
+        pending: true,
+      },
     },
     {
       id: "diplomeNonObtenu",
