@@ -13,6 +13,7 @@ module.exports = async (components) => {
 
   const app = express();
 
+  app.disable("x-powered-by");
   app.use(bodyParser.json());
   app.use(logMiddleware(logger));
   app.use(rewriteDeprecatedUrlMiddleware());
