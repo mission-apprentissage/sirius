@@ -22,7 +22,7 @@ module.exports = async (components) => {
 
   //Routes
   app.get(
-    "/api",
+    "/api/healthcheck",
     tryCatch(async (req, res) => {
       let mongodbStatus;
       await db
@@ -39,9 +39,7 @@ module.exports = async (components) => {
       return res.json({
         version,
         env: config.env,
-        healthcheck: {
-          mongodb: mongodbStatus,
-        },
+        healthcheck: mongodbStatus,
       });
     })
   );
