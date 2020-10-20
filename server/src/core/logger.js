@@ -1,4 +1,5 @@
 const bunyan = require("bunyan");
+const { throttle } = require("lodash");
 const util = require("util");
 const { writeObject } = require("oleoduc");
 const PrettyStream = require("bunyan-prettystream");
@@ -23,29 +24,32 @@ const consoleStream = (level) => {
 };
 
 const slackStream = (env, slackWebhookUrl) => {
+  let stream = new BunyanSlack(
+    {
+      webhook_url: slackWebhookUrl,
+      customFormatter: (record, levelName) => {
+        if (record.type === "http") {
+          record = {
+            url: record.request.url.relative,
+            statusCode: record.response.statusCode,
+            ...(record.error ? { message: record.error.message } : {}),
+          };
+        }
+        return {
+          text: util.format(`[SERVER][${env}] %O`, levelName.toUpperCase(), record),
+        };
+      },
+    },
+    (error) => {
+      console.log("Unable to send log to slack", error);
+    }
+  );
+  stream.write = throttle(stream.write, 5000);
+
   return {
     name: "slack",
     level: "error",
-    stream: new BunyanSlack(
-      {
-        webhook_url: slackWebhookUrl,
-        customFormatter: (record, levelName) => {
-          if (record.type === "http") {
-            record = {
-              url: record.request.url.relative,
-              statusCode: record.response.statusCode,
-              ...(record.error ? { message: record.error.message } : {}),
-            };
-          }
-          return {
-            text: util.format(`[SERVER][${env}] %O`, levelName.toUpperCase(), record),
-          };
-        },
-      },
-      (error) => {
-        console.log("Unable to send log to slack", error);
-      }
-    ),
+    stream: stream,
   };
 };
 

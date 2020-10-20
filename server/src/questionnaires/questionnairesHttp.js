@@ -1,5 +1,6 @@
 const express = require("express");
 const Joi = require("@hapi/joi");
+const sanitizeHtml = require("sanitize-html");
 const { oleoduc, transformObject } = require("oleoduc");
 const tryCatch = require("../core/http/tryCatchMiddleware");
 const { sendHTML, sendJsonStream, sendCSVStream } = require("../core/http/httpUtils");
@@ -51,13 +52,23 @@ module.exports = ({ db, config, questionnaires }) => {
           Joi.object({
             id: Joi.number().required(),
             satisfaction: Joi.string().allow("BON", "MOYEN", "MAUVAIS"),
-            label: Joi.string().required(),
+            label: Joi.string().required().max(250),
           })
         )
         .required()
+        .max(10)
         .validateAsync(req.body, { abortEarly: false });
 
-      await questionnaires.answerToQuestion(token, questionId, reponses);
+      await questionnaires.answerToQuestion(
+        token,
+        questionId,
+        reponses.map((r) => {
+          return {
+            ...r,
+            label: sanitizeHtml(r.label),
+          };
+        })
+      );
 
       res.json({});
     })

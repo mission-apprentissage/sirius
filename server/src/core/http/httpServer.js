@@ -1,4 +1,5 @@
 const express = require("express");
+const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const rewriteDeprecatedUrlMiddleware = require("./rewriteDeprecatedUrlMiddleware");
 const logMiddleware = require("./logMiddleware");
@@ -13,15 +14,17 @@ module.exports = async (components) => {
 
   const app = express();
 
+  app.use(helmet.contentSecurityPolicy());
   app.use(bodyParser.json());
   app.use(logMiddleware(logger));
   app.use(rewriteDeprecatedUrlMiddleware());
   app.use(questionnairesHttp(components));
   app.use(contratsHttp(components));
+  app.disable("x-powered-by");
 
   //Routes
   app.get(
-    "/api",
+    "/api/healthcheck",
     tryCatch(async (req, res) => {
       let mongodbStatus;
       await db
@@ -38,9 +41,7 @@ module.exports = async (components) => {
       return res.json({
         version,
         env: config.env,
-        healthcheck: {
-          mongodb: mongodbStatus,
-        },
+        healthcheck: mongodbStatus,
       });
     })
   );
