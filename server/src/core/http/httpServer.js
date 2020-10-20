@@ -1,4 +1,5 @@
 const express = require("express");
+const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const rewriteDeprecatedUrlMiddleware = require("./rewriteDeprecatedUrlMiddleware");
 const logMiddleware = require("./logMiddleware");
@@ -13,12 +14,13 @@ module.exports = async (components) => {
 
   const app = express();
 
-  app.disable("x-powered-by");
+  app.use(helmet.contentSecurityPolicy());
   app.use(bodyParser.json());
   app.use(logMiddleware(logger));
   app.use(rewriteDeprecatedUrlMiddleware());
   app.use(questionnairesHttp(components));
   app.use(contratsHttp(components));
+  app.disable("x-powered-by");
 
   //Routes
   app.get(
