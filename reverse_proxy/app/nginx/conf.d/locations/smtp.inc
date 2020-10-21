@@ -1,4 +1,7 @@
 location /smtp {
+    auth_basic "Restricted";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+
     proxy_pass          http://smtp:8025;
 
     # Websocket configuration
