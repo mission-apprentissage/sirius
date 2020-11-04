@@ -7,7 +7,6 @@ services:
     build:
       context: reverse_proxy
     mem_limit: 256m
-    restart: unless-stopped
     ports:
       - 80:80
     networks:
@@ -33,7 +32,6 @@ services:
     build:
       context: server
     mem_limit: 1g
-    restart: unless-stopped
     networks:
       - sirius_network
     depends_on:
@@ -47,7 +45,6 @@ services:
     image: mongo:4.2.6-bionic
     container_name: sirius_mongodb
     mem_limit: 1g
-    restart: unless-stopped
     networks:
       - sirius_network
 
