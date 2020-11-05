@@ -75,6 +75,17 @@ module.exports = ({ db, config, questionnaires }) => {
   );
 
   router.put(
+    "/api/questionnaires/:token/markAsPending",
+    tryCatch(async (req, res) => {
+      let { token } = req.params;
+
+      await questionnaires.markAsPending(token);
+
+      res.json({});
+    })
+  );
+
+  router.put(
     "/api/questionnaires/:token/close",
     tryCatch(async (req, res) => {
       let { token } = req.params;
@@ -149,6 +160,15 @@ module.exports = ({ db, config, questionnaires }) => {
                   },
                 },
               },
+              enAttente: {
+                $sum: {
+                  $cond: {
+                    if: { $eq: ["$contrats.questionnaires.status", "pending"] },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
               termines: {
                 $sum: {
                   $cond: {
@@ -180,6 +200,7 @@ module.exports = ({ db, config, questionnaires }) => {
               ouverts: 1,
               cliques: 1,
               enCours: 1,
+              enAttente: 1,
               termines: 1,
               erreurs: 1,
             },
@@ -201,6 +222,7 @@ module.exports = ({ db, config, questionnaires }) => {
               "Emails ouverts": res.ouverts,
               "Liens cliqués": res.cliques,
               "Nombre de questionnaires en cours": res.enCours,
+              "Nombre de questionnaires en attente": res.enAttente,
               "Nombre de questionnaires terminés": res.termines,
               "Nombre de questionnaires en erreur": res.erreurs,
             };

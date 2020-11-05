@@ -46,7 +46,7 @@ const Chat = ({ questions, onResults = noop, onEnd = noop }) => {
     let nextQuestion = questions.find((q) => q.id === nextQuestionId);
 
     if (nextQuestion.last) {
-      await onEnd(currentQuestion);
+      await onEnd(currentQuestion.id, nextQuestion.options);
     }
 
     setCurrentQuestion(nextQuestion);

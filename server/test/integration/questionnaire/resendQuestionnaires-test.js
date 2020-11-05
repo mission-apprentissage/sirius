@@ -275,7 +275,7 @@ integrationTests(__filename, ({ getComponents }) => {
               questionnaires: [
                 newQuestionnaire({
                   type: "finFormation",
-                  status: "inprogress",
+                  status: "pending",
                   sendDates: [moment().subtract(30, "days").toDate()],
                   questions: [
                     {
@@ -302,7 +302,7 @@ integrationTests(__filename, ({ getComponents }) => {
               questionnaires: [
                 newQuestionnaire({
                   type: "finFormation",
-                  status: "inprogress",
+                  status: "pending",
                   sendDates: [moment().subtract(10, "days").toDate()],
                   questions: [
                     {
