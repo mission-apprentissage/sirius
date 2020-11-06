@@ -1,6 +1,7 @@
 const { program: cli } = require("commander");
 const runScript = require("../core/runScript");
 const injectData = require("./dataset/injectData");
+const addGroupToQuestions = require("./migration/addThematiqueToQuestions");
 
 cli
   .command("migrate")
@@ -8,7 +9,7 @@ cli
   .action(() => {
     runScript(async ({ db }) => {
       return {
-
+        addGroupToQuestions: await addGroupToQuestions(db),
       };
     });
   });

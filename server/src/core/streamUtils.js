@@ -10,13 +10,16 @@ module.exports = {
     return new Transform({
       objectMode: true,
       transform: function (chunk, encoding, callback) {
+        let columns = options.columns;
+
         try {
           if (lines++ === 0) {
-            let columnNames = Object.keys(chunk).join(separator);
+            let columnNames = Object.keys(columns || chunk).join(separator);
             this.push(`${columnNames}\n`);
           }
 
-          let line = Object.values(chunk).join(separator);
+          let values = columns ? Object.keys(columns).map((key) => columns[key](chunk)) : Object.values(chunk);
+          let line = values.join(separator);
           this.push(`${line}\n`);
           callback();
         } catch (e) {
