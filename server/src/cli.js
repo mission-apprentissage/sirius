@@ -21,5 +21,6 @@ cli.command("apprentis", "Gestion des apprentis", { executableFile: "apprentis/a
 cli.command("questionnaires", "Gestion des questionnaires", {
   executableFile: "questionnaires/questionnairesCli",
 });
+cli.command("misc", "Commandes diverses", { executableFile: "misc/miscCli" });
 
 cli.parse(process.argv);

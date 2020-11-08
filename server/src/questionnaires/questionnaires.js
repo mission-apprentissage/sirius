@@ -2,7 +2,7 @@ const Boom = require("boom");
 const path = require("path");
 
 module.exports = (db, mailer) => {
-  const statuses = { sent: 0, error: 1, opened: 2, clicked: 3, inprogress: 4, closed: 5 };
+  const statuses = { sent: 0, error: 1, opened: 2, clicked: 3, pending: 4, inprogress: 5, closed: 6 };
   const getEmailTemplate = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
   const getData = async (token) => {
     let apprenti = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": token });
@@ -68,7 +68,6 @@ module.exports = (db, mailer) => {
           },
         },
         {
-          returnOriginal: false,
           arrayFilters: [
             {
               "c.questionnaires.token": token,
@@ -142,7 +141,6 @@ module.exports = (db, mailer) => {
             },
           },
           {
-            returnOriginal: false,
             arrayFilters: [
               {
                 "c.questionnaires.token": token,
@@ -158,8 +156,8 @@ module.exports = (db, mailer) => {
     answerToQuestion: async (token, questionId, reponses) => {
       let { questionnaire } = await getData(token);
 
-      if (statuses[questionnaire.status] > statuses["inprogress"]) {
-        throw Boom.badRequest(`Impossible de répondre à une question pour un questionnaire fermé`);
+      if (questionnaire.status === "closed") {
+        throw Boom.badRequest(`Impossible de répondre au questionnaire`);
       }
 
       await db.collection("apprentis").updateOne(
@@ -178,7 +176,33 @@ module.exports = (db, mailer) => {
           },
         },
         {
-          returnOriginal: false,
+          arrayFilters: [
+            {
+              "c.questionnaires.token": token,
+            },
+            {
+              "q.token": token,
+            },
+          ],
+        }
+      );
+    },
+    markAsPending: async (token) => {
+      let { questionnaire } = await getData(token);
+
+      if (questionnaire.status === "closed") {
+        throw Boom.badRequest(`Impossible de mettre le questionnaire en pending`);
+      }
+
+      await db.collection("apprentis").updateOne(
+        { "contrats.questionnaires.token": token },
+        {
+          $set: {
+            "contrats.$[c].questionnaires.$[q].status": "pending",
+            "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
+          },
+        },
+        {
           arrayFilters: [
             {
               "c.questionnaires.token": token,
@@ -193,8 +217,8 @@ module.exports = (db, mailer) => {
     close: async (token) => {
       let { questionnaire } = await getData(token);
 
-      if (statuses[questionnaire.status] < statuses["inprogress"]) {
-        throw Boom.badRequest(`Impossible de changer le status du questionnaire en '${questionnaire.status}'`);
+      if (questionnaire.status === "closed") {
+        throw Boom.badRequest(`Impossible de fermer le questionnaire`);
       }
 
       await db.collection("apprentis").updateOne(
@@ -206,7 +230,6 @@ module.exports = (db, mailer) => {
           },
         },
         {
-          returnOriginal: false,
           arrayFilters: [
             {
               "c.questionnaires.token": token,

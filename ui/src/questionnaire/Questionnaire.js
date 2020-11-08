@@ -38,7 +38,13 @@ export default () => {
           onResults={(questionId, reponses) => {
             return _put(`/api/questionnaires/${token}/answerToQuestion/${questionId}`, reponses);
           }}
-          onEnd={() => _put(`/api/questionnaires/${token}/close`)}
+          onEnd={(questionId, options = {}) => {
+            if (options.pending) {
+              return _put(`/api/questionnaires/${token}/markAsPending`);
+            } else {
+              return _put(`/api/questionnaires/${token}/close`);
+            }
+          }}
         />
         <Background className={"hide-sm"} />
       </Box>

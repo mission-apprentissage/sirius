@@ -211,7 +211,7 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 400);
     assert.deepStrictEqual(response.data, {
       error: "Bad Request",
-      message: "Impossible de répondre à une question pour un questionnaire fermé",
+      message: "Impossible de répondre au questionnaire",
       statusCode: 400,
     });
   });
@@ -245,6 +245,35 @@ httpTests(__filename, ({ startServer }) => {
     let finAnnee = found.contrats[0].questionnaires[0];
     assert.deepStrictEqual(finAnnee.questions, [{ id: "début", reponses: [{ id: 1, label: "other" }] }]);
     assert.deepStrictEqual(finAnnee.status, "inprogress");
+  });
+
+  it("Vérifie qu'on peut mettre le questionnaire en pending", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                token: "123456",
+                type: "finAnnee",
+                status: "inprogress",
+                questions: [],
+              }),
+            ],
+          }),
+        ],
+      })
+    );
+
+    let response = await httpClient.put("/api/questionnaires/123456/markAsPending");
+
+    assert.strictEqual(response.status, 200);
+
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
+    assert.deepStrictEqual(finAnnee.status, "pending");
   });
 
   it("Vérifie qu'on peut terminer un questionnaire", async () => {
@@ -341,6 +370,7 @@ httpTests(__filename, ({ startServer }) => {
         ouverts: 1,
         cliques: 1,
         enCours: 0,
+        enAttente: 0,
         termines: 1,
         erreurs: 0,
         date: moment().format("YYYY-MM-DD"),

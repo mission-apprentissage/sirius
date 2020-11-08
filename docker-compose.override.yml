@@ -39,7 +39,8 @@ services:
     ports:
       - "127.0.0.1:27017:27017"
     volumes:
-      - .local/mongodb:/data
+      - .local/mongodb/db:/data/db
+      - .local/mongodb/configdb:/data/configdb
 
   smtp:
     image: mailhog/mailhog

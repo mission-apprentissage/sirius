@@ -11,15 +11,9 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
     failed: 0,
   };
   let shouldBeIgnored = (questionnaire) => {
-    if (questionnaire.type === "finFormation") {
-      let diplome = questionnaire.questions.find((q) => q.id === "diplome");
-      let enAttente = 2000;
-
-      return (
-        diplome &&
-        diplome.reponses.filter((r) => r.id === enAttente).length > 0 &&
-        moment().diff(moment(questionnaire.sendDates[0]), "days") >= 30
-      );
+    let diplome = questionnaire.questions.find((q) => q.id === "diplome");
+    if (diplome && questionnaire.status === "pending") {
+      return moment().diff(moment(questionnaire.sendDates[0]), "days") >= 30;
     }
     return false;
   };
