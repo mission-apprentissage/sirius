@@ -1,7 +1,8 @@
 const { program: cli } = require("commander");
 const runScript = require("../core/runScript");
 const injectData = require("./dataset/injectData");
-const addGroupToQuestions = require("./migration/addThematiqueToQuestions");
+const addThematiqueToQuestions = require("./migration/addThematiqueToQuestions");
+const addMissingSatisfaction = require("./migration/addMissingSatisfaction");
 
 cli
   .command("migrate")
@@ -9,7 +10,8 @@ cli
   .action(() => {
     runScript(async ({ db }) => {
       return {
-        addGroupToQuestions: await addGroupToQuestions(db),
+        addThematiqueToQuestions: await addThematiqueToQuestions(db),
+        addMissingSatisfaction: await addMissingSatisfaction(db),
       };
     });
   });
