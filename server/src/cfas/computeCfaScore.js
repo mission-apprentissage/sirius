@@ -66,35 +66,51 @@ module.exports = async (db, outputFile) => {
       },
       {
         $group: {
-          _id: { cfa: "$cfa.uaiFormateur" },
+          _id: "$cfa.uaiFormateur",
           cfa: { $first: "$cfa" },
-          thematiques: { $push: { thematique: "$_id.thematique", bon: "$bon", moyen: "$moyen", mauvais: "$mauvais" } },
+          satisfactions: {
+            $push: { thematique: "$_id.thematique", bon: "$bon", moyen: "$moyen", mauvais: "$mauvais" },
+          },
         },
       },
+      { $sort: { _id: -1 } },
     ])
     .stream();
+
+  let computeNote = (satisfaction) => {
+    let total = satisfaction.bon + satisfaction.moyen + satisfaction.mauvais;
+    let note = satisfaction.bon * 1 - satisfaction.moyen * 0.5 - satisfaction.mauvais * 1;
+    return note < 0 ? 0 : Math.round((note * 20) / total);
+  };
+
+  let computeNoteGlobale = (notes) => {
+    let nbNotes = Object.keys(notes).length;
+    let sum = Object.values(notes).reduce((acc, v) => acc + v, 0);
+
+    return Math.round((sum * 20) / (nbNotes * 20));
+  };
 
   await oleoduc(
     stream,
     transformObject((res) => {
+      let notes = res.satisfactions.reduce((acc, satisfaction) => {
+        return {
+          ...acc,
+          [satisfaction.thematique]: computeNote(satisfaction),
+        };
+      }, {});
+
       return {
         cfa: res.cfa,
-        ...res.thematiques.reduce((acc, t) => {
-          let total = t.bon + t.moyen + t.mauvais;
-          let value = t.bon - t.mauvais;
-          let note = value < 0 ? 0 : value;
-          console.log(res.cfa.uaiFormateur, t.thematique, t);
-          return {
-            ...acc,
-            [t.thematique]: note === 0 ? 0 : Math.round((note * 20) / total),
-          };
-        }, {}),
+        ...notes,
+        global: computeNoteGlobale(notes),
       };
     }),
     transformObjectIntoCSV({
       columns: {
         "Nom du cfa": (data) => data.cfa.nom,
         "UAI du cfa": (data) => data.cfa.uaiFormateur,
+        "Note globale": (data) => data.global,
         "Le CFA est en relation avec les entreprises": (data) => data.cfaRelationEntreprise,
         "Ce que nous pensons des formateurs": (data) => data.formateurs,
         "Le CFA nous a aidés à être prêt pour l'examen": (data) => data.preparationExamen,

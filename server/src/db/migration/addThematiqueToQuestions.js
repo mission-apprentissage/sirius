@@ -1,24 +1,17 @@
 const { getNbModifiedDocuments } = require("../../core/mongoUtils");
 
 let update = async (db, ids, thematique) => {
-  let selector = { $in: ids };
   let results = await db.collection("apprentis").updateMany(
-    { "contrats.questionnaires.questions.id": selector },
+    {},
     {
       $set: {
-        "contrats.$[c].questionnaires.$[qt].questions.$[q].thematique": thematique,
+        "contrats.$[].questionnaires.$[].questions.$[q].thematique": thematique,
       },
     },
     {
       arrayFilters: [
         {
-          "c.questionnaires.questions.id": selector,
-        },
-        {
-          "qt.questions.id": selector,
-        },
-        {
-          "q.id": selector,
+          "q.id": { $in: ids },
         },
       ],
     }
