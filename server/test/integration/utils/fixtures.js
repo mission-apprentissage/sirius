@@ -1,5 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-require
 const faker = require("faker");
+const uuid = require("uuid");
 const moment = require("moment");
 const _ = require("lodash");
 const ObjectID = require("mongodb").ObjectID;
@@ -46,7 +47,7 @@ module.exports = {
     return _.merge(
       {
         type: "finAnnee",
-        token: "12345",
+        token: uuid.v4(),
         status: "sent",
         sendDates: [new Date()],
         questions: [],

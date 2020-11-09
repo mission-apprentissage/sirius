@@ -13,7 +13,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
   let shouldBeIgnored = (questionnaire) => {
     let diplome = questionnaire.questions.find((q) => q.id === "diplome");
     if (diplome && questionnaire.status === "pending") {
-      return moment().diff(moment(questionnaire.sendDates[0]), "days") >= 30;
+      return moment().diff(moment(questionnaire.sendDates[0]), "days") < 30;
     }
     return false;
   };
@@ -23,19 +23,18 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
       { $match: { unsubscribe: false } },
       { $unwind: "$contrats" },
       { $unwind: "$contrats.questionnaires" },
-      { $project: { email: "$email", questionnaire: "$contrats.questionnaires" } },
       {
         $match: {
-          "questionnaire.status": { $ne: "closed" },
-          "questionnaire.sendDates.0": { $lte: moment().subtract(6, "days").toDate() },
-          "questionnaire.sendDates.1": { $exists: false },
+          "contrats.questionnaires.status": { $ne: "closed" },
+          "contrats.questionnaires.sendDates.0": { $lte: moment().subtract(6, "days").toDate() },
+          "contrats.questionnaires.sendDates.1": { $exists: false },
         },
       },
+      { $project: { email: "$email", questionnaire: "$contrats.questionnaires" } },
     ]),
     writeObject(async ({ email, questionnaire }) => {
       try {
         stats.total++;
-
         if (stats.sent > limit || shouldBeIgnored(questionnaire)) {
           stats.ignored++;
         } else {
