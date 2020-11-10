@@ -261,7 +261,7 @@ integrationTests(__filename, ({ getComponents }) => {
     });
   });
 
-  it("Vérifie qu'on attend 30 jours avant de relancer les questionnaires pour les apprentis en attente de diplome", async () => {
+  it("Vérifie qu'on attend 30 jours avant de relancer les questionnaires pour les apprentis en attente de diplôme", async () => {
     let emails = [];
     let { db, questionnaires } = await getComponents({
       mailer: createFakeMailer({ calls: emails }),
@@ -269,7 +269,7 @@ integrationTests(__filename, ({ getComponents }) => {
     await Promise.all([
       db.collection("apprentis").insertOne(
         newApprenti({
-          email: "ok@domain.com",
+          email: "30jours@domain.com",
           contrats: [
             newContrat({
               questionnaires: [
@@ -296,7 +296,7 @@ integrationTests(__filename, ({ getComponents }) => {
       ),
       db.collection("apprentis").insertOne(
         newApprenti({
-          email: "ko@domain.com",
+          email: "10jours@domain.com",
           contrats: [
             newContrat({
               questionnaires: [
@@ -333,6 +333,7 @@ integrationTests(__filename, ({ getComponents }) => {
     });
 
     //Check emails
-    assert.deepStrictEqual(emails[0].to, "ok@domain.com");
+    assert.deepStrictEqual(emails.length, 1);
+    assert.deepStrictEqual(emails[0].to, "30jours@domain.com");
   });
 });
