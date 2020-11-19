@@ -1,5 +1,4 @@
-// eslint-disable-next-line node/no-unpublished-require
-const faker = require("faker");
+const faker = require("faker"); // eslint-disable-line node/no-unpublished-require
 const uuid = require("uuid");
 const moment = require("moment");
 const _ = require("lodash");

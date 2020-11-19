@@ -46,10 +46,9 @@ module.exports = (db) => {
       let type = null;
       let isFormationTerminée = moment(periode.fin).isBefore(moment());
       let isPremièreAnnéeTerminée = moment(periode.debut).add(1, "years").isBefore(moment());
-      let questionnaires = apprenti.contrats.reduce((acc, contrat) => {
-        return [...acc, ...contrat.questionnaires];
-      }, []);
+      let questionnaires = apprenti.contrats.reduce((acc, contrat) => [...acc, ...contrat.questionnaires], []);
 
+      //TODO gérer le cas ou un questionnaire a été généré mais pas encore envoyé
       if (isFormationTerminée) {
         if (!questionnaires.find((q) => q.type === "finFormation")) {
           type = "finFormation";
