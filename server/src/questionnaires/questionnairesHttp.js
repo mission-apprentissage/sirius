@@ -39,7 +39,14 @@ module.exports = ({ db, config, questionnaires }) => {
 
       await questionnaires.markAsClicked(token);
 
-      res.json(await questionnaires.getQuestionnaireContext(token));
+      let { apprenti, questionnaire } = await questionnaires.getDetails(token);
+      res.json({
+        type: questionnaire.type,
+        status: questionnaire.status,
+        apprenti: {
+          prenom: apprenti.prenom,
+        },
+      });
     })
   );
 
