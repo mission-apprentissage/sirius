@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "---------------------------------------"
-
 # A hook script to verify that we don't commit files that could contain sensible data or credentials like json, csv, xls(x) or .env
 
 readonly SENSIBLE_FILES_PATTERN="\.(csv|xls|xls(x?)|json|env)$"
@@ -16,7 +14,7 @@ fi
 echo
 echo "ERROR: Preventing commit of potentially sensible files:"
 echo
-echo "${SENSIBLE_FILES}^/   /"
+echo "${SENSIBLE_FILES}"
 echo
 echo "Either reset those files, add them to .gitignore or remove them."
 echo
