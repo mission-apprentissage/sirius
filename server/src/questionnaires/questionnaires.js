@@ -4,7 +4,7 @@ const path = require("path");
 module.exports = (db, mailer) => {
   const statuses = { sent: 0, error: 1, opened: 2, clicked: 3, pending: 4, inprogress: 5, closed: 6 };
   const getEmailTemplate = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
-  const getDetails = async (token) => {
+  const getQuestionnaireDetails = async (token) => {
     let apprenti = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": token });
     if (!apprenti) {
       throw Boom.notFound("Questionnaire inconnu");
@@ -48,9 +48,9 @@ module.exports = (db, mailer) => {
   };
 
   return {
-    getDetails,
+    getQuestionnaireDetails,
     sendQuestionnaire: async (token) => {
-      let { apprenti, contrat, questionnaire } = await getDetails(token);
+      let { apprenti, contrat, questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
         throw Boom.badRequest("Impossible d'envoyer le questionnaire car il est fermé");
@@ -85,7 +85,7 @@ module.exports = (db, mailer) => {
       }
     },
     previewEmail: async (token) => {
-      let { apprenti, contrat, questionnaire } = await getDetails(token);
+      let { apprenti, contrat, questionnaire } = await getQuestionnaireDetails(token);
 
       return mailer.renderEmail(getEmailTemplate(questionnaire.type), {
         apprenti,
@@ -94,7 +94,7 @@ module.exports = (db, mailer) => {
       });
     },
     markAsOpened: async (token) => {
-      let { questionnaire } = await getDetails(token);
+      let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (statuses[questionnaire.status] < statuses["opened"]) {
         await db.collection("apprentis").updateOne(
@@ -119,7 +119,7 @@ module.exports = (db, mailer) => {
       }
     },
     markAsClicked: async (token) => {
-      let { questionnaire } = await getDetails(token);
+      let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (statuses[questionnaire.status] <= statuses["inprogress"]) {
         await db.collection("apprentis").updateOne(
@@ -145,7 +145,7 @@ module.exports = (db, mailer) => {
       }
     },
     answerToQuestion: async (token, questionId, reponses) => {
-      let { questionnaire } = await getDetails(token);
+      let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
         throw Boom.badRequest(`Impossible de répondre au questionnaire`);
@@ -179,7 +179,7 @@ module.exports = (db, mailer) => {
       );
     },
     markAsPending: async (token) => {
-      let { questionnaire } = await getDetails(token);
+      let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
         throw Boom.badRequest(`Impossible de mettre le questionnaire en pending`);
@@ -206,7 +206,7 @@ module.exports = (db, mailer) => {
       );
     },
     close: async (token) => {
-      let { questionnaire } = await getDetails(token);
+      let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
         throw Boom.badRequest(`Impossible de fermer le questionnaire`);
