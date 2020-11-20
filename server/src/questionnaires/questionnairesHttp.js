@@ -38,8 +38,15 @@ module.exports = ({ db, config, questionnaires }) => {
       let { token } = req.params;
 
       await questionnaires.markAsClicked(token);
+      let { apprenti, questionnaire } = await questionnaires.getQuestionnaireDetails(token);
 
-      res.json(await questionnaires.getQuestionnaireContext(token));
+      res.json({
+        type: questionnaire.type,
+        status: questionnaire.status,
+        apprenti: {
+          prenom: apprenti.prenom,
+        },
+      });
     })
   );
 
