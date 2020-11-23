@@ -12,6 +12,9 @@ start:
 stop:
 	docker-compose stop
 
+test:
+	yarn --cwd server test
+
 dataset:
 	docker exec -it sirius_server yarn cli db dataset
 	docker exec -it sirius_server yarn cli questionnaires send --limit 50
