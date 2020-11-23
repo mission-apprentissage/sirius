@@ -1,7 +1,6 @@
 const { program: cli } = require("commander");
 const runScript = require("../core/runScript");
 const injectData = require("./dataset/injectData");
-const removeLastSendDateForPending = require("./migration/removeLastSendDateForPending");
 
 cli
   .command("migrate")
@@ -9,7 +8,7 @@ cli
   .action(() => {
     runScript(async ({ db }) => {
       return {
-        removeLastSendDateForPending: await removeLastSendDateForPending(db),
+
       };
     });
   });
