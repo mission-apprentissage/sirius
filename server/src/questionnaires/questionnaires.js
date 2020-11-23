@@ -144,7 +144,7 @@ module.exports = (db, mailer) => {
         );
       }
     },
-    answerToQuestion: async (token, questionId, reponses) => {
+    answerToQuestion: async (token, questionId, reponses, options = {}) => {
       let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
@@ -161,6 +161,7 @@ module.exports = (db, mailer) => {
               ...questionnaire.questions.filter((q) => q.id !== questionId),
               {
                 id: questionId,
+                ...(options.thematique ? { thematique: options.thematique } : {}),
                 reponses,
               },
             ],

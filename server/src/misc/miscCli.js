@@ -4,7 +4,7 @@ const reconciliateWithCatalogue = require("./reconciliateWithCatalogue");
 
 cli
   .command("reconciliate")
-  .description("Démarre le server http")
+  .description("Permet de tester la réconciliation")
   .action(async () => {
     runScript(({ db, logger, httpClient }) => {
       return reconciliateWithCatalogue(db, logger, httpClient);

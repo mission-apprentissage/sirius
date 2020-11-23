@@ -130,6 +130,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "suivi",
+      thematique: "cfaRelationEntreprise",
       message: (
         <Message>
           <Highlight>Sur le suivi en entreprise par le CFA, vous diriez :</Highlight>
@@ -153,6 +154,7 @@ export default ({ apprenti }) => {
           Pourriez-vous préciser ? <Tips>(plusieurs réponses possibles)</Tips>
         </Message>
       ),
+      thematique: "cfaRelationEntreprise",
       input: (
         <MultiChoice
           options={[
@@ -327,6 +329,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "ambiance",
+      thematique: "ambiance",
       message: (
         <Message>
           <Highlight>Que diriez-vous de l'ambiance au CFA ?</Highlight>
@@ -352,6 +355,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "formateurs",
+      thematique: "formateurs",
       message: (
         <Message>
           <Highlight>Que diriez-vous des formateurs ?</Highlight>
@@ -393,6 +397,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "ateliers",
+      thematique: "matériel",
       message: (
         <Message>
           <Highlight>Diriez-vous que les ateliers/plateaux techniques sont : </Highlight>
