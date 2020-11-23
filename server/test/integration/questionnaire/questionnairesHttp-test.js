@@ -176,7 +176,9 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", [{ id: 1, label: "ok" }]);
+    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", {
+      reponses: [{ id: 1, label: "ok" }],
+    });
 
     assert.strictEqual(response.status, 200);
 
@@ -184,6 +186,73 @@ httpTests(__filename, ({ startServer }) => {
     let finAnnee = found.contrats[0].questionnaires[0];
     assert.ok(finAnnee.updateDate);
     assert.deepStrictEqual(finAnnee.questions, [{ id: "début", reponses: [{ id: 1, label: "ok" }] }]);
+  });
+
+  it("Vérifie qu'on peut ajouter une réponse avec un indice de satisfaction", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                token: "123456",
+                type: "finAnnee",
+                status: "sent",
+                questions: [],
+              }),
+            ],
+          }),
+        ],
+      })
+    );
+
+    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", {
+      reponses: [{ id: 1, label: "ok", satisfaction: "BON" }],
+    });
+
+    assert.strictEqual(response.status, 200);
+
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
+    assert.deepStrictEqual(finAnnee.questions, [
+      { id: "début", reponses: [{ id: 1, label: "ok", satisfaction: "BON" }] },
+    ]);
+  });
+
+  it("Vérifie qu'on peut ajouter une réponse avec une thématique", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                token: "123456",
+                type: "finAnnee",
+                status: "sent",
+                questions: [],
+              }),
+            ],
+          }),
+        ],
+      })
+    );
+
+    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", {
+      thematique: "ambiance",
+      reponses: [{ id: 1, label: "ok" }],
+    });
+
+    assert.strictEqual(response.status, 200);
+
+    let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });
+    let finAnnee = found.contrats[0].questionnaires[0];
+    assert.deepStrictEqual(finAnnee.questions, [
+      { id: "début", thematique: "ambiance", reponses: [{ id: 1, label: "ok" }] },
+    ]);
   });
 
   it("Vérifie qu'on ne peut pas ajouter une réponse à un questionnaire closed", async () => {
@@ -206,7 +275,9 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", [{ id: 1, label: "ko" }]);
+    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", {
+      reponses: [{ id: 1, label: "ko" }],
+    });
 
     assert.strictEqual(response.status, 400);
     assert.deepStrictEqual(response.data, {
@@ -236,9 +307,9 @@ httpTests(__filename, ({ startServer }) => {
       })
     );
 
-    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", [
-      { id: 1, label: "other" },
-    ]);
+    let response = await httpClient.put("/api/questionnaires/123456/answerToQuestion/début", {
+      reponses: [{ id: 1, label: "other" }],
+    });
 
     assert.strictEqual(response.status, 200);
     let found = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": "123456" });

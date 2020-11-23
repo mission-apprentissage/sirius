@@ -15,15 +15,19 @@ module.exports = async (db, logger, apprentis, questionnaires, options = {}) => 
     writeObject(async (apprenti) => {
       try {
         let email = apprenti.email;
-        let context = await apprentis.getNextQuestionnaireContext(email);
+        let next = await apprentis.whatsNext(email);
         stats.total++;
 
-        if (stats.sent >= limit || !context || (options.type && context.type !== options.type)) {
+        if (stats.sent >= limit || !next || (options.type && next.questionnaire.type !== options.type)) {
           stats.ignored++;
         } else {
-          let nextQuestionnaire = await apprentis.generateQuestionnaire(email, context);
-          logger.info(`Sending questionnaire ${nextQuestionnaire.type} with token ${nextQuestionnaire.token}`);
-          await questionnaires.sendQuestionnaire(nextQuestionnaire.token);
+          let { contrat, questionnaire } = next;
+
+          await apprentis.addQuestionnaire(email, contrat, questionnaire);
+
+          logger.info(`Sending questionnaire ${questionnaire.type} with token ${questionnaire.token}`);
+          await questionnaires.sendQuestionnaire(questionnaire.token);
+
           await delay(100);
           stats.sent++;
         }

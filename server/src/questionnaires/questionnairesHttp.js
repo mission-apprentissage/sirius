@@ -38,8 +38,15 @@ module.exports = ({ db, config, questionnaires }) => {
       let { token } = req.params;
 
       await questionnaires.markAsClicked(token);
+      let { apprenti, questionnaire } = await questionnaires.getQuestionnaireDetails(token);
 
-      res.json(await questionnaires.getQuestionnaireContext(token));
+      res.json({
+        type: questionnaire.type,
+        status: questionnaire.status,
+        apprenti: {
+          prenom: apprenti.prenom,
+        },
+      });
     })
   );
 
@@ -47,17 +54,21 @@ module.exports = ({ db, config, questionnaires }) => {
     "/api/questionnaires/:token/answerToQuestion/:questionId",
     tryCatch(async (req, res) => {
       let { token, questionId } = req.params;
-      let reponses = await Joi.array()
-        .items(
-          Joi.object({
-            id: Joi.number().required(),
-            satisfaction: Joi.string().allow("BON", "MOYEN", "MAUVAIS"),
-            label: Joi.string().required().max(250),
-          })
-        )
-        .required()
-        .max(10)
-        .validateAsync(req.body, { abortEarly: false });
+      let { thematique, reponses } = await Joi.object({
+        thematique: Joi.string()
+          .valid("cfaRelationEntreprise", "ambiance", "formateurs", "matériel", "preparationExamen")
+          .allow(null),
+        reponses: Joi.array()
+          .items(
+            Joi.object({
+              id: Joi.number().required(),
+              satisfaction: Joi.string().valid("BON", "MOYEN", "MAUVAIS").allow(null),
+              label: Joi.string().required().max(250),
+            })
+          )
+          .required()
+          .max(10),
+      }).validateAsync(req.body, { abortEarly: false });
 
       await questionnaires.answerToQuestion(
         token,
@@ -67,7 +78,8 @@ module.exports = ({ db, config, questionnaires }) => {
             ...r,
             label: sanitizeHtml(r.label),
           };
-        })
+        }),
+        { thematique }
       );
 
       res.json({});
@@ -102,7 +114,7 @@ module.exports = ({ db, config, questionnaires }) => {
     checkAuth,
     tryCatch(async (req, res) => {
       let { type } = await Joi.object({
-        type: Joi.string().required().allow("json", "csv"),
+        type: Joi.string().required().valid("json", "csv"),
       }).validateAsync(req.params, { abortEarly: false });
 
       let stream = db

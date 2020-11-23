@@ -35,10 +35,13 @@ export default () => {
       <Box justify={"center"} height={"100%"}>
         <Chat
           questions={getQuestions(error, questionnaireContext)}
-          onResults={(questionId, reponses) => {
-            return _put(`/api/questionnaires/${token}/answerToQuestion/${questionId}`, reponses);
+          onResults={(question, reponses) => {
+            return _put(`/api/questionnaires/${token}/answerToQuestion/${question.questionId}`, {
+              thematique: question.thematique,
+              reponses,
+            });
           }}
-          onEnd={(questionId, options = {}) => {
+          onEnd={(options = {}) => {
             if (options.pending) {
               return _put(`/api/questionnaires/${token}/markAsPending`);
             } else {

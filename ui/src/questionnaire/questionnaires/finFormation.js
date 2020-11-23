@@ -131,7 +131,8 @@ export default ({ apprenti }) => {
     },
     {
       id: "coordination",
-      message: <Message> Dans votre cas, vous diriez ?</Message>,
+      thematique: "preparationExamen",
+      message: <Message>Dans votre cas, vous diriez ?</Message>,
       input: (
         <SingleChoice
           options={[
@@ -158,6 +159,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "preparationExamen",
+      thematique: "preparationExamen",
       message: (
         <Message>
           <Highlight>
@@ -196,6 +198,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "ambiance",
+      thematique: "ambiance",
       message: (
         <Message>
           <Highlight>Que diriez-vous de l'ambiance au CFA ?</Highlight>
@@ -221,6 +224,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "formateurs",
+      thematique: "formateurs",
       message: (
         <Message>
           <Highlight>Que diriez-vous des formateurs ?</Highlight>
@@ -262,6 +266,7 @@ export default ({ apprenti }) => {
     },
     {
       id: "ateliers",
+      thematique: "matériel",
       message: (
         <Message>
           <Highlight>Diriez-vous que les ateliers/plateaux techniques sont : </Highlight>

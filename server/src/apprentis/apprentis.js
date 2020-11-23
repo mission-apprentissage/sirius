@@ -1,5 +1,5 @@
 const uuid = require("uuid");
-const { sortBy } = require("lodash");
+const { sortBy, last } = require("lodash");
 const moment = require("moment");
 
 module.exports = (db) => {
@@ -33,9 +33,9 @@ module.exports = (db) => {
         }
       );
     },
-    getNextQuestionnaireContext: async (email) => {
+    whatsNext: async (email) => {
       let apprenti = await db.collection("apprentis").findOne({ email });
-      let contrat = sortBy(apprenti.contrats, ["formation.periode.fin"]).pop();
+      let contrat = last(sortBy(apprenti.contrats, ["formation.periode.fin"]));
       let periode = contrat.formation.periode;
 
       if (!periode) {
@@ -46,31 +46,32 @@ module.exports = (db) => {
       let type = null;
       let isFormationTerminée = moment(periode.fin).isBefore(moment());
       let isPremièreAnnéeTerminée = moment(periode.debut).add(1, "years").isBefore(moment());
-      let questionnaires = apprenti.contrats.reduce((acc, contrat) => {
-        return [...acc, ...contrat.questionnaires];
-      }, []);
+      let allQuestionnaires = apprenti.contrats.reduce((acc, contrat) => [...acc, ...contrat.questionnaires], []);
 
+      //TODO gérer le cas ou un questionnaire a été généré mais pas encore envoyé
       if (isFormationTerminée) {
-        if (!questionnaires.find((q) => q.type === "finFormation")) {
+        if (!allQuestionnaires.find((q) => q.type === "finFormation")) {
           type = "finFormation";
         }
       } else if (isPremièreAnnéeTerminée) {
-        if (questionnaires.length === 0 && moment(periode.fin).diff(moment(), "months") > 12) {
+        if (allQuestionnaires.length === 0 && moment(periode.fin).diff(moment(), "months") > 12) {
           type = "finAnnee";
         }
       }
 
-      return type ? { contrat, type } : null;
+      return !type
+        ? null
+        : {
+            contrat,
+            questionnaire: {
+              type,
+              token: uuid.v4(),
+              sendDates: [],
+              questions: [],
+            },
+          };
     },
-    generateQuestionnaire: async (email, context) => {
-      let { contrat, type } = context;
-      let questionnaire = {
-        type,
-        token: uuid.v4(),
-        sendDates: [],
-        questions: [],
-      };
-
+    addQuestionnaire: async (email, contrat, questionnaire) => {
       await db.collection("apprentis").updateOne(
         {
           email,
@@ -90,8 +91,6 @@ module.exports = (db) => {
           ],
         }
       );
-
-      return questionnaire;
     },
   };
 };
