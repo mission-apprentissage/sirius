@@ -36,7 +36,7 @@ export default () => {
         <Chat
           questions={getQuestions(error, questionnaireContext)}
           onResults={(question, reponses) => {
-            return _put(`/api/questionnaires/${token}/answerToQuestion/${question.questionId}`, {
+            return _put(`/api/questionnaires/${token}/answerToQuestion/${question.id}`, {
               thematique: question.thematique,
               reponses,
             });
