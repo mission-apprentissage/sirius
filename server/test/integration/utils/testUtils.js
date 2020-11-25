@@ -1,5 +1,6 @@
 const { Readable } = require("stream");
 const createIndexes = require("../../../src/db/migration/indexes/createIndexes");
+const addApprentisSchema = require("../../../src/db/migration/schemas/addApprentisSchema");
 const connectToMongoDB = require("../../../src/core/connectToMongoDB");
 const config = require("../../../src/config");
 const createComponents = require("../../../src/components");
@@ -12,7 +13,10 @@ let connectToMongoForTests = async () => {
     let uri = config.mongodb.uri.split("sirius").join("sirius_test");
     clientHolder = await connectToMongoDB({ uri });
   }
-  await createIndexes(clientHolder.db());
+  let db = clientHolder.db();
+
+  await createIndexes(db);
+  await addApprentisSchema(db);
   return clientHolder;
 };
 

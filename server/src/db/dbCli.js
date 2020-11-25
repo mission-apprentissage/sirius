@@ -1,6 +1,7 @@
 const { program: cli } = require("commander");
 const runScript = require("../core/runScript");
 const injectData = require("./dataset/injectData");
+const addApprentisSchema = require("./migration/schemas/addApprentisSchema");
 
 cli
   .command("migrate")
@@ -8,6 +9,7 @@ cli
   .action(() => {
     runScript(async ({ db }) => {
       return {
+        addApprentisSchema: await addApprentisSchema(db),
       };
     });
   });
