@@ -18,10 +18,11 @@ module.exports = async (db, logger, apprentis, questionnaires, options = {}) => 
         let next = await apprentis.whatsNext(email);
         stats.total++;
 
-        if (stats.sent >= limit || !next || (options.type && next.questionnaire.type !== options.type)) {
+        if (stats.sent >= limit || !next || (options.type && next.type !== options.type)) {
           stats.ignored++;
         } else {
-          let { contrat, questionnaire } = next;
+          let { contrat, type } = next;
+          let questionnaire = questionnaires.buildQuestionnaire(contrat, type);
 
           await apprentis.addQuestionnaire(email, contrat, questionnaire);
 

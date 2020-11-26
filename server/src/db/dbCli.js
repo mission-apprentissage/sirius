@@ -7,8 +7,7 @@ cli
   .description("Migre les données en base")
   .action(() => {
     runScript(async ({ db }) => {
-      return {
-      };
+      return {};
     });
   });
 

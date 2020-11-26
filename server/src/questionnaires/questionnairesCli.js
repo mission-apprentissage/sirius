@@ -2,6 +2,7 @@ const { program: cli } = require("commander");
 const runScript = require("../core/runScript");
 const sendQuestionnaires = require("./emails/sendQuestionnaires");
 const resendQuestionnaires = require("./emails/resendQuestionnaires");
+const closeInProgressQuestionnaires = require("./closeInProgressQuestionnaires");
 
 cli
   .command("send")
@@ -21,6 +22,15 @@ cli
   .action((options) => {
     runScript(({ db, logger, questionnaires }) => {
       return resendQuestionnaires(db, logger, questionnaires, { limit: options.limit });
+    });
+  });
+
+cli
+  .command("close")
+  .description("Ferme les questionnaires toujours en cours au bout d'un mois")
+  .action(() => {
+    runScript(({ db }) => {
+      return closeInProgressQuestionnaires(db);
     });
   });
 
