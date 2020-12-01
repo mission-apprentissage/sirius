@@ -1,4 +1,3 @@
-const uuid = require("uuid");
 const { sortBy, last } = require("lodash");
 const moment = require("moment");
 
@@ -59,17 +58,7 @@ module.exports = (db) => {
         }
       }
 
-      return !type
-        ? null
-        : {
-            contrat,
-            questionnaire: {
-              type,
-              token: uuid.v4(),
-              sendDates: [],
-              questions: [],
-            },
-          };
+      return type ? { contrat, type } : null;
     },
     addQuestionnaire: async (email, contrat, questionnaire) => {
       await db.collection("apprentis").updateOne(

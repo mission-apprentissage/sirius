@@ -13,10 +13,9 @@ module.exports = () => {
       error = Boom.badRequest("Erreur de validation");
       error.output.payload.details = rawError.details;
     } else {
-      error = Boom.boomify(rawError, {
-        statusCode: rawError.status || 500,
-        ...(!rawError.message ? "Une erreur est survenue" : {}),
-      });
+      // Unexpected error
+      error = Boom.internal("Une erreur est survenue");
+      error.reformat(true);
     }
 
     return res.status(error.output.statusCode).send(error.output.payload);
