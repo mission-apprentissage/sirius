@@ -28,7 +28,7 @@ module.exports = async (components) => {
     tryCatch(async (req, res) => {
       let mongodbStatus;
       await db
-        .collection("questionnaires")
+        .collection("apprentis")
         .stats()
         .then(() => {
           mongodbStatus = true;
@@ -43,6 +43,13 @@ module.exports = async (components) => {
         env: config.env,
         healthcheck: mongodbStatus,
       });
+    })
+  );
+
+  app.get(
+    "/api/healthcheck/error",
+    tryCatch(() => {
+      throw new Error("Healthcheck error");
     })
   );
 
