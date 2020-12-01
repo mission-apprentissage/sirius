@@ -97,6 +97,34 @@ httpTests(__filename, ({ startServer }) => {
     assert.deepStrictEqual(finAnnee.status, "clicked");
   });
 
+  it("Vérifie qu'on ne peut pas démarrer un questionnaire trop vieux", async () => {
+    let { httpClient, components } = await startServer();
+    let { db } = components;
+    await db.collection("apprentis").insertOne(
+      newApprenti({
+        contrats: [
+          newContrat({
+            questionnaires: [
+              newQuestionnaire({
+                token: "123456",
+                sendDates: [moment().subtract(2, "months")],
+              }),
+            ],
+          }),
+        ],
+      })
+    );
+
+    let response = await httpClient.put("/api/questionnaires/123456/markAsClicked");
+
+    assert.strictEqual(response.status, 400);
+    assert.deepStrictEqual(response.data, {
+      error: "Bad Request",
+      message: "Désolé le questionnaire n'est plus disponible",
+      statusCode: 400,
+    });
+  });
+
   it("Vérifie qu'à chaque ouverture le questionnaire est réinitialisé", async () => {
     let { httpClient, components } = await startServer();
     let { db } = components;

@@ -1,4 +1,7 @@
 const express = require("express");
+const Boom = require("boom");
+const { last } = require("lodash");
+const moment = require("moment");
 const Joi = require("@hapi/joi");
 const sanitizeHtml = require("sanitize-html");
 const { oleoduc, transformObject } = require("oleoduc");
@@ -39,14 +42,19 @@ module.exports = ({ db, config, questionnaires }) => {
 
       await questionnaires.markAsClicked(token);
       let { apprenti, questionnaire } = await questionnaires.getQuestionnaireDetails(token);
+      let isOlderThanOneMonth = moment(last(questionnaire.sendDates)).isBefore(moment().subtract(1, "months"));
 
-      res.json({
-        type: questionnaire.type,
-        status: questionnaire.status,
-        apprenti: {
-          prenom: apprenti.prenom,
-        },
-      });
+      if (isOlderThanOneMonth) {
+        throw Boom.badRequest("Désolé le questionnaire n'est plus disponible");
+      } else {
+        res.json({
+          type: questionnaire.type,
+          status: questionnaire.status,
+          apprenti: {
+            prenom: apprenti.prenom,
+          },
+        });
+      }
     })
   );
 

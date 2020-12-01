@@ -14,7 +14,6 @@ module.exports = async (db, outputFile) => {
       { $unwind: "$contrats.questionnaires.questions.reponses" },
       {
         $match: {
-          "contrats.questionnaires.status": "closed",
           "contrats.questionnaires.questions.thematique": { $exists: true },
         },
       },
