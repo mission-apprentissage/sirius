@@ -23,7 +23,7 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 500);
     assert.deepStrictEqual(response.data, {
       error: "Internal Server Error",
-      message: "Une erreur est survenue",
+      message: "Healthcheck error",
       statusCode: 500,
     });
   });

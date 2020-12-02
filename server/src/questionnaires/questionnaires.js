@@ -1,6 +1,6 @@
 const uuid = require("uuid");
-const Boom = require("boom");
 const path = require("path");
+const { NotFoundError, QuestionnaireNotAvailableError } = require("../core/errors");
 
 module.exports = (db, mailer) => {
   const statuses = { created: 0, sent: 1, error: 2, opened: 3, clicked: 4, pending: 5, inprogress: 6, closed: 7 };
@@ -8,7 +8,7 @@ module.exports = (db, mailer) => {
   const getQuestionnaireDetails = async (token) => {
     let apprenti = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": token });
     if (!apprenti) {
-      throw Boom.notFound("Questionnaire inconnu");
+      throw new NotFoundError("Questionnaire inconnu");
     }
 
     let contrat = apprenti.contrats.find((c) => !!c.questionnaires.find((q) => q.token === token));
@@ -60,7 +60,7 @@ module.exports = (db, mailer) => {
       let { apprenti, contrat, questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
-        throw Boom.badRequest("Impossible d'envoyer le questionnaire car il est fermé");
+        throw new QuestionnaireNotAvailableError();
       }
 
       await sendEmail(apprenti, contrat, questionnaire);
@@ -86,7 +86,7 @@ module.exports = (db, mailer) => {
       );
 
       if (!updated) {
-        throw Boom.badRequest("Questionnaire inconnu");
+        throw new NotFoundError("Questionnaire inconnu");
       }
     },
     previewEmail: async (token) => {
@@ -147,7 +147,7 @@ module.exports = (db, mailer) => {
       let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
-        throw Boom.badRequest(`Impossible de répondre au questionnaire`);
+        throw new QuestionnaireNotAvailableError();
       }
 
       await db.collection("apprentis").updateOne(
@@ -179,7 +179,7 @@ module.exports = (db, mailer) => {
       let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
-        throw Boom.badRequest(`Impossible de mettre le questionnaire en pending`);
+        throw new QuestionnaireNotAvailableError();
       }
 
       await db.collection("apprentis").updateOne(
@@ -203,7 +203,7 @@ module.exports = (db, mailer) => {
       let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
-        throw Boom.badRequest(`Impossible de fermer le questionnaire`);
+        throw new QuestionnaireNotAvailableError();
       }
 
       await db.collection("apprentis").updateOne(

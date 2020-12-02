@@ -7,6 +7,7 @@ const sanitizeHtml = require("sanitize-html");
 const { oleoduc, transformObject } = require("oleoduc");
 const tryCatch = require("../core/http/tryCatchMiddleware");
 const { sendHTML, sendJsonStream, sendCSVStream } = require("../core/http/httpUtils");
+const { QuestionnaireNotAvailableError } = require("../core/errors");
 const authMiddleware = require("../core/http/authMiddleware");
 
 module.exports = ({ db, config, questionnaires }) => {
@@ -45,7 +46,7 @@ module.exports = ({ db, config, questionnaires }) => {
       let isOlderThanOneMonth = moment(last(questionnaire.sendDates)).isBefore(moment().subtract(1, "months"));
 
       if (isOlderThanOneMonth) {
-        throw Boom.badRequest("Désolé le questionnaire n'est plus disponible");
+        throw new QuestionnaireNotAvailableError();
       } else {
         res.json({
           type: questionnaire.type,
