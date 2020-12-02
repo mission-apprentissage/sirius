@@ -2,7 +2,7 @@ const connectToMongoDB = require("./core/connectToMongoDB");
 const createMailer = require("./core/mailer");
 const creatHttpClient = require("./core/httpClient");
 const createQuestionnaires = require("./questionnaires/questionnaires");
-const createApprentis = require("./apprentis/apprentis");
+const createApprentis = require("./core/apprentis");
 const createLogger = require("./core/logger");
 const defaults = require("./config");
 
