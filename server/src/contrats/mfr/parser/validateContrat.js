@@ -26,6 +26,7 @@ let schema = Joi.object({
   entreprise: {
     raisonSociale: Joi.string().allow(null),
     siret: Joi.string().pattern(/^[0-9]{9,14}$/),
+    email: Joi.string().email().required(),
     tuteur: Joi.object({
       prenom: Joi.string(),
       nom: Joi.string(),
