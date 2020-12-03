@@ -15,9 +15,9 @@ class BasicError extends Error {
 }
 
 const Errors = {
-  NotFoundError: class NotFoundError extends BasicError {
+  QuestionnaireNotFoundError: class NotFoundError extends BasicError {
     constructor(message, extra) {
-      super(message || "Not Found", extra);
+      super(message || "Questionnaire inconnu", extra);
     }
 
     get status() {

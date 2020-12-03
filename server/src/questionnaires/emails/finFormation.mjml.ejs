@@ -28,7 +28,7 @@
                 <mj-button background-color="#ec615b" align="center"
                            font-size="14px" font-weight="600" line-height="14px"
                            padding="10px" border-radius="50px" font-family="Helvetica"
-                           href="<%= utils.getPublicUrl(`/questionnaires/${data.token}`) %>">
+                           href="<%= utils.getPublicUrl(`/questionnaires/${data.questionnaire.token}`) %>">
                     Donnez votre avis sur votre CFA
                 </mj-button>
             </mj-column>
@@ -51,7 +51,7 @@
                 <mj-button background-color="#ec615b" align="center"
                            font-size="14px" font-weight="600" line-height="14px"
                            padding="10px" border-radius="50px" font-family="Helvetica"
-                           href="<%= utils.getPublicUrl(`/questionnaires/${data.token}`) %>">
+                           href="<%= utils.getPublicUrl(`/questionnaires/${data.questionnaire.token}`) %>">
                     Donnez votre avis sur votre CFA en moins de 3 minutes
                 </mj-button>
 
@@ -117,7 +117,7 @@
                     Vous avez reçu cet email parce que votre CFA nous a transmis votre email.
                     <br/>
                     Pour vous désinscrire,
-                    <a href="<%= utils.getPublicUrl(`/api/apprentis/${data.apprenti._id}/unsubscribe`) %>"
+                    <a href="<%= utils.getPublicUrl(`/api/unsubscribe/${data.apprenti.email}`) %>"
                        class="link-nostyle">cliquez
                         ici</a>
                 </mj-text>
@@ -127,14 +127,14 @@
         <mj-section background-color="#5222d0" padding-top="0">
             <mj-column>
                 <mj-text align="center" color="#ffffff" font-size="14px" line-height="20px">
-                    <a href="<%= utils.getPublicUrl(`/questionnaires/${data.token}/previewEmail`) %>"
+                    <a href="<%= utils.getPublicUrl(`/questionnaires/${data.questionnaire.token}/previewEmail`) %>"
                        class="link-nostyle">Voir
                         cet email dans votre navigateur</a>
                 </mj-text>
                 <mj-image align="center" width="76px" alt="Logo République Française Marianne"
                           src="<%= utils.getPublicUrl(`/images/marianne.png`) %>"/>
                 <mj-image width="1px" alt="Pixel"
-                          src="<%= utils.getPublicUrl(`/api/questionnaires/${data.token}/markAsOpened`) %>"/>
+                          src="<%= utils.getPublicUrl(`/api/questionnaires/${data.questionnaire.token}/markAsOpened`) %>"/>
             </mj-column>
         </mj-section>
 

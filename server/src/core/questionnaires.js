@@ -1,48 +1,19 @@
 const uuid = require("uuid");
-const path = require("path");
-const { NotFoundError, QuestionnaireNotAvailableError } = require("../core/errors");
+const emails = require("../questionnaires/emails/emails");
+const { QuestionnaireNotFoundError, QuestionnaireNotAvailableError } = require("./errors");
 
 module.exports = (db, mailer) => {
   const statuses = { created: 0, sent: 1, error: 2, opened: 3, clicked: 4, pending: 5, inprogress: 6, closed: 7 };
-  const getEmailTemplate = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
+
   const getQuestionnaireDetails = async (token) => {
     let apprenti = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": token });
     if (!apprenti) {
-      throw new NotFoundError("Questionnaire inconnu");
+      throw new QuestionnaireNotFoundError();
     }
 
     let contrat = apprenti.contrats.find((c) => !!c.questionnaires.find((q) => q.token === token));
     let questionnaire = contrat.questionnaires.find((q) => q.token === token);
     return { apprenti, contrat, questionnaire };
-  };
-
-  const sendEmail = async (apprenti, contrat, questionnaire) => {
-    let { token, type } = questionnaire;
-
-    try {
-      let titre = `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`;
-      await mailer.sendEmail(apprenti.email, titre, getEmailTemplate(type), { apprenti, contrat, token });
-    } catch (e) {
-      await db.collection("apprentis").updateOne(
-        { "contrats.questionnaires.token": token },
-        {
-          $set: {
-            "contrats.$[].questionnaires.$[q].status": "error",
-          },
-          $push: {
-            "contrats.$[].questionnaires.$[q].sendDates": new Date(),
-          },
-        },
-        {
-          arrayFilters: [
-            {
-              "q.token": token,
-            },
-          ],
-        }
-      );
-      throw e;
-    }
   };
 
   return {
@@ -57,20 +28,43 @@ module.exports = (db, mailer) => {
       };
     },
     sendQuestionnaire: async (token) => {
-      let { apprenti, contrat, questionnaire } = await getQuestionnaireDetails(token);
+      let details = await getQuestionnaireDetails(token);
+      let { type, status } = details.questionnaire;
+      let { emailAddress, subject, template } = emails[type](details);
 
-      if (questionnaire.status === "closed") {
+      if (status === "closed") {
         throw new QuestionnaireNotAvailableError();
       }
 
-      await sendEmail(apprenti, contrat, questionnaire);
+      try {
+        await mailer.sendEmail(emailAddress, subject, template, details);
+      } catch (e) {
+        await db.collection("apprentis").updateOne(
+          { "contrats.questionnaires.token": token },
+          {
+            $set: {
+              "contrats.$[].questionnaires.$[q].status": "error",
+            },
+            $push: {
+              "contrats.$[].questionnaires.$[q].sendDates": new Date(),
+            },
+          },
+          {
+            arrayFilters: [
+              {
+                "q.token": token,
+              },
+            ],
+          }
+        );
+        throw e;
+      }
 
       let { value: updated } = await db.collection("apprentis").findOneAndUpdate(
         { "contrats.questionnaires.token": token },
         {
           $set: {
-            "contrats.$[].questionnaires.$[q].status":
-              questionnaire.status === "created" ? "sent" : questionnaire.status,
+            "contrats.$[].questionnaires.$[q].status": status === "created" ? "sent" : status,
           },
           $push: {
             "contrats.$[].questionnaires.$[q].sendDates": new Date(),
@@ -86,17 +80,14 @@ module.exports = (db, mailer) => {
       );
 
       if (!updated) {
-        throw new NotFoundError("Questionnaire inconnu");
+        throw new QuestionnaireNotFoundError();
       }
     },
     previewEmail: async (token) => {
-      let { apprenti, contrat, questionnaire } = await getQuestionnaireDetails(token);
+      let details = await getQuestionnaireDetails(token);
+      let { template } = emails[details.questionnaire.type](details);
 
-      return mailer.renderEmail(getEmailTemplate(questionnaire.type), {
-        apprenti,
-        token,
-        contrat,
-      });
+      return mailer.renderEmail(template, details);
     },
     markAsOpened: async (token) => {
       let { questionnaire } = await getQuestionnaireDetails(token);

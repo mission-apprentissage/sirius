@@ -1,6 +1,3 @@
-const { sortBy, last } = require("lodash");
-const moment = require("moment");
-
 module.exports = (db) => {
   return {
     exists: async (email) => {
@@ -10,8 +7,8 @@ module.exports = (db) => {
     create: (data) => {
       return db.collection("apprentis").insertOne(data);
     },
-    unsubscribe: (id) => {
-      return db.collection("apprentis").updateOne({ _id: id }, { $set: { unsubscribe: true } });
+    unsubscribe: (email) => {
+      return db.collection("apprentis").updateOne({ email }, { $set: { unsubscribe: true } });
     },
     hasContrat: async (email, contrat) => {
       let count = await db.collection("apprentis").countDocuments({
@@ -31,34 +28,6 @@ module.exports = (db) => {
           },
         }
       );
-    },
-    whatsNext: async (email) => {
-      let apprenti = await db.collection("apprentis").findOne({ email });
-      let contrat = last(sortBy(apprenti.contrats, ["formation.periode.fin"]));
-      let periode = contrat.formation.periode;
-
-      if (!periode) {
-        //FIXME
-        return null;
-      }
-
-      let type = null;
-      let isFormationTerminée = moment(periode.fin).isBefore(moment());
-      let isPremièreAnnéeTerminée = moment(periode.debut).add(1, "years").isBefore(moment());
-      let allQuestionnaires = apprenti.contrats.reduce((acc, contrat) => [...acc, ...contrat.questionnaires], []);
-
-      //TODO gérer le cas ou un questionnaire a été généré mais pas encore envoyé
-      if (isFormationTerminée) {
-        if (!allQuestionnaires.find((q) => q.type === "finFormation")) {
-          type = "finFormation";
-        }
-      } else if (isPremièreAnnéeTerminée) {
-        if (allQuestionnaires.length === 0 && moment(periode.fin).diff(moment(), "months") > 12) {
-          type = "finAnnee";
-        }
-      }
-
-      return type ? { contrat, type } : null;
     },
     addQuestionnaire: async (email, contrat, questionnaire) => {
       await db.collection("apprentis").updateOne(

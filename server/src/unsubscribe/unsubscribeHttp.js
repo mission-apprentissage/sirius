@@ -1,20 +1,15 @@
 const express = require("express");
 const tryCatch = require("../core/http/tryCatchMiddleware");
-const ObjectID = require("mongodb").ObjectID;
-const Boom = require("boom");
 
-module.exports = ({ apprentis }) => {
+module.exports = ({ apprentis, entreprises }) => {
   const router = express.Router(); // eslint-disable-line new-cap
 
   router.get(
-    "/api/apprentis/:id/unsubscribe",
+    "/api/unsubscribe/:email",
     tryCatch(async (req, res) => {
-      let { id } = req.params;
-      if (!ObjectID.isValid(id)) {
-        throw Boom.badRequest("Identifiant invalide");
-      }
+      let { email } = req.params;
 
-      await apprentis.unsubscribe(new ObjectID(id));
+      await Promise.all([apprentis.unsubscribe(email), entreprises.unsubscribe(email)]);
 
       res.json({ message: "Votre demande à bien été prise en compte" });
     })

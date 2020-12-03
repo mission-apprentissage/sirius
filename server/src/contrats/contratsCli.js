@@ -1,11 +1,10 @@
 const { program: cli } = require("commander");
 const { createReadStream } = require("fs");
 const runScript = require("../core/runScript");
-const importContrats = require("./mfr/importContrats");
-const updateContrats = require("./mfr/updateContrats");
+const importContrats = require("./importContrats");
+const updateContrats = require("./updateContrats");
 
-let mfr = cli.command("mfr").description("Gestion des apprentis provenant des fichiers MFR");
-mfr
+cli
   .command("import [csvFile]")
   .description("Importe le fichier CSV dans la base")
   .action((csvFile) => {
@@ -13,7 +12,7 @@ mfr
     runScript(({ logger, apprentis }) => importContrats(logger, apprentis, inputStream));
   });
 
-mfr
+cli
   .command("update [csvFile]")
   .description("Met à jour les contrats en base à partir du fichier")
   .action((csvFile) => {

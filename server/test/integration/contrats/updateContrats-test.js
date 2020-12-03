@@ -1,7 +1,7 @@
 const assert = require("assert");
 const { newApprenti, newContrat } = require("../utils/fixtures");
 const integrationTests = require("../utils/integrationTests");
-const updateContrats = require("../../../src/contrats/mfr/updateContrats");
+const updateContrats = require("../../../src/contrats/updateContrats");
 const { createStream } = require("../utils/testUtils");
 
 integrationTests(__filename, ({ getComponents }) => {
@@ -41,6 +41,7 @@ integrationTests(__filename, ({ getComponents }) => {
       updated: 1,
       failed: 0,
     });
+    assert.ok(found.contrats[0].questionnaires);
     assert.deepStrictEqual(found.contrats[0].cfa, {
       nom: "CFA",
       siret: "22222222200014",

@@ -1,6 +1,6 @@
 const moment = require("moment");
 const { oleoduc, writeObject } = require("oleoduc");
-const { delay } = require("../../core/asyncUtils");
+const { delay } = require("../core/utils/asyncUtils");
 
 module.exports = async (db, logger, questionnaires, options = {}) => {
   let limit = options.limit || 1;

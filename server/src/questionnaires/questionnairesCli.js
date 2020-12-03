@@ -1,7 +1,7 @@
 const { program: cli } = require("commander");
 const runScript = require("../core/runScript");
-const sendQuestionnaires = require("./emails/sendQuestionnaires");
-const resendQuestionnaires = require("./emails/resendQuestionnaires");
+const sendQuestionnaires = require("./sendQuestionnaires");
+const resendQuestionnaires = require("./resendQuestionnaires");
 
 cli
   .command("send")
@@ -9,8 +9,11 @@ cli
   .option("--type <string>", "Le type de questionnaire à envoyer")
   .description("Envoie les questionnaires aux apprentis")
   .action((options) => {
-    runScript(({ db, logger, apprentis, questionnaires }) => {
-      return sendQuestionnaires(db, logger, apprentis, questionnaires, { limit: options.limit, type: options.type });
+    runScript(({ db, logger, workflow, apprentis, questionnaires }) => {
+      return sendQuestionnaires(db, logger, workflow, apprentis, questionnaires, {
+        limit: options.limit,
+        type: options.type,
+      });
     });
   });
 

@@ -1,0 +1,120 @@
+<mjml>
+    <mj-head>
+        <mj-title>Sirius</mj-title>
+        <mj-font name="Public Sans"
+                 href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,600;0,900;1,400"/>
+        <mj-style inline="inline">
+            .link-nostyle { color: inherit; }
+            .prenom { font-weight:600; }
+            .pr-1 { padding-right: 5px; }
+        </mj-style>
+        <mj-attributes>
+            <mj-text
+                    color="#373F41"
+                    font-family="Public Sans,sans-serif"
+                    font-size="16px"
+                    font-weight="300"
+                    font-style="normal"
+                    line-height="23px"
+            />
+        </mj-attributes>
+    </mj-head>
+
+    <mj-body background-color="#ffffff">
+        <mj-section padding="20px 0" text-align="center" vertical-align="top">
+            <mj-column>
+                <mj-image src="<%= utils.getPublicUrl(`/images/lba-dark.png`) %>" width="128px"></mj-image>
+            </mj-column>
+        </mj-section>
+
+        <mj-section padding="20px 0">
+            <mj-column>
+                <mj-text>
+                    Bonjour,
+                </mj-text>
+                <mj-text>
+                    Ce message s'adresse à <%= data.contrat.entreprise.tuteur.prenom %>
+                    <%= data.contrat.entreprise.tuteur.nom %>.
+                </mj-text>
+                <mj-text>
+                    Vous formez actuellement <span class="prenom"><%= data.apprenti.prenom %></span> en apprentissage.
+                </mj-text>
+                <mj-text>
+                    Sirius est un nouveau service de l'État qui vise à éclairer les jeunes sur l’apprentissage grâce
+                    aux
+                    avis des apprentis et des entreprises.
+                </mj-text>
+                <mj-text>
+                    Ces avis seront diffusés anonymement sur :
+                    <a href="https://labonnealternance.pole-emploi.fr/" class="link-nostyle">La Bonne
+                        Alternance.fr</a>.
+                </mj-text>
+
+                <mj-button background-color="#EC615B" align="center" font-size="14px" line-height="23px" padding="30px"
+                           border-radius="13px" font-weight="600"
+                           href="https://docs.google.com/forms/d/1j2OB40lWAn32lro2RNSUIwgAq3dw36_F4KGU_Ps9AeQ">
+                    <img alt="Icone boutton" class="pr-1"
+                         src="<%= utils.getPublicUrl(`/images/email-link-icon.png`) %>"/>
+                    Donnez votre avis en 2 minutes
+                </mj-button>
+
+            </mj-column>
+        </mj-section>
+
+        <mj-section>
+            <mj-column width="50%">
+                <mj-image align="right" padding-right="0px" width="84px" alt="Logo Gouvernement"
+                          src="<%= utils.getPublicUrl(`/images/gouv.png`) %>"/>
+            </mj-column>
+            <mj-column width="50%">
+                <mj-image align="left" width="62px" alt="Logo Education Nationale"
+                          src="<%= utils.getPublicUrl(`/images/educNat.png`) %>"/>
+            </mj-column>
+        </mj-section>
+
+        <mj-section>
+            <mj-column>
+                <mj-divider border-width="2px" border-color="lightgrey"/>
+            </mj-column>
+        </mj-section>
+
+        <mj-section padding-top="0">
+            <mj-column padding-top="0">
+                <mj-text align="left" font-size="12px" line-height="20px" font-weight="100">
+                    Sirius traite vos données à caractère personnel (données professionnelles, données de contact) pour
+                    les besoins de la réalisation d’une enquête de satisfaction. Cette enquête est facultative. Sirius a
+                    obtenu vos données directement par votre CFA.
+                </mj-text>
+                <mj-text align="left" font-size="12px" line-height="20px" font-weight="100">
+                    Vos données seront conservées pendant la durée de l’enquête, pour les apprentis n’ayant pas consenti
+                    à être contacté, ou jusqu’à la révocation du consentement et au maximum 3 ans pour les stagiaires
+                    ayant consentis à être contactés.
+                </mj-text>
+                <mj-text align="left" font-size="12px" line-height="20px" font-weight="100">
+                    Conformément aux articles 12 à 23 du règlement général (UE) sur la protection des données n°2016/679
+                    du 27 avril 2016 et à la loi Informatique et libertés n°78-17 du 6 janvier 1978 modifiée, vous
+                    bénéficiez notamment d’un droit d’accès, de rectification, d’effacement et le droit de porter une
+                    réclamation devant la Commission nationale de l’informatique et des libertés pour les données vous
+                    concernant. Pour exercer vos droits, vous pouvez vous adresser à votre agence ou au délégué à la
+                    protection des données de Pôle emploi (1 avenue du Docteur Gley, 75987 Paris cedex 20 ;
+                    courriers-cnil@pole-emploi.fr).
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <mj-section padding-top="0">
+            <mj-column padding-top="0">
+                <mj-text align="left" font-size="12px" line-height="20px" font-weight="100">
+                    Cet email a été envoyé à <%= data.contrat.entreprise.email %>
+                    <br/>
+                    Vous avez reçu cet email parce que votre CFA nous a transmis votre email.
+                    <br/>
+                    Pour vous désinscrire,
+                    <a href="<%= utils.getPublicUrl(`/api/unsubscribe/${data.contrat.entreprise.email}`) %>"
+                       class="link-nostyle">cliquez
+                        ici</a>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>

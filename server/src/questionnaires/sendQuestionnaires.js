@@ -1,7 +1,7 @@
 const { oleoduc, writeObject } = require("oleoduc");
-const { delay } = require("../../core/asyncUtils");
+const { delay } = require("../core/utils/asyncUtils");
 
-module.exports = async (db, logger, apprentis, questionnaires, options = {}) => {
+module.exports = async (db, logger, workflow, apprentis, questionnaires, options = {}) => {
   let limit = options.limit || 1;
   let stats = {
     total: 0,
@@ -11,11 +11,11 @@ module.exports = async (db, logger, apprentis, questionnaires, options = {}) => 
   };
 
   await oleoduc(
-    db.collection("apprentis").find({ unsubscribe: false }),
+    db.collection("apprentis").find(),
     writeObject(async (apprenti) => {
       try {
         let email = apprenti.email;
-        let next = await apprentis.whatsNext(email);
+        let next = await workflow.whatsNext(email);
         stats.total++;
 
         if (stats.sent >= limit || !next || (options.type && next.type !== options.type)) {
