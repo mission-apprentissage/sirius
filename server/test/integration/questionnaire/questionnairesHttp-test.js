@@ -310,7 +310,7 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 400);
     assert.deepStrictEqual(response.data, {
       error: "Bad Request",
-      message: "Impossible de répondre au questionnaire",
+      message: "Désolé le questionnaire n'est plus disponible",
       statusCode: 400,
     });
   });
