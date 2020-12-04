@@ -36,7 +36,7 @@ module.exports = (config, transporter = createTransporter(config.smtp)) => {
         html: await renderEmail(template, data),
         list: {
           help: "https://app.gitbook.com/@mission-apprentissage/s/general/les-nouveaux-services/anotea-apprentissage",
-          unsubscribe: utils.getPublicUrl(`/api/apprentis/${data.contrat._id}/unsubscribe`),
+          unsubscribe: utils.getPublicUrl(`/api/unsubscribe/${to}`),
         },
       });
     },
