@@ -1,6 +1,6 @@
 const { createWriteStream } = require("fs");
 const { oleoduc, transformObject } = require("oleoduc");
-const { transformObjectIntoCSV, encodeIntoUTF8 } = require("../core/streamUtils");
+const { transformObjectIntoCSV, encodeIntoUTF8 } = require("../core/utils/streamUtils");
 
 module.exports = async (db, outputFile) => {
   const csvFile = outputFile || "scores.csv";

@@ -1,5 +1,5 @@
 const { oleoduc, jsonStream } = require("oleoduc");
-const { encodeStream, transformObjectIntoCSV } = require("../streamUtils");
+const { encodeStream, transformObjectIntoCSV } = require("../utils/streamUtils");
 
 module.exports = {
   sendCSVStream: (csvStream, res, options = {}) => {

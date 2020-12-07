@@ -5,7 +5,7 @@ const integrationTests = require("../utils/integrationTests");
 const logger = require("../utils/fakeLogger");
 const createFakeMailer = require("../utils/fakeMailer");
 const { newApprenti, newContrat, newQuestionnaire } = require("../utils/fixtures");
-const resendQuestionnaires = require("../../../src/questionnaires/emails/resendQuestionnaires");
+const resendQuestionnaires = require("../../../src/questionnaires/resendQuestionnaires");
 
 integrationTests(__filename, ({ getComponents }) => {
   it("Vérifie qu'on peut renvoyer un questionnaire de fin d'année", async () => {
@@ -52,7 +52,6 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(email.from, "sirius@apprentissage.beta.gouv.fr");
     assert.strictEqual(email.to, "test@domain.com");
     assert.strictEqual(email.subject, "Que pensez-vous de votre formation CAP Boucher ?");
-    assert.ok(email.html.lastIndexOf("Donnez votre avis") !== -1);
     assert.ok(email.html.lastIndexOf(`http://localhost:5000/questionnaires/${token}`) !== -1);
   });
 
@@ -99,7 +98,6 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(email.from, "sirius@apprentissage.beta.gouv.fr");
     assert.strictEqual(email.to, "test@domain.com");
     assert.strictEqual(email.subject, "Que pensez-vous de votre formation CAP Boucher ?");
-    assert.ok(email.html.lastIndexOf("Donnez votre avis") !== -1);
     assert.ok(email.html.lastIndexOf(`http://localhost:5000/questionnaires/${token}`) !== -1);
   });
 

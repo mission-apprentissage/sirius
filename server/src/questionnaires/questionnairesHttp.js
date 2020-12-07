@@ -1,5 +1,4 @@
 const express = require("express");
-const Boom = require("boom");
 const { last } = require("lodash");
 const moment = require("moment");
 const Joi = require("@hapi/joi");

@@ -1,8 +1,10 @@
 const connectToMongoDB = require("./core/connectToMongoDB");
 const createMailer = require("./core/mailer");
 const creatHttpClient = require("./core/httpClient");
-const createQuestionnaires = require("./questionnaires/questionnaires");
+const createQuestionnaires = require("./core/questionnaires");
+const createWorkflow = require("./core/workflow");
 const createApprentis = require("./core/apprentis");
+const createEntreprises = require("./core/entreprises");
 const createLogger = require("./core/logger");
 const defaults = require("./config");
 
@@ -12,18 +14,17 @@ module.exports = async (options = {}) => {
   let db = client.db();
   let mailer = options.mailer || createMailer(config);
   let logger = options.logger || createLogger(config, { db });
-  let apprentis = options.apprentis || createApprentis(db);
-  let questionnaires = options.questionnaires || createQuestionnaires(db, mailer, apprentis);
-  let httpClient = options.httpClient || creatHttpClient(logger);
 
   return {
     db,
     config,
     logger,
     mailer,
-    httpClient,
-    questionnaires,
-    apprentis,
+    httpClient: options.httpClient || creatHttpClient(logger),
+    workflow: options.workflow || createWorkflow(db),
+    questionnaires: options.questionnaires || createQuestionnaires(db, mailer),
+    apprentis: options.apprentis || createApprentis(db),
+    entreprises: options.entreprises || createEntreprises(db),
     close: () => client.close(),
   };
 };

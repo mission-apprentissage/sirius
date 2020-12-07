@@ -1,143 +1,75 @@
 <mjml>
-    <mj-head>
-        <mj-title>Sirius</mj-title>
-        <mj-font name="Public Sans"
-                 href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,600;0,900;1,400"/>
-        <mj-style inline="inline">
-            .link-nostyle { color: inherit;}
-        </mj-style>
-        <mj-attributes>
-            <mj-text
-                    color="#ffffff"
-                    font-family="Public Sans,sans-serif"
-                    font-size="16px"
-                    line-height="23px"
-            />
-        </mj-attributes>
-    </mj-head>
+    <%- include('./common/head.ejs'); %>
 
-    <mj-body background-color="#e5e5e5">
+    <mj-body background-color="#ffffff">
+        <%- include('./common/header.ejs'); %>
+        <mj-wrapper padding="10px 20px">
+            <mj-section padding-top="0"
+                        border="1px solid #DCDCDC"
+                        border-left="1px solid #DCDCDC"
+                        border-right="1px solid #DCDCDC">
+                <mj-column>
+                    <mj-text align="center"
+                             font-weight="700"
+                             font-size="28px"
+                             line-height="28px"
+                             padding-top="25px">
+                        Bonjour <%= data.apprenti.prenom %>,<br>
+                        comment s’est passé votre <br>examen de CAP ?
+                    </mj-text>
+                    <mj-text align="center"
+                             font-weight="600">
+                        Parlez-nous de votre expérience dans votre centre de formation pour aider les futurs apprentis!
+                    </mj-text>
 
-        <mj-section background-color="#F3F6F7">
-            <mj-column width="60%" padding-right="0">
-                <mj-image align="left" width="42px" alt="Logo de Sirius"
-                          src="<%= utils.getPublicUrl(`/images/logo.png`) %>"/>
-                <mj-text align="left" padding="10px 0 25px 25px" font-size="22px" font-weight="900" line-height="26px"
-                         color="#5222D0">Aidez les futurs apprentis à choisir leur formation
-                </mj-text>
-                <mj-button background-color="#ec615b" align="center"
-                           font-size="14px" font-weight="600" line-height="14px"
-                           padding="10px" border-radius="50px" font-family="Helvetica"
-                           href="<%= utils.getPublicUrl(`/questionnaires/${data.token}`) %>">
-                    Donnez votre avis sur votre CFA
-                </mj-button>
-            </mj-column>
-            <mj-column width="40%">
-                <mj-image padding="10px 0" alt="Logo"
-                          src="<%= utils.getPublicUrl(`/images/header-email-v2.png`) %>"/>
-            </mj-column>
-        </mj-section>
+                    <mj-button inner-padding="10px 75px"
+                               href="<%= utils.getPublicUrl(`/questionnaires/${data.questionnaire.token}`) %>">
+                        <img alt="Icone boutton"
+                             class="left"
+                             src="<%= utils.getPublicUrl(`/images/email-link-icon.png`) %>"/>
+                        C'est parti !
+                    </mj-button>
+                </mj-column>
+            </mj-section>
 
-        <mj-section padding-bottom="20px" padding-top="10px" background-color="#5222d0">
-            <mj-column>
-                <mj-text align="center" padding-top="50px" color="#ffffff">Bonjour <%= data.apprenti.prenom %>
-                    ,
-                </mj-text>
-                <mj-text align="center" padding="10px 25px" color="#ffffff">
-                    Vous suivez la formation de
-                    <strong><%= data.contrat.formation.intitule %></strong>
-                </mj-text>
+            <mj-section padding="0"
+                        border-left="1px solid #DCDCDC"
+                        border-right="1px solid #DCDCDC">
+                <mj-column padding="0">
+                    <mj-image align="center"
+                              alt="Jeune apprenti qui regarde le ciel"
+                              src="<%= utils.getPublicUrl(`/images/email-background.png`) %>"
+                              padding="0"/>
+                </mj-column>
+            </mj-section>
 
-                <mj-button background-color="#ec615b" align="center"
-                           font-size="14px" font-weight="600" line-height="14px"
-                           padding="10px" border-radius="50px" font-family="Helvetica"
-                           href="<%= utils.getPublicUrl(`/questionnaires/${data.token}`) %>">
-                    Donnez votre avis sur votre CFA en moins de 3 minutes
-                </mj-button>
+            <mj-section
+                    border-left="1px solid #DCDCDC"
+                    border-right="1px solid #DCDCDC"
+                    border-bottom="1px solid #DCDCDC">
+                <mj-column vertical-align="middle">
+                    <mj-text align="center" font-weight="100">
+                        Vous avez suivi la formation de
+                        <span class="highlight"><%= data.contrat.formation.intitule %> - <%= data.contrat.cfa.nom %></span>.
+                        Des futurs apprentis souhaiteraient en savoir plus sur votre expérience dans cette formation.
+                    </mj-text>
 
-                <mj-text align="center" font-style="italic" font-size="14px">
-                    Avis 100% anonyme
-                </mj-text>
+                    <mj-text align="center" padding="25px">
+                        Votre avis sera publié sur
+                        <a href="https://labonnealternance.pole-emploi.fr"
+                           target="_blank"
+                           class="link-nostyle">
+                            <img width="120px"
+                                 alt="Logo de La Bonne Alternance"
+                                 class="icon right"
+                                 src="<%= utils.getPublicUrl(`/images/lba-dark.png`) %>"/>
+                        </a>
+                    </mj-text>
+                </mj-column>
+            </mj-section>
+        </mj-wrapper>
 
-                <mj-text align="center" font-weight="600" padding="25px">
-                    Aidez les prochains à faire les bons choix
-                    <br>
-                    Dites-leur tout sur l’apprentissage
-                </mj-text>
-
-                <mj-text align="center" padding="25px">
-                    Votre avis sera publié sur
-                    <img width="100px" alt="Logo de La Bonne Alternance"
-                         src="<%= utils.getPublicUrl(`/images/logo-lba.png`) %>"/>
-                </mj-text>
-
-            </mj-column>
-        </mj-section>
-
-        <mj-section background-color="#5222d0">
-            <mj-column>
-                <mj-divider border-width="2px" border-color="lightgrey"/>
-            </mj-column>
-        </mj-section>
-
-        <mj-section background-color="#5222d0" padding-top="0">
-            <mj-column padding-top="0">
-                <mj-text align="left" font-size="12px" line-height="20px">
-                    Sirius est un service développé par la Mission Intermnistérielle qui vise à faciliter les entrées en
-                    apprentissage.
-                    Vous trouverez toutes les informations <a
-                            href="https://app.gitbook.com/@mission-apprentissage/s/general/les-nouveaux-services/anotea-apprentissage"
-                            class="link-nostyle">ici</a>.
-                    <br>
-                    Sirius traite vos données à caractère personnel (données professionnelles, données de contact) pour
-                    les besoins de la réalisation d’une enquête de satisfaction. Cette enquête est facultative. Sirius a
-                    obtenu vos données directement par votre CFA.
-                </mj-text>
-                <mj-text align="left" font-size="12px" line-height="20px">
-                    Vos données seront conservées pendant la durée de
-                    l’enquête, ou jusqu’à la révocation du
-                    consentement et au maximum 3 ans pour les apprentis ayant répondu au questionnaire.
-                </mj-text>
-                <mj-text align="left" font-size="12px" line-height="20px">
-                    Conformément aux articles 12 à 23 du règlement général (UE) sur la protection des données n°2016/679
-                    du 27 avril
-                    2016 et à la loi Informatique et libertés n°78-17 du 6 janvier 1978 modifiée, vous bénéficiez
-                    notamment d’un droit d’accès, de rectification, d’effacement et le droit de porter une réclamation
-                    devant la Commission nationale de l’informatique et des libertés pour les données vous concernant.
-                    Pour exercer vos droits, vous pouvez vous adresser à sirius@apprentissage.beta.gouv.fr.
-                </mj-text>
-            </mj-column>
-        </mj-section>
-
-        <mj-section background-color="#5222d0" padding-bottom="0">
-            <mj-column padding-top="0">
-                <mj-text align="left" font-size="14px" line-height="20px">
-                    Cet email a été envoyé à <%= data.apprenti.email %>
-                    <br/>
-                    Vous avez reçu cet email parce que votre CFA nous a transmis votre email.
-                    <br/>
-                    Pour vous désinscrire,
-                    <a href="<%= utils.getPublicUrl(`/api/apprentis/${data.apprenti._id}/unsubscribe`) %>"
-                       class="link-nostyle">cliquez
-                        ici</a>
-                </mj-text>
-            </mj-column>
-        </mj-section>
-
-        <mj-section background-color="#5222d0" padding-top="0">
-            <mj-column>
-                <mj-text align="center" color="#ffffff" font-size="14px" line-height="20px">
-                    <a href="<%= utils.getPublicUrl(`/questionnaires/${data.token}/previewEmail`) %>"
-                       class="link-nostyle">Voir
-                        cet email dans votre navigateur</a>
-                </mj-text>
-                <mj-image align="center" width="76px" alt="Logo République Française Marianne"
-                          src="<%= utils.getPublicUrl(`/images/marianne.png`) %>"/>
-                <mj-image width="1px" alt="Pixel"
-                          src="<%= utils.getPublicUrl(`/api/questionnaires/${data.token}/markAsOpened`) %>"/>
-            </mj-column>
-        </mj-section>
-
+        <%- include('./common/footer.ejs'); %>
     </mj-body>
 
 </mjml>
