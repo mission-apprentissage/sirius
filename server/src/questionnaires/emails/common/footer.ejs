@@ -38,12 +38,12 @@
             </mj-text>
 
             <mj-text align="left" font-size="12px" line-height="20px">
-                Cet email a été envoyé à <%= email %>
+                Cet email a été envoyé à <%= email.to %>
                 <br/>
                 Vous avez reçu cet email parce que votre CFA nous a transmis votre email.
                 <br/>
                 Pour vous désinscrire,
-                <a href="<%= unsubscribeLink %>" class="link-nostyle">cliquez ici</a>
+                <a href="<%= utils.getPublicUrl(`/api/unsubscribe/${email.to}`) %>" class="link-nostyle">cliquez ici</a>
             </mj-text>
         </mj-column>
     </mj-section>

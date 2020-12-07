@@ -69,11 +69,7 @@
             </mj-section>
         </mj-wrapper>
 
-        <%-
-        include('./common/footer.ejs', {
-        email: data.apprenti.email,
-        unsubscribeLink: utils.getPublicUrl(`/api/unsubscribe/${data.apprenti.email}`) }),
-        %>
+        <%- include('./common/footer.ejs'); %>
     </mj-body>
 
 </mjml>

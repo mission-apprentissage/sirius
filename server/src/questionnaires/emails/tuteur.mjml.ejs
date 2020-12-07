@@ -41,11 +41,7 @@
             </mj-section>
         </mj-wrapper>
 
-        <%-
-        include('./common/footer.ejs', {
-        email: data.contrat.entreprise.email,
-        unsubscribeLink: utils.getPublicUrl(`/api/unsubscribe/${data.contrat.entreprise.email}`) }),
-        %>
+        <%- include('./common/footer.ejs'); %>
     </mj-body>
 
 </mjml>

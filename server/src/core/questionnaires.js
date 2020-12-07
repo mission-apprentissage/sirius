@@ -30,14 +30,14 @@ module.exports = (db, mailer) => {
     sendQuestionnaire: async (token) => {
       let details = await getQuestionnaireDetails(token);
       let { type, status } = details.questionnaire;
-      let { emailAddress, subject, template } = emails[type](details);
+      let email = emails[type](details);
 
       if (status === "closed") {
         throw new QuestionnaireNotAvailableError();
       }
 
       try {
-        await mailer.sendEmail(emailAddress, subject, template, details);
+        await mailer.sendEmail(email, details);
       } catch (e) {
         await db.collection("apprentis").updateOne(
           { "contrats.questionnaires.token": token },
@@ -85,9 +85,9 @@ module.exports = (db, mailer) => {
     },
     previewEmail: async (token) => {
       let details = await getQuestionnaireDetails(token);
-      let { template } = emails[details.questionnaire.type](details);
+      let email = emails[details.questionnaire.type](details);
 
-      return mailer.renderEmail(template, details);
+      return mailer.renderEmail(email, details);
     },
     markAsOpened: async (token) => {
       let { questionnaire } = await getQuestionnaireDetails(token);
