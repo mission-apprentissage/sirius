@@ -5,7 +5,6 @@ const { delay } = require("../core/utils/asyncUtils");
 module.exports = async (db, logger, questionnaires, options = {}) => {
   let limit = options.limit || 1;
   let stats = {
-    total: 0,
     sent: 0,
     ignored: 0,
     failed: 0,
@@ -34,13 +33,14 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
     ]),
     writeObject(async ({ email, questionnaire }) => {
       try {
-        stats.total++;
         if (stats.sent > limit || shouldBeIgnored(questionnaire)) {
           stats.ignored++;
         } else {
-          logger.info(`Resending questionnaire ${questionnaire.type} to ${email}...`);
+          let type = questionnaire.type;
+          logger.info(`Resending questionnaire ${type} to ${email}...`);
           await questionnaires.sendQuestionnaire(questionnaire.token);
           await delay(100);
+          stats[type] = (stats[type] || 0) + 1;
           stats.sent++;
         }
       } catch (e) {

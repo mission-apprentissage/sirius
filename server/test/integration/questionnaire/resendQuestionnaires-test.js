@@ -28,8 +28,8 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await resendQuestionnaires(db, logger, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 1,
+      finAnnee: 1,
       failed: 0,
       ignored: 0,
     });
@@ -75,8 +75,8 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await resendQuestionnaires(db, logger, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 1,
+      finFormation: 1,
       failed: 0,
       ignored: 0,
     });
@@ -124,8 +124,9 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await resendQuestionnaires(db, logger, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 2,
       sent: 2,
+      finAnnee: 1,
+      finFormation: 1,
       failed: 0,
       ignored: 0,
     });
@@ -154,7 +155,6 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await resendQuestionnaires(db, logger, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 0,
       sent: 0,
       failed: 0,
       ignored: 0,
@@ -182,7 +182,6 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await resendQuestionnaires(db, logger, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 0,
       sent: 0,
       failed: 0,
       ignored: 0,
@@ -210,7 +209,6 @@ integrationTests(__filename, ({ getComponents }) => {
 
     assert.strictEqual(emails.length, 0);
     assert.deepStrictEqual(stats, {
-      total: 0,
       sent: 0,
       failed: 0,
       ignored: 0,
@@ -252,7 +250,6 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await resendQuestionnaires(db, logger, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 0,
       sent: 0,
       failed: 0,
       ignored: 0,
@@ -324,8 +321,8 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await resendQuestionnaires(db, logger, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 2,
       sent: 1,
+      finFormation: 1,
       failed: 0,
       ignored: 1,
     });

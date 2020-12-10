@@ -32,10 +32,10 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await sendQuestionnaires(db, logger, workflow, apprentis, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 1,
-      failed: 0,
       ignored: 0,
+      finAnnee: 1,
+      failed: 0,
     });
 
     let found = await db.collection("apprentis").findOne();
@@ -84,10 +84,10 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await sendQuestionnaires(db, logger, workflow, apprentis, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 1,
-      failed: 0,
       ignored: 0,
+      finFormation: 1,
+      failed: 0,
     });
 
     let found = await db.collection("apprentis").findOne();
@@ -145,10 +145,10 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await sendQuestionnaires(db, logger, workflow, apprentis, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 1,
-      failed: 0,
       ignored: 0,
+      tuteur: 1,
+      failed: 0,
     });
 
     let found = await db.collection("apprentis").findOne();
@@ -199,10 +199,9 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await sendQuestionnaires(db, logger, workflow, apprentis, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 0,
-      failed: 0,
       ignored: 1,
+      failed: 0,
     });
     assert.strictEqual(emails.length, 0);
   });
@@ -220,10 +219,9 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await sendQuestionnaires(db, logger, workflow, apprentis, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 0,
-      failed: 1,
       ignored: 0,
+      failed: 1,
     });
     let found = await db.collection("apprentis").findOne();
     let questionnaire = found.contrats[0].questionnaires[0];
@@ -271,10 +269,10 @@ integrationTests(__filename, ({ getComponents }) => {
 
     assert.strictEqual(emails.length, 1);
     assert.deepStrictEqual(stats, {
-      total: 2,
       sent: 1,
-      failed: 0,
+      finAnnee: 1,
       ignored: 1,
+      failed: 0,
     });
   });
 
@@ -303,10 +301,9 @@ integrationTests(__filename, ({ getComponents }) => {
 
     assert.strictEqual(emails.length, 0);
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 0,
-      failed: 0,
       ignored: 1,
+      failed: 0,
     });
   });
 
@@ -382,10 +379,9 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await sendQuestionnaires(db, logger, workflow, apprentis, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 0,
-      failed: 0,
       ignored: 1,
+      failed: 0,
     });
     assert.strictEqual(emails.length, 0);
   });
@@ -405,10 +401,9 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await sendQuestionnaires(db, logger, workflow, apprentis, questionnaires);
 
     assert.deepStrictEqual(stats, {
-      total: 1,
       sent: 0,
-      failed: 0,
       ignored: 1,
+      failed: 0,
     });
     assert.strictEqual(emails.length, 0);
   });
