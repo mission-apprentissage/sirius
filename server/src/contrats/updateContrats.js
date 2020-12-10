@@ -25,6 +25,8 @@ module.exports = async (db, logger, csvStream) => {
         },
         {
           $set: {
+            prenom: apprenti.prenom,
+            nom: apprenti.nom,
             "contrats.$.cfa": contrat.cfa,
             "contrats.$.entreprise": contrat.entreprise,
             "contrats.$.formation": contrat.formation,

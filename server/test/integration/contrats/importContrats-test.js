@@ -48,7 +48,7 @@ integrationTests(__filename, ({ getComponents }) => {
             codePostal: "75001",
           },
           entreprise: {
-            raisonSociale: null,
+            raisonSociale: "Entreprise",
             siret: "11111111100027",
             email: "email@entreprise.fr",
             tuteur: { prenom: "Jacques", nom: "HENRI" },
@@ -103,7 +103,7 @@ integrationTests(__filename, ({ getComponents }) => {
             codePostal: "75001",
           },
           entreprise: {
-            raisonSociale: null,
+            raisonSociale: "Entreprise 1",
             siret: "11111111100027",
             email: "email@entreprise1.fr",
             tuteur: { prenom: "Jacques", nom: "HENRI" },
@@ -127,7 +127,7 @@ integrationTests(__filename, ({ getComponents }) => {
             codePostal: "75001",
           },
           entreprise: {
-            raisonSociale: null,
+            raisonSociale: "Entreprise 2",
             siret: "11111111100030",
             email: "email@entreprise2.fr",
             tuteur: { prenom: "Jacques", nom: "HENRI" },
