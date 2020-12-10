@@ -30,6 +30,7 @@ let newContrat = (custom = {}) => {
       entreprise: {
         raisonSociale: faker.company.companyName(),
         siret: faker.helpers.replaceSymbols("#########00015"),
+        email: faker.internet.email(),
         tuteur: {
           prenom: faker.name.firstName(),
           nom: faker.name.lastName(),

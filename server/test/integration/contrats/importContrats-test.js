@@ -1,7 +1,7 @@
 const assert = require("assert");
 const { omit } = require("lodash");
 const integrationTests = require("../utils/integrationTests");
-const importContrats = require("../../../src/apprentis/mfr/importContrats");
+const importContrats = require("../../../src/contrats/importContrats");
 const { createStream } = require("../utils/testUtils");
 
 integrationTests(__filename, ({ getComponents }) => {
@@ -47,7 +47,12 @@ integrationTests(__filename, ({ getComponents }) => {
             adresse: "31 rue des lilas 75001 Paris",
             codePostal: "75001",
           },
-          entreprise: { raisonSociale: null, siret: "11111111100027", tuteur: { prenom: "Jacques", nom: "HENRI" } },
+          entreprise: {
+            raisonSociale: "Entreprise",
+            siret: "11111111100027",
+            email: "email@entreprise.fr",
+            tuteur: { prenom: "Jacques", nom: "HENRI" },
+          },
           rupture: null,
         },
       ],
@@ -97,7 +102,12 @@ integrationTests(__filename, ({ getComponents }) => {
             adresse: "31 rue des lilas 75001 Paris",
             codePostal: "75001",
           },
-          entreprise: { raisonSociale: null, siret: "11111111100027", tuteur: { prenom: "Jacques", nom: "HENRI" } },
+          entreprise: {
+            raisonSociale: "Entreprise 1",
+            siret: "11111111100027",
+            email: "email@entreprise1.fr",
+            tuteur: { prenom: "Jacques", nom: "HENRI" },
+          },
           rupture: null,
         },
         {
@@ -116,7 +126,12 @@ integrationTests(__filename, ({ getComponents }) => {
             adresse: "31 rue des lilas 75001 Paris",
             codePostal: "75001",
           },
-          entreprise: { raisonSociale: null, siret: "11111111100030", tuteur: { prenom: "Jacques", nom: "HENRI" } },
+          entreprise: {
+            raisonSociale: "Entreprise 2",
+            siret: "11111111100030",
+            email: "email@entreprise2.fr",
+            tuteur: { prenom: "Jacques", nom: "HENRI" },
+          },
           rupture: null,
         },
       ],

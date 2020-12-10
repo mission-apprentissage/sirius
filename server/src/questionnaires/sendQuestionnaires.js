@@ -1,27 +1,26 @@
 const { oleoduc, writeObject } = require("oleoduc");
-const { delay } = require("../../core/asyncUtils");
+const { delay } = require("../core/utils/asyncUtils");
 
-module.exports = async (db, logger, apprentis, questionnaires, options = {}) => {
+module.exports = async (db, logger, workflow, apprentis, questionnaires, options = {}) => {
   let limit = options.limit || 1;
   let stats = {
-    total: 0,
     sent: 0,
     failed: 0,
     ignored: 0,
   };
 
   await oleoduc(
-    db.collection("apprentis").find({ unsubscribe: false }),
+    db.collection("apprentis").find(),
     writeObject(async (apprenti) => {
       try {
         let email = apprenti.email;
-        let next = await apprentis.whatsNext(email);
-        stats.total++;
+        let next = await workflow.whatsNext(email);
 
-        if (stats.sent >= limit || !next || (options.type && next.questionnaire.type !== options.type)) {
+        if (stats.sent >= limit || !next || (options.type && next.type !== options.type)) {
           stats.ignored++;
         } else {
-          let { contrat, questionnaire } = next;
+          let { contrat, type } = next;
+          let questionnaire = questionnaires.buildQuestionnaire(contrat, type);
 
           await apprentis.addQuestionnaire(email, contrat, questionnaire);
 
@@ -29,6 +28,7 @@ module.exports = async (db, logger, apprentis, questionnaires, options = {}) => 
           await questionnaires.sendQuestionnaire(questionnaire.token);
 
           await delay(100);
+          stats[type] = (stats[type] || 0) + 1;
           stats.sent++;
         }
       } catch (e) {

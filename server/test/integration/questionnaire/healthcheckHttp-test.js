@@ -14,4 +14,17 @@ httpTests(__filename, ({ startServer }) => {
       version: "1.0.0",
     });
   });
+
+  it("Vérifie qu'on peut obtenir une erreur de test", async () => {
+    let { httpClient } = await startServer();
+
+    let response = await httpClient.get("/api/healthcheck/error");
+
+    assert.strictEqual(response.status, 500);
+    assert.deepStrictEqual(response.data, {
+      error: "Internal Server Error",
+      message: "Healthcheck error",
+      statusCode: 500,
+    });
+  });
 });

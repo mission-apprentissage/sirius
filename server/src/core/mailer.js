@@ -17,10 +17,11 @@ const createTransporter = (smtp) => {
 module.exports = (config, transporter = createTransporter(config.smtp)) => {
   let utils = { getPublicUrl: (path) => `${config.publicUrl}${path}` };
 
-  let renderEmail = async (template, data = {}) => {
-    let buffer = await renderFile(template, {
-      utils,
+  let renderEmail = async (email, data = {}) => {
+    let buffer = await renderFile(email.template, {
+      email,
       data,
+      utils,
     });
     let { html } = mjml(buffer.toString(), { minify: true });
     return html;
@@ -28,15 +29,15 @@ module.exports = (config, transporter = createTransporter(config.smtp)) => {
 
   return {
     renderEmail,
-    sendEmail: async (to, subject, template, data) => {
+    sendEmail: async (email, data) => {
       return transporter.sendMail({
         from: "sirius@apprentissage.beta.gouv.fr",
-        to,
-        subject,
-        html: await renderEmail(template, data),
+        to: email.to,
+        subject: email.subject,
+        html: await renderEmail(email, data),
         list: {
           help: "https://app.gitbook.com/@mission-apprentissage/s/general/les-nouveaux-services/anotea-apprentissage",
-          unsubscribe: utils.getPublicUrl(`/api/apprentis/${data.contrat._id}/unsubscribe`),
+          unsubscribe: utils.getPublicUrl(`/api/unsubscribe/${email.to}`),
         },
       });
     },

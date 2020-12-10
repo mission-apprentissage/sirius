@@ -6,7 +6,7 @@ const logMiddleware = require("./logMiddleware");
 const errorMiddleware = require("./errorMiddleware");
 const tryCatch = require("./tryCatchMiddleware");
 const questionnairesHttp = require("../../questionnaires/questionnairesHttp");
-const contratsHttp = require("../../apprentis/apprentisHttp");
+const unsubscribeHttp = require("../../unsubscribe/unsubscribeHttp");
 const { version } = require("../../../package.json");
 
 module.exports = async (components) => {
@@ -19,7 +19,7 @@ module.exports = async (components) => {
   app.use(logMiddleware(logger));
   app.use(rewriteDeprecatedUrlMiddleware());
   app.use(questionnairesHttp(components));
-  app.use(contratsHttp(components));
+  app.use(unsubscribeHttp(components));
   app.disable("x-powered-by");
 
   //Routes
@@ -28,7 +28,7 @@ module.exports = async (components) => {
     tryCatch(async (req, res) => {
       let mongodbStatus;
       await db
-        .collection("questionnaires")
+        .collection("apprentis")
         .stats()
         .then(() => {
           mongodbStatus = true;
@@ -43,6 +43,13 @@ module.exports = async (components) => {
         env: config.env,
         healthcheck: mongodbStatus,
       });
+    })
+  );
+
+  app.get(
+    "/api/healthcheck/error",
+    tryCatch(() => {
+      throw new Error("Healthcheck error");
     })
   );
 

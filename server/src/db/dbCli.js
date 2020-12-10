@@ -1,15 +1,13 @@
 const { program: cli } = require("commander");
 const runScript = require("../core/runScript");
-const injectData = require("./dataset/injectData");
+const migrateDb = require("./migrateDb");
+const injectData = require("./injectData");
 
 cli
   .command("migrate")
   .description("Migre les données en base")
   .action(() => {
-    runScript(async ({ db }) => {
-      return {
-      };
-    });
+    runScript(async ({ db }) => migrateDb(db));
   });
 
 cli

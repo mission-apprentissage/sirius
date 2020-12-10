@@ -1,9 +1,12 @@
 const express = require("express");
+const { last } = require("lodash");
+const moment = require("moment");
 const Joi = require("@hapi/joi");
 const sanitizeHtml = require("sanitize-html");
 const { oleoduc, transformObject } = require("oleoduc");
 const tryCatch = require("../core/http/tryCatchMiddleware");
 const { sendHTML, sendJsonStream, sendCSVStream } = require("../core/http/httpUtils");
+const { QuestionnaireNotAvailableError } = require("../core/errors");
 const authMiddleware = require("../core/http/authMiddleware");
 
 module.exports = ({ db, config, questionnaires }) => {
@@ -39,14 +42,19 @@ module.exports = ({ db, config, questionnaires }) => {
 
       await questionnaires.markAsClicked(token);
       let { apprenti, questionnaire } = await questionnaires.getQuestionnaireDetails(token);
+      let isOlderThanOneMonth = moment(last(questionnaire.sendDates)).isBefore(moment().subtract(1, "months"));
 
-      res.json({
-        type: questionnaire.type,
-        status: questionnaire.status,
-        apprenti: {
-          prenom: apprenti.prenom,
-        },
-      });
+      if (isOlderThanOneMonth) {
+        throw new QuestionnaireNotAvailableError();
+      } else {
+        res.json({
+          type: questionnaire.type,
+          status: questionnaire.status,
+          apprenti: {
+            prenom: apprenti.prenom,
+          },
+        });
+      }
     })
   );
 

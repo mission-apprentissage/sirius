@@ -15,8 +15,8 @@ module.exports = () => {
     } else {
       error = Boom.boomify(rawError, {
         statusCode: rawError.status || 500,
-        ...(!rawError.message ? "Une erreur est survenue" : {}),
       });
+      error.reformat(true);
     }
 
     return res.status(error.output.statusCode).send(error.output.payload);

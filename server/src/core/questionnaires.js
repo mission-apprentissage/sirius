@@ -1,13 +1,14 @@
-const Boom = require("boom");
-const path = require("path");
+const uuid = require("uuid");
+const emails = require("../questionnaires/emails/emails");
+const { QuestionnaireNotFoundError, QuestionnaireNotAvailableError } = require("./errors");
 
 module.exports = (db, mailer) => {
-  const statuses = { sent: 0, error: 1, opened: 2, clicked: 3, pending: 4, inprogress: 5, closed: 6 };
-  const getEmailTemplate = (type) => path.join(__dirname, "emails", `${type}.mjml.ejs`);
+  const statuses = { created: 0, sent: 1, error: 2, opened: 3, clicked: 4, pending: 5, inprogress: 6, closed: 7 };
+
   const getQuestionnaireDetails = async (token) => {
     let apprenti = await db.collection("apprentis").findOne({ "contrats.questionnaires.token": token });
     if (!apprenti) {
-      throw Boom.notFound("Questionnaire inconnu");
+      throw new QuestionnaireNotFoundError();
     }
 
     let contrat = apprenti.contrats.find((c) => !!c.questionnaires.find((q) => q.token === token));
@@ -15,64 +16,62 @@ module.exports = (db, mailer) => {
     return { apprenti, contrat, questionnaire };
   };
 
-  const sendEmail = async (apprenti, contrat, questionnaire) => {
-    let { token, type } = questionnaire;
-
-    try {
-      let titre = `Que pensez-vous de votre formation ${contrat.formation.intitule} ?`;
-      await mailer.sendEmail(apprenti.email, titre, getEmailTemplate(type), { apprenti, contrat, token });
-    } catch (e) {
-      await db.collection("apprentis").updateOne(
-        { "contrats.questionnaires.token": token },
-        {
-          $set: {
-            "contrats.$[c].questionnaires.$[q].status": "error",
-          },
-          $push: {
-            "contrats.$[c].questionnaires.$[q].sendDates": new Date(),
-          },
-        },
-        {
-          arrayFilters: [
-            {
-              "c.questionnaires.token": token,
-            },
-            {
-              "q.token": token,
-            },
-          ],
-        }
-      );
-      throw e;
-    }
-  };
-
   return {
     getQuestionnaireDetails,
+    buildQuestionnaire: (contrat, type) => {
+      return {
+        type,
+        token: uuid.v4(),
+        status: "created",
+        sendDates: [],
+        questions: [],
+      };
+    },
     sendQuestionnaire: async (token) => {
-      let { apprenti, contrat, questionnaire } = await getQuestionnaireDetails(token);
+      let details = await getQuestionnaireDetails(token);
+      let { type, status } = details.questionnaire;
+      let email = emails[type](details);
 
-      if (questionnaire.status === "closed") {
-        throw Boom.badRequest("Impossible d'envoyer le questionnaire car il est fermé");
+      if (status === "closed") {
+        throw new QuestionnaireNotAvailableError();
       }
 
-      await sendEmail(apprenti, contrat, questionnaire);
+      try {
+        await mailer.sendEmail(email, details);
+      } catch (e) {
+        await db.collection("apprentis").updateOne(
+          { "contrats.questionnaires.token": token },
+          {
+            $set: {
+              "contrats.$[].questionnaires.$[q].status": "error",
+            },
+            $push: {
+              "contrats.$[].questionnaires.$[q].sendDates": new Date(),
+            },
+          },
+          {
+            arrayFilters: [
+              {
+                "q.token": token,
+              },
+            ],
+          }
+        );
+        throw e;
+      }
 
       let { value: updated } = await db.collection("apprentis").findOneAndUpdate(
         { "contrats.questionnaires.token": token },
         {
           $set: {
-            "contrats.$[c].questionnaires.$[q].status": questionnaire.status || "sent",
+            "contrats.$[].questionnaires.$[q].status": status === "created" ? "sent" : status,
           },
           $push: {
-            "contrats.$[c].questionnaires.$[q].sendDates": new Date(),
+            "contrats.$[].questionnaires.$[q].sendDates": new Date(),
           },
         },
         {
           arrayFilters: [
-            {
-              "c.questionnaires.token": token,
-            },
             {
               "q.token": token,
             },
@@ -81,17 +80,14 @@ module.exports = (db, mailer) => {
       );
 
       if (!updated) {
-        throw Boom.badRequest("Questionnaire inconnu");
+        throw new QuestionnaireNotFoundError();
       }
     },
     previewEmail: async (token) => {
-      let { apprenti, contrat, questionnaire } = await getQuestionnaireDetails(token);
+      let details = await getQuestionnaireDetails(token);
+      let email = emails[details.questionnaire.type](details);
 
-      return mailer.renderEmail(getEmailTemplate(questionnaire.type), {
-        apprenti,
-        token,
-        contrat,
-      });
+      return mailer.renderEmail(email, details);
     },
     markAsOpened: async (token) => {
       let { questionnaire } = await getQuestionnaireDetails(token);
@@ -101,15 +97,12 @@ module.exports = (db, mailer) => {
           { "contrats.questionnaires.token": token },
           {
             $set: {
-              "contrats.$[c].questionnaires.$[q].status": "opened",
-              "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
+              "contrats.$[].questionnaires.$[q].status": "opened",
+              "contrats.$[].questionnaires.$[q].updateDate": new Date(),
             },
           },
           {
             arrayFilters: [
-              {
-                "c.questionnaires.token": token,
-              },
               {
                 "q.token": token,
               },
@@ -126,16 +119,13 @@ module.exports = (db, mailer) => {
           { "contrats.questionnaires.token": token },
           {
             $set: {
-              "contrats.$[c].questionnaires.$[q].status": "clicked",
-              "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
-              "contrats.$[c].questionnaires.$[q].questions": [],
+              "contrats.$[].questionnaires.$[q].status": "clicked",
+              "contrats.$[].questionnaires.$[q].updateDate": new Date(),
+              "contrats.$[].questionnaires.$[q].questions": [],
             },
           },
           {
             arrayFilters: [
-              {
-                "c.questionnaires.token": token,
-              },
               {
                 "q.token": token,
               },
@@ -148,16 +138,16 @@ module.exports = (db, mailer) => {
       let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
-        throw Boom.badRequest(`Impossible de répondre au questionnaire`);
+        throw new QuestionnaireNotAvailableError();
       }
 
       await db.collection("apprentis").updateOne(
         { "contrats.questionnaires.token": token },
         {
           $set: {
-            "contrats.$[c].questionnaires.$[q].status": "inprogress",
-            "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
-            "contrats.$[c].questionnaires.$[q].questions": [
+            "contrats.$[].questionnaires.$[q].status": "inprogress",
+            "contrats.$[].questionnaires.$[q].updateDate": new Date(),
+            "contrats.$[].questionnaires.$[q].questions": [
               ...questionnaire.questions.filter((q) => q.id !== questionId),
               {
                 id: questionId,
@@ -170,9 +160,6 @@ module.exports = (db, mailer) => {
         {
           arrayFilters: [
             {
-              "c.questionnaires.token": token,
-            },
-            {
               "q.token": token,
             },
           ],
@@ -183,22 +170,19 @@ module.exports = (db, mailer) => {
       let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
-        throw Boom.badRequest(`Impossible de mettre le questionnaire en pending`);
+        throw new QuestionnaireNotAvailableError();
       }
 
       await db.collection("apprentis").updateOne(
         { "contrats.questionnaires.token": token },
         {
           $set: {
-            "contrats.$[c].questionnaires.$[q].status": "pending",
-            "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
+            "contrats.$[].questionnaires.$[q].status": "pending",
+            "contrats.$[].questionnaires.$[q].updateDate": new Date(),
           },
         },
         {
           arrayFilters: [
-            {
-              "c.questionnaires.token": token,
-            },
             {
               "q.token": token,
             },
@@ -210,22 +194,19 @@ module.exports = (db, mailer) => {
       let { questionnaire } = await getQuestionnaireDetails(token);
 
       if (questionnaire.status === "closed") {
-        throw Boom.badRequest(`Impossible de fermer le questionnaire`);
+        throw new QuestionnaireNotAvailableError();
       }
 
       await db.collection("apprentis").updateOne(
         { "contrats.questionnaires.token": token },
         {
           $set: {
-            "contrats.$[c].questionnaires.$[q].status": "closed",
-            "contrats.$[c].questionnaires.$[q].updateDate": new Date(),
+            "contrats.$[].questionnaires.$[q].status": "closed",
+            "contrats.$[].questionnaires.$[q].updateDate": new Date(),
           },
         },
         {
           arrayFilters: [
-            {
-              "c.questionnaires.token": token,
-            },
             {
               "q.token": token,
             },

@@ -1,6 +1,6 @@
 const parseCSV = require("./parser/parseCSV");
 
-const { getNbModifiedDocuments } = require("../../core/mongoUtils");
+const { getNbModifiedDocuments } = require("../core/utils/mongoUtils");
 
 module.exports = async (db, logger, csvStream) => {
   let stats = {
@@ -25,7 +25,11 @@ module.exports = async (db, logger, csvStream) => {
         },
         {
           $set: {
-            "contrats.$": contrat,
+            prenom: apprenti.prenom,
+            nom: apprenti.nom,
+            "contrats.$.cfa": contrat.cfa,
+            "contrats.$.entreprise": contrat.entreprise,
+            "contrats.$.formation": contrat.formation,
           },
         }
       );
