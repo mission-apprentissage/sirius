@@ -3,6 +3,8 @@ version: "2.4"
 services:
 
   reverse_proxy:
+    ports:
+      - 80:80
     volumes:
       - .local/nginx:/data
     depends_on:
