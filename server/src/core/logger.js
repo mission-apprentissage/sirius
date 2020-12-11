@@ -1,7 +1,7 @@
 const bunyan = require("bunyan");
 const { throttle } = require("lodash");
 const util = require("util");
-const { writeObject } = require("oleoduc");
+const { writeData } = require("oleoduc");
 const PrettyStream = require("bunyan-prettystream");
 const BunyanSlack = require("bunyan-slack");
 
@@ -57,7 +57,7 @@ const mongodbStream = (db, level) => {
   return {
     name: "mongodb",
     level,
-    stream: writeObject((record) => db.collection("logs").insertOne(JSON.parse(record))),
+    stream: writeData((record) => db.collection("logs").insertOne(JSON.parse(record))),
   };
 };
 

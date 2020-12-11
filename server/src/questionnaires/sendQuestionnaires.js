@@ -1,4 +1,4 @@
-const { oleoduc, writeObject } = require("oleoduc");
+const { oleoduc, writeData } = require("oleoduc");
 const { delay } = require("../core/utils/asyncUtils");
 
 module.exports = async (db, logger, workflow, apprentis, questionnaires, options = {}) => {
@@ -11,7 +11,7 @@ module.exports = async (db, logger, workflow, apprentis, questionnaires, options
 
   await oleoduc(
     db.collection("apprentis").find(),
-    writeObject(async (apprenti) => {
+    writeData(async (apprenti) => {
       try {
         let email = apprenti.email;
         let next = await workflow.whatsNext(email);

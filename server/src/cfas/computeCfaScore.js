@@ -1,6 +1,6 @@
 const { createWriteStream } = require("fs");
-const { oleoduc, transformObject } = require("oleoduc");
-const { transformObjectIntoCSV, encodeIntoUTF8 } = require("../core/utils/streamUtils");
+const { oleoduc, transformData } = require("oleoduc");
+const { transformDataIntoCSV, encodeIntoUTF8 } = require("../core/utils/streamUtils");
 
 module.exports = async (db, outputFile) => {
   const csvFile = outputFile || "scores.csv";
@@ -91,7 +91,7 @@ module.exports = async (db, outputFile) => {
 
   await oleoduc(
     stream,
-    transformObject((res) => {
+    transformData((res) => {
       let notes = res.satisfactions.reduce((acc, satisfaction) => {
         return {
           ...acc,
@@ -105,7 +105,7 @@ module.exports = async (db, outputFile) => {
         global: computeNoteGlobale(notes),
       };
     }),
-    transformObjectIntoCSV({
+    transformDataIntoCSV({
       columns: {
         "Nom du cfa": (data) => data.cfa.nom,
         "UAI du cfa": (data) => data.cfa.uaiFormateur,
