@@ -34,8 +34,7 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await updateContrats(db, logger, stream);
 
     let found = await db.collection("apprentis").findOne({ email: "john@doe.com" });
-    assert.deepStrictEqual(omit(found, ["_id", "creationDate", "telephones"]), {
-      cohorte: "test_q2_2020_12_10",
+    assert.deepStrictEqual(omit(found, ["_id", "creationDate", "telephones", "cohorte"]), {
       prenom: "John",
       nom: "Dodo",
       email: "john@doe.com",
