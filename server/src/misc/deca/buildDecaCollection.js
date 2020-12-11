@@ -4,7 +4,7 @@ const path = require("path");
 const _ = require("lodash");
 const csv = require("csv-parser");
 const { Readable } = require("stream");
-const { oleoduc, transformObject, writeObject, filterObject } = require("oleoduc");
+const { oleoduc, transformData, writeData, filterData } = require("oleoduc");
 const { findTableName, findPrimaryKey } = require("./primaryKeys");
 
 const isCsvWithSemicolon = (filename) => {
@@ -22,7 +22,7 @@ const convertCsvIntoJson = async (dir, filename) => {
   await oleoduc(
     fs.createReadStream(path.join(dir, filename), { encoding: "UTF-8" }),
     csv({ separator: isCsvWithSemicolon(filename) ? ";" : "," }),
-    writeObject((data) => json.push(data))
+    writeData((data) => json.push(data))
   );
   return json;
 };
@@ -32,8 +32,8 @@ const loadDescriptors = async (decaDir) => {
 
   await oleoduc(
     Readable.from(await opendir(decaDir)),
-    filterObject((entry) => entry.name !== "details_contrat.csv"),
-    transformObject(
+    filterData((entry) => entry.name !== "details_contrat.csv"),
+    transformData(
       async (fileEntry) => {
         let filename = fileEntry.name;
         let json = await convertCsvIntoJson(decaDir, filename);
@@ -46,7 +46,7 @@ const loadDescriptors = async (decaDir) => {
       },
       { parallel: 5 }
     ),
-    writeObject((descriptor) => descriptors.push(descriptor))
+    writeData((descriptor) => descriptors.push(descriptor))
   );
   return descriptors;
 };
@@ -82,7 +82,7 @@ module.exports = async (db, decaDir) => {
   await oleoduc(
     fs.createReadStream(path.join(decaDir, "details_contrat.csv"), { encoding: "UTF-8" }),
     csv(),
-    writeObject(
+    writeData(
       async (row) => {
         let contrat = innerJoinAll(row, findPrimaryKey("details_contrat"), descriptors);
         await db.collection("deca").insertOne(contrat);

@@ -38,7 +38,7 @@
     "nodemailer": "^6.4.16",
     "nodemailer-html-to-text": "3.1.0",
     "nodemon": "2.0.6",
-    "oleoduc": "0.3.0",
+    "oleoduc": "0.4.0",
     "passport": "0.4.1",
     "passport-http": "0.3.0",
     "sanitize-html": "^2.2.0",

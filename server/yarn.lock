@@ -3041,10 +3041,10 @@ object-assign@^4.1.0:
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
-oleoduc@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/oleoduc/-/oleoduc-0.3.0.tgz#2b5caa1e6b71c2d67d9f6b556a55229e009cef76"
-  integrity sha512-pa4yQL4bJFjPptqtO+7jpucZ6HR2Yez4C57PxRwi30M3FFwe4h7D1A1TVShEPewi8bi0Vs1ZvK9OoycKebG7+w==
+oleoduc@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/oleoduc/-/oleoduc-0.4.0.tgz#c752105cbdbf48c150800e89b369f5e68ae9aaed"
+  integrity sha512-Z68+iawzGSTcXetUAQomVtZ4qt8njUZENytM4uKFAPVoCBJRv1guaGGLaySe5zD+NLu55Rz90poAyyZP+jAy0g==
   dependencies:
     cyclist "1.0.1"
     multipipe "4.0.0"

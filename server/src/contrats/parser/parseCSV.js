@@ -1,5 +1,5 @@
 const csv = require("csv-parser");
-const { oleoduc, writeObject } = require("oleoduc");
+const { oleoduc, writeData } = require("oleoduc");
 const buildApprenti = require("./buildApprenti");
 const buildContrat = require("./buildContrat");
 const validateContrat = require("./validateContrat");
@@ -17,7 +17,7 @@ module.exports = (inputStream, callback) => {
           .replace(/[\u0300-\u036f]/g, "")
           .replace(/ /g, "_"),
     }),
-    writeObject(async (data) => {
+    writeData(async (data) => {
       try {
         let contrat = buildContrat(data);
         validateContrat(contrat);

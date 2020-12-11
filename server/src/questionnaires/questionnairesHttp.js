@@ -3,7 +3,7 @@ const { last } = require("lodash");
 const moment = require("moment");
 const Joi = require("@hapi/joi");
 const sanitizeHtml = require("sanitize-html");
-const { oleoduc, transformObject } = require("oleoduc");
+const { oleoduc, transformData } = require("oleoduc");
 const tryCatch = require("../core/http/tryCatchMiddleware");
 const { sendHTML, sendJsonStream, sendCSVStream } = require("../core/http/httpUtils");
 const { QuestionnaireNotAvailableError } = require("../core/errors");
@@ -234,7 +234,7 @@ module.exports = ({ db, config, questionnaires }) => {
       } else {
         let csvStream = oleoduc(
           stream,
-          transformObject((res) => {
+          transformData((res) => {
             return {
               Date: res.date,
               "Type de questionnaire": res.type,
