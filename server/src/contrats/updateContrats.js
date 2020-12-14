@@ -1,19 +1,19 @@
 const parseCSV = require("./parser/parseCSV");
-
 const { getNbModifiedDocuments } = require("../core/utils/mongoUtils");
 
 module.exports = async (db, logger, csvStream) => {
   let stats = {
     total: 0,
     updated: 0,
-    failed: 0,
+    invalid: 0,
   };
 
   await parseCSV(csvStream, async (err, json) => {
     stats.total++;
     if (err) {
-      logger.error(`Unable to handle ${JSON.stringify(json, null, 2)}`, err);
-      stats.failed++;
+      let level = err.name === "ValidationError" ? "warn" : "error";
+      logger[level](`Unable to update ${JSON.stringify(json, null, 2)}`, err);
+      stats.invalid++;
     } else {
       let { apprenti, contrat } = json;
       let results = await db.collection("apprentis").updateOne(
@@ -27,6 +27,7 @@ module.exports = async (db, logger, csvStream) => {
           $set: {
             prenom: apprenti.prenom,
             nom: apprenti.nom,
+            updateDate: new Date(),
             "contrats.$.cfa": contrat.cfa,
             "contrats.$.entreprise": contrat.entreprise,
             "contrats.$.formation": contrat.formation,

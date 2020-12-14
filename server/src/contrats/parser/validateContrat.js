@@ -6,8 +6,8 @@ let schema = Joi.object({
     intitule: Joi.string().required(),
     anneePromotion: Joi.string().allow(null),
     periode: Joi.object({
-      debut: Joi.date().required(),
-      fin: Joi.date().required(),
+      debut: Joi.date().required().strict(true),
+      fin: Joi.date().required().strict(true),
     }).required(),
   },
   cfa: {
@@ -26,7 +26,7 @@ let schema = Joi.object({
   entreprise: {
     raisonSociale: Joi.string().allow(null),
     siret: Joi.string().pattern(/^[0-9]{9,14}$/),
-    email: Joi.string().email().required(),
+    email: Joi.string().email().allow(null).required(),
     tuteur: Joi.object({
       prenom: Joi.string(),
       nom: Joi.string(),
@@ -34,4 +34,4 @@ let schema = Joi.object({
   },
 });
 
-module.exports = (contrat) => schema.validate(contrat, { abortEarly: false });
+module.exports = (contrat) => schema.validateAsync(contrat, { abortEarly: false });

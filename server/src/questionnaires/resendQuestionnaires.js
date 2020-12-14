@@ -1,5 +1,5 @@
 const moment = require("moment");
-const { oleoduc, writeObject } = require("oleoduc");
+const { oleoduc, writeData } = require("oleoduc");
 const { delay } = require("../core/utils/asyncUtils");
 
 module.exports = async (db, logger, questionnaires, options = {}) => {
@@ -31,7 +31,7 @@ module.exports = async (db, logger, questionnaires, options = {}) => {
       },
       { $project: { email: "$email", questionnaire: "$contrats.questionnaires" } },
     ]),
-    writeObject(async ({ email, questionnaire }) => {
+    writeData(async ({ email, questionnaire }) => {
       try {
         if (stats.sent > limit || shouldBeIgnored(questionnaire)) {
           stats.ignored++;

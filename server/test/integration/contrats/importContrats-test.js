@@ -138,7 +138,7 @@ integrationTests(__filename, ({ getComponents }) => {
     });
   });
 
-  it("Vérifie qu'on ne peut pas ignore un contrat déjà importé", async () => {
+  it("Vérifie qu'on ne peut pas ignorer un contrat déjà importé", async () => {
     let { db, logger, apprentis } = await getComponents();
     let stream = createStream(
       `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"
@@ -164,6 +164,26 @@ integrationTests(__filename, ({ getComponents }) => {
     let stream = createStream(
       `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"
 "Invalid"`
+    );
+
+    let stats = await importContrats(logger, apprentis, stream);
+
+    let count = await db.collection("apprentis").countDocuments();
+    assert.strictEqual(count, 0);
+    assert.deepStrictEqual(stats, {
+      total: 1,
+      created: 0,
+      updated: 0,
+      invalid: 1,
+      duplicated: 0,
+    });
+  });
+
+  it("Vérifie que les lignes avec des données invalides sont rejetées", async () => {
+    let { db, logger, apprentis } = await getComponents();
+    let stream = createStream(
+      `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"|||"ROBERT"|"HENRI"|"11111111"|"Licence professionnelle Management"|25/11/2019|13/9/2020||"Entreprise"|11111111100027|||"email@entreprise.fr"|"4651Z"|"HENRI"|"Jacques"|"CFA"|"22222222200014"|"1111111D "|"2222222D "|"31 rue des lilas 75001 Paris"
+"email@apprenti.fr"||||"HENRI"|"11111111"|"Licence professionnelle Management"|25/11/2019|13/9/2020||"Entreprise"|11111111100027|||"email@entreprise.fr"|"4651Z"|"HENRI"|"Jacques"|"CFA"|"22222222200014"|"1111111D "|"2222222D "|"31 rue des lilas 75001 Paris"`
     );
 
     let stats = await importContrats(logger, apprentis, stream);

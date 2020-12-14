@@ -4,7 +4,7 @@ const { encodeStream } = require("iconv-lite");
 module.exports = {
   encodeStream,
   encodeIntoUTF8: () => encodeStream("UTF-8"),
-  transformObjectIntoCSV: (options = {}) => {
+  transformDataIntoCSV: (options = {}) => {
     let lines = 0;
     let separator = options.separator || ";";
     return new Transform({

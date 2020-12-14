@@ -1,4 +1,4 @@
-const { oleoduc, transformObject, writeObject } = require("oleoduc");
+const { oleoduc, transformData, writeData } = require("oleoduc");
 
 module.exports = async (db, logger, httpClient) => {
   let stream = db
@@ -30,7 +30,7 @@ module.exports = async (db, logger, httpClient) => {
 
   await oleoduc(
     stream,
-    transformObject(
+    transformData(
       async ({ cfa }) => {
         stats.total++;
 
@@ -51,7 +51,7 @@ module.exports = async (db, logger, httpClient) => {
       },
       { parallel: 10 }
     ),
-    writeObject(
+    writeData(
       ({ cfa, found }) => {
         if (found) {
           stats.found++;

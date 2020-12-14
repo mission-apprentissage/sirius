@@ -10,4 +10,4 @@ let schema = Joi.object({
   },
 });
 
-module.exports = (contrat) => schema.validate(contrat, { abortEarly: false });
+module.exports = (contrat) => schema.validateAsync(contrat, { abortEarly: false });
