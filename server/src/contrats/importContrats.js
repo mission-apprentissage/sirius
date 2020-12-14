@@ -13,7 +13,8 @@ module.exports = async (logger, apprentis, csvStream) => {
   await parseCSV(csvStream, async (err, data) => {
     stats.total++;
     if (err) {
-      logger.error(`Unable to import ${JSON.stringify(data, null, 2)}`, err);
+      let level = err.name === "ValidationError" ? "warn" : "error";
+      logger[level](`Unable to import ${JSON.stringify(data, null, 2)}`, err);
       stats.invalid++;
     } else {
       let apprenti = {

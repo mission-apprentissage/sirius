@@ -20,10 +20,10 @@ module.exports = (inputStream, callback) => {
     writeData(async (data) => {
       try {
         let contrat = buildContrat(data);
-        validateContrat(contrat);
+        await validateContrat(contrat);
 
         let apprenti = buildApprenti(data);
-        validateApprenti(apprenti);
+        await validateApprenti(apprenti);
 
         return callback(null, { apprenti, contrat });
       } catch (e) {

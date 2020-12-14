@@ -7,7 +7,7 @@ cli
   .command("migrate")
   .description("Migre les données en base")
   .action(() => {
-    runScript(async ({ db }) => migrateDb(db));
+    runScript(({ db }) => migrateDb(db));
   });
 
 cli

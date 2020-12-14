@@ -34,7 +34,7 @@ integrationTests(__filename, ({ getComponents }) => {
     let stats = await updateContrats(db, logger, stream);
 
     let found = await db.collection("apprentis").findOne({ email: "john@doe.com" });
-    assert.deepStrictEqual(omit(found, ["_id", "creationDate", "telephones", "cohorte"]), {
+    assert.deepStrictEqual(omit(found, ["_id", "creationDate", "updateDate", "telephones", "cohorte"]), {
       prenom: "John",
       nom: "Dodo",
       email: "john@doe.com",
@@ -69,7 +69,7 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.deepStrictEqual(stats, {
       total: 1,
       updated: 1,
-      failed: 0,
+      invalid: 0,
     });
   });
 
@@ -92,7 +92,25 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.deepStrictEqual(stats, {
       total: 1,
       updated: 0,
-      failed: 0,
+      invalid: 0,
+    });
+  });
+
+  it("Vérifie que les lignes avec des données invalides sont rejetées", async () => {
+    let { db, logger } = await getComponents();
+    let stream = createStream(
+      `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"|||"ROBERT"|"HENRI"|"11111111"|"Licence professionnelle Management"|25/11/2019|13/9/2020||"Entreprise"|11111111100027|||"email@entreprise.fr"|"4651Z"|"HENRI"|"Jacques"|"CFA"|"22222222200014"|"1111111D "|"2222222D "|"31 rue des lilas 75001 Paris"
+"email@apprenti.fr"|||"ROBERT"|"HENRI"|"11111111"|"Licence professionnelle Management"||||"Entreprise"|11111111100027|||"email@entreprise.fr"|"4651Z"|"HENRI"|"Jacques"|"CFA"|"22222222200014"|"1111111D "|"2222222D "|"31 rue des lilas 75001 Paris"`
+    );
+
+    let stats = await updateContrats(db, logger, stream);
+
+    let count = await db.collection("apprentis").countDocuments();
+    assert.strictEqual(count, 0);
+    assert.deepStrictEqual(stats, {
+      total: 1,
+      updated: 0,
+      invalid: 1,
     });
   });
 });
