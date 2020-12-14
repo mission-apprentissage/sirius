@@ -21,7 +21,7 @@ const sanitizeDiacritics = (value) => {
 
 const sanitize = (value) => {
   let res = sanitizeDiacritics(value);
-  return isEmpty(res) ? null : res.replace(/[ .,]/g, "");
+  return isEmpty(res) ? null : res.replace(/[^\x00-\xA0]/g, "").replace(/[ .,]/g, "");
 };
 
 const getCodePostal = (adresse) => {
@@ -52,7 +52,7 @@ module.exports = (data) => {
     entreprise: {
       raisonSociale: sanitizeDiacritics(data.entreprise),
       siret: sanitize(data.siret_entreprise),
-      email: data.email_entreprise.replace(/ /g, ""),
+      email: data.email_entreprise ? data.email_entreprise.replace(/ /g, "") : null,
       tuteur:
         data.prenom_tuteur && data.nom_tuteur
           ? {
