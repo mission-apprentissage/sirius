@@ -10,16 +10,22 @@ module.exports = async (logger, apprentis, csvStream) => {
     invalid: 0,
   };
 
-  await parseCSV(csvStream, async (err, data) => {
+  let handleError = (err, json) => {
+    stats.invalid++;
+
+    let level = err.name === "ValidationError" ? "warn" : "error";
+    logger[level](`Unable to update ${JSON.stringify(json, null, 2)}`, err);
+  };
+
+  await parseCSV(csvStream, async (err, json) => {
     stats.total++;
+
     if (err) {
-      let level = err.name === "ValidationError" ? "warn" : "error";
-      logger[level](`Unable to import ${JSON.stringify(data, null, 2)}`, err);
-      stats.invalid++;
+      handleError(err, json);
     } else {
-      let email = data.apprenti.email;
+      let email = json.apprenti.email;
       let contrat = {
-        ...data.contrat,
+        ...json.contrat,
         questionnaires: [],
       };
 
@@ -38,7 +44,7 @@ module.exports = async (logger, apprentis, csvStream) => {
           creationDate: new Date(),
           cohorte: `cohorte_test_${moment().format("YYYY_MM_DD")}`,
           unsubscribe: false,
-          ...data.apprenti,
+          ...json.apprenti,
           contrats: [contrat],
         });
         stats.created++;

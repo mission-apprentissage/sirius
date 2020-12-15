@@ -8,12 +8,31 @@ module.exports = async (db, logger, csvStream) => {
     invalid: 0,
   };
 
+  let handleError = (err, json) => {
+    stats.invalid++;
+
+    let level = err.name === "ValidationError" ? "warn" : "error";
+    logger[level](`Unable to update ${JSON.stringify(json, null, 2)}`, err);
+  };
+
+  let markApprentiAsUpdated = (email) => {
+    stats.updated++;
+
+    return db.collection("apprentis").updateOne(
+      { email },
+      {
+        $set: {
+          updateDate: new Date(),
+        },
+      }
+    );
+  };
+
   await parseCSV(csvStream, async (err, json) => {
     stats.total++;
+
     if (err) {
-      let level = err.name === "ValidationError" ? "warn" : "error";
-      logger[level](`Unable to update ${JSON.stringify(json, null, 2)}`, err);
-      stats.invalid++;
+      handleError(err, json);
     } else {
       let { apprenti, contrat } = json;
       let results = await db.collection("apprentis").updateOne(
@@ -27,14 +46,17 @@ module.exports = async (db, logger, csvStream) => {
           $set: {
             prenom: apprenti.prenom,
             nom: apprenti.nom,
-            updateDate: new Date(),
             "contrats.$.cfa": contrat.cfa,
             "contrats.$.entreprise": contrat.entreprise,
             "contrats.$.formation": contrat.formation,
           },
         }
       );
-      stats.updated += getNbModifiedDocuments(results);
+
+      let nbDocumentUpdated = getNbModifiedDocuments(results);
+      if (nbDocumentUpdated > 0) {
+        markApprentiAsUpdated(apprenti.email);
+      }
     }
   });
 
