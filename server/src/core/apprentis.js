@@ -1,5 +1,8 @@
 module.exports = (db) => {
   return {
+    getApprenti: (email) => {
+      return db.collection("apprentis").findOne({ email });
+    },
     exists: async (email) => {
       let count = await db.collection("apprentis").countDocuments({ email });
       return count > 0;
