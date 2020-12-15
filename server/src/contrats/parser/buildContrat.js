@@ -1,27 +1,11 @@
 const moment = require("moment");
 const { isEmpty } = require("lodash");
+const sanitize = require("./sanitize");
 const parseDate = (value) => new Date(moment(value, "DD/MM/YYYY").format("YYYY-MM-DD") + "Z");
 
-const sanitizeDiacritics = (value) => {
-  let res = value
-    .replace(/´/g, "")
-    .replace(/ª/g, "")
-    .replace(/È/g, "é")
-    .replace(/Ë/g, "è")
-    .replace(/Ù/g, "ô")
-    .replace(/…/g, "É")
-    .replace(/Î/g, "ë")
-    .replace(/Ó/g, "î")
-    .replace(/ª´/g, "")
-    .replace(/b‚t/g, "bât")
-    .replace(/l\?/g, "l'")
-    .replace(/ \? /g, " ");
-  return isEmpty(res) ? null : res;
-};
-
-const sanitize = (value) => {
-  let res = sanitizeDiacritics(value);
-  return isEmpty(res) ? null : res.replace(/[^\x00-\xA0]/g, "").replace(/[ .,]/g, "");
+const sanitizeCode = (value) => {
+  let res = sanitize(value);
+  return isEmpty(res) ? null : res.replace(/[ .,]/g, "");
 };
 
 const getCodePostal = (adresse) => {
@@ -32,8 +16,8 @@ const getCodePostal = (adresse) => {
 module.exports = (data) => {
   return {
     formation: {
-      codeDiplome: sanitize(data.code_diplome),
-      intitule: sanitizeDiacritics(data.app_diplome),
+      codeDiplome: sanitizeCode(data.code_diplome),
+      intitule: sanitize(data.app_diplome),
       anneePromotion: data.annee_promotion || null,
       periode: {
         debut: parseDate(data.date_debut),
@@ -42,16 +26,16 @@ module.exports = (data) => {
     },
     cfa: {
       nom: data["etablissement/site_cfa"],
-      siret: sanitize(data.siret),
-      uaiResponsable: sanitize(data.code_uai_cfa),
-      uaiFormateur: sanitize(data.code_uai_site),
+      siret: sanitizeCode(data.siret),
+      uaiResponsable: sanitizeCode(data.code_uai_cfa),
+      uaiFormateur: sanitizeCode(data.code_uai_site),
       adresse: data.adresse_postale_cfa,
       codePostal: getCodePostal(data.adresse_postale_cfa),
     },
     rupture: data.date_rupture ? parseDate(data.date_rupture) : null,
     entreprise: {
-      raisonSociale: sanitizeDiacritics(data.entreprise),
-      siret: sanitize(data.siret_entreprise),
+      raisonSociale: sanitize(data.entreprise),
+      siret: sanitizeCode(data.siret_entreprise),
       email: data.email_entreprise ? data.email_entreprise.replace(/ /g, "") : null,
       tuteur:
         data.prenom_tuteur && data.nom_tuteur

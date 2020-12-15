@@ -29,7 +29,7 @@ integrationTests(__filename, ({ getComponents }) => {
 
     let stream = createStream(
       `"Email Apprenti"|"TÈlÈphone Apprenti"|"Portable Apprenti"|"Nom Apprenti"|"PrÈnom Apprenti"|"Code diplome"|"APP diplome"|"Date dÈbut"|"Date fin"|"Date rupture"|"Entreprise"|"Siret Entreprise"|"TÈlÈphone Entreprise"|"Portable Entreprise"|"Email Entreprise"|"Code APE/NAF"|"Nom tuteur"|"PrÈnom tuteur"|"Etablissement/site CFA"|"Siret"|"Code UAI CFA"|"Code UAI Site"|"Adresse Postale CFA"
-"john@doe.com"|||"Dodo"|"John"|"11111111"|"Licence professionnelle Management"|25/11/2019|13/9/2020||"Nouvelle Entreprise"|11111111100027|||"email@entreprise.fr"|"4651Z"|"HENRI"|"Jacques"|"CFA"|"22222222200014"|"1111111D "|"2222222D "|"31 rue des lilas 75001 Paris"`
+"john@doe.com"|||"RÈgis"|"John"|"11111111"|"Licence professionnelle Management"|25/11/2019|13/9/2020||"Nouvelle Entreprise"|11111111100027|||"email@entreprise.fr"|"4651Z"|"HENRI"|"Jacques"|"CFA"|"22222222200014"|"1111111D "|"2222222D "|"31 rue des lilas 75001 Paris"`
     );
     let stats = await updateContrats(db, logger, stream);
 
@@ -37,7 +37,7 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.ok(found.updateDate);
     assert.deepStrictEqual(omit(found, ["_id", "creationDate", "updateDate", "telephones", "cohorte"]), {
       prenom: "John",
-      nom: "Dodo",
+      nom: "Régis",
       email: "john@doe.com",
       unsubscribe: false,
       contrats: [
