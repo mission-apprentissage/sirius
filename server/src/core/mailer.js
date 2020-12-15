@@ -39,6 +39,7 @@ module.exports = (config, transporter = createTransporter(config.smtp)) => {
           help: "https://app.gitbook.com/@mission-apprentissage/s/general/les-nouveaux-services/anotea-apprentissage",
           unsubscribe: utils.getPublicUrl(`/api/unsubscribe/${email.to}`),
         },
+        ...(process.env.SIRIUS_SMTP_BCC ? { bcc: process.env.SIRIUS_SMTP_BCC } : {}),
       });
     },
   };
