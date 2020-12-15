@@ -59,40 +59,6 @@ integrationTests(__filename, ({ getComponents }) => {
     assert.strictEqual(emails.length, 1);
   });
 
-  it("Vérifie qu'on n'envoie pas de questionnaire de fin d'année si l'apprenti fini sa formation bientôt", async () => {
-    let emails = [];
-    let { db, workflow, apprentis, questionnaires } = await getComponents({
-      mailer: createFakeMailer({ calls: emails }),
-    });
-    await db.collection("apprentis").insertOne(
-      newApprenti({
-        email: "apprenti@domain.fr",
-        contrats: [
-          newContrat({
-            formation: {
-              periode: {
-                debut: moment().subtract(2, "years").toDate(),
-                fin: moment().add(11, "months").toDate(),
-              },
-            },
-          }),
-        ],
-      })
-    );
-
-    let stats = await sendQuestionnaires(db, logger, workflow, apprentis, questionnaires);
-
-    assert.deepStrictEqual(stats, {
-      sent: 1,
-      ignored: 0,
-      tuteur: 1,
-      failed: 0,
-    });
-
-    let found = await db.collection("apprentis").findOne();
-    assert.strictEqual(found.contrats[0].questionnaires.length, 1);
-  });
-
   it("Vérifie qu'on peut envoyer un questionnaire de fin de formation", async () => {
     let emails = [];
     let { db, workflow, apprentis, questionnaires } = await getComponents({

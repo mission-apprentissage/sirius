@@ -23,11 +23,7 @@ module.exports = (db) => {
           type = "finFormation";
         }
       } else if (isPremiereAnneeTerminee) {
-        if (
-          allQuestionnaires.length === 0 &&
-          moment(periode.fin).diff(moment(), "months") > 12 &&
-          !apprenti.unsubscribe
-        ) {
+        if (allQuestionnaires.length === 0 && !apprenti.unsubscribe) {
           type = "finAnnee";
         } else if (notYetSent("tuteur") && contrat.entreprise.email && !contrat.entreprise.unsubscribe) {
           type = "tuteur";
