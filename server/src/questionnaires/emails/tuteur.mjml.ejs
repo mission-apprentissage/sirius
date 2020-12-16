@@ -31,7 +31,7 @@
                     <mj-button background-color="#EC615B" align="center" font-size="14px" line-height="23px"
                                padding="30px"
                                border-radius="13px" font-weight="600"
-                               href="https://docs.google.com/forms/d/1j2OB40lWAn32lro2RNSUIwgAq3dw36_F4KGU_Ps9AeQ">
+                               href="<%= utils.getPublicUrl(`/api/questionnaires/${data.questionnaire.token}/getExternalQuestionnaireUrl`) %>">
                         <img alt="Icone boutton" class="left"
                              src="<%= utils.getPublicUrl(`/images/email-link-icon.png`) %>"/>
                         Donnez votre avis en 2 minutes
