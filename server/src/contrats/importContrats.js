@@ -33,11 +33,8 @@ module.exports = async (logger, apprentis, csvStream) => {
         if (await apprentis.hasContrat(email, contrat)) {
           stats.duplicated++;
         } else {
-          let previous = await apprentis.getApprenti(email);
-          if (moment(previous.creationDate).diff(moment(), "days") === 0) {
-            await apprentis.addContrat(email, contrat);
-            stats.updated++;
-          }
+          await apprentis.addContrat(email, contrat);
+          stats.updated++;
         }
       } else {
         await apprentis.create({
