@@ -35,6 +35,19 @@ module.exports = ({ db, config, questionnaires }) => {
     })
   );
 
+  router.get(
+    "/api/questionnaires/:token/getExternalQuestionnaireUrl",
+    tryCatch(async (req, res) => {
+      let { token } = req.params;
+      let { questionnaire } = await questionnaires.getQuestionnaireDetails(token);
+      if (questionnaire.type === "tuteur") {
+        await questionnaires.markAsClicked(token);
+        return res.redirect("https://docs.google.com/forms/d/1j2OB40lWAn32lro2RNSUIwgAq3dw36_F4KGU_Ps9AeQ");
+      }
+      throw new QuestionnaireNotAvailableError();
+    })
+  );
+
   router.put(
     "/api/questionnaires/:token/markAsClicked",
     tryCatch(async (req, res) => {
