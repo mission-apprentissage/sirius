@@ -15,7 +15,9 @@ services:
     mem_limit: 1g
     stdin_open: true
     volumes:
+      #Allows source folders to be watched and use node_modules from container
       - ./ui:/app
+      - /app/node_modules/
     build:
       args:
         - SIRIUS_ENV=dev
