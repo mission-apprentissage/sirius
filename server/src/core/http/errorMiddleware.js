@@ -1,4 +1,4 @@
-const Boom = require("boom");
+const Boom = require("@hapi/boom");
 
 module.exports = () => {
   // eslint-disable-next-line no-unused-vars
