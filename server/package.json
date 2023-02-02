@@ -31,7 +31,7 @@
     "http-errors": "2.0.0",
     "iconv-lite": "0.6.3",
     "lodash": "4.17.21",
-    "mjml": "4.7.1",
+    "mjml": "4.13.0",
     "moment": "2.29.1",
     "mongodb": "3.6.3",
     "nodemailer": "6.4.16",
