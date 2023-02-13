@@ -2,6 +2,7 @@ const express = require("express");
 const tryCatch = require("../core/http/tryCatchMiddleware");
 const validator = require("../core/http/validatorMiddleware");
 const createCampagneSchema = require("./validators");
+const { BasicError, CampagneNotFoundError } = require("../core/errors");
 
 const campagnesHttp = ({ campagnesController }) => {
   const router = express.Router();
@@ -22,7 +23,7 @@ const campagnesHttp = ({ campagnesController }) => {
       if (campagne.result.ok === 1) {
         return res.status(201).json(campagne.ops[0]);
       } else {
-        return res.status(500).json(campagne);
+        throw new BasicError();
       }
     })
   );
@@ -32,7 +33,7 @@ const campagnesHttp = ({ campagnesController }) => {
     tryCatch(async (req, res) => {
       const campagne = await campagnesController.getOne(req.params.id);
       if (!campagne) {
-        return res.status(404).json({ error: "Campagne not found" });
+        throw new CampagneNotFoundError();
       }
       return res.status(200).json(campagne);
     })
@@ -45,7 +46,7 @@ const campagnesHttp = ({ campagnesController }) => {
       if (campagne.deletedCount === 1) {
         return res.status(200).json({ message: "ok" });
       } else {
-        return res.status(404).json({ error: "Campagne not found" });
+        throw new CampagneNotFoundError();
       }
     })
   );

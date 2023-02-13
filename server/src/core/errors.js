@@ -33,6 +33,16 @@ const Errors = {
       return 400;
     }
   },
+
+  CampagneNotFoundError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || "Campagne inconnue", extra);
+    }
+
+    get status() {
+      return 404;
+    }
+  },
 };
 
-module.exports = Errors;
+module.exports = { ...Errors, BasicError };
