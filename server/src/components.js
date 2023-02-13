@@ -26,7 +26,7 @@ module.exports = async (options = {}) => {
     questionnaires: options.questionnaires || createQuestionnaires(db, mailer),
     apprentis: options.apprentis || createApprentis(db),
     entreprises: options.entreprises || createEntreprises(db),
-    campagnes: options.campagnes || createCampagnes(db),
+    campagnesController: options.campagnes || createCampagnes(db),
     close: () => client.close(),
   };
 };
