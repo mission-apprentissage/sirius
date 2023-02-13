@@ -27,6 +27,17 @@ const campagnesHttp = ({ campagnesController }) => {
     })
   );
 
+  router.get(
+    "/api/campagnes/:id",
+    tryCatch(async (req, res) => {
+      const campagne = await campagnesController.getOne(req.params.id);
+      if (!campagne) {
+        return res.status(404).json({ error: "Campagne not found" });
+      }
+      return res.status(200).json(campagne);
+    })
+  );
+
   return router;
 };
 
