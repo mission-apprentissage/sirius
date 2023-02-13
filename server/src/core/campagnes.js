@@ -13,5 +13,8 @@ module.exports = (db) => {
         .collection("campagnes")
         .insertOne({ nomCampagne, cfa, formation, startDate, endDate, questionnaire, questionnaireUI });
     },
+    deleteOne: (id) => {
+      return db.collection("campagnes").deleteOne({ _id: ObjectID(id) });
+    },
   };
 };

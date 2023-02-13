@@ -38,6 +38,18 @@ const campagnesHttp = ({ campagnesController }) => {
     })
   );
 
+  router.delete(
+    "/api/campagnes/:id",
+    tryCatch(async (req, res) => {
+      const campagne = await campagnesController.deleteOne(req.params.id);
+      if (campagne.deletedCount === 1) {
+        return res.status(200).json({ message: "ok" });
+      } else {
+        return res.status(404).json({ error: "Campagne not found" });
+      }
+    })
+  );
+
   return router;
 };
 
