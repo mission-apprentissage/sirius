@@ -6,9 +6,10 @@ httpTests(__filename, ({ startServer }) => {
   it("should return 200 and delete the campagne if it exists", async () => {
     const { httpClient, components } = await startServer();
     const campagne = newCampagne();
+
     const createdCampagne = await components.campagnesController.create(campagne);
 
-    const response = await httpClient.delete("/api/campagnes/" + createdCampagne.ops[0]._id);
+    const response = await httpClient.delete("/api/campagnes/" + createdCampagne.insertedId);
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, {

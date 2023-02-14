@@ -20,8 +20,8 @@ const campagnesHttp = ({ campagnesController }) => {
     validator(createCampagneSchema),
     tryCatch(async (req, res) => {
       const campagne = await campagnesController.create(req.body);
-      if (campagne.result.ok === 1) {
-        return res.status(201).json(campagne.ops[0]);
+      if (campagne.acknowledged) {
+        return res.status(201).json({ _id: campagne.insertedId, ...req.body });
       } else {
         throw new BasicError();
       }
