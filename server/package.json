@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": ">=12.11.0"
+    "node": ">=18.14.0"
   },
   "dependencies": {
     "joi": "17.7.0",
