@@ -41,6 +41,21 @@ let newContrat = (custom = {}) => {
   );
 };
 
+const newCampagne = (custom = {}) => {
+  return _.merge(
+    {
+      nomCampagne: "nom de la campagne",
+      cfa: "cfa1",
+      formation: "formation1",
+      startDate: moment(new Date()).format("YYYY-MM-DD"),
+      endDate: moment(new Date()).format("YYYY-MM-DD"),
+      questionnaire: {},
+      questionnaireUI: {},
+    },
+    custom
+  );
+};
+
 module.exports = {
   newContrat,
   newQuestionnaire: (custom = {}) => {
@@ -74,4 +89,5 @@ module.exports = {
       custom
     );
   },
+  newCampagne,
 };
