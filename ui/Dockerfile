@@ -1,4 +1,4 @@
-FROM node:14.15.0-stretch
+FROM node:18.14.0-alpine
 
 ARG SIRIUS_ENV
 ARG SIRIUS_HOTJAR_ID
