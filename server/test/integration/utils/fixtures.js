@@ -1,4 +1,4 @@
-const faker = require("faker"); // eslint-disable-line node/no-unpublished-require
+const faker = require("@faker-js/faker"); // eslint-disable-line node/no-unpublished-require
 const moment = require("moment");
 const _ = require("lodash");
 

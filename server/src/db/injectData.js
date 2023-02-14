@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const { newApprenti } = require("../../test/integration/utils/fixtures");
 const moment = require("moment");
-const faker = require("faker"); //eslint-disable-line node/no-unpublished-require
+const faker = require("@faker-js/faker"); //eslint-disable-line node/no-unpublished-require
 faker.locale = "fr";
 
 module.exports = async (db) => {
