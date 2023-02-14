@@ -7,7 +7,7 @@ const indexes = {
 const capLogs = async (db) => {
   let collections = await db.listCollections().toArray();
   if (!collections.map((c) => c.name).find((name) => name === "logs")) {
-    await db.createCollection("logs", { strict: true });
+    await db.createCollection("logs");
   }
 
   await db.command({ convertToCapped: "logs", size: 1000000000 });

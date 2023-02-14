@@ -8,7 +8,7 @@ httpTests(__filename, ({ startServer }) => {
     const campagne = newCampagne();
     const createdCampagne = await components.campagnesController.create(campagne);
 
-    const response = await httpClient.get("/api/campagnes/" + createdCampagne.ops[0]._id);
+    const response = await httpClient.get("/api/campagnes/" + createdCampagne.insertedId);
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, {
