@@ -9,7 +9,7 @@ export const opacity = keyframes`
 `;
 
 const Animation = styled.span`
-  font-size: 40rem;
+  font-size: 40px;
   color: ${primary};
   animation: ${opacity} 1.4s infinite both;
   animation-delay: ${(props) => props.delay};

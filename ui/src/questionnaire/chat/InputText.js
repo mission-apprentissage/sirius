@@ -29,12 +29,12 @@ const createRecognition = (resultCallback, endCallback) => {
 };
 
 const WrapperBox = styled(Box)`
-  margin: 17rem;
-  height: 45rem;
-  max-height: 45rem;
+  margin: 17px;
+  height: 45px;
+  max-height: 45px;
 
   input {
-    font-size: 16rem;
+    font-size: 16px;
     flex-grow: 1;
     background-color: #ececec;
     padding: 10px 20px;
@@ -55,7 +55,7 @@ const WrapperBox = styled(Box)`
       background-color: #ececec;
       border-bottom-right-radius: 18px;
       border-top-right-radius: 18px;
-      padding-right: 10rem;
+      padding-right: 10px;
     }
     &:active,
     &:focus {

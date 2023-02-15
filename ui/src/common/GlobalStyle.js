@@ -68,13 +68,11 @@ export default createGlobalStyle`
   /****** Typography *******/
   html {
     height: 100vh;
-    font-size: 1px; /*for using REM units*/
   }
 
   body {
     height: 100vh;
     font-family: "Public Sans", sans-serif;
-    font-size: 16rem;
     font-weight: 400;
     line-height: 1.3;
     color: #222;
@@ -86,11 +84,11 @@ export default createGlobalStyle`
   }
 
   .pt-1 {
-    padding-top: 10rem;
+    padding-top: 10px;
   }
   
   .pb-1 {
-    padding-bottom: 10rem;
+    padding-bottom: 10px;
   }
 
   .hide-sm {
