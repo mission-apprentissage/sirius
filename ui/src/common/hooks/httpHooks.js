@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { _get, _put } from "../../utils/httpClient";
+import { _delete, _get, _put } from "../../utils/httpClient";
 
 export function useGet(url) {
   const [response, setResponse] = useState({});
@@ -48,6 +48,35 @@ export function usePut(url, body) {
       setLoading(false);
     }
   }, [body, url]);
+
+  useEffect(() => {
+    async function run() {
+      return sendRequest();
+    }
+    run();
+  }, [url, sendRequest]);
+
+  return [response, loading, error];
+}
+
+export function useDelete(url) {
+  const [response, setResponse] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const sendRequest = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await _delete(url);
+      setResponse(response);
+      setLoading(false);
+    } catch (error) {
+      setError(error.json);
+      setLoading(false);
+    }
+  }, [url]);
 
   useEffect(() => {
     async function run() {
