@@ -1,7 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Questionnaire from "./questionnaire/Questionnaire";
-import Campagnes from "./campagnes/Campagnes";
+import ViewCampagnes from "./campagnes/ViewCampagnes";
+import AddCampagne from "./campagnes/AddCampagne";
+
 import PreviewEmail from "./questionnaire/PreviewEmail";
 import Home from "./Home";
 
@@ -10,7 +12,8 @@ function App() {
     <Router>
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route exact path="/campagnes" component={Campagnes} />
+        <Route exact path="/campagnes" component={ViewCampagnes} />
+        <Route exact path="/campagnes/ajout" component={AddCampagne} />
         <Route exact path="/questionnaires/:token" component={Questionnaire} />
         <Route exact path="/questionnaires/:token/previewEmail" component={PreviewEmail} />
         <Redirect to="/" />
