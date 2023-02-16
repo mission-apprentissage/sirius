@@ -7,8 +7,8 @@ import QuestionContext from "./QuestionContext";
 import { ChoiceButton } from "../../toolkit";
 
 const moveUpToDown = keyframes`
-  0% { transform: translateY(10rem); }
-  100% { transform: translateY(20rem); }
+  0% { transform: translateY(10px); }
+  100% { transform: translateY(20px); }
 `;
 
 const AnimatedIcon = styled(HandDownIcon)`

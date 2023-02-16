@@ -7,8 +7,8 @@ import background from "./common/icons/background.svg";
 
 const Pitch = styled(Item)`
   font-weight: 900;
-  font-size: 48rem;
-  line-height: 50rem;
+  font-size: 48px;
+  line-height: 50px;
   text-align: center;
   color: ${primary};
 `;

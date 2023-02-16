@@ -6,30 +6,30 @@ import avatar from "./icons/miley.svg";
 import React from "react";
 
 export const Entry = styled(Box)`
-  padding-top: 10rem;
-  padding-bottom: 10rem;
+  padding-top: 10px;
+  padding-bottom: 10px;
 `;
 
 export const Avatar = styled.img.attrs(() => ({ src: avatar, alt: "logo" }))`
-  padding-left: 5rem;
-  padding-right: 5rem;
+  padding-left: 5px;
+  padding-right: 5px;
   height: 38px;
-  font-size: 20rem;
+  font-size: 20px;
   color: ${primary};
 `;
 
 export const Bubble = styled.div.attrs(() => ({ className: "question" }))`
-  font-size: 16rem;
+  font-size: 16px;
   ${(props) => (props.animated ? appear : "")};
   background-color: #f7f3ff;
   padding: 20px;
   border-radius: 35px 35px 35px 10px;
-  line-height: 30rem;
+  line-height: 30px;
   color: #455a64;
 `;
 
 export const Message = styled.div`
-  //margin-bottom: 18rem;
+  //margin-bottom: 18px;
 `;
 
 export const Reponse = styled(Bubble)`
@@ -41,12 +41,12 @@ export const Reponse = styled(Bubble)`
 `;
 
 export const Highlight = styled.p`
-  margin-top: 10rem;
+  margin-top: 10px;
   font-weight: bolder;
 `;
 
 export const Tips = styled.div`
-  font-size: 12rem;
+  font-size: 12px;
   font-style: italic;
   font-weight: 300;
   color: #4c4c4c;

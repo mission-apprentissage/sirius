@@ -8,7 +8,7 @@ import { primary, secondary } from "./utils/colors";
 
 const wrapSVG = (icon) => {
   return ({ left, right, ...rest }) => (
-    <span style={{ paddingLeft: left ? "5rem" : 0, paddingRight: right ? "5rem" : 0 }} {...rest}>
+    <span style={{ paddingLeft: left ? "5px" : 0, paddingRight: right ? "5px" : 0 }} {...rest}>
       <FontAwesomeIcon icon={icon} />
     </span>
   );
@@ -16,7 +16,7 @@ const wrapSVG = (icon) => {
 
 export const MicroIcon = styled(wrapSVG(faMicrophoneAlt))`
   color: ${primary};
-  font-size: 25rem;
+  font-size: 25px;
   &.fading {
     color: ${secondary};
     ${fade};
@@ -26,5 +26,5 @@ export const MicroIcon = styled(wrapSVG(faMicrophoneAlt))`
 export const ChevronIcon = wrapSVG(faChevronRight);
 export const HandDownIcon = styled(wrapSVG(faHandPointDown))`
   color: ${primary};
-  font-size: 25rem;
+  font-size: 25px;
 `;

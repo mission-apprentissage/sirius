@@ -2,6 +2,7 @@ import "react-app-polyfill/ie11";
 import "react-app-polyfill/stable";
 import React from "react";
 import ReactDOM from "react-dom";
+import { ChakraProvider } from "@chakra-ui/react";
 import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
@@ -10,8 +11,10 @@ import GlobalStyle from "./common/GlobalStyle";
 
 ReactDOM.render(
   <React.StrictMode>
-    <GlobalStyle />
-    <App />
+    <ChakraProvider>
+      <GlobalStyle />
+      <App />
+    </ChakraProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
