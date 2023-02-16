@@ -23,6 +23,7 @@ import {
   Text,
   VStack,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon, ViewIcon, LinkIcon } from "@chakra-ui/icons";
 import { useHistory } from "react-router-dom";
@@ -36,8 +37,8 @@ const ViewCampagnes = () => {
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [campagneLinks, setCampagneLinks] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const history = useHistory();
+  const toast = useToast();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -50,10 +51,30 @@ const ViewCampagnes = () => {
   }, [campagnes]);
 
   useEffect(() => {
-    if (deletedCampagneId) {
-      _delete(`/api/campagnes/${deletedCampagneId}`);
+    const deleteCampagne = async () => {
+      const result = await _delete(`/api/campagnes/${deletedCampagneId}`);
+
+      if (result?.message === "ok") {
+        toast({
+          title: "Campagne supprimée",
+          description: "La campagne a bien été supprimée",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Une erreur est survenue",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
       const filteredDisplayedCampagne = displayedCampagnes.filter((campagne) => campagne._id !== deletedCampagneId);
       setDisplayedCampagnes(filteredDisplayedCampagne);
+    };
+    if (deletedCampagneId) {
+      deleteCampagne();
     }
   }, [deletedCampagneId]);
 

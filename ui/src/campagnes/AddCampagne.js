@@ -61,7 +61,7 @@ const Campagnes = () => {
         toast({
           description: "La campagne a été créée",
           status: "success",
-          duration: 15000,
+          duration: 5000,
           isClosable: true,
         });
         history.push(`/campagnes`);
