@@ -31,12 +31,12 @@ import QRCode from "react-qr-code";
 
 import { _delete } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
+import Breadcrumbs from "../Components/Breadcrumbs";
 
-const ViewCampagnes = () => {
+const ViewCampagnes = ({ crumbs }) => {
   const [deletedCampagneId, setDeletedCampagneId] = useState(null);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [campagneLinks, setCampagneLinks] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const history = useHistory();
   const toast = useToast();
 
@@ -81,6 +81,7 @@ const ViewCampagnes = () => {
   if (loading || error) return <Spinner size="xl" />;
   return (
     <>
+      {crumbs && <Breadcrumbs crumbs={crumbs} />}
       <Flex bg="gray.100" align="center" justify="center" minH="100vh">
         <TableContainer my={12}>
           <Table colorScheme="purple" size="md">
