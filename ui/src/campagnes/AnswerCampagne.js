@@ -5,9 +5,11 @@ import Form from "@rjsf/chakra-ui";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner } from "@chakra-ui/react";
 import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
+import CustomRadios from "../Components/Form/CustomRadios";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
+  RadioWidget: CustomRadios,
 };
 
 const AnswerCampagne = () => {
