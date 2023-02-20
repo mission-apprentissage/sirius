@@ -5,6 +5,7 @@ const logMiddleware = require("./logMiddleware");
 const errorMiddleware = require("./errorMiddleware");
 const tryCatch = require("./tryCatchMiddleware");
 const campagnesHttp = require("../../campagnes/campagnesHttp");
+const temoignagesHttp = require("../../temoignages/temoignagesHttp");
 const { version } = require("../../../package.json");
 
 module.exports = async (components) => {
@@ -16,6 +17,7 @@ module.exports = async (components) => {
   app.use(bodyParser.json());
   app.use(logMiddleware(logger));
   app.use(campagnesHttp(components));
+  app.use(temoignagesHttp(components));
   app.disable("x-powered-by");
 
   //Routes
