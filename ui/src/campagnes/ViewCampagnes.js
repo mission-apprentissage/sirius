@@ -162,13 +162,13 @@ const ViewCampagnes = ({ crumbs }) => {
               <Center>
                 <VStack spacing={6}>
                   <Text fontSize="lg">{campagneLinks.nomCampagne}</Text>
-                  <QRCode value={`${window.location.hostname}/questionnaires/${campagneLinks._id}`} fgColor="#6B46C1" />
+                  <QRCode value={`${window.location.hostname}/campagnes/${campagneLinks._id}`} fgColor="#6B46C1" />
                   <Link
-                    href={`${window.location.hostname}/questionnaires/${campagneLinks._id}`}
+                    href={`/campagnes/${campagneLinks._id}`}
                     isExternal
                     mt={4}
                     fontSize="sm"
-                  >{`${window.location.hostname}/questionnaires/${campagneLinks._id}`}</Link>
+                  >{`${window.location.hostname}/campagnes/${campagneLinks._id}`}</Link>
                 </VStack>
               </Center>
             )}
