@@ -29,7 +29,7 @@ const CustomCheckboxes = (props) => {
       <legend>{props.label}</legend>
       <Wrap spacing={2} direction="row" mt={4}>
         {options.map((option) => (
-          <CustomCheckbox {...getCheckboxProps({ value: option.value, label: option.label })} />
+          <CustomCheckbox key={option.value} {...getCheckboxProps({ value: option.value, label: option.label })} />
         ))}
       </Wrap>
     </fieldset>
