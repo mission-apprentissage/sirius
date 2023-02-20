@@ -6,10 +6,12 @@ import { useGet } from "../common/hooks/httpHooks";
 import { Spinner } from "@chakra-ui/react";
 import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
 import CustomRadios from "../Components/Form/CustomRadios";
+import CustomTextWidget from "../Components/Form/CustomTextWidget";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
   RadioWidget: CustomRadios,
+  TextWidget: CustomTextWidget,
 };
 
 const AnswerCampagne = () => {
