@@ -19,6 +19,19 @@ const newCampagne = (custom = {}) => {
   );
 };
 
+const newTemoignage = (custom = {}) => {
+  return _.merge(
+    {
+      campagneId: "5f9f1b9b9c9d4b0b8c8b8b8b",
+      reponses: {
+        test: faker.lorem.paragraph(),
+      },
+    },
+    custom
+  );
+};
+
 module.exports = {
   newCampagne,
+  newTemoignage,
 };
