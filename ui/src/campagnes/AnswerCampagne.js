@@ -16,6 +16,10 @@ const AnswerCampagne = () => {
   const { id } = useParams();
   const [campagne, loading, error] = useGet(`/api/campagnes/${id}`);
 
+  const onChangeHandler = (data) => {
+    console.log({ data });
+  };
+
   if (loading) return <Spinner size="xl" />;
 
   return (
@@ -24,9 +28,9 @@ const AnswerCampagne = () => {
       uiSchema={campagne.questionnaireUI}
       validator={validator}
       widgets={widgets}
-      onChange={() => console.log("changed")}
       onSubmit={() => console.log("submitted")}
       onError={() => console.log("errors")}
+      onChange={onChangeHandler}
     />
   );
 };
