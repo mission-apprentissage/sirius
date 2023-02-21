@@ -7,12 +7,14 @@ import { Spinner, useToast } from "@chakra-ui/react";
 import { _post } from "../utils/httpClient";
 import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
 import CustomRadios from "../Components/Form/CustomRadios";
-import CustomTextWidget from "../Components/Form/CustomTextWidget";
+import CustomText from "../Components/Form/CustomText";
+import CustomTextarea from "../Components/Form/CustomTextarea";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
   RadioWidget: CustomRadios,
-  TextWidget: CustomTextWidget,
+  TextWidget: CustomText,
+  TextareaWidget: CustomTextarea,
 };
 
 const AnswerCampagne = () => {
