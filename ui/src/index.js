@@ -26,6 +26,9 @@ export const theme = extendTheme({
             "input:not(:placeholder-shown) + label, .chakra-select__wrapper + label": {
               ...activeLabelStyles,
             },
+            "textarea:not(:placeholder-shown) + label, .chakra-select__wrapper + label": {
+              ...activeLabelStyles,
+            },
             label: {
               top: 0,
               left: 0,

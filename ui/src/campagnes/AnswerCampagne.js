@@ -8,11 +8,13 @@ import { _post } from "../utils/httpClient";
 import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
 import CustomRadios from "../Components/Form/CustomRadios";
 import CustomTextWidget from "../Components/Form/CustomTextWidget";
+import CustomTextarea from "../Components/Form/CustomTextarea";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
   RadioWidget: CustomRadios,
   TextWidget: CustomTextWidget,
+  TextareaWidget: CustomTextarea,
 };
 
 const AnswerCampagne = () => {
