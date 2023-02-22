@@ -20,7 +20,7 @@ httpTests(__filename, ({ startServer }) => {
     const { httpClient } = await startServer();
 
     const response = await httpClient.delete("/api/campagnes/5f7b5c5d0f7e0e2b9c7a7f1c");
-    console.log(response);
+
     assert.strictEqual(response.status, 404);
     assert.deepStrictEqual(response.data, {
       error: "Not Found",
