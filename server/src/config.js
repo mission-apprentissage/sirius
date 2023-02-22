@@ -12,6 +12,11 @@ module.exports = {
   },
   auth: {
     admin: env.get("SIRIUS_AUTH_ADMIN_PASSWORD").default("12345").asString(),
+    jwtSecret: env.get("SIRIUS_AUTH_JWT_SECRET").default("abcdef").asString(),
+    refreshTokenSecret: env.get("SIRIUS_AUTH_REFRESH_TOKEN_SECRET").default("abcdef").asString(),
+    sessionExpiry: env.get("SIRIUS_AUTH_SESSION_EXPIRY").default(900).asInt(),
+    refreshTokenExpiry: env.get("SIRIUS_AUTH_REFRESH_TOKEN_EXPIRY").default(2592000).asInt(),
+    cookieSecret: env.get("SIRIUS_AUTH_COOKIE_SECRET").default("abcdef").asString(),
   },
   smtp: {
     host: env.get("SIRIUS_SMTP_HOST").default("localhost").asString(),
