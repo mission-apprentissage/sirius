@@ -15,8 +15,8 @@ httpTests(__filename, ({ startServer }) => {
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, [
-      { ...campagne1, _id: response.data[0]._id },
-      { ...campagne2, _id: response.data[1]._id },
+      { ...campagne1, _id: response.data[0]._id, __v: 0 },
+      { ...campagne2, _id: response.data[1]._id, __v: 0 },
     ]);
   });
   it("should return 200 and an empty array if no campagne exist", async () => {

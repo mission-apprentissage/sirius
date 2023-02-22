@@ -1,5 +1,5 @@
 const { Readable } = require("stream");
-const createIndexes = require("../../../src/db/migration/createIndexes");
+const mongoose = require("mongoose");
 const connectToMongoDB = require("../../../src/core/connectToMongoDB");
 const config = require("../../../src/config");
 const createComponents = require("../../../src/components");
@@ -12,7 +12,6 @@ let connectToMongoForTests = async () => {
     let uri = config.mongodb.uri.split("sirius").join("sirius_test");
     clientHolder = await connectToMongoDB({ uri });
   }
-  await createIndexes(clientHolder.db());
   return clientHolder;
 };
 
@@ -27,8 +26,8 @@ module.exports = {
       ...options,
     });
   },
-  cleanAll: () => {
-    return clientHolder.db().dropDatabase();
+  cleanAll: async () => {
+    return mongoose.connection.db.dropDatabase();
   },
   randomize: (value) => `${value}-${Math.random().toString(36).substring(7)}`,
   createStream: (content) => {

@@ -7,7 +7,7 @@
     "start": "nodemon --ignore test/ src/cli.js http",
     "debug": "nodemon --inspect=0.0.0.0 --signal SIGINT --ignore test/ src/cli.js http",
     "cli": "node src/cli.js",
-    "test": "mocha --recursive --exit --timeout 5000 test/",
+    "test": "nodemon --exec \"mocha --recursive --exit --timeout 5000 test/\"",
     "test:coverage": "nyc --reporter=html --temp-dir .coverage/build --report-dir .coverage mocha --recursive --exit --timeout 500 test/"
   },
   "author": "",

@@ -13,6 +13,7 @@ httpTests(__filename, ({ startServer }) => {
     assert.deepStrictEqual(response.data, {
       ...temoignage,
       _id: response.data._id,
+      __v: 0,
     });
   });
   it("should return 400 and a validation error if the payload is not correct", async () => {
