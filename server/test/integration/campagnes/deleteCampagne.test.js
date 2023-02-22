@@ -9,7 +9,7 @@ httpTests(__filename, ({ startServer }) => {
 
     const createdCampagne = await components.campagnesController.create(campagne);
 
-    const response = await httpClient.delete("/api/campagnes/" + createdCampagne.insertedId);
+    const response = await httpClient.delete("/api/campagnes/" + createdCampagne._id);
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, {

@@ -8,12 +8,13 @@ httpTests(__filename, ({ startServer }) => {
     const campagne = newCampagne();
     const createdCampagne = await components.campagnesController.create(campagne);
 
-    const response = await httpClient.get("/api/campagnes/" + createdCampagne.insertedId);
+    const response = await httpClient.get("/api/campagnes/" + createdCampagne._id);
 
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.data, {
       ...campagne,
       _id: response.data._id,
+      __v: 0,
     });
   });
   it("should return 404 if campagne does not exist", async () => {

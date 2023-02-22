@@ -53,23 +53,23 @@ const slackStream = (env, slackWebhookUrl) => {
   };
 };
 
-const mongodbStream = (db, level) => {
+const mongodbStream = (Log, level) => {
   return {
     name: "mongodb",
     level,
-    stream: writeData((record) => db.collection("logs").insertOne(JSON.parse(record))),
+    stream: writeData((record) => Log.create(JSON.parse(record))),
   };
 };
 
 module.exports = (config, options = {}) => {
   let { env, slackWebhookUrl, log } = config;
   let { type, level } = log;
-  let { db } = options;
+  let { Log } = options;
 
   let streams = [
     ...(type === "console" ? [consoleStream(level)] : [jsonStream(level)]),
     ...(slackWebhookUrl ? [slackStream(env, slackWebhookUrl)] : []),
-    ...(db ? [mongodbStream(db, level)] : []),
+    ...(Log ? [mongodbStream(Log, level)] : []),
   ];
 
   return bunyan.createLogger({

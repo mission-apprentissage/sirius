@@ -1,20 +1,24 @@
-const { ObjectID } = require("mongodb");
-
-module.exports = (db) => {
+module.exports = (Campagne) => {
   return {
     getAll: () => {
-      return db.collection("campagnes").find({}).toArray();
+      return Campagne.find({});
     },
     getOne: (id) => {
-      return db.collection("campagnes").findOne({ _id: ObjectID(id) });
+      return Campagne.findOne({ _id: id });
     },
     create: ({ nomCampagne, cfa, formation, startDate, endDate, questionnaire, questionnaireUI }) => {
-      return db
-        .collection("campagnes")
-        .insertOne({ nomCampagne, cfa, formation, startDate, endDate, questionnaire, questionnaireUI });
+      return Campagne.create({
+        nomCampagne,
+        cfa,
+        formation,
+        startDate,
+        endDate,
+        questionnaire,
+        questionnaireUI,
+      });
     },
     deleteOne: (id) => {
-      return db.collection("campagnes").deleteOne({ _id: ObjectID(id) });
+      return Campagne.deleteOne({ _id: id });
     },
   };
 };
