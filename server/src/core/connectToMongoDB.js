@@ -1,11 +1,11 @@
-const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
 
 module.exports = ({ uri }) =>
   new Promise((resolve, reject) => {
     let retries = 0;
 
     const retry = (delay, maxRetries) => {
-      MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+      mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if (err) {
           if (retries > maxRetries) {
             reject(err);

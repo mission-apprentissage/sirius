@@ -1,7 +1,7 @@
-module.exports = (db) => {
+module.exports = (Temoignage) => {
   return {
     create: ({ campagneId, reponses }) => {
-      return db.collection("temoignages").insertOne({ campagneId, reponses });
+      return Temoignage.create({ campagneId, reponses });
     },
   };
 };

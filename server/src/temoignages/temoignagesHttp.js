@@ -12,8 +12,9 @@ const temoignagesHttp = ({ temoignagesController }) => {
     validator(createTemoignageSchema),
     tryCatch(async (req, res) => {
       const temoignage = await temoignagesController.create(req.body);
-      if (temoignage.acknowledged) {
-        return res.status(201).json({ _id: temoignage.insertedId, ...req.body });
+
+      if (temoignage._id) {
+        return res.status(201).json(temoignage);
       } else {
         throw new BasicError();
       }

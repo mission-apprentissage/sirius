@@ -5,22 +5,23 @@ const createCampagnes = require("./core/campagnes");
 const createTemoignages = require("./core/temoignages");
 const createLogger = require("./core/logger");
 const defaults = require("./config");
+const Campagne = require("./models/campagne");
+const Temoignage = require("./models/temoignage");
+const Log = require("./models/log");
 
 module.exports = async (options = {}) => {
   let config = options.config || defaults;
   let client = options.client || (await connectToMongoDB(config.mongodb));
-  let db = client.db();
   let mailer = options.mailer || createMailer(config);
-  let logger = options.logger || createLogger(config, { db });
+  let logger = options.logger || createLogger(config, { Log });
 
   return {
-    db,
     config,
     logger,
     mailer,
     httpClient: options.httpClient || creatHttpClient(logger),
-    campagnesController: options.campagnes || createCampagnes(db),
-    temoignagesController: options.temoignages || createTemoignages(db),
+    campagnesController: options.campagnes || createCampagnes(Campagne),
+    temoignagesController: options.temoignages || createTemoignages(Temoignage),
     close: () => client.close(),
   };
 };
