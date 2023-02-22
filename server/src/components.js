@@ -22,6 +22,6 @@ module.exports = async (options = {}) => {
     httpClient: options.httpClient || creatHttpClient(logger),
     campagnesController: options.campagnes || createCampagnes(Campagne),
     temoignagesController: options.temoignages || createTemoignages(Temoignage),
-    close: () => client.close(),
+    close: () => client.connection.close(),
   };
 };
