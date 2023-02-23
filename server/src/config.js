@@ -1,6 +1,6 @@
 const env = require("env-var");
 module.exports = {
-  env: env.get("SIRIUS_ENV").default("standalone").asString(),
+  env: env.get("SIRIUS_ENV").default("dev").asString(),
   publicUrl: env.get("SIRIUS_PUBLIC_URL").default("http://localhost:5000").asString(),
   slackWebhookUrl: env.get("SIRIUS_SLACK_WEBHOOK_URL").asString(),
   log: {
@@ -12,6 +12,11 @@ module.exports = {
   },
   auth: {
     admin: env.get("SIRIUS_AUTH_ADMIN_PASSWORD").default("12345").asString(),
+    jwtSecret: env.get("SIRIUS_AUTH_JWT_SECRET").default("abcdef").asString(),
+    refreshTokenSecret: env.get("SIRIUS_AUTH_REFRESH_TOKEN_SECRET").default("abcdef").asString(),
+    sessionExpiry: env.get("SIRIUS_AUTH_SESSION_EXPIRY").default(900).asInt(),
+    refreshTokenExpiry: env.get("SIRIUS_AUTH_REFRESH_TOKEN_EXPIRY").default(2592000).asInt(),
+    cookieSecret: env.get("SIRIUS_AUTH_COOKIE_SECRET").default("abcdef").asString(),
   },
   smtp: {
     host: env.get("SIRIUS_SMTP_HOST").default("localhost").asString(),

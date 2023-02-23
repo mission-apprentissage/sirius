@@ -24,6 +24,15 @@ const Errors = {
       return 404;
     }
   },
+  Unauthorized: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || "Unauthorized", extra);
+    }
+
+    get status() {
+      return 401;
+    }
+  },
 };
 
 module.exports = { ...Errors, BasicError };

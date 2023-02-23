@@ -4,10 +4,12 @@ const creatHttpClient = require("./core/httpClient");
 const createCampagnes = require("./core/campagnes");
 const createTemoignages = require("./core/temoignages");
 const createLogger = require("./core/logger");
+const createUsers = require("./core/users");
 const defaults = require("./config");
 const Campagne = require("./models/campagne");
 const Temoignage = require("./models/temoignage");
 const Log = require("./models/log");
+const Users = require("./models/user");
 
 module.exports = async (options = {}) => {
   let config = options.config || defaults;
@@ -22,6 +24,7 @@ module.exports = async (options = {}) => {
     httpClient: options.httpClient || creatHttpClient(logger),
     campagnesController: options.campagnes || createCampagnes(Campagne),
     temoignagesController: options.temoignages || createTemoignages(Temoignage),
-    close: () => client.close(),
+    usersController: options.users || createUsers(Users),
+    close: () => client.connection.close(),
   };
 };
