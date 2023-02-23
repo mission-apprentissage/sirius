@@ -6,7 +6,7 @@ const passport = require("passport");
 const logMiddleware = require("./logMiddleware");
 const errorMiddleware = require("./errorMiddleware");
 const tryCatch = require("./tryCatchMiddleware");
-const campagnesHttp = require("../../campagnes/campagnesHttp");
+const campagnes = require("../../routes/campagnes.routes");
 const temoignagesHttp = require("../../temoignages/temoignagesHttp");
 const usersHttp = require("../../users/usersHttp");
 const { version } = require("../../../package.json");
@@ -19,7 +19,7 @@ module.exports = async (components) => {
   app.use(bodyParser.json());
   app.use(cookieParser(config.auth.cookieSecret));
   app.use(logMiddleware(logger));
-  app.use(campagnesHttp(components));
+  app.use(campagnes(components));
   app.use(temoignagesHttp(components));
   app.use(usersHttp(components));
   app.use(passport.initialize());
