@@ -6,7 +6,6 @@ const temoignagesDAO = require("./dao/temoignages.dao.js");
 const createLogger = require("./core/logger");
 const usersDAO = require("./dao/users.dao");
 const defaults = require("./config");
-const Temoignage = require("./models/temoignage");
 const Log = require("./models/log");
 const Users = require("./models/user");
 
@@ -22,7 +21,7 @@ module.exports = async (options = {}) => {
     mailer,
     httpClient: options.httpClient || creatHttpClient(logger),
     campagnes: options.campagnes || campagnesDAO,
-    temoignagesController: options.temoignages || temoignagesDAO(Temoignage),
+    temoignages: options.temoignages || temoignagesDAO,
     usersController: options.users || usersDAO(Users),
     close: () => client.connection.close(),
   };

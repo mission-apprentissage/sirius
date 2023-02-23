@@ -1,7 +1,9 @@
-module.exports = (Temoignage) => {
-  return {
-    create: ({ campagneId, reponses }) => {
-      return Temoignage.create({ campagneId, reponses });
-    },
-  };
+const Temoignage = require("../models/temoignage.model");
+
+const create = async (temoignage) => {
+  return Temoignage.create(temoignage);
+};
+
+module.exports = {
+  create,
 };

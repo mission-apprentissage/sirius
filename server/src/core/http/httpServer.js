@@ -7,7 +7,7 @@ const logMiddleware = require("./logMiddleware");
 const errorMiddleware = require("./errorMiddleware");
 const tryCatch = require("./tryCatchMiddleware");
 const campagnes = require("../../routes/campagnes.routes");
-const temoignagesHttp = require("../../temoignages/temoignagesHttp");
+const temoignages = require("../../routes/temoignages.routes");
 const usersHttp = require("../../users/usersHttp");
 const { version } = require("../../../package.json");
 
@@ -19,8 +19,8 @@ module.exports = async (components) => {
   app.use(bodyParser.json());
   app.use(cookieParser(config.auth.cookieSecret));
   app.use(logMiddleware(logger));
-  app.use(campagnes(components));
-  app.use(temoignagesHttp(components));
+  app.use(campagnes());
+  app.use(temoignages());
   app.use(usersHttp(components));
   app.use(passport.initialize());
 
