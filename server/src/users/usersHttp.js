@@ -84,6 +84,42 @@ const usersHttp = ({ usersController }) => {
     res.json(req.user);
   });
 
+  router.get(
+    "/api/users/logout",
+    verifyUser,
+    tryCatch(async (req, res) => {
+      const { signedCookies = {} } = req;
+      const { refreshToken } = signedCookies;
+
+      if (!refreshToken) {
+        throw new Unauthorized();
+      }
+
+      const user = await usersController.getOne(req.user._id);
+
+      if (!user) {
+        throw new BasicError();
+      }
+
+      const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
+
+      if (tokenIndex === -1) {
+        throw new Unauthorized();
+      }
+
+      user.refreshToken.id(user.refreshToken[tokenIndex]._id).remove();
+
+      const updatedUser = await usersController.update(user);
+
+      if (!updatedUser._id) {
+        throw new BasicError();
+      }
+
+      res.clearCookie("refreshToken", COOKIE_OPTIONS);
+      res.send({ success: true });
+    })
+  );
+
   return router;
 };
 
