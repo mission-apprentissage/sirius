@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config");
 const usersDao = require("../dao/users.dao");
-const { getToken, getRefreshToken } = require("../core/utils/authenticateUtils");
+const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
 
 const loginUser = async (id) => {
   try {

@@ -1,5 +1,5 @@
 const { program: cli } = require("commander");
-const httpServer = require("./core/http/httpServer");
+const httpServer = require("./httpServer");
 const createComponents = require("./components");
 
 process.on("unhandledRejection", (e) => console.log("An unexpected error occurred", e));

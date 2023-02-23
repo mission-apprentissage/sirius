@@ -1,5 +1,5 @@
 const express = require("express");
-const validator = require("../core/http/validatorMiddleware");
+const validator = require("../middlewares/validatorMiddleware");
 const createTemoignageSchema = require("../validators/temoignages.validators");
 const { createTemoignage } = require("../controllers/temoignages.controller");
 

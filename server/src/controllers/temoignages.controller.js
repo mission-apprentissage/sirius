@@ -1,6 +1,6 @@
 const temoignagesService = require("../services/temoignages.service");
-const { BasicError } = require("../core/errors");
-const tryCatch = require("../core/http/tryCatchMiddleware");
+const { BasicError } = require("../errors");
+const tryCatch = require("../utils/tryCatch.utils");
 
 const createTemoignage = tryCatch(async (req, res) => {
   const { success, body } = await temoignagesService.createTemoignage(req.body);

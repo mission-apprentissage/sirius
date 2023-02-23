@@ -3,13 +3,13 @@ const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
-const logMiddleware = require("./logMiddleware");
-const errorMiddleware = require("./errorMiddleware");
-const tryCatch = require("./tryCatchMiddleware");
-const campagnes = require("../../routes/campagnes.routes");
-const temoignages = require("../../routes/temoignages.routes");
-const users = require("../../routes/users.routes");
-const { version } = require("../../../package.json");
+const logMiddleware = require("./middlewares/logMiddleware");
+const errorMiddleware = require("./middlewares/errorMiddleware");
+const tryCatch = require("./utils/tryCatch.utils");
+const campagnes = require("./routes/campagnes.routes");
+const temoignages = require("./routes/temoignages.routes");
+const users = require("./routes/users.routes");
+const { version } = require("../package.json");
 
 module.exports = async (components) => {
   const { db, config, logger } = components;
@@ -25,8 +25,8 @@ module.exports = async (components) => {
   app.use(passport.initialize());
 
   app.disable("x-powered-by");
-  require("../auth/strategies/jwtStrategy");
-  require("../auth/strategies/localStrategy");
+  require("./modules/authStrategies/jwtStrategy");
+  require("./modules/authStrategies/localStrategy");
 
   //Routes
   app.get(

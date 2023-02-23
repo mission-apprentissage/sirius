@@ -1,6 +1,6 @@
 const campagnesService = require("../services/campagnes.service");
-const { BasicError, CampagneNotFoundError } = require("../core/errors");
-const tryCatch = require("../core/http/tryCatchMiddleware");
+const { BasicError, CampagneNotFoundError } = require("../errors");
+const tryCatch = require("../utils/tryCatch.utils");
 
 const getCampagnes = tryCatch(async (req, res) => {
   const { success, body } = await campagnesService.getCampagnes();

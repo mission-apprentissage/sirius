@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
-const validator = require("../core/http/validatorMiddleware");
-const verifyUser = require("../core/http/verifyUserMiddleware");
+const validator = require("../middlewares/validatorMiddleware");
+const verifyUser = require("../middlewares/verifyUserMiddleware");
 const loginSchema = require("../validators/users.validators");
 const { loginUser, refreshTokenUser, getCurrentUser, logoutUser } = require("../controllers/users.controller");
 

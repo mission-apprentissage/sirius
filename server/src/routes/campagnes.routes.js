@@ -1,5 +1,5 @@
 const express = require("express");
-const validator = require("../core/http/validatorMiddleware");
+const validator = require("../middlewares/validatorMiddleware");
 const createCampagneSchema = require("../validators/campagnes.validators");
 const { getCampagnes, getCampagne, createCampagne, deleteCampagne } = require("../controllers/campagnes.controller");
 

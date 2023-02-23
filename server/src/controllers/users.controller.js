@@ -1,7 +1,7 @@
 const usersService = require("../services/users.service");
-const { BasicError, UnauthorizedError } = require("../core/errors");
-const tryCatch = require("../core/http/tryCatchMiddleware");
-const { COOKIE_OPTIONS } = require("../core/utils/authenticateUtils");
+const { BasicError, UnauthorizedError } = require("../errors");
+const tryCatch = require("../utils/tryCatch.utils");
+const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
 
 const loginUser = tryCatch(async (req, res) => {
   const { success, body } = await usersService.loginUser(req.user._id);
