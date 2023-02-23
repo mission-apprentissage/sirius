@@ -54,7 +54,7 @@ const ViewCampagnes = ({ crumbs }) => {
     const deleteCampagne = async () => {
       const result = await _delete(`/api/campagnes/${deletedCampagneId}`);
 
-      if (result?.message === "ok") {
+      if (result?.deletedCount) {
         toast({
           title: "Campagne supprimée",
           description: "La campagne a bien été supprimée",
