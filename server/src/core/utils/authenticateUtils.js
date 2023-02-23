@@ -1,4 +1,3 @@
-const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const config = require("../../config");
 
@@ -27,6 +26,4 @@ const getRefreshToken = (user) => {
   return refreshToken;
 };
 
-const verifyUser = passport.authenticate("jwt", { session: false });
-
-module.exports = { COOKIE_OPTIONS, getToken, getRefreshToken, verifyUser };
+module.exports = { COOKIE_OPTIONS, getToken, getRefreshToken };
