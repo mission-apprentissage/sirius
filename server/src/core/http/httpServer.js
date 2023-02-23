@@ -8,7 +8,7 @@ const errorMiddleware = require("./errorMiddleware");
 const tryCatch = require("./tryCatchMiddleware");
 const campagnes = require("../../routes/campagnes.routes");
 const temoignages = require("../../routes/temoignages.routes");
-const usersHttp = require("../../users/usersHttp");
+const users = require("../../routes/users.routes");
 const { version } = require("../../../package.json");
 
 module.exports = async (components) => {
@@ -21,7 +21,7 @@ module.exports = async (components) => {
   app.use(logMiddleware(logger));
   app.use(campagnes());
   app.use(temoignages());
-  app.use(usersHttp(components));
+  app.use(users());
   app.use(passport.initialize());
 
   app.disable("x-powered-by");

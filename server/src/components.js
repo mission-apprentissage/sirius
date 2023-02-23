@@ -7,7 +7,6 @@ const createLogger = require("./core/logger");
 const usersDAO = require("./dao/users.dao");
 const defaults = require("./config");
 const Log = require("./models/log");
-const Users = require("./models/user");
 
 module.exports = async (options = {}) => {
   let config = options.config || defaults;
@@ -22,7 +21,7 @@ module.exports = async (options = {}) => {
     httpClient: options.httpClient || creatHttpClient(logger),
     campagnes: options.campagnes || campagnesDAO,
     temoignages: options.temoignages || temoignagesDAO,
-    usersController: options.users || usersDAO(Users),
+    users: options.users || usersDAO,
     close: () => client.connection.close(),
   };
 };
