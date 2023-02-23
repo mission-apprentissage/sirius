@@ -1,10 +1,12 @@
 const express = require("express");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 const tryCatch = require("../core/http/tryCatchMiddleware");
 const validator = require("../core/http/validatorMiddleware");
-const { BasicError } = require("../core/errors");
+const { BasicError, Unauthorized } = require("../core/errors");
 const { COOKIE_OPTIONS, getToken, getRefreshToken } = require("../core/utils/authenticateUtils");
 const loginSchema = require("./validators");
+const config = require("../config");
 
 const usersHttp = ({ usersController }) => {
   const router = express.Router();
@@ -29,6 +31,51 @@ const usersHttp = ({ usersController }) => {
       } else {
         throw new BasicError();
       }
+    })
+  );
+
+  router.post(
+    "/api/users/refreshToken/",
+    tryCatch(async (req, res) => {
+      const { signedCookies = {} } = req;
+      const { refreshToken } = signedCookies;
+
+      if (!refreshToken) {
+        throw new Unauthorized();
+      }
+
+      const payload = jwt.verify(refreshToken, config.auth.refreshTokenSecret);
+
+      if (!payload) {
+        throw new Unauthorized();
+      }
+
+      const userId = payload._id;
+
+      const user = await usersController.getOne(userId);
+
+      if (!user) {
+        throw new Unauthorized();
+      }
+
+      const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
+
+      if (tokenIndex === -1) {
+        throw new Unauthorized();
+      }
+
+      const token = getToken({ _id: userId });
+      const newRefreshToken = getRefreshToken({ _id: userId });
+      user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
+
+      const updatedUser = await usersController.update(user);
+
+      if (!updatedUser._id) {
+        throw new BasicError();
+      }
+
+      res.cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS);
+      res.json({ success: true, token });
     })
   );
 
