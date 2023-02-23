@@ -1,15 +1,12 @@
-const connectToMongoDB = require("./core/connectToMongoDB");
-const createMailer = require("./core/mailer");
-const creatHttpClient = require("./core/httpClient");
-const createCampagnes = require("./core/campagnes");
-const createTemoignages = require("./core/temoignages");
-const createLogger = require("./core/logger");
-const createUsers = require("./core/users");
+const connectToMongoDB = require("./modules/connectToMongoDB");
+const createMailer = require("./modules/mailer");
+const creatHttpClient = require("./modules/httpClient");
+const campagnesDAO = require("./dao/campagnes.dao");
+const temoignagesDAO = require("./dao/temoignages.dao.js");
+const createLogger = require("./modules/logger");
+const usersDAO = require("./dao/users.dao");
 const defaults = require("./config");
-const Campagne = require("./models/campagne");
-const Temoignage = require("./models/temoignage");
 const Log = require("./models/log");
-const Users = require("./models/user");
 
 module.exports = async (options = {}) => {
   let config = options.config || defaults;
@@ -22,9 +19,9 @@ module.exports = async (options = {}) => {
     logger,
     mailer,
     httpClient: options.httpClient || creatHttpClient(logger),
-    campagnesController: options.campagnes || createCampagnes(Campagne),
-    temoignagesController: options.temoignages || createTemoignages(Temoignage),
-    usersController: options.users || createUsers(Users),
+    campagnes: options.campagnes || campagnesDAO,
+    temoignages: options.temoignages || temoignagesDAO,
+    users: options.users || usersDAO,
     close: () => client.connection.close(),
   };
 };

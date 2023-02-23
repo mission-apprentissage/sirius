@@ -1,6 +1,6 @@
 const axiosist = require("axiosist"); // eslint-disable-line node/no-unpublished-require
 const { cleanAll, getComponents } = require("./testUtils.js");
-const server = require("../../../src/core/http/httpServer");
+const server = require("../../../src/httpServer");
 
 let startServer = async (options) => {
   let components = await getComponents(options);

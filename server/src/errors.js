@@ -24,7 +24,7 @@ const Errors = {
       return 404;
     }
   },
-  Unauthorized: class NotFoundError extends BasicError {
+  UnauthorizedError: class NotFoundError extends BasicError {
     constructor(message, extra) {
       super(message || "Unauthorized", extra);
     }

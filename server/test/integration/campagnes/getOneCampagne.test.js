@@ -6,7 +6,7 @@ httpTests(__filename, ({ startServer }) => {
   it("should return 200 with one campagne if it exists", async () => {
     const { httpClient, components } = await startServer();
     const campagne = newCampagne();
-    const createdCampagne = await components.campagnesController.create(campagne);
+    const createdCampagne = await components.campagnes.create(campagne);
 
     const response = await httpClient.get("/api/campagnes/" + createdCampagne._id);
 

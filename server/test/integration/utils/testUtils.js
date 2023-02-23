@@ -1,6 +1,6 @@
 const { Readable } = require("stream");
 const mongoose = require("mongoose");
-const connectToMongoDB = require("../../../src/core/connectToMongoDB");
+const connectToMongoDB = require("../../../src/modules/connectToMongoDB");
 const config = require("../../../src/config");
 const createComponents = require("../../../src/components");
 const logger = require("./fakeLogger.js");

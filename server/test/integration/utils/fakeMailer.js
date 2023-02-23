@@ -1,4 +1,4 @@
-const mailer = require("../../../src/core/mailer");
+const mailer = require("../../../src/modules/mailer");
 const config = require("../../../src/config");
 
 module.exports = (options = {}) => {

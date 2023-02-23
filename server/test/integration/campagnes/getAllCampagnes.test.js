@@ -8,8 +8,8 @@ httpTests(__filename, ({ startServer }) => {
     const campagne1 = newCampagne();
     const campagne2 = newCampagne({ nomCampagne: "Campagne 2" });
 
-    await components.campagnesController.create(campagne1);
-    await components.campagnesController.create(campagne2);
+    await components.campagnes.create(campagne1);
+    await components.campagnes.create(campagne2);
 
     const response = await httpClient.get("/api/campagnes/");
 
