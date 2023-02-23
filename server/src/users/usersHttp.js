@@ -7,6 +7,7 @@ const { BasicError, Unauthorized } = require("../core/errors");
 const { COOKIE_OPTIONS, getToken, getRefreshToken } = require("../core/utils/authenticateUtils");
 const loginSchema = require("./validators");
 const config = require("../config");
+const verifyUser = require("../core/http/verifyUserMiddleware");
 
 const usersHttp = ({ usersController }) => {
   const router = express.Router();
@@ -78,6 +79,10 @@ const usersHttp = ({ usersController }) => {
       res.json({ success: true, token });
     })
   );
+
+  router.get("/api/users/me", verifyUser, (req, res) => {
+    res.json(req.user);
+  });
 
   return router;
 };
