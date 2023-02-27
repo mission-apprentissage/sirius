@@ -10,7 +10,7 @@ const COOKIE_OPTIONS = {
   secure: !isDev,
   signed: true,
   maxAge: refreshTokenExpiry * 1000,
-  sameSite: "none",
+  sameSite: "strict",
 };
 
 const getToken = (user) => {

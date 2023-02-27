@@ -23,13 +23,9 @@ const AnswerCampagne = () => {
   const [campagne, loading, error] = useGet(`/api/campagnes/${id}`);
   const toast = useToast();
 
-  const onChangeHandler = (data) => {
-    console.log({ data });
-  };
-
   const onSubmitHandler = async ({ formData }) => {
     const result = await _post(`/api/temoignages/`, { reponses: formData, campagneId: id });
-    if (result._id) {
+    if (result.status === 201) {
       history.push(`/temoignages/succes`);
     } else {
       toast({
@@ -52,7 +48,6 @@ const AnswerCampagne = () => {
       widgets={widgets}
       onSubmit={onSubmitHandler}
       onError={() => console.log("errors")}
-      onChange={onChangeHandler}
     />
   );
 };
