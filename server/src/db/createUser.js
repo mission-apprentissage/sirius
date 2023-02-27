@@ -1,5 +1,5 @@
-const User = require("../models/user");
-const { getToken, getRefreshToken } = require("../core/utils/authenticateUtils");
+const User = require("../models/user.model");
+const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
 
 module.exports = async (username, password, firstName, lastName) => {
   User.register(new User({ username: username }), password, (err, user) => {

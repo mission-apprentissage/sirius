@@ -1,5 +1,5 @@
 const { program: cli } = require("commander");
-const runScript = require("../core/runScript");
+const runScript = require("../modules/runScript");
 const migrateDb = require("./migrateDb");
 const injectData = require("./injectData");
 const createUser = require("./createUser");
