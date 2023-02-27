@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const passportLocalMongoose = require("passport-local-mongoose");
+const { STRATEGIES } = require("../middlewares/verifyUserMiddleware");
 
 const Session = new mongoose.Schema({
   refreshToken: {
@@ -19,7 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   authStrategy: {
     type: String,
-    default: "local",
+    default: STRATEGIES.local,
   },
   refreshToken: {
     type: [Session],
