@@ -108,7 +108,7 @@ const ViewCampagnes = ({ crumbs }) => {
               </Tr>
             </Thead>
             <Tbody>
-              {displayedCampagnes.map((campagne) => (
+              {displayedCampagnes?.map((campagne) => (
                 <Tr key={campagne._id}>
                   <Td>{campagne.nomCampagne}</Td>
                   <Td>{campagne.cfa}</Td>

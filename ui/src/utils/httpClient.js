@@ -54,7 +54,7 @@ export const _post = (path, body) => {
     method: "POST",
     headers: getHeaders(),
     body: JSON.stringify(body),
-  }).then((res) => handleResponse(path, res));
+  }).then((res) => res);
 };
 
 export const _put = (path, body = {}) => {
