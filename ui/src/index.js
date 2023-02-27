@@ -8,6 +8,7 @@ import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
 import * as Hotjar from "./utils/hotjar";
 import GlobalStyle from "./common/GlobalStyle";
+import { UserProvider } from "./context/UserContext";
 
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
@@ -53,7 +54,9 @@ ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <GlobalStyle />
-      <App />
+      <UserProvider>
+        <App />
+      </UserProvider>
     </ChakraProvider>
   </React.StrictMode>,
   document.getElementById("root")
