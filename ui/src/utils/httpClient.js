@@ -49,12 +49,13 @@ export const _get = (path) => {
   }).then((res) => handleResponse(path, res));
 };
 
-export const _post = (path, body) => {
+export const _post = async (path, body) => {
   return fetch(`${path}`, {
     method: "POST",
     headers: getHeaders(),
     body: JSON.stringify(body),
-  }).then((res) => res);
+    credentials: "include",
+  }).then((res) => res.json());
 };
 
 export const _put = (path, body = {}) => {

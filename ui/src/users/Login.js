@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   Flex,
   Heading,
@@ -19,6 +19,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useHistory } from "react-router-dom";
 import { _post } from "../utils/httpClient";
+import { UserContext } from "../context/UserContext";
 
 const validationSchema = Yup.object({
   username: Yup.string().email("Le champ n'est pas au bon format").required("Ce champ est obligatoire"),
@@ -29,6 +30,8 @@ const Login = () => {
   const history = useHistory();
   const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userContext, setUserContext] = useContext(UserContext);
 
   const handleShowClick = () => setShowPassword(!showPassword);
 
@@ -43,8 +46,39 @@ const Login = () => {
       questionnaireUI: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      console.log({ values });
+    onSubmit: async ({ username, password }) => {
+      setIsSubmitting(true);
+      const result = await _post(`/api/users/login`, { username, password });
+      if (result.success) {
+        toast({
+          title: "Vous êtes connecté",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        setUserContext((oldValues) => {
+          return { ...oldValues, token: result.token };
+        });
+        setIsSubmitting(false);
+        history.push("/campagnes");
+      } else if (result.statusCode === 401) {
+        toast({
+          title: "Une erreur est survenue",
+          description: "Mauvais email ou mot de passe",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
+      } else if (result.statusCode === 500) {
+        toast({
+          title: "Une erreur est survenue",
+          description: "Merci de réessayer",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
+      }
     },
   });
 
@@ -96,7 +130,14 @@ const Login = () => {
                 </InputGroup>
                 <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
               </FormControl>
-              <Button borderRadius="md" type="submit" variant="solid" colorScheme="purple" width="full">
+              <Button
+                borderRadius="md"
+                type="submit"
+                variant="solid"
+                colorScheme="purple"
+                width="full"
+                isLoading={isSubmitting}
+              >
                 Connexion
               </Button>
             </Stack>
