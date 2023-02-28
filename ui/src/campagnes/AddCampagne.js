@@ -56,7 +56,7 @@ const Campagnes = ({ crumbs }) => {
         questionnaire: JSON.parse(values.questionnaire),
         questionnaireUI: JSON.parse(values.questionnaireUI),
       });
-      if (result.status === 201) {
+      if (result._id) {
         toast({
           description: "La campagne a été créée",
           status: "success",

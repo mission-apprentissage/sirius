@@ -25,7 +25,7 @@ const AnswerCampagne = () => {
 
   const onSubmitHandler = async ({ formData }) => {
     const result = await _post(`/api/temoignages/`, { reponses: formData, campagneId: id });
-    if (result.status === 201) {
+    if (result._id) {
       history.push(`/temoignages/succes`);
     } else {
       toast({
