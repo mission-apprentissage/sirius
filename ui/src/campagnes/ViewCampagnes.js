@@ -75,7 +75,7 @@ const ViewCampagnes = () => {
     if (deletedCampagneId) {
       deleteCampagne();
     }
-  }, [deletedCampagneId]);
+  }, [deletedCampagneId, displayedCampagnes, toast]);
 
   if (loading || error) return <Spinner size="xl" />;
   return (
