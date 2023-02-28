@@ -1,7 +1,13 @@
 const express = require("express");
 const validator = require("../middlewares/validatorMiddleware");
 const createCampagneSchema = require("../validators/campagnes.validators");
-const { getCampagnes, getCampagne, createCampagne, deleteCampagne } = require("../controllers/campagnes.controller");
+const {
+  getCampagnes,
+  getCampagne,
+  createCampagne,
+  deleteCampagne,
+  updateCampagne,
+} = require("../controllers/campagnes.controller");
 
 const campagnes = () => {
   const router = express.Router();
@@ -20,6 +26,10 @@ const campagnes = () => {
 
   router.delete("/api/campagnes/:id", (req, res, next) => {
     deleteCampagne(req, res, next);
+  });
+
+  router.put("/api/campagnes/:id", validator(createCampagneSchema), (req, res, next) => {
+    updateCampagne(req, res, next);
   });
 
   return router;
