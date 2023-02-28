@@ -17,9 +17,10 @@ import {
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
+import Miley from "../assets/images/miley.png";
 
 const validationSchema = Yup.object({
   username: Yup.string().email("Le champ n'est pas au bon format").required("Ce champ est obligatoire"),
@@ -49,6 +50,7 @@ const Login = () => {
     onSubmit: async ({ username, password }) => {
       setIsSubmitting(true);
       const result = await _post(`/api/users/login`, { username, password });
+
       if (result.success) {
         toast({
           title: "Vous êtes connecté",
@@ -82,17 +84,12 @@ const Login = () => {
     },
   });
 
+  if (!userContext.loading && userContext.token) return <Redirect to="/campagnes" />;
+
   return (
-    <Flex
-      flexDirection="column"
-      width="100wh"
-      height="100vh"
-      backgroundColor="gray.100"
-      justifyContent="center"
-      alignItems="center"
-    >
+    <Flex flexDirection="column" backgroundColor="gray.100" justifyContent="center" alignItems="center" w="100%">
       <Stack flexDir="column" mb="2" justifyContent="center" alignItems="center">
-        <Avatar bg="purple.500" />
+        <Avatar size="lg" src={Miley} alt="" />
         <Heading color="purple.400">Bienvenue</Heading>
         <Box maxW="400px">
           <form onSubmit={formik.handleSubmit}>

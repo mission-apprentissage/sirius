@@ -14,7 +14,7 @@ function App() {
             <Route exact path={path} key={key} component={(props) => <Component {...props} />} />
           );
         })}
-        <Redirect to="/" />
+        <Redirect to="/connexion" />
       </Switch>
     </Router>
   );
