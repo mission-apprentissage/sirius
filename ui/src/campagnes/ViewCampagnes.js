@@ -25,7 +25,7 @@ import {
   Link,
   useToast,
 } from "@chakra-ui/react";
-import { AddIcon, DeleteIcon, ViewIcon, LinkIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon } from "@chakra-ui/icons";
 import { useHistory } from "react-router-dom";
 import QRCode from "react-qr-code";
 
@@ -80,9 +80,9 @@ const ViewCampagnes = () => {
   if (loading || error) return <Spinner size="xl" />;
   return (
     <>
-      <Flex bg="gray.100" align="center" justify="center">
-        <TableContainer my={12}>
-          <Table colorScheme="purple" size="md">
+      <Flex align="center" justify="center">
+        <TableContainer my={12} p={6} rounded="md" w="100%" boxShadow="md" bg="white">
+          <Table size="md">
             <TableCaption>
               <Center>
                 <IconButton
@@ -131,6 +131,14 @@ const ViewCampagnes = () => {
                         setCampagneLinks(campagne);
                         onOpen();
                       }}
+                      mx={2}
+                    />
+                    <IconButton
+                      aria-label="Modifier la campagne"
+                      variant="outline"
+                      colorScheme="purple"
+                      icon={<EditIcon />}
+                      onClick={() => history.push(`/campagnes/${campagne._id}/edition`)}
                       mx={2}
                     />
                     <IconButton

@@ -58,12 +58,13 @@ export const _post = async (path, body) => {
   }).then((res) => res.json());
 };
 
-export const _put = (path, body = {}) => {
+export const _put = async (path, body = {}) => {
   return fetch(`${path}`, {
     method: "PUT",
     headers: getHeaders(),
     body: JSON.stringify(body),
-  }).then((res) => handleResponse(path, res));
+    credentials: "include",
+  }).then((res) => res.json());
 };
 
 export const _delete = (path) => {

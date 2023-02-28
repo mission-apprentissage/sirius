@@ -1,6 +1,8 @@
 import React from "react";
-import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useFormik } from "formik";
+import { useToast } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 import {
   Box,
   Button,
@@ -19,12 +21,10 @@ import {
   AccordionIcon,
   Text,
   Textarea,
-  useToast,
 } from "@chakra-ui/react";
-import { useHistory } from "react-router-dom";
-import { _post } from "../utils/httpClient";
+import { _post, _put } from "../utils/httpClient";
 
-const validationSchema = Yup.object({
+export const validationSchema = Yup.object({
   nomCampagne: Yup.string().required("Ce champ est obligatoire"),
   cfa: Yup.string().required("Ce champ est obligatoire"),
   formation: Yup.string().required("Ce champ est obligatoire"),
@@ -34,46 +34,72 @@ const validationSchema = Yup.object({
   questionnaireUI: Yup.string().required("Ce champ est obligatoire"),
 });
 
-const Campagnes = ({ crumbs }) => {
+const submitHandler = async (values, editedCampagneId) => {
+  const isEdition = !!editedCampagneId;
+
+  if (isEdition) {
+    const result = await _put(`/api/campagnes/${editedCampagneId}`, {
+      ...values,
+      questionnaire: JSON.parse(values.questionnaire),
+      questionnaireUI: JSON.parse(values.questionnaireUI),
+    });
+
+    return result.acknowledged
+      ? {
+          success: true,
+          message: "La campagne a été mise à jour",
+        }
+      : {
+          success: false,
+        };
+  } else {
+    const result = await _post(`/api/campagnes/`, {
+      ...values,
+      questionnaire: JSON.parse(values.questionnaire),
+      questionnaireUI: JSON.parse(values.questionnaireUI),
+    });
+
+    return result._id
+      ? {
+          success: true,
+          message: "La campagne a été créée",
+        }
+      : {
+          success: false,
+        };
+  }
+};
+
+const CampagneForm = ({ campagne = null }) => {
   const history = useHistory();
   const toast = useToast();
-
+  console.log({ campagne });
   const formik = useFormik({
     initialValues: {
-      nomCampagne: "",
-      cfa: "",
-      formation: "",
-      startDate: "",
-      endDate: "",
-      questionnaire: "",
-      questionnaireUI: "",
+      nomCampagne: campagne ? campagne.nomCampagne : "",
+      cfa: campagne ? campagne.cfa : "",
+      formation: campagne ? campagne.formation : "",
+      startDate: campagne ? campagne.startDate : "",
+      endDate: campagne ? campagne.endDate : "",
+      questionnaire: campagne ? JSON.stringify(campagne.questionnaire) : "",
+      questionnaireUI: campagne ? JSON.stringify(campagne.questionnaireUI) : "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      const result = await _post(`/api/campagnes/`, {
-        ...values,
-        questionnaire: JSON.parse(values.questionnaire),
-        questionnaireUI: JSON.parse(values.questionnaireUI),
+      const { success, message } = await submitHandler(values, campagne._id);
+
+      toast({
+        description: success ? message : "Une erreur est survenue",
+        status: success ? "success" : "error",
+        duration: 5000,
+        isClosable: true,
       });
-      if (result._id) {
-        toast({
-          description: "La campagne a été créée",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-        history.push(`/campagnes`);
-      } else {
-        toast({
-          title: "Une erreur est survenue",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+
+      if (success) {
+        history.push("/campagnes");
       }
     },
   });
-
   return (
     <>
       <Flex align="center" justify="center" m="auto" width="100%">
@@ -220,4 +246,4 @@ const Campagnes = ({ crumbs }) => {
   );
 };
 
-export default Campagnes;
+export default CampagneForm;
