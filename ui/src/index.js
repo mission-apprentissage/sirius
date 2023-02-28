@@ -9,6 +9,7 @@ import * as serviceWorker from "./serviceWorker";
 import * as Hotjar from "./utils/hotjar";
 import GlobalStyle from "./common/GlobalStyle";
 import { UserProvider } from "./context/UserContext";
+import Layout from "./Components/Layout";
 
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
@@ -55,7 +56,9 @@ ReactDOM.render(
     <ChakraProvider theme={theme}>
       <GlobalStyle />
       <UserProvider>
-        <App />
+        <Layout>
+          <App />
+        </Layout>
       </UserProvider>
     </ChakraProvider>
   </React.StrictMode>,

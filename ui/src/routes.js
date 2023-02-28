@@ -6,7 +6,7 @@ import Login from "./users/Login";
 const routes = [
   { path: "/campagnes", name: "Campagnes", isProtected: true, Component: ViewCampagnes },
   { path: "/campagnes/ajout", name: "Ajouter une campagne", isProtected: true, Component: AddCampagne },
-  { path: "/campagnes/:id", name: "Questionnaire", isProtected: true, Component: AnswerCampagne },
+  { path: "/campagnes/:id", name: "Questionnaire", isProtected: false, Component: AnswerCampagne },
   { path: "/connexion/", name: "Connexion", isProtected: false, Component: Login },
 ];
 

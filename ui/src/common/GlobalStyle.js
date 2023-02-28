@@ -1,6 +1,5 @@
 import { createGlobalStyle } from "styled-components";
 import { normalize } from "styled-normalize";
-import { breakpoints } from "./FlexboxGrid";
 
 export default createGlobalStyle`
   ${normalize}
@@ -61,51 +60,11 @@ export default createGlobalStyle`
     margin: 0;
   }
 
-  //*,*:focus,*:hover{
-  // outline:none;
-  //}
-
-  /****** Typography *******/
-  html {
-    height: 100vh;
-  }
-
   body {
-    height: 100vh;
     font-family: "Public Sans", sans-serif;
     font-weight: 400;
     line-height: 1.3;
     color: #222;
-    background-color: #f3f6f7;
-  }
-
-  #root {
-    height: 100vh;
-  }
-
-  .pt-1 {
-    padding-top: 10px;
-  }
-  
-  .pb-1 {
-    padding-bottom: 10px;
-  }
-
-  .hide-sm {
-    @media (max-width: ${breakpoints.sm.max}) {
-      display: none;
-    }
-  }
-
-  .fixed-bottom {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1030;
-  }
-  
-  .text-center {
-    text-align: center;
+    background-color: #EDF2F7;
   }
 `;
