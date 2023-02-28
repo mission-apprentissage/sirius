@@ -87,7 +87,7 @@ const Login = () => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      backgroundColor="gray.200"
+      backgroundColor="gray.100"
       justifyContent="center"
       alignItems="center"
     >

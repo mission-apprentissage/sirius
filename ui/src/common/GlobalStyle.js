@@ -60,21 +60,11 @@ export default createGlobalStyle`
     margin: 0;
   }
 
-  //*,*:focus,*:hover{
-  // outline:none;
-  //}
-
-  /****** Typography *******/
-  html {
-    height: 100vh;
-  }
-
   body {
-    height: 100vh;
     font-family: "Public Sans", sans-serif;
     font-weight: 400;
     line-height: 1.3;
     color: #222;
-    background-color: #f3f6f7;
+    background-color: #EDF2F7;
   }
 `;

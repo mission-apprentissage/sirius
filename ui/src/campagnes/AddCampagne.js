@@ -23,7 +23,6 @@ import {
 } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import { _post } from "../utils/httpClient";
-import Breadcrumbs from "../Components/Breadcrumbs";
 
 const validationSchema = Yup.object({
   nomCampagne: Yup.string().required("Ce champ est obligatoire"),
@@ -77,9 +76,8 @@ const Campagnes = ({ crumbs }) => {
 
   return (
     <>
-      {crumbs && <Breadcrumbs crumbs={crumbs} />}
-      <Flex bg="gray.100" align="center" justify="center" m="auto" minH="100vh">
-        <Box bg="white" p={6} rounded="md" w="50vw" h="100%" my="50px">
+      <Flex align="center" justify="center" m="auto" width="100%">
+        <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
           <form onSubmit={formik.handleSubmit}>
             <VStack spacing={6} align="flex-start">
               <FormControl isInvalid={!!formik.errors.nomCampagne && formik.touched.nomCampagne}>

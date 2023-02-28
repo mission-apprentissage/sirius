@@ -31,7 +31,7 @@ const Navbar = () => {
 
   return (
     <>
-      <Box bg="gray.100" px={4}>
+      <Box bg="gray.300" px={4}>
         <Flex h={16} alignItems="center" justifyContent="space-between">
           <IconButton
             size="md"
@@ -53,6 +53,7 @@ const Navbar = () => {
                   href={link.href}
                   px={2}
                   py={1}
+                  color="grey.500"
                   rounded="md"
                   _hover={{
                     textDecoration: "none",

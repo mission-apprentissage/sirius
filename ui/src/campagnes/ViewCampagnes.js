@@ -31,9 +31,8 @@ import QRCode from "react-qr-code";
 
 import { _delete } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
-import Breadcrumbs from "../Components/Breadcrumbs";
 
-const ViewCampagnes = ({ crumbs }) => {
+const ViewCampagnes = () => {
   const [deletedCampagneId, setDeletedCampagneId] = useState(null);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [campagneLinks, setCampagneLinks] = useState(null);
@@ -81,8 +80,7 @@ const ViewCampagnes = ({ crumbs }) => {
   if (loading || error) return <Spinner size="xl" />;
   return (
     <>
-      {crumbs && <Breadcrumbs crumbs={crumbs} />}
-      <Flex bg="gray.100" align="center" justify="center" minH="100vh">
+      <Flex bg="gray.100" align="center" justify="center">
         <TableContainer my={12}>
           <Table colorScheme="purple" size="md">
             <TableCaption>
@@ -168,6 +166,8 @@ const ViewCampagnes = ({ crumbs }) => {
                     isExternal
                     mt={4}
                     fontSize="sm"
+                    wordBreak="break-all"
+                    maxW="100%"
                   >{`${window.location.hostname}/campagnes/${campagneLinks._id}`}</Link>
                 </VStack>
               </Center>
