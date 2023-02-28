@@ -9,7 +9,6 @@ import * as serviceWorker from "./serviceWorker";
 import * as Hotjar from "./utils/hotjar";
 import GlobalStyle from "./common/GlobalStyle";
 import { UserProvider } from "./context/UserContext";
-import Navbar from "./Components/Navbar";
 import Layout from "./Components/Layout";
 
 const activeLabelStyles = {
@@ -57,7 +56,6 @@ ReactDOM.render(
     <ChakraProvider theme={theme}>
       <GlobalStyle />
       <UserProvider>
-        <Navbar />
         <Layout>
           <App />
         </Layout>
