@@ -14,6 +14,7 @@ import Layout from "./Components/Layout";
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
 };
+
 export const theme = extendTheme({
   components: {
     Form: {
@@ -71,7 +72,9 @@ WebFont.load({
   },
 });
 
-Hotjar.initialize(process.env.REACT_APP_SIRIUS_HOTJAR_ID);
+if (process.env.NODE_ENV !== "development") {
+  Hotjar.initialize(process.env.REACT_APP_SIRIUS_HOTJAR_ID);
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

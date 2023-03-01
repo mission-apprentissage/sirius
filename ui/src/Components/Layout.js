@@ -4,7 +4,7 @@ import Navbar from "./Navbar";
 import { UserContext } from "../context/UserContext";
 
 const Layout = ({ children }) => {
-  const [userContext, setUserContext] = useContext(UserContext);
+  const [userContext] = useContext(UserContext);
   const isAuthenticated = userContext?.token;
 
   if (userContext.loading) return <Spinner />;

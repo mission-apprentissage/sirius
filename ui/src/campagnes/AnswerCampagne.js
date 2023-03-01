@@ -20,7 +20,7 @@ const widgets = {
 const AnswerCampagne = () => {
   const { id } = useParams();
   const history = useHistory();
-  const [campagne, loading, error] = useGet(`/api/campagnes/${id}`);
+  const [campagne, loading] = useGet(`/api/campagnes/${id}`);
   const toast = useToast();
 
   const onSubmitHandler = async ({ formData }) => {

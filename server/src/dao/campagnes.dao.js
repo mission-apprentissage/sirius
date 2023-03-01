@@ -16,9 +16,14 @@ const deleteOne = async (id) => {
   return Campagne.deleteOne({ _id: id });
 };
 
+const update = async (id, updatedCampagne) => {
+  return Campagne.replaceOne({ _id: id }, updatedCampagne);
+};
+
 module.exports = {
   getAll,
   getOne,
   create,
   deleteOne,
+  update,
 };

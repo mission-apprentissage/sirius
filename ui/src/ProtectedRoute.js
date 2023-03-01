@@ -4,7 +4,7 @@ import { Route, Redirect } from "react-router-dom";
 import { UserContext } from "./context/UserContext";
 
 const ProtectedRoute = ({ component: Component, ...restOfProps }) => {
-  const [userContext, setUserContext] = useContext(UserContext);
+  const [userContext] = useContext(UserContext);
   const isAuthenticated = userContext?.token;
 
   if (userContext.loading) return <Spinner />;

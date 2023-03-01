@@ -36,4 +36,13 @@ const deleteCampagne = async (id) => {
   }
 };
 
-module.exports = { getCampagnes, getOneCampagne, createCampagne, deleteCampagne };
+const updateCampagne = async (id, updatedCampagne) => {
+  try {
+    const campagne = await campagnesDao.update(id, updatedCampagne);
+    return { success: true, body: campagne };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { getCampagnes, getOneCampagne, createCampagne, deleteCampagne, updateCampagne };
