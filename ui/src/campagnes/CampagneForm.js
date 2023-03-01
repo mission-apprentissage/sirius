@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useToast } from "@chakra-ui/react";
@@ -20,19 +20,9 @@ import {
   AccordionPanel,
   AccordionIcon,
   Text,
-  Textarea,
 } from "@chakra-ui/react";
+import MonacoEditor from "@monaco-editor/react";
 import { _post, _put } from "../utils/httpClient";
-
-export const validationSchema = Yup.object({
-  nomCampagne: Yup.string().required("Ce champ est obligatoire"),
-  cfa: Yup.string().required("Ce champ est obligatoire"),
-  formation: Yup.string().required("Ce champ est obligatoire"),
-  startDate: Yup.string().required("Ce champ est obligatoire"),
-  endDate: Yup.string().required("Ce champ est obligatoire"),
-  questionnaire: Yup.string().required("Ce champ est obligatoire"),
-  questionnaireUI: Yup.string().required("Ce champ est obligatoire"),
-});
 
 const submitHandler = async (values, editedCampagneId) => {
   const isEdition = !!editedCampagneId;
@@ -70,10 +60,29 @@ const submitHandler = async (values, editedCampagneId) => {
   }
 };
 
+const validationSchema = (isQuestionnaireValid, isQuestionnaireUIValid) =>
+  Yup.object({
+    nomCampagne: Yup.string().required("Ce champ est obligatoire"),
+    cfa: Yup.string().required("Ce champ est obligatoire"),
+    formation: Yup.string().required("Ce champ est obligatoire"),
+    startDate: Yup.string().required("Ce champ est obligatoire"),
+    endDate: Yup.string().required("Ce champ est obligatoire"),
+    questionnaire: Yup.string()
+      .required("Ce champ est obligatoire")
+      .test("is-json", "Le questionnaire doit être un JSON valide", () => isQuestionnaireValid),
+    questionnaireUI: Yup.string()
+      .required("Ce champ est obligatoire")
+      .test("is-json", "Le questionnaire doit être un JSON valide", () => isQuestionnaireUIValid),
+  });
+
 const CampagneForm = ({ campagne = null }) => {
   const history = useHistory();
   const toast = useToast();
-  console.log({ campagne });
+  const [isQuestionnaireValid, setIsQuestionnaireValid] = useState(true);
+  const [isQuestionnaireUIValid, setIsQuestionnaireUIValid] = useState(true);
+  const [questionnaire, setQuestionnaire] = useState(null);
+  const [questionnaireUI, setQuestionnaireUI] = useState(null);
+
   const formik = useFormik({
     initialValues: {
       nomCampagne: campagne ? campagne.nomCampagne : "",
@@ -81,12 +90,20 @@ const CampagneForm = ({ campagne = null }) => {
       formation: campagne ? campagne.formation : "",
       startDate: campagne ? campagne.startDate : "",
       endDate: campagne ? campagne.endDate : "",
-      questionnaire: campagne ? JSON.stringify(campagne.questionnaire) : "",
-      questionnaireUI: campagne ? JSON.stringify(campagne.questionnaireUI) : "",
+      questionnaire: campagne ? JSON.stringify(campagne.questionnaire) : JSON.stringify({}),
+      questionnaireUI: campagne ? JSON.stringify(campagne.questionnaireUI) : JSON.stringify({}),
     },
-    validationSchema: validationSchema,
+    validationSchema: validationSchema(isQuestionnaireValid, isQuestionnaireUIValid),
     onSubmit: async (values) => {
-      const { success, message } = await submitHandler(values, campagne._id);
+      const campagneId = campagne ? campagne._id : null;
+
+      const sentQuestionnaire = questionnaire ? questionnaire : values.questionnaire;
+      const sentQuestionnaireUI = questionnaireUI ? questionnaireUI : values.questionnaireUI;
+
+      const { success, message } = await submitHandler(
+        { ...values, questionnaire: sentQuestionnaire, questionnaireUI: sentQuestionnaireUI },
+        campagneId
+      );
 
       toast({
         description: success ? message : "Une erreur est survenue",
@@ -100,6 +117,7 @@ const CampagneForm = ({ campagne = null }) => {
       }
     },
   });
+
   return (
     <>
       <Flex align="center" justify="center" m="auto" width="100%">
@@ -178,27 +196,33 @@ const CampagneForm = ({ campagne = null }) => {
                 <AccordionItem>
                   <AccordionButton>
                     <Box flex="1" textAlign="left">
-                      <Text
-                        color={
-                          !!formik.errors.questionnaire && formik.touched.questionnaire ? "#E53E3E" : "currentcolor"
-                        }
-                      >
-                        Questionnaire JSON
-                      </Text>
+                      <Text color={!!formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>Questionnaire JSON</Text>
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel pb={4}>
-                    <FormControl isInvalid={!!formik.errors.questionnaire && formik.touched.questionnaire}>
-                      <Textarea
+                    <FormControl isInvalid={!!formik.errors.questionnaire}>
+                      <MonacoEditor
                         id="questionnaire"
                         name="questionnaire"
-                        onChange={formik.handleChange}
-                        value={formik.values.questionnaire}
-                        size="sm"
-                        resize="vertical"
-                        rows={20}
-                        variant="filled"
+                        language="json"
+                        value={JSON.stringify(JSON.parse(formik.values.questionnaire), null, 2)}
+                        theme="vs-light"
+                        onChange={(value) => setQuestionnaire(value)}
+                        onValidate={(markers) => {
+                          if (markers.length === 0) {
+                            setIsQuestionnaireValid(true);
+                          } else {
+                            setIsQuestionnaireValid(false);
+                          }
+                        }}
+                        height="50vh"
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                          automaticLayout: true,
+                        }}
                       />
                       <FormErrorMessage>{formik.errors.questionnaire}</FormErrorMessage>
                     </FormControl>
@@ -208,27 +232,35 @@ const CampagneForm = ({ campagne = null }) => {
                 <AccordionItem>
                   <AccordionButton>
                     <Box flex="1" textAlign="left">
-                      <Text
-                        color={
-                          !!formik.errors.questionnaireUI && formik.touched.questionnaireUI ? "#E53E3E" : "currentcolor"
-                        }
-                      >
+                      <Text color={!!formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
                         Questionnaire UI JSON
                       </Text>
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
                   <AccordionPanel pb={4}>
-                    <FormControl isInvalid={!!formik.errors.questionnaireUI && formik.touched.questionnaireUI}>
-                      <Textarea
+                    <FormControl isInvalid={!!formik.errors.questionnaireUI}>
+                      <MonacoEditor
                         id="questionnaireUI"
                         name="questionnaireUI"
-                        onChange={formik.handleChange}
-                        value={formik.values.questionnaireUI}
-                        size="sm"
-                        resize="vertical"
-                        rows={20}
-                        variant="filled"
+                        language="json"
+                        value={JSON.stringify(JSON.parse(formik.values.questionnaireUI), null, 2)}
+                        theme="vs-light"
+                        onChange={(value) => setQuestionnaireUI(value)}
+                        onValidate={(markers) => {
+                          if (markers.length === 0) {
+                            setIsQuestionnaireUIValid(true);
+                          } else {
+                            setIsQuestionnaireUIValid(false);
+                          }
+                        }}
+                        height="50vh"
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                          automaticLayout: true,
+                        }}
                       />
                       <FormErrorMessage>{formik.errors.questionnaireUI}</FormErrorMessage>
                     </FormControl>
