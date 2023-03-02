@@ -2,13 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
+import { Box, Flex, Center, Button } from "@chakra-ui/react";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
+import styled from "styled-components";
 import { _post } from "../utils/httpClient";
 import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
 import CustomRadios from "../Components/Form/CustomRadios";
 import CustomText from "../Components/Form/CustomText";
 import CustomTextarea from "../Components/Form/CustomTextarea";
+
+const StyledForm = styled(Form)`
+  width: 100%;
+`;
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -116,18 +122,28 @@ const AnswerCampagne = () => {
   if (loading) return <Spinner size="xl" />;
 
   return (
-    <Form
-      schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
-      uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
-      validator={validator}
-      widgets={widgets}
-      onSubmit={(values) =>
-        isLastCategory && isLastQuestionInCategory
-          ? onSubmitHandler(values.formData)
-          : nextQuestionHandler(values.formData)
-      }
-      onError={() => console.log("errors")}
-    />
+    <Flex align="center" justify="center" m="auto" width="100%" h="50vh">
+      <Box bg="white" p={6} rounded="md" w="80%" minH="50vh" boxShadow="md" h="100%">
+        <Center h="100%" w="100%" justifyContent="flex-start">
+          <StyledForm
+            schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
+            uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
+            validator={validator}
+            widgets={widgets}
+            onSubmit={(values) =>
+              isLastCategory && isLastQuestionInCategory
+                ? onSubmitHandler(values.formData)
+                : nextQuestionHandler(values.formData)
+            }
+            onError={() => console.log("errors")}
+          >
+            <Button borderRadius="md" type="submit" variant="solid" colorScheme="purple" width="full" mt="25px">
+              Envoyer
+            </Button>
+          </StyledForm>
+        </Center>
+      </Box>
+    </Flex>
   );
 };
 

@@ -37,7 +37,7 @@ export const theme = extendTheme({
               left: 0,
               zIndex: 2,
               position: "absolute",
-              backgroundColor: "#f3f6f7",
+              backgroundColor: "white",
               pointerEvents: "none",
               mx: 3,
               px: 1,
