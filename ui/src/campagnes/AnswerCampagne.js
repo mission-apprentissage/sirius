@@ -67,6 +67,29 @@ const multiStepQuestionnaireUIFormatter = (questionnaireUI) => {
   return categories;
 };
 
+const transformErrors = (errors) => {
+  return errors.map((error) => {
+    switch (error.name) {
+      case "required":
+        error.message = "Ce champ est obligatoire";
+        break;
+      case "pattern":
+        error.message = "Ce champ n'est pas au bon format";
+        break;
+      case "enum":
+        error.message = "Ce champ est invalide";
+        break;
+      case "minItems":
+        error.message = "Vous devez sélectionner au moins une réponse";
+        break;
+      default:
+        error.message = "Erreur de validation";
+        break;
+    }
+    return error;
+  });
+};
+
 const AnswerCampagne = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -135,7 +158,10 @@ const AnswerCampagne = () => {
                 ? onSubmitHandler(values.formData)
                 : nextQuestionHandler(values.formData)
             }
-            onError={() => console.log("errors")}
+            onError={(error) => console.log({ error })}
+            noHtml5Validate
+            templates={{ ErrorListTemplate: () => null }}
+            transformErrors={transformErrors}
           >
             <Button borderRadius="md" type="submit" variant="solid" colorScheme="purple" width="full" mt="25px">
               Envoyer
