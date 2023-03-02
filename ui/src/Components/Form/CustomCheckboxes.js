@@ -1,7 +1,7 @@
 import { Box, useCheckboxGroup, useCheckbox, Wrap } from "@chakra-ui/react";
 
 const CheckboxCard = (props) => {
-  const { getInputProps, getCheckboxProps } = useCheckbox(props);
+  const { getInputProps, getCheckboxProps } = useCheckbox({ ...props, required: false }); // native required on multiple checkboxes is not supported
 
   const input = getInputProps();
   const checkbox = getCheckboxProps();
@@ -44,6 +44,7 @@ const CustomCheckboxes = (props) => {
       <Wrap spacing={2} direction="row" mt={4}>
         {options.map((value) => {
           const checkbox = getCheckboxProps({ value });
+          console.log(checkbox);
           return (
             <CheckboxCard key={value} {...checkbox}>
               {value}
