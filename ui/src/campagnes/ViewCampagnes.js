@@ -168,7 +168,10 @@ const ViewCampagnes = () => {
               <Center>
                 <VStack spacing={6}>
                   <Text fontSize="lg">{campagneLinks.nomCampagne}</Text>
-                  <QRCode value={`${window.location.hostname}/campagnes/${campagneLinks._id}`} fgColor="#6B46C1" />
+                  <QRCode
+                    value={`${window.location.protocol}//${window.location.hostname}/campagnes/${campagneLinks._id}`}
+                    fgColor="#6B46C1"
+                  />
                   <Link
                     href={`/campagnes/${campagneLinks._id}`}
                     isExternal
@@ -176,7 +179,7 @@ const ViewCampagnes = () => {
                     fontSize="sm"
                     wordBreak="break-all"
                     maxW="100%"
-                  >{`${window.location.hostname}/campagnes/${campagneLinks._id}`}</Link>
+                  >{`${window.location.protocol}//${window.location.hostname}/campagnes/${campagneLinks._id}`}</Link>
                 </VStack>
               </Center>
             )}
