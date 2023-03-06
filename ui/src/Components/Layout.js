@@ -13,7 +13,7 @@ const Layout = ({ children }) => {
     <>
       {isAuthenticated && <Navbar />}
       <Container maxW="container.lg" bg="gray.100">
-        <Flex py={20}>{children}</Flex>
+        <Flex py={[5, 20]}>{children}</Flex>
       </Container>
     </>
   );

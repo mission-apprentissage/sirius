@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
-import { Box, Flex, Center, Button } from "@chakra-ui/react";
+import { Box, Flex, Button } from "@chakra-ui/react";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
 import styled from "styled-components";
@@ -11,6 +11,7 @@ import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
 import CustomRadios from "../Components/Form/CustomRadios";
 import CustomText from "../Components/Form/CustomText";
 import CustomTextarea from "../Components/Form/CustomTextarea";
+import { Stepper } from "../Components/Stepper";
 
 const StyledForm = styled(Form)`
   width: 100%;
@@ -90,6 +91,13 @@ const transformErrors = (errors) => {
   });
 };
 
+const getCategories = (questionnaire) => {
+  return Object.entries(questionnaire.properties).map((property) => {
+    const [key, content] = property;
+    return content.title;
+  });
+};
+
 const AnswerCampagne = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -100,6 +108,7 @@ const AnswerCampagne = () => {
   const [formattedQuestionnnaire, setFormattedQuestionnnaire] = useState([]);
   const [formattedQuestionnnaireUI, setFormattedQuestionnnaireUI] = useState([]);
   const [answers, setAnswers] = useState({});
+  const [categories, setCategories] = useState([]);
 
   const isLastCategory = formattedQuestionnnaire.length
     ? currentCategoryIndex === formattedQuestionnnaire.length - 1
@@ -111,6 +120,7 @@ const AnswerCampagne = () => {
   useEffect(() => {
     if (campagne.questionnaire) {
       setFormattedQuestionnnaire(multiStepQuestionnaireFormatter(campagne.questionnaire));
+      setCategories(getCategories(campagne.questionnaire));
     }
     if (campagne.questionnaireUI) {
       setFormattedQuestionnnaireUI(multiStepQuestionnaireUIFormatter(campagne.questionnaireUI));
@@ -145,9 +155,9 @@ const AnswerCampagne = () => {
   if (loading) return <Spinner size="xl" />;
 
   return (
-    <Flex align="center" justify="center" m="auto" width="100%" h="50vh">
-      <Box bg="white" p={6} rounded="md" w="80%" minH="50vh" boxShadow="md" h="100%">
-        <Center h="100%" w="100%" justifyContent="flex-start">
+    <Stepper categories={categories} currentCategoryIndex={currentCategoryIndex}>
+      <Flex my="20px">
+        <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
           <StyledForm
             schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
             uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
@@ -164,12 +174,12 @@ const AnswerCampagne = () => {
             transformErrors={transformErrors}
           >
             <Button borderRadius="md" type="submit" variant="solid" colorScheme="purple" width="full" mt="25px">
-              Envoyer
+              Suivant
             </Button>
           </StyledForm>
-        </Center>
-      </Box>
-    </Flex>
+        </Box>
+      </Flex>
+    </Stepper>
   );
 };
 

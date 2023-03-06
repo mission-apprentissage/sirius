@@ -3,6 +3,7 @@ import "react-app-polyfill/stable";
 import React from "react";
 import ReactDOM from "react-dom";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { StepsStyleConfig as Steps } from "chakra-ui-steps";
 import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
@@ -13,6 +14,27 @@ import Layout from "./Components/Layout";
 
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
+};
+
+const CustomSteps = {
+  ...Steps,
+  sizes: {
+    ...Steps.sizes,
+    sm: {
+      ...Steps.sizes.sm,
+      label: {
+        ...Steps.sizes.sm.label,
+        width: "auto",
+      },
+    },
+    md: {
+      ...Steps.sizes.md,
+      label: {
+        ...Steps.sizes.md.label,
+        width: "100px",
+      },
+    },
+  },
 };
 
 export const theme = extendTheme({
@@ -49,6 +71,7 @@ export const theme = extendTheme({
         },
       },
     },
+    Steps: CustomSteps,
   },
 });
 
