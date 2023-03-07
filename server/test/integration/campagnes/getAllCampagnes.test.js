@@ -1,6 +1,6 @@
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newCampagne } = require("../utils/fixtures");
+const { newCampagne } = require("../../fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   it("should return 200 with multiple campagnes if it exists", async () => {

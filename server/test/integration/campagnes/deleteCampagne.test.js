@@ -1,6 +1,6 @@
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newCampagne } = require("../utils/fixtures");
+const { newCampagne } = require("../../fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   it("should return 200 and delete the campagne if it exists", async () => {

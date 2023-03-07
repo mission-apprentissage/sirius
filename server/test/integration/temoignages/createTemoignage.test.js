@@ -1,6 +1,6 @@
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newTemoignage } = require("../utils/fixtures");
+const { newTemoignage } = require("../../fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   it("should return 201, create a temoignage and return it", async () => {
