@@ -48,7 +48,7 @@
     "passport-local-mongoose": "7.1.2"
   },
   "devDependencies": {
-    "@faker-js/faker": "5.1.0",
+    "@faker-js/faker": "7.6.0",
     "axiosist": "1.0.1",
     "chai": "4.3.7",
     "eslint": "8.34.0",
