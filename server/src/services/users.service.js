@@ -12,7 +12,7 @@ const loginUser = async (id) => {
 
     user.refreshToken.push({ refreshToken });
 
-    await usersDao.update(user);
+    await usersDao.update(id, user);
 
     return { success: true, body: { token, refreshToken } };
   } catch (error) {

@@ -23,4 +23,4 @@ const verifyUser = (req, res, next) => {
   return passport.authenticate(strategy, callback, { session: false })(req, res, next);
 };
 
-module.exports = { verifyUser, STRATEGIES };
+module.exports = { verifyUser, STRATEGIES, passportCallback };
