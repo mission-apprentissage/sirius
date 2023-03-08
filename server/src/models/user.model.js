@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  username: {
+    type: String,
+    default: "",
+    unique: true,
+  },
   authStrategy: {
     type: String,
     default: STRATEGIES.local,
