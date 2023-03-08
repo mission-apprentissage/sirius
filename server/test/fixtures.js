@@ -43,7 +43,7 @@ const newUser = (custom = {}, hasId = false) => {
       lastName: faker.name.lastName(),
       username: faker.internet.email(),
       authStrategy: STRATEGIES.local,
-      refreshToken: ["aaaaaaaa"],
+      refreshToken: [{ _id: ObjectId(faker.database.mongodbObjectId()), refreshToken: "refreshToken" }],
     },
     custom
   );
