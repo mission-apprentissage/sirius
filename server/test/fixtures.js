@@ -1,13 +1,15 @@
-const faker = require("@faker-js/faker");
+const { faker } = require("@faker-js/faker");
 const moment = require("moment");
 const _ = require("lodash");
+const ObjectId = require("mongoose").mongo.ObjectId;
 const { STRATEGIES } = require("../src/middlewares/verifyUserMiddleware");
 
 faker.locale = "fr";
 
-const newCampagne = (custom = {}) => {
+const newCampagne = (custom = {}, hasId = false) => {
   return _.merge(
     {
+      ...(hasId && { _id: ObjectId(faker.database.mongodbObjectId()) }),
       nomCampagne: "nom de la campagne",
       cfa: "cfa1",
       formation: "formation1",
@@ -20,10 +22,11 @@ const newCampagne = (custom = {}) => {
   );
 };
 
-const newTemoignage = (custom = {}) => {
+const newTemoignage = (custom = {}, hasId = false) => {
   return _.merge(
     {
-      campagneId: faker.random.uuid(),
+      ...(hasId && { _id: ObjectId(faker.database.mongodbObjectId()) }),
+      campagneId: faker.database.mongodbObjectId(),
       reponses: {
         test: faker.lorem.paragraph(),
       },
@@ -32,10 +35,10 @@ const newTemoignage = (custom = {}) => {
   );
 };
 
-const newUser = (custom = {}) => {
+const newUser = (custom = {}, hasId = false) => {
   return _.merge(
     {
-      _id: faker.random.uuid(),
+      ...(hasId && { _id: ObjectId(faker.database.mongodbObjectId()) }),
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       username: faker.internet.email(),

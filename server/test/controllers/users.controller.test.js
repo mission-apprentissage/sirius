@@ -2,7 +2,8 @@ const { use, expect } = require("chai");
 const { stub, restore, match, reset } = require("sinon");
 const sinonChai = require("sinon-chai");
 const { mockRequest, mockResponse } = require("mock-req-res");
-const faker = require("@faker-js/faker");
+const { faker } = require("@faker-js/faker");
+const ObjectId = require("mongoose").mongo.ObjectId;
 
 const usersController = require("../../src/controllers/users.controller");
 const usersService = require("../../src/services/users.service");
@@ -31,7 +32,7 @@ describe(__filename, () => {
 
   describe("loginUser", () => {
     it("should throw a BasicError if success is false", async () => {
-      req.user = { _id: faker.random.uuid() };
+      req.user = { _id: ObjectId(faker.database.mongodbObjectId()) };
       stub(usersService, "loginUser").returns({ success: false });
 
       await usersController.loginUser(req, res, next);
@@ -39,10 +40,10 @@ describe(__filename, () => {
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
     it("should returns the cookie and token if success is true", async () => {
-      req.user = { _id: faker.random.uuid() };
+      req.user = { _id: ObjectId(faker.database.mongodbObjectId()) };
 
-      const token = faker.random.uuid();
-      const refreshToken = faker.random.uuid();
+      const token = faker.datatype.uuid();
+      const refreshToken = faker.datatype.uuid();
 
       stub(usersService, "loginUser").returns({
         success: true,
@@ -65,7 +66,7 @@ describe(__filename, () => {
       expect(next.getCall(0).args[0]).to.be.an.instanceof(UnauthorizedError);
     });
     it("should throw a BasicError if success is false", async () => {
-      req.signedCookies = { refreshToken: faker.random.uuid() };
+      req.signedCookies = { refreshToken: faker.datatype.uuid() };
 
       stub(usersService, "refreshTokenUser").returns({ success: false });
 
@@ -74,10 +75,10 @@ describe(__filename, () => {
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
     it("should returns the cookie and token if success is true", async () => {
-      req.signedCookies = { refreshToken: faker.random.uuid() };
+      req.signedCookies = { refreshToken: faker.datatype.uuid() };
 
-      const token = faker.random.uuid();
-      const newRefreshToken = faker.random.uuid();
+      const token = faker.datatype.uuid();
+      const newRefreshToken = faker.datatype.uuid();
 
       stub(usersService, "refreshTokenUser").returns({
         success: true,
@@ -110,7 +111,7 @@ describe(__filename, () => {
       expect(next.getCall(0).args[0]).to.be.an.instanceof(UnauthorizedError);
     });
     it("should throw a BasicError if success is false", async () => {
-      req.signedCookies = { refreshToken: faker.random.uuid() };
+      req.signedCookies = { refreshToken: faker.datatype.uuid() };
       req.user = user1;
 
       stub(usersService, "logoutUser").returns({ success: false });
@@ -120,7 +121,7 @@ describe(__filename, () => {
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
     it("should remove the cookie if success is true", async () => {
-      req.signedCookies = { refreshToken: faker.random.uuid() };
+      req.signedCookies = { refreshToken: faker.datatype.uuid() };
       req.user = user1;
 
       stub(usersService, "logoutUser").returns({
