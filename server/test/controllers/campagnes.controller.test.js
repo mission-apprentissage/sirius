@@ -43,8 +43,6 @@ describe(__filename, () => {
     });
   });
   describe("getCampagne", () => {
-    req.params.id = "5f9f1b9b9c9d4b0b8c8b8b8b";
-
     it("should throw a BasicError if success is false", async () => {
       stub(campagnesService, "getOneCampagne").returns({ success: false, body: null });
 
@@ -69,8 +67,6 @@ describe(__filename, () => {
     });
   });
   describe("createCampagne", () => {
-    req.body = campagne1;
-
     it("should throw a BasicError if success is false", async () => {
       stub(campagnesService, "createCampagne").returns({ success: false, body: null });
 
@@ -88,8 +84,6 @@ describe(__filename, () => {
     });
   });
   describe("deleteCampagne", () => {
-    req.params.id = "5f9f1b9b9c9d4b0b8c8b8b8b";
-
     it("should throw a BasicError if success is false", async () => {
       stub(campagnesService, "deleteCampagne").returns({ success: false, body: null });
 
@@ -113,9 +107,6 @@ describe(__filename, () => {
     });
   });
   describe("updateCampagne", () => {
-    req.params.id = "5f9f1b9b9c9d4b0b8c8b8b8b";
-    req.body = campagne1;
-
     it("should throw a BasicError if success is false", async () => {
       stub(campagnesService, "updateCampagne").returns({ success: false, body: null });
 

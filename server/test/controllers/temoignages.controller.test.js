@@ -25,8 +25,6 @@ describe(__filename, () => {
   });
 
   describe("createTemoignage", () => {
-    req.body = temoignage1;
-
     it("should throw a BasicError if success is false", async () => {
       stub(temoignagesService, "createTemoignage").returns({ success: false, body: null });
 
