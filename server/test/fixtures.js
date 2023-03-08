@@ -1,6 +1,7 @@
-const faker = require("@faker-js/faker"); // eslint-disable-line node/no-unpublished-require
+const faker = require("@faker-js/faker");
 const moment = require("moment");
 const _ = require("lodash");
+const { STRATEGIES } = require("../src/middlewares/verifyUserMiddleware");
 
 faker.locale = "fr";
 
@@ -22,7 +23,7 @@ const newCampagne = (custom = {}) => {
 const newTemoignage = (custom = {}) => {
   return _.merge(
     {
-      campagneId: "5f9f1b9b9c9d4b0b8c8b8b8b",
+      campagneId: faker.random.uuid(),
       reponses: {
         test: faker.lorem.paragraph(),
       },
@@ -31,7 +32,22 @@ const newTemoignage = (custom = {}) => {
   );
 };
 
+const newUser = (custom = {}) => {
+  return _.merge(
+    {
+      _id: faker.random.uuid(),
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      username: faker.internet.email(),
+      authStrategy: STRATEGIES.local,
+      refreshToken: ["aaaaaaaa"],
+    },
+    custom
+  );
+};
+
 module.exports = {
   newCampagne,
   newTemoignage,
+  newUser,
 };
