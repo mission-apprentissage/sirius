@@ -9,7 +9,7 @@ const loginUser = tryCatch(async (req, res) => {
   if (!success) throw new BasicError();
 
   res.cookie("refreshToken", body.refreshToken, COOKIE_OPTIONS);
-  res.json({ success: true, token: body.token });
+  res.status(200).json({ success: true, token: body.token });
 });
 
 const refreshTokenUser = tryCatch(async (req, res) => {
@@ -25,7 +25,7 @@ const refreshTokenUser = tryCatch(async (req, res) => {
   if (!success) throw new BasicError();
 
   res.cookie("refreshToken", body.newRefreshToken, COOKIE_OPTIONS);
-  res.json({ success: true, token: body.token });
+  res.status(200).json({ success: true, token: body.token });
 });
 
 const getCurrentUser = tryCatch(async (req, res) => {
@@ -45,7 +45,7 @@ const logoutUser = tryCatch(async (req, res) => {
   if (!success) throw new BasicError();
 
   res.clearCookie("refreshToken", COOKIE_OPTIONS);
-  res.send({ success: true });
+  res.status(200).json({ success: true });
 });
 
 module.exports = { loginUser, refreshTokenUser, getCurrentUser, logoutUser };
