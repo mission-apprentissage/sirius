@@ -46,8 +46,11 @@ const logoutUser = async (id, refreshToken) => {
     const user = await usersDao.getOne(id);
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
 
-    user.refreshToken.id(user.refreshToken[tokenIndex]._id).remove();
-    await usersDao.update(user);
+    if (tokenIndex !== -1) {
+      user.refreshToken.splice(tokenIndex, 1);
+    }
+
+    await usersDao.update(id, user);
 
     return { success: true, body: {} };
   } catch (error) {
