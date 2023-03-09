@@ -15,7 +15,7 @@
   },
   "rules": {
     "node/no-unpublished-require": ["error", {
-      "allowModules": ["chai", "mock-req-res", "sinon", "sinon-chai", "@faker-js/faker"]
+      "allowModules": ["chai", "mock-req-res", "sinon", "sinon-chai", "@faker-js/faker", "cookie-signature", "supertest"]
     }]
   }
 }

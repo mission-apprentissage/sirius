@@ -14,9 +14,9 @@ httpTests(__filename, ({ startServer }) => {
     const response = await httpClient.get("/api/campagnes/");
 
     assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.data, [
-      { ...campagne1, _id: response.data[0]._id, __v: 0 },
-      { ...campagne2, _id: response.data[1]._id, __v: 0 },
+    assert.deepStrictEqual(response.body, [
+      { ...campagne1, _id: response.body[0]._id, __v: 0 },
+      { ...campagne2, _id: response.body[1]._id, __v: 0 },
     ]);
   });
   it("should return 200 and an empty array if no campagne exist", async () => {
@@ -25,6 +25,6 @@ httpTests(__filename, ({ startServer }) => {
     const response = await httpClient.get("/api/campagnes/");
 
     assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.data, []);
+    assert.deepStrictEqual(response.body, []);
   });
 });

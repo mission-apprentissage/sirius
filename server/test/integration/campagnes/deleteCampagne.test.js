@@ -12,7 +12,7 @@ httpTests(__filename, ({ startServer }) => {
     const response = await httpClient.delete("/api/campagnes/" + createdCampagne._id);
 
     assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.data, {
+    assert.deepStrictEqual(response.body, {
       acknowledged: true,
       deletedCount: 1,
     });
@@ -23,7 +23,7 @@ httpTests(__filename, ({ startServer }) => {
     const response = await httpClient.delete("/api/campagnes/5f7b5c5d0f7e0e2b9c7a7f1c");
 
     assert.strictEqual(response.status, 404);
-    assert.deepStrictEqual(response.data, {
+    assert.deepStrictEqual(response.body, {
       error: "Not Found",
       message: "Campagne inconnue",
       statusCode: 404,

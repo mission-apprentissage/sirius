@@ -7,22 +7,22 @@ httpTests(__filename, ({ startServer }) => {
     const { httpClient } = await startServer();
     const temoignage = newTemoignage();
 
-    const response = await httpClient.post("/api/temoignages/", temoignage);
+    const response = await httpClient.post("/api/temoignages/").send(temoignage);
 
     assert.strictEqual(response.status, 201);
-    assert.deepStrictEqual(response.data, {
+    assert.deepStrictEqual(response.body, {
       ...temoignage,
-      _id: response.data._id,
+      _id: response.body._id,
       __v: 0,
     });
   });
   it("should return 400 and a validation error if the payload is not correct", async () => {
     const { httpClient } = await startServer();
     const temoignage = { campagneId: "" };
-    const response = await httpClient.post("/api/temoignages/", temoignage);
+    const response = await httpClient.post("/api/temoignages/").send(temoignage);
 
     assert.strictEqual(response.status, 400);
-    assert.deepStrictEqual(response.data, {
+    assert.deepStrictEqual(response.body, {
       details: [
         {
           context: {

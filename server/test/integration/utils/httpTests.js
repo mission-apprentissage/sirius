@@ -1,4 +1,5 @@
-const axiosist = require("axiosist"); // eslint-disable-line node/no-unpublished-require
+const request = require("supertest");
+
 const { cleanAll, getComponents } = require("./testUtils.js");
 const server = require("../../../src/httpServer");
 
@@ -6,7 +7,7 @@ let startServer = async (options) => {
   let components = await getComponents(options);
   let app = await server(components);
   return {
-    httpClient: axiosist(app),
+    httpClient: request(app),
     components,
   };
 };
