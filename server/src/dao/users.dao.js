@@ -5,7 +5,7 @@ const getOne = (id) => {
 };
 
 const update = (id, user) => {
-  return User.replaceOne({ _id: id }, user);
+  return User.updateOne({ _id: id }, user);
 };
 
 const create = (user) => {

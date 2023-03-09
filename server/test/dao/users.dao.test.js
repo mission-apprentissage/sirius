@@ -27,8 +27,8 @@ httpTests(__filename, ({ startServer }) => {
       const user1 = newUser();
       const createdUser = await usersDao.create(user1);
 
-      const newNomUser = "nouveau nom";
-      createdUser.nomUser = newNomUser;
+      const newlastName = "nouveau nom";
+      createdUser.lastName = newlastName;
 
       const updatedUser = await usersDao.update(createdUser._id, createdUser);
 
