@@ -33,7 +33,7 @@ const refreshTokenUser = async (refreshToken) => {
     const newRefreshToken = getRefreshToken({ _id: userId });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 
-    await usersDao.update(user);
+    await usersDao.update(user.id, user);
 
     return { success: true, body: { token, newRefreshToken } };
   } catch (error) {
