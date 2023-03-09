@@ -2,13 +2,13 @@ const mongoose = require("mongoose");
 
 const campagneSchema = new mongoose.Schema(
   {
-    nomCampagne: String,
-    cfa: String,
-    formation: String,
-    startDate: String,
-    endDate: String,
-    questionnaire: Object,
-    questionnaireUI: Object,
+    nomCampagne: { type: String, required: true },
+    cfa: { type: String, required: true },
+    formation: { type: String, required: true },
+    startDate: { type: String, required: true },
+    endDate: { type: String, required: true },
+    questionnaire: { type: Object, required: true },
+    questionnaireUI: { type: Object, required: true },
   },
   { minimize: false }
 );

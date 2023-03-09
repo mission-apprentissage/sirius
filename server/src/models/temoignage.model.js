@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const temoignageSchema = new mongoose.Schema(
   {
-    campagneId: String,
-    reponses: Object,
+    campagneId: { type: String, required: true },
+    reponses: { type: Object, required: true },
   },
   { minimize: false }
 );

@@ -12,11 +12,16 @@ const Session = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
-    default: "",
+    required: true,
   },
   lastName: {
     type: String,
-    default: "",
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
   },
   authStrategy: {
     type: String,

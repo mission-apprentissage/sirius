@@ -5,6 +5,7 @@ module.exports = ({ uri }) =>
     let retries = 0;
 
     const retry = (delay, maxRetries) => {
+      mongoose.set("strictQuery", false);
       mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if (err) {
           if (retries > maxRetries) {

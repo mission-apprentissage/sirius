@@ -12,7 +12,7 @@ const loginUser = async (id) => {
 
     user.refreshToken.push({ refreshToken });
 
-    await usersDao.update(user);
+    await usersDao.update(id, user);
 
     return { success: true, body: { token, refreshToken } };
   } catch (error) {
@@ -33,7 +33,7 @@ const refreshTokenUser = async (refreshToken) => {
     const newRefreshToken = getRefreshToken({ _id: userId });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 
-    await usersDao.update(user);
+    await usersDao.update(user.id, user);
 
     return { success: true, body: { token, newRefreshToken } };
   } catch (error) {
@@ -46,8 +46,11 @@ const logoutUser = async (id, refreshToken) => {
     const user = await usersDao.getOne(id);
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
 
-    user.refreshToken.id(user.refreshToken[tokenIndex]._id).remove();
-    await usersDao.update(user);
+    if (tokenIndex !== -1) {
+      user.refreshToken.splice(tokenIndex, 1);
+    }
+
+    await usersDao.update(id, user);
 
     return { success: true, body: {} };
   } catch (error) {

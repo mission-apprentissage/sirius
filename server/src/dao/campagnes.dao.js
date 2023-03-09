@@ -1,11 +1,11 @@
 const Campagne = require("../models/campagne.model");
 
 const getAll = async () => {
-  return Campagne.find({});
+  return Campagne.find({}).lean();
 };
 
 const getOne = async (id) => {
-  return Campagne.findOne({ _id: id });
+  return Campagne.findOne({ _id: id }).lean();
 };
 
 const create = async (campagne) => {

@@ -1,28 +1,28 @@
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newCampagne } = require("../utils/fixtures");
+const { newCampagne } = require("../../fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   it("should return 201, create a campagne and return it", async () => {
     const { httpClient } = await startServer();
     const campagne = newCampagne();
 
-    const response = await httpClient.post("/api/campagnes/", campagne);
+    const response = await httpClient.post("/api/campagnes/").send(campagne);
 
     assert.strictEqual(response.status, 201);
-    assert.deepStrictEqual(response.data, {
+    assert.deepStrictEqual(response.body, {
       ...campagne,
-      _id: response.data._id,
+      _id: response.body._id,
       __v: 0,
     });
   });
   it("should return 400 and a validation error if the payload is not correct", async () => {
     const { httpClient } = await startServer();
     const campagne = { nomCampagne: "" };
-    const response = await httpClient.post("/api/campagnes/", campagne);
+    const response = await httpClient.post("/api/campagnes/").send(campagne);
 
     assert.strictEqual(response.status, 400);
-    assert.deepStrictEqual(response.data, {
+    assert.deepStrictEqual(response.body, {
       details: [
         {
           context: {

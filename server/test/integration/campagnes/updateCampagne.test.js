@@ -1,20 +1,22 @@
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
-const { newCampagne } = require("../utils/fixtures");
+const { newCampagne } = require("../../fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   it("should returns 200 and update the campagne", async () => {
     const { httpClient } = await startServer();
     const campagne = newCampagne();
     const newCampagneName = "updatedCampagne";
-    const existingCampagne = await httpClient.post("/api/campagnes/", campagne);
+    const existingCampagne = await httpClient.post("/api/campagnes/").send(campagne);
 
     const campagneWithNewName = newCampagne({ ...campagne, nomCampagne: newCampagneName });
 
-    const updatedCampagne = await httpClient.put(`/api/campagnes/${existingCampagne.data._id}`, campagneWithNewName);
+    const updatedCampagne = await httpClient
+      .put(`/api/campagnes/${existingCampagne.body._id}`)
+      .send(campagneWithNewName);
 
     assert.strictEqual(updatedCampagne.status, 200);
-    assert.deepStrictEqual(updatedCampagne.data, {
+    assert.deepStrictEqual(updatedCampagne.body, {
       acknowledged: true,
       matchedCount: 1,
       modifiedCount: 1,
@@ -26,14 +28,16 @@ httpTests(__filename, ({ startServer }) => {
     const { httpClient } = await startServer();
     const newCampagneName = "";
     const campagne = newCampagne();
-    const existingCampagne = await httpClient.post("/api/campagnes/", campagne);
+    const existingCampagne = await httpClient.post("/api/campagnes/").send(campagne);
 
     const campagneWithNewName = { nomCampagne: newCampagneName };
 
-    const updatedCampagne = await httpClient.put(`/api/campagnes/${existingCampagne.data._id}`, campagneWithNewName);
+    const updatedCampagne = await httpClient
+      .put(`/api/campagnes/${existingCampagne.body._id}`)
+      .send(campagneWithNewName);
 
     assert.strictEqual(updatedCampagne.status, 400);
-    assert.deepStrictEqual(updatedCampagne.data, {
+    assert.deepStrictEqual(updatedCampagne.body, {
       details: [
         {
           context: {
