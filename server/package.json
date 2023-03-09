@@ -49,7 +49,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "7.6.0",
-    "axiosist": "1.0.1",
     "chai": "4.3.7",
     "eslint": "8.34.0",
     "eslint-config-prettier": "8.6.0",
