@@ -41,6 +41,7 @@ const CustomRadios = (props) => {
   const { getRadioProps } = useRadioGroup({
     name: props.id,
     onChange: (e) => props.onChange(e),
+    value: props.value,
   });
 
   return (

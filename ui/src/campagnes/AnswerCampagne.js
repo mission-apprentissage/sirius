@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
-import { Box, Flex, Button } from "@chakra-ui/react";
+import { Box, Flex, Button, IconButton } from "@chakra-ui/react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
 import styled from "styled-components";
@@ -113,6 +114,7 @@ const AnswerCampagne = () => {
   const isLastCategory = formattedQuestionnnaire.length
     ? currentCategoryIndex === formattedQuestionnnaire.length - 1
     : false;
+
   const isLastQuestionInCategory = formattedQuestionnnaire.length
     ? currentQuestionIndex === formattedQuestionnnaire[currentCategoryIndex].properties.length - 1
     : false;
@@ -155,9 +157,24 @@ const AnswerCampagne = () => {
   if (loading) return <Spinner size="xl" />;
 
   return (
-    <Stepper categories={categories} currentCategoryIndex={currentCategoryIndex}>
+    <Stepper
+      categories={categories}
+      currentCategoryIndex={currentCategoryIndex}
+      setCurrentCategoryIndex={setCurrentCategoryIndex}
+    >
       <Flex my="20px">
         <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
+          {currentQuestionIndex !== 0 && (
+            <Box w="100%" display="flex" alignContent="flex-start" my="10px">
+              <IconButton
+                aria-label="Revenir à la question précédente"
+                variant="outline"
+                colorScheme="purple"
+                icon={<ArrowBackIcon />}
+                onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+              />
+            </Box>
+          )}
           <StyledForm
             schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
             uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
@@ -172,6 +189,7 @@ const AnswerCampagne = () => {
             noHtml5Validate
             templates={{ ErrorListTemplate: () => null }}
             transformErrors={transformErrors}
+            formData={answers}
           >
             <Button borderRadius="md" type="submit" variant="solid" colorScheme="purple" width="full" mt="25px">
               Suivant
