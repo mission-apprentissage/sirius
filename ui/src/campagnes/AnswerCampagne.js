@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
-import { Box, Flex, Button, IconButton } from "@chakra-ui/react";
+import { Box, Flex, Button, IconButton, Text } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
@@ -101,7 +101,6 @@ const getCategories = (questionnaire) => {
 
 const AnswerCampagne = () => {
   const { id } = useParams();
-  const history = useHistory();
   const [campagne, loading] = useGet(`/api/campagnes/${id}`);
   const toast = useToast();
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
@@ -110,6 +109,7 @@ const AnswerCampagne = () => {
   const [formattedQuestionnnaireUI, setFormattedQuestionnnaireUI] = useState([]);
   const [answers, setAnswers] = useState({});
   const [categories, setCategories] = useState([]);
+  const [isTemoignageSent, setIsTemoignageSent] = useState(false);
 
   const isLastCategory = formattedQuestionnnaire.length
     ? currentCategoryIndex === formattedQuestionnnaire.length - 1
@@ -142,7 +142,7 @@ const AnswerCampagne = () => {
   const onSubmitHandler = async (formData) => {
     const result = await _post(`/api/temoignages/`, { reponses: { ...answers, ...formData }, campagneId: id });
     if (result._id) {
-      history.push(`/temoignages/succes`);
+      setIsTemoignageSent(true);
     } else {
       toast({
         title: "Une erreur est survenue",
@@ -161,40 +161,49 @@ const AnswerCampagne = () => {
       categories={categories}
       currentCategoryIndex={currentCategoryIndex}
       setCurrentCategoryIndex={setCurrentCategoryIndex}
+      isTemoignageSent={isTemoignageSent}
     >
       <Flex my="20px">
         <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
-          {currentQuestionIndex !== 0 && (
-            <Box w="100%" display="flex" alignContent="flex-start" my="10px">
-              <IconButton
-                aria-label="Revenir à la question précédente"
-                variant="outline"
-                colorScheme="purple"
-                icon={<ArrowBackIcon />}
-                onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
-              />
-            </Box>
+          {isTemoignageSent ? (
+            <Text fontSize="xl" my="30px" align="center" fontWeight="semibold">
+              Merci de votre participation !
+            </Text>
+          ) : (
+            <>
+              {currentQuestionIndex !== 0 && (
+                <Box w="100%" display="flex" alignContent="flex-start" mb="40px">
+                  <IconButton
+                    aria-label="Revenir à la question précédente"
+                    variant="outline"
+                    colorScheme="purple"
+                    icon={<ArrowBackIcon />}
+                    onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+                  />
+                </Box>
+              )}
+              <StyledForm
+                schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
+                uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
+                validator={validator}
+                widgets={widgets}
+                onSubmit={(values) =>
+                  isLastCategory && isLastQuestionInCategory
+                    ? onSubmitHandler(values.formData)
+                    : nextQuestionHandler(values.formData)
+                }
+                onError={(error) => console.log({ error })}
+                noHtml5Validate
+                templates={{ ErrorListTemplate: () => null }}
+                transformErrors={transformErrors}
+                formData={answers}
+              >
+                <Button borderRadius="md" type="submit" variant="solid" colorScheme="purple" width="full" mt="25px">
+                  Suivant
+                </Button>
+              </StyledForm>
+            </>
           )}
-          <StyledForm
-            schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
-            uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
-            validator={validator}
-            widgets={widgets}
-            onSubmit={(values) =>
-              isLastCategory && isLastQuestionInCategory
-                ? onSubmitHandler(values.formData)
-                : nextQuestionHandler(values.formData)
-            }
-            onError={(error) => console.log({ error })}
-            noHtml5Validate
-            templates={{ ErrorListTemplate: () => null }}
-            transformErrors={transformErrors}
-            formData={answers}
-          >
-            <Button borderRadius="md" type="submit" variant="solid" colorScheme="purple" width="full" mt="25px">
-              Suivant
-            </Button>
-          </StyledForm>
         </Box>
       </Flex>
     </Stepper>
