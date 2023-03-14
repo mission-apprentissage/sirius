@@ -12,6 +12,7 @@ const CustomTextarea = (props) => {
         borderColor="purple.400"
         focusBorderColor="purple.400"
         mt="10px"
+        value={props.value}
       />
     </FormControl>
   );

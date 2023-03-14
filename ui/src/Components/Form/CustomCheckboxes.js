@@ -41,6 +41,7 @@ const CustomCheckboxes = (props) => {
   const { getCheckboxProps } = useCheckboxGroup({
     name: props.id,
     onChange: (e) => props.onChange(e),
+    value: props.value,
   });
 
   return (

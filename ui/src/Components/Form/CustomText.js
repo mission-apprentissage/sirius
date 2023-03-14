@@ -8,6 +8,7 @@ const CustomText = (props) => {
         placeholder=" "
         borderColor="purple.400"
         focusBorderColor="purple.400"
+        value={props.value}
       />
       <FormLabel>{props.label}</FormLabel>
     </FormControl>
