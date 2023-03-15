@@ -8,7 +8,6 @@ import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
 import * as Hotjar from "./utils/hotjar";
-import GlobalStyle from "./common/GlobalStyle";
 import { UserProvider } from "./context/UserContext";
 import Layout from "./Components/Layout";
 

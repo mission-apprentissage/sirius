@@ -1,7 +1,17 @@
 {
   "root": true,
-  "extends": [
-    "react-app",
-    "plugin:prettier/recommended"
-  ]
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:prettier/recommended", "plugin:react/jsx-runtime"],
+  "plugins": ["react"],
+  "rules": {
+    "react/prop-types": "off",
+    "react/jsx-uses-react": 1
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2020
+  },
+  "env":{
+    "browser": true,
+    "node": true
+  }
 }

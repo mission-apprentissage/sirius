@@ -69,7 +69,9 @@ const ViewCampagnes = () => {
           isClosable: true,
         });
       }
-      const filteredDisplayedCampagne = displayedCampagnes.filter((campagne) => campagne._id !== deletedCampagneId);
+      const filteredDisplayedCampagne = displayedCampagnes.filter(
+        (campagne) => campagne._id !== deletedCampagneId
+      );
       setDisplayedCampagnes(filteredDisplayedCampagne);
     };
     if (deletedCampagneId) {

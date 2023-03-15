@@ -196,7 +196,9 @@ const CampagneForm = ({ campagne = null }) => {
                 <AccordionItem>
                   <AccordionButton>
                     <Box flex="1" textAlign="left">
-                      <Text color={!!formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>Questionnaire JSON</Text>
+                      <Text color={formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>
+                        Questionnaire JSON
+                      </Text>
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
@@ -232,7 +234,7 @@ const CampagneForm = ({ campagne = null }) => {
                 <AccordionItem>
                   <AccordionButton>
                     <Box flex="1" textAlign="left">
-                      <Text color={!!formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
+                      <Text color={formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
                         Questionnaire UI JSON
                       </Text>
                     </Box>

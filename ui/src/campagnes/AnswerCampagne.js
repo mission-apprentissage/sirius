@@ -6,7 +6,6 @@ import { Box, Flex, Button, IconButton, Text } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
-import styled from "styled-components";
 import { _post } from "../utils/httpClient";
 import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
 import CustomRadios from "../Components/Form/CustomRadios";
@@ -26,21 +25,24 @@ const multiStepQuestionnaireFormatter = (questionnaire) => {
     const [key] = property;
 
     // format questions for each categories
-    const nestedProperties = Object.entries(questionnaire.properties[key].properties).map((property) => {
-      const [nestedKey, nestedValue] = property;
-      return {
-        type: "object",
-        properties: {
-          [nestedKey]: {
-            ...nestedValue,
+    const nestedProperties = Object.entries(questionnaire.properties[key].properties).map(
+      (property) => {
+        const [nestedKey, nestedValue] = property;
+        return {
+          type: "object",
+          properties: {
+            [nestedKey]: {
+              ...nestedValue,
+            },
           },
-        },
-        dependencies: {
-          [nestedKey]: questionnaire.properties.Cfa.dependencies[nestedKey],
-        },
-        required: questionnaire.properties.Cfa.required.indexOf(nestedKey) !== -1 ? [nestedKey] : [],
-      };
-    });
+          dependencies: {
+            [nestedKey]: questionnaire.properties.Cfa.dependencies[nestedKey],
+          },
+          required:
+            questionnaire.properties.Cfa.required.indexOf(nestedKey) !== -1 ? [nestedKey] : [],
+        };
+      }
+    );
     // format category and returns them with formatted questions
     return {
       type: "object",
@@ -58,7 +60,7 @@ const multiStepQuestionnaireFormatter = (questionnaire) => {
 
 const multiStepQuestionnaireUIFormatter = (questionnaireUI) => {
   const categories = Object.entries(questionnaireUI).map((category) => {
-    const [key, value] = category;
+    const [, value] = category;
     return value;
   });
 
@@ -90,7 +92,7 @@ const transformErrors = (errors) => {
 
 const getCategories = (questionnaire) => {
   return Object.entries(questionnaire.properties).map((property) => {
-    const [key, content] = property;
+    const [, content] = property;
     return content.title;
   });
 };
@@ -136,7 +138,10 @@ const AnswerCampagne = () => {
   };
 
   const onSubmitHandler = async (formData) => {
-    const result = await _post(`/api/temoignages/`, { reponses: { ...answers, ...formData }, campagneId: id });
+    const result = await _post(`/api/temoignages/`, {
+      reponses: { ...answers, ...formData },
+      campagneId: id,
+    });
     if (result._id) {
       setIsTemoignageSent(true);
     } else {
@@ -179,7 +184,9 @@ const AnswerCampagne = () => {
                 </Box>
               )}
               <Form
-                schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
+                schema={
+                  formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]
+                }
                 uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
                 validator={validator}
                 widgets={widgets}
@@ -194,7 +201,14 @@ const AnswerCampagne = () => {
                 transformErrors={transformErrors}
                 formData={answers}
               >
-                <Button borderRadius="md" type="submit" variant="solid" colorScheme="purple" width="full" mt="25px">
+                <Button
+                  borderRadius="md"
+                  type="submit"
+                  variant="solid"
+                  colorScheme="purple"
+                  width="full"
+                  mt="25px"
+                >
                   Suivant
                 </Button>
               </Form>
