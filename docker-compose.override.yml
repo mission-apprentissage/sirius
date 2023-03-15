@@ -14,6 +14,8 @@ services:
     command: yarn start
     mem_limit: 1g
     stdin_open: true
+    environment:
+      - WDS_SOCKET_PORT=0
     volumes:
       - ./ui:/app
     build:
