@@ -10,10 +10,10 @@ export const Stepper = ({ categories, currentCategoryIndex, setCurrentCategoryIn
     <Flex flexDir="column" width="100%">
       <Steps
         activeStep={currentCategoryIndex}
-        labelOrientation="vertical"
         colorScheme="purple"
         size={isMobile ? "sm" : "md"}
         orientation="horizontal"
+        variant="circles-alt"
       >
         {categories.map((category, index) => (
           <Step

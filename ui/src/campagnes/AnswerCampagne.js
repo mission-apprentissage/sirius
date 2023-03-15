@@ -14,10 +14,6 @@ import CustomText from "../Components/Form/CustomText";
 import CustomTextarea from "../Components/Form/CustomTextarea";
 import { Stepper } from "../Components/Stepper";
 
-const StyledForm = styled(Form)`
-  width: 100%;
-`;
-
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
   RadioWidget: CustomRadios,
@@ -182,7 +178,7 @@ const AnswerCampagne = () => {
                   />
                 </Box>
               )}
-              <StyledForm
+              <Form
                 schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
                 uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
                 validator={validator}
@@ -201,7 +197,7 @@ const AnswerCampagne = () => {
                 <Button borderRadius="md" type="submit" variant="solid" colorScheme="purple" width="full" mt="25px">
                   Suivant
                 </Button>
-              </StyledForm>
+              </Form>
             </>
           )}
         </Box>
