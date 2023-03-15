@@ -29,7 +29,11 @@ const handleResponse = async (path, response) => {
     if (statusCode === 401 || statusCode === 403) {
       throw new AuthError(json, statusCode);
     } else {
-      throw new HTTPError(`Server returned ${statusCode} when requesting resource ${path}`, json, statusCode);
+      throw new HTTPError(
+        `Server returned ${statusCode} when requesting resource ${path}`,
+        json,
+        statusCode
+      );
     }
   }
   return json;

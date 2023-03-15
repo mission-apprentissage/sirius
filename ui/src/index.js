@@ -1,14 +1,13 @@
 import "react-app-polyfill/ie11";
 import "react-app-polyfill/stable";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
-import { StepsStyleConfig as Steps } from "chakra-ui-steps";
+import { StepsTheme as Steps } from "chakra-ui-steps";
 import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
 import * as Hotjar from "./utils/hotjar";
-import GlobalStyle from "./common/GlobalStyle";
 import { UserProvider } from "./context/UserContext";
 import Layout from "./Components/Layout";
 
@@ -38,6 +37,17 @@ const CustomSteps = {
 };
 
 export const theme = extendTheme({
+  styles: {
+    global: {
+      body: {
+        fontFamily: "'Public Sans', sans-serif",
+        fontWeight: 400,
+        lineHeight: 1.3,
+        color: "#222",
+        backgroundColor: "#EDF2F7",
+      },
+    },
+  },
   components: {
     Form: {
       variants: {
@@ -74,19 +84,20 @@ export const theme = extendTheme({
     Steps: CustomSteps,
   },
 });
+const container = document.getElementById("root");
 
-ReactDOM.render(
+const root = createRoot(container);
+
+root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <GlobalStyle />
       <UserProvider>
         <Layout>
           <App />
         </Layout>
       </UserProvider>
     </ChakraProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
 
 WebFont.load({

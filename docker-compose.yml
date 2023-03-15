@@ -4,6 +4,7 @@ services:
   reverse_proxy:
     image: sirius_reverse_proxy
     container_name: sirius_reverse_proxy
+    tty: true
     build:
       context: reverse_proxy
     mem_limit: 256m
@@ -17,6 +18,7 @@ services:
   ui:
     image: sirius_ui
     container_name: sirius_ui
+    tty: true
     build:
       context: ui
     mem_limit: 256m
@@ -29,6 +31,7 @@ services:
   server:
     image: sirius_server
     container_name: sirius_server
+    tty: true
     build:
       context: server
     mem_limit: 1g
@@ -45,6 +48,7 @@ services:
   mongodb:
     image: mongo:4.4.1-bionic
     container_name: sirius_mongodb
+    tty: true
     mem_limit: 1g
     restart: unless-stopped
     networks:

@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
   Flex,
   Heading,
@@ -17,18 +17,20 @@ import {
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Redirect, useHistory } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import Miley from "../assets/images/miley.png";
 
 const validationSchema = Yup.object({
-  username: Yup.string().email("Le champ n'est pas au bon format").required("Ce champ est obligatoire"),
+  username: Yup.string()
+    .email("Le champ n'est pas au bon format")
+    .required("Ce champ est obligatoire"),
   password: Yup.string().required("Ce champ est obligatoire"),
 });
 
 const Login = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,7 +64,7 @@ const Login = () => {
           return { ...oldValues, token: result.token };
         });
         setIsSubmitting(false);
-        history.push("/campagnes");
+        navigate("/campagnes");
       } else if (result.statusCode === 401) {
         toast({
           title: "Une erreur est survenue",
@@ -84,19 +86,33 @@ const Login = () => {
     },
   });
 
-  if (!userContext.loading && userContext.token) return <Redirect to="/campagnes" />;
+  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes" />;
 
   return (
-    <Flex flexDirection="column" backgroundColor="gray.100" justifyContent="center" alignItems="center" w="100%">
+    <Flex
+      flexDirection="column"
+      backgroundColor="gray.100"
+      justifyContent="center"
+      alignItems="center"
+      w="100%"
+    >
       <Stack flexDir="column" mb="2" justifyContent="center" alignItems="center">
         <Avatar size="lg" src={Miley} alt="" />
         <Heading color="purple.400">Bienvenue</Heading>
         <Box maxW="400px">
           <form onSubmit={formik.handleSubmit}>
-            <Stack spacing={4} p="2rem" backgroundColor="whiteAlpha.900" boxShadow="md" borderRadius="md">
+            <Stack
+              spacing={4}
+              p="2rem"
+              backgroundColor="whiteAlpha.900"
+              boxShadow="md"
+              borderRadius="md"
+            >
               <FormControl isInvalid={!!formik.errors.username && formik.touched.username}>
                 <InputGroup>
-                  <InputLeftElement pointerEvents="none" color="gray.300" children={<EmailIcon />} />
+                  <InputLeftElement pointerEvents="none" color="gray.300">
+                    <EmailIcon />
+                  </InputLeftElement>
                   <Input
                     id="username"
                     name="username"
@@ -110,7 +126,9 @@ const Login = () => {
               </FormControl>
               <FormControl isInvalid={!!formik.errors.password && formik.touched.password}>
                 <InputGroup>
-                  <InputLeftElement pointerEvents="none" color="gray.300" children={<LockIcon />} />
+                  <InputLeftElement pointerEvents="none" color="gray.300">
+                    <LockIcon />
+                  </InputLeftElement>
                   <Input
                     id="password"
                     name="password"

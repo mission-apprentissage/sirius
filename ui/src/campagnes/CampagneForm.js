@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useToast } from "@chakra-ui/react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -76,7 +76,7 @@ const validationSchema = (isQuestionnaireValid, isQuestionnaireUIValid) =>
   });
 
 const CampagneForm = ({ campagne = null }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const toast = useToast();
   const [isQuestionnaireValid, setIsQuestionnaireValid] = useState(true);
   const [isQuestionnaireUIValid, setIsQuestionnaireUIValid] = useState(true);
@@ -113,7 +113,7 @@ const CampagneForm = ({ campagne = null }) => {
       });
 
       if (success) {
-        history.push("/campagnes");
+        navigate("/campagnes");
       }
     },
   });
@@ -196,7 +196,9 @@ const CampagneForm = ({ campagne = null }) => {
                 <AccordionItem>
                   <AccordionButton>
                     <Box flex="1" textAlign="left">
-                      <Text color={!!formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>Questionnaire JSON</Text>
+                      <Text color={formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>
+                        Questionnaire JSON
+                      </Text>
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
@@ -232,7 +234,7 @@ const CampagneForm = ({ campagne = null }) => {
                 <AccordionItem>
                   <AccordionButton>
                     <Box flex="1" textAlign="left">
-                      <Text color={!!formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
+                      <Text color={formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
                         Questionnaire UI JSON
                       </Text>
                     </Box>
