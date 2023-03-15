@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useToast } from "@chakra-ui/react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -76,7 +76,7 @@ const validationSchema = (isQuestionnaireValid, isQuestionnaireUIValid) =>
   });
 
 const CampagneForm = ({ campagne = null }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const toast = useToast();
   const [isQuestionnaireValid, setIsQuestionnaireValid] = useState(true);
   const [isQuestionnaireUIValid, setIsQuestionnaireUIValid] = useState(true);
@@ -113,7 +113,7 @@ const CampagneForm = ({ campagne = null }) => {
       });
 
       if (success) {
-        history.push("/campagnes");
+        navigate("/campagnes");
       }
     },
   });

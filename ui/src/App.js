@@ -1,21 +1,25 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
-import routes from "./routes";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+import ViewCampagnes from "./campagnes/ViewCampagnes";
+import CampagneForm from "./campagnes/CampagneForm";
+import AnswerCampagne from "./campagnes/AnswerCampagne";
+import EditCampagne from "./campagnes/EditCampagne";
+import Login from "./users/Login";
 
 function App() {
   return (
     <Router>
-      <Switch>
-        {routes.map(({ path, Component, isProtected }, key) => {
-          return isProtected ? (
-            <ProtectedRoute exact path={path} key={key} component={(props) => <Component {...props} />} />
-          ) : (
-            <Route exact path={path} key={key} component={(props) => <Component {...props} />} />
-          );
-        })}
-        <Redirect to="/connexion" />
-      </Switch>
+      <Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route exact path="/" element={<ViewCampagnes />} />
+          <Route exact path="/campagnes/ajout" element={<CampagneForm />} />
+          <Route exact path="/campagnes/:id/edition" element={<EditCampagne />} />
+          <Route exact path="/campagnes" element={<ViewCampagnes />} />
+        </Route>
+        <Route exact path="/connexion" element={<Login />} />
+        <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
+      </Routes>
     </Router>
   );
 }

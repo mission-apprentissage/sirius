@@ -154,7 +154,7 @@ const AnswerCampagne = () => {
     }
   };
 
-  if (loading) return <Spinner size="xl" />;
+  if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
 
   return (
     <Stepper

@@ -26,7 +26,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon } from "@chakra-ui/icons";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
 
 import { _delete } from "../utils/httpClient";
@@ -36,7 +36,7 @@ const ViewCampagnes = () => {
   const [deletedCampagneId, setDeletedCampagneId] = useState(null);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [campagneLinks, setCampagneLinks] = useState(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   const toast = useToast();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -77,7 +77,8 @@ const ViewCampagnes = () => {
     }
   }, [deletedCampagneId, displayedCampagnes, toast]);
 
-  if (loading || error) return <Spinner size="xl" />;
+  if (loading || error || !displayedCampagnes.length) return <Spinner size="xl" />;
+
   return (
     <>
       <Flex align="center" justify="center">
@@ -90,7 +91,7 @@ const ViewCampagnes = () => {
                   variant="outline"
                   colorScheme="purple"
                   icon={<AddIcon />}
-                  onClick={() => history.push(`/campagnes/ajout`)}
+                  onClick={() => navigate(`/campagnes/ajout`)}
                 />
               </Center>
             </TableCaption>
@@ -119,7 +120,7 @@ const ViewCampagnes = () => {
                       variant="outline"
                       colorScheme="purple"
                       icon={<ViewIcon />}
-                      onClick={() => history.push(`/campagnes/${campagne._id}`)}
+                      onClick={() => navigate(`/campagnes/${campagne._id}`)}
                       mx={2}
                     />
                     <IconButton
@@ -138,7 +139,7 @@ const ViewCampagnes = () => {
                       variant="outline"
                       colorScheme="purple"
                       icon={<EditIcon />}
-                      onClick={() => history.push(`/campagnes/${campagne._id}/edition`)}
+                      onClick={() => navigate(`/campagnes/${campagne._id}/edition`)}
                       mx={2}
                     />
                     <IconButton

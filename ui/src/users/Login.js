@@ -17,7 +17,7 @@ import {
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Redirect, useHistory } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import Miley from "../assets/images/miley.png";
@@ -28,7 +28,7 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,7 +62,7 @@ const Login = () => {
           return { ...oldValues, token: result.token };
         });
         setIsSubmitting(false);
-        history.push("/campagnes");
+        navigate("/campagnes");
       } else if (result.statusCode === 401) {
         toast({
           title: "Une erreur est survenue",
@@ -84,7 +84,7 @@ const Login = () => {
     },
   });
 
-  if (!userContext.loading && userContext.token) return <Redirect to="/campagnes" />;
+  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes" />;
 
   return (
     <Flex flexDirection="column" backgroundColor="gray.100" justifyContent="center" alignItems="center" w="100%">
