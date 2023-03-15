@@ -1,7 +1,7 @@
 import "react-app-polyfill/ie11";
 import "react-app-polyfill/stable";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { StepsStyleConfig as Steps } from "chakra-ui-steps";
 import App from "./App";
@@ -74,8 +74,11 @@ export const theme = extendTheme({
     Steps: CustomSteps,
   },
 });
+const container = document.getElementById("root");
 
-ReactDOM.render(
+const root = createRoot(container);
+
+root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <GlobalStyle />
@@ -85,8 +88,7 @@ ReactDOM.render(
         </Layout>
       </UserProvider>
     </ChakraProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
 
 WebFont.load({
