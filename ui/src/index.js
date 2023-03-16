@@ -34,6 +34,20 @@ const CustomSteps = {
       },
     },
   },
+  variants: {
+    "circles-alt": (props) => {
+      console.log(Steps.variants["circles-alt"](props).step);
+      return {
+        ...Steps.variants["circles-alt"](props),
+        step: {
+          ...Steps.variants["circles-alt"](props).step,
+          _highlighted: {
+            cursor: "pointer!important",
+          },
+        },
+      };
+    },
+  },
 };
 
 export const theme = extendTheme({
