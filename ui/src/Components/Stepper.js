@@ -20,16 +20,15 @@ export const Stepper = ({
         size={isMobile ? "sm" : "md"}
         orientation="horizontal"
         variant="circles-alt"
+        onClickStep={(stepIndex) =>
+          currentCategoryIndex > stepIndex && setCurrentCategoryIndex(stepIndex)
+        }
       >
         {categories.map((category, index) => (
           <Step
             key={index}
             label={category}
-            onClick={() => currentCategoryIndex > index && setCurrentCategoryIndex(index)}
             isCompletedStep={index < currentCategoryIndex || isTemoignageSent ? true : false}
-            style={{
-              cursor: currentCategoryIndex > index ? "pointer" : "initial",
-            }}
           >
             {children}
           </Step>
