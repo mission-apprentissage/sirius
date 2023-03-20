@@ -16,7 +16,7 @@ httpTests(__filename, ({ startServer }) => {
 
     const loggedInUser = await httpClient
       .post("/api/users/login")
-      .send({ username: user.username, password: user.password });
+      .send({ username: user.username.toLowerCase(), password: user.password });
 
     const logoutRequest = await httpClient
       .get("/api/users/logout")
@@ -44,7 +44,7 @@ httpTests(__filename, ({ startServer }) => {
 
     const loggedInUser = await httpClient
       .post("/api/users/login")
-      .send({ username: user.username, password: user.password });
+      .send({ username: user.username.toLowerCase(), password: user.password });
 
     const logoutRequest = await httpClient
       .get("/api/users/logout")

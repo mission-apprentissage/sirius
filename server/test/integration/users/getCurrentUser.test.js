@@ -16,7 +16,7 @@ httpTests(__filename, ({ startServer }) => {
 
     const loggedInUser = await httpClient
       .post("/api/users/login")
-      .send({ username: user.username, password: user.password });
+      .send({ username: user.username.toLowerCase(), password: user.password });
 
     const meRequest = await httpClient
       .get("/api/users/me")
@@ -28,7 +28,7 @@ httpTests(__filename, ({ startServer }) => {
       authStrategy: user.authStrategy,
       firstName: user.firstName,
       lastName: user.lastName,
-      username: user.username,
+      username: user.username.toLowerCase(),
       _id: meRequest.body._id,
       __v: 0,
     });
