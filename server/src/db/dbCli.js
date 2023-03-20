@@ -1,22 +1,6 @@
 const { program: cli } = require("commander");
 const runScript = require("../modules/runScript");
-const migrateDb = require("./migrateDb");
-const injectData = require("./injectData");
 const createUser = require("./createUser");
-
-cli
-  .command("migrate")
-  .description("Migre les données en base")
-  .action(() => {
-    runScript(({ db }) => migrateDb(db));
-  });
-
-cli
-  .command("dataset")
-  .description("Injecte un jeu de données dans la base")
-  .action(() => {
-    runScript(({ db, apprentis }) => injectData(db, apprentis));
-  });
 
 cli
   .command("create-user")
