@@ -51,7 +51,10 @@ const Login = () => {
     validationSchema: validationSchema,
     onSubmit: async ({ username, password }) => {
       setIsSubmitting(true);
-      const result = await _post(`/api/users/login`, { username, password });
+      const result = await _post(`/api/users/login`, {
+        username: username.toLowerCase(),
+        password,
+      });
 
       if (result.success) {
         toast({
