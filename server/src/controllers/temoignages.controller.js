@@ -10,4 +10,12 @@ const createTemoignage = tryCatch(async (req, res) => {
   return res.status(201).json(body);
 });
 
-module.exports = { createTemoignage };
+const getTemoignages = tryCatch(async (req, res) => {
+  const { success, body } = await temoignagesService.getTemoignages();
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
+module.exports = { createTemoignage, getTemoignages };

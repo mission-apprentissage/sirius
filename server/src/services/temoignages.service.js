@@ -9,4 +9,13 @@ const createTemoignage = async (temoignage) => {
   }
 };
 
-module.exports = { createTemoignage };
+const getTemoignages = async () => {
+  try {
+    const temoignages = await temoignagesDao.getAll();
+    return { success: true, body: temoignages };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { createTemoignage, getTemoignages };

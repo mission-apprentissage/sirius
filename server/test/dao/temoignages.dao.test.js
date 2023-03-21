@@ -20,4 +20,20 @@ httpTests(__filename, ({ startServer }) => {
       expect(createdTemoignage.toObject()).to.eql({ ...temoignage1, _id: createdTemoignage._id, __v: 0 });
     });
   });
+  describe("getAll", () => {
+    it("should returns the temoignages", async () => {
+      const temoignage1 = newTemoignage({}, true);
+      const temoignage2 = newTemoignage({}, true);
+
+      await temoignagesDao.create(temoignage1);
+      await temoignagesDao.create(temoignage2);
+
+      const temoignages = await temoignagesDao.getAll();
+
+      expect(temoignages).to.have.deep.members([
+        { ...temoignage1, __v: 0 },
+        { ...temoignage2, __v: 0 },
+      ]);
+    });
+  });
 });

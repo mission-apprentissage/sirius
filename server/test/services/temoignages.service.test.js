@@ -29,4 +29,24 @@ describe(__filename, () => {
       expect(body).to.be.an("error");
     });
   });
+  describe("getTemoignages", () => {
+    it("should be successful and returns temoignages", async () => {
+      const temoignage = newTemoignage();
+      stub(temoignagesDao, "getAll").returns([temoignage]);
+
+      const { success, body } = await temoignagesService.getTemoignages();
+
+      expect(success).to.be.true;
+      expect(body).to.be.an("array");
+      expect(body[0]).to.deep.equal(temoignage);
+    });
+    it("should be unsuccessful and returns errors if it throws", async () => {
+      stub(temoignagesDao, "getAll").throws(new Error());
+
+      const { success, body } = await temoignagesService.getTemoignages();
+
+      expect(success).to.be.false;
+      expect(body).to.be.an("error");
+    });
+  });
 });
