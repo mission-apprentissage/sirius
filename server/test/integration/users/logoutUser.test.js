@@ -2,8 +2,7 @@ const { use, expect } = require("chai");
 const sinonChai = require("sinon-chai");
 
 const httpTests = require("../utils/httpTests");
-const { newUser } = require("../../fixtures");
-const createUser = require("../../../src/db/createUser");
+const { createAndLoginUser } = require("../utils/user");
 
 use(sinonChai);
 
@@ -11,17 +10,12 @@ httpTests(__filename, ({ startServer }) => {
   it("should return 200 and delete refreshToken cookie", async () => {
     const { httpClient } = await startServer();
 
-    const user = newUser({ password: "toto" });
-    await createUser(user.username, user.password, user.firstName, user.lastName);
-
-    const loggedInUser = await httpClient
-      .post("/api/users/login")
-      .send({ username: user.username.toLowerCase(), password: user.password });
+    const loggedInUserResponse = await createAndLoginUser(httpClient);
 
     const logoutRequest = await httpClient
       .get("/api/users/logout")
-      .set("Authorization", `Bearer ${loggedInUser.body.token}`)
-      .set("Cookie", [...loggedInUser.headers["set-cookie"]])
+      .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
+      .set("Cookie", [...loggedInUserResponse.headers["set-cookie"]])
       .send();
 
     expect(logoutRequest.user).to.be.undefined;
@@ -39,16 +33,11 @@ httpTests(__filename, ({ startServer }) => {
   it("should return 401 and unauthorized error if no signed cookie is provided", async () => {
     const { httpClient } = await startServer();
 
-    const user = newUser({ password: "toto" });
-    await createUser(user.username, user.password, user.firstName, user.lastName);
-
-    const loggedInUser = await httpClient
-      .post("/api/users/login")
-      .send({ username: user.username.toLowerCase(), password: user.password });
+    const loggedInUserResponse = await createAndLoginUser(httpClient);
 
     const logoutRequest = await httpClient
       .get("/api/users/logout")
-      .set("Authorization", `Bearer ${loggedInUser.body.token}`)
+      .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
       .send();
 
     expect(logoutRequest.status).to.equal(401);
