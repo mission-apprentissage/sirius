@@ -1,18 +1,26 @@
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
 const { newCampagne } = require("../../fixtures");
+const { createAndLoginUser } = require("../utils/user");
 
 httpTests(__filename, ({ startServer }) => {
   it("should returns 200 and update the campagne", async () => {
     const { httpClient } = await startServer();
     const campagne = newCampagne();
     const newCampagneName = "updatedCampagne";
-    const existingCampagne = await httpClient.post("/api/campagnes/").send(campagne);
+
+    const loggedInUserResponse = await createAndLoginUser(httpClient);
+
+    const existingCampagne = await httpClient
+      .post("/api/campagnes/")
+      .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
+      .send(campagne);
 
     const campagneWithNewName = newCampagne({ ...campagne, nomCampagne: newCampagneName });
 
     const updatedCampagne = await httpClient
       .put(`/api/campagnes/${existingCampagne.body._id}`)
+      .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
       .send(campagneWithNewName);
 
     assert.strictEqual(updatedCampagne.status, 200);
@@ -28,12 +36,19 @@ httpTests(__filename, ({ startServer }) => {
     const { httpClient } = await startServer();
     const newCampagneName = "";
     const campagne = newCampagne();
-    const existingCampagne = await httpClient.post("/api/campagnes/").send(campagne);
+
+    const loggedInUserResponse = await createAndLoginUser(httpClient);
+
+    const existingCampagne = await httpClient
+      .post("/api/campagnes/")
+      .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
+      .send(campagne);
 
     const campagneWithNewName = { nomCampagne: newCampagneName };
 
     const updatedCampagne = await httpClient
       .put(`/api/campagnes/${existingCampagne.body._id}`)
+      .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
       .send(campagneWithNewName);
 
     assert.strictEqual(updatedCampagne.status, 400);

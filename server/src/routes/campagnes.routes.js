@@ -8,15 +8,16 @@ const {
   deleteCampagne,
   updateCampagne,
 } = require("../controllers/campagnes.controller");
+const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 
 const campagnes = () => {
   const router = express.Router();
 
-  router.get("/api/campagnes/", (req, res, next) => {
+  router.get("/api/campagnes/", verifyUser, (req, res, next) => {
     getCampagnes(req, res, next);
   });
 
-  router.post("/api/campagnes/", validator(createCampagneSchema), (req, res, next) => {
+  router.post("/api/campagnes/", verifyUser, validator(createCampagneSchema), (req, res, next) => {
     createCampagne(req, res, next);
   });
 
@@ -24,11 +25,11 @@ const campagnes = () => {
     getCampagne(req, res, next);
   });
 
-  router.delete("/api/campagnes/:id", (req, res, next) => {
+  router.delete("/api/campagnes/:id", verifyUser, (req, res, next) => {
     deleteCampagne(req, res, next);
   });
 
-  router.put("/api/campagnes/:id", validator(createCampagneSchema), (req, res, next) => {
+  router.put("/api/campagnes/:id", verifyUser, validator(createCampagneSchema), (req, res, next) => {
     updateCampagne(req, res, next);
   });
 
