@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Center,
   IconButton,
@@ -31,8 +31,10 @@ import QRCode from "react-qr-code";
 
 import { _delete } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
+import { UserContext } from "../context/UserContext";
 
 const ViewCampagnes = () => {
+  const [userContext] = useContext(UserContext);
   const [deletedCampagneId, setDeletedCampagneId] = useState(null);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [campagneLinks, setCampagneLinks] = useState(null);
@@ -51,7 +53,7 @@ const ViewCampagnes = () => {
 
   useEffect(() => {
     const deleteCampagne = async () => {
-      const result = await _delete(`/api/campagnes/${deletedCampagneId}`);
+      const result = await _delete(`/api/campagnes/${deletedCampagneId}`, userContext.token);
 
       if (result?.deletedCount) {
         toast({
@@ -73,6 +75,7 @@ const ViewCampagnes = () => {
         (campagne) => campagne._id !== deletedCampagneId
       );
       setDisplayedCampagnes(filteredDisplayedCampagne);
+      setDeletedCampagneId(null);
     };
     if (deletedCampagneId) {
       deleteCampagne();

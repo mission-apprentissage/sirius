@@ -1,81 +1,41 @@
-import EventEmitter from "events";
-
-class AuthError extends Error {
-  constructor(json, statusCode) {
-    super(`Request rejected with status code ${statusCode}`);
-    this.json = json;
-    this.statusCode = statusCode;
-    this.prettyMessage = "Identifiant ou mot de passe invalide";
-  }
-}
-
-class HTTPError extends Error {
-  constructor(message, json, statusCode) {
-    super(message);
-    this.json = json;
-    this.statusCode = statusCode;
-    this.prettyMessage = "Une erreur technique est survenue";
-  }
-}
-
-const emitter = new EventEmitter();
-const handleResponse = async (path, response) => {
-  let statusCode = response.status;
-  let json = await response.json();
-
-  if (statusCode >= 400 && statusCode < 600) {
-    emitter.emit("http:error", response);
-
-    if (statusCode === 401 || statusCode === 403) {
-      throw new AuthError(json, statusCode);
-    } else {
-      throw new HTTPError(
-        `Server returned ${statusCode} when requesting resource ${path}`,
-        json,
-        statusCode
-      );
-    }
-  }
-  return json;
-};
-
-const getHeaders = () => {
+const getHeaders = (token) => {
   return {
     Accept: "application/json",
+    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
 };
 
-export const _get = (path) => {
+export const _get = async (path, token = null) => {
   return fetch(`${path}`, {
     method: "GET",
-    headers: getHeaders(),
-  }).then((res) => handleResponse(path, res));
+    headers: getHeaders(token),
+    credentials: "same-origin",
+  }).then((res) => res.json());
 };
 
-export const _post = async (path, body) => {
+export const _post = async (path, body, token = null) => {
   return fetch(`${path}`, {
     method: "POST",
-    headers: getHeaders(),
+    headers: getHeaders(token),
     body: JSON.stringify(body),
-    credentials: "include",
+    credentials: "same-origin",
   }).then((res) => res.json());
 };
 
-export const _put = async (path, body = {}) => {
+export const _put = async (path, body = {}, token = null) => {
   return fetch(`${path}`, {
     method: "PUT",
-    headers: getHeaders(),
+    headers: getHeaders(token),
     body: JSON.stringify(body),
-    credentials: "include",
+    credentials: "same-origin",
   }).then((res) => res.json());
 };
 
-export const _delete = (path) => {
+export const _delete = async (path, token = null) => {
   return fetch(`${path}`, {
     method: "DELETE",
-    headers: getHeaders(),
-  }).then((res) => handleResponse(path, res));
+    headers: getHeaders(token),
+    credentials: "same-origin",
+  }).then((res) => res.json());
 };
-
-export const subscribeToHttpEvent = (eventName, callback) => emitter.on(eventName, callback);

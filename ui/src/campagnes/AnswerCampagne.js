@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
@@ -12,6 +12,7 @@ import CustomRadios from "../Components/Form/CustomRadios";
 import CustomText from "../Components/Form/CustomText";
 import CustomTextarea from "../Components/Form/CustomTextarea";
 import { Stepper } from "../Components/Stepper";
+import { UserContext } from "../context/UserContext";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -101,6 +102,7 @@ const AnswerCampagne = () => {
   const { id } = useParams();
   const [campagne, loading] = useGet(`/api/campagnes/${id}`);
   const toast = useToast();
+  const [userContext] = useContext(UserContext);
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [formattedQuestionnnaire, setFormattedQuestionnnaire] = useState([]);
@@ -138,10 +140,14 @@ const AnswerCampagne = () => {
   };
 
   const onSubmitHandler = async (formData) => {
-    const result = await _post(`/api/temoignages/`, {
-      reponses: { ...answers, ...formData },
-      campagneId: id,
-    });
+    const result = await _post(
+      `/api/temoignages/`,
+      {
+        reponses: { ...answers, ...formData },
+        campagneId: id,
+      },
+      userContext.token
+    );
     if (result._id) {
       setIsTemoignageSent(true);
     } else {
