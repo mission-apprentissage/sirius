@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useToast } from "@chakra-ui/react";
@@ -23,16 +23,21 @@ import {
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import { _post, _put } from "../utils/httpClient";
+import { UserContext } from "../context/UserContext";
 
-const submitHandler = async (values, editedCampagneId) => {
+const submitHandler = async (values, editedCampagneId, token) => {
   const isEdition = !!editedCampagneId;
 
   if (isEdition) {
-    const result = await _put(`/api/campagnes/${editedCampagneId}`, {
-      ...values,
-      questionnaire: JSON.parse(values.questionnaire),
-      questionnaireUI: JSON.parse(values.questionnaireUI),
-    });
+    const result = await _put(
+      `/api/campagnes/${editedCampagneId}`,
+      {
+        ...values,
+        questionnaire: JSON.parse(values.questionnaire),
+        questionnaireUI: JSON.parse(values.questionnaireUI),
+      },
+      token
+    );
 
     return result.acknowledged
       ? {
@@ -43,11 +48,15 @@ const submitHandler = async (values, editedCampagneId) => {
           success: false,
         };
   } else {
-    const result = await _post(`/api/campagnes/`, {
-      ...values,
-      questionnaire: JSON.parse(values.questionnaire),
-      questionnaireUI: JSON.parse(values.questionnaireUI),
-    });
+    const result = await _post(
+      `/api/campagnes/`,
+      {
+        ...values,
+        questionnaire: JSON.parse(values.questionnaire),
+        questionnaireUI: JSON.parse(values.questionnaireUI),
+      },
+      token
+    );
 
     return result._id
       ? {
@@ -82,6 +91,7 @@ const CampagneForm = ({ campagne = null }) => {
   const [isQuestionnaireUIValid, setIsQuestionnaireUIValid] = useState(true);
   const [questionnaire, setQuestionnaire] = useState(null);
   const [questionnaireUI, setQuestionnaireUI] = useState(null);
+  const [userContext] = useContext(UserContext);
 
   const formik = useFormik({
     initialValues: {
@@ -102,7 +112,8 @@ const CampagneForm = ({ campagne = null }) => {
 
       const { success, message } = await submitHandler(
         { ...values, questionnaire: sentQuestionnaire, questionnaireUI: sentQuestionnaireUI },
-        campagneId
+        campagneId,
+        userContext.token
       );
 
       toast({
