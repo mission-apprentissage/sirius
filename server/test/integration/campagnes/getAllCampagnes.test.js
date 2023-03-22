@@ -1,6 +1,7 @@
 const assert = require("assert");
 const httpTests = require("../utils/httpTests");
 const { newCampagne } = require("../../fixtures");
+const { createAndLoginUser } = require("../utils/user");
 
 httpTests(__filename, ({ startServer }) => {
   it("should return 200 with multiple campagnes if it exists", async () => {
@@ -11,8 +12,11 @@ httpTests(__filename, ({ startServer }) => {
     await components.campagnes.create(campagne1);
     await components.campagnes.create(campagne2);
 
-    const response = await httpClient.get("/api/campagnes/");
+    const loggedInUserResponse = await createAndLoginUser(httpClient);
 
+    const response = await httpClient
+      .get("/api/campagnes/")
+      .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.body, [
       { ...campagne1, _id: response.body[0]._id, __v: 0 },
@@ -22,8 +26,11 @@ httpTests(__filename, ({ startServer }) => {
   it("should return 200 and an empty array if no campagne exist", async () => {
     const { httpClient } = await startServer();
 
-    const response = await httpClient.get("/api/campagnes/");
+    const loggedInUserResponse = await createAndLoginUser(httpClient);
 
+    const response = await httpClient
+      .get("/api/campagnes/")
+      .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.body, []);
   });

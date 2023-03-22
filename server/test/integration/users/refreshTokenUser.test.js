@@ -2,8 +2,7 @@ const { use, expect } = require("chai");
 const sinonChai = require("sinon-chai");
 
 const httpTests = require("../utils/httpTests");
-const { newUser } = require("../../fixtures");
-const createUser = require("../../../src/db/createUser");
+const { createAndLoginUser } = require("../utils/user");
 
 use(sinonChai);
 
@@ -11,19 +10,14 @@ httpTests(__filename, ({ startServer }) => {
   it("should return 200 and the new user token", async () => {
     const { httpClient } = await startServer();
 
-    const user = newUser({ password: "toto" });
-    await createUser(user.username, user.password, user.firstName, user.lastName);
-
-    const loggedInUser = await httpClient
-      .post("/api/users/login")
-      .send({ username: user.username.toLowerCase(), password: user.password });
+    const loggedInUserResponse = await createAndLoginUser(httpClient);
 
     const refreshTokenRequest = await httpClient
       .post("/api/users/refreshToken")
-      .set("Cookie", [...loggedInUser.headers["set-cookie"]])
+      .set("Cookie", [...loggedInUserResponse.headers["set-cookie"]])
       .send();
 
-    expect(refreshTokenRequest.headers["set-cookie"]).to.eql([...loggedInUser.headers["set-cookie"]]);
+    expect(refreshTokenRequest.headers["set-cookie"]).to.eql([...loggedInUserResponse.headers["set-cookie"]]);
     expect(refreshTokenRequest.status).to.equal(200);
     expect(refreshTokenRequest.body).to.deep.equal({
       success: true,
