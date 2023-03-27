@@ -18,4 +18,13 @@ const getTemoignages = async () => {
   }
 };
 
-module.exports = { createTemoignage, getTemoignages };
+const deleteTemoignage = async (id) => {
+  try {
+    const temoignage = await temoignagesDao.deleteOne(id);
+    return { success: true, body: temoignage };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { createTemoignage, getTemoignages, deleteTemoignage };

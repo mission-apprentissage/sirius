@@ -1,5 +1,5 @@
 const temoignagesService = require("../services/temoignages.service");
-const { BasicError } = require("../errors");
+const { BasicError, TemoignageNotFoundError } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 
 const createTemoignage = tryCatch(async (req, res) => {
@@ -18,4 +18,13 @@ const getTemoignages = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-module.exports = { createTemoignage, getTemoignages };
+const deleteTemoignage = tryCatch(async (req, res) => {
+  const { success, body } = await temoignagesService.deleteTemoignage(req.params.id);
+
+  if (!success) throw new BasicError();
+  if (!body.deletedCount) throw new TemoignageNotFoundError();
+
+  return res.status(200).json(body);
+});
+
+module.exports = { createTemoignage, getTemoignages, deleteTemoignage };

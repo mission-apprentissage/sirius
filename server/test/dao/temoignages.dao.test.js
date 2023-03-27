@@ -36,4 +36,14 @@ httpTests(__filename, ({ startServer }) => {
       ]);
     });
   });
+  describe("deleteOne", () => {
+    it("should deletes the temoignage", async () => {
+      const temoignage1 = newTemoignage({}, true);
+      await temoignagesDao.create(temoignage1);
+
+      const deletedTemoignage = await temoignagesDao.deleteOne(temoignage1._id);
+
+      expect(deletedTemoignage.deletedCount).to.eql(1);
+    });
+  });
 });

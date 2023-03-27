@@ -24,6 +24,15 @@ const Errors = {
       return 404;
     }
   },
+  TemoignageNotFoundError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || "Temoignage inconnu", extra);
+    }
+
+    get status() {
+      return 404;
+    }
+  },
   UnauthorizedError: class NotFoundError extends BasicError {
     constructor(message, extra) {
       super(message || "Unauthorized", extra);

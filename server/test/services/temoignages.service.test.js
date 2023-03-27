@@ -49,4 +49,30 @@ describe(__filename, () => {
       expect(body).to.be.an("error");
     });
   });
+  describe("deleteTemoignage", () => {
+    it("should be successful and returns the number of deleted temoignage", async () => {
+      const temoignage = newTemoignage({}, true);
+      stub(temoignagesDao, "deleteOne").returns({
+        acknowledged: true,
+        deletedCount: 1,
+      });
+
+      const { success, body } = await temoignagesService.deleteTemoignage(temoignage._id);
+
+      expect(success).to.be.true;
+      expect(body).to.be.an("object");
+      expect(body).to.deep.equal({
+        acknowledged: true,
+        deletedCount: 1,
+      });
+    });
+    it("should be unsuccessful and returns errors if it throws", async () => {
+      stub(temoignagesDao, "deleteOne").throws(new Error());
+
+      const { success, body } = await temoignagesService.deleteTemoignage();
+
+      expect(success).to.be.false;
+      expect(body).to.be.an("error");
+    });
+  });
 });

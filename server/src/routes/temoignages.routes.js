@@ -1,7 +1,7 @@
 const express = require("express");
 const validator = require("../middlewares/validatorMiddleware");
 const createTemoignageSchema = require("../validators/temoignages.validators");
-const { createTemoignage, getTemoignages } = require("../controllers/temoignages.controller");
+const { createTemoignage, getTemoignages, deleteTemoignage } = require("../controllers/temoignages.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 
 const temoignages = () => {
@@ -13,6 +13,10 @@ const temoignages = () => {
 
   router.get("/api/temoignages/", verifyUser, (req, res, next) => {
     getTemoignages(req, res, next);
+  });
+
+  router.delete("/api/temoignages/:id", verifyUser, (req, res, next) => {
+    deleteTemoignage(req, res, next);
   });
 
   return router;
