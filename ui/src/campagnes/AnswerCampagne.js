@@ -120,7 +120,7 @@ const AnswerCampagne = () => {
     : false;
 
   useEffect(() => {
-    if (campagne.questionnaire) {
+    if (campagne.questionnaire && Object.keys(campagne.questionnaire).length) {
       setFormattedQuestionnnaire(multiStepQuestionnaireFormatter(campagne.questionnaire));
       setCategories(getCategories(campagne.questionnaire));
     }
