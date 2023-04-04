@@ -4,8 +4,8 @@ const create = async (temoignage) => {
   return Temoignage.create(temoignage);
 };
 
-const getAll = async () => {
-  return Temoignage.find({}).lean();
+const getAll = async (query) => {
+  return Temoignage.find(query).lean();
 };
 
 const deleteOne = async (id) => {

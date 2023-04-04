@@ -11,7 +11,8 @@ const createTemoignage = tryCatch(async (req, res) => {
 });
 
 const getTemoignages = tryCatch(async (req, res) => {
-  const { success, body } = await temoignagesService.getTemoignages();
+  const query = req.query;
+  const { success, body } = await temoignagesService.getTemoignages(query);
 
   if (!success) throw new BasicError();
 

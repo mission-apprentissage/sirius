@@ -9,9 +9,9 @@ const createTemoignage = async (temoignage) => {
   }
 };
 
-const getTemoignages = async () => {
+const getTemoignages = async (query) => {
   try {
-    const temoignages = await temoignagesDao.getAll();
+    const temoignages = await temoignagesDao.getAll(query);
     return { success: true, body: temoignages };
   } catch (error) {
     return { success: false, body: error };
