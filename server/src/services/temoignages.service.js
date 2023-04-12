@@ -9,4 +9,22 @@ const createTemoignage = async (temoignage) => {
   }
 };
 
-module.exports = { createTemoignage };
+const getTemoignages = async (query) => {
+  try {
+    const temoignages = await temoignagesDao.getAll(query);
+    return { success: true, body: temoignages };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+const deleteTemoignage = async (id) => {
+  try {
+    const temoignage = await temoignagesDao.deleteOne(id);
+    return { success: true, body: temoignage };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { createTemoignage, getTemoignages, deleteTemoignage };

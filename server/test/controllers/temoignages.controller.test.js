@@ -5,7 +5,7 @@ const { mockRequest, mockResponse } = require("mock-req-res");
 
 const temoignagesController = require("../../src/controllers/temoignages.controller");
 const temoignagesService = require("../../src/services/temoignages.service");
-const { BasicError } = require("../../src/errors");
+const { BasicError, TemoignageNotFoundError } = require("../../src/errors");
 const { newTemoignage } = require("../fixtures");
 
 use(sinonChai);
@@ -16,6 +16,7 @@ describe(__filename, () => {
   const next = stub();
 
   const temoignage1 = newTemoignage();
+  const temoignage2 = newTemoignage();
 
   afterEach(() => {
     restore();
@@ -39,6 +40,46 @@ describe(__filename, () => {
 
       expect(res.status).to.have.been.calledWith(201);
       expect(res.json).to.have.been.calledWith(match(temoignage1));
+    });
+  });
+  describe("getTemoignages", () => {
+    it("should throw a BasicError if success is false", async () => {
+      stub(temoignagesService, "getTemoignages").returns({ success: false, body: null });
+
+      await temoignagesController.getTemoignages(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
+    });
+    it("should returns temoignages and status 200 if success is true", async () => {
+      stub(temoignagesService, "getTemoignages").returns({ success: true, body: [temoignage1, temoignage2] });
+
+      await temoignagesController.getTemoignages(req, res, next);
+
+      expect(res.status).to.have.been.calledWith(200);
+      expect(res.json).to.have.been.calledWith(match([temoignage1, temoignage2]));
+    });
+  });
+  describe("deleteTemoignage", () => {
+    it("should throw a BasicError if success is false", async () => {
+      stub(temoignagesService, "deleteTemoignage").returns({ success: false, body: null });
+
+      await temoignagesController.deleteTemoignage(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
+    });
+    it("should throw a TemoignageNotFoundError if deletedCount is not 1", async () => {
+      stub(temoignagesService, "deleteTemoignage").returns({ success: true, body: { deletedCount: 0 } });
+
+      await temoignagesController.deleteTemoignage(req, res, next);
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(TemoignageNotFoundError);
+    });
+    it("should returns the deletedCount and status 200 if success is true", async () => {
+      stub(temoignagesService, "deleteTemoignage").returns({ success: true, body: { deletedCount: 1 } });
+
+      await temoignagesController.deleteTemoignage(req, res, next);
+
+      expect(res.status).to.have.been.calledWith(200);
+      expect(res.json).to.have.been.calledWith(match({ deletedCount: 1 }));
     });
   });
 });

@@ -24,6 +24,10 @@ const Links = [
     label: "Campagnes",
     href: "/campagnes",
   },
+  {
+    label: "Temoignages",
+    href: "/temoignages",
+  },
 ];
 
 const Navbar = () => {
@@ -49,7 +53,7 @@ const Navbar = () => {
             <HStack as="nav" spacing={4} display={{ base: "none", md: "flex" }}>
               {Links.map((link) => (
                 <Link
-                  key={link}
+                  key={link.label}
                   href={link.href}
                   px={2}
                   py={1}

@@ -20,4 +20,44 @@ httpTests(__filename, ({ startServer }) => {
       expect(createdTemoignage.toObject()).to.eql({ ...temoignage1, _id: createdTemoignage._id, __v: 0 });
     });
   });
+  describe("getAll", () => {
+    it("should returns the temoignages", async () => {
+      const temoignage1 = newTemoignage({}, true);
+      const temoignage2 = newTemoignage({}, true);
+
+      await temoignagesDao.create(temoignage1);
+      await temoignagesDao.create(temoignage2);
+
+      const temoignages = await temoignagesDao.getAll();
+
+      expect(temoignages).to.have.deep.members([
+        { ...temoignage1, __v: 0 },
+        { ...temoignage2, __v: 0 },
+      ]);
+    });
+    it("should returns the temoignages related to the query if it exists", async () => {
+      const temoignage1 = newTemoignage({ campagneId: "42" }, true);
+      const temoignage2 = newTemoignage({ campagneId: "42" }, true);
+
+      await temoignagesDao.create(temoignage1);
+      await temoignagesDao.create(temoignage2);
+
+      const temoignages = await temoignagesDao.getAll({ campagneId: "42" });
+
+      expect(temoignages).to.have.deep.members([
+        { ...temoignage1, __v: 0 },
+        { ...temoignage2, __v: 0 },
+      ]);
+    });
+  });
+  describe("deleteOne", () => {
+    it("should deletes the temoignage", async () => {
+      const temoignage1 = newTemoignage({}, true);
+      await temoignagesDao.create(temoignage1);
+
+      const deletedTemoignage = await temoignagesDao.deleteOne(temoignage1._id);
+
+      expect(deletedTemoignage.deletedCount).to.eql(1);
+    });
+  });
 });

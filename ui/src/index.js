@@ -36,7 +36,6 @@ const CustomSteps = {
   },
   variants: {
     "circles-alt": (props) => {
-      console.log(Steps.variants["circles-alt"](props).step);
       return {
         ...Steps.variants["circles-alt"](props),
         step: {
