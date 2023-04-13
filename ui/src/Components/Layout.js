@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
   return (
     <>
       {isAuthenticated && <Navbar />}
-      <Container maxW="container.lg" bg="gray.100">
+      <Container maxW="container.xl" bg="gray.100">
         <Flex py={[5, 20]}>{children}</Flex>
       </Container>
     </>
