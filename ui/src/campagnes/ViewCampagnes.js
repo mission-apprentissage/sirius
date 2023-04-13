@@ -24,6 +24,7 @@ import {
   VStack,
   Link,
   useToast,
+  Tooltip,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
@@ -86,7 +87,7 @@ const ViewCampagnes = () => {
 
   return (
     <>
-      <Flex align="center" justify="center">
+      <Flex align="center" justify="center" width="100%">
         <TableContainer my={12} p={6} rounded="md" w="100%" boxShadow="md" bg="white">
           <Table size="md">
             <TableCaption>
@@ -114,7 +115,11 @@ const ViewCampagnes = () => {
             <Tbody>
               {displayedCampagnes?.map((campagne) => (
                 <Tr key={campagne._id}>
-                  <Td>{campagne.nomCampagne}</Td>
+                  <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
+                    <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {campagne.nomCampagne}
+                    </Td>
+                  </Tooltip>
                   <Td>{campagne.cfa}</Td>
                   <Td>{campagne.formation}</Td>
                   <Td>{campagne.startDate}</Td>

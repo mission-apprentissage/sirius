@@ -4,20 +4,10 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Heading,
   Text,
-  Button,
   Flex,
   HStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import ReactEChartsCore from "echarts-for-react/lib/core";
@@ -29,6 +19,7 @@ import { useGet } from "../common/hooks/httpHooks";
 import { _get } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../utils/temoignage";
+import TemoignagesModal from "./Components/TemoignagesModal";
 
 echarts.use([TooltipComponent, GridComponent, PieChart, CanvasRenderer]);
 
@@ -46,7 +37,7 @@ const option = (countedResponses) => ({
     {
       name: "",
       type: "pie",
-      radius: "80%",
+      radius: "60%",
       center: ["50%", "50%"],
       data: countedResponses,
       itemStyle: {
@@ -69,8 +60,6 @@ const ViewTemoignages = () => {
   const [questionsList, setQuestionsList] = useState([]);
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
   const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     if (campagnes) {
@@ -179,26 +168,10 @@ const ViewTemoignages = () => {
                     )}
                   </CardBody>
                   {matchedCardTypeAndQuestions[question] === "text" && (
-                    <>
-                      <CardFooter>
-                        <Button onClick={onOpen}>Voir plus</Button>
-                      </CardFooter>
-                      <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
-                        <ModalOverlay bg="blackAlpha.300" />
-                        <ModalContent>
-                          <ModalHeader p={4}>{matchedIdAndQuestions[question]}</ModalHeader>
-                          <ModalCloseButton />
-                          <ModalBody>
-                            {responses.map((response, index) => (
-                              <Text key={index} fontSize="xl" pl={4} mb={6}>
-                                {response}
-                              </Text>
-                            ))}
-                          </ModalBody>
-                          <ModalFooter></ModalFooter>
-                        </ModalContent>
-                      </Modal>
-                    </>
+                    <TemoignagesModal
+                      responses={responses}
+                      question={matchedIdAndQuestions[question]}
+                    />
                   )}
                 </Card>
               )
