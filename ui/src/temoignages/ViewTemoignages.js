@@ -20,42 +20,45 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Pie } from "react-chartjs-2";
+import ReactEChartsCore from "echarts-for-react/lib/core";
+import * as echarts from "echarts/core";
+import { PieChart } from "echarts/charts";
+import { GridComponent, TooltipComponent } from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
 import { useGet } from "../common/hooks/httpHooks";
 import { _get } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../utils/temoignage";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+echarts.use([TooltipComponent, GridComponent, PieChart, CanvasRenderer]);
 
-export const data = (countedResponses) => {
-  return {
-    labels: countedResponses.map((item) => item.label),
-    datasets: [
-      {
-        data: countedResponses.map((item) => item.count),
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.7)",
-          "rgba(54, 162, 235, 0.7)",
-          "rgba(255, 206, 86, 0.7)",
-          "rgba(75, 192, 192, 0.7)",
-          "rgba(153, 102, 255, 0.7)",
-          "rgba(255, 159, 64, 0.7)",
-        ],
-        borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-          "rgba(255, 159, 64, 1)",
-        ],
-        borderWidth: 1,
+const option = (countedResponses) => ({
+  tooltip: {
+    trigger: "item",
+    formatter: "{a} <br/>{b} : {c} ({d}%)",
+    position: (pos, params, dom, rect, size) => {
+      const obj = { top: 60 };
+      obj[["left", "right"][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+      return obj;
+    },
+  },
+  series: [
+    {
+      name: "",
+      type: "pie",
+      radius: "80%",
+      center: ["50%", "50%"],
+      data: countedResponses,
+      itemStyle: {
+        emphasis: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: "rgba(0, 0, 0, 0.5)",
+        },
       },
-    ],
-  };
-};
+    },
+  ],
+});
 
 const ViewTemoignages = () => {
   const [userContext] = useContext(UserContext);
@@ -125,19 +128,19 @@ const ViewTemoignages = () => {
         </Text>
       )}
       <Flex align="center" justify="center" w="100%" mt="8">
-        <SimpleGrid spacing={4} templateColumns="repeat(auto-fill, minmax(400px, 1fr))" w="100%">
+        <SimpleGrid spacing={4} templateColumns="repeat(auto-fill, minmax(350px, 1fr))" w="100%">
           {questionsList.map((question) => {
             const responses = temoignages
               .map((temoignage) => temoignage.reponses[question])
               .flat()
               .filter(Boolean);
-            const countedResponses = responses.reduce((acc, label) => {
-              if (label) {
-                const index = acc.findIndex((item) => item.label === label);
+            const countedResponses = responses.reduce((acc, name) => {
+              if (name) {
+                const index = acc.findIndex((item) => item.name === name);
                 if (index !== -1) {
-                  acc[index].count++;
+                  acc[index].value++;
                 } else {
-                  acc.push({ label, count: 1 });
+                  acc.push({ name, value: 1 });
                 }
               }
               return acc;
@@ -172,10 +175,7 @@ const ViewTemoignages = () => {
                       </Flex>
                     )}
                     {matchedCardTypeAndQuestions[question] === "pie" && (
-                      <Pie
-                        data={data(countedResponses)}
-                        options={{ plugins: { legend: { display: true } } }}
-                      />
+                      <ReactEChartsCore echarts={echarts} option={option(countedResponses)} />
                     )}
                   </CardBody>
                   {matchedCardTypeAndQuestions[question] === "text" && (
