@@ -1,4 +1,5 @@
 const { use, expect } = require("chai");
+const sinon = require("sinon");
 const sinonChai = require("sinon-chai");
 const httpTests = require("../integration/utils/httpTests");
 
@@ -11,6 +12,12 @@ httpTests(__filename, ({ startServer }) => {
   before(async () => {
     await startServer();
   });
+  beforeEach(async () => {
+    sinon.useFakeTimers(new Date());
+  });
+  afterEach(async () => {
+    sinon.restore();
+  });
   describe("getAll", () => {
     it("should returns the campagnes", async () => {
       const campagne1 = newCampagne({}, true);
@@ -22,8 +29,8 @@ httpTests(__filename, ({ startServer }) => {
       const campagnes = await campagnesDao.getAll();
 
       expect(campagnes).to.have.deep.members([
-        { ...campagne1, __v: 0 },
-        { ...campagne2, __v: 0 },
+        { ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date() },
+        { ...campagne2, __v: 0, createdAt: new Date(), updatedAt: new Date() },
       ]);
     });
   });
@@ -34,7 +41,7 @@ httpTests(__filename, ({ startServer }) => {
 
       const campagne = await campagnesDao.getOne(campagne1._id);
 
-      expect(campagne).to.eql({ ...campagne1, __v: 0 });
+      expect(campagne).to.eql({ ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date() });
     });
   });
   describe("create", () => {
@@ -43,7 +50,13 @@ httpTests(__filename, ({ startServer }) => {
 
       const createdCampagne = await campagnesDao.create(campagne1);
 
-      expect(createdCampagne.toObject()).to.eql({ ...campagne1, _id: createdCampagne._id, __v: 0 });
+      expect(createdCampagne.toObject()).to.eql({
+        ...campagne1,
+        _id: createdCampagne._id,
+        __v: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
     });
   });
   describe("deleteOne", () => {

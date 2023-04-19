@@ -10,7 +10,7 @@ const campagneSchema = new mongoose.Schema(
     questionnaire: { type: Object, required: true },
     questionnaireUI: { type: Object, required: true },
   },
-  { minimize: false }
+  { minimize: false, timestamps: true }
 );
 
 const Campagne = mongoose.model("Campagne", campagneSchema);
