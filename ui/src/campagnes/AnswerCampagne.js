@@ -6,7 +6,7 @@ import { Box, Flex, Button, IconButton, Text } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
-import { _post } from "../utils/httpClient";
+import { _post, _put } from "../utils/httpClient";
 import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
 import CustomRadios from "../Components/Form/CustomRadios";
 import CustomText from "../Components/Form/CustomText";
@@ -110,6 +110,7 @@ const AnswerCampagne = () => {
   const [answers, setAnswers] = useState({});
   const [categories, setCategories] = useState([]);
   const [isTemoignageSent, setIsTemoignageSent] = useState(false);
+  const [temoignageId, setTemoignageId] = useState(null);
 
   const isLastCategory = formattedQuestionnnaire.length
     ? currentCategoryIndex === formattedQuestionnnaire.length - 1
@@ -129,36 +130,48 @@ const AnswerCampagne = () => {
     }
   }, [campagne]);
 
-  const nextQuestionHandler = (formData) => {
-    if (isLastQuestionInCategory) {
+  const onSubmitHandler = async (formData, isLastQuestion) => {
+    if (!temoignageId) {
+      const result = await _post(`/api/temoignages/`, {
+        reponses: { ...answers, ...formData },
+        campagneId: id,
+      });
+      if (result._id) {
+        setTemoignageId(result._id);
+      } else {
+        toast({
+          title: "Une erreur est survenue",
+          description: "Merci de réessayer",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } else {
+      const result = await _put(`/api/temoignages/${temoignageId}`, {
+        reponses: { ...answers, ...formData },
+      });
+      if (!result.acknowledged) {
+        toast({
+          title: "Une erreur est survenue",
+          description: "Merci de réessayer",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+
+    if (isLastQuestion) {
+      setIsTemoignageSent(true);
+      return;
+    } else if (isLastQuestionInCategory) {
       setCurrentCategoryIndex(currentCategoryIndex + 1);
       setCurrentQuestionIndex(0);
     } else {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
     setAnswers({ ...answers, ...formData });
-  };
-
-  const onSubmitHandler = async (formData) => {
-    const result = await _post(
-      `/api/temoignages/`,
-      {
-        reponses: { ...answers, ...formData },
-        campagneId: id,
-      },
-      userContext.token
-    );
-    if (result._id) {
-      setIsTemoignageSent(true);
-    } else {
-      toast({
-        title: "Une erreur est survenue",
-        description: "Merci de réessayer",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
   };
 
   if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
@@ -197,9 +210,7 @@ const AnswerCampagne = () => {
                 validator={validator}
                 widgets={widgets}
                 onSubmit={(values) =>
-                  isLastCategory && isLastQuestionInCategory
-                    ? onSubmitHandler(values.formData)
-                    : nextQuestionHandler(values.formData)
+                  onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)
                 }
                 onError={(error) => console.log({ error })}
                 noHtml5Validate
