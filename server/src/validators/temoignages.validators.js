@@ -5,4 +5,8 @@ const createTemoignageSchema = Joi.object({
   reponses: Joi.object().required(),
 });
 
-module.exports = createTemoignageSchema;
+const updateTemoignageSchema = Joi.object({
+  reponses: Joi.object().required(),
+});
+
+module.exports = { createTemoignageSchema, updateTemoignageSchema };

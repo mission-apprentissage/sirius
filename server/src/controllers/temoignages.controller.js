@@ -28,4 +28,12 @@ const deleteTemoignage = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-module.exports = { createTemoignage, getTemoignages, deleteTemoignage };
+const updateTemoignage = tryCatch(async (req, res) => {
+  const { success, body } = await temoignagesService.updateTemoignage(req.params.id, req.body);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
+module.exports = { createTemoignage, getTemoignages, deleteTemoignage, updateTemoignage };

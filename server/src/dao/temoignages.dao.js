@@ -12,8 +12,13 @@ const deleteOne = async (id) => {
   return Temoignage.deleteOne({ _id: id });
 };
 
+const update = async (id, updatedCampagne) => {
+  return Temoignage.updateOne({ _id: id }, updatedCampagne);
+};
+
 module.exports = {
   create,
   getAll,
   deleteOne,
+  update,
 };
