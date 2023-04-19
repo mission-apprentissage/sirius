@@ -1,9 +1,17 @@
 const assert = require("assert");
+const sinon = require("sinon");
+
 const httpTests = require("../utils/httpTests");
 const { newTemoignage, newCampagne } = require("../../fixtures");
 const { createAndLoginUser } = require("../utils/user");
 
 httpTests(__filename, ({ startServer }) => {
+  before(async () => {
+    sinon.useFakeTimers();
+  });
+  after(async () => {
+    sinon.restore();
+  });
   it("should return 200 with multiple temoignages if it exists", async () => {
     const { httpClient, components } = await startServer();
     const temoignage1 = newTemoignage();
@@ -19,8 +27,20 @@ httpTests(__filename, ({ startServer }) => {
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.body, [
-      { ...temoignage1, _id: response.body[0]._id, __v: 0 },
-      { ...temoignage2, _id: response.body[1]._id, __v: 0 },
+      {
+        ...temoignage1,
+        _id: response.body[0]._id,
+        __v: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        ...temoignage2,
+        _id: response.body[1]._id,
+        __v: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
     ]);
   });
   it("should return 200 and an empty array if no temoignage exist", async () => {
@@ -54,8 +74,20 @@ httpTests(__filename, ({ startServer }) => {
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.body, [
-      { ...temoignage1, _id: response.body[0]._id, __v: 0 },
-      { ...temoignage2, _id: response.body[1]._id, __v: 0 },
+      {
+        ...temoignage1,
+        _id: response.body[0]._id,
+        __v: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        ...temoignage2,
+        _id: response.body[1]._id,
+        __v: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
     ]);
   });
 });

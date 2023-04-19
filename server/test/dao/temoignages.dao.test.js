@@ -1,4 +1,5 @@
 const { use, expect } = require("chai");
+const sinon = require("sinon");
 const sinonChai = require("sinon-chai");
 const httpTests = require("../integration/utils/httpTests");
 
@@ -11,13 +12,25 @@ httpTests(__filename, ({ startServer }) => {
   before(async () => {
     await startServer();
   });
+  beforeEach(async () => {
+    sinon.useFakeTimers(new Date());
+  });
+  afterEach(async () => {
+    sinon.restore();
+  });
   describe("create", () => {
     it("should create and returns the temoignage", async () => {
       const temoignage1 = newTemoignage();
 
       const createdTemoignage = await temoignagesDao.create(temoignage1);
 
-      expect(createdTemoignage.toObject()).to.eql({ ...temoignage1, _id: createdTemoignage._id, __v: 0 });
+      expect(createdTemoignage.toObject()).to.eql({
+        ...temoignage1,
+        _id: createdTemoignage._id,
+        __v: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
     });
   });
   describe("getAll", () => {
@@ -31,8 +44,8 @@ httpTests(__filename, ({ startServer }) => {
       const temoignages = await temoignagesDao.getAll();
 
       expect(temoignages).to.have.deep.members([
-        { ...temoignage1, __v: 0 },
-        { ...temoignage2, __v: 0 },
+        { ...temoignage1, __v: 0, createdAt: new Date(), updatedAt: new Date() },
+        { ...temoignage2, __v: 0, createdAt: new Date(), updatedAt: new Date() },
       ]);
     });
     it("should returns the temoignages related to the query if it exists", async () => {
@@ -45,8 +58,8 @@ httpTests(__filename, ({ startServer }) => {
       const temoignages = await temoignagesDao.getAll({ campagneId: "42" });
 
       expect(temoignages).to.have.deep.members([
-        { ...temoignage1, __v: 0 },
-        { ...temoignage2, __v: 0 },
+        { ...temoignage1, __v: 0, createdAt: new Date(), updatedAt: new Date() },
+        { ...temoignage2, __v: 0, createdAt: new Date(), updatedAt: new Date() },
       ]);
     });
   });

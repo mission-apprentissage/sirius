@@ -1,9 +1,16 @@
 const assert = require("assert");
+const sinon = require("sinon");
 const httpTests = require("../utils/httpTests");
 const { newCampagne } = require("../../fixtures");
 const { createAndLoginUser } = require("../utils/user");
 
 httpTests(__filename, ({ startServer }) => {
+  beforeEach(async () => {
+    sinon.useFakeTimers(new Date());
+  });
+  afterEach(async () => {
+    sinon.restore();
+  });
   it("should return 201, create a campagne and return it", async () => {
     const { httpClient } = await startServer();
     const campagne = newCampagne();
@@ -20,6 +27,8 @@ httpTests(__filename, ({ startServer }) => {
       ...campagne,
       _id: response.body._id,
       __v: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   });
   it("should return 400 and a validation error if the payload is not correct", async () => {

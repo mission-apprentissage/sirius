@@ -5,7 +5,7 @@ const temoignageSchema = new mongoose.Schema(
     campagneId: { type: String, required: true },
     reponses: { type: Object, required: true },
   },
-  { minimize: false }
+  { minimize: false, timestamps: true }
 );
 
 const Temoignage = mongoose.model("Temoignage", temoignageSchema);

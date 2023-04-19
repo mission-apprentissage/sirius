@@ -17,7 +17,7 @@ const deleteOne = async (id) => {
 };
 
 const update = async (id, updatedCampagne) => {
-  return Campagne.replaceOne({ _id: id }, updatedCampagne);
+  return Campagne.updateOne({ _id: id }, updatedCampagne);
 };
 
 module.exports = {

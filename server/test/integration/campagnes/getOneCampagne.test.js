@@ -1,8 +1,15 @@
 const assert = require("assert");
+const sinon = require("sinon");
 const httpTests = require("../utils/httpTests");
 const { newCampagne } = require("../../fixtures");
 
 httpTests(__filename, ({ startServer }) => {
+  beforeEach(async () => {
+    sinon.useFakeTimers(new Date());
+  });
+  afterEach(async () => {
+    sinon.restore();
+  });
   it("should return 200 with one campagne if it exists", async () => {
     const { httpClient, components } = await startServer();
     const campagne = newCampagne();
@@ -15,6 +22,8 @@ httpTests(__filename, ({ startServer }) => {
       ...campagne,
       _id: response.body._id,
       __v: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   });
   it("should return 404 if campagne does not exist", async () => {

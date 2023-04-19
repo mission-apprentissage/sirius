@@ -110,16 +110,18 @@ const ViewCampagnes = () => {
                 <Th>Début</Th>
                 <Th>Fin</Th>
                 <Th>Actions</Th>
+                <Th>Crée le</Th>
+                <Th>Modifié le</Th>
               </Tr>
             </Thead>
             <Tbody>
               {displayedCampagnes?.map((campagne) => (
                 <Tr key={campagne._id}>
-                  <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
-                    <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
                       {campagne.nomCampagne}
-                    </Td>
-                  </Tooltip>
+                    </Tooltip>
+                  </Td>
                   <Td>{campagne.cfa}</Td>
                   <Td>{campagne.formation}</Td>
                   <Td>{campagne.startDate}</Td>
@@ -160,6 +162,28 @@ const ViewCampagnes = () => {
                       onClick={() => setDeletedCampagneId(campagne._id)}
                       mx={2}
                     />
+                  </Td>
+                  <Td>
+                    <Tooltip
+                      label={new Date(campagne.createdAt).toLocaleString("fr-FR", {
+                        timeZone: "Europe/Paris",
+                      })}
+                      hasArrow
+                      arrowSize={15}
+                    >
+                      {new Date(campagne.createdAt).toLocaleDateString("fr-FR")}
+                    </Tooltip>
+                  </Td>
+                  <Td>
+                    <Tooltip
+                      label={new Date(campagne.updatedAt).toLocaleString("fr-FR", {
+                        timeZone: "Europe/Paris",
+                      })}
+                      hasArrow
+                      arrowSize={15}
+                    >
+                      {new Date(campagne.updatedAt).toLocaleDateString("fr-FR")}
+                    </Tooltip>
                   </Td>
                 </Tr>
               ))}
