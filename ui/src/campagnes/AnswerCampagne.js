@@ -10,6 +10,7 @@ import { _post, _put } from "../utils/httpClient";
 import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
 import CustomRadios from "../Components/Form/CustomRadios";
 import CustomText from "../Components/Form/CustomText";
+import CustomUpDown from "../Components/Form/CustomUpDown";
 import CustomTextarea from "../Components/Form/CustomTextarea";
 import { Stepper } from "../Components/Stepper";
 import { UserContext } from "../context/UserContext";
@@ -19,6 +20,7 @@ const widgets = {
   RadioWidget: CustomRadios,
   TextWidget: CustomText,
   TextareaWidget: CustomTextarea,
+  UpDownWidget: CustomUpDown,
 };
 
 const multiStepQuestionnaireFormatter = (questionnaire) => {
