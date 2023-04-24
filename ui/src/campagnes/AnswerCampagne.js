@@ -37,10 +37,10 @@ const multiStepQuestionnaireFormatter = (questionnaire) => {
             },
           },
           dependencies: {
-            [nestedKey]: questionnaire.properties.Cfa.dependencies[nestedKey],
+            [nestedKey]: questionnaire.properties[key].dependencies[nestedKey],
           },
           required:
-            questionnaire.properties.Cfa.required.indexOf(nestedKey) !== -1 ? [nestedKey] : [],
+            questionnaire.properties[key].required.indexOf(nestedKey) !== -1 ? [nestedKey] : [],
         };
       }
     );
