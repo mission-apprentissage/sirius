@@ -6,9 +6,12 @@ import {
   Box,
   useBreakpoint,
   FormLabel,
-  ListItem,
-  UnorderedList,
-  Stack,
+  Table,
+  Tbody,
+  Tr,
+  Td,
+  TableContainer,
+  SliderFilledTrack,
 } from "@chakra-ui/react";
 
 const emojiGetter = (value) => {
@@ -42,42 +45,44 @@ const CustomRange = (props) => {
 
   return (
     <>
-      <FormLabel as="legend" fontSize="lg" fontWeight="semibold">
+      <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">
         {props.schema.title}
       </FormLabel>
-      <Box pt={6} pb={isMobile ? 6 : 12} w={isMobile ? "100%" : "90%"} m="auto">
-        <UnorderedList listStyleType="none" w="100%" spacing={6} m="0">
-          {props.schema.questions.map((question, index) => (
-            <Stack key={index} w="100%" direction={isMobile ? "column" : "row"}>
-              <ListItem
-                w={isMobile ? "100%" : "50%"}
-                fontWeight="semibold"
-                pl={isMobile ? "0" : "3"}
-              >
-                {question}
-              </ListItem>
-              <Slider
-                id="slider"
-                defaultValue={0}
-                min={0}
-                max={4}
-                colorScheme="purple"
-                w={isMobile ? "100%" : "50%"}
-                height={isMobile ? "50px" : "inherit"}
-                onChange={(value) => {
-                  setCurrentValue((prev) => {
-                    prev[index] = { [question]: value };
-                    return prev;
-                  });
-                  props.onChange(currentValue);
-                }}
-              >
-                <SliderTrack bgColor="purple.200" />
-                <SliderThumb fontSize={26}>{emojiGetter(currentValue[index])}</SliderThumb>
-              </Slider>
-            </Stack>
-          ))}
-        </UnorderedList>
+      <Box pt={2} pb={isMobile ? 6 : 2} w={isMobile ? "100%" : "90%"} m="auto">
+        <TableContainer>
+          <Table variant="striped" colorScheme="orange">
+            <Tbody>
+              {props.schema.questions.map((question, index) => (
+                <Tr key={index}>
+                  <Td>{question}</Td>
+                  <Td w="100%">
+                    <Slider
+                      id="slider"
+                      defaultValue={0}
+                      min={0}
+                      max={4}
+                      colorScheme="orange"
+                      w="100%"
+                      height={isMobile ? "50px" : "inherit"}
+                      onChange={(value) => {
+                        setCurrentValue((prev) => {
+                          prev[index] = { [question]: value };
+                          return prev;
+                        });
+                        props.onChange(currentValue);
+                      }}
+                    >
+                      <SliderTrack colorScheme="orange">
+                        <SliderFilledTrack />
+                      </SliderTrack>
+                      <SliderThumb fontSize={26}>{emojiGetter(currentValue[index])}</SliderThumb>
+                    </Slider>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       </Box>
     </>
   );
