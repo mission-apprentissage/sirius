@@ -13,7 +13,7 @@ import CustomText from "../Components/Form/CustomText";
 import CustomUpDown from "../Components/Form/CustomUpDown";
 import CustomTextarea from "../Components/Form/CustomTextarea";
 import { Stepper } from "../Components/Stepper";
-import CustomRange from "../Components/Form/fields/CustomRange";
+import CustomRange from "../Components/Form/CustomRange";
 import CustomMultiRange from "../Components/Form/CustomMultiRange";
 
 const widgets = {
