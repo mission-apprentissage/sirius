@@ -71,6 +71,10 @@ export const transformErrors = (errors) => {
 export const getCategoriesWithEmojis = (questionnaire) => {
   return Object.entries(questionnaire.properties).map((property) => {
     const [, content] = property;
-    return { title: content.title, emoji: content.emoji };
+    return {
+      title: content.title,
+      emoji: content.emoji,
+      questionCount: Object.keys(content.properties).length,
+    };
   });
 };

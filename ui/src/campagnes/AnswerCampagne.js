@@ -117,63 +117,64 @@ const AnswerCampagne = () => {
   if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
 
   return startedAnswering ? (
-    <Stepper
-      categories={categories}
-      currentCategoryIndex={currentCategoryIndex}
-      setCurrentCategoryIndex={setCurrentCategoryIndex}
-      isTemoignageSent={isTemoignageSent}
-    >
-      <Flex my="20px">
-        <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
-          {isTemoignageSent ? (
-            <Text fontSize="xl" my="30px" align="center" fontWeight="semibold">
-              Merci de votre participation !
-            </Text>
-          ) : (
-            <>
-              {currentQuestionIndex !== 0 && (
-                <Box w="100%" display="flex" alignContent="flex-start" mb="40px">
-                  <IconButton
-                    aria-label="Revenir à la question précédente"
-                    variant="outline"
-                    colorScheme="purple"
-                    icon={<ArrowBackIcon />}
-                    onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
-                  />
-                </Box>
-              )}
-              <Form
-                schema={
-                  formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]
-                }
-                uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
-                validator={validator}
-                widgets={widgets}
-                onSubmit={(values) =>
-                  onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)
-                }
-                onError={(error) => console.log({ error })}
-                noHtml5Validate
-                templates={{ ErrorListTemplate: () => null }}
-                transformErrors={transformErrors}
-                formData={answers}
-              >
-                <Button
-                  borderRadius="md"
-                  type="submit"
-                  variant="solid"
+    <Flex my="20px" width="80%" m="auto">
+      <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
+        <Stepper
+          categories={categories}
+          currentCategoryIndex={currentCategoryIndex}
+          setCurrentCategoryIndex={setCurrentCategoryIndex}
+          setCurrentQuestionIndex={setCurrentQuestionIndex}
+          isTemoignageSent={isTemoignageSent}
+          currentQuestionIndex={currentQuestionIndex}
+        />
+        {isTemoignageSent ? (
+          <Text fontSize="xl" my="30px" align="center" fontWeight="semibold">
+            Merci de votre participation !
+          </Text>
+        ) : (
+          <>
+            {currentQuestionIndex !== 0 && (
+              <Box w="100%" display="flex" alignContent="flex-start" mb="40px">
+                <IconButton
+                  aria-label="Revenir à la question précédente"
+                  variant="outline"
                   colorScheme="purple"
-                  width="full"
-                  mt="25px"
-                >
-                  Suivant
-                </Button>
-              </Form>
-            </>
-          )}
-        </Box>
-      </Flex>
-    </Stepper>
+                  icon={<ArrowBackIcon />}
+                  onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+                />
+              </Box>
+            )}
+            <Form
+              schema={
+                formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]
+              }
+              uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
+              validator={validator}
+              widgets={widgets}
+              onSubmit={(values) =>
+                onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)
+              }
+              onError={(error) => console.log({ error })}
+              noHtml5Validate
+              templates={{ ErrorListTemplate: () => null }}
+              transformErrors={transformErrors}
+              formData={answers}
+            >
+              <Button
+                borderRadius="md"
+                type="submit"
+                variant="solid"
+                colorScheme="purple"
+                width="full"
+                mt="25px"
+              >
+                Suivant
+              </Button>
+            </Form>
+          </>
+        )}
+      </Box>
+    </Flex>
   ) : (
     <Hero setStartedAnswering={setStartedAnswering} isMobile={isMobile} categories={categories} />
   );
