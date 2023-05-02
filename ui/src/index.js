@@ -58,7 +58,7 @@ export const theme = extendTheme({
         fontWeight: 400,
         lineHeight: 1.3,
         color: "#222",
-        backgroundColor: "#EDF2F7",
+        backgroundColor: "purple.100",
       },
     },
   },
