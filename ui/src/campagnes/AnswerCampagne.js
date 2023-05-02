@@ -14,6 +14,7 @@ import CustomUpDown from "../Components/Form/CustomUpDown";
 import CustomTextarea from "../Components/Form/CustomTextarea";
 import { Stepper } from "../Components/Stepper";
 import CustomRange from "../Components/Form/fields/CustomRange";
+import CustomMultiRange from "../Components/Form/CustomMultiRange";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -22,6 +23,7 @@ const widgets = {
   TextareaWidget: CustomTextarea,
   UpDownWidget: CustomUpDown,
   customRangeWidget: CustomRange,
+  customMultiRangeWidget: CustomMultiRange,
 };
 
 const multiStepQuestionnaireFormatter = (questionnaire) => {
