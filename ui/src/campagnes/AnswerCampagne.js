@@ -7,14 +7,16 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { _post, _put } from "../utils/httpClient";
-import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
-import CustomRadios from "../Components/Form/CustomRadios";
-import CustomText from "../Components/Form/CustomText";
-import CustomUpDown from "../Components/Form/CustomUpDown";
-import CustomTextarea from "../Components/Form/CustomTextarea";
+import {
+  CustomCheckboxes,
+  CustomMultiRange,
+  CustomRadios,
+  CustomRange,
+  CustomText,
+  CustomTextarea,
+  CustomUpDown,
+} from "../Components/Form/widgets";
 import { Stepper } from "../Components/Stepper";
-import CustomRange from "../Components/Form/CustomRange";
-import CustomMultiRange from "../Components/Form/CustomMultiRange";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
