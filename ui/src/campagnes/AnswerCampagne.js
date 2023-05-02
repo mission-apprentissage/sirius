@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
@@ -10,15 +10,20 @@ import { _post, _put } from "../utils/httpClient";
 import CustomCheckboxes from "../Components/Form/CustomCheckboxes";
 import CustomRadios from "../Components/Form/CustomRadios";
 import CustomText from "../Components/Form/CustomText";
+import CustomUpDown from "../Components/Form/CustomUpDown";
 import CustomTextarea from "../Components/Form/CustomTextarea";
 import { Stepper } from "../Components/Stepper";
-import { UserContext } from "../context/UserContext";
+import CustomRange from "../Components/Form/CustomRange";
+import CustomMultiRange from "../Components/Form/CustomMultiRange";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
   RadioWidget: CustomRadios,
   TextWidget: CustomText,
   TextareaWidget: CustomTextarea,
+  UpDownWidget: CustomUpDown,
+  customRangeWidget: CustomRange,
+  customMultiRangeWidget: CustomMultiRange,
 };
 
 const multiStepQuestionnaireFormatter = (questionnaire) => {
@@ -102,7 +107,6 @@ const AnswerCampagne = () => {
   const { id } = useParams();
   const [campagne, loading] = useGet(`/api/campagnes/${id}`);
   const toast = useToast();
-  const [userContext] = useContext(UserContext);
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [formattedQuestionnnaire, setFormattedQuestionnnaire] = useState([]);
