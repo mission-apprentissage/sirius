@@ -68,9 +68,9 @@ export const transformErrors = (errors) => {
   });
 };
 
-export const getCategories = (questionnaire) => {
+export const getCategoriesWithEmojis = (questionnaire) => {
   return Object.entries(questionnaire.properties).map((property) => {
     const [, content] = property;
-    return content.title;
+    return { title: content.title, emoji: content.emoji };
   });
 };

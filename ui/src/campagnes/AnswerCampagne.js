@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
-import { Box, Flex, Button, IconButton, Text } from "@chakra-ui/react";
+import { Box, Flex, Button, IconButton, Text, useBreakpoint } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
@@ -17,10 +17,11 @@ import {
   CustomUpDown,
 } from "../Components/Form/widgets";
 import { Stepper } from "../Components/Stepper";
+import Hero from "../Components/Form/Hero";
 import {
   multiStepQuestionnaireFormatter,
   multiStepQuestionnaireUIFormatter,
-  getCategories,
+  getCategoriesWithEmojis,
   transformErrors,
 } from "./utils";
 
@@ -46,6 +47,10 @@ const AnswerCampagne = () => {
   const [categories, setCategories] = useState([]);
   const [isTemoignageSent, setIsTemoignageSent] = useState(false);
   const [temoignageId, setTemoignageId] = useState(null);
+  const [startedAnswering, setStartedAnswering] = useState(false);
+  const breakpoint = useBreakpoint({ ssr: false });
+
+  const isMobile = breakpoint === "base";
 
   const isLastCategory = formattedQuestionnnaire.length
     ? currentCategoryIndex === formattedQuestionnnaire.length - 1
@@ -58,7 +63,7 @@ const AnswerCampagne = () => {
   useEffect(() => {
     if (campagne.questionnaire && Object.keys(campagne.questionnaire).length) {
       setFormattedQuestionnnaire(multiStepQuestionnaireFormatter(campagne.questionnaire));
-      setCategories(getCategories(campagne.questionnaire));
+      setCategories(getCategoriesWithEmojis(campagne.questionnaire));
     }
     if (campagne.questionnaireUI) {
       setFormattedQuestionnnaireUI(multiStepQuestionnaireUIFormatter(campagne.questionnaireUI));
@@ -111,7 +116,7 @@ const AnswerCampagne = () => {
 
   if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
 
-  return (
+  return startedAnswering ? (
     <Stepper
       categories={categories}
       currentCategoryIndex={currentCategoryIndex}
@@ -169,6 +174,8 @@ const AnswerCampagne = () => {
         </Box>
       </Flex>
     </Stepper>
+  ) : (
+    <Hero setStartedAnswering={setStartedAnswering} isMobile={isMobile} categories={categories} />
   );
 };
 

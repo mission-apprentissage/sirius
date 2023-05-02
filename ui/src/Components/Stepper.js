@@ -27,7 +27,7 @@ export const Stepper = ({
         {categories.map((category, index) => (
           <Step
             key={index}
-            label={category}
+            label={category.title}
             isCompletedStep={index < currentCategoryIndex || isTemoignageSent ? true : false}
           >
             {children}
