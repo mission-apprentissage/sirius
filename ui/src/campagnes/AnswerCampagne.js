@@ -133,17 +133,6 @@ const AnswerCampagne = () => {
           </Text>
         ) : (
           <>
-            {currentQuestionIndex !== 0 && (
-              <Box w="100%" display="flex" alignContent="flex-start" mb="40px">
-                <IconButton
-                  aria-label="Revenir à la question précédente"
-                  variant="outline"
-                  colorScheme="purple"
-                  icon={<ArrowBackIcon />}
-                  onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
-                />
-              </Box>
-            )}
             <Form
               schema={
                 formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]
