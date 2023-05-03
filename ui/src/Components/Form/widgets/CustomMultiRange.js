@@ -12,6 +12,7 @@ import {
   Td,
   TableContainer,
   SliderFilledTrack,
+  Badge,
 } from "@chakra-ui/react";
 
 const emojiGetter = (value) => {
@@ -45,7 +46,17 @@ const CustomRange = (props) => {
 
   return (
     <Box mx="5">
-      <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">
+      <FormLabel
+        as="legend"
+        fontSize="2xl"
+        fontWeight="semibold"
+        color="orange.500"
+        requiredIndicator={
+          <Badge bgColor="orange.500" color="white" ml="2">
+            *
+          </Badge>
+        }
+      >
         {props.schema.title}
       </FormLabel>
       <Box pt={2} pb={isMobile ? 6 : 2} w={isMobile ? "100%" : "90%"} m="auto">
