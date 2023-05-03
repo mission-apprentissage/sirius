@@ -15,7 +15,7 @@ const CustomRange = (props) => {
   const savedValue = props.schema.enum.indexOf(props.value) || null;
 
   return (
-    <>
+    <Box mx="5">
       <FormLabel as="legend" fontSize="lg" fontWeight="semibold">
         {props.schema.title}
       </FormLabel>
@@ -57,7 +57,7 @@ const CustomRange = (props) => {
           <SliderThumb bgColor="purple.400" left={isMobile ? "0!important" : "inherit"} />
         </Slider>
       </Box>
-    </>
+    </Box>
   );
 };
 

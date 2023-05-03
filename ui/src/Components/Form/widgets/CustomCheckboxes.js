@@ -45,7 +45,7 @@ const CustomCheckboxes = (props) => {
   });
 
   return (
-    <fieldset>
+    <Box as="fieldset" mx="5">
       <FormLabel
         as="legend"
         fontSize="2xl"
@@ -72,7 +72,7 @@ const CustomCheckboxes = (props) => {
           );
         })}
       </Wrap>
-    </fieldset>
+    </Box>
   );
 };
 

@@ -36,7 +36,7 @@ const CustomRadios = (props) => {
   });
 
   return (
-    <fieldset>
+    <Box as="fieldset" mx="5">
       <FormLabel
         as="legend"
         fontSize="2xl"
@@ -63,7 +63,7 @@ const CustomRadios = (props) => {
           );
         })}
       </Wrap>
-    </fieldset>
+    </Box>
   );
 };
 

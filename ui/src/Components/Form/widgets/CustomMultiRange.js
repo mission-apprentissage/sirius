@@ -44,7 +44,7 @@ const CustomRange = (props) => {
   }, []);
 
   return (
-    <>
+    <Box mx="5">
       <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">
         {props.schema.title}
       </FormLabel>
@@ -84,7 +84,7 @@ const CustomRange = (props) => {
           </Table>
         </TableContainer>
       </Box>
-    </>
+    </Box>
   );
 };
 
