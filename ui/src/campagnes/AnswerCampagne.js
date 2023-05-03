@@ -119,7 +119,7 @@ const AnswerCampagne = () => {
 
   return startedAnswering ? (
     <Flex my="20px" width="80%" m="auto">
-      <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
+      <Box bg="white" p={6} rounded="md" w="80%" m="auto" boxShadow="md">
         <Stepper
           categories={categories}
           currentCategoryIndex={currentCategoryIndex}
