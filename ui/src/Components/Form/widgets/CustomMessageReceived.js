@@ -2,6 +2,8 @@ import { FormControl, Box, Textarea, Text, Image } from "@chakra-ui/react";
 import nadia from "../../../assets/images/nadia.svg";
 import johan from "../../../assets/images/johan.svg";
 import salomee from "../../../assets/images/salomee.svg";
+import nazir from "../../../assets/images/nazir.svg";
+import samy from "../../../assets/images/samy.svg";
 
 const CustomMessageReceived = (props) => {
   const pictoGetter = () => {
@@ -12,6 +14,10 @@ const CustomMessageReceived = (props) => {
         return johan;
       case "salomee":
         return salomee;
+      case "nazir":
+        return nazir;
+      case "samy":
+        return samy;
       default:
         return nadia;
     }
