@@ -1,4 +1,13 @@
-import { Box, useCheckboxGroup, useCheckbox, Wrap, FormLabel } from "@chakra-ui/react";
+import {
+  Box,
+  useCheckboxGroup,
+  useCheckbox,
+  Wrap,
+  FormLabel,
+  Badge,
+  Text,
+  Tag,
+} from "@chakra-ui/react";
 
 const CheckboxCard = (props) => {
   const { getInputProps, getCheckboxProps } = useCheckbox({ ...props, required: false }); // native required on multiple checkboxes is not supported
@@ -9,28 +18,19 @@ const CheckboxCard = (props) => {
   return (
     <Box as="label">
       <input {...input} />
-      <Box
+      <Tag
         {...checkbox}
         cursor="pointer"
-        borderWidth="1px"
-        borderRadius="md"
-        borderColor="purple.400"
-        color="purple.400"
-        _checked={{
-          bg: "purple.400",
-          color: "white",
-          borderColor: "purple.400",
-        }}
+        size="lg"
+        variant={input.checked ? "solid" : "subtle"}
         _hover={{
-          bg: "purple.400",
+          backgroundColor: "orange.500",
           color: "white",
-          borderColor: "purple.400",
         }}
-        px={5}
-        py={3}
+        colorScheme="orange"
       >
         {props.children}
-      </Box>
+      </Tag>
     </Box>
   );
 };
@@ -46,9 +46,22 @@ const CustomCheckboxes = (props) => {
 
   return (
     <fieldset>
-      <FormLabel as="legend" fontSize="lg" fontWeight="semibold">
+      <FormLabel
+        as="legend"
+        fontSize="2xl"
+        fontWeight="semibold"
+        color="orange.500"
+        requiredIndicator={
+          <Badge bgColor="orange.500" color="white" ml="2">
+            *
+          </Badge>
+        }
+      >
         {props.label}
       </FormLabel>
+      <Text fontSize="xs" color="orange.900">
+        (plusieurs choix de réponses possibles)
+      </Text>
       <Wrap spacing={2} direction="row" mt={4}>
         {options.map((value) => {
           const checkbox = getCheckboxProps({ value });
