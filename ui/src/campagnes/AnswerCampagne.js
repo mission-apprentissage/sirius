@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
-import { Box, Flex, Button, IconButton, Text, useBreakpoint } from "@chakra-ui/react";
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import { Box, Flex, Button, Text, useBreakpoint } from "@chakra-ui/react";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { _post, _put } from "../utils/httpClient";
@@ -13,8 +12,9 @@ import {
   CustomRadios,
   CustomRange,
   CustomText,
-  CustomTextarea,
+  CustomTextareaPrecision,
   CustomUpDown,
+  CustomMessageReceived,
 } from "../Components/Form/widgets";
 import { Stepper } from "../Components/Stepper";
 import Hero from "../Components/Form/Hero";
@@ -29,10 +29,11 @@ const widgets = {
   CheckboxesWidget: CustomCheckboxes,
   RadioWidget: CustomRadios,
   TextWidget: CustomText,
-  TextareaWidget: CustomTextarea,
+  TextareaWidget: CustomTextareaPrecision,
   UpDownWidget: CustomUpDown,
   customRangeWidget: CustomRange,
   customMultiRangeWidget: CustomMultiRange,
+  customMessageReceived: CustomMessageReceived,
 };
 
 const AnswerCampagne = () => {

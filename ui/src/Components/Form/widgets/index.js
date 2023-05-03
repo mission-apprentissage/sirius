@@ -3,8 +3,9 @@ import CustomMultiRange from "./CustomMultiRange";
 import CustomRadios from "./CustomRadios";
 import CustomRange from "./CustomRange";
 import CustomText from "./CustomText";
-import CustomTextarea from "./CustomTextarea";
+import CustomTextareaPrecision from "./CustomTextareaPrecision";
 import CustomUpDown from "./CustomUpDown";
+import CustomMessageReceived from "./CustomMessageReceived";
 
 export {
   CustomCheckboxes,
@@ -12,6 +13,7 @@ export {
   CustomRadios,
   CustomRange,
   CustomText,
-  CustomTextarea,
+  CustomTextareaPrecision,
   CustomUpDown,
+  CustomMessageReceived,
 };
