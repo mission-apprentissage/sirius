@@ -87,7 +87,7 @@ const ViewCampagnes = () => {
 
   return (
     <>
-      <Flex align="center" justify="center" width="100%">
+      <Flex align="center" justify="center" width="80%" m="auto">
         <TableContainer my={12} p={6} rounded="md" w="100%" boxShadow="md" bg="white">
           <Table size="md">
             <TableCaption>

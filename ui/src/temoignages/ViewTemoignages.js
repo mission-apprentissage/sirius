@@ -87,7 +87,7 @@ const ViewTemoignages = () => {
   }, [selectedCampagne]);
 
   return (
-    <Flex direction="column" w="100%">
+    <Flex direction="column" w="80%" m="auto">
       <HStack mb={4}>
         <Text fontWeight="semibold">Filtrer par</Text>
         <Select
