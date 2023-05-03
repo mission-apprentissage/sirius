@@ -1,4 +1,4 @@
-import { Box, Wrap, useRadioGroup, useRadio, FormLabel } from "@chakra-ui/react";
+import { Box, Wrap, useRadioGroup, useRadio, FormLabel, Text, Tag, Badge } from "@chakra-ui/react";
 
 const RadioCard = (props) => {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -9,28 +9,19 @@ const RadioCard = (props) => {
   return (
     <Box as="label">
       <input {...input} />
-      <Box
+      <Tag
         {...checkbox}
         cursor="pointer"
-        borderWidth="1px"
-        borderRadius="md"
-        borderColor="purple.400"
-        color="purple.400"
-        _checked={{
-          bg: "purple.400",
-          color: "white",
-          borderColor: "purple.400",
-        }}
+        size="lg"
+        variant={input.checked ? "solid" : "subtle"}
         _hover={{
-          bg: "purple.400",
+          backgroundColor: "orange.500",
           color: "white",
-          borderColor: "purple.400",
         }}
-        px={5}
-        py={3}
+        colorScheme="orange"
       >
         {props.children}
-      </Box>
+      </Tag>
     </Box>
   );
 };
@@ -46,9 +37,22 @@ const CustomRadios = (props) => {
 
   return (
     <fieldset>
-      <FormLabel as="legend" fontSize="lg" fontWeight="semibold">
+      <FormLabel
+        as="legend"
+        fontSize="2xl"
+        fontWeight="semibold"
+        color="orange.500"
+        requiredIndicator={
+          <Badge bgColor="orange.500" color="white" ml="2">
+            *
+          </Badge>
+        }
+      >
         {props.label}
       </FormLabel>
+      <Text fontSize="xs" color="orange.900">
+        (une seule réponse possible)
+      </Text>
       <Wrap spacing={2} direction="row" mt={4}>
         {options.map((value) => {
           const radio = getRadioProps({ value });
