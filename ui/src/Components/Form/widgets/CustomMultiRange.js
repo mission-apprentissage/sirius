@@ -20,15 +20,13 @@ const emojiGetter = (value) => {
   const key = Object.keys(value)[0];
   switch (value[key]) {
     case 0:
-      return "😰";
+      return "😫";
     case 1:
-      return "😨";
+      return "🧐";
     case 2:
-      return "😐";
+      return "😊";
     case 3:
-      return "😌";
-    case 4:
-      return "😁";
+      return "😝";
   }
 };
 
@@ -71,7 +69,7 @@ const CustomRange = (props) => {
                       id="slider"
                       defaultValue={0}
                       min={0}
-                      max={4}
+                      max={3}
                       colorScheme="orange"
                       w="100%"
                       height={isMobile ? "50px" : "inherit"}
