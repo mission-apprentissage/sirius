@@ -6,11 +6,6 @@ import {
   Box,
   useBreakpoint,
   FormLabel,
-  Table,
-  Tbody,
-  Tr,
-  Td,
-  TableContainer,
   SliderFilledTrack,
   Badge,
 } from "@chakra-ui/react";
@@ -30,7 +25,7 @@ const emojiGetter = (value) => {
   }
 };
 
-const CustomRange = (props) => {
+const CustomMultiRange = (props) => {
   const [currentValue, setCurrentValue] = useState([]);
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
@@ -58,43 +53,46 @@ const CustomRange = (props) => {
         {props.schema.title}
       </FormLabel>
       <Box pt={2} pb={isMobile ? 6 : 2} w={isMobile ? "100%" : "90%"} m="auto">
-        <TableContainer>
-          <Table variant="striped" colorScheme="orange">
-            <Tbody>
-              {props.schema.questions.map((question, index) => (
-                <Tr key={index}>
-                  <Td>{question}</Td>
-                  <Td w="100%">
-                    <Slider
-                      id="slider"
-                      defaultValue={0}
-                      min={0}
-                      max={3}
-                      colorScheme="orange"
-                      w="100%"
-                      height={isMobile ? "50px" : "inherit"}
-                      onChange={(value) => {
-                        setCurrentValue((prev) => {
-                          prev[index] = { [question]: value };
-                          return prev;
-                        });
-                        props.onChange(currentValue);
-                      }}
-                    >
-                      <SliderTrack colorScheme="orange">
-                        <SliderFilledTrack />
-                      </SliderTrack>
-                      <SliderThumb fontSize={26}>{emojiGetter(currentValue[index])}</SliderThumb>
-                    </Slider>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
+        {props.schema.questions.map((question, index) => (
+          <Box
+            key={index}
+            w="100%"
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            bgColor={index % 2 !== 0 ? "white" : "orange.100"}
+            py="5"
+            px="5"
+          >
+            <Box w="50%">{question}</Box>
+            <Box w="50%">
+              <Slider
+                id="slider"
+                defaultValue={0}
+                min={0}
+                max={3}
+                colorScheme="orange"
+                w="100%"
+                height={isMobile ? "50px" : "inherit"}
+                onChange={(value) => {
+                  setCurrentValue((prev) => {
+                    prev[index] = { [question]: value };
+                    return prev;
+                  });
+                  props.onChange(currentValue);
+                }}
+              >
+                <SliderTrack colorScheme="orange">
+                  <SliderFilledTrack />
+                </SliderTrack>
+                <SliderThumb fontSize={26}>{emojiGetter(currentValue[index])}</SliderThumb>
+              </Slider>
+            </Box>
+          </Box>
+        ))}
       </Box>
     </Box>
   );
 };
 
-export default CustomRange;
+export default CustomMultiRange;
