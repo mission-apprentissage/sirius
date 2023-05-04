@@ -75,6 +75,9 @@ const CustomRange = (props) => {
                 borderRadius="md"
                 fontWeight="semibold"
                 py="1"
+                onClick={() => props.onChange(props.schema.enum[index])}
+                cursor="pointer"
+                sx={{ pointerEvents: "all!important" }}
               >
                 {elem}
               </SliderMark>
