@@ -58,7 +58,8 @@ export const transformErrors = (errors) => {
         error.message = "Ce champ est invalide";
         break;
       case "minItems":
-        error.message = "Vous devez sélectionner au moins une réponse";
+        error.message =
+          "Pas si vite ! On a besoin que tu répondes à cette question avant de passer à la suivante";
         break;
       default:
         error.message = "Erreur de validation";

@@ -25,6 +25,7 @@ import {
   getCategoriesWithEmojis,
   transformErrors,
 } from "./utils";
+import ErrorTemplate from "../Components/Form/ErrorTemplate";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -146,11 +147,11 @@ const AnswerCampagne = () => {
               onSubmit={(values) =>
                 onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)
               }
-              onError={(error) => console.log({ error })}
               noHtml5Validate
-              templates={{ ErrorListTemplate: () => null }}
+              templates={{ FieldErrorTemplate: ErrorTemplate }}
               transformErrors={transformErrors}
               formData={answers}
+              showErrorList={false}
             >
               <Button
                 borderRadius="md"
