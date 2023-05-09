@@ -6,6 +6,7 @@ import CustomText from "./CustomText";
 import CustomTextareaPrecision from "./CustomTextareaPrecision";
 import CustomUpDown from "./CustomUpDown";
 import CustomMessageReceived from "./CustomMessageReceived";
+import CustomMultiRangeSortable from "./CustomMultiRangeSortable";
 
 export {
   CustomCheckboxes,
@@ -16,4 +17,5 @@ export {
   CustomTextareaPrecision,
   CustomUpDown,
   CustomMessageReceived,
+  CustomMultiRangeSortable,
 };

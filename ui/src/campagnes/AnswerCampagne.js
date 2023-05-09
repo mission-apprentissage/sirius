@@ -15,6 +15,7 @@ import {
   CustomTextareaPrecision,
   CustomUpDown,
   CustomMessageReceived,
+  CustomMultiRangeSortable,
 } from "../Components/Form/widgets";
 import { Stepper } from "../Components/Stepper";
 import Hero from "../Components/Form/Hero";
@@ -34,6 +35,7 @@ const widgets = {
   customRangeWidget: CustomRange,
   customMultiRangeWidget: CustomMultiRange,
   customMessageReceived: CustomMessageReceived,
+  customMultiRangeSortableWidget: CustomMultiRangeSortable,
 };
 
 const AnswerCampagne = () => {
