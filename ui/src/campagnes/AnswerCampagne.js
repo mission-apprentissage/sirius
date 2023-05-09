@@ -5,6 +5,7 @@ import Form from "@rjsf/chakra-ui";
 import { Box, Flex, Button, Text, useBreakpoint } from "@chakra-ui/react";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import { _post, _put } from "../utils/httpClient";
 import {
   CustomCheckboxes,
@@ -24,6 +25,7 @@ import {
   multiStepQuestionnaireUIFormatter,
   getCategoriesWithEmojis,
   transformErrors,
+  getNextButtonLabel,
 } from "./utils";
 import ErrorTemplate from "../Components/Form/ErrorTemplate";
 
@@ -153,16 +155,18 @@ const AnswerCampagne = () => {
               formData={answers}
               showErrorList={false}
             >
-              <Button
-                borderRadius="md"
-                type="submit"
-                variant="solid"
-                colorScheme="purple"
-                width="full"
-                mt="25px"
-              >
-                Suivant
-              </Button>
+              <Box display="flex" justifyContent="flex-end">
+                <Button
+                  borderRadius="md"
+                  type="submit"
+                  variant="solid"
+                  colorScheme="purple"
+                  rightIcon={<ChevronRightIcon />}
+                  mt="25px"
+                >
+                  {getNextButtonLabel(isLastCategory, isLastQuestionInCategory)}
+                </Button>
+              </Box>
             </Form>
           </>
         )}

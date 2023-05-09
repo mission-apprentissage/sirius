@@ -79,3 +79,13 @@ export const getCategoriesWithEmojis = (questionnaire) => {
     };
   });
 };
+
+export const getNextButtonLabel = (isLastCategory, isLastQuestionInCategory) => {
+  if (isLastCategory && isLastQuestionInCategory) {
+    return "Terminer";
+  } else if (isLastQuestionInCategory) {
+    return "Passer à la partie suivante";
+  } else {
+    return "Suivant";
+  }
+};
