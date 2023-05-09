@@ -8,12 +8,11 @@ import {
   FormLabel,
   SliderFilledTrack,
   Badge,
+  SliderMark,
 } from "@chakra-ui/react";
 
 const emojiGetter = (value) => {
-  if (!value) return null;
-  const key = Object.keys(value)[0];
-  switch (value[key]) {
+  switch (value) {
     case 0:
       return "😫";
     case 1:
@@ -27,12 +26,13 @@ const emojiGetter = (value) => {
 
 const CustomMultiRange = (props) => {
   const [currentValue, setCurrentValue] = useState([]);
+  const [isSliderClicked, setIsSliderClicked] = useState(null);
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
 
   useEffect(() => {
     if (currentValue.length === 0) {
-      setCurrentValue(props.schema.questions.map((question) => ({ [question]: 0 })));
+      setCurrentValue(props.schema.questions.map((question) => ({ label: question, value: 0 })));
       props.onChange(currentValue);
     }
   }, []);
@@ -74,18 +74,37 @@ const CustomMultiRange = (props) => {
                 colorScheme="orange"
                 w="100%"
                 height={isMobile ? "50px" : "inherit"}
+                onChangeStart={() => setIsSliderClicked(index)}
+                onChangeEnd={() => setIsSliderClicked(null)}
                 onChange={(value) => {
                   setCurrentValue((prev) => {
-                    prev[index] = { [question]: value };
+                    prev[index] = { ...prev[index], value };
                     return prev;
                   });
                   props.onChange(currentValue);
                 }}
               >
+                {isSliderClicked === index && (
+                  <SliderMark
+                    value={currentValue[index]?.value || 0}
+                    textAlign="center"
+                    bg="orange.500"
+                    color="white"
+                    mt="-40px"
+                    ml="-55"
+                    minWidth="100px"
+                    px="2"
+                    borderRadius="md"
+                  >
+                    {props.uiSchema.labels[currentValue[index].value]}
+                  </SliderMark>
+                )}
                 <SliderTrack colorScheme="orange">
                   <SliderFilledTrack />
                 </SliderTrack>
-                <SliderThumb fontSize={26}>{emojiGetter(currentValue[index])}</SliderThumb>
+                <SliderThumb fontSize={26}>
+                  {emojiGetter(currentValue[index]?.value || 0)}
+                </SliderThumb>
               </Slider>
             </Box>
           </Box>

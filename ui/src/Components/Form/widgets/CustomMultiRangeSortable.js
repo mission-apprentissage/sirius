@@ -10,6 +10,7 @@ import {
   Badge,
   ListItem,
   OrderedList,
+  SliderMark,
 } from "@chakra-ui/react";
 import { DragHandleIcon } from "@chakra-ui/icons";
 import { ReactSortable } from "react-sortablejs";
@@ -29,6 +30,7 @@ const emojiGetter = (value) => {
 
 const CustomMultiRangeSortable = (props) => {
   const [list, setList] = useState([]);
+  const [isSliderClicked, setIsSliderClicked] = useState(null);
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
 
@@ -108,6 +110,8 @@ const CustomMultiRangeSortable = (props) => {
                       colorScheme="orange"
                       w="100%"
                       height={isMobile ? "50px" : "inherit"}
+                      onChangeStart={() => setIsSliderClicked(index)}
+                      onChangeEnd={() => setIsSliderClicked(null)}
                       onChange={(value) => {
                         setList((prev) => {
                           prev[index] = { ...prev[index], value };
@@ -116,7 +120,22 @@ const CustomMultiRangeSortable = (props) => {
                         props.onChange(list);
                       }}
                     >
-                      <SliderTrack colorScheme="orange">
+                      {isSliderClicked === index && (
+                        <SliderMark
+                          value={list[index].value || 0}
+                          textAlign="center"
+                          bg="orange.500"
+                          color="white"
+                          mt="-40px"
+                          ml="-55"
+                          minWidth="100px"
+                          px="2"
+                          borderRadius="md"
+                        >
+                          {props.uiSchema.labels[list[index].value]}
+                        </SliderMark>
+                      )}
+                      <SliderTrack>
                         <SliderFilledTrack />
                       </SliderTrack>
                       <SliderThumb fontSize={26}>{emojiGetter(list[index].value || 0)}</SliderThumb>
