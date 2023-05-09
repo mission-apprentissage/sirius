@@ -2,7 +2,7 @@ import { Box, Stack, Image, Text, Button } from "@chakra-ui/react";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import shareTemoignage from "../../assets/images/share_temoignage.svg";
 
-const Hero = ({ setStartedAnswering, isMobile, categories }) => {
+const Hero = ({ setStartedAnswering, isMobile }) => {
   return (
     <Stack direction="column" w="100%" m="auto">
       <Box w="80%" mx="auto" my="5">
@@ -19,7 +19,8 @@ const Hero = ({ setStartedAnswering, isMobile, categories }) => {
               sur ta formation en apprentissage
             </Text>
             <Text fontSize="lg" color="purple.900" mt="5">
-              Ça ne prendra pas plus de 5 minutes, promis !
+              Répondre à ce questionnaire te prendra entre 5 et 10 minutes et ton anonymat sera
+              respecté.
             </Text>
             <Button
               size="lg"
@@ -34,69 +35,90 @@ const Hero = ({ setStartedAnswering, isMobile, categories }) => {
           </Box>
         </Stack>
       </Box>
-      <Box bgColor="white" w="100%" pt="35">
-        {categories.length && (
-          <Box
-            display="flex"
-            m="auto"
-            w={isMobile ? "100%" : "60%"}
-            justifyContent="center"
-            flexWrap={isMobile ? "wrap" : "nowrap"}
-          >
-            {categories.map((category, index) => (
-              <Box
-                key={index}
-                justifyContent="flex-start"
-                alignItems="center"
-                mx="10"
-                display="flex"
-                flexDirection="column"
-                width="88px"
-                my={isMobile ? "2" : "0"}
-              >
-                <Box
-                  borderRadius="100%"
-                  bgColor="purple.200"
-                  w="88px"
-                  h="88px"
-                  fontSize="5xl"
-                  justifyContent="center"
-                  alignItems="center"
-                  display="flex"
-                >
-                  {category.emoji}
-                </Box>
-                <Text
-                  color="purple.900"
-                  fontSize="sm"
-                  textAlign="center"
-                  wordBreak="break-word"
-                  mt="2"
-                >
-                  {category.title}
-                </Text>
-              </Box>
-            ))}
-          </Box>
-        )}
-        <Box w={isMobile ? "90%" : "60%"} mx="auto" my="35">
+      <Box bgColor="white" w="100%" pt="10px">
+        <Box w={isMobile ? "90%" : "50%"} mx="auto" my="35">
           <Text fontWeight="bold" color="purple.900" fontSize="xl" textAlign="center">
-            Flemme de répondre ? 3 raisons pour te convaincre
+            Flemme de répondre ?
           </Text>
-          <Box mt="5">
-            <Text display="flex" alignItems="center" justifyContent="center" fontSize="sm" my="2">
-              <ArrowForwardIcon mr={isMobile ? "5" : "2"} />
-              Un espace pour t’exprimer et faire le bilan sur ton expérience d’apprenti·e
-            </Text>
-            <Text display="flex" alignItems="center" justifyContent="center" fontSize="sm" my="2">
-              <ArrowForwardIcon mr={isMobile ? "5" : "2"} />
-              Tu feras remonter de l’info anonymement à ton CFA pour améliorer ta formation
-            </Text>
-            <Text display="flex" alignItems="center" justifyContent="center" fontSize="sm" my="2">
-              <ArrowForwardIcon mr={isMobile ? "5" : "2"} />
-              Personne n’est plus qualifié que toi pour aider des jeunes sur leur orientation
-            </Text>
-          </Box>
+          <Text color="purple.900" fontSize="xl" textAlign="center">
+            3 raisons pour te convaincre
+          </Text>
+          <Stack direction={isMobile ? "column" : "row"} spacing="8" my="5">
+            <Box
+              bgColor="purple.200"
+              shadow="md"
+              width="250px"
+              borderRadius="12"
+              display="flex"
+              flexDirection="column"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
+              <Text fontSize="5xl" my="20px">
+                💬
+              </Text>
+              <Text
+                fontSize="md"
+                lineHeight="6"
+                color="purple.900"
+                textAlign="center"
+                mb="20px"
+                mx="15px"
+              >
+                Personne n’est plus qualifié que toi pour
+                <b> renseigner les collégien·nes sur l’apprentissage</b>
+              </Text>
+            </Box>
+            <Box
+              bgColor="purple.200"
+              shadow="md"
+              width="250px"
+              borderRadius="12"
+              display="flex"
+              flexDirection="column"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
+              <Text fontSize="5xl" my="20px">
+                👷🏻‍♀️️
+              </Text>
+              <Text
+                fontSize="md"
+                lineHeight="6"
+                color="purple.900"
+                textAlign="center"
+                mb="20px"
+                mx="15px"
+              >
+                <b>On te propose un espace pour t’exprimer</b>, faire le bilan de ton expérience
+                d’apprenti·e
+              </Text>
+            </Box>
+            <Box
+              bgColor="purple.200"
+              shadow="md"
+              width="250px"
+              borderRadius="12"
+              display="flex"
+              flexDirection="column"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
+              <Text fontSize="5xl" my="20px">
+                👨🏽‍🎓
+              </Text>
+              <Text
+                fontSize="md"
+                lineHeight="6"
+                color="purple.900"
+                textAlign="center"
+                mb="20px"
+                mx="15px"
+              >
+                Avec ton témoignage, tu participes à <b>l’amélioration de ta formation en CFA</b>
+              </Text>
+            </Box>
+          </Stack>
         </Box>
       </Box>
     </Stack>

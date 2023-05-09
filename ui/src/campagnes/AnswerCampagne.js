@@ -168,7 +168,7 @@ const AnswerCampagne = () => {
       </Box>
     </Flex>
   ) : (
-    <Hero setStartedAnswering={setStartedAnswering} isMobile={isMobile} categories={categories} />
+    <Hero setStartedAnswering={setStartedAnswering} isMobile={isMobile} />
   );
 };
 
