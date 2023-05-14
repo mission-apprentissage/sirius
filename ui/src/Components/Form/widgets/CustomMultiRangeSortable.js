@@ -52,7 +52,7 @@ const CustomMultiRangeSortable = (props) => {
       props.onChange(list);
     }
   }, [list]);
-  console.log(list);
+
   return (
     <Box mx={isMobile ? "0" : "5"}>
       <FormLabel

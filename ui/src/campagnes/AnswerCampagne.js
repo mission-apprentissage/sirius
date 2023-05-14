@@ -18,6 +18,7 @@ import {
   CustomMessageReceived,
   CustomMultiRangeSortable,
 } from "../Components/Form/widgets";
+import { CustomNestedRadios } from "../Components/Form/fields";
 import { Stepper } from "../Components/Stepper";
 import Hero from "../Components/Form/Hero";
 import {
@@ -39,6 +40,10 @@ const widgets = {
   customMultiRangeWidget: CustomMultiRange,
   customMessageReceived: CustomMessageReceived,
   customMultiRangeSortableWidget: CustomMultiRangeSortable,
+};
+
+const fields = {
+  nestedRadios: CustomNestedRadios,
 };
 
 const AnswerCampagne = () => {
@@ -146,6 +151,7 @@ const AnswerCampagne = () => {
               uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
               validator={validator}
               widgets={widgets}
+              fields={fields}
               onSubmit={(values) =>
                 onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)
               }
