@@ -1,4 +1,4 @@
-import { FormControl, Box, Textarea, Text, Image } from "@chakra-ui/react";
+import { FormControl, Box, Textarea, Text, Image, useBreakpoint } from "@chakra-ui/react";
 import nadia from "../../../assets/images/nadia.svg";
 import johan from "../../../assets/images/johan.svg";
 import salomee from "../../../assets/images/salomee.svg";
@@ -6,6 +6,9 @@ import nazir from "../../../assets/images/nazir.svg";
 import samy from "../../../assets/images/samy.svg";
 
 const CustomMessageReceived = (props) => {
+  const breakpoint = useBreakpoint({ ssr: false });
+  const isMobile = breakpoint === "base";
+
   const pictoGetter = () => {
     switch (props.schema.picto) {
       case "nadia":
@@ -24,25 +27,31 @@ const CustomMessageReceived = (props) => {
   };
 
   return (
-    <Box mx="5">
+    <Box mx={isMobile ? "0" : "5"}>
       <Text fontSize="2xl" fontWeight="semibold" color="cyan.800" mb="5">
         📬 Tu as reçu un message !
       </Text>
-      <Box display="flex" flexDirection="row" justifyContent="center" alignItems="center" mb="5">
-        <Box w="50%">
+      <Box
+        display="flex"
+        flexDirection={isMobile ? "column" : "row"}
+        justifyContent="center"
+        alignItems="center"
+        mb="5"
+      >
+        <Box w={isMobile ? "100%" : "50%"}>
           <Text
             fontSize="md"
             fontWeight="semibold"
             color="cyan.800"
             textAlign="center"
-            mx="12"
+            mx={isMobile ? "2" : "12"}
             lineHeight="24px"
           >
             « {props.label} »
           </Text>
         </Box>
         <Box
-          w="50%"
+          w={isMobile ? "100%" : "50%"}
           m="auto"
           display="flex"
           flexDirection="column"

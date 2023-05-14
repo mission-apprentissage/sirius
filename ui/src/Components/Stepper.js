@@ -35,7 +35,11 @@ export const Stepper = ({
 
   return (
     <Box display="flex" flexDirection="column" w="100%">
-      <Box display="flex" flexDirection="row">
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent={isMobile ? "space-between" : "inherit"}
+      >
         {categories.map((category, index) => {
           const isCurrent = index === currentCategoryIndex;
           return (
@@ -54,14 +58,14 @@ export const Stepper = ({
                 bgColor={isCurrent ? "purple.500" : "purple.200"}
                 w={isCurrent ? "auto" : "50px"}
                 h="50px"
-                fontSize="lg"
+                fontSize={isMobile ? "2xl" : "lg"}
                 justifyContent="center"
                 alignItems="center"
                 display="flex"
                 p={isCurrent ? "4" : "0"}
               >
                 {category.emoji}
-                {isCurrent && (
+                {isCurrent && !isMobile && (
                   <Text color="white" fontSize="sm" textAlign="center" fontWeight="semibold" ml={2}>
                     {category.title}
                   </Text>
@@ -83,12 +87,16 @@ export const Stepper = ({
           size="xs"
           variant="solid"
           colorScheme="purple"
-          leftIcon={<ArrowBackIcon />}
+          leftIcon={!isMobile && <ArrowBackIcon />}
           color="black"
           bgColor="purple.300"
           onClick={goBackHandler}
         >
-          {goBackButtonLabelGetter(currentCategoryIndex, currentQuestionIndex)}
+          {isMobile ? (
+            <ArrowBackIcon />
+          ) : (
+            goBackButtonLabelGetter(currentCategoryIndex, currentQuestionIndex)
+          )}
         </Button>
       </Box>
     </Box>

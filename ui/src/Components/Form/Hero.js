@@ -9,19 +9,38 @@ const Hero = ({ setStartedAnswering, isMobile }) => {
         <Stack direction={isMobile ? "column" : "row"}>
           <Box w={isMobile ? "100%" : "50%"}>
             <Image src={shareTemoignage} alt="" objectFit="contain" w="80%" m="auto" />
-            <Text color="purple.900" fontSize="xs" textAlign="center" mt="2">
+            <Text
+              color="purple.900"
+              fontSize="xs"
+              textAlign="center"
+              mt="2"
+              display={isMobile ? "none" : "inherit"}
+            >
               Chloé (3e) - Nazir (3e prépa-métier) - Alba (3e SEGPA)
             </Text>
           </Box>
           <Box w={isMobile ? "100%" : "50%"}>
-            <Text fontSize="2xl" color="purple.900" fontWeight="semibold">
-              Aide ces jeunes à préciser leurs choix d’orientation en répondant à leurs questions
-              sur ta formation en apprentissage
-            </Text>
-            <Text fontSize="lg" color="purple.900" mt="5">
-              Répondre à ce questionnaire te prendra entre 5 et 10 minutes et ton anonymat sera
-              respecté.
-            </Text>
+            <Box display="flex" flexDirection={isMobile ? "column-reverse" : "column"}>
+              <Text
+                fontSize="2xl"
+                color="purple.900"
+                fontWeight="semibold"
+                textAlign={isMobile ? "center" : "inherit"}
+              >
+                Aide ces jeunes à préciser leurs choix d’orientation en répondant à leurs questions
+                sur ta formation en apprentissage
+              </Text>
+              <Text
+                fontSize="lg"
+                color="purple.900"
+                mt="5"
+                mb={isMobile ? "5" : "0"}
+                textAlign={isMobile ? "center" : "inherit"}
+              >
+                Répondre à ce questionnaire te prendra entre 5 et 10 minutes et ton anonymat sera
+                respecté.
+              </Text>
+            </Box>
             <Button
               size="lg"
               variant="solid"
@@ -43,11 +62,17 @@ const Hero = ({ setStartedAnswering, isMobile }) => {
           <Text color="purple.900" fontSize="xl" textAlign="center">
             3 raisons pour te convaincre
           </Text>
-          <Stack direction={isMobile ? "column" : "row"} spacing="8" my="5">
+          <Stack
+            direction={isMobile ? "column" : "row"}
+            spacing="8"
+            my="5"
+            alignItems={isMobile ? "center" : "inherit"}
+            display="flex"
+          >
             <Box
               bgColor="purple.200"
               shadow="md"
-              width="250px"
+              width={isMobile ? "90%" : "250px"}
               borderRadius="12"
               display="flex"
               flexDirection="column"
@@ -72,7 +97,7 @@ const Hero = ({ setStartedAnswering, isMobile }) => {
             <Box
               bgColor="purple.200"
               shadow="md"
-              width="250px"
+              width={isMobile ? "90%" : "250px"}
               borderRadius="12"
               display="flex"
               flexDirection="column"
@@ -97,7 +122,7 @@ const Hero = ({ setStartedAnswering, isMobile }) => {
             <Box
               bgColor="purple.200"
               shadow="md"
-              width="250px"
+              width={isMobile ? "90%" : "250px"}
               borderRadius="12"
               display="flex"
               flexDirection="column"
@@ -118,6 +143,17 @@ const Hero = ({ setStartedAnswering, isMobile }) => {
                 Avec ton témoignage, tu participes à <b>l’amélioration de ta formation en CFA</b>
               </Text>
             </Box>
+            <Button
+              size="lg"
+              variant="solid"
+              colorScheme="purple"
+              rightIcon={<ArrowForwardIcon />}
+              mt="10"
+              onClick={() => setStartedAnswering(true)}
+              display={isMobile ? "inherit" : "none"}
+            >
+              Go
+            </Button>
           </Stack>
         </Box>
       </Box>

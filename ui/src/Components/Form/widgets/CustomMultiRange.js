@@ -29,6 +29,7 @@ const CustomMultiRange = (props) => {
   const [isSliderClicked, setIsSliderClicked] = useState(null);
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
+  const labels = props.uiSchema.labels || ["Très difficile", "Difficile", "Facile", "Très facile"];
 
   useEffect(() => {
     if (currentValue.length === 0) {
@@ -38,7 +39,7 @@ const CustomMultiRange = (props) => {
   }, []);
 
   return (
-    <Box mx="5">
+    <Box mx={isMobile ? "0" : "5"}>
       <FormLabel
         as="legend"
         fontSize="2xl"
@@ -58,14 +59,16 @@ const CustomMultiRange = (props) => {
             key={index}
             w="100%"
             display="flex"
-            flexDirection="row"
+            flexDirection={isMobile ? "column" : "row"}
             alignItems="center"
             bgColor={index % 2 !== 0 ? "white" : "orange.100"}
             py="5"
             px="5"
           >
-            <Box w="50%">{question}</Box>
-            <Box w="50%">
+            <Box w={isMobile ? "100%" : "50%"} color="orange.800" fontSize="sm" textAlign="center">
+              {question}
+            </Box>
+            <Box w={isMobile ? "100%" : "50%"}>
               <Slider
                 id="slider"
                 defaultValue={0}
@@ -90,13 +93,13 @@ const CustomMultiRange = (props) => {
                     textAlign="center"
                     bg="orange.500"
                     color="white"
-                    mt="-40px"
+                    mt={isMobile ? "-20px" : "-40px"}
                     ml="-55"
                     minWidth="100px"
                     px="2"
                     borderRadius="md"
                   >
-                    {props.uiSchema.labels[currentValue[index].value]}
+                    {labels[currentValue[index]?.value || 0]}
                   </SliderMark>
                 )}
                 <SliderTrack colorScheme="orange">

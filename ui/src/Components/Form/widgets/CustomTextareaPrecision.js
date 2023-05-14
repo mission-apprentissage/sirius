@@ -1,8 +1,10 @@
-import { FormControl, Textarea, Box } from "@chakra-ui/react";
+import { FormControl, Textarea, Box, useBreakpoint } from "@chakra-ui/react";
 
 const CustomTextareaPrecision = (props) => {
+  const breakpoint = useBreakpoint({ ssr: false });
+  const isMobile = breakpoint === "base";
   return (
-    <Box mx="5">
+    <Box mx={isMobile ? "0" : "5"}>
       <FormControl id={props.id} width="100%">
         <Textarea
           onChange={(e) => props.onChange(e.target.value)}

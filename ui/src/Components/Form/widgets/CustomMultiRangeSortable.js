@@ -33,6 +33,7 @@ const CustomMultiRangeSortable = (props) => {
   const [isSliderClicked, setIsSliderClicked] = useState(null);
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
+  const labels = props.uiSchema.labels || ["Très difficile", "Difficile", "Facile", "Très facile"];
 
   useEffect(() => {
     if (list.length === 0) {
@@ -51,9 +52,9 @@ const CustomMultiRangeSortable = (props) => {
       props.onChange(list);
     }
   }, [list]);
-
+  console.log(list);
   return (
-    <Box mx="5">
+    <Box mx={isMobile ? "0" : "5"}>
       <FormLabel
         as="legend"
         fontSize="2xl"
@@ -93,15 +94,32 @@ const CustomMultiRangeSortable = (props) => {
                 sx={{ counterIncrement: "custom" }}
                 display="inline-flex"
                 cursor="grab"
+                borderLeft={isMobile ? "5px solid #CBD5E0" : "none"}
+                mb={isMobile ? "5" : "0"}
                 _before={{
-                  content: `counter(custom) " "`,
+                  content: isMobile ? "none" : `counter(custom) " "`,
                   width: "20px",
                   display: "inline-block",
                 }}
               >
-                <Box display="flex" flexDirection="row" alignItems="center" w="calc(100% - 20px)">
-                  <Box w="calc(50% - 25px)">{question?.label}</Box>
-                  <Box w="50%">
+                <Box
+                  display="flex"
+                  flexDirection={isMobile ? "column" : "row"}
+                  alignItems="center"
+                  w="calc(100% - 20px)"
+                >
+                  <Box display="flex" w={isMobile ? "100%" : "50%"}>
+                    <DragHandleIcon
+                      display={isMobile ? "inherit" : "none"}
+                      width="15px"
+                      mr="15px"
+                      color="gray.300"
+                    />
+                    <Box w="90%" textAlign="center">
+                      {question?.label}
+                    </Box>
+                  </Box>
+                  <Box w={isMobile ? "100%" : "50%"}>
                     <Slider
                       id="slider"
                       defaultValue={0}
@@ -122,7 +140,7 @@ const CustomMultiRangeSortable = (props) => {
                     >
                       {isSliderClicked === index && (
                         <SliderMark
-                          value={list[index].value || 0}
+                          value={list[index]?.value || 0}
                           textAlign="center"
                           bg="orange.500"
                           color="white"
@@ -132,16 +150,17 @@ const CustomMultiRangeSortable = (props) => {
                           px="2"
                           borderRadius="md"
                         >
-                          {props.uiSchema.labels[list[index].value]}
+                          {labels[list[index]?.value]}
                         </SliderMark>
                       )}
                       <SliderTrack>
                         <SliderFilledTrack />
                       </SliderTrack>
-                      <SliderThumb fontSize={26}>{emojiGetter(list[index].value || 0)}</SliderThumb>
+                      <SliderThumb fontSize={26}>
+                        {emojiGetter(list[index]?.value || 0)}
+                      </SliderThumb>
                     </Slider>
                   </Box>
-                  <DragHandleIcon ml="5" />
                 </Box>
               </ListItem>
             );

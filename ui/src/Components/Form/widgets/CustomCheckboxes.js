@@ -7,6 +7,7 @@ import {
   Badge,
   Text,
   Tag,
+  useBreakpoint,
 } from "@chakra-ui/react";
 
 const CheckboxCard = (props) => {
@@ -28,6 +29,7 @@ const CheckboxCard = (props) => {
           color: "white",
         }}
         colorScheme="orange"
+        p={2}
       >
         {props.children}
       </Tag>
@@ -36,6 +38,8 @@ const CheckboxCard = (props) => {
 };
 
 const CustomCheckboxes = (props) => {
+  const breakpoint = useBreakpoint({ ssr: false });
+  const isMobile = breakpoint === "base";
   const options = props.options.enumOptions.map((option) => option.label);
 
   const { getCheckboxProps } = useCheckboxGroup({
@@ -45,7 +49,7 @@ const CustomCheckboxes = (props) => {
   });
 
   return (
-    <Box as="fieldset" mx="5">
+    <Box as="fieldset" mx={isMobile ? "0" : "5"}>
       <FormLabel
         as="legend"
         fontSize="2xl"

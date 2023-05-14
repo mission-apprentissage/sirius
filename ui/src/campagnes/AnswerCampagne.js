@@ -123,8 +123,8 @@ const AnswerCampagne = () => {
   if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
 
   return startedAnswering ? (
-    <Flex my="20px" width="80%" m="auto">
-      <Box bg="white" p={6} rounded="md" w="80%" m="auto" boxShadow="md">
+    <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto">
+      <Box bg="white" p={6} rounded="md" w={isMobile ? "100%" : "80%"} m="auto" boxShadow="md">
         <Stepper
           categories={categories}
           currentCategoryIndex={currentCategoryIndex}
