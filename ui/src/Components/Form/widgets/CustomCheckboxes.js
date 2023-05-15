@@ -6,32 +6,34 @@ import {
   FormLabel,
   Badge,
   Text,
-  Tag,
   useBreakpoint,
 } from "@chakra-ui/react";
 
 const CheckboxCard = (props) => {
   const { getInputProps, getCheckboxProps } = useCheckbox({ ...props, required: false }); // native required on multiple checkboxes is not supported
 
-  const input = getInputProps({ name: "testCustomNestedRadiosAutre" });
+  const input = getInputProps();
   const checkbox = getCheckboxProps();
+
   return (
     <Box as="label">
-      <input {...input} name="testCustomNestedRadiosAutre" />
-      <Tag
+      <input {...input} />
+      <Box
         {...checkbox}
         cursor="pointer"
-        size="lg"
-        variant={input.checked ? "solid" : "subtle"}
-        _hover={{
-          backgroundColor: "orange.500",
+        borderRadius="md"
+        _checked={{
+          bg: "orange.500",
           color: "white",
+          borderColor: "orange.500",
         }}
-        colorScheme="orange"
-        p={2}
+        px={2}
+        py={1}
+        color="orange.800"
+        bgColor="orange.100"
       >
         {props.children}
-      </Tag>
+      </Box>
     </Box>
   );
 };
@@ -43,7 +45,8 @@ const CustomCheckboxes = (props) => {
     ? props.enum
     : props.options.enumOptions.map((option) => option.label);
   const { getCheckboxProps } = useCheckboxGroup({
-    name: props.id,
+    id: props.id,
+    name: props.name,
     onChange: (e) => {
       return props.standalone ? props.onChange(e, props.id) : props.onChange(e);
     },
@@ -75,6 +78,7 @@ const CustomCheckboxes = (props) => {
       <Wrap spacing={2} direction="row" mt={4}>
         {options.map((value) => {
           const checkbox = getCheckboxProps({ value });
+
           return (
             <CheckboxCard key={value} {...checkbox}>
               {value}
