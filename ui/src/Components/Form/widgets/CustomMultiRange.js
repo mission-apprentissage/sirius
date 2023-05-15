@@ -9,6 +9,7 @@ import {
   SliderFilledTrack,
   Badge,
   SliderMark,
+  Text,
 } from "@chakra-ui/react";
 
 const emojiGetter = (value) => {
@@ -53,17 +54,23 @@ const CustomMultiRange = (props) => {
       >
         {props.schema.title}
       </FormLabel>
+      <Text fontSize="xs" color="orange.900">
+        (Pour chacune de ces propositions déplace le curseur sur l’émoji qui se rapproche le plus de
+        ton ressenti)
+      </Text>
       <Box pt={2} pb={isMobile ? 6 : 2} w={isMobile ? "100%" : "90%"} m="auto">
         {props.schema.questions.map((question, index) => (
           <Box
             key={index}
-            w="100%"
+            w={isMobile ? "80%" : "100%"}
             display="flex"
             flexDirection={isMobile ? "column" : "row"}
             alignItems="center"
             bgColor={index % 2 !== 0 ? "white" : "orange.100"}
             py="5"
             px="5"
+            margin="auto"
+            mt="2"
           >
             <Box w={isMobile ? "100%" : "50%"} color="orange.800" fontSize="sm" textAlign="center">
               {question}

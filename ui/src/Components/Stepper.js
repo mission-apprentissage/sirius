@@ -76,6 +76,11 @@ export const Stepper = ({
         })}
       </Box>
       <Box w="100%" my="5">
+        {isMobile && (
+          <Text mb="2" color="purple.500">
+            {categories[currentCategoryIndex].title}
+          </Text>
+        )}
         <Progress
           colorScheme="purple"
           hasStripe

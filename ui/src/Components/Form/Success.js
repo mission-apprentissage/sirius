@@ -25,8 +25,8 @@ const Success = () => {
         textAlign="center"
         mt="2"
       >
-        Tes réponses seront partagées aux collégiens et collégiennes qui s’interrogent sur les
-        formations en apprentissage
+        Tes réponses seront partagées aux jeunes qui s’interrogent sur les formations en
+        apprentissage
       </Text>
       <Image src={success} alt="" objectFit="contain" maxW="500px" w="80%" m="auto" mt="10" />
     </Box>
