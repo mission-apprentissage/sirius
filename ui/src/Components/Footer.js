@@ -77,7 +77,7 @@ const Footer = () => {
         </Box>
       </Box>
       <Box
-        display="flex"
+        display="none"
         w="100%"
         justifyContent={isMobile ? "center" : "flex-start"}
         alignItems={isMobile ? "center" : "flex-start"}
