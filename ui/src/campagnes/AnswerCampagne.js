@@ -21,6 +21,7 @@ import {
 import { CustomNestedRadios } from "../Components/Form/fields";
 import { Stepper } from "../Components/Stepper";
 import Hero from "../Components/Form/Hero";
+import Success from "../Components/Form/Success";
 import {
   multiStepQuestionnaireFormatter,
   multiStepQuestionnaireUIFormatter,
@@ -129,20 +130,17 @@ const AnswerCampagne = () => {
 
   return startedAnswering ? (
     <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto">
-      <Box bg="white" p={6} rounded="md" w={isMobile ? "100%" : "80%"} m="auto" boxShadow="md">
-        <Stepper
-          categories={categories}
-          currentCategoryIndex={currentCategoryIndex}
-          setCurrentCategoryIndex={setCurrentCategoryIndex}
-          setCurrentQuestionIndex={setCurrentQuestionIndex}
-          isTemoignageSent={isTemoignageSent}
-          currentQuestionIndex={currentQuestionIndex}
-        />
-        {isTemoignageSent ? (
-          <Text fontSize="xl" my="30px" align="center" fontWeight="semibold">
-            Merci de votre participation !
-          </Text>
-        ) : (
+      {isTemoignageSent && <Success />}
+      {!isTemoignageSent && (
+        <Box bg="white" p={6} rounded="md" w={isMobile ? "100%" : "80%"} m="auto" boxShadow="md">
+          <Stepper
+            categories={categories}
+            currentCategoryIndex={currentCategoryIndex}
+            setCurrentCategoryIndex={setCurrentCategoryIndex}
+            setCurrentQuestionIndex={setCurrentQuestionIndex}
+            isTemoignageSent={isTemoignageSent}
+            currentQuestionIndex={currentQuestionIndex}
+          />
           <>
             <Form
               schema={
@@ -175,8 +173,8 @@ const AnswerCampagne = () => {
               </Box>
             </Form>
           </>
-        )}
-      </Box>
+        </Box>
+      )}
     </Flex>
   ) : (
     <Hero setStartedAnswering={setStartedAnswering} isMobile={isMobile} />
