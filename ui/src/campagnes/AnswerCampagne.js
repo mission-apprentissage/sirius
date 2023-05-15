@@ -132,7 +132,15 @@ const AnswerCampagne = () => {
     <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto">
       {isTemoignageSent && <Success />}
       {!isTemoignageSent && (
-        <Box bg="white" p={6} rounded="md" w={isMobile ? "100%" : "80%"} m="auto" boxShadow="md">
+        <Box
+          bg="white"
+          p={6}
+          rounded="md"
+          w={isMobile ? "100%" : "80%"}
+          m="auto"
+          boxShadow="md"
+          minHeight={isMobile ? "100vh" : "inherit"}
+        >
           <Stepper
             categories={categories}
             currentCategoryIndex={currentCategoryIndex}
