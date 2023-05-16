@@ -21,7 +21,7 @@ const CustomRange = (props) => {
   useEffect(() => {
     if (!props.value) props.onChange(props.schema.enum[0]);
   }, []);
-  console.log(markerRef);
+
   return (
     <Box mx={isMobile ? "0" : "5"}>
       <FormLabel
@@ -60,7 +60,6 @@ const CustomRange = (props) => {
           onChange={(value) => props.onChange(props.schema.enum[value])}
         >
           {props.schema.enum.map((elem, index) => {
-            console.log(-markerRef?.current[index]?.offsetWidth);
             return (
               <SliderMark
                 key={index}
