@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
-import { Box, Flex, Button, Text, useBreakpoint } from "@chakra-ui/react";
+import { Box, Flex, Button, useBreakpoint } from "@chakra-ui/react";
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
@@ -61,7 +61,7 @@ const AnswerCampagne = () => {
   const [temoignageId, setTemoignageId] = useState(null);
   const [startedAnswering, setStartedAnswering] = useState(false);
   const breakpoint = useBreakpoint({ ssr: false });
-
+  const [nestedData, setNestedData] = useState({});
   const isMobile = breakpoint === "base";
 
   const isLastCategory = formattedQuestionnnaire.length
@@ -85,7 +85,7 @@ const AnswerCampagne = () => {
   const onSubmitHandler = async (formData, isLastQuestion) => {
     if (!temoignageId) {
       const result = await _post(`/api/temoignages/`, {
-        reponses: { ...answers, ...formData },
+        reponses: { ...answers, ...formData, ...nestedData },
         campagneId: id,
       });
       if (result._id) {
@@ -101,7 +101,7 @@ const AnswerCampagne = () => {
       }
     } else {
       const result = await _put(`/api/temoignages/${temoignageId}`, {
-        reponses: { ...answers, ...formData },
+        reponses: { ...answers, ...formData, ...nestedData },
       });
       if (!result.acknowledged) {
         toast({
@@ -126,8 +126,11 @@ const AnswerCampagne = () => {
     setAnswers({ ...answers, ...formData });
   };
 
-  if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
+  const handleNested = (nestedFormData) => {
+    setNestedData({ ...nestedFormData });
+  };
 
+  if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
   return startedAnswering ? (
     <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto">
       {isTemoignageSent && <Success />}
@@ -166,6 +169,7 @@ const AnswerCampagne = () => {
               transformErrors={transformErrors}
               formData={answers}
               showErrorList={false}
+              formContext={{ handleNested }}
             >
               <Box display="flex" justifyContent="flex-end">
                 <Button

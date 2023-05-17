@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import {
   Box,
   useRadioGroup,
@@ -43,7 +43,6 @@ function RadioCard(props) {
 }
 
 const otherInputGetter = (dependencies, props, value) => {
-  if (!props.formData) return null;
   const otherInput = dependencies.find((dep) =>
     dep.properties[props.name].contains.enum.includes(value)
   );
@@ -52,13 +51,24 @@ const otherInputGetter = (dependencies, props, value) => {
 
 const CustomNestedRadios = (props) => {
   const [nestedValues, setNestedValues] = useState(null);
+  const [parentValue, setparentValue] = useState("");
   const options = props.schema.enum;
   const dependencies = props.registry.rootSchema.dependencies[props.name].oneOf;
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: props.name,
-    onChange: props.onChange,
+    onChange: setparentValue,
   });
   const group = getRootProps();
+
+  useEffect(() => {
+    props.formContext.handleNested({
+      [props.name + "Autre"]: nestedValues,
+      [props.name]: parentValue,
+    });
+  }, [nestedValues, parentValue]);
+
+  props.onChange(parentValue);
+
   return (
     <>
       {props.schema.info && (
@@ -100,7 +110,7 @@ const CustomNestedRadios = (props) => {
               return (
                 <Fragment key={value}>
                   <RadioCard {...radio}>{value}</RadioCard>
-                  {otherInput && props.formData === value && (
+                  {parentValue === value && otherInput && (
                     <Box ml="3" mb="5">
                       <NestedInput
                         {...otherInput}
