@@ -4,7 +4,6 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
-import { StepsTheme as Steps } from "chakra-ui-steps";
 import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
@@ -16,40 +15,6 @@ const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
 };
 
-const CustomSteps = {
-  ...Steps,
-  sizes: {
-    ...Steps.sizes,
-    sm: {
-      ...Steps.sizes.sm,
-      label: {
-        ...Steps.sizes.sm.label,
-        width: "auto",
-      },
-    },
-    md: {
-      ...Steps.sizes.md,
-      label: {
-        ...Steps.sizes.md.label,
-        width: "100px",
-      },
-    },
-  },
-  variants: {
-    "circles-alt": (props) => {
-      return {
-        ...Steps.variants["circles-alt"](props),
-        step: {
-          ...Steps.variants["circles-alt"](props).step,
-          _highlighted: {
-            cursor: "pointer!important",
-          },
-        },
-      };
-    },
-  },
-};
-
 export const theme = extendTheme({
   styles: {
     global: {
@@ -58,7 +23,7 @@ export const theme = extendTheme({
         fontWeight: 400,
         lineHeight: 1.3,
         color: "#222",
-        backgroundColor: "#EDF2F7",
+        backgroundColor: "purple.100",
       },
     },
   },
@@ -95,7 +60,6 @@ export const theme = extendTheme({
         },
       },
     },
-    Steps: CustomSteps,
   },
 });
 const container = document.getElementById("root");

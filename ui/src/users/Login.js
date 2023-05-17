@@ -92,13 +92,7 @@ const Login = () => {
   if (!userContext.loading && userContext.token) return <Navigate to="/campagnes" />;
 
   return (
-    <Flex
-      flexDirection="column"
-      backgroundColor="gray.100"
-      justifyContent="center"
-      alignItems="center"
-      w="100%"
-    >
+    <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
       <Stack flexDir="column" mb="2" justifyContent="center" alignItems="center">
         <Avatar size="lg" src={Miley} alt="" />
         <Heading color="purple.400">Bienvenue</Heading>

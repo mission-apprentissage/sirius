@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Flex, Container, Spinner } from "@chakra-ui/react";
 import Navbar from "./Navbar";
+import UnauthNavbar from "./UnauthNavbar";
 import { UserContext } from "../context/UserContext";
 
 const Layout = ({ children }) => {
@@ -11,9 +12,11 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      {isAuthenticated && <Navbar />}
-      <Container maxW="container.xl" bg="gray.100">
-        <Flex py={[5, 20]}>{children}</Flex>
+      {isAuthenticated ? <Navbar /> : <UnauthNavbar />}
+      <Container maxW="container.xl" bg="purple.100" p="0" m="0" maxWidth="100%">
+        <Flex py={[0, 5]} w="100%">
+          {children}
+        </Flex>
       </Container>
     </>
   );

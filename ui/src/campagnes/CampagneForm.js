@@ -131,7 +131,7 @@ const CampagneForm = ({ campagne = null }) => {
 
   return (
     <>
-      <Flex align="center" justify="center" m="auto" width="100%">
+      <Flex align="center" justify="center" m="auto" width="80%">
         <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
           <form onSubmit={formik.handleSubmit}>
             <VStack spacing={6} align="flex-start">
