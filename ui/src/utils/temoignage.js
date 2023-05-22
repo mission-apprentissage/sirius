@@ -35,6 +35,11 @@ export const matchCardTypeAndQuestions = (campagne) => {
     const properties = questionnaire[category].properties;
     Object.keys(properties).forEach((question) => {
       if (
+        properties[question].type === "array" &&
+        properties[question].hasOwnProperty("questions")
+      ) {
+        obj[question] = "bar";
+      } else if (
         (properties[question].type === "string" && properties[question].hasOwnProperty("enum")) ||
         properties[question].type === "array"
       ) {
