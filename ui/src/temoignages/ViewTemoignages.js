@@ -241,10 +241,24 @@ const ViewTemoignages = () => {
         />
       </HStack>
       {selectedCampagne && (
-        <Text>
-          {temoignages.length} témoignage{temoignages.length > 1 && "s"} / {questionsList.length}{" "}
-          question{questionsList.length > 1 && "s"}
-        </Text>
+        <Flex w="100%">
+          <Card textAlign="center" h="auto" w="150px" mx="2">
+            <CardHeader p="2">
+              <Heading size="md">{temoignages.length}</Heading>
+            </CardHeader>
+            <CardBody p="1">
+              <Text>témoignage{temoignages.length > 1 && "s"}</Text>
+            </CardBody>
+          </Card>
+          <Card textAlign="center" w="150px" mx="2">
+            <CardHeader p="2">
+              <Heading size="md">{questionsList.length}</Heading>
+            </CardHeader>
+            <CardBody p="1">
+              <Text>question{questionsList.length > 1 && "s"}</Text>
+            </CardBody>
+          </Card>
+        </Flex>
       )}
       <Accordion allowMultiple mt="15px">
         {categories.length > 0 &&
@@ -255,7 +269,7 @@ const ViewTemoignages = () => {
               ).includes(question)
             );
             return (
-              <AccordionItem key={category}>
+              <AccordionItem key={category.id}>
                 <AccordionButton>
                   <Box display="flex" flexDirection="row" w="calc(100% - 15px)">
                     <Text fontSize="xl" mr="10px">
