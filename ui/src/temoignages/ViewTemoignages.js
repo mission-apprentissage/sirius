@@ -23,7 +23,11 @@ import { CanvasRenderer } from "echarts/renderers";
 import { useGet } from "../common/hooks/httpHooks";
 import { _get } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
-import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../utils/temoignage";
+import {
+  matchIdAndQuestions,
+  matchCardTypeAndQuestions,
+  getMedianDuration,
+} from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
 import TemoignagesModal from "./Components/TemoignagesModal";
 
@@ -216,6 +220,8 @@ const ViewTemoignages = () => {
 
   const categories = getCategoriesWithEmojis(selectedCampagne?.questionnaire);
 
+  const medianDuration = getMedianDuration(temoignages);
+
   return (
     <Flex direction="column" w="80%" m="auto">
       <HStack mb={4}>
@@ -256,6 +262,14 @@ const ViewTemoignages = () => {
             </CardHeader>
             <CardBody p="1">
               <Text>question{questionsList.length > 1 && "s"}</Text>
+            </CardBody>
+          </Card>
+          <Card textAlign="center" w="150px" mx="2">
+            <CardHeader p="2">
+              <Heading size="md">{medianDuration}</Heading>
+            </CardHeader>
+            <CardBody p="1">
+              <Text>temps médian de passation</Text>
             </CardBody>
           </Card>
         </Flex>
