@@ -1,9 +1,6 @@
 const bunyan = require("bunyan");
-const { throttle } = require("lodash");
-const util = require("util");
 const { writeData } = require("oleoduc");
 const PrettyStream = require("bunyan-prettystream");
-const BunyanSlack = require("bunyan-slack");
 
 const jsonStream = (level) => {
   return {
@@ -23,36 +20,6 @@ const consoleStream = (level) => {
   };
 };
 
-const slackStream = (env, slackWebhookUrl) => {
-  let stream = new BunyanSlack(
-    {
-      webhook_url: slackWebhookUrl,
-      customFormatter: (record, levelName) => {
-        if (record.type === "http") {
-          record = {
-            url: record.request.url.relative,
-            statusCode: record.response.statusCode,
-            ...(record.error ? { message: record.error.message } : {}),
-          };
-        }
-        return {
-          text: util.format(`[SERVER][${env}] %O`, levelName.toUpperCase(), record),
-        };
-      },
-    },
-    (error) => {
-      console.log("Unable to send log to slack", error);
-    }
-  );
-  stream.write = throttle(stream.write, 5000);
-
-  return {
-    name: "slack",
-    level: "error",
-    stream: stream,
-  };
-};
-
 const mongodbStream = (Log, level) => {
   return {
     name: "mongodb",
@@ -62,13 +29,12 @@ const mongodbStream = (Log, level) => {
 };
 
 module.exports = (config, options = {}) => {
-  let { env, slackWebhookUrl, log } = config;
+  let { log } = config;
   let { type, level } = log;
   let { Log } = options;
 
   let streams = [
     ...(type === "console" ? [consoleStream(level)] : [jsonStream(level)]),
-    ...(slackWebhookUrl ? [slackStream(env, slackWebhookUrl)] : []),
     ...(Log ? [mongodbStream(Log, level)] : []),
   ];
 
