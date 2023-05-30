@@ -70,9 +70,11 @@ export const transformErrors = (errors) => {
 };
 
 export const getCategoriesWithEmojis = (questionnaire) => {
+  if (!questionnaire || !questionnaire.properties) return [];
   return Object.entries(questionnaire.properties).map((property) => {
-    const [, content] = property;
+    const [key, content] = property;
     return {
+      id: key,
       title: content.title,
       emoji: content.emoji,
       questionCount: Object.keys(content.properties).length,
