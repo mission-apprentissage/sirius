@@ -7,6 +7,7 @@ import CampagneForm from "./campagnes/CampagneForm";
 import AnswerCampagne from "./campagnes/AnswerCampagne";
 import EditCampagne from "./campagnes/EditCampagne";
 import Login from "./users/Login";
+import MentionsInformation from "./legal/MentionsInformation";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         </Route>
         <Route exact path="/connexion" element={<Login />} />
         <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
+        <Route exact path="/mentions-information" element={<MentionsInformation />} />
       </Routes>
     </Router>
   );
