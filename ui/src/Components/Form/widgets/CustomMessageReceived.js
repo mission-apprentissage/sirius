@@ -94,7 +94,7 @@ const CustomMessageReceived = (props) => {
         />
         <Popover>
           <PopoverTrigger>
-            <HStack mt="10px">
+            <HStack mt="10px" w="fit-content">
               <InfoOutlineIcon color="purple.500" boxSize={4} />
               <Text color="purple.500" fontSize="sm" sx={{ marginTop: "0px" }}>
                 Mention d’information – Champs libres

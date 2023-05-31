@@ -33,7 +33,7 @@ const CustomTextareaPrecision = (props) => {
         />
         <Popover>
           <PopoverTrigger>
-            <HStack>
+            <HStack w="fit-content">
               <InfoOutlineIcon color="purple.500" boxSize={4} />
               <Text color="purple.500" fontSize="sm">
                 Mention d’information – Champs libres
