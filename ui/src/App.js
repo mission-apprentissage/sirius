@@ -8,6 +8,7 @@ import AnswerCampagne from "./campagnes/AnswerCampagne";
 import EditCampagne from "./campagnes/EditCampagne";
 import Login from "./users/Login";
 import MentionsInformation from "./legal/MentionsInformation";
+import CGU from "./legal/CGU";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route exact path="/connexion" element={<Login />} />
         <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
         <Route exact path="/mentions-information" element={<MentionsInformation />} />
+        <Route exact path="/cgu" element={<CGU />} />
       </Routes>
     </Router>
   );
