@@ -22,7 +22,7 @@ const TemoignagesModal = ({ question, responses }) => {
       <CardFooter>
         <Button onClick={onOpen}>Voir plus</Button>
       </CardFooter>
-      <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered>
+      <Modal onClose={onClose} isOpen={isOpen} size="xl" isCentered scrollBehavior="inside">
         <ModalOverlay bg="blackAlpha.300" />
         <ModalContent>
           <ModalHeader p={4}>{question}</ModalHeader>
