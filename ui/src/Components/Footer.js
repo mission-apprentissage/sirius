@@ -77,16 +77,12 @@ const Footer = () => {
         </Box>
       </Box>
       <Box
-        display="none"
+        display="flex"
         w="100%"
         justifyContent={isMobile ? "center" : "flex-start"}
         alignItems={isMobile ? "center" : "flex-start"}
         my="2"
       >
-        <Link href="/mentions-legales" fontSize={isMobile ? "xs" : "inherit"}>
-          Mentions légales
-        </Link>
-        <Text mx={isMobile ? "1" : "4"}>|</Text>
         <Link href="/cgu" fontSize={isMobile ? "xs" : "inherit"}>
           CGU
         </Link>
