@@ -107,6 +107,11 @@ const barOption = (responses) => {
     return response.value.filter((value) => value === 3).length;
   });
 
+  const labelFormatter = (param) => {
+    if (param.data == 0) return "";
+    return param.data;
+  };
+
   return {
     tooltip: {
       trigger: "axis",
@@ -137,11 +142,13 @@ const barOption = (responses) => {
         stack: "total",
         label: {
           show: true,
+          formatter: labelFormatter,
         },
         emphasis: {
           focus: "series",
         },
         data: zero,
+        color: "#EE6766",
       },
       {
         name: "🧐",
@@ -149,11 +156,13 @@ const barOption = (responses) => {
         stack: "total",
         label: {
           show: true,
+          formatter: labelFormatter,
         },
         emphasis: {
           focus: "series",
         },
         data: one,
+        color: "#FAC858",
       },
       {
         name: "😊",
@@ -161,11 +170,13 @@ const barOption = (responses) => {
         stack: "total",
         label: {
           show: true,
+          formatter: labelFormatter,
         },
         emphasis: {
           focus: "series",
         },
         data: two,
+        color: "#91CC75",
       },
       {
         name: "😝",
@@ -173,11 +184,13 @@ const barOption = (responses) => {
         stack: "total",
         label: {
           show: true,
+          formatter: labelFormatter,
         },
         emphasis: {
           focus: "series",
         },
         data: three,
+        color: "#5470C6",
       },
     ],
   };
