@@ -142,6 +142,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: zero,
+        color: "#EE6766",
       },
       {
         name: "🧐",
@@ -154,6 +155,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: one,
+        color: "#FAC858",
       },
       {
         name: "😊",
@@ -166,6 +168,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: two,
+        color: "#91CC75",
       },
       {
         name: "😝",
@@ -178,6 +181,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: three,
+        color: "#5470C6",
       },
     ],
   };
