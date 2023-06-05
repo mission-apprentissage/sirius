@@ -176,7 +176,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: two,
-        color: "#91CC75",
+        color: "#5470C6",
       },
       {
         name: "😝",
@@ -190,7 +190,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: three,
-        color: "#5470C6",
+        color: "#91CC75",
       },
     ],
   };
