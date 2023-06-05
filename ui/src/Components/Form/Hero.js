@@ -1,9 +1,25 @@
-import { Box, Stack, Image, Text, Button } from "@chakra-ui/react";
+import {
+  Box,
+  Stack,
+  Image,
+  Text,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import shareTemoignage from "../../assets/images/share_temoignage.svg";
 import Footer from "../Footer";
 
 const Hero = ({ setStartedAnswering, isMobile }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <>
       <Stack direction="column" w="100%" m="auto">
@@ -49,7 +65,7 @@ const Hero = ({ setStartedAnswering, isMobile }) => {
                 colorScheme="purple"
                 rightIcon={<ArrowForwardIcon />}
                 mt="10"
-                onClick={() => setStartedAnswering(true)}
+                onClick={onOpen}
               >
                 Je partage mon témoignage
               </Button>
@@ -151,16 +167,65 @@ const Hero = ({ setStartedAnswering, isMobile }) => {
                 colorScheme="purple"
                 rightIcon={<ArrowForwardIcon />}
                 mt="10"
-                onClick={() => setStartedAnswering(true)}
+                onClick={onOpen}
                 display={isMobile ? "inherit" : "none"}
               >
-                Go
+                Je partage mon témoignage
               </Button>
             </Stack>
           </Box>
         </Box>
         <Footer />
       </Stack>
+      <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <Text color="purple.500">Mention d’information – Champs libres - Sirius</Text>
+          </ModalHeader>
+          <ModalBody>
+            <Stack>
+              <Text>
+                Attention à vos{" "}
+                <Text as="span" fontWeight="semibold" color="purple.500">
+                  données
+                </Text>
+                , elles sont{" "}
+                <Text as="span" fontWeight="semibold" color="purple.500">
+                  importantes
+                </Text>{" "}
+                pour nous !
+              </Text>
+              <Text>
+                C’est pour cela que nous invitons à nous communiquer les{" "}
+                <Text as="span" fontWeight="semibold" color="purple.500">
+                  seules informations et données strictement nécessaires.
+                </Text>
+              </Text>
+              <Text>
+                Notamment, ne communiquez pas vos opinions{" "}
+                <Text as="span" fontWeight="semibold" color="purple.500">
+                  philosophiques, syndicales, politiques ou sur votre vie sexuelle.{" "}
+                </Text>
+              </Text>
+              <Text fontWeight="semibold" color="purple.500">
+                Ces données sont trop personnelles !
+              </Text>
+            </Stack>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              size="lg"
+              variant="solid"
+              colorScheme="purple"
+              rightIcon={<ArrowForwardIcon />}
+              onClick={() => setStartedAnswering(true)}
+            >
+              C'est parti !
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

@@ -1,4 +1,20 @@
-import { FormControl, Box, Textarea, Text, Image, useBreakpoint } from "@chakra-ui/react";
+import {
+  FormControl,
+  Box,
+  Textarea,
+  Text,
+  Image,
+  useBreakpoint,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
+  HStack,
+  Stack,
+} from "@chakra-ui/react";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
 import nadia from "../../../assets/images/nadia.svg";
 import johan from "../../../assets/images/johan.svg";
 import salomee from "../../../assets/images/salomee.svg";
@@ -76,6 +92,50 @@ const CustomMessageReceived = (props) => {
           mt="10px"
           value={props.value}
         />
+        <Popover>
+          <PopoverTrigger>
+            <HStack mt="10px" w="fit-content">
+              <InfoOutlineIcon color="purple.500" boxSize={4} />
+              <Text color="purple.500" fontSize="sm" sx={{ marginTop: "0px" }}>
+                Mention d’information – Champs libres
+              </Text>
+            </HStack>
+          </PopoverTrigger>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverBody>
+              <Stack>
+                <Text>
+                  Attention à vos{" "}
+                  <Text as="span" fontWeight="semibold" color="purple.500">
+                    données
+                  </Text>
+                  , elles sont{" "}
+                  <Text as="span" fontWeight="semibold" color="purple.500">
+                    importantes
+                  </Text>{" "}
+                  pour nous !
+                </Text>
+                <Text>
+                  C’est pour cela que nous invitons à nous communiquer les{" "}
+                  <Text as="span" fontWeight="semibold" color="purple.500">
+                    seules informations et données strictement nécessaires.
+                  </Text>
+                </Text>
+                <Text>
+                  Notamment, ne communiquez pas vos opinions{" "}
+                  <Text as="span" fontWeight="semibold" color="purple.500">
+                    philosophiques, syndicales, politiques ou sur votre vie sexuelle.{" "}
+                  </Text>
+                </Text>
+                <Text fontWeight="semibold" color="purple.500">
+                  Ces données sont trop personnelles !
+                </Text>
+              </Stack>
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
       </FormControl>
     </Box>
   );
