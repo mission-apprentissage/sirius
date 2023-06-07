@@ -14,10 +14,18 @@ class BasicError extends Error {
   }
 }
 
+const ErrorMessage = {
+  CampagneNotFoundError: "Campagne inconnue",
+  TemoignageNotFoundError: "Temoignage inconnu",
+  UnauthorizedError: "Unauthorized",
+  CampagneNotStarted: "La campagne n'a pas encore commencé",
+  CampagneEnded: "La campagne est terminée",
+};
+
 const Errors = {
   CampagneNotFoundError: class NotFoundError extends BasicError {
     constructor(message, extra) {
-      super(message || "Campagne inconnue", extra);
+      super(message || ErrorMessage.CampagneNotFoundError, extra);
     }
 
     get status() {
@@ -26,7 +34,7 @@ const Errors = {
   },
   TemoignageNotFoundError: class NotFoundError extends BasicError {
     constructor(message, extra) {
-      super(message || "Temoignage inconnu", extra);
+      super(message || ErrorMessage.TemoignageNotFoundError, extra);
     }
 
     get status() {
@@ -35,13 +43,31 @@ const Errors = {
   },
   UnauthorizedError: class NotFoundError extends BasicError {
     constructor(message, extra) {
-      super(message || "Unauthorized", extra);
+      super(message || ErrorMessage.UnauthorizedError, extra);
     }
 
     get status() {
       return 401;
     }
   },
+  CampagneNotStarted: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.CampagneNotStarted, extra);
+    }
+
+    get status() {
+      return 403;
+    }
+  },
+  CampagneEnded: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.CampagneEnded, extra);
+    }
+
+    get status() {
+      return 403;
+    }
+  },
 };
 
-module.exports = { ...Errors, BasicError };
+module.exports = { ...Errors, BasicError, ErrorMessage };
