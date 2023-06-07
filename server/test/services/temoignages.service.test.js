@@ -1,7 +1,8 @@
 const { expect } = require("chai");
 const { stub, restore } = require("sinon");
-const { newTemoignage } = require("../fixtures");
+const { newTemoignage, newCampagne } = require("../fixtures");
 const temoignagesService = require("../../src/services/temoignages.service");
+const campagnesService = require("../../src/services/campagnes.service");
 const temoignagesDao = require("../../src/dao/temoignages.dao");
 
 describe(__filename, () => {
@@ -11,7 +12,11 @@ describe(__filename, () => {
 
   describe("createTemoignage", () => {
     it("should be successful and returns one temoignage", async () => {
-      const temoignage = newTemoignage();
+      const campagne = newCampagne({}, true);
+      const temoignage = newTemoignage({ campagneId: campagne._id });
+
+      await campagnesService.createCampagne(campagne);
+
       stub(temoignagesDao, "create").returns(temoignage);
 
       const { success, body } = await temoignagesService.createTemoignage(temoignage);
