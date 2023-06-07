@@ -10,7 +10,6 @@ import {
   Th,
   Td,
   TableContainer,
-  TableCaption,
   Flex,
   Modal,
   ModalOverlay,
@@ -25,6 +24,12 @@ import {
   Link,
   useToast,
   Tooltip,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Box,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +38,101 @@ import QRCode from "react-qr-code";
 import { _delete } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
+
+const CampagneTable = ({ campagnes, navigate, setCampagneLinks, onOpen, setDeletedCampagneId }) => {
+  return (
+    <TableContainer my={4} p={2} rounded="md" w="100%" boxShadow="md" bg="white">
+      <Table size="md">
+        <Thead>
+          <Tr>
+            <Th>Nom de la campagne</Th>
+            <Th>CFA</Th>
+            <Th>Formation</Th>
+            <Th>Début</Th>
+            <Th>Fin</Th>
+            <Th>Actions</Th>
+            <Th>Crée le</Th>
+            <Th>Modifié le</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {campagnes?.map((campagne) => (
+            <Tr key={campagne._id}>
+              <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
+                  {campagne.nomCampagne}
+                </Tooltip>
+              </Td>
+              <Td>{campagne.cfa}</Td>
+              <Td>{campagne.formation}</Td>
+              <Td>{campagne.startDate}</Td>
+              <Td>{campagne.endDate}</Td>
+              <Td>
+                <IconButton
+                  aria-label="Voir la campagne"
+                  variant="outline"
+                  colorScheme="purple"
+                  icon={<ViewIcon />}
+                  onClick={() => navigate(`/campagnes/${campagne._id}`)}
+                  mx={2}
+                />
+                <IconButton
+                  aria-label="Voir le lien et le QR code de la campagne"
+                  variant="outline"
+                  colorScheme="purple"
+                  icon={<LinkIcon />}
+                  onClick={() => {
+                    setCampagneLinks(campagne);
+                    onOpen();
+                  }}
+                  mx={2}
+                />
+                <IconButton
+                  aria-label="Modifier la campagne"
+                  variant="outline"
+                  colorScheme="purple"
+                  icon={<EditIcon />}
+                  onClick={() => navigate(`/campagnes/${campagne._id}/edition`)}
+                  mx={2}
+                />
+                <IconButton
+                  aria-label="Supprimer la campagne"
+                  variant="outline"
+                  colorScheme="purple"
+                  icon={<DeleteIcon />}
+                  onClick={() => setDeletedCampagneId(campagne._id)}
+                  mx={2}
+                />
+              </Td>
+              <Td>
+                <Tooltip
+                  label={new Date(campagne.createdAt).toLocaleString("fr-FR", {
+                    timeZone: "Europe/Paris",
+                  })}
+                  hasArrow
+                  arrowSize={15}
+                >
+                  {new Date(campagne.createdAt).toLocaleDateString("fr-FR")}
+                </Tooltip>
+              </Td>
+              <Td>
+                <Tooltip
+                  label={new Date(campagne.updatedAt).toLocaleString("fr-FR", {
+                    timeZone: "Europe/Paris",
+                  })}
+                  hasArrow
+                  arrowSize={15}
+                >
+                  {new Date(campagne.updatedAt).toLocaleDateString("fr-FR")}
+                </Tooltip>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </TableContainer>
+  );
+};
 
 const ViewCampagnes = () => {
   const [userContext] = useContext(UserContext);
@@ -85,111 +185,78 @@ const ViewCampagnes = () => {
 
   if (loading || error || !displayedCampagnes.length) return <Spinner size="xl" />;
 
-  return (
-    <>
-      <Flex align="center" justify="center" width="80%" m="auto">
-        <TableContainer my={12} p={6} rounded="md" w="100%" boxShadow="md" bg="white">
-          <Table size="md">
-            <TableCaption>
-              <Center>
-                <IconButton
-                  aria-label="Ajouter une campagne"
-                  variant="outline"
-                  colorScheme="purple"
-                  icon={<AddIcon />}
-                  onClick={() => navigate(`/campagnes/ajout`)}
-                />
-              </Center>
-            </TableCaption>
+  const notStartedCampagnes = displayedCampagnes.filter(
+    (campagne) => new Date(campagne.startDate) > new Date()
+  );
 
-            <Thead>
-              <Tr>
-                <Th>Nom de la campagne</Th>
-                <Th>CFA</Th>
-                <Th>Formation</Th>
-                <Th>Début</Th>
-                <Th>Fin</Th>
-                <Th>Actions</Th>
-                <Th>Crée le</Th>
-                <Th>Modifié le</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {displayedCampagnes?.map((campagne) => (
-                <Tr key={campagne._id}>
-                  <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
-                      {campagne.nomCampagne}
-                    </Tooltip>
-                  </Td>
-                  <Td>{campagne.cfa}</Td>
-                  <Td>{campagne.formation}</Td>
-                  <Td>{campagne.startDate}</Td>
-                  <Td>{campagne.endDate}</Td>
-                  <Td>
-                    <IconButton
-                      aria-label="Voir la campagne"
-                      variant="outline"
-                      colorScheme="purple"
-                      icon={<ViewIcon />}
-                      onClick={() => navigate(`/campagnes/${campagne._id}`)}
-                      mx={2}
-                    />
-                    <IconButton
-                      aria-label="Voir le lien et le QR code de la campagne"
-                      variant="outline"
-                      colorScheme="purple"
-                      icon={<LinkIcon />}
-                      onClick={() => {
-                        setCampagneLinks(campagne);
-                        onOpen();
-                      }}
-                      mx={2}
-                    />
-                    <IconButton
-                      aria-label="Modifier la campagne"
-                      variant="outline"
-                      colorScheme="purple"
-                      icon={<EditIcon />}
-                      onClick={() => navigate(`/campagnes/${campagne._id}/edition`)}
-                      mx={2}
-                    />
-                    <IconButton
-                      aria-label="Supprimer la campagne"
-                      variant="outline"
-                      colorScheme="purple"
-                      icon={<DeleteIcon />}
-                      onClick={() => setDeletedCampagneId(campagne._id)}
-                      mx={2}
-                    />
-                  </Td>
-                  <Td>
-                    <Tooltip
-                      label={new Date(campagne.createdAt).toLocaleString("fr-FR", {
-                        timeZone: "Europe/Paris",
-                      })}
-                      hasArrow
-                      arrowSize={15}
-                    >
-                      {new Date(campagne.createdAt).toLocaleDateString("fr-FR")}
-                    </Tooltip>
-                  </Td>
-                  <Td>
-                    <Tooltip
-                      label={new Date(campagne.updatedAt).toLocaleString("fr-FR", {
-                        timeZone: "Europe/Paris",
-                      })}
-                      hasArrow
-                      arrowSize={15}
-                    >
-                      {new Date(campagne.updatedAt).toLocaleDateString("fr-FR")}
-                    </Tooltip>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
+  const endedCampagnes = displayedCampagnes.filter(
+    (campagne) => new Date(campagne.endDate) < new Date()
+  );
+  const currentCampagnes = displayedCampagnes.filter(
+    (campagne) =>
+      new Date(campagne.startDate) < new Date() && new Date(campagne.endDate) > new Date()
+  );
+
+  return (
+    <Box display="flex" flexDirection="column" width="80%" m="auto">
+      <Box mb="5" display="flex" flexDirection="row" alignItems="center">
+        <IconButton
+          aria-label="Ajouter une campagne"
+          variant="outline"
+          colorScheme="purple"
+          icon={<AddIcon />}
+          onClick={() => navigate(`/campagnes/ajout`)}
+        />
+        <Text ml="5">Créer une campagne</Text>
+      </Box>
+      <Flex align="center" justify="center" width="100%">
+        <Accordion defaultIndex={[0]} allowMultiple w="100%">
+          <AccordionItem>
+            <AccordionButton>
+              <Text fontSize="lg">Campagnes en cours</Text>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              <CampagneTable
+                campagnes={currentCampagnes}
+                navigate={navigate}
+                setCampagneLinks={setCampagneLinks}
+                onOpen={onOpen}
+                setDeletedCampagneId={setDeletedCampagneId}
+              />
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionButton>
+              <Text fontSize="lg">Campagnes à venir</Text>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              <CampagneTable
+                campagnes={notStartedCampagnes}
+                navigate={navigate}
+                setCampagneLinks={setCampagneLinks}
+                onOpen={onOpen}
+                setDeletedCampagneId={setDeletedCampagneId}
+              />
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionButton>
+              <Text fontSize="lg">Campagnes terminées</Text>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel>
+              <CampagneTable
+                campagnes={endedCampagnes}
+                navigate={navigate}
+                setCampagneLinks={setCampagneLinks}
+                onOpen={onOpen}
+                setDeletedCampagneId={setDeletedCampagneId}
+              />
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </Flex>
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
@@ -222,7 +289,7 @@ const ViewCampagnes = () => {
           <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </Box>
   );
 };
 
