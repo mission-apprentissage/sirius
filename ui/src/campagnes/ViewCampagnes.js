@@ -44,6 +44,7 @@ const CampagneTable = ({ campagnes, navigate, setCampagneLinks, onOpen, setDelet
       <Table size="md">
         <Thead>
           <Tr>
+            <Th>Liens</Th>
             <Th>Nom de la campagne</Th>
             <Th>CFA</Th>
             <Th>Formation</Th>
@@ -57,6 +58,18 @@ const CampagneTable = ({ campagnes, navigate, setCampagneLinks, onOpen, setDelet
         <Tbody>
           {campagnes?.map((campagne) => (
             <Tr key={campagne._id}>
+              <Td>
+                <IconButton
+                  aria-label="Voir le lien et le QR code de la campagne"
+                  variant="outline"
+                  colorScheme="purple"
+                  icon={<LinkIcon />}
+                  onClick={() => {
+                    setCampagneLinks(campagne);
+                    onOpen();
+                  }}
+                />
+              </Td>
               <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                 <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
                   {campagne.nomCampagne}
@@ -214,7 +227,6 @@ const ViewCampagnes = () => {
           <Tab>À venir ({notStartedCampagnes.length})</Tab>
           <Tab>Terminées ({endedCampagnes.length})</Tab>
         </TabList>
-
         <TabPanels>
           <TabPanel>
             <CampagneTable
@@ -245,7 +257,6 @@ const ViewCampagnes = () => {
           </TabPanel>
         </TabPanels>
       </Tabs>
-
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
