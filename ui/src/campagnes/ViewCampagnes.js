@@ -31,15 +31,24 @@ import {
   TabPanel,
   Input,
 } from "@chakra-ui/react";
-import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon, CopyIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
 
 import { _delete } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
+import DuplicateCampagneModal from "./DuplicateCampagneModal";
 
-const CampagneTable = ({ campagnes, navigate, setCampagneLinks, onOpen, setDeletedCampagneId }) => {
+const CampagneTable = ({
+  campagnes,
+  navigate,
+  setCampagneLinks,
+  onOpenLinks,
+  setCampagneToDuplicate,
+  onOpenDuplication,
+  setDeletedCampagneId,
+}) => {
   return (
     <>
       <TableContainer my={4} p={2} rounded="md" w="100%" boxShadow="md" bg="white">
@@ -68,7 +77,7 @@ const CampagneTable = ({ campagnes, navigate, setCampagneLinks, onOpen, setDelet
                     icon={<LinkIcon />}
                     onClick={() => {
                       setCampagneLinks(campagne);
-                      onOpen();
+                      onOpenLinks();
                     }}
                   />
                 </Td>
@@ -91,13 +100,13 @@ const CampagneTable = ({ campagnes, navigate, setCampagneLinks, onOpen, setDelet
                     mx={2}
                   />
                   <IconButton
-                    aria-label="Voir le lien et le QR code de la campagne"
+                    aria-label="Dupliquer la campagne"
                     variant="outline"
                     colorScheme="purple"
-                    icon={<LinkIcon />}
+                    icon={<CopyIcon />}
                     onClick={() => {
-                      setCampagneLinks(campagne);
-                      onOpen();
+                      setCampagneToDuplicate(campagne);
+                      onOpenDuplication();
                     }}
                     mx={2}
                   />
@@ -155,17 +164,24 @@ const ViewCampagnes = () => {
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [filteredCampagne, setFilteredCampagne] = useState([]);
   const [campagneLinks, setCampagneLinks] = useState(null);
+  const [campagneToDuplicate, setCampagneToDuplicate] = useState(null);
   const [searchCampagneTerm, setSearchCampagneTerm] = useState(null);
+
   const navigate = useNavigate();
   const toast = useToast();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenLinks, onOpen: onOpenLinks, onClose: onCloseLinks } = useDisclosure();
+  const {
+    isOpen: isOpenDuplication,
+    onOpen: onOpenDuplication,
+    onClose: onCloseDuplication,
+  } = useDisclosure();
 
   const [campagnes, loading, error] = useGet(`/api/campagnes/`);
 
   useEffect(() => {
-    if (campagnes) {
-      setDisplayedCampagnes(campagnes);
+    if (campagnes.length > 0) {
+      setDisplayedCampagnes(campagnes.reverse());
     }
   }, [campagnes]);
 
@@ -265,8 +281,10 @@ const ViewCampagnes = () => {
               campagnes={currentCampagnes}
               navigate={navigate}
               setCampagneLinks={setCampagneLinks}
-              onOpen={onOpen}
+              onOpenLinks={onOpenLinks}
+              onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
+              setCampagneToDuplicate={setCampagneToDuplicate}
               handleSearch={handleSearch}
             />
           </TabPanel>
@@ -275,8 +293,10 @@ const ViewCampagnes = () => {
               campagnes={notStartedCampagnes}
               navigate={navigate}
               setCampagneLinks={setCampagneLinks}
-              onOpen={onOpen}
+              onOpenLinks={onOpenLinks}
+              onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
+              setCampagneToDuplicate={setCampagneToDuplicate}
               handleSearch={handleSearch}
             />
           </TabPanel>
@@ -285,14 +305,22 @@ const ViewCampagnes = () => {
               campagnes={endedCampagnes}
               navigate={navigate}
               setCampagneLinks={setCampagneLinks}
-              onOpen={onOpen}
+              onOpenLinks={onOpenLinks}
+              onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
+              setCampagneToDuplicate={setCampagneToDuplicate}
               handleSearch={handleSearch}
             />
           </TabPanel>
         </TabPanels>
       </Tabs>
-      <Modal onClose={onClose} isOpen={isOpen} isCentered>
+      <DuplicateCampagneModal
+        isOpen={isOpenDuplication}
+        onOpen={onOpenDuplication}
+        onClose={onCloseDuplication}
+        campagne={campagneToDuplicate}
+      />
+      <Modal onClose={onCloseLinks} isOpen={isOpenLinks} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Lien et QR code</ModalHeader>
@@ -319,7 +347,6 @@ const ViewCampagnes = () => {
               </Center>
             )}
           </ModalBody>
-          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </Box>
