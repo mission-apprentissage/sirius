@@ -8,6 +8,7 @@ const createCampagneSchema = Joi.object({
   endDate: Joi.date().min(1).required(),
   questionnaire: Joi.object().required(),
   questionnaireUI: Joi.object().required(),
+  seats: Joi.number().min(0).allow(null).required(),
 });
 
 module.exports = createCampagneSchema;
