@@ -20,6 +20,11 @@ import {
   AccordionPanel,
   AccordionIcon,
   Text,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import { _post, _put } from "../utils/httpClient";
@@ -76,6 +81,7 @@ const validationSchema = (isQuestionnaireValid, isQuestionnaireUIValid) =>
     formation: Yup.string().required("Ce champ est obligatoire"),
     startDate: Yup.string().required("Ce champ est obligatoire"),
     endDate: Yup.string().required("Ce champ est obligatoire"),
+    seats: Yup.string().required("Ce champ est obligatoire"),
     questionnaire: Yup.string()
       .required("Ce champ est obligatoire")
       .test("is-json", "Le questionnaire doit être un JSON valide", () => isQuestionnaireValid),
@@ -100,6 +106,7 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
       formation: campagne ? campagne.formation : "",
       startDate: campagne ? campagne.startDate : "",
       endDate: campagne ? campagne.endDate : "",
+      seats: campagne ? campagne.seats : "0",
       questionnaire: campagne ? JSON.stringify(campagne.questionnaire) : JSON.stringify({}),
       questionnaireUI: campagne ? JSON.stringify(campagne.questionnaireUI) : JSON.stringify({}),
     },
@@ -207,45 +214,63 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
                   <FormErrorMessage>{formik.errors.endDate}</FormErrorMessage>
                 </FormControl>
               </HStack>
-              {!isDuplicating && (
-                <Accordion allowToggle w="100%">
-                  <AccordionItem>
-                    <AccordionButton>
-                      <Box flex="1" textAlign="left">
-                        <Text color={formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>
-                          Questionnaire JSON
-                        </Text>
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <FormControl isInvalid={!!formik.errors.questionnaire}>
-                        <MonacoEditor
-                          id="questionnaire"
-                          name="questionnaire"
-                          language="json"
-                          value={JSON.stringify(JSON.parse(formik.values.questionnaire), null, 2)}
-                          theme="vs-light"
-                          onChange={(value) => setQuestionnaire(value)}
-                          onValidate={(markers) => {
-                            if (markers.length === 0) {
-                              setIsQuestionnaireValid(true);
-                            } else {
-                              setIsQuestionnaireValid(false);
-                            }
-                          }}
-                          height="50vh"
-                          options={{
-                            minimap: {
-                              enabled: false,
-                            },
-                            automaticLayout: true,
-                          }}
-                        />
-                        <FormErrorMessage>{formik.errors.questionnaire}</FormErrorMessage>
-                      </FormControl>
-                    </AccordionPanel>
-                  </AccordionItem>
+              <FormControl isInvalid={!!formik.errors.seats && formik.touched.seats}>
+                <FormLabel htmlFor="seats">Nombre de place</FormLabel>
+                <NumberInput
+                  variant="filled"
+                  min="0"
+                  max="100"
+                  value={formik.values.seats}
+                  onChange={(value) => formik.setFieldValue("seats", value)}
+                  id="seats"
+                  name="seats"
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+                <FormErrorMessage>{formik.errors.seats}</FormErrorMessage>
+              </FormControl>
+              <Accordion allowToggle w="100%">
+                <AccordionItem>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                      <Text color={formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>
+                        Questionnaire JSON
+                      </Text>
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <FormControl isInvalid={!!formik.errors.questionnaire}>
+                      <MonacoEditor
+                        id="questionnaire"
+                        name="questionnaire"
+                        language="json"
+                        value={JSON.stringify(JSON.parse(formik.values.questionnaire), null, 2)}
+                        theme="vs-light"
+                        onChange={(value) => setQuestionnaire(value)}
+                        onValidate={(markers) => {
+                          if (markers.length === 0) {
+                            setIsQuestionnaireValid(true);
+                          } else {
+                            setIsQuestionnaireValid(false);
+                          }
+                        }}
+                        height="50vh"
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                          automaticLayout: true,
+                        }}
+                      />
+                      <FormErrorMessage>{formik.errors.questionnaire}</FormErrorMessage>
+                    </FormControl>
+                  </AccordionPanel>
+                </AccordionItem>
 
                   <AccordionItem>
                     <AccordionButton>
