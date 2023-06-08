@@ -1,7 +1,33 @@
 const Campagne = require("../models/campagne.model");
 
-const getAll = async () => {
-  return Campagne.find({ deletedAt: null }).lean();
+const getAllWithTemoignageCount = async () => {
+  return Campagne.aggregate([
+    { deletedAt: null },
+    {
+      $lookup: {
+        from: "temoignages",
+        let: { campagneId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: [{ $toObjectId: "$campagneId" }, "$$campagneId"],
+              },
+            },
+          },
+        ],
+        as: "temoignagesList",
+      },
+    },
+    {
+      $addFields: {
+        temoignagesCount: { $size: "$temoignagesList" },
+      },
+    },
+    {
+      $unset: ["temoignagesList"],
+    },
+  ]);
 };
 
 const getOne = async (id) => {
@@ -21,7 +47,7 @@ const update = async (id, updatedCampagne) => {
 };
 
 module.exports = {
-  getAll,
+  getAllWithTemoignageCount,
   getOne,
   create,
   deleteOne,

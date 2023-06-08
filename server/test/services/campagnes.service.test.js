@@ -12,7 +12,7 @@ describe(__filename, () => {
   describe("getCampagnes", () => {
     it("should be successful and returns campagnes", async () => {
       const campagne = newCampagne();
-      stub(campagnesDao, "getAll").returns([campagne]);
+      stub(campagnesDao, "getAllWithTemoignageCount").returns([campagne]);
 
       const { success, body } = await campagnesService.getCampagnes();
 
@@ -21,7 +21,7 @@ describe(__filename, () => {
       expect(body[0]).to.deep.equal(campagne);
     });
     it("should be unsuccessful and returns errors if it throws", async () => {
-      stub(campagnesDao, "getAll").throws(new Error());
+      stub(campagnesDao, "getAllWithTemoignageCount").throws(new Error());
 
       const { success, body } = await campagnesService.getCampagnes();
 

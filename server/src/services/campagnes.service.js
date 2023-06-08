@@ -2,7 +2,7 @@ const campagnesDao = require("../dao/campagnes.dao");
 
 const getCampagnes = async () => {
   try {
-    const campagnes = await campagnesDao.getAll();
+    const campagnes = await campagnesDao.getAllWithTemoignageCount();
     return { success: true, body: campagnes };
   } catch (error) {
     return { success: false, body: error };
