@@ -10,7 +10,6 @@ import {
   Th,
   Td,
   TableContainer,
-  Flex,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -24,12 +23,12 @@ import {
   Link,
   useToast,
   Tooltip,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
   Box,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
@@ -209,55 +208,43 @@ const ViewCampagnes = () => {
         />
         <Text ml="5">Créer une campagne</Text>
       </Box>
-      <Flex align="center" justify="center" width="100%">
-        <Accordion defaultIndex={[0]} allowMultiple w="100%">
-          <AccordionItem>
-            <AccordionButton>
-              <Text fontSize="lg">Campagnes en cours</Text>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel>
-              <CampagneTable
-                campagnes={currentCampagnes}
-                navigate={navigate}
-                setCampagneLinks={setCampagneLinks}
-                onOpen={onOpen}
-                setDeletedCampagneId={setDeletedCampagneId}
-              />
-            </AccordionPanel>
-          </AccordionItem>
-          <AccordionItem>
-            <AccordionButton>
-              <Text fontSize="lg">Campagnes à venir</Text>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel>
-              <CampagneTable
-                campagnes={notStartedCampagnes}
-                navigate={navigate}
-                setCampagneLinks={setCampagneLinks}
-                onOpen={onOpen}
-                setDeletedCampagneId={setDeletedCampagneId}
-              />
-            </AccordionPanel>
-          </AccordionItem>
-          <AccordionItem>
-            <AccordionButton>
-              <Text fontSize="lg">Campagnes terminées</Text>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel>
-              <CampagneTable
-                campagnes={endedCampagnes}
-                navigate={navigate}
-                setCampagneLinks={setCampagneLinks}
-                onOpen={onOpen}
-                setDeletedCampagneId={setDeletedCampagneId}
-              />
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
-      </Flex>
+      <Tabs isFitted>
+        <TabList>
+          <Tab>En cours ({currentCampagnes.length})</Tab>
+          <Tab>À venir ({notStartedCampagnes.length})</Tab>
+          <Tab>Terminées ({endedCampagnes.length})</Tab>
+        </TabList>
+
+        <TabPanels>
+          <TabPanel>
+            <CampagneTable
+              campagnes={currentCampagnes}
+              navigate={navigate}
+              setCampagneLinks={setCampagneLinks}
+              onOpen={onOpen}
+              setDeletedCampagneId={setDeletedCampagneId}
+            />
+          </TabPanel>
+          <TabPanel>
+            <CampagneTable
+              campagnes={notStartedCampagnes}
+              navigate={navigate}
+              setCampagneLinks={setCampagneLinks}
+              onOpen={onOpen}
+              setDeletedCampagneId={setDeletedCampagneId}
+            />
+          </TabPanel>
+          <TabPanel>
+            <CampagneTable
+              campagnes={endedCampagnes}
+              navigate={navigate}
+              setCampagneLinks={setCampagneLinks}
+              onOpen={onOpen}
+              setDeletedCampagneId={setDeletedCampagneId}
+            />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
