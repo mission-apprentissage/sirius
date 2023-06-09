@@ -9,6 +9,7 @@ const campagneSchema = new mongoose.Schema(
     endDate: { type: String, required: true },
     questionnaire: { type: Object, required: true },
     questionnaireUI: { type: Object, required: true },
+    deletedAt: { type: Date, default: null },
   },
   { minimize: false, timestamps: true }
 );

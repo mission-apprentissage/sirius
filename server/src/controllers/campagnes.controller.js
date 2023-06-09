@@ -31,7 +31,7 @@ const deleteCampagne = tryCatch(async (req, res) => {
   const { success, body } = await campagnesService.deleteCampagne(req.params.id);
 
   if (!success) throw new BasicError();
-  if (!body.deletedCount) throw new CampagneNotFoundError();
+  if (body.modifiedCount === 0) throw new CampagneNotFoundError();
 
   return res.status(200).json(body);
 });

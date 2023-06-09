@@ -92,18 +92,18 @@ describe(__filename, () => {
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
     it("should throw a CampagneNotFoundError if deletedCount is not 1", async () => {
-      stub(campagnesService, "deleteCampagne").returns({ success: true, body: { deletedCount: 0 } });
+      stub(campagnesService, "deleteCampagne").returns({ success: true, body: { modifiedCount: 0 } });
 
       await campagnesController.deleteCampagne(req, res, next);
       expect(next.getCall(0).args[0]).to.be.an.instanceof(CampagneNotFoundError);
     });
     it("should returns the deletedCount and status 200 if success is true", async () => {
-      stub(campagnesService, "deleteCampagne").returns({ success: true, body: { deletedCount: 1 } });
+      stub(campagnesService, "deleteCampagne").returns({ success: true, body: { modifiedCount: 1 } });
 
       await campagnesController.deleteCampagne(req, res, next);
 
       expect(res.status).to.have.been.calledWith(200);
-      expect(res.json).to.have.been.calledWith(match({ deletedCount: 1 }));
+      expect(res.json).to.have.been.calledWith(match({ modifiedCount: 1 }));
     });
   });
   describe("updateCampagne", () => {
