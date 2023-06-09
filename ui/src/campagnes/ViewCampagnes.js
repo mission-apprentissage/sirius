@@ -219,7 +219,7 @@ const ViewCampagnes = () => {
   useEffect(() => {
     if (searchCampagneTerm) {
       const campagnes = displayedCampagnes.filter((item) =>
-        item.nomCampagne.includes(searchCampagneTerm)
+        item.nomCampagne.toLowerCase().includes(searchCampagneTerm)
       );
       setFilteredCampagne(campagnes);
     }
