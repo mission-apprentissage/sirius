@@ -2,7 +2,11 @@ const Campagne = require("../models/campagne.model");
 
 const getAllWithTemoignageCount = async () => {
   return Campagne.aggregate([
-    { deletedAt: null },
+    {
+      $match: {
+        deletedAt: null,
+      },
+    },
     {
       $lookup: {
         from: "temoignages",

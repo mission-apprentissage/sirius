@@ -272,45 +272,44 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
                   </AccordionPanel>
                 </AccordionItem>
 
-                  <AccordionItem>
-                    <AccordionButton>
-                      <Box flex="1" textAlign="left">
-                        <Text color={formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
-                          Questionnaire UI JSON
-                        </Text>
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <FormControl isInvalid={!!formik.errors.questionnaireUI}>
-                        <MonacoEditor
-                          id="questionnaireUI"
-                          name="questionnaireUI"
-                          language="json"
-                          value={JSON.stringify(JSON.parse(formik.values.questionnaireUI), null, 2)}
-                          theme="vs-light"
-                          onChange={(value) => setQuestionnaireUI(value)}
-                          onValidate={(markers) => {
-                            if (markers.length === 0) {
-                              setIsQuestionnaireUIValid(true);
-                            } else {
-                              setIsQuestionnaireUIValid(false);
-                            }
-                          }}
-                          height="50vh"
-                          options={{
-                            minimap: {
-                              enabled: false,
-                            },
-                            automaticLayout: true,
-                          }}
-                        />
-                        <FormErrorMessage>{formik.errors.questionnaireUI}</FormErrorMessage>
-                      </FormControl>
-                    </AccordionPanel>
-                  </AccordionItem>
-                </Accordion>
-              )}
+                <AccordionItem>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                      <Text color={formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
+                        Questionnaire UI JSON
+                      </Text>
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <FormControl isInvalid={!!formik.errors.questionnaireUI}>
+                      <MonacoEditor
+                        id="questionnaireUI"
+                        name="questionnaireUI"
+                        language="json"
+                        value={JSON.stringify(JSON.parse(formik.values.questionnaireUI), null, 2)}
+                        theme="vs-light"
+                        onChange={(value) => setQuestionnaireUI(value)}
+                        onValidate={(markers) => {
+                          if (markers.length === 0) {
+                            setIsQuestionnaireUIValid(true);
+                          } else {
+                            setIsQuestionnaireUIValid(false);
+                          }
+                        }}
+                        height="50vh"
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                          automaticLayout: true,
+                        }}
+                      />
+                      <FormErrorMessage>{formik.errors.questionnaireUI}</FormErrorMessage>
+                    </FormControl>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
               <Button type="submit" colorScheme="purple" width="full">
                 {isDuplicating ? "Dupliquer" : "Envoyer"}
               </Button>
