@@ -225,6 +225,8 @@ const AnswerCampagne = () => {
       isMobile={isMobile}
       startDate={campagne.startDate}
       endDate={campagne.endDate}
+      seats={campagne.seats}
+      temoignageCount={campagne.temoignageCount}
     />
   );
 };

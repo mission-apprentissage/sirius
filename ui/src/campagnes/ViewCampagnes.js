@@ -84,7 +84,7 @@ const CampagneTable = ({
                   />
                 </Td>
                 <Td>
-                  {campagne.temoignagesCount} {campagne.seats > 0 && ` / ${campagne.seats}`}{" "}
+                  {campagne.temoignagesCount} / {campagne.seats || "∞"}
                 </Td>
                 <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                   <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
