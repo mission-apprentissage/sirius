@@ -16,9 +16,14 @@ const update = async (id, updatedCampagne) => {
   return Temoignage.updateOne({ _id: id }, updatedCampagne);
 };
 
+const countByCampagne = async (id) => {
+  return Temoignage.countDocuments({ campagneId: id, deletedAt: null });
+};
+
 module.exports = {
   create,
   getAll,
   deleteOne,
   update,
+  countByCampagne,
 };

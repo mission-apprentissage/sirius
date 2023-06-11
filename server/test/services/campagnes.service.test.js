@@ -32,7 +32,7 @@ describe(__filename, () => {
   describe("getOneCampagne", () => {
     it("should be successful and returns one campagne", async () => {
       const campagne = newCampagne({}, true);
-      stub(campagnesDao, "getOne").returns(campagne);
+      stub(campagnesDao, "getOneWithTemoignagneCount").returns([campagne]);
 
       const { success, body } = await campagnesService.getOneCampagne(campagne._id);
 
@@ -41,7 +41,7 @@ describe(__filename, () => {
       expect(body).to.deep.equal(campagne);
     });
     it("should be unsuccessful and returns errors if it throws", async () => {
-      stub(campagnesDao, "getOne").throws(new Error());
+      stub(campagnesDao, "getOneWithTemoignagneCount").throws(new Error());
 
       const { success, body } = await campagnesService.getOneCampagne();
 

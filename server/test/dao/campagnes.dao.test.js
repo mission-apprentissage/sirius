@@ -34,14 +34,21 @@ httpTests(__filename, ({ startServer }) => {
       ]);
     });
   });
-  describe("getOne", () => {
+  describe("getOneWithTemoignagneCount", () => {
     it("should returns the campagne", async () => {
       const campagne1 = newCampagne({}, true);
       await campagnesDao.create(campagne1);
 
-      const campagne = await campagnesDao.getOne(campagne1._id);
+      const campagne = await campagnesDao.getOneWithTemoignagneCount(campagne1._id);
 
-      expect(campagne).to.eql({ ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null });
+      expect(campagne[0]).to.eql({
+        ...campagne1,
+        __v: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        temoignagesCount: 0,
+      });
     });
   });
   describe("create", () => {

@@ -17,7 +17,7 @@ const newCampagne = (custom = {}, hasId = false) => {
       endDate: moment(new Date("2025-01-01")).format("YYYY-MM-DD"),
       questionnaire: {},
       questionnaireUI: {},
-      seats: 20,
+      seats: 0,
     },
     custom
   );

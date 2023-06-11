@@ -1,3 +1,4 @@
+const ObjectId = require("mongoose").mongo.ObjectId;
 const Campagne = require("../models/campagne.model");
 
 const getAllWithTemoignageCount = async () => {
@@ -34,8 +35,40 @@ const getAllWithTemoignageCount = async () => {
   ]);
 };
 
-const getOne = async (id) => {
-  return Campagne.findOne({ _id: id, deletedAt: null }).lean();
+const getOneWithTemoignagneCount = async (id) => {
+  const idToObjectId = ObjectId(id);
+  return Campagne.aggregate([
+    {
+      $match: {
+        deletedAt: null,
+        _id: idToObjectId,
+      },
+    },
+    {
+      $lookup: {
+        from: "temoignages",
+        let: { campagneId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: [{ $toObjectId: "$campagneId" }, "$$campagneId"],
+              },
+            },
+          },
+        ],
+        as: "temoignagesList",
+      },
+    },
+    {
+      $addFields: {
+        temoignagesCount: { $size: "$temoignagesList" },
+      },
+    },
+    {
+      $unset: ["temoignagesList"],
+    },
+  ]);
 };
 
 const create = async (campagne) => {
@@ -52,7 +85,7 @@ const update = async (id, updatedCampagne) => {
 
 module.exports = {
   getAllWithTemoignageCount,
-  getOne,
+  getOneWithTemoignagneCount,
   create,
   deleteOne,
   update,

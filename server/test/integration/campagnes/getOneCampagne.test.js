@@ -25,6 +25,7 @@ httpTests(__filename, ({ startServer }) => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
+      temoignagesCount: 0,
     });
   });
   it("should return 404 if campagne does not exist", async () => {
