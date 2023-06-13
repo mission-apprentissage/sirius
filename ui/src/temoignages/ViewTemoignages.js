@@ -30,6 +30,7 @@ import {
 } from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
 import TemoignagesModal from "./Components/TemoignagesModal";
+import TemoignagesTable from "./Components/TemoignagesTable";
 
 echarts.use([TooltipComponent, GridComponent, PieChart, CanvasRenderer, LegendComponent, BarChart]);
 
@@ -316,7 +317,7 @@ const ViewTemoignages = () => {
                         .filter(Boolean);
                       return (
                         matchedIdAndQuestions[question] && (
-                          <Card key={question} width="100%" m="4">
+                          <Card key={question} width="100%" my="4">
                             <CardHeader>
                               <Heading size="md">{matchedIdAndQuestions[question]}</Heading>
                             </CardHeader>
@@ -368,6 +369,7 @@ const ViewTemoignages = () => {
           </TabPanels>
         </Tabs>
       )}
+      {temoignages.length > 0 && <TemoignagesTable temoignages={temoignages} />}
     </Flex>
   );
 };

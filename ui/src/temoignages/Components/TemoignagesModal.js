@@ -34,7 +34,6 @@ const TemoignagesModal = ({ question, responses }) => {
               </Text>
             ))}
           </ModalBody>
-          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </>
