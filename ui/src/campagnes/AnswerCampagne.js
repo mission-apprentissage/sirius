@@ -226,7 +226,7 @@ const AnswerCampagne = () => {
       startDate={campagne.startDate}
       endDate={campagne.endDate}
       seats={campagne.seats}
-      temoignageCount={campagne.temoignageCount}
+      temoignageCount={campagne.temoignagesCount}
     />
   );
 };
