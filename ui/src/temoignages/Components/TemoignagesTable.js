@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   IconButton,
   Table,
@@ -9,19 +9,68 @@ import {
   Td,
   TableContainer,
   useDisclosure,
+  useToast,
   Tooltip,
 } from "@chakra-ui/react";
 import { DeleteIcon, ViewIcon } from "@chakra-ui/icons";
+import { _delete } from "../../utils/httpClient";
+import { UserContext } from "../../context/UserContext";
 import ReponsesModal from "./ReponsesModal";
+import DeleteTemoignageConfirmationModal from "./DeleteTemoignageConfirmationModal";
 import { msToTime } from "../../utils/temoignage";
 
 const TemoignagesTable = ({ temoignages }) => {
+  const [userContext] = useContext(UserContext);
   const [selectedTemoignageToShow, setSelectedTemoignageToShow] = useState(null);
+  const [deletedTemoignageId, setDeletedTemoignageId] = useState(null);
+  const [temoignageToDelete, setTemoignageToDelete] = useState(null);
+  const [displayedTemoignages, setDisplayedTemoignages] = useState(null);
+
   const {
     isOpen: isOpenReponses,
     onOpen: onOpenReponses,
     onClose: onCloseReponses,
   } = useDisclosure();
+  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+
+  const toast = useToast();
+
+  useEffect(() => {
+    if (temoignages.length > 0) {
+      setDisplayedTemoignages(temoignages.reverse());
+    }
+  }, [temoignages]);
+
+  useEffect(() => {
+    const deleteTemoignage = async () => {
+      const result = await _delete(`/api/temoignages/${deletedTemoignageId}`, userContext.token);
+
+      if (result?.modifiedCount === 1) {
+        toast({
+          title: "Campagne supprimée",
+          description: "La campagne a bien été supprimée",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Une erreur est survenue",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      const filteredDisplayedTemoignage = temoignages.filter(
+        (temoignage) => temoignage._id !== deletedTemoignageId
+      );
+      setDisplayedTemoignages(filteredDisplayedTemoignage);
+      setDeletedTemoignageId(null);
+    };
+    if (deletedTemoignageId) {
+      deleteTemoignage();
+    }
+  }, [deletedTemoignageId, toast]);
 
   return (
     <>
@@ -37,7 +86,7 @@ const TemoignagesTable = ({ temoignages }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {temoignages?.map((temoignage) => {
+            {displayedTemoignages?.map((temoignage) => {
               const duration = msToTime(
                 new Date(temoignage.updatedAt).getTime() - new Date(temoignage.createdAt).getTime()
               );
@@ -85,6 +134,10 @@ const TemoignagesTable = ({ temoignages }) => {
                       colorScheme="purple"
                       icon={<DeleteIcon />}
                       mx={2}
+                      onClick={() => {
+                        setTemoignageToDelete(temoignage);
+                        onOpenDelete();
+                      }}
                     />
                   </Td>
                 </Tr>
@@ -97,6 +150,12 @@ const TemoignagesTable = ({ temoignages }) => {
         onClose={onCloseReponses}
         isOpen={isOpenReponses}
         rawResponses={selectedTemoignageToShow}
+      />
+      <DeleteTemoignageConfirmationModal
+        isOpen={isOpenDelete}
+        onClose={onCloseDelete}
+        temoignage={temoignageToDelete}
+        setDeletedTemoignageId={setDeletedTemoignageId}
       />
     </>
   );
