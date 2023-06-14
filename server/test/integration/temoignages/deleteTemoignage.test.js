@@ -18,7 +18,10 @@ httpTests(__filename, ({ startServer }) => {
     assert.strictEqual(response.status, 200);
     assert.deepStrictEqual(response.body, {
       acknowledged: true,
-      deletedCount: 1,
+      matchedCount: 1,
+      modifiedCount: 1,
+      upsertedCount: 0,
+      upsertedId: null,
     });
   });
   it("should return 404 if temoignage does not exist", async () => {

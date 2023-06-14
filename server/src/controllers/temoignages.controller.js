@@ -34,7 +34,7 @@ const deleteTemoignage = tryCatch(async (req, res) => {
   const { success, body } = await temoignagesService.deleteTemoignage(req.params.id);
 
   if (!success) throw new BasicError();
-  if (!body.deletedCount) throw new TemoignageNotFoundError();
+  if (!body.modifiedCount) throw new TemoignageNotFoundError();
 
   return res.status(200).json(body);
 });

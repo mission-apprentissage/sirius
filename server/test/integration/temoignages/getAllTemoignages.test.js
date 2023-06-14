@@ -33,6 +33,7 @@ httpTests(__filename, ({ startServer }) => {
         __v: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        deletedAt: null,
       },
       {
         ...temoignage2,
@@ -40,6 +41,7 @@ httpTests(__filename, ({ startServer }) => {
         __v: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        deletedAt: null,
       },
     ]);
   });
@@ -80,6 +82,7 @@ httpTests(__filename, ({ startServer }) => {
         __v: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        deletedAt: null,
       },
       {
         ...temoignage2,
@@ -87,6 +90,7 @@ httpTests(__filename, ({ startServer }) => {
         __v: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        deletedAt: null,
       },
     ]);
   });

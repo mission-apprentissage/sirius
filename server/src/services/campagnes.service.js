@@ -12,10 +12,8 @@ const getCampagnes = async () => {
 const getOneCampagne = async (id) => {
   try {
     const campagne = await campagnesDao.getOneWithTemoignagneCount(id);
-    console.log({ campagne });
     return { success: true, body: campagne[0] };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };
