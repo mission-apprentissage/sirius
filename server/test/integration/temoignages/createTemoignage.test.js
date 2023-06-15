@@ -1,7 +1,7 @@
 const assert = require("assert");
 const sinon = require("sinon");
 const httpTests = require("../utils/httpTests");
-const { newTemoignage } = require("../../fixtures");
+const { newTemoignage, newCampagne } = require("../../fixtures");
 
 httpTests(__filename, ({ startServer }) => {
   beforeEach(async () => {
@@ -11,15 +11,19 @@ httpTests(__filename, ({ startServer }) => {
     sinon.restore();
   });
   it("should return 201, create a temoignage and return it", async () => {
-    const { httpClient } = await startServer();
-    const temoignage = newTemoignage();
+    const { httpClient, components } = await startServer();
 
+    const campagne1 = newCampagne({}, false);
+    const createdCampagne = await components.campagnes.create(campagne1);
+
+    const temoignage = newTemoignage({ campagneId: createdCampagne._id });
     const response = await httpClient.post("/api/temoignages/").send(temoignage);
 
     assert.strictEqual(response.status, 201);
     assert.deepStrictEqual(response.body, {
       ...temoignage,
       _id: response.body._id,
+      campagneId: createdCampagne._id.toString(),
       __v: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

@@ -88,42 +88,73 @@ const AnswerCampagne = () => {
         reponses: { ...answers, ...formData, ...nestedData },
         campagneId: id,
       });
+
       if (result._id) {
         setTemoignageId(result._id);
+        if (isLastQuestion) {
+          setIsTemoignageSent(true);
+          return;
+        } else if (isLastQuestionInCategory) {
+          setCurrentCategoryIndex(currentCategoryIndex + 1);
+          setCurrentQuestionIndex(0);
+        } else {
+          setCurrentQuestionIndex(currentQuestionIndex + 1);
+        }
+        setAnswers({ ...answers, ...formData });
       } else {
-        toast({
-          title: "Une erreur est survenue",
-          description: "Merci de réessayer",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+        if (result.statusCode === 403) {
+          toast({
+            title: "Une erreur est survenue",
+            description: result.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        } else {
+          toast({
+            title: "Une erreur est survenue",
+            description: "Merci de réessayer",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
       }
     } else {
       const result = await _put(`/api/temoignages/${temoignageId}`, {
         reponses: { ...answers, ...formData, ...nestedData },
       });
       if (!result.acknowledged) {
-        toast({
-          title: "Une erreur est survenue",
-          description: "Merci de réessayer",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+        if (result.statusCode === 403) {
+          toast({
+            title: "Une erreur est survenue",
+            description: result.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        } else {
+          toast({
+            title: "Une erreur est survenue",
+            description: "Merci de réessayer",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } else {
+        if (isLastQuestion) {
+          setIsTemoignageSent(true);
+          return;
+        } else if (isLastQuestionInCategory) {
+          setCurrentCategoryIndex(currentCategoryIndex + 1);
+          setCurrentQuestionIndex(0);
+        } else {
+          setCurrentQuestionIndex(currentQuestionIndex + 1);
+        }
+        setAnswers({ ...answers, ...formData });
       }
     }
-
-    if (isLastQuestion) {
-      setIsTemoignageSent(true);
-      return;
-    } else if (isLastQuestionInCategory) {
-      setCurrentCategoryIndex(currentCategoryIndex + 1);
-      setCurrentQuestionIndex(0);
-    } else {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-    setAnswers({ ...answers, ...formData });
   };
 
   const handleNested = (nestedFormData) => {
@@ -189,7 +220,12 @@ const AnswerCampagne = () => {
       )}
     </Flex>
   ) : (
-    <Hero setStartedAnswering={setStartedAnswering} isMobile={isMobile} />
+    <Hero
+      setStartedAnswering={setStartedAnswering}
+      isMobile={isMobile}
+      startDate={campagne.startDate}
+      endDate={campagne.endDate}
+    />
   );
 };
 

@@ -10,15 +10,17 @@ import {
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
+
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import shareTemoignage from "../../assets/images/share_temoignage.svg";
 import Footer from "../Footer";
 
-const Hero = ({ setStartedAnswering, isMobile }) => {
+const Hero = ({ setStartedAnswering, isMobile, startDate, endDate }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const isCampagneActive = new Date(startDate) > new Date() || new Date(endDate) < new Date();
 
   return (
     <>
@@ -177,6 +179,16 @@ const Hero = ({ setStartedAnswering, isMobile }) => {
         </Box>
         <Footer />
       </Stack>
+      <Modal isOpen={isCampagneActive} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader textAlign="center">La campagne n'est pas ouverte</ModalHeader>
+          <ModalBody textAlign="center" pb="5">
+            La campagne est ouverte du {new Date(startDate).toLocaleDateString()} au{" "}
+            {new Date(endDate).toLocaleDateString()}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
         <ModalOverlay />
         <ModalContent>

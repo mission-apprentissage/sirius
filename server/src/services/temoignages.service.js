@@ -1,8 +1,21 @@
 const temoignagesDao = require("../dao/temoignages.dao");
+const campagnesDao = require("../dao/campagnes.dao");
+const { ErrorMessage } = require("../errors");
 
 const createTemoignage = async (temoignage) => {
   try {
+    const campagne = await campagnesDao.getOne(temoignage.campagneId);
+
+    if (!campagne) throw new Error("Campagne not found");
+
+    if (new Date(campagne.startDate) > new Date()) {
+      return { success: false, body: ErrorMessage.CampagneNotStarted };
+    }
+    if (new Date(campagne.endDate) < new Date()) {
+      return { success: false, body: ErrorMessage.CampagneEnded };
+    }
     const createdTemoignage = await temoignagesDao.create(temoignage);
+
     return { success: true, body: createdTemoignage };
   } catch (error) {
     return { success: false, body: error };

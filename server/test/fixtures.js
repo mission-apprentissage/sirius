@@ -13,8 +13,8 @@ const newCampagne = (custom = {}, hasId = false) => {
       nomCampagne: "nom de la campagne",
       cfa: "cfa1",
       formation: "formation1",
-      startDate: moment(new Date()).format("YYYY-MM-DD"),
-      endDate: moment(new Date()).format("YYYY-MM-DD"),
+      startDate: moment(new Date("2022-01-01")).format("YYYY-MM-DD"),
+      endDate: moment(new Date("2025-01-01")).format("YYYY-MM-DD"),
       questionnaire: {},
       questionnaireUI: {},
     },
@@ -26,7 +26,7 @@ const newTemoignage = (custom = {}, hasId = false) => {
   return _.merge(
     {
       ...(hasId && { _id: ObjectId(faker.database.mongodbObjectId()) }),
-      campagneId: faker.database.mongodbObjectId(),
+      campagneId: custom.campagneId || faker.database.mongodbObjectId(),
       reponses: {
         test: faker.lorem.paragraph(),
       },

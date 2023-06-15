@@ -1,12 +1,14 @@
 const temoignagesService = require("../services/temoignages.service");
-const { BasicError, TemoignageNotFoundError } = require("../errors");
+const { BasicError, TemoignageNotFoundError, CampagneNotStarted, CampagneEnded, ErrorMessage } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 
 const createTemoignage = tryCatch(async (req, res) => {
   const { success, body } = await temoignagesService.createTemoignage(req.body);
 
-  if (!success) throw new BasicError();
+  if (!success && body === ErrorMessage.CampagneNotStarted) throw new CampagneNotStarted();
+  if (!success && body === ErrorMessage.CampagneEnded) throw new CampagneEnded();
 
+  if (!success) throw new BasicError();
   return res.status(201).json(body);
 });
 
