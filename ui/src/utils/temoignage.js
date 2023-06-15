@@ -72,7 +72,7 @@ const getMedian = (values) => {
   return Math.round(sorted[middle]);
 };
 
-const msToTime = (duration) => {
+export const msToTime = (duration) => {
   let seconds = Math.floor((duration / 1000) % 60);
   let minutes = Math.floor((duration / (1000 * 60)) % 60);
   let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);

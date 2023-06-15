@@ -18,7 +18,7 @@ httpTests(__filename, ({ startServer }) => {
   afterEach(async () => {
     sinon.restore();
   });
-  describe("getAll", () => {
+  describe("getAllWithTemoignageCount", () => {
     it("should returns the campagnes", async () => {
       const campagne1 = newCampagne({}, true);
       const campagne2 = newCampagne({}, true);
@@ -26,22 +26,29 @@ httpTests(__filename, ({ startServer }) => {
       await campagnesDao.create(campagne1);
       await campagnesDao.create(campagne2);
 
-      const campagnes = await campagnesDao.getAll();
+      const campagnes = await campagnesDao.getAllWithTemoignageCount();
 
       expect(campagnes).to.have.deep.members([
-        { ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
-        { ...campagne2, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
+        { ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null, temoignagesCount: 0 },
+        { ...campagne2, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null, temoignagesCount: 0 },
       ]);
     });
   });
-  describe("getOne", () => {
+  describe("getOneWithTemoignagneCount", () => {
     it("should returns the campagne", async () => {
       const campagne1 = newCampagne({}, true);
       await campagnesDao.create(campagne1);
 
-      const campagne = await campagnesDao.getOne(campagne1._id);
+      const campagne = await campagnesDao.getOneWithTemoignagneCount(campagne1._id);
 
-      expect(campagne).to.eql({ ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null });
+      expect(campagne[0]).to.eql({
+        ...campagne1,
+        __v: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        temoignagesCount: 0,
+      });
     });
   });
   describe("create", () => {

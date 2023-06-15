@@ -30,6 +30,7 @@ httpTests(__filename, ({ startServer }) => {
         __v: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
+        deletedAt: null,
       });
     });
   });
@@ -44,8 +45,8 @@ httpTests(__filename, ({ startServer }) => {
       const temoignages = await temoignagesDao.getAll();
 
       expect(temoignages).to.have.deep.members([
-        { ...temoignage1, __v: 0, createdAt: new Date(), updatedAt: new Date() },
-        { ...temoignage2, __v: 0, createdAt: new Date(), updatedAt: new Date() },
+        { ...temoignage1, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
+        { ...temoignage2, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
       ]);
     });
     it("should returns the temoignages related to the query if it exists", async () => {
@@ -58,8 +59,8 @@ httpTests(__filename, ({ startServer }) => {
       const temoignages = await temoignagesDao.getAll({ campagneId: "42" });
 
       expect(temoignages).to.have.deep.members([
-        { ...temoignage1, __v: 0, createdAt: new Date(), updatedAt: new Date() },
-        { ...temoignage2, __v: 0, createdAt: new Date(), updatedAt: new Date() },
+        { ...temoignage1, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
+        { ...temoignage2, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
       ]);
     });
   });
@@ -70,7 +71,7 @@ httpTests(__filename, ({ startServer }) => {
 
       const deletedTemoignage = await temoignagesDao.deleteOne(temoignage1._id);
 
-      expect(deletedTemoignage.deletedCount).to.eql(1);
+      expect(deletedTemoignage.modifiedCount).to.eql(1);
     });
   });
 });

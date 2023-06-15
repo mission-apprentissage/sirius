@@ -57,6 +57,7 @@ const CampagneTable = ({
           <Thead>
             <Tr>
               <Th>Liens</Th>
+              <Th># réponses</Th>
               <Th>Nom de la campagne</Th>
               <Th>CFA</Th>
               <Th>Formation</Th>
@@ -81,6 +82,9 @@ const CampagneTable = ({
                       onOpenLinks();
                     }}
                   />
+                </Td>
+                <Td>
+                  {campagne.temoignagesCount} / {campagne.seats || "∞"}
                 </Td>
                 <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                   <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>

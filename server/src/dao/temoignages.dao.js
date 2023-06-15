@@ -5,15 +5,19 @@ const create = async (temoignage) => {
 };
 
 const getAll = async (query) => {
-  return Temoignage.find(query).lean();
+  return Temoignage.find({ ...query, deletedAt: null }).lean();
 };
 
 const deleteOne = async (id) => {
-  return Temoignage.deleteOne({ _id: id });
+  return Temoignage.updateOne({ _id: id }, { deletedAt: new Date() });
 };
 
 const update = async (id, updatedCampagne) => {
-  return Temoignage.updateOne({ _id: id }, updatedCampagne);
+  return Temoignage.updateOne({ _id: id, deletedAt: null }, updatedCampagne);
+};
+
+const countByCampagne = async (id) => {
+  return Temoignage.countDocuments({ campagneId: id, deletedAt: null });
 };
 
 module.exports = {
@@ -21,4 +25,5 @@ module.exports = {
   getAll,
   deleteOne,
   update,
+  countByCampagne,
 };

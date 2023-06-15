@@ -10,6 +10,7 @@ const campagneSchema = new mongoose.Schema(
     questionnaire: { type: Object, required: true },
     questionnaireUI: { type: Object, required: true },
     deletedAt: { type: Date, default: null },
+    seats: { type: Number, required: true },
   },
   { minimize: false, timestamps: true }
 );

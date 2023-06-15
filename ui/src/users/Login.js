@@ -42,11 +42,6 @@ const Login = () => {
     initialValues: {
       username: "",
       password: "",
-      formation: "",
-      startDate: "",
-      endDate: "",
-      questionnaire: "",
-      questionnaireUI: "",
     },
     validationSchema: validationSchema,
     onSubmit: async ({ username, password }) => {

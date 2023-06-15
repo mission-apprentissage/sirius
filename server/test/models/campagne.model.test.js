@@ -15,6 +15,7 @@ describe(__filename, () => {
       expect(err.errors.endDate).to.exist;
       expect(err.errors.questionnaire).to.exist;
       expect(err.errors.questionnaireUI).to.exist;
+      expect(err.errors.seats).to.exist;
       done();
     });
   });

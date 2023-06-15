@@ -17,10 +17,11 @@ import { ArrowForwardIcon } from "@chakra-ui/icons";
 import shareTemoignage from "../../assets/images/share_temoignage.svg";
 import Footer from "../Footer";
 
-const Hero = ({ setStartedAnswering, isMobile, startDate, endDate }) => {
+const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoignageCount }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isCampagneActive = new Date(startDate) > new Date() || new Date(endDate) < new Date();
+  const hasOpenSeats = !seats || seats > temoignageCount;
 
   return (
     <>
@@ -186,6 +187,15 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate }) => {
           <ModalBody textAlign="center" pb="5">
             La campagne est ouverte du {new Date(startDate).toLocaleDateString()} au{" "}
             {new Date(endDate).toLocaleDateString()}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={!hasOpenSeats} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader textAlign="center">La campagne n'a plus de places disponibles</ModalHeader>
+          <ModalBody textAlign="center" pb="5">
+            La campagne n'a plus de place disponible. Merci de contacter un administrateur.
           </ModalBody>
         </ModalContent>
       </Modal>
