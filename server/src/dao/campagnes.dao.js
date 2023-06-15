@@ -1,11 +1,11 @@
 const Campagne = require("../models/campagne.model");
 
 const getAll = async () => {
-  return Campagne.find({}).lean();
+  return Campagne.find({ deletedAt: null }).lean();
 };
 
 const getOne = async (id) => {
-  return Campagne.findOne({ _id: id }).lean();
+  return Campagne.findOne({ _id: id, deletedAt: null }).lean();
 };
 
 const create = async (campagne) => {
@@ -13,11 +13,11 @@ const create = async (campagne) => {
 };
 
 const deleteOne = async (id) => {
-  return Campagne.deleteOne({ _id: id });
+  return Campagne.updateOne({ _id: id }, { deletedAt: new Date() });
 };
 
 const update = async (id, updatedCampagne) => {
-  return Campagne.updateOne({ _id: id }, updatedCampagne);
+  return Campagne.updateOne({ _id: id, deletedAt: null }, updatedCampagne);
 };
 
 module.exports = {

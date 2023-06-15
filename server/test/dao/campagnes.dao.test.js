@@ -29,8 +29,8 @@ httpTests(__filename, ({ startServer }) => {
       const campagnes = await campagnesDao.getAll();
 
       expect(campagnes).to.have.deep.members([
-        { ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date() },
-        { ...campagne2, __v: 0, createdAt: new Date(), updatedAt: new Date() },
+        { ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
+        { ...campagne2, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null },
       ]);
     });
   });
@@ -41,7 +41,7 @@ httpTests(__filename, ({ startServer }) => {
 
       const campagne = await campagnesDao.getOne(campagne1._id);
 
-      expect(campagne).to.eql({ ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date() });
+      expect(campagne).to.eql({ ...campagne1, __v: 0, createdAt: new Date(), updatedAt: new Date(), deletedAt: null });
     });
   });
   describe("create", () => {
@@ -56,6 +56,7 @@ httpTests(__filename, ({ startServer }) => {
         __v: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
+        deletedAt: null,
       });
     });
   });
@@ -66,7 +67,7 @@ httpTests(__filename, ({ startServer }) => {
 
       const deletedCampagne = await campagnesDao.deleteOne(campagne1._id);
 
-      expect(deletedCampagne.deletedCount).to.eql(1);
+      expect(deletedCampagne.modifiedCount).to.eql(1);
     });
   });
   describe("update", () => {

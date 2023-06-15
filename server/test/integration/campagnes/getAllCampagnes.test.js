@@ -32,6 +32,7 @@ httpTests(__filename, ({ startServer }) => {
         __v: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        deletedAt: null,
       },
       {
         ...campagne2,
@@ -39,6 +40,7 @@ httpTests(__filename, ({ startServer }) => {
         __v: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        deletedAt: null,
       },
     ]);
   });

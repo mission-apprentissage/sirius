@@ -14,7 +14,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   useDisclosure,
@@ -39,6 +38,7 @@ import { _delete } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import DuplicateCampagneModal from "./DuplicateCampagneModal";
+import DeleteCampagneConfirmationModal from "./DeleteCampagneConfirmationModal";
 
 const CampagneTable = ({
   campagnes,
@@ -47,7 +47,8 @@ const CampagneTable = ({
   onOpenLinks,
   setCampagneToDuplicate,
   onOpenDuplication,
-  setDeletedCampagneId,
+  setCampagneToDelete,
+  onOpenDeletion,
 }) => {
   return (
     <>
@@ -123,7 +124,10 @@ const CampagneTable = ({
                     variant="outline"
                     colorScheme="purple"
                     icon={<DeleteIcon />}
-                    onClick={() => setDeletedCampagneId(campagne._id)}
+                    onClick={() => {
+                      setCampagneToDelete(campagne);
+                      onOpenDeletion();
+                    }}
                     mx={2}
                   />
                 </Td>
@@ -165,6 +169,7 @@ const ViewCampagnes = () => {
   const [filteredCampagne, setFilteredCampagne] = useState([]);
   const [campagneLinks, setCampagneLinks] = useState(null);
   const [campagneToDuplicate, setCampagneToDuplicate] = useState(null);
+  const [campagneToDelete, setCampagneToDelete] = useState(null);
   const [searchCampagneTerm, setSearchCampagneTerm] = useState(null);
 
   const navigate = useNavigate();
@@ -175,6 +180,11 @@ const ViewCampagnes = () => {
     isOpen: isOpenDuplication,
     onOpen: onOpenDuplication,
     onClose: onCloseDuplication,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDeletion,
+    onOpen: onOpenDeletion,
+    onClose: onCloseDeletion,
   } = useDisclosure();
 
   const [campagnes, loading, error] = useGet(`/api/campagnes/`);
@@ -189,7 +199,7 @@ const ViewCampagnes = () => {
     const deleteCampagne = async () => {
       const result = await _delete(`/api/campagnes/${deletedCampagneId}`, userContext.token);
 
-      if (result?.deletedCount) {
+      if (result?.modifiedCount === 1) {
         toast({
           title: "Campagne supprimée",
           description: "La campagne a bien été supprimée",
@@ -285,7 +295,8 @@ const ViewCampagnes = () => {
               onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
               setCampagneToDuplicate={setCampagneToDuplicate}
-              handleSearch={handleSearch}
+              setCampagneToDelete={setCampagneToDelete}
+              onOpenDeletion={onOpenDeletion}
             />
           </TabPanel>
           <TabPanel>
@@ -297,7 +308,8 @@ const ViewCampagnes = () => {
               onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
               setCampagneToDuplicate={setCampagneToDuplicate}
-              handleSearch={handleSearch}
+              setCampagneToDelete={setCampagneToDelete}
+              onOpenDeletion={onOpenDeletion}
             />
           </TabPanel>
           <TabPanel>
@@ -309,7 +321,8 @@ const ViewCampagnes = () => {
               onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
               setCampagneToDuplicate={setCampagneToDuplicate}
-              handleSearch={handleSearch}
+              setCampagneToDelete={setCampagneToDelete}
+              onOpenDeletion={onOpenDeletion}
             />
           </TabPanel>
         </TabPanels>
@@ -319,6 +332,13 @@ const ViewCampagnes = () => {
         onOpen={onOpenDuplication}
         onClose={onCloseDuplication}
         campagne={campagneToDuplicate}
+      />
+      <DeleteCampagneConfirmationModal
+        isOpen={isOpenDeletion}
+        onOpen={onOpenDeletion}
+        onClose={onCloseDeletion}
+        campagne={campagneToDelete}
+        setDeletedCampagneId={setDeletedCampagneId}
       />
       <Modal onClose={onCloseLinks} isOpen={isOpenLinks} isCentered>
         <ModalOverlay />
