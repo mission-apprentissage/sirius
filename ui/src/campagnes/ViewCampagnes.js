@@ -29,107 +29,132 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Input,
 } from "@chakra-ui/react";
-import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon, CopyIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
 
 import { _delete } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
+import DuplicateCampagneModal from "./DuplicateCampagneModal";
 
-const CampagneTable = ({ campagnes, navigate, setCampagneLinks, onOpen, setDeletedCampagneId }) => {
+const CampagneTable = ({
+  campagnes,
+  navigate,
+  setCampagneLinks,
+  onOpenLinks,
+  setCampagneToDuplicate,
+  onOpenDuplication,
+  setDeletedCampagneId,
+}) => {
   return (
-    <TableContainer my={4} p={2} rounded="md" w="100%" boxShadow="md" bg="white">
-      <Table size="md">
-        <Thead>
-          <Tr>
-            <Th>Nom de la campagne</Th>
-            <Th>CFA</Th>
-            <Th>Formation</Th>
-            <Th>Début</Th>
-            <Th>Fin</Th>
-            <Th>Actions</Th>
-            <Th>Crée le</Th>
-            <Th>Modifié le</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {campagnes?.map((campagne) => (
-            <Tr key={campagne._id}>
-              <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
-                <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
-                  {campagne.nomCampagne}
-                </Tooltip>
-              </Td>
-              <Td>{campagne.cfa}</Td>
-              <Td>{campagne.formation}</Td>
-              <Td>{campagne.startDate}</Td>
-              <Td>{campagne.endDate}</Td>
-              <Td>
-                <IconButton
-                  aria-label="Voir la campagne"
-                  variant="outline"
-                  colorScheme="purple"
-                  icon={<ViewIcon />}
-                  onClick={() => navigate(`/campagnes/${campagne._id}`)}
-                  mx={2}
-                />
-                <IconButton
-                  aria-label="Voir le lien et le QR code de la campagne"
-                  variant="outline"
-                  colorScheme="purple"
-                  icon={<LinkIcon />}
-                  onClick={() => {
-                    setCampagneLinks(campagne);
-                    onOpen();
-                  }}
-                  mx={2}
-                />
-                <IconButton
-                  aria-label="Modifier la campagne"
-                  variant="outline"
-                  colorScheme="purple"
-                  icon={<EditIcon />}
-                  onClick={() => navigate(`/campagnes/${campagne._id}/edition`)}
-                  mx={2}
-                />
-                <IconButton
-                  aria-label="Supprimer la campagne"
-                  variant="outline"
-                  colorScheme="purple"
-                  icon={<DeleteIcon />}
-                  onClick={() => setDeletedCampagneId(campagne._id)}
-                  mx={2}
-                />
-              </Td>
-              <Td>
-                <Tooltip
-                  label={new Date(campagne.createdAt).toLocaleString("fr-FR", {
-                    timeZone: "Europe/Paris",
-                  })}
-                  hasArrow
-                  arrowSize={15}
-                >
-                  {new Date(campagne.createdAt).toLocaleDateString("fr-FR")}
-                </Tooltip>
-              </Td>
-              <Td>
-                <Tooltip
-                  label={new Date(campagne.updatedAt).toLocaleString("fr-FR", {
-                    timeZone: "Europe/Paris",
-                  })}
-                  hasArrow
-                  arrowSize={15}
-                >
-                  {new Date(campagne.updatedAt).toLocaleDateString("fr-FR")}
-                </Tooltip>
-              </Td>
+    <>
+      <TableContainer my={4} p={2} rounded="md" w="100%" boxShadow="md" bg="white">
+        <Table size="md">
+          <Thead>
+            <Tr>
+              <Th>Liens</Th>
+              <Th>Nom de la campagne</Th>
+              <Th>CFA</Th>
+              <Th>Formation</Th>
+              <Th>Début</Th>
+              <Th>Fin</Th>
+              <Th>Actions</Th>
+              <Th>Crée le</Th>
+              <Th>Modifié le</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </TableContainer>
+          </Thead>
+          <Tbody>
+            {campagnes?.map((campagne) => (
+              <Tr key={campagne._id}>
+                <Td>
+                  <IconButton
+                    aria-label="Voir le lien et le QR code de la campagne"
+                    variant="outline"
+                    colorScheme="purple"
+                    icon={<LinkIcon />}
+                    onClick={() => {
+                      setCampagneLinks(campagne);
+                      onOpenLinks();
+                    }}
+                  />
+                </Td>
+                <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
+                    {campagne.nomCampagne}
+                  </Tooltip>
+                </Td>
+                <Td>{campagne.cfa}</Td>
+                <Td>{campagne.formation}</Td>
+                <Td>{campagne.startDate}</Td>
+                <Td>{campagne.endDate}</Td>
+                <Td>
+                  <IconButton
+                    aria-label="Voir la campagne"
+                    variant="outline"
+                    colorScheme="purple"
+                    icon={<ViewIcon />}
+                    onClick={() => navigate(`/campagnes/${campagne._id}`)}
+                    mx={2}
+                  />
+                  <IconButton
+                    aria-label="Dupliquer la campagne"
+                    variant="outline"
+                    colorScheme="purple"
+                    icon={<CopyIcon />}
+                    onClick={() => {
+                      setCampagneToDuplicate(campagne);
+                      onOpenDuplication();
+                    }}
+                    mx={2}
+                  />
+                  <IconButton
+                    aria-label="Modifier la campagne"
+                    variant="outline"
+                    colorScheme="purple"
+                    icon={<EditIcon />}
+                    onClick={() => navigate(`/campagnes/${campagne._id}/edition`)}
+                    mx={2}
+                  />
+                  <IconButton
+                    aria-label="Supprimer la campagne"
+                    variant="outline"
+                    colorScheme="purple"
+                    icon={<DeleteIcon />}
+                    onClick={() => setDeletedCampagneId(campagne._id)}
+                    mx={2}
+                  />
+                </Td>
+                <Td>
+                  <Tooltip
+                    label={new Date(campagne.createdAt).toLocaleString("fr-FR", {
+                      timeZone: "Europe/Paris",
+                    })}
+                    hasArrow
+                    arrowSize={15}
+                  >
+                    {new Date(campagne.createdAt).toLocaleDateString("fr-FR")}
+                  </Tooltip>
+                </Td>
+                <Td>
+                  <Tooltip
+                    label={new Date(campagne.updatedAt).toLocaleString("fr-FR", {
+                      timeZone: "Europe/Paris",
+                    })}
+                    hasArrow
+                    arrowSize={15}
+                  >
+                    {new Date(campagne.updatedAt).toLocaleDateString("fr-FR")}
+                  </Tooltip>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
+    </>
   );
 };
 
@@ -137,17 +162,26 @@ const ViewCampagnes = () => {
   const [userContext] = useContext(UserContext);
   const [deletedCampagneId, setDeletedCampagneId] = useState(null);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
+  const [filteredCampagne, setFilteredCampagne] = useState([]);
   const [campagneLinks, setCampagneLinks] = useState(null);
+  const [campagneToDuplicate, setCampagneToDuplicate] = useState(null);
+  const [searchCampagneTerm, setSearchCampagneTerm] = useState(null);
+
   const navigate = useNavigate();
   const toast = useToast();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenLinks, onOpen: onOpenLinks, onClose: onCloseLinks } = useDisclosure();
+  const {
+    isOpen: isOpenDuplication,
+    onOpen: onOpenDuplication,
+    onClose: onCloseDuplication,
+  } = useDisclosure();
 
   const [campagnes, loading, error] = useGet(`/api/campagnes/`);
 
   useEffect(() => {
-    if (campagnes) {
-      setDisplayedCampagnes(campagnes);
+    if (campagnes.length > 0) {
+      setDisplayedCampagnes(campagnes.reverse());
     }
   }, [campagnes]);
 
@@ -182,16 +216,33 @@ const ViewCampagnes = () => {
     }
   }, [deletedCampagneId, displayedCampagnes, toast]);
 
+  useEffect(() => {
+    if (searchCampagneTerm) {
+      const campagnes = displayedCampagnes.filter((item) =>
+        item.nomCampagne.toLowerCase().includes(searchCampagneTerm)
+      );
+      setFilteredCampagne(campagnes);
+    }
+  }, [searchCampagneTerm]);
+
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchCampagneTerm(value);
+  };
+
   if (loading || error || !displayedCampagnes.length) return <Spinner size="xl" />;
 
-  const notStartedCampagnes = displayedCampagnes.filter(
+  const campagnesSource = searchCampagneTerm ? filteredCampagne : displayedCampagnes;
+
+  const notStartedCampagnes = campagnesSource.filter(
     (campagne) => new Date(campagne.startDate) > new Date()
   );
 
-  const endedCampagnes = displayedCampagnes.filter(
+  const endedCampagnes = campagnesSource.filter(
     (campagne) => new Date(campagne.endDate) < new Date()
   );
-  const currentCampagnes = displayedCampagnes.filter(
+
+  const currentCampagnes = campagnesSource.filter(
     (campagne) =>
       new Date(campagne.startDate) < new Date() && new Date(campagne.endDate) > new Date()
   );
@@ -208,21 +259,33 @@ const ViewCampagnes = () => {
         />
         <Text ml="5">Créer une campagne</Text>
       </Box>
+      <Box mb="4">
+        <Input
+          id="nomCampagne"
+          name="nomCampagne"
+          type="text"
+          variant="solid"
+          placeholder="Chercher une campagne"
+          onChange={handleSearch}
+        />
+      </Box>
       <Tabs isFitted>
         <TabList>
           <Tab>En cours ({currentCampagnes.length})</Tab>
           <Tab>À venir ({notStartedCampagnes.length})</Tab>
           <Tab>Terminées ({endedCampagnes.length})</Tab>
         </TabList>
-
         <TabPanels>
           <TabPanel>
             <CampagneTable
               campagnes={currentCampagnes}
               navigate={navigate}
               setCampagneLinks={setCampagneLinks}
-              onOpen={onOpen}
+              onOpenLinks={onOpenLinks}
+              onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
+              setCampagneToDuplicate={setCampagneToDuplicate}
+              handleSearch={handleSearch}
             />
           </TabPanel>
           <TabPanel>
@@ -230,8 +293,11 @@ const ViewCampagnes = () => {
               campagnes={notStartedCampagnes}
               navigate={navigate}
               setCampagneLinks={setCampagneLinks}
-              onOpen={onOpen}
+              onOpenLinks={onOpenLinks}
+              onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
+              setCampagneToDuplicate={setCampagneToDuplicate}
+              handleSearch={handleSearch}
             />
           </TabPanel>
           <TabPanel>
@@ -239,14 +305,22 @@ const ViewCampagnes = () => {
               campagnes={endedCampagnes}
               navigate={navigate}
               setCampagneLinks={setCampagneLinks}
-              onOpen={onOpen}
+              onOpenLinks={onOpenLinks}
+              onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
+              setCampagneToDuplicate={setCampagneToDuplicate}
+              handleSearch={handleSearch}
             />
           </TabPanel>
         </TabPanels>
       </Tabs>
-
-      <Modal onClose={onClose} isOpen={isOpen} isCentered>
+      <DuplicateCampagneModal
+        isOpen={isOpenDuplication}
+        onOpen={onOpenDuplication}
+        onClose={onCloseDuplication}
+        campagne={campagneToDuplicate}
+      />
+      <Modal onClose={onCloseLinks} isOpen={isOpenLinks} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Lien et QR code</ModalHeader>
@@ -273,7 +347,6 @@ const ViewCampagnes = () => {
               </Center>
             )}
           </ModalBody>
-          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </Box>

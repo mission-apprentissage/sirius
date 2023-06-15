@@ -84,7 +84,7 @@ const validationSchema = (isQuestionnaireValid, isQuestionnaireUIValid) =>
       .test("is-json", "Le questionnaire doit être un JSON valide", () => isQuestionnaireUIValid),
   });
 
-const CampagneForm = ({ campagne = null }) => {
+const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
   const navigate = useNavigate();
   const toast = useToast();
   const [isQuestionnaireValid, setIsQuestionnaireValid] = useState(true);
@@ -105,7 +105,7 @@ const CampagneForm = ({ campagne = null }) => {
     },
     validationSchema: validationSchema(isQuestionnaireValid, isQuestionnaireUIValid),
     onSubmit: async (values) => {
-      const campagneId = campagne ? campagne._id : null;
+      const campagneId = campagne && !isDuplicating ? campagne._id : null;
 
       const sentQuestionnaire = questionnaire ? questionnaire : values.questionnaire;
       const sentQuestionnaireUI = questionnaireUI ? questionnaireUI : values.questionnaireUI;
@@ -123,6 +123,10 @@ const CampagneForm = ({ campagne = null }) => {
         isClosable: true,
       });
 
+      if (success && isDuplicating) {
+        navigate(0);
+      }
+
       if (success) {
         navigate("/campagnes");
       }
@@ -131,8 +135,8 @@ const CampagneForm = ({ campagne = null }) => {
 
   return (
     <>
-      <Flex align="center" justify="center" m="auto" width="80%">
-        <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
+      <Flex align="center" justify="center" m="auto" width={isDuplicating ? "100%" : "80%"}>
+        <Box bg="white" p={6} rounded="md" w="100%" boxShadow={isDuplicating ? "none" : "md"}>
           <form onSubmit={formik.handleSubmit}>
             <VStack spacing={6} align="flex-start">
               <FormControl isInvalid={!!formik.errors.nomCampagne && formik.touched.nomCampagne}>
@@ -203,85 +207,87 @@ const CampagneForm = ({ campagne = null }) => {
                   <FormErrorMessage>{formik.errors.endDate}</FormErrorMessage>
                 </FormControl>
               </HStack>
-              <Accordion allowToggle w="100%">
-                <AccordionItem>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      <Text color={formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>
-                        Questionnaire JSON
-                      </Text>
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <FormControl isInvalid={!!formik.errors.questionnaire}>
-                      <MonacoEditor
-                        id="questionnaire"
-                        name="questionnaire"
-                        language="json"
-                        value={JSON.stringify(JSON.parse(formik.values.questionnaire), null, 2)}
-                        theme="vs-light"
-                        onChange={(value) => setQuestionnaire(value)}
-                        onValidate={(markers) => {
-                          if (markers.length === 0) {
-                            setIsQuestionnaireValid(true);
-                          } else {
-                            setIsQuestionnaireValid(false);
-                          }
-                        }}
-                        height="50vh"
-                        options={{
-                          minimap: {
-                            enabled: false,
-                          },
-                          automaticLayout: true,
-                        }}
-                      />
-                      <FormErrorMessage>{formik.errors.questionnaire}</FormErrorMessage>
-                    </FormControl>
-                  </AccordionPanel>
-                </AccordionItem>
+              {!isDuplicating && (
+                <Accordion allowToggle w="100%">
+                  <AccordionItem>
+                    <AccordionButton>
+                      <Box flex="1" textAlign="left">
+                        <Text color={formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>
+                          Questionnaire JSON
+                        </Text>
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <FormControl isInvalid={!!formik.errors.questionnaire}>
+                        <MonacoEditor
+                          id="questionnaire"
+                          name="questionnaire"
+                          language="json"
+                          value={JSON.stringify(JSON.parse(formik.values.questionnaire), null, 2)}
+                          theme="vs-light"
+                          onChange={(value) => setQuestionnaire(value)}
+                          onValidate={(markers) => {
+                            if (markers.length === 0) {
+                              setIsQuestionnaireValid(true);
+                            } else {
+                              setIsQuestionnaireValid(false);
+                            }
+                          }}
+                          height="50vh"
+                          options={{
+                            minimap: {
+                              enabled: false,
+                            },
+                            automaticLayout: true,
+                          }}
+                        />
+                        <FormErrorMessage>{formik.errors.questionnaire}</FormErrorMessage>
+                      </FormControl>
+                    </AccordionPanel>
+                  </AccordionItem>
 
-                <AccordionItem>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      <Text color={formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
-                        Questionnaire UI JSON
-                      </Text>
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <FormControl isInvalid={!!formik.errors.questionnaireUI}>
-                      <MonacoEditor
-                        id="questionnaireUI"
-                        name="questionnaireUI"
-                        language="json"
-                        value={JSON.stringify(JSON.parse(formik.values.questionnaireUI), null, 2)}
-                        theme="vs-light"
-                        onChange={(value) => setQuestionnaireUI(value)}
-                        onValidate={(markers) => {
-                          if (markers.length === 0) {
-                            setIsQuestionnaireUIValid(true);
-                          } else {
-                            setIsQuestionnaireUIValid(false);
-                          }
-                        }}
-                        height="50vh"
-                        options={{
-                          minimap: {
-                            enabled: false,
-                          },
-                          automaticLayout: true,
-                        }}
-                      />
-                      <FormErrorMessage>{formik.errors.questionnaireUI}</FormErrorMessage>
-                    </FormControl>
-                  </AccordionPanel>
-                </AccordionItem>
-              </Accordion>
+                  <AccordionItem>
+                    <AccordionButton>
+                      <Box flex="1" textAlign="left">
+                        <Text color={formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
+                          Questionnaire UI JSON
+                        </Text>
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <FormControl isInvalid={!!formik.errors.questionnaireUI}>
+                        <MonacoEditor
+                          id="questionnaireUI"
+                          name="questionnaireUI"
+                          language="json"
+                          value={JSON.stringify(JSON.parse(formik.values.questionnaireUI), null, 2)}
+                          theme="vs-light"
+                          onChange={(value) => setQuestionnaireUI(value)}
+                          onValidate={(markers) => {
+                            if (markers.length === 0) {
+                              setIsQuestionnaireUIValid(true);
+                            } else {
+                              setIsQuestionnaireUIValid(false);
+                            }
+                          }}
+                          height="50vh"
+                          options={{
+                            minimap: {
+                              enabled: false,
+                            },
+                            automaticLayout: true,
+                          }}
+                        />
+                        <FormErrorMessage>{formik.errors.questionnaireUI}</FormErrorMessage>
+                      </FormControl>
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
+              )}
               <Button type="submit" colorScheme="purple" width="full">
-                Envoyer
+                {isDuplicating ? "Dupliquer" : "Envoyer"}
               </Button>
             </VStack>
           </form>
