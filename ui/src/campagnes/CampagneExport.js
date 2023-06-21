@@ -112,7 +112,7 @@ const handleDownloadImage = async (refs, archiveName) => {
   }
 };
 
-const ExcelCampagneExport = ({ currentCampagnes, notStartedCampagnes, endedCampagnes }) => {
+const CampagneExport = ({ currentCampagnes, notStartedCampagnes, endedCampagnes }) => {
   const [exportedData, setExportedData] = useState({});
   const qrCodeRefs = useRef([]);
 
@@ -170,4 +170,4 @@ const ExcelCampagneExport = ({ currentCampagnes, notStartedCampagnes, endedCampa
   );
 };
 
-export default ExcelCampagneExport;
+export default CampagneExport;
