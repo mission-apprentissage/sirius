@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import FileSaver from "file-saver";
 import { utils, write } from "xlsx";
-import { IconButton, VStack, Text, Box } from "@chakra-ui/react";
+import { IconButton, VStack, Box } from "@chakra-ui/react";
 import { DownloadIcon } from "@chakra-ui/icons";
 import QRCode from "react-qr-code";
 import html2canvas from "html2canvas";
@@ -13,7 +13,8 @@ const fileExtension = ".xlsx";
 const Heading = [
   {
     nomCampagne: "Nom de la campagne",
-    responses: "Réponses",
+    seats: "Places",
+    temoignagesCount: "Nombre de témoignages",
     cfa: "CFA",
     formation: "Formation",
     startDate: "Date de début",
@@ -25,15 +26,23 @@ const Heading = [
 const createWs = (campagnes) => {
   campagnes.map((campagne) => delete campagne.id);
   const ws = utils.json_to_sheet(Heading, {
-    header: ["nomCampagne", "responses", "cfa", "formation", "startDate", "endDate", "link"],
+    header: [
+      "nomCampagne",
+      "seats",
+      "temoignagesCount",
+      "cfa",
+      "formation",
+      "startDate",
+      "endDate",
+      "link",
+    ],
     skipHeader: true,
     origin: 0,
   });
   ws["!cols"] = [
     { wch: Math.max(...campagnes.map((row) => row.nomCampagne.length)) },
-    {
-      wch: 10,
-    },
+    { wch: Math.max(...campagnes.map((row) => row.seats.length)) },
+    { wch: 20 },
     { wch: Math.max(...campagnes.map((row) => row.cfa.length)) },
     { wch: Math.max(...campagnes.map((row) => row.formation.length)) },
     { wch: Math.max(...campagnes.map((row) => row.startDate.length)) + 3 },
@@ -46,7 +55,16 @@ const createWs = (campagnes) => {
   ];
 
   utils.sheet_add_json(ws, campagnes, {
-    header: ["nomCampagne", "responses", "cfa", "formation", "startDate", "endDate", "link"],
+    header: [
+      "nomCampagne",
+      "seats",
+      "temoignagesCount",
+      "cfa",
+      "formation",
+      "startDate",
+      "endDate",
+      "link",
+    ],
     skipHeader: true,
     origin: -1,
   });
@@ -87,19 +105,19 @@ const exportedDataFilter = (campagnes) =>
     startDate: new Date(campagne.startDate).toLocaleDateString("fr-FR"),
     endDate: new Date(campagne.endDate).toLocaleDateString("fr-FR"),
     link: `${window.location.protocol}//${window.location.hostname}/campagnes/${campagne._id}`,
-    responses: `${campagne.temoignagesCount} / ${campagne.seats || "∞"}`,
+    seats: campagne.seats || 0,
+    temoignagesCount: campagne.temoignagesCount || 0,
   }));
 
-const handleDownloadImage = async (refs, archiveName) => {
+const handleDownloadImage = async (refs, campagnesNames, archiveName) => {
   const zip = new JSZip();
   const filteredRefs = refs.filter(Boolean);
 
-  const campagneNames = filteredRefs.map((ref) => ref.innerText);
   const canvases = await Promise.all(filteredRefs.map(async (ref) => await html2canvas(ref)));
 
   for (let i = 0; i < canvases.length; i++) {
     canvases[i].toBlob((data) => {
-      zip.file(`${i + 1}_${campagneNames[i]}.png`, data);
+      zip.file(`${i + 1}_${campagnesNames[i]}.png`, data);
 
       if (i === canvases.length - 1) {
         zip
@@ -132,6 +150,8 @@ const CampagneExport = ({ currentCampagnes, notStartedCampagnes, endedCampagnes 
     ...exportedData.endedCampagnes,
   ];
 
+  const campagnesNames = flattenExportedData.map((campagne) => campagne.nomCampagne);
+
   return (
     <>
       {flattenExportedData.map((campagne, index) => (
@@ -141,10 +161,7 @@ const CampagneExport = ({ currentCampagnes, notStartedCampagnes, endedCampagnes 
             sx={{ position: "absolute", left: "5000px" }}
             p="10"
           >
-            <Text fontSize="lg" mb="5" textAlign="center">
-              {campagne.nomCampagne}
-            </Text>
-            <Box w="100%" height="100%">
+            <Box w="100%" h="100%">
               <QRCode
                 value={`${window.location.protocol}//${window.location.hostname}/campagnes/${campagne.id}`}
                 fgColor="#6B46C1"
@@ -162,6 +179,7 @@ const CampagneExport = ({ currentCampagnes, notStartedCampagnes, endedCampagnes 
           exportToCSV(exportedData, `sirius_campagnes_${new Date().toLocaleString()}`);
           handleDownloadImage(
             qrCodeRefs.current,
+            campagnesNames,
             `sirius_campagne_qr_codes_${new Date().toLocaleString()}`
           );
         }}
