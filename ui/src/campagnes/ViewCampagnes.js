@@ -39,7 +39,7 @@ import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import DuplicateCampagneModal from "./DuplicateCampagneModal";
 import DeleteCampagneConfirmationModal from "./DeleteCampagneConfirmationModal";
-import ExcelCampagneExport from "./ExcelCampagneExport";
+import ExcelCampagneExport from "./CampagneExport";
 
 const CampagneTable = ({
   campagnes,

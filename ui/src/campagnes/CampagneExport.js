@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FileSaver from "file-saver";
 import { utils, write } from "xlsx";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, VStack, Text, Box } from "@chakra-ui/react";
 import { DownloadIcon } from "@chakra-ui/icons";
+import QRCode from "react-qr-code";
+import html2canvas from "html2canvas";
+import JSZip from "jszip";
 
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
@@ -20,6 +23,7 @@ const Heading = [
 ];
 
 const createWs = (campagnes) => {
+  campagnes.map((campagne) => delete campagne.id);
   const ws = utils.json_to_sheet(Heading, {
     header: ["nomCampagne", "responses", "cfa", "formation", "startDate", "endDate", "link"],
     skipHeader: true,
@@ -76,6 +80,7 @@ const exportToCSV = (exportedData, fileName) => {
 
 const exportedDataFilter = (campagnes) =>
   campagnes.map((campagne) => ({
+    id: campagne._id,
     nomCampagne: campagne.nomCampagne,
     cfa: campagne.cfa,
     formation: campagne.formation,
@@ -85,8 +90,31 @@ const exportedDataFilter = (campagnes) =>
     responses: `${campagne.temoignagesCount} / ${campagne.seats || "∞"}`,
   }));
 
+const handleDownloadImage = async (refs, archiveName) => {
+  const zip = new JSZip();
+  const filteredRefs = refs.filter(Boolean);
+
+  const campagneNames = filteredRefs.map((ref) => ref.innerText);
+  const canvases = await Promise.all(filteredRefs.map(async (ref) => await html2canvas(ref)));
+
+  for (let i = 0; i < canvases.length; i++) {
+    canvases[i].toBlob((data) => {
+      zip.file(`${i + 1}_${campagneNames[i]}.png`, data);
+
+      if (i === canvases.length - 1) {
+        zip
+          .generateAsync({
+            type: "blob",
+          })
+          .then((content) => FileSaver.saveAs(content, archiveName));
+      }
+    });
+  }
+};
+
 const ExcelCampagneExport = ({ currentCampagnes, notStartedCampagnes, endedCampagnes }) => {
   const [exportedData, setExportedData] = useState({});
+  const qrCodeRefs = useRef([]);
 
   useEffect(() => {
     setExportedData({
@@ -96,14 +124,49 @@ const ExcelCampagneExport = ({ currentCampagnes, notStartedCampagnes, endedCampa
     });
   }, [currentCampagnes, notStartedCampagnes, endedCampagnes]);
 
+  if (!exportedData.currentCampagnes) return null;
+
+  const flattenExportedData = [
+    ...exportedData.currentCampagnes,
+    ...exportedData.notStartedCampagnes,
+    ...exportedData.endedCampagnes,
+  ];
+
   return (
-    <IconButton
-      aria-label="Exporter les campagnes"
-      variant="outline"
-      colorScheme="purple"
-      icon={<DownloadIcon />}
-      onClick={() => exportToCSV(exportedData, `sirius_campagnes_${new Date().toLocaleString()}`)}
-    />
+    <>
+      {flattenExportedData.map((campagne, index) => (
+        <React.Fragment key={index}>
+          <VStack
+            ref={(el) => (qrCodeRefs.current[index] = el)}
+            sx={{ position: "absolute", left: "5000px" }}
+            p="10"
+          >
+            <Text fontSize="lg" mb="5" textAlign="center">
+              {campagne.nomCampagne}
+            </Text>
+            <Box w="100%" height="100%">
+              <QRCode
+                value={`${window.location.protocol}//${window.location.hostname}/campagnes/${campagne.id}`}
+                fgColor="#6B46C1"
+              />
+            </Box>
+          </VStack>
+        </React.Fragment>
+      ))}
+      <IconButton
+        aria-label="Exporter les campagnes"
+        variant="outline"
+        colorScheme="purple"
+        icon={<DownloadIcon />}
+        onClick={() => {
+          exportToCSV(exportedData, `sirius_campagnes_${new Date().toLocaleString()}`);
+          handleDownloadImage(
+            qrCodeRefs.current,
+            `sirius_campagne_qr_codes_${new Date().toLocaleString()}`
+          );
+        }}
+      />
+    </>
   );
 };
 
