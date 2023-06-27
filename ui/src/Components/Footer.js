@@ -32,7 +32,7 @@ const Footer = () => {
         <Box
           display="flex"
           flexDirection={isMobile ? "column" : "row"}
-          justifyContent={isMobile ? "flex-start" : "space-between"}
+          justifyContent="flex-start"
           w="100%"
           m={isMobile ? "auto" : "0"}
           mt={isMobile ? "2" : "0"}
@@ -48,18 +48,6 @@ const Footer = () => {
               color="purple.900"
             >
               onisep.fr
-            </Link>
-          </Box>
-          <Box mx={isMobile ? "0" : "1"}>
-            <Link
-              href="https://beta.gouv.fr/startups/?incubateur=mission-inserjeunes"
-              target="_blank"
-              rel="noreferrer"
-              textDecoration="underline"
-              fontWeight="semibold"
-              color="purple.900"
-            >
-              Mission interministérielle InserJeunes
             </Link>
           </Box>
           <Box mx={isMobile ? "0" : "1"}>
@@ -87,8 +75,8 @@ const Footer = () => {
           CGU
         </Link>
         <Text mx={isMobile ? "1" : "4"}>|</Text>
-        <Link href="/politique-confidentialite" fontSize={isMobile ? "xs" : "inherit"}>
-          Politique de confidentialité
+        <Link href="/mentions-information" fontSize={isMobile ? "xs" : "inherit"}>
+          Mentions d’information
         </Link>
       </Box>
     </Box>

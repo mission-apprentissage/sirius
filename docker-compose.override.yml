@@ -21,7 +21,6 @@ services:
     build:
       args:
         - SIRIUS_ENV=dev
-        - SIRIUS_HOTJAR_ID=12345
 
   server:
     command: yarn debug
