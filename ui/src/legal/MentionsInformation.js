@@ -93,14 +93,6 @@ const MentionsInformation = () => {
             vous êtes référencé.e dans la base apprentis de la DGEFP, source des données de contact
             pour Sirius et collectées à partir du CERFA 10103-07.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
-            Pourquoi recevez-vous ce mail ?
-          </Text>
-          <Text>
-            Vous êtes sollicités, car vous avez signé un contrat en apprentissage et à ce titre vous
-            êtes référencé dans la base apprentis de la DGEFP, source des données de contact pour
-            Sirius et collectées à partir du CERFA du CERFA 10103-07.
-          </Text>
           <Text>
             Les informations recueillies sur ce contrat sont enregistrées dans un fichier
             informatisé afin d’améliorer l’information sur les Centres de formation d’apprentis
