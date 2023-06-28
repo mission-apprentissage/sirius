@@ -131,10 +131,6 @@ const MentionsInformation = () => {
                 contrat de l’apprenti.e et rupture (en cas de rupture de contrat par l’une ou
                 l’autre partie).
               </ListItem>
-              <ListItem>
-                Contrat de l'apprenti : date début de contrat de l’apprenti, date de fin du contrat
-                de l’apprenti et rupture (en cas de rupture de contrat par l’une ou l’autre partie).
-              </ListItem>
               <ListItem>Avis et commentaires libres</ListItem>
             </UnorderedList>
           </Box>
