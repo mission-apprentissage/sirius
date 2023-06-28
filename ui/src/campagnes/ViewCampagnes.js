@@ -39,6 +39,7 @@ import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import DuplicateCampagneModal from "./DuplicateCampagneModal";
 import DeleteCampagneConfirmationModal from "./DeleteCampagneConfirmationModal";
+import ExcelCampagneExport from "./CampagneExport";
 
 const CampagneTable = ({
   campagnes,
@@ -270,8 +271,13 @@ const ViewCampagnes = () => {
           colorScheme="purple"
           icon={<AddIcon />}
           onClick={() => navigate(`/campagnes/ajout`)}
+          mr="5"
         />
-        <Text ml="5">Créer une campagne</Text>
+        <ExcelCampagneExport
+          currentCampagnes={currentCampagnes}
+          notStartedCampagnes={notStartedCampagnes}
+          endedCampagnes={endedCampagnes}
+        />
       </Box>
       <Box mb="4">
         <Input

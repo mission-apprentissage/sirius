@@ -23,6 +23,7 @@ export const theme = extendTheme({
         lineHeight: 1.3,
         color: "#222",
         backgroundColor: "purple.100",
+        overflowX: "hidden",
       },
     },
   },
