@@ -93,14 +93,6 @@ const MentionsInformation = () => {
             vous êtes référencé.e dans la base apprentis de la DGEFP, source des données de contact
             pour Sirius et collectées à partir du CERFA 10103-07.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
-            Pourquoi recevez-vous ce mail ?
-          </Text>
-          <Text>
-            Vous êtes sollicités, car vous avez signé un contrat en apprentissage et à ce titre vous
-            êtes référencé dans la base apprentis de la DGEFP, source des données de contact pour
-            Sirius et collectées à partir du CERFA du CERFA 10103-07.
-          </Text>
           <Text>
             Les informations recueillies sur ce contrat sont enregistrées dans un fichier
             informatisé afin d’améliorer l’information sur les Centres de formation d’apprentis
@@ -138,10 +130,6 @@ const MentionsInformation = () => {
                 Contrat de l'apprenti.e : date début de contrat de l’apprenti.e, date de fin du
                 contrat de l’apprenti.e et rupture (en cas de rupture de contrat par l’une ou
                 l’autre partie).
-              </ListItem>
-              <ListItem>
-                Contrat de l'apprenti : date début de contrat de l’apprenti, date de fin du contrat
-                de l’apprenti et rupture (en cas de rupture de contrat par l’une ou l’autre partie).
               </ListItem>
               <ListItem>Avis et commentaires libres</ListItem>
             </UnorderedList>
@@ -195,7 +183,12 @@ const MentionsInformation = () => {
           </Text>
           <Box ml="4">
             <UnorderedList>
-              <ListItem>Par courriel : dpo@onisep.fr</ListItem>
+              <ListItem>
+                Par courriel :{" "}
+                <Link isExternal href="mailto:dpo@onisep.fr">
+                  dpo@onisep.fr
+                </Link>
+              </ListItem>
               <ListItem>
                 Ou par courrier postal : ONISEP , A l’attention du Délégué à la Protection des
                 Données, 12 mail Barthélémy Thimonnier, CS10450 Lognes, 77437 Marne-la-Vallée cedex
