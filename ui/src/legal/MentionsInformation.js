@@ -183,7 +183,12 @@ const MentionsInformation = () => {
           </Text>
           <Box ml="4">
             <UnorderedList>
-              <ListItem>Par courriel : dpo@onisep.fr</ListItem>
+              <ListItem>
+                Par courriel :{" "}
+                <Link isExternal href="mailto:dpo@onisep.fr">
+                  dpo@onisep.fr
+                </Link>
+              </ListItem>
               <ListItem>
                 Ou par courrier postal : ONISEP , A l’attention du Délégué à la Protection des
                 Données, 12 mail Barthélémy Thimonnier, CS10450 Lognes, 77437 Marne-la-Vallée cedex
