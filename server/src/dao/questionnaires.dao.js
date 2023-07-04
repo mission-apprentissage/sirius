@@ -4,8 +4,33 @@ const create = async (questionnaire) => {
   return Questionnaire.create(questionnaire);
 };
 
-const getAll = async (query) => {
-  return Questionnaire.find({ ...query, deletedAt: null }).lean();
+const getAllWithCreatorName = async () => {
+  return Questionnaire.aggregate([
+    {
+      $match: {
+        deletedAt: null,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "createdBy",
+        foreignField: "_id",
+        as: "createdBy",
+      },
+    },
+    {
+      $project: {
+        "createdBy.username": 0,
+        "createdBy.authStrategy": 0,
+        "createdBy.createdAt": 0,
+        "createdBy.updatedAt": 0,
+        "createdBy.salt": 0,
+        "createdBy.hash": 0,
+        "createdBy.refreshToken": 0,
+      },
+    },
+  ]);
 };
 
 const deleteOne = async (id) => {
@@ -18,7 +43,7 @@ const update = async (id, updatedQuestionnaire) => {
 
 module.exports = {
   create,
-  getAll,
+  getAllWithCreatorName,
   deleteOne,
   update,
 };

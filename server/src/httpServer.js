@@ -9,6 +9,7 @@ const tryCatch = require("./utils/tryCatch.utils");
 const campagnes = require("./routes/campagnes.routes");
 const temoignages = require("./routes/temoignages.routes");
 const users = require("./routes/users.routes");
+const questionnaires = require("./routes/questionnaires.routes");
 const { version } = require("../package.json");
 
 module.exports = async (components) => {
@@ -22,6 +23,7 @@ module.exports = async (components) => {
   app.use(campagnes());
   app.use(temoignages());
   app.use(users());
+  app.use(questionnaires());
   app.use(passport.initialize());
 
   app.disable("x-powered-by");
