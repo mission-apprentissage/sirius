@@ -501,7 +501,13 @@ const ViewTemoignages = () => {
                                         ({responses.length} témoignage{responses.length > 1 && "s"})
                                       </Text>
                                       {responses.map((response, index) => (
-                                        <Text fontSize="md" color="orange.900" key={index} mb="8px">
+                                        <Text
+                                          fontSize="md"
+                                          color="orange.900"
+                                          key={index}
+                                          mb="8px"
+                                          textAlign="center"
+                                        >
                                           « {response} »
                                         </Text>
                                       ))}
