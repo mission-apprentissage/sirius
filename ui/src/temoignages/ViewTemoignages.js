@@ -13,6 +13,7 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Tag,
 } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import ReactEChartsCore from "echarts-for-react/lib/core";
@@ -27,6 +28,7 @@ import {
   matchIdAndQuestions,
   matchCardTypeAndQuestions,
   getMedianDuration,
+  getChampsLibreRate,
 } from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
 import TemoignagesModal from "./Components/TemoignagesModal";
@@ -236,58 +238,143 @@ const ViewTemoignages = () => {
 
   const medianDuration = getMedianDuration(temoignages);
 
+  const champsLibreRate = getChampsLibreRate(selectedCampagne?.questionnaireUI, temoignages);
+
   return (
-    <Flex direction="column" w="80%" m="auto">
-      <HStack mb={4}>
-        <Text fontWeight="semibold">Filtrer par</Text>
-        <Select
-          id="nomCampagne"
-          name="nomCampagne"
-          variant="filled"
-          isSearchable
-          isLoading={loadingCampagnes}
-          isDisabled={!!errorCampagnes}
-          options={
-            allCampagnes.length > 0 &&
-            allCampagnes.map((campagne) => ({
-              value: campagne._id,
-              label: campagne.nomCampagne,
-            }))
-          }
-          placeholder="Campagnes"
-          onChange={({ value }) =>
-            setSelectedCampagne(campagnes.find((campagne) => campagne._id === value))
-          }
-        />
-      </HStack>
-      {selectedCampagne && (
-        <Flex w="100%">
-          <Card textAlign="center" h="auto" w="150px" mx="2">
-            <CardHeader p="2">
-              <Heading size="md">{temoignages.length}</Heading>
-            </CardHeader>
-            <CardBody p="1">
-              <Text>témoignage{temoignages.length > 1 && "s"}</Text>
-            </CardBody>
-          </Card>
-          <Card textAlign="center" w="150px" mx="2">
-            <CardHeader p="2">
-              <Heading size="md">{questionsList.length}</Heading>
-            </CardHeader>
-            <CardBody p="1">
-              <Text>question{questionsList.length > 1 && "s"}</Text>
-            </CardBody>
-          </Card>
-          <Card textAlign="center" w="150px" mx="2">
-            <CardHeader p="2">
-              <Heading size="md">{medianDuration}</Heading>
-            </CardHeader>
-            <CardBody p="1">
-              <Text>temps médian de passation</Text>
-            </CardBody>
-          </Card>
-        </Flex>
-      )}
+    <Flex direction="column" w="100%" m="auto">
+      <Box p="64px 72px" bgColor="#FAF5FF" boxShadow="md">
+        <HStack mb={4} w="100%">
+          {selectedCampagne && (
+            <>
+              <Text color="purple.600" fontSize="5xl" textTransform="uppercase">
+                CFA{" "}
+                <Text as="span" fontWeight="semibold">
+                  {selectedCampagne.cfa}
+                </Text>
+              </Text>
+              <Text color="purple.600" fontSize="3xl" px="24px">
+                •
+              </Text>
+            </>
+          )}
+          <Box w={selectedCampagne ? "300px" : "100%"}>
+            <Select
+              id="nomCampagne"
+              name="nomCampagne"
+              variant="filled"
+              size="lg"
+              placeholder="Campagnes"
+              isSearchable
+              isLoading={loadingCampagnes}
+              isDisabled={!!errorCampagnes}
+              chakraStyles={{
+                control: (baseStyles) => ({
+                  ...baseStyles,
+                  backgroundColor: "purple.600!important",
+                  color: "white",
+                }),
+                placeholder: (baseStyles) => ({
+                  ...baseStyles,
+                  color: "white",
+                }),
+                dropdownIndicator: (baseStyles) => ({
+                  ...baseStyles,
+                  backgroundColor: "purple.600",
+                  color: "white",
+                }),
+                option: (baseStyles) => ({
+                  "&:hover": {
+                    backgroundColor: "white",
+                    color: "purple.600",
+                  },
+                  ...baseStyles,
+                  backgroundColor: "purple.600",
+                  color: "white",
+                }),
+                menuList: (baseStyles) => ({
+                  ...baseStyles,
+                  backgroundColor: "purple.600",
+                }),
+              }}
+              options={
+                allCampagnes.length > 0 &&
+                allCampagnes.map((campagne) => ({
+                  value: campagne._id,
+                  label: campagne.nomCampagne,
+                }))
+              }
+              onChange={({ value }) =>
+                setSelectedCampagne(campagnes.find((campagne) => campagne._id === value))
+              }
+            />
+          </Box>
+          {selectedCampagne && (
+            <>
+              <Text color="purple.600" fontSize="3xl" px="24px">
+                •
+              </Text>
+              <Text color="purple.600" fontSize="lg">
+                <Text as="span" fontSize="2xl">
+                  {new Date(selectedCampagne.startDate).toLocaleDateString("fr-FR")}
+                </Text>{" "}
+                au{" "}
+                <Text as="span" fontSize="2xl">
+                  {new Date(selectedCampagne.endDate).toLocaleDateString("fr-FR")}
+                </Text>
+              </Text>
+            </>
+          )}
+        </HStack>
+        {selectedCampagne && (
+          <HStack w="100%">
+            <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" pr="32px">
+              <Tag
+                fontSize="2xl"
+                colorScheme="purple"
+                color="purple.600"
+                fontWeight="semibold"
+                mr="5px"
+                textAlign="center"
+              >
+                {temoignages.length}
+              </Tag>
+              <Text fontSize="xl" color="purple.600">
+                TÉMOIGNAGE{temoignages.length > 1 && "S"} RECUEILLI{temoignages.length > 1 && "S"}
+              </Text>
+            </Box>
+            <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" px="32px">
+              <Tag
+                fontSize="2xl"
+                colorScheme="purple"
+                color="purple.600"
+                fontWeight="semibold"
+                mr="5px"
+                textAlign="center"
+              >
+                {medianDuration}
+              </Tag>
+              <Text fontSize="xl" color="purple.600">
+                TEMPS MÉDIAN DE PASSATION
+              </Text>
+            </Box>
+            <Box display="flex" alignItems="center" pl="32px">
+              <Tag
+                fontSize="2xl"
+                colorScheme="purple"
+                color="purple.600"
+                fontWeight="semibold"
+                mr="5px"
+                textAlign="center"
+              >
+                {champsLibreRate + "%"}
+              </Tag>
+              <Text fontSize="xl" color="purple.600">
+                TAUX DE RÉPONSE CHAMPS LIBRES
+              </Text>
+            </Box>
+          </HStack>
+        )}
+      </Box>
       {categories.length > 0 && (
         <Tabs isFitted mt="4">
           <TabList>
