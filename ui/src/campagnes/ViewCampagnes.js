@@ -263,7 +263,7 @@ const ViewCampagnes = () => {
   );
 
   return (
-    <Box display="flex" flexDirection="column" width="80%" m="auto">
+    <Box display="flex" flexDirection="column" width="80%" m="auto" py="5">
       <Box mb="5" display="flex" flexDirection="row" alignItems="center">
         <IconButton
           aria-label="Ajouter une campagne"
