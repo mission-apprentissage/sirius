@@ -11,6 +11,7 @@ import {
   useDisclosure,
   useToast,
   Tooltip,
+  Box,
 } from "@chakra-ui/react";
 import { DeleteIcon, ViewIcon } from "@chakra-ui/icons";
 import { _delete } from "../../utils/httpClient";
@@ -73,7 +74,7 @@ const TemoignagesTable = ({ temoignages }) => {
   }, [deletedTemoignageId, toast]);
 
   return (
-    <>
+    <Box w="60%" m="25px auto">
       <TableContainer my={4} p={2} rounded="md" w="100%" boxShadow="md" bg="white">
         <Table size="sm">
           <Thead>
@@ -157,7 +158,7 @@ const TemoignagesTable = ({ temoignages }) => {
         temoignage={temoignageToDelete}
         setDeletedTemoignageId={setDeletedTemoignageId}
       />
-    </>
+    </Box>
   );
 };
 

@@ -93,3 +93,36 @@ export const getMedianDuration = (answers) => {
 
   return msToTime(getMedian(durations));
 };
+
+const getChampsLibreField = (questionnaireUI) => {
+  const fieldsWithCustomMessageReceived = [];
+
+  for (const category in questionnaireUI) {
+    const categoryFields = questionnaireUI[category];
+
+    for (const field in categoryFields) {
+      const widget = categoryFields[field]["ui:widget"];
+
+      if (widget === "customMessageReceived") {
+        fieldsWithCustomMessageReceived.push(field);
+      }
+    }
+  }
+
+  return fieldsWithCustomMessageReceived;
+};
+
+export const getChampsLibreRate = (questionnaireUI, temoignages) => {
+  const champsLibreField = getChampsLibreField(questionnaireUI);
+
+  const champsLibresFieldsCountWithAnswer = temoignages.reduce((acc, cur) => {
+    const answers = Object.keys(cur.reponses);
+    const count = answers.filter((answer) => champsLibreField.includes(answer)).length;
+    return acc + count;
+  }, 0);
+
+  const champsLibresFieldsCount = champsLibreField.length * temoignages.length;
+
+  const rate = Math.round((champsLibresFieldsCountWithAnswer / champsLibresFieldsCount) * 100);
+  return rate || 0;
+};

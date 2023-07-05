@@ -8,17 +8,25 @@ import {
   Flex,
   HStack,
   Box,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
+  Tag,
+  Step,
+  StepIndicator,
+  StepSeparator,
+  StepStatus,
+  Stepper,
+  FormLabel,
+  Switch,
 } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import * as echarts from "echarts/core";
 import { PieChart, BarChart } from "echarts/charts";
-import { GridComponent, TooltipComponent, LegendComponent } from "echarts/components";
+import {
+  GridComponent,
+  TooltipComponent,
+  LegendComponent,
+  VisualMapComponent,
+} from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 import { useGet } from "../common/hooks/httpHooks";
 import { _get } from "../utils/httpClient";
@@ -27,12 +35,20 @@ import {
   matchIdAndQuestions,
   matchCardTypeAndQuestions,
   getMedianDuration,
+  getChampsLibreRate,
 } from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
-import TemoignagesModal from "./Components/TemoignagesModal";
 import TemoignagesTable from "./Components/TemoignagesTable";
 
-echarts.use([TooltipComponent, GridComponent, PieChart, CanvasRenderer, LegendComponent, BarChart]);
+echarts.use([
+  TooltipComponent,
+  GridComponent,
+  PieChart,
+  CanvasRenderer,
+  LegendComponent,
+  BarChart,
+  VisualMapComponent,
+]);
 
 const pieResponsesFormatting = (responses) =>
   responses.reduce((acc, name) => {
@@ -63,6 +79,13 @@ const barResponsesFormatting = (responses) => {
   }, []);
 };
 
+const pieColorGetter = (length) => {
+  const colors = ["#9C4221", "#C05621", "#DD6B20", "#F6AD55", "#FBD38D"];
+  if (length === 3) return ["#9C4221", "#DD6B20", "#FBD38D"];
+  if (length === 2) return ["#9C4221", "#FBD38D"];
+  return colors;
+};
+
 const pieOption = (countedResponses) => ({
   tooltip: {
     trigger: "item",
@@ -77,15 +100,36 @@ const pieOption = (countedResponses) => ({
     {
       name: "",
       type: "pie",
-      radius: "60%",
+      radius: "75%",
       center: ["50%", "50%"],
-      data: countedResponses,
-      itemStyle: {
-        emphasis: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: "rgba(0, 0, 0, 0.5)",
+      data: countedResponses.sort((a, b) => {
+        return a.value - b.value;
+      }),
+      color: pieColorGetter(countedResponses.length),
+      roseType: "radius",
+      label: {
+        color: "#652B19",
+        overflow: "break",
+        formatter: "{b} \n ({c} - {d}%)",
+      },
+      labelLine: {
+        lineStyle: {
+          color: "#652B19",
         },
+        smooth: 0.2,
+        length: 10,
+        length2: 30,
+      },
+      itemStyle: {
+        shadowBlur: 30,
+        shadowColor: "rgba(0, 0, 0, 0.5)",
+        borderWidth: 1,
+        borderColor: "white",
+      },
+      animationType: "scale",
+      animationEasing: "elasticOut",
+      animationDelay: function () {
+        return Math.random() * 200;
       },
     },
   ],
@@ -120,7 +164,11 @@ const barOption = (responses) => {
         type: "shadow",
       },
     },
-    legend: {},
+    legend: {
+      textStyle: {
+        fontSize: "36px",
+      },
+    },
     grid: {
       left: "3%",
       right: "4%",
@@ -149,7 +197,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: zero,
-        color: "#EE6766",
+        color: "#9C4221",
       },
       {
         name: "🧐",
@@ -163,7 +211,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: one,
-        color: "#FAC858",
+        color: "#DD6B20",
       },
       {
         name: "😊",
@@ -177,7 +225,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: two,
-        color: "#5470C6",
+        color: "#FAC858",
       },
       {
         name: "😝",
@@ -203,9 +251,9 @@ const ViewTemoignages = () => {
   const [allCampagnes, setAllCampagnes] = useState([]);
   const [selectedCampagne, setSelectedCampagne] = useState(null);
   const [temoignages, setTemoignages] = useState([]);
-  const [questionsList, setQuestionsList] = useState([]);
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
   const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
+  const [isVerbatimsDisplayed, setIsVerbatimsDisplayed] = useState(true);
 
   useEffect(() => {
     if (campagnes) {
@@ -220,11 +268,7 @@ const ViewTemoignages = () => {
           `/api/temoignages?campagneId=${selectedCampagne._id}`,
           userContext.token
         );
-        const uniqueQuestions = [
-          ...new Set(result.map((temoignage) => Object.keys(temoignage.reponses)).flat()),
-        ];
         setTemoignages(result);
-        setQuestionsList(uniqueQuestions);
         setMatchedIdAndQuestions(matchIdAndQuestions(selectedCampagne));
         setMatchedCardTypeAndQuestions(matchCardTypeAndQuestions(selectedCampagne));
       }
@@ -236,139 +280,311 @@ const ViewTemoignages = () => {
 
   const medianDuration = getMedianDuration(temoignages);
 
+  const champsLibreRate = getChampsLibreRate(selectedCampagne?.questionnaireUI, temoignages);
+
   return (
-    <Flex direction="column" w="80%" m="auto">
-      <HStack mb={4}>
-        <Text fontWeight="semibold">Filtrer par</Text>
-        <Select
-          id="nomCampagne"
-          name="nomCampagne"
-          variant="filled"
-          isSearchable
-          isLoading={loadingCampagnes}
-          isDisabled={!!errorCampagnes}
-          options={
-            allCampagnes.length > 0 &&
-            allCampagnes.map((campagne) => ({
-              value: campagne._id,
-              label: campagne.nomCampagne,
-            }))
-          }
-          placeholder="Campagnes"
-          onChange={({ value }) =>
-            setSelectedCampagne(campagnes.find((campagne) => campagne._id === value))
-          }
-        />
-      </HStack>
-      {selectedCampagne && (
-        <Flex w="100%">
-          <Card textAlign="center" h="auto" w="150px" mx="2">
-            <CardHeader p="2">
-              <Heading size="md">{temoignages.length}</Heading>
-            </CardHeader>
-            <CardBody p="1">
-              <Text>témoignage{temoignages.length > 1 && "s"}</Text>
-            </CardBody>
-          </Card>
-          <Card textAlign="center" w="150px" mx="2">
-            <CardHeader p="2">
-              <Heading size="md">{questionsList.length}</Heading>
-            </CardHeader>
-            <CardBody p="1">
-              <Text>question{questionsList.length > 1 && "s"}</Text>
-            </CardBody>
-          </Card>
-          <Card textAlign="center" w="150px" mx="2">
-            <CardHeader p="2">
-              <Heading size="md">{medianDuration}</Heading>
-            </CardHeader>
-            <CardBody p="1">
-              <Text>temps médian de passation</Text>
-            </CardBody>
-          </Card>
-        </Flex>
-      )}
-      {categories.length > 0 && (
-        <Tabs isFitted mt="4">
-          <TabList>
-            {categories.map((category) => (
-              <Tab key={category.id}>
-                <Box display="flex" flexDirection="column">
-                  <Text fontSize="2xl">{category.emoji}</Text>
-                  <Text>{category.title}</Text>
+    <Flex direction="column" w="100%" m="auto" bgColor="white">
+      <Flex direction="column" w="100%" m="auto" bgColor="white">
+        <Box p="64px 72px 32px 72px" bgColor="#FAF5FF" boxShadow="md">
+          <HStack mb={4} w="100%">
+            {selectedCampagne && (
+              <>
+                <Text color="purple.600" fontSize="5xl" textTransform="uppercase">
+                  CFA{" "}
+                  <Text as="span" fontWeight="semibold">
+                    {selectedCampagne.cfa}
+                  </Text>
+                </Text>
+                <Text color="purple.600" fontSize="3xl" px="24px">
+                  •
+                </Text>
+              </>
+            )}
+            <Box w={selectedCampagne ? "590px" : "100%"}>
+              <Select
+                id="nomCampagne"
+                name="nomCampagne"
+                variant="filled"
+                size="lg"
+                placeholder="Campagnes"
+                isSearchable
+                isLoading={loadingCampagnes}
+                isDisabled={!!errorCampagnes}
+                chakraStyles={{
+                  control: (baseStyles) => ({
+                    ...baseStyles,
+                    backgroundColor: "purple.600!important",
+                    color: "white",
+                  }),
+                  placeholder: (baseStyles) => ({
+                    ...baseStyles,
+                    color: "white",
+                  }),
+                  dropdownIndicator: (baseStyles) => ({
+                    ...baseStyles,
+                    backgroundColor: "purple.600",
+                    color: "white",
+                  }),
+                  option: (baseStyles) => ({
+                    "&:hover": {
+                      backgroundColor: "white",
+                      color: "purple.600",
+                    },
+                    ...baseStyles,
+                    backgroundColor: "purple.600",
+                    color: "white",
+                  }),
+                  menuList: (baseStyles) => ({
+                    ...baseStyles,
+                    backgroundColor: "purple.600",
+                  }),
+                }}
+                options={
+                  allCampagnes.length > 0 &&
+                  allCampagnes.map((campagne) => ({
+                    value: campagne._id,
+                    label: campagne.nomCampagne,
+                  }))
+                }
+                onChange={({ value }) =>
+                  setSelectedCampagne(campagnes.find((campagne) => campagne._id === value))
+                }
+              />
+            </Box>
+            {selectedCampagne && (
+              <>
+                <Text color="purple.600" fontSize="3xl" px="24px">
+                  •
+                </Text>
+                <Text color="purple.600" fontSize="lg">
+                  <Text as="span" fontSize="2xl">
+                    {new Date(selectedCampagne.startDate).toLocaleDateString("fr-FR")}
+                  </Text>{" "}
+                  au{" "}
+                  <Text as="span" fontSize="2xl">
+                    {new Date(selectedCampagne.endDate).toLocaleDateString("fr-FR")}
+                  </Text>
+                </Text>
+              </>
+            )}
+          </HStack>
+          {selectedCampagne && (
+            <>
+              <HStack w="100%">
+                <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" pr="32px">
+                  <Tag
+                    fontSize="2xl"
+                    colorScheme="purple"
+                    color="purple.600"
+                    fontWeight="semibold"
+                    mr="5px"
+                    textAlign="center"
+                  >
+                    {temoignages.length}
+                  </Tag>
+                  <Text fontSize="xl" color="purple.600">
+                    TÉMOIGNAGE{temoignages.length > 1 && "S"} RECUEILLI
+                    {temoignages.length > 1 && "S"}
+                  </Text>
                 </Box>
-              </Tab>
-            ))}
-          </TabList>
-          <TabPanels>
-            {categories.length > 0 &&
-              categories.map((category) => {
+                <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" px="32px">
+                  <Tag
+                    fontSize="2xl"
+                    colorScheme="purple"
+                    color="purple.600"
+                    fontWeight="semibold"
+                    mr="5px"
+                    textAlign="center"
+                  >
+                    {medianDuration}
+                  </Tag>
+                  <Text fontSize="xl" color="purple.600">
+                    TEMPS MÉDIAN DE PASSATION
+                  </Text>
+                </Box>
+                <Box display="flex" alignItems="center" pl="32px">
+                  <Tag
+                    fontSize="2xl"
+                    colorScheme="purple"
+                    color="purple.600"
+                    fontWeight="semibold"
+                    mr="5px"
+                    textAlign="center"
+                  >
+                    {champsLibreRate + "%"}
+                  </Tag>
+                  <Text fontSize="xl" color="purple.600">
+                    TAUX DE RÉPONSE CHAMPS LIBRES
+                  </Text>
+                </Box>
+              </HStack>
+              <Box mt="40px" display="flex">
+                <FormLabel htmlFor="isChecked" color="purple.500">
+                  Affichage verbatims
+                </FormLabel>
+                <Switch
+                  id="isChecked"
+                  isChecked={isVerbatimsDisplayed}
+                  colorScheme="purple"
+                  onChange={() => setIsVerbatimsDisplayed(!isVerbatimsDisplayed)}
+                />
+              </Box>
+            </>
+          )}
+        </Box>
+
+        {categories.length > 0 && (
+          <Box w="calc(100% - 27px)" ml="27px" mt="60px">
+            <Stepper
+              size="lg"
+              colorScheme="purple"
+              orientation="vertical"
+              index={categories.length}
+            >
+              {categories.map((category, index) => {
+                const questionsList = Object.keys(
+                  selectedCampagne.questionnaire.properties[category.id].properties
+                );
+
                 const filteredQuestionsList = questionsList.filter((question) =>
                   Object.keys(
                     selectedCampagne.questionnaire.properties[category.id].properties
                   ).includes(question)
                 );
                 return (
-                  <TabPanel key={category.id}>
-                    {filteredQuestionsList.map((question) => {
-                      const responses = temoignages
-                        .map((temoignage) => temoignage.reponses[question])
-                        .flat()
-                        .filter(Boolean);
-                      return (
-                        matchedIdAndQuestions[question] && (
-                          <Card key={question} width="100%" my="4">
-                            <CardHeader>
-                              <Heading size="md">{matchedIdAndQuestions[question]}</Heading>
-                            </CardHeader>
-                            <CardBody>
-                              {matchedCardTypeAndQuestions[question] === "text" && (
-                                <Flex
-                                  p={10}
-                                  justifyContent={"space-between"}
-                                  position={"relative"}
-                                  _after={{
-                                    content: '""',
-                                    position: "absolute",
-                                    height: "21px",
-                                    width: "29px",
-                                    left: "35px",
-                                    top: "-10px",
-                                    backgroundSize: "cover",
-                                    backgroundImage: `url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' width='29' height='21' viewBox='0 0 29 21' fill='none'%3E%3Cpath d='M6.91391 21C4.56659 21 2.81678 20.2152 1.66446 18.6455C0.55482 17.0758 0 15.2515 0 13.1727C0 11.2636 0.405445 9.43939 1.21634 7.7C2.0699 5.91818 3.15821 4.3697 4.48124 3.05454C5.84695 1.69697 7.31935 0.678787 8.89845 0L13.3157 3.24545C11.5659 3.96667 9.98676 4.94242 8.57837 6.17273C7.21266 7.36061 6.25239 8.63333 5.69757 9.99091L6.01766 10.1818C6.27373 10.0121 6.55114 9.88485 6.84989 9.8C7.19132 9.71515 7.63944 9.67273 8.19426 9.67273C9.34658 9.67273 10.4776 10.097 11.5872 10.9455C12.7395 11.7939 13.3157 13.1091 13.3157 14.8909C13.3157 16.8848 12.6542 18.4121 11.3311 19.4727C10.0508 20.4909 8.57837 21 6.91391 21ZM22.5982 21C20.2509 21 18.5011 20.2152 17.3488 18.6455C16.2391 17.0758 15.6843 15.2515 15.6843 13.1727C15.6843 11.2636 16.0898 9.43939 16.9007 7.7C17.7542 5.91818 18.8425 4.3697 20.1656 3.05454C21.5313 1.69697 23.0037 0.678787 24.5828 0L29 3.24545C27.2502 3.96667 25.6711 4.94242 24.2627 6.17273C22.897 7.36061 21.9367 8.63333 21.3819 9.99091L21.702 10.1818C21.9581 10.0121 22.2355 9.88485 22.5342 9.8C22.8756 9.71515 23.3238 9.67273 23.8786 9.67273C25.0309 9.67273 26.1619 10.097 27.2715 10.9455C28.4238 11.7939 29 13.1091 29 14.8909C29 16.8848 28.3385 18.4121 27.0155 19.4727C25.7351 20.4909 24.2627 21 22.5982 21Z' fill='%239F7AEA'/%3E%3C/svg%3E")`,
-                                  }}
-                                >
-                                  <Text fontSize="xl" fontWeight="semibold" pl={4}>
-                                    {responses[0]}
-                                  </Text>
-                                </Flex>
-                              )}
-                              {matchedCardTypeAndQuestions[question] === "pie" && (
-                                <ReactEChartsCore
-                                  echarts={echarts}
-                                  option={pieOption(pieResponsesFormatting(responses))}
-                                />
-                              )}
-                              {matchedCardTypeAndQuestions[question] === "bar" && (
-                                <ReactEChartsCore echarts={echarts} option={barOption(responses)} />
-                              )}
-                            </CardBody>
-                            {matchedCardTypeAndQuestions[question] === "text" && (
-                              <TemoignagesModal
-                                responses={responses}
-                                question={matchedIdAndQuestions[question]}
-                              />
-                            )}
-                          </Card>
-                        )
-                      );
-                    })}
-                  </TabPanel>
+                  <Step key={index}>
+                    <StepIndicator w="74px" h="74px" fontSize="40px">
+                      <StepStatus complete={category.emoji} />
+                    </StepIndicator>
+
+                    <Box ml="28px" mt="10px" width="100%">
+                      <HStack>
+                        <Text fontSize="4xl" color="purple.600">
+                          {category.title}
+                        </Text>
+                        <Box
+                          display="flex"
+                          flexDirection="row"
+                          alignItems="center"
+                          borderLeft="2px solid #6B46C1"
+                          px="32px"
+                          ml="32px"
+                        >
+                          <Tag
+                            fontSize="2xl"
+                            colorScheme="purple"
+                            color="purple.600"
+                            fontWeight="semibold"
+                            mr="5px"
+                          >
+                            {questionsList.length}
+                          </Tag>
+                          <Text fontSize="xl" color="purple.600">
+                            QUESTIONS
+                          </Text>
+                        </Box>
+                      </HStack>
+                      <Box display="flex" flexWrap="wrap">
+                        {filteredQuestionsList.map((question) => {
+                          const responses = temoignages
+                            .map((temoignage) => temoignage.reponses[question])
+                            .flat()
+                            .filter(Boolean);
+
+                          if (
+                            !isVerbatimsDisplayed &&
+                            matchedCardTypeAndQuestions[question] === "text"
+                          )
+                            return null;
+                          return (
+                            matchedIdAndQuestions[question] && (
+                              <Card
+                                key={question}
+                                width={
+                                  matchedCardTypeAndQuestions[question] === "pie"
+                                    ? "calc(50% - 72px)"
+                                    : "calc(100% - 112px)"
+                                }
+                                m="4"
+                                variant="outline"
+                                borderColor="purple.600"
+                                borderRadius="20px"
+                              >
+                                <CardHeader>
+                                  <Heading
+                                    fontSize="xl"
+                                    textAlign="center"
+                                    color="orange.500"
+                                    fontWeight="normal"
+                                    maxWidth={
+                                      matchedCardTypeAndQuestions[question] === "text"
+                                        ? "60%"
+                                        : "100%"
+                                    }
+                                    lineHeight="28px"
+                                    margin="auto"
+                                  >
+                                    {matchedIdAndQuestions[question]}
+                                  </Heading>
+                                </CardHeader>
+                                <CardBody>
+                                  {matchedCardTypeAndQuestions[question] === "text" && (
+                                    <Flex
+                                      justifyContent={"space-between"}
+                                      position={"relative"}
+                                      alignItems={"center"}
+                                      flexDirection={"column"}
+                                      maxWidth="70%"
+                                      margin="auto"
+                                    >
+                                      <Text
+                                        fontSize="sm"
+                                        fontWeight="semibold"
+                                        color="orange.900"
+                                        mb="8px"
+                                      >
+                                        ({responses.length} témoignage{responses.length > 1 && "s"})
+                                      </Text>
+                                      {responses.map((response, index) => (
+                                        <Text
+                                          fontSize="md"
+                                          color="orange.900"
+                                          key={index}
+                                          mb="8px"
+                                          textAlign="center"
+                                        >
+                                          « {response} »
+                                        </Text>
+                                      ))}
+                                    </Flex>
+                                  )}
+                                  {matchedCardTypeAndQuestions[question] === "pie" && (
+                                    <ReactEChartsCore
+                                      echarts={echarts}
+                                      option={pieOption(pieResponsesFormatting(responses))}
+                                    />
+                                  )}
+                                  {matchedCardTypeAndQuestions[question] === "bar" && (
+                                    <ReactEChartsCore
+                                      echarts={echarts}
+                                      option={barOption(responses)}
+                                    />
+                                  )}
+                                </CardBody>
+                              </Card>
+                            )
+                          );
+                        })}
+                      </Box>
+                    </Box>
+                    <StepSeparator ml="17px" mt="20px" />
+                  </Step>
                 );
               })}
-          </TabPanels>
-        </Tabs>
-      )}
+            </Stepper>
+          </Box>
+        )}
+      </Flex>
       {temoignages.length > 0 && <TemoignagesTable temoignages={temoignages} />}
     </Flex>
   );

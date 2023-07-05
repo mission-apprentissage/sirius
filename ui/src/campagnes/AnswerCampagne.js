@@ -163,7 +163,7 @@ const AnswerCampagne = () => {
 
   if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
   return startedAnswering ? (
-    <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto">
+    <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto" pt={["0", "5"]}>
       {isTemoignageSent && <Success />}
       {!isTemoignageSent && (
         <Box
