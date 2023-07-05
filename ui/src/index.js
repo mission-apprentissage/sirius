@@ -18,7 +18,7 @@ export const theme = extendTheme({
   styles: {
     global: {
       body: {
-        fontFamily: "'Public Sans', sans-serif",
+        fontFamily: "'Inter', sans-serif",
         fontWeight: 400,
         lineHeight: 1.3,
         color: "#222",
@@ -80,7 +80,7 @@ root.render(
 
 WebFont.load({
   google: {
-    families: ["Public+Sans:ital,wght@0,400;0,600;0,900;1,400;1,300"],
+    families: ["Inter:ital,wght@0,400;0,600;0,900;1,400;1,300"],
   },
 });
 
