@@ -14,12 +14,19 @@ import {
   StepSeparator,
   StepStatus,
   Stepper,
+  FormLabel,
+  Switch,
 } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import * as echarts from "echarts/core";
 import { PieChart, BarChart } from "echarts/charts";
-import { GridComponent, TooltipComponent, LegendComponent } from "echarts/components";
+import {
+  GridComponent,
+  TooltipComponent,
+  LegendComponent,
+  VisualMapComponent,
+} from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 import { useGet } from "../common/hooks/httpHooks";
 import { _get } from "../utils/httpClient";
@@ -33,7 +40,15 @@ import {
 import { getCategoriesWithEmojis } from "../campagnes/utils";
 import TemoignagesTable from "./Components/TemoignagesTable";
 
-echarts.use([TooltipComponent, GridComponent, PieChart, CanvasRenderer, LegendComponent, BarChart]);
+echarts.use([
+  TooltipComponent,
+  GridComponent,
+  PieChart,
+  CanvasRenderer,
+  LegendComponent,
+  BarChart,
+  VisualMapComponent,
+]);
 
 const pieResponsesFormatting = (responses) =>
   responses.reduce((acc, name) => {
@@ -64,6 +79,13 @@ const barResponsesFormatting = (responses) => {
   }, []);
 };
 
+const pieColorGetter = (length) => {
+  const colors = ["#9C4221", "#C05621", "#DD6B20", "#F6AD55", "#FBD38D"];
+  if (length === 3) return ["#9C4221", "#DD6B20", "#FBD38D"];
+  if (length === 2) return ["#9C4221", "#FBD38D"];
+  return colors;
+};
+
 const pieOption = (countedResponses) => ({
   tooltip: {
     trigger: "item",
@@ -83,7 +105,7 @@ const pieOption = (countedResponses) => ({
       data: countedResponses.sort((a, b) => {
         return a.value - b.value;
       }),
-      color: ["#9C4221", "#C05621", "#DD6B20", "#F6AD55", "#FBD38D"],
+      color: pieColorGetter(countedResponses.length),
       roseType: "radius",
       label: {
         color: "#652B19",
@@ -101,6 +123,8 @@ const pieOption = (countedResponses) => ({
       itemStyle: {
         shadowBlur: 30,
         shadowColor: "rgba(0, 0, 0, 0.5)",
+        borderWidth: 1,
+        borderColor: "white",
       },
       animationType: "scale",
       animationEasing: "elasticOut",
@@ -173,7 +197,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: zero,
-        color: "#EE6766",
+        color: "#9C4221",
       },
       {
         name: "🧐",
@@ -187,7 +211,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: one,
-        color: "#FAC858",
+        color: "#DD6B20",
       },
       {
         name: "😊",
@@ -201,7 +225,7 @@ const barOption = (responses) => {
           focus: "series",
         },
         data: two,
-        color: "#5470C6",
+        color: "#FAC858",
       },
       {
         name: "😝",
@@ -229,6 +253,7 @@ const ViewTemoignages = () => {
   const [temoignages, setTemoignages] = useState([]);
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
   const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
+  const [isVerbatimsDisplayed, setIsVerbatimsDisplayed] = useState(true);
 
   useEffect(() => {
     if (campagnes) {
@@ -260,7 +285,7 @@ const ViewTemoignages = () => {
   return (
     <Flex direction="column" w="100%" m="auto" bgColor="white">
       <Flex direction="column" w="100%" m="auto" bgColor="white">
-        <Box p="64px 72px" bgColor="#FAF5FF" boxShadow="md">
+        <Box p="64px 72px 32px 72px" bgColor="#FAF5FF" boxShadow="md">
           <HStack mb={4} w="100%">
             {selectedCampagne && (
               <>
@@ -275,7 +300,7 @@ const ViewTemoignages = () => {
                 </Text>
               </>
             )}
-            <Box w={selectedCampagne ? "300px" : "100%"}>
+            <Box w={selectedCampagne ? "590px" : "100%"}>
               <Select
                 id="nomCampagne"
                 name="nomCampagne"
@@ -344,58 +369,72 @@ const ViewTemoignages = () => {
             )}
           </HStack>
           {selectedCampagne && (
-            <HStack w="100%">
-              <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" pr="32px">
-                <Tag
-                  fontSize="2xl"
+            <>
+              <HStack w="100%">
+                <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" pr="32px">
+                  <Tag
+                    fontSize="2xl"
+                    colorScheme="purple"
+                    color="purple.600"
+                    fontWeight="semibold"
+                    mr="5px"
+                    textAlign="center"
+                  >
+                    {temoignages.length}
+                  </Tag>
+                  <Text fontSize="xl" color="purple.600">
+                    TÉMOIGNAGE{temoignages.length > 1 && "S"} RECUEILLI
+                    {temoignages.length > 1 && "S"}
+                  </Text>
+                </Box>
+                <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" px="32px">
+                  <Tag
+                    fontSize="2xl"
+                    colorScheme="purple"
+                    color="purple.600"
+                    fontWeight="semibold"
+                    mr="5px"
+                    textAlign="center"
+                  >
+                    {medianDuration}
+                  </Tag>
+                  <Text fontSize="xl" color="purple.600">
+                    TEMPS MÉDIAN DE PASSATION
+                  </Text>
+                </Box>
+                <Box display="flex" alignItems="center" pl="32px">
+                  <Tag
+                    fontSize="2xl"
+                    colorScheme="purple"
+                    color="purple.600"
+                    fontWeight="semibold"
+                    mr="5px"
+                    textAlign="center"
+                  >
+                    {champsLibreRate + "%"}
+                  </Tag>
+                  <Text fontSize="xl" color="purple.600">
+                    TAUX DE RÉPONSE CHAMPS LIBRES
+                  </Text>
+                </Box>
+              </HStack>
+              <Box mt="40px" display="flex">
+                <FormLabel htmlFor="isChecked" color="purple.500">
+                  Affichage verbatims
+                </FormLabel>
+                <Switch
+                  id="isChecked"
+                  isChecked={isVerbatimsDisplayed}
                   colorScheme="purple"
-                  color="purple.600"
-                  fontWeight="semibold"
-                  mr="5px"
-                  textAlign="center"
-                >
-                  {temoignages.length}
-                </Tag>
-                <Text fontSize="xl" color="purple.600">
-                  TÉMOIGNAGE{temoignages.length > 1 && "S"} RECUEILLI{temoignages.length > 1 && "S"}
-                </Text>
+                  onChange={() => setIsVerbatimsDisplayed(!isVerbatimsDisplayed)}
+                />
               </Box>
-              <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" px="32px">
-                <Tag
-                  fontSize="2xl"
-                  colorScheme="purple"
-                  color="purple.600"
-                  fontWeight="semibold"
-                  mr="5px"
-                  textAlign="center"
-                >
-                  {medianDuration}
-                </Tag>
-                <Text fontSize="xl" color="purple.600">
-                  TEMPS MÉDIAN DE PASSATION
-                </Text>
-              </Box>
-              <Box display="flex" alignItems="center" pl="32px">
-                <Tag
-                  fontSize="2xl"
-                  colorScheme="purple"
-                  color="purple.600"
-                  fontWeight="semibold"
-                  mr="5px"
-                  textAlign="center"
-                >
-                  {champsLibreRate + "%"}
-                </Tag>
-                <Text fontSize="xl" color="purple.600">
-                  TAUX DE RÉPONSE CHAMPS LIBRES
-                </Text>
-              </Box>
-            </HStack>
+            </>
           )}
         </Box>
 
         {categories.length > 0 && (
-          <Box w="100%" ml="27px" mt="60px">
+          <Box w="calc(100% - 27px)" ml="27px" mt="60px">
             <Stepper
               size="lg"
               colorScheme="purple"
@@ -451,6 +490,12 @@ const ViewTemoignages = () => {
                             .map((temoignage) => temoignage.reponses[question])
                             .flat()
                             .filter(Boolean);
+
+                          if (
+                            !isVerbatimsDisplayed &&
+                            matchedCardTypeAndQuestions[question] === "text"
+                          )
+                            return null;
                           return (
                             matchedIdAndQuestions[question] && (
                               <Card
