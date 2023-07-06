@@ -281,7 +281,7 @@ const ViewTemoignages = () => {
   const medianDuration = getMedianDuration(temoignages);
 
   const champsLibreRate = getChampsLibreRate(selectedCampagne?.questionnaireUI, temoignages);
-
+  console.log({ selectedCampagne });
   return (
     <Flex direction="column" w="100%" m="auto" bgColor="white">
       <Flex direction="column" w="100%" m="auto" bgColor="white">
@@ -380,7 +380,8 @@ const ViewTemoignages = () => {
                     mr="5px"
                     textAlign="center"
                   >
-                    {temoignages.length}
+                    {temoignages.length}{" "}
+                    {selectedCampagne?.seats ? `/ ${selectedCampagne.seats}` : ""}
                   </Tag>
                   <Text fontSize="xl" color="purple.600">
                     TÉMOIGNAGE{temoignages.length > 1 && "S"} RECUEILLI
