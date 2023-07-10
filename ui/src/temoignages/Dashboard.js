@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -17,7 +17,6 @@ import {
   FormLabel,
   Switch,
 } from "@chakra-ui/react";
-import { Select } from "chakra-react-select";
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import * as echarts from "echarts/core";
 import { PieChart, BarChart } from "echarts/charts";
@@ -28,9 +27,6 @@ import {
   VisualMapComponent,
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
-import { useGet } from "../common/hooks/httpHooks";
-import { _get } from "../utils/httpClient";
-import { UserContext } from "../context/UserContext";
 import {
   matchIdAndQuestions,
   matchCardTypeAndQuestions,
@@ -38,7 +34,7 @@ import {
   getChampsLibreRate,
 } from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
-import TemoignagesTable from "./Components/TemoignagesTable";
+import CampagneSelector from "./Components/CampagneSelector";
 
 echarts.use([
   TooltipComponent,
@@ -245,10 +241,7 @@ const barOption = (responses) => {
   };
 };
 
-const ViewTemoignages = () => {
-  const [userContext] = useContext(UserContext);
-  const [campagnes, loadingCampagnes, errorCampagnes] = useGet(`/api/campagnes/`);
-  const [allCampagnes, setAllCampagnes] = useState([]);
+const Dashboard = () => {
   const [selectedCampagne, setSelectedCampagne] = useState(null);
   const [temoignages, setTemoignages] = useState([]);
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
@@ -256,24 +249,10 @@ const ViewTemoignages = () => {
   const [isVerbatimsDisplayed, setIsVerbatimsDisplayed] = useState(true);
 
   useEffect(() => {
-    if (campagnes) {
-      setAllCampagnes(campagnes);
+    if (selectedCampagne) {
+      setMatchedIdAndQuestions(matchIdAndQuestions(selectedCampagne));
+      setMatchedCardTypeAndQuestions(matchCardTypeAndQuestions(selectedCampagne));
     }
-  }, [campagnes]);
-
-  useEffect(() => {
-    const getTemoignages = async () => {
-      if (selectedCampagne) {
-        const result = await _get(
-          `/api/temoignages?campagneId=${selectedCampagne._id}`,
-          userContext.token
-        );
-        setTemoignages(result);
-        setMatchedIdAndQuestions(matchIdAndQuestions(selectedCampagne));
-        setMatchedCardTypeAndQuestions(matchCardTypeAndQuestions(selectedCampagne));
-      }
-    };
-    getTemoignages();
   }, [selectedCampagne]);
 
   const categories = getCategoriesWithEmojis(selectedCampagne?.questionnaire);
@@ -301,54 +280,9 @@ const ViewTemoignages = () => {
               </>
             )}
             <Box w={selectedCampagne ? "590px" : "100%"}>
-              <Select
-                id="nomCampagne"
-                name="nomCampagne"
-                variant="filled"
-                size="lg"
-                placeholder="Campagnes"
-                isSearchable
-                isLoading={loadingCampagnes}
-                isDisabled={!!errorCampagnes}
-                chakraStyles={{
-                  control: (baseStyles) => ({
-                    ...baseStyles,
-                    backgroundColor: "purple.600!important",
-                    color: "white",
-                  }),
-                  placeholder: (baseStyles) => ({
-                    ...baseStyles,
-                    color: "white",
-                  }),
-                  dropdownIndicator: (baseStyles) => ({
-                    ...baseStyles,
-                    backgroundColor: "purple.600",
-                    color: "white",
-                  }),
-                  option: (baseStyles) => ({
-                    "&:hover": {
-                      backgroundColor: "white",
-                      color: "purple.600",
-                    },
-                    ...baseStyles,
-                    backgroundColor: "purple.600",
-                    color: "white",
-                  }),
-                  menuList: (baseStyles) => ({
-                    ...baseStyles,
-                    backgroundColor: "purple.600",
-                  }),
-                }}
-                options={
-                  allCampagnes.length > 0 &&
-                  allCampagnes.map((campagne) => ({
-                    value: campagne._id,
-                    label: campagne.nomCampagne,
-                  }))
-                }
-                onChange={({ value }) =>
-                  setSelectedCampagne(campagnes.find((campagne) => campagne._id === value))
-                }
+              <CampagneSelector
+                temoignagesSetter={setTemoignages}
+                selectedCampagneSetter={setSelectedCampagne}
               />
             </Box>
             {selectedCampagne && (
@@ -380,7 +314,8 @@ const ViewTemoignages = () => {
                     mr="5px"
                     textAlign="center"
                   >
-                    {temoignages.length}
+                    {temoignages.length}{" "}
+                    {selectedCampagne?.seats ? `/ ${selectedCampagne.seats}` : ""}
                   </Tag>
                   <Text fontSize="xl" color="purple.600">
                     TÉMOIGNAGE{temoignages.length > 1 && "S"} RECUEILLI
@@ -452,7 +387,7 @@ const ViewTemoignages = () => {
                   ).includes(question)
                 );
                 return (
-                  <Step key={index}>
+                  <Step key={index} w="100%">
                     <StepIndicator w="74px" h="74px" fontSize="40px">
                       <StepStatus complete={category.emoji} />
                     </StepIndicator>
@@ -585,9 +520,8 @@ const ViewTemoignages = () => {
           </Box>
         )}
       </Flex>
-      {temoignages.length > 0 && <TemoignagesTable temoignages={temoignages} />}
     </Flex>
   );
 };
 
-export default ViewTemoignages;
+export default Dashboard;
