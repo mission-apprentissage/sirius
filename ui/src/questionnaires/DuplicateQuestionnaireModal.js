@@ -18,7 +18,7 @@ const DuplicateModalQuestionnaire = ({ questionnaire, onClose, isOpen }) => {
         <ModalHeader>Dupliquer {questionnaire.nom}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <QuestionnaireForm questionnaire={questionnaire} isDuplicating={true} />
+          <QuestionnaireForm duplicatedQuestionnaire={questionnaire} />
         </ModalBody>
       </ModalContent>
     </Modal>
