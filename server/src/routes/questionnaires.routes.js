@@ -6,6 +6,7 @@ const {
   getQuestionnaires,
   deleteQuestionnaire,
   updateQuestionnaire,
+  getQuestionnaire,
 } = require("../controllers/questionnaires.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 
@@ -20,11 +21,15 @@ const questionnaires = () => {
     getQuestionnaires(req, res, next);
   });
 
+  router.get("/api/questionnaires/:id", verifyUser, (req, res, next) => {
+    getQuestionnaire(req, res, next);
+  });
+
   router.delete("/api/questionnaires/:id", verifyUser, (req, res, next) => {
     deleteQuestionnaire(req, res, next);
   });
 
-  router.put("/api/questionnaires/:id", validator(updateQuestionnaireSchema), (req, res, next) => {
+  router.put("/api/questionnaires/:id", verifyUser, validator(updateQuestionnaireSchema), (req, res, next) => {
     updateQuestionnaire(req, res, next);
   });
 

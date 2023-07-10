@@ -19,6 +19,15 @@ const getQuestionnaires = async (query) => {
   }
 };
 
+const getOneQuestionnaire = async (id) => {
+  try {
+    const questionnaire = await questionnairesDao.getOne(id);
+    return { success: true, body: questionnaire };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 const deleteQuestionnaire = async (id) => {
   try {
     const questionnaire = await questionnairesDao.deleteOne(id);
@@ -40,4 +49,10 @@ const updateQuestionnaire = async (id, updatedQuestionnaire) => {
   }
 };
 
-module.exports = { createQuestionnaire, getQuestionnaires, deleteQuestionnaire, updateQuestionnaire };
+module.exports = {
+  createQuestionnaire,
+  getQuestionnaires,
+  deleteQuestionnaire,
+  updateQuestionnaire,
+  getOneQuestionnaire,
+};

@@ -19,6 +19,15 @@ const getQuestionnaires = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getQuestionnaire = tryCatch(async (req, res) => {
+  const { success, body } = await questionnairesService.getOneQuestionnaire(req.params.id);
+
+  if (!success) throw new BasicError();
+  if (!body) throw new QuestionnaireNotFoundError();
+
+  return res.status(200).json(body);
+});
+
 const deleteQuestionnaire = tryCatch(async (req, res) => {
   const { success, body } = await questionnairesService.deleteQuestionnaire(req.params.id);
 
@@ -36,4 +45,4 @@ const updateQuestionnaire = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-module.exports = { createQuestionnaire, getQuestionnaires, deleteQuestionnaire, updateQuestionnaire };
+module.exports = { createQuestionnaire, getQuestionnaires, deleteQuestionnaire, updateQuestionnaire, getQuestionnaire };

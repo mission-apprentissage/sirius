@@ -41,9 +41,14 @@ const update = async (id, updatedQuestionnaire) => {
   return Questionnaire.updateOne({ _id: id, deletedAt: null }, updatedQuestionnaire);
 };
 
+const getOne = (id) => {
+  return Questionnaire.findById(id).lean();
+};
+
 module.exports = {
   create,
   getAllWithCreatorName,
   deleteOne,
   update,
+  getOne,
 };
