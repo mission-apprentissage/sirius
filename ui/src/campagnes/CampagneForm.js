@@ -141,7 +141,13 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
   });
 
   return (
-    <Flex align="center" justify="center" m="auto" width={isDuplicating ? "100%" : "80%"} py="5">
+    <Flex
+      align="center"
+      justify="center"
+      m="auto"
+      width={isDuplicating ? "100%" : "80%"}
+      py={isDuplicating ? "0" : "5"}
+    >
       <Box bg="white" p={6} rounded="md" w="100%" boxShadow={isDuplicating ? "none" : "md"}>
         <form onSubmit={formik.handleSubmit}>
           <VStack spacing={6} align="flex-start">
