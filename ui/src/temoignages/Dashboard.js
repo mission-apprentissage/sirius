@@ -38,7 +38,6 @@ import {
   getChampsLibreRate,
 } from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
-import TemoignagesTable from "./Components/TemoignagesTable";
 
 echarts.use([
   TooltipComponent,
@@ -245,7 +244,7 @@ const barOption = (responses) => {
   };
 };
 
-const ViewTemoignages = () => {
+const Dashboard = () => {
   const [userContext] = useContext(UserContext);
   const [campagnes, loadingCampagnes, errorCampagnes] = useGet(`/api/campagnes/`);
   const [allCampagnes, setAllCampagnes] = useState([]);
@@ -281,7 +280,7 @@ const ViewTemoignages = () => {
   const medianDuration = getMedianDuration(temoignages);
 
   const champsLibreRate = getChampsLibreRate(selectedCampagne?.questionnaireUI, temoignages);
-  console.log({ selectedCampagne });
+
   return (
     <Flex direction="column" w="100%" m="auto" bgColor="white">
       <Flex direction="column" w="100%" m="auto" bgColor="white">
@@ -586,9 +585,8 @@ const ViewTemoignages = () => {
           </Box>
         )}
       </Flex>
-      {temoignages.length > 0 && <TemoignagesTable temoignages={temoignages} />}
     </Flex>
   );
 };
 
-export default ViewTemoignages;
+export default Dashboard;

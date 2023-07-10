@@ -34,12 +34,12 @@ const NAV_ITEMS = [
       {
         label: "Dashboard",
         subLabel: "Afficher les statistiques d'une campagne",
-        href: "/temoignages",
+        href: "/temoignages/dashboard",
       },
       {
         label: "Gestion",
         subLabel: "Gérer les témoignages d'une campagne",
-        href: "#",
+        href: "/temoignages/gestion",
       },
     ],
   },

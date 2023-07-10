@@ -2,7 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import ViewCampagnes from "./campagnes/ViewCampagnes";
-import ViewTemoignages from "./temoignages/ViewTemoignages";
+import TemoignagesDashboard from "./temoignages/Dashboard";
+import TemoignagesManaging from "./temoignages/Managing";
 import CampagneForm from "./campagnes/CampagneForm";
 import AnswerCampagne from "./campagnes/AnswerCampagne";
 import EditCampagne from "./campagnes/EditCampagne";
@@ -20,7 +21,8 @@ function App() {
           <Route exact path="/campagnes/ajout" element={<CampagneForm />} />
           <Route exact path="/campagnes/:id/edition" element={<EditCampagne />} />
           <Route exact path="/campagnes" element={<ViewCampagnes />} />
-          <Route exact path="/temoignages" element={<ViewTemoignages />} />
+          <Route exact path="/temoignages/dashboard" element={<TemoignagesDashboard />} />
+          <Route exact path="/temoignages/gestion" element={<TemoignagesManaging />} />
         </Route>
         <Route exact path="/connexion" element={<Login />} />
         <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
