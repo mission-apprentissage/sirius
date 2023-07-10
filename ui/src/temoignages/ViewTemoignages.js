@@ -453,7 +453,7 @@ const ViewTemoignages = () => {
                   ).includes(question)
                 );
                 return (
-                  <Step key={index}>
+                  <Step key={index} w="100%">
                     <StepIndicator w="74px" h="74px" fontSize="40px">
                       <StepStatus complete={category.emoji} />
                     </StepIndicator>
