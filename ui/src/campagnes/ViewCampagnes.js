@@ -60,6 +60,7 @@ const CampagneTable = ({
               <Th>Liens</Th>
               <Th># réponses</Th>
               <Th>Nom de la campagne</Th>
+              <Th>Template</Th>
               <Th>CFA</Th>
               <Th>Formation</Th>
               <Th>Début</Th>
@@ -90,6 +91,13 @@ const CampagneTable = ({
                 <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                   <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
                     {campagne.nomCampagne}
+                  </Tooltip>
+                </Td>
+                <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <Tooltip label={campagne.questionnaireTemplateName} hasArrow arrowSize={15}>
+                    {campagne.questionnaireTemplateName
+                      ? campagne.questionnaireTemplateName
+                      : "N/A"}
                   </Tooltip>
                 </Td>
                 <Td>{campagne.cfa}</Td>
