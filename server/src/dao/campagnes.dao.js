@@ -16,7 +16,12 @@ const getAllWithTemoignageCount = async () => {
           {
             $match: {
               $expr: {
-                $eq: [{ $toObjectId: "$campagneId" }, "$$campagneId"],
+                $and: [
+                  { $eq: [{ $toObjectId: "$campagneId" }, "$$campagneId"] },
+                  {
+                    $or: [{ $eq: ["$deletedAt", null] }, { $not: { $gt: ["$deletedAt", null] } }],
+                  },
+                ],
               },
             },
           },
@@ -52,7 +57,12 @@ const getOneWithTemoignagneCount = async (id) => {
           {
             $match: {
               $expr: {
-                $eq: [{ $toObjectId: "$campagneId" }, "$$campagneId"],
+                $and: [
+                  { $eq: [{ $toObjectId: "$campagneId" }, "$$campagneId"] },
+                  {
+                    $or: [{ $eq: ["$deletedAt", null] }, { $not: { $gt: ["$deletedAt", null] } }],
+                  },
+                ],
               },
             },
           },
