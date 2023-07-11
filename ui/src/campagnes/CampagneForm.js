@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useToast } from "@chakra-ui/react";
@@ -14,21 +14,15 @@ import {
   VStack,
   HStack,
   Select,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Text,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
 } from "@chakra-ui/react";
-import MonacoEditor from "@monaco-editor/react";
 import { _post, _put } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
+import QuestionnaireSelector from "./QuestionnaireSelector";
 
 const submitHandler = async (values, editedCampagneId, token) => {
   const isEdition = !!editedCampagneId;
@@ -38,8 +32,6 @@ const submitHandler = async (values, editedCampagneId, token) => {
       `/api/campagnes/${editedCampagneId}`,
       {
         ...values,
-        questionnaire: JSON.parse(values.questionnaire),
-        questionnaireUI: JSON.parse(values.questionnaireUI),
       },
       token
     );
@@ -57,8 +49,6 @@ const submitHandler = async (values, editedCampagneId, token) => {
       `/api/campagnes/`,
       {
         ...values,
-        questionnaire: JSON.parse(values.questionnaire),
-        questionnaireUI: JSON.parse(values.questionnaireUI),
       },
       token
     );
@@ -74,29 +64,19 @@ const submitHandler = async (values, editedCampagneId, token) => {
   }
 };
 
-const validationSchema = (isQuestionnaireValid, isQuestionnaireUIValid) =>
-  Yup.object({
-    nomCampagne: Yup.string().required("Ce champ est obligatoire"),
-    cfa: Yup.string().required("Ce champ est obligatoire"),
-    formation: Yup.string().required("Ce champ est obligatoire"),
-    startDate: Yup.string().required("Ce champ est obligatoire"),
-    endDate: Yup.string().required("Ce champ est obligatoire"),
-    seats: Yup.string().required("Ce champ est obligatoire"),
-    questionnaire: Yup.string()
-      .required("Ce champ est obligatoire")
-      .test("is-json", "Le questionnaire doit être un JSON valide", () => isQuestionnaireValid),
-    questionnaireUI: Yup.string()
-      .required("Ce champ est obligatoire")
-      .test("is-json", "Le questionnaire doit être un JSON valide", () => isQuestionnaireUIValid),
-  });
+const validationSchema = Yup.object({
+  nomCampagne: Yup.string().required("Ce champ est obligatoire"),
+  cfa: Yup.string().required("Ce champ est obligatoire"),
+  formation: Yup.string().required("Ce champ est obligatoire"),
+  startDate: Yup.string().required("Ce champ est obligatoire"),
+  endDate: Yup.string().required("Ce champ est obligatoire"),
+  seats: Yup.string().required("Ce champ est obligatoire"),
+  questionnaireId: Yup.string().required("Ce champ est obligatoire"),
+});
 
 const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
   const navigate = useNavigate();
   const toast = useToast();
-  const [isQuestionnaireValid, setIsQuestionnaireValid] = useState(true);
-  const [isQuestionnaireUIValid, setIsQuestionnaireUIValid] = useState(true);
-  const [questionnaire, setQuestionnaire] = useState(null);
-  const [questionnaireUI, setQuestionnaireUI] = useState(null);
   const [userContext] = useContext(UserContext);
 
   const formik = useFormik({
@@ -107,18 +87,14 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
       startDate: campagne ? campagne.startDate : "",
       endDate: campagne ? campagne.endDate : "",
       seats: campagne ? campagne.seats : "0",
-      questionnaire: campagne ? JSON.stringify(campagne.questionnaire) : JSON.stringify({}),
-      questionnaireUI: campagne ? JSON.stringify(campagne.questionnaireUI) : JSON.stringify({}),
+      questionnaireId: campagne ? campagne.questionnaireId : "",
     },
-    validationSchema: validationSchema(isQuestionnaireValid, isQuestionnaireUIValid),
+    validationSchema,
     onSubmit: async (values) => {
       const campagneId = campagne && !isDuplicating ? campagne._id : null;
 
-      const sentQuestionnaire = questionnaire ? questionnaire : values.questionnaire;
-      const sentQuestionnaireUI = questionnaireUI ? questionnaireUI : values.questionnaireUI;
-
       const { success, message } = await submitHandler(
-        { ...values, questionnaire: sentQuestionnaire, questionnaireUI: sentQuestionnaireUI },
+        { ...values },
         campagneId,
         userContext.token
       );
@@ -139,6 +115,8 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
       }
     },
   });
+
+  console.log(formik.values);
 
   return (
     <Flex
@@ -238,83 +216,12 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
               </NumberInput>
               <FormErrorMessage>{formik.errors.seats}</FormErrorMessage>
             </FormControl>
-            <Accordion allowToggle w="100%">
-              <AccordionItem>
-                <AccordionButton>
-                  <Box flex="1" textAlign="left">
-                    <Text color={formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>
-                      Questionnaire JSON
-                    </Text>
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-                <AccordionPanel pb={4}>
-                  <FormControl isInvalid={!!formik.errors.questionnaire}>
-                    <MonacoEditor
-                      id="questionnaire"
-                      name="questionnaire"
-                      language="json"
-                      value={JSON.stringify(JSON.parse(formik.values.questionnaire), null, 2)}
-                      theme="vs-light"
-                      onChange={(value) => setQuestionnaire(value)}
-                      onValidate={(markers) => {
-                        if (markers.length === 0) {
-                          setIsQuestionnaireValid(true);
-                        } else {
-                          setIsQuestionnaireValid(false);
-                        }
-                      }}
-                      height="50vh"
-                      options={{
-                        minimap: {
-                          enabled: false,
-                        },
-                        automaticLayout: true,
-                      }}
-                    />
-                    <FormErrorMessage>{formik.errors.questionnaire}</FormErrorMessage>
-                  </FormControl>
-                </AccordionPanel>
-              </AccordionItem>
-
-              <AccordionItem>
-                <AccordionButton>
-                  <Box flex="1" textAlign="left">
-                    <Text color={formik.errors.questionnaireUI ? "#E53E3E" : "currentcolor"}>
-                      Questionnaire UI JSON
-                    </Text>
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-                <AccordionPanel pb={4}>
-                  <FormControl isInvalid={!!formik.errors.questionnaireUI}>
-                    <MonacoEditor
-                      id="questionnaireUI"
-                      name="questionnaireUI"
-                      language="json"
-                      value={JSON.stringify(JSON.parse(formik.values.questionnaireUI), null, 2)}
-                      theme="vs-light"
-                      onChange={(value) => setQuestionnaireUI(value)}
-                      onValidate={(markers) => {
-                        if (markers.length === 0) {
-                          setIsQuestionnaireUIValid(true);
-                        } else {
-                          setIsQuestionnaireUIValid(false);
-                        }
-                      }}
-                      height="50vh"
-                      options={{
-                        minimap: {
-                          enabled: false,
-                        },
-                        automaticLayout: true,
-                      }}
-                    />
-                    <FormErrorMessage>{formik.errors.questionnaireUI}</FormErrorMessage>
-                  </FormControl>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
+            <FormControl
+              isInvalid={!!formik.errors.questionnaireId && formik.touched.questionnaireId}
+            >
+              <FormLabel htmlFor="questionnaireId">Template de questionnaire</FormLabel>
+              <QuestionnaireSelector questionnaireSetter={formik.setFieldValue} />
+            </FormControl>
             <Button type="submit" colorScheme="purple" width="full">
               {isDuplicating ? "Dupliquer" : "Envoyer"}
             </Button>
