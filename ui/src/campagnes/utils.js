@@ -1,4 +1,11 @@
 export const multiStepQuestionnaireFormatter = (questionnaire) => {
+  if (
+    !questionnaire ||
+    !Object.keys(questionnaire).length ||
+    !Object.keys(questionnaire).includes("properties") ||
+    !Object.entries(questionnaire.properties).length
+  )
+    return null;
   return Object.entries(questionnaire.properties).map((property) => {
     const [key] = property;
 

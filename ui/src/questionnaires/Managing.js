@@ -79,15 +79,21 @@ const QuestionnaireTable = ({
                 </Td>
                 <Td>
                   <IconButton
-                    aria-label="Voir le questionnaire"
+                    aria-label="Aperçu du questionnaire"
                     variant="outline"
                     colorScheme="purple"
                     icon={<ViewIcon />}
-                    onClick={() => navigate(`/questionnaires/${questionnaire._id}`)}
+                    onClick={() =>
+                      window.open(
+                        `/questionnaires/${questionnaire._id}/apercu`,
+                        "_blank",
+                        "noreferrer"
+                      )
+                    }
                     mx={2}
                   />
                   <IconButton
-                    aria-label="Dupliquer la questionnaire"
+                    aria-label="Dupliquer le questionnaire"
                     variant="outline"
                     colorScheme="purple"
                     icon={<CopyIcon />}
@@ -98,7 +104,7 @@ const QuestionnaireTable = ({
                     mx={2}
                   />
                   <IconButton
-                    aria-label="Modifier la questionnaire"
+                    aria-label="Modifier le questionnaire"
                     variant="outline"
                     colorScheme="purple"
                     icon={<EditIcon />}
@@ -106,7 +112,7 @@ const QuestionnaireTable = ({
                     mx={2}
                   />
                   <IconButton
-                    aria-label="Supprimer la questionnaire"
+                    aria-label="Supprimer le questionnaire"
                     variant="outline"
                     colorScheme="purple"
                     icon={<DeleteIcon />}
