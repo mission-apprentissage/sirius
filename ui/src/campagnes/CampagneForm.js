@@ -111,12 +111,10 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
       }
 
       if (success) {
-        navigate("/campagnes");
+        navigate("/campagnes/gestion");
       }
     },
   });
-
-  console.log(formik.values);
 
   return (
     <Flex
@@ -220,7 +218,11 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
               isInvalid={!!formik.errors.questionnaireId && formik.touched.questionnaireId}
             >
               <FormLabel htmlFor="questionnaireId">Template de questionnaire</FormLabel>
-              <QuestionnaireSelector questionnaireSetter={formik.setFieldValue} />
+              <QuestionnaireSelector
+                questionnaireSetter={formik.setFieldValue}
+                questionnaireId={formik.values.questionnaireId}
+              />
+              <FormErrorMessage>{formik.errors.questionnaireId}</FormErrorMessage>
             </FormControl>
             <Button type="submit" colorScheme="purple" width="full">
               {isDuplicating ? "Dupliquer" : "Envoyer"}
