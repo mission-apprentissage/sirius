@@ -13,8 +13,7 @@ describe(__filename, () => {
       expect(err.errors.formation).to.exist;
       expect(err.errors.startDate).to.exist;
       expect(err.errors.endDate).to.exist;
-      expect(err.errors.questionnaire).to.exist;
-      expect(err.errors.questionnaireUI).to.exist;
+      expect(err.errors.questionnaireId).to.exist;
       expect(err.errors.seats).to.exist;
       done();
     });

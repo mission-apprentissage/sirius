@@ -15,8 +15,7 @@ const newCampagne = (custom = {}, hasId = false) => {
       formation: "formation1",
       startDate: moment(new Date("2022-01-01")).format("YYYY-MM-DD"),
       endDate: moment(new Date("2025-01-01")).format("YYYY-MM-DD"),
-      questionnaire: {},
-      questionnaireUI: {},
+      questionnaireId: ObjectId(faker.database.mongodbObjectId()),
       seats: 0,
     },
     custom
