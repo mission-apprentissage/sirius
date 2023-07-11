@@ -1,7 +1,7 @@
 const ObjectId = require("mongoose").mongo.ObjectId;
 const Campagne = require("../models/campagne.model");
 
-const getAllWithTemoignageCount = async () => {
+const getAllWithTemoignageCountAndTemplateName = async () => {
   return Campagne.aggregate([
     {
       $match: {
@@ -37,10 +37,34 @@ const getAllWithTemoignageCount = async () => {
     {
       $unset: ["temoignagesList"],
     },
+    {
+      $lookup: {
+        from: "questionnaires",
+        let: { questionnaireId: { $toObjectId: "$questionnaireId" } },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$_id", "$$questionnaireId"],
+              },
+            },
+          },
+        ],
+        as: "questionnaireTemplate",
+      },
+    },
+    {
+      $addFields: {
+        questionnaireTemplateName: { $arrayElemAt: ["$questionnaireTemplate.nom", 0] },
+      },
+    },
+    {
+      $unset: ["questionnaireTemplate"],
+    },
   ]);
 };
 
-const getOneWithTemoignagneCount = async (id) => {
+const getOneWithTemoignagneCountAndTemplateName = async (id) => {
   const idToObjectId = ObjectId(id);
   return Campagne.aggregate([
     {
@@ -78,6 +102,30 @@ const getOneWithTemoignagneCount = async (id) => {
     {
       $unset: ["temoignagesList"],
     },
+    {
+      $lookup: {
+        from: "questionnaires",
+        let: { questionnaireId: { $toObjectId: "$questionnaireId" } },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$_id", "$$questionnaireId"],
+              },
+            },
+          },
+        ],
+        as: "questionnaireTemplate",
+      },
+    },
+    {
+      $addFields: {
+        questionnaireTemplateName: { $arrayElemAt: ["$questionnaireTemplate.nom", 0] },
+      },
+    },
+    {
+      $unset: ["questionnaireTemplate"],
+    },
   ]);
 };
 
@@ -94,8 +142,8 @@ const update = async (id, updatedCampagne) => {
 };
 
 module.exports = {
-  getAllWithTemoignageCount,
-  getOneWithTemoignagneCount,
+  getAllWithTemoignageCountAndTemplateName,
+  getOneWithTemoignagneCountAndTemplateName,
   create,
   deleteOne,
   update,

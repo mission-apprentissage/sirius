@@ -34,6 +34,7 @@ httpTests(__filename, ({ startServer }) => {
         updatedAt: new Date().toISOString(),
         deletedAt: null,
         temoignagesCount: 0,
+        questionnaireId: response.body[0].questionnaireId,
       },
       {
         ...campagne2,
@@ -43,6 +44,7 @@ httpTests(__filename, ({ startServer }) => {
         updatedAt: new Date().toISOString(),
         deletedAt: null,
         temoignagesCount: 0,
+        questionnaireId: response.body[1].questionnaireId,
       },
     ]);
   });

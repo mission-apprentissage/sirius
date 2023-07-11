@@ -30,6 +30,7 @@ httpTests(__filename, ({ startServer }) => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
+      questionnaireId: response.body.questionnaireId,
     });
   });
   it("should return 400 and a validation error if the payload is not correct", async () => {
