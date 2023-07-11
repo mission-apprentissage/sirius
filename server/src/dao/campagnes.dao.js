@@ -56,6 +56,12 @@ const getAllWithTemoignageCountAndTemplateName = async () => {
     {
       $addFields: {
         questionnaireTemplateName: { $arrayElemAt: ["$questionnaireTemplate.nom", 0] },
+        questionnaire: {
+          $ifNull: [{ $arrayElemAt: ["$questionnaireTemplate.questionnaire", 0] }, "$questionnaire"],
+        },
+        questionnaireUI: {
+          $ifNull: [{ $arrayElemAt: ["$questionnaireTemplate.questionnaireUI", 0] }, "$questionnaireUI"],
+        },
       },
     },
     {
@@ -121,6 +127,12 @@ const getOneWithTemoignagneCountAndTemplateName = async (id) => {
     {
       $addFields: {
         questionnaireTemplateName: { $arrayElemAt: ["$questionnaireTemplate.nom", 0] },
+        questionnaire: {
+          $ifNull: [{ $arrayElemAt: ["$questionnaireTemplate.questionnaire", 0] }, "$questionnaire"],
+        },
+        questionnaireUI: {
+          $ifNull: [{ $arrayElemAt: ["$questionnaireTemplate.questionnaireUI", 0] }, "$questionnaireUI"],
+        },
       },
     },
     {
