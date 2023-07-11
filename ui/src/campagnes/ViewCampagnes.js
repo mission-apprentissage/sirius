@@ -30,7 +30,7 @@ import {
   TabPanel,
   Input,
 } from "@chakra-ui/react";
-import { AddIcon, DeleteIcon, ViewIcon, LinkIcon, EditIcon, CopyIcon } from "@chakra-ui/icons";
+import { DeleteIcon, ViewIcon, LinkIcon, EditIcon, CopyIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
 
@@ -273,14 +273,6 @@ const ViewCampagnes = () => {
   return (
     <Box display="flex" flexDirection="column" width="80%" m="auto" py="5">
       <Box mb="5" display="flex" flexDirection="row" alignItems="center">
-        <IconButton
-          aria-label="Ajouter une campagne"
-          variant="outline"
-          colorScheme="purple"
-          icon={<AddIcon />}
-          onClick={() => navigate(`/campagnes/ajout`)}
-          mr="5"
-        />
         <ExcelCampagneExport
           currentCampagnes={currentCampagnes}
           notStartedCampagnes={notStartedCampagnes}
