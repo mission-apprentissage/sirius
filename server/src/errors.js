@@ -23,6 +23,7 @@ const ErrorMessage = {
   CampagneEnded: "La campagne est terminée",
   NoSeatsAvailable: "La campagne n'a plus de places disponibles",
   EtablissementNotFoundError: "Etablissement inconnu",
+  FormationNotFoundError: "Formation inconnue",
 };
 
 const Errors = {
@@ -92,6 +93,15 @@ const Errors = {
   EtablissementNotFoundError: class NotFoundError extends BasicError {
     constructor(message, extra) {
       super(message || ErrorMessage.EtablissementNotFoundError, extra);
+    }
+
+    get status() {
+      return 404;
+    }
+  },
+  FormationNotFoundError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.FormationNotFoundError, extra);
     }
 
     get status() {
