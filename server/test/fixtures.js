@@ -11,7 +11,7 @@ const newCampagne = (custom = {}, hasId = false) => {
     {
       ...(hasId && { _id: ObjectId(faker.database.mongodbObjectId()) }),
       nomCampagne: "nom de la campagne",
-      cfa: "cfa1",
+      etablissement: "etablissement1",
       formation: "formation1",
       startDate: moment(new Date("2022-01-01")).format("YYYY-MM-DD"),
       endDate: moment(new Date("2025-01-01")).format("YYYY-MM-DD"),

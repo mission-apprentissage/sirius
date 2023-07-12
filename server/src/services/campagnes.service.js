@@ -23,6 +23,7 @@ const createCampagne = async (campagne) => {
     const createdCampagne = await campagnesDao.create(campagne);
     return { success: true, body: createdCampagne };
   } catch (error) {
+    console.log(error);
     return { success: false, body: error };
   }
 };
