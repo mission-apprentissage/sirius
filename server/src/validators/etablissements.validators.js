@@ -7,7 +7,6 @@ const createEtablissementSchema = Joi.object({
 });
 
 const updateEtablissementSchema = Joi.object({
-  data: Joi.object().required(),
   formationIds: Joi.array().required(),
 });
 
