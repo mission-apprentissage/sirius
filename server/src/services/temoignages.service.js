@@ -4,7 +4,7 @@ const { ErrorMessage } = require("../errors");
 
 const createTemoignage = async (temoignage) => {
   try {
-    const campagne = await campagnesDao.getOneWithTemoignagneCount(temoignage.campagneId);
+    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(temoignage.campagneId);
     const temoignageCount = await temoignagesDao.countByCampagne(temoignage.campagneId);
 
     if (!campagne) throw new Error("Campagne not found");
@@ -48,7 +48,7 @@ const deleteTemoignage = async (id) => {
 const updateTemoignage = async (id, updatedTemoignage) => {
   try {
     const temoignage = await temoignagesDao.update(id, updatedTemoignage);
-    const campagne = await campagnesDao.getOneWithTemoignagneCount(temoignage.campagneId);
+    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(temoignage.campagneId);
     const temoignageCount = await temoignagesDao.countByCampagne(temoignage.campagneId);
 
     if (!campagne) throw new Error("Campagne not found");

@@ -26,7 +26,18 @@ import Logo from "../assets/images/logo.svg";
 const NAV_ITEMS = [
   {
     label: "Campagnes",
-    href: "/campagnes",
+    children: [
+      {
+        label: "Ajout",
+        subLabel: "Ajouter une campagne",
+        href: "/campagnes/ajout",
+      },
+      {
+        label: "Gestion",
+        subLabel: "Gérer les campagnes",
+        href: "/campagnes/gestion",
+      },
+    ],
   },
   {
     label: "Témoignages",
@@ -40,6 +51,21 @@ const NAV_ITEMS = [
         label: "Gestion",
         subLabel: "Gérer les témoignages d'une campagne",
         href: "/temoignages/gestion",
+      },
+    ],
+  },
+  {
+    label: "Questionnaires",
+    children: [
+      {
+        label: "Ajout",
+        subLabel: "Ajouter un questionnaire",
+        href: "/questionnaires/ajout",
+      },
+      {
+        label: "Gestion",
+        subLabel: "Gérer les questionnaires",
+        href: "/questionnaires/gestion",
       },
     ],
   },

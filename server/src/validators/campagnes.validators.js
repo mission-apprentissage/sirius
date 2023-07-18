@@ -6,8 +6,7 @@ const createCampagneSchema = Joi.object({
   formation: Joi.string().valid("formation1", "formation2", "formation3").required(),
   startDate: Joi.date().required(),
   endDate: Joi.date().min(1).required(),
-  questionnaire: Joi.object().required(),
-  questionnaireUI: Joi.object().required(),
+  questionnaireId: Joi.string().required(),
   seats: Joi.number().min(0).allow(null).required(),
 });
 

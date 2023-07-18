@@ -17,6 +17,7 @@ class BasicError extends Error {
 const ErrorMessage = {
   CampagneNotFoundError: "Campagne inconnue",
   TemoignageNotFoundError: "Temoignage inconnu",
+  QuestionnaireNotFoundError: "Questionnaire inconnu",
   UnauthorizedError: "Unauthorized",
   CampagneNotStarted: "La campagne n'a pas encore commencé",
   CampagneEnded: "La campagne est terminée",
@@ -36,6 +37,15 @@ const Errors = {
   TemoignageNotFoundError: class NotFoundError extends BasicError {
     constructor(message, extra) {
       super(message || ErrorMessage.TemoignageNotFoundError, extra);
+    }
+
+    get status() {
+      return 404;
+    }
+  },
+  QuestionnaireNotFoundError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.QuestionnaireNotFoundError, extra);
     }
 
     get status() {

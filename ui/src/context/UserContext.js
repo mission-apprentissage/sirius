@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import jwt from "jwt-decode";
 import { _post } from "../utils/httpClient";
 
 const UserContext = React.createContext([{}, () => {}]);
@@ -11,8 +12,14 @@ const UserProvider = (props) => {
   const verifyUser = useCallback(async () => {
     const result = await _post(`/api/users/refreshToken`);
     if (result.success) {
+      const decodedToken = jwt(result.token);
       setUser((oldValues) => {
-        return { ...oldValues, token: result.token, loading: false };
+        return {
+          ...oldValues,
+          token: result.token,
+          loading: false,
+          currentUserId: decodedToken._id,
+        };
       });
     } else {
       setUser((oldValues) => {
