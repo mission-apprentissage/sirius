@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const formationSchema = new mongoose.Schema(
   {
     data: { type: Object, required: true },
-    campagneIds: { type: Array, default: [] },
+    campagneId: { type: String, required: true },
     deletedAt: { type: Date, default: null },
     createdBy: { type: Object, required: true },
   },
