@@ -67,6 +67,38 @@ const getAllWithTemoignageCountAndTemplateName = async () => {
     {
       $unset: ["questionnaireTemplate"],
     },
+    {
+      $lookup: {
+        from: "formations",
+        let: { campagneId: { $toString: "$_id" } },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$$campagneId", "$campagneId"],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              "data.intitule_long": 1,
+              "data.tags": 1,
+              "data.lieu_formation_adresse_computed": 1,
+            },
+          },
+          {
+            $limit: 1,
+          },
+        ],
+        as: "formation",
+      },
+    },
+    {
+      $addFields: {
+        formation: { $arrayElemAt: ["$formation", 0] },
+      },
+    },
   ]);
 };
 
@@ -137,6 +169,38 @@ const getOneWithTemoignagneCountAndTemplateName = async (id) => {
     },
     {
       $unset: ["questionnaireTemplate"],
+    },
+    {
+      $lookup: {
+        from: "formations",
+        let: { campagneId: { $toString: "$_id" } },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$$campagneId", "$campagneId"],
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              "data.intitule_long": 1,
+              "data.tags": 1,
+              "data.lieu_formation_adresse_computed": 1,
+            },
+          },
+          {
+            $limit: 1,
+          },
+        ],
+        as: "formation",
+      },
+    },
+    {
+      $addFields: {
+        formation: { $arrayElemAt: ["$formation", 0] },
+      },
     },
   ]);
 };
