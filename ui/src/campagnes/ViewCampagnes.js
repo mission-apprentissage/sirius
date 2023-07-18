@@ -59,10 +59,10 @@ const CampagneTable = ({
             <Tr>
               <Th>Liens</Th>
               <Th># réponses</Th>
+              <Th>Établissement</Th>
+              <Th>Formation</Th>
               <Th>Nom de la campagne</Th>
               <Th>Template</Th>
-              <Th>CFA</Th>
-              <Th>Formation</Th>
               <Th>Début</Th>
               <Th>Fin</Th>
               <Th>Actions</Th>
@@ -88,6 +88,34 @@ const CampagneTable = ({
                 <Td>
                   {campagne.temoignagesCount} / {campagne.seats || "∞"}
                 </Td>
+                <Td sx={{ maxWidth: "400px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {(campagne.etablissement?.data?.enseigne ||
+                    campagne.etablissement?.data?.onisep_nom) && (
+                    <Tooltip
+                      label={`${campagne.etablissement?.data?.onisep_nom} - ${campagne.etablissement?.data?.enseigne} - ${campagne.etablissement?.data?.siret}`}
+                      hasArrow
+                      arrowSize={15}
+                    >
+                      {campagne.etablissement?.data?.enseigne ||
+                        campagne.etablissement?.data?.onisep_nom}
+                    </Tooltip>
+                  )}
+                </Td>
+                <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {campagne.formation?.data?.intitule_long && (
+                    <Tooltip
+                      label={`${
+                        campagne.formation?.data?.intitule_long
+                      } - ${campagne.formation?.data?.tags.join(", ")} - ${
+                        campagne.formation?.data?.lieu_formation_adresse_computed
+                      }`}
+                      hasArrow
+                      arrowSize={15}
+                    >
+                      {campagne.formation?.data?.intitule_long}
+                    </Tooltip>
+                  )}
+                </Td>
                 <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                   <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
                     {campagne.nomCampagne}
@@ -100,8 +128,6 @@ const CampagneTable = ({
                       : "N/A"}
                   </Tooltip>
                 </Td>
-                <Td>{campagne.cfa}</Td>
-                <Td>{campagne.formation}</Td>
                 <Td>{campagne.startDate}</Td>
                 <Td>{campagne.endDate}</Td>
                 <Td>
