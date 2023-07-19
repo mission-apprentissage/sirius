@@ -86,8 +86,8 @@ const CampagneTable = ({
                       hasArrow
                       arrowSize={15}
                     >
-                      {campagne.etablissement?.data?.enseigne ||
-                        campagne.etablissement?.data?.onisep_nom}
+                      {campagne.etablissement?.data?.onisep_nom ||
+                        campagne.etablissement?.data?.enseigne}
                     </Tooltip>
                   )}
                 </Td>

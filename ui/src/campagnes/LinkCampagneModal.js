@@ -28,8 +28,8 @@ const LinkCampagneModal = ({ isOpen, onClose, campagne }) => {
                 {campagne.formation?.data?.intitule_long ? (
                   <>
                     <Text fontSize="lg">
-                      {campagne.etablissement?.data?.enseigne ||
-                        campagne.etablissement?.data?.onisep_nom}
+                      {campagne.etablissement?.data?.onisep_nom ||
+                        campagne.etablissement?.data?.enseigne}
                     </Text>
                     <Text fontSize="lg">{campagne.formation?.data?.intitule_long}</Text>
                   </>
