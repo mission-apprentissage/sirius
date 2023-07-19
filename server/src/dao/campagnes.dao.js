@@ -75,7 +75,12 @@ const formationQuery = [
         {
           $match: {
             $expr: {
-              $eq: ["$$campagneId", "$campagneId"],
+              $and: [
+                { $eq: ["$$campagneId", "$campagneId"] },
+                {
+                  $or: [{ $eq: ["$deletedAt", null] }, { $not: { $gt: ["$deletedAt", null] } }],
+                },
+              ],
             },
           },
         },
@@ -117,6 +122,7 @@ const etablissementQuery = [
         {
           $project: {
             _id: { $toString: "$_id" },
+            formationIds: 1,
             "data.onisep_nom": 1,
             "data.enseigne": 1,
             "data.siret": 1,

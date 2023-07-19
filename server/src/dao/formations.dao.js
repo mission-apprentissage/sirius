@@ -13,7 +13,7 @@ const getOne = (id) => {
 };
 
 const deleteOne = async (id) => {
-  return Formation.updateOne({ _id: id }, { deletedAt: new Date() });
+  return Formation.deleteOne({ _id: id });
 };
 
 const update = async (id, updatedFormation) => {
