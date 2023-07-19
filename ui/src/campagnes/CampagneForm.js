@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useToast } from "@chakra-ui/react";
@@ -13,108 +13,364 @@ import {
   Input,
   VStack,
   HStack,
-  Select,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Text,
 } from "@chakra-ui/react";
-import { _post, _put } from "../utils/httpClient";
+import { Select, AsyncSelect } from "chakra-react-select";
+import { _post, _put, _get, _delete } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import QuestionnaireSelector from "./QuestionnaireSelector";
 
-const submitHandler = async (values, editedCampagneId, token) => {
-  const isEdition = !!editedCampagneId;
-
-  if (isEdition) {
-    const result = await _put(
-      `/api/campagnes/${editedCampagneId}`,
-      {
-        ...values,
-      },
-      token
-    );
-
-    return result.acknowledged
-      ? {
-          success: true,
-          message: "La campagne a été mise à jour",
-        }
-      : {
-          success: false,
-        };
-  } else {
-    const result = await _post(
-      `/api/campagnes/`,
-      {
-        ...values,
-      },
-      token
-    );
-
-    return result._id
-      ? {
-          success: true,
-          message: "La campagne a été créée",
-        }
-      : {
-          success: false,
-        };
-  }
-};
-
 const validationSchema = Yup.object({
   nomCampagne: Yup.string().required("Ce champ est obligatoire"),
-  cfa: Yup.string().required("Ce champ est obligatoire"),
-  formation: Yup.string().required("Ce champ est obligatoire"),
+  formation: Yup.object().required("Ce champ est obligatoire"),
   startDate: Yup.string().required("Ce champ est obligatoire"),
   endDate: Yup.string().required("Ce champ est obligatoire"),
   seats: Yup.string().required("Ce champ est obligatoire"),
   questionnaireId: Yup.string().required("Ce champ est obligatoire"),
 });
 
+const formatOptionLabel = (props) => {
+  return (
+    <Box pointerEvents="none" onClick={(e) => e.preventDefault()}>
+      <Text>{props.intitule_long}</Text>
+      <Text fontSize="xs">
+        {props.lieu_formation_adresse_computed || props.lieu_formation_adresse}
+      </Text>
+      <Text fontSize="xs">{props.tags.join(" - ")}</Text>
+    </Box>
+  );
+};
+
+const existingEtablissementsChecker = (existingEtablissements, inputSiret) =>
+  existingEtablissements.find((etablissement) => etablissement.data.siret === inputSiret);
+
+const ACTION_TYPES = {
+  CREATE: "CREATE",
+  EDIT: "EDIT",
+  DUPLICATE: "DUPLICATE",
+};
+
+const editionSubmitHandler = async (
+  values,
+  previousValues,
+  isUsingExistingEtablissement,
+  userContext
+) => {
+  const { etablissement, formation, existingEtablissement, ...rest } = values;
+
+  const hasEtablissementChanged =
+    previousValues?.etablissement?._id !== etablissement?._id ||
+    (isUsingExistingEtablissement &&
+      existingEtablissement?._id !== previousValues?.etablissement?._id);
+
+  const hasFormationChanged = previousValues?.formation?._id !== formation?._id;
+
+  let etablissementResult;
+  let formationResult;
+  let deletedFormation;
+  let etablissementWithoutPreviousFormationId;
+
+  const campagneResult = await _put(
+    `/api/campagnes/${previousValues._id}`,
+    {
+      ...rest,
+    },
+    userContext.token
+  );
+
+  if (hasFormationChanged) {
+    deletedFormation = await _delete(
+      `/api/formations/${previousValues.formation._id}`,
+      userContext.token
+    );
+
+    formationResult = await _post(
+      `/api/formations/`,
+      {
+        data: formation,
+        campagneId: previousValues._id,
+        createdBy: userContext.currentUserId,
+      },
+      userContext.token
+    );
+  }
+
+  if (hasEtablissementChanged) {
+    const formationIdsWithoutPreviousFormation = previousValues.etablissement.formationIds.filter(
+      (formationId) => formationId !== previousValues.formation._id
+    );
+
+    etablissementWithoutPreviousFormationId = await _put(
+      `/api/etablissements/${previousValues.etablissement._id}`,
+      {
+        formationIds: [...formationIdsWithoutPreviousFormation],
+      },
+      userContext.token
+    );
+    if (!isUsingExistingEtablissement) {
+      etablissementResult = await _post(
+        `/api/etablissements/`,
+        {
+          data: etablissement,
+          formationIds: [formationResult._id],
+          createdBy: userContext.currentUserId,
+        },
+        userContext.token
+      );
+    } else {
+      etablissementResult = await _put(
+        `/api/etablissements/${existingEtablissement[0]._id}`,
+        {
+          formationIds: [...existingEtablissement[0].formationIds, formationResult._id],
+        },
+        userContext.token
+      );
+    }
+  } else {
+    const formationIdsWithoutPreviousFormation = previousValues.etablissement.formationIds.filter(
+      (formationId) => formationId !== previousValues.formation._id
+    );
+
+    etablissementWithoutPreviousFormationId = await _put(
+      `/api/etablissements/${previousValues.etablissement._id}`,
+      {
+        formationIds: [...formationIdsWithoutPreviousFormation, formationResult._id],
+      },
+      userContext.token
+    );
+  }
+
+  return (!hasEtablissementChanged && !hasFormationChanged && campagneResult.modifiedCount) ||
+    (hasFormationChanged &&
+      formationResult._id &&
+      etablissementWithoutPreviousFormationId.modifiedCount &&
+      deletedFormation.deletedCount) ||
+    (hasEtablissementChanged &&
+      (etablissementResult._id || etablissementResult.modifiedCount) &&
+      formationResult._id &&
+      deletedFormation.modifiedCount)
+    ? {
+        status: "success",
+        description: "La campagne a été mise à jour",
+      }
+    : {
+        status: "error",
+        description: "Une erreur est survenue",
+      };
+};
+
+const creationSubmitHandler = async (values, isUsingExistingEtablissement, userContext) => {
+  const { etablissement, formation, existingEtablissement, ...rest } = values;
+
+  let etablissementResult;
+  const campagneResult = await _post(
+    `/api/campagnes/`,
+    {
+      ...rest,
+    },
+    userContext.token
+  );
+  const formationResult = await _post(
+    `/api/formations/`,
+    {
+      data: formation,
+      campagneId: campagneResult._id,
+      createdBy: userContext.currentUserId,
+    },
+    userContext.token
+  );
+
+  if (!isUsingExistingEtablissement) {
+    etablissementResult = await _post(
+      `/api/etablissements/`,
+      {
+        data: etablissement,
+        formationIds: [formationResult._id],
+        createdBy: userContext.currentUserId,
+      },
+      userContext.token
+    );
+  } else {
+    const id = existingEtablissement[0]?._id || existingEtablissement._id;
+    etablissementResult = await _put(
+      `/api/etablissements/${id}`,
+      {
+        formationIds: [
+          ...(existingEtablissement[0]?.formationIds || existingEtablissement.formationIds),
+          formationResult._id,
+        ],
+      },
+      userContext.token
+    );
+  }
+
+  return campagneResult._id &&
+    formationResult._id &&
+    (etablissementResult._id || etablissementResult.modifiedCount)
+    ? {
+        status: "success",
+        description: "La campagne a été créée",
+      }
+    : {
+        status: "error",
+        description: "Une erreur est survenue",
+      };
+};
+
+const submitHandler = async (
+  actionType,
+  values,
+  userContext,
+  isUsingExistingEtablissement,
+  previousValues
+) => {
+  switch (actionType) {
+    case ACTION_TYPES.CREATE:
+      return await creationSubmitHandler(values, isUsingExistingEtablissement, userContext);
+    case ACTION_TYPES.DUPLICATE:
+      return await creationSubmitHandler(values, isUsingExistingEtablissement, userContext);
+    case ACTION_TYPES.EDIT:
+      return await editionSubmitHandler(
+        values,
+        previousValues,
+        isUsingExistingEtablissement,
+        userContext
+      );
+  }
+};
+
+const getInitialValues = (campagne) => ({
+  nomCampagne: campagne ? campagne.nomCampagne : "",
+  etablissement: campagne ? campagne.etablissement : "",
+  existingEtablissement: campagne ? campagne.etablissement : "",
+  formation: campagne ? campagne.formation : "",
+  startDate: campagne ? campagne.startDate : "",
+  endDate: campagne ? campagne.endDate : "",
+  seats: campagne ? campagne.seats : "0",
+  questionnaireId: campagne ? campagne.questionnaireId : "",
+});
+
 const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
-  const navigate = useNavigate();
-  const toast = useToast();
+  const [showAddEtablissement, setShowAddEtablissement] = useState(false);
+  const [existingEtablissements, setExistingEtablissements] = useState(null);
+  const [fetchedEtablissement, setFetchedEtablissement] = useState([]);
+  const [isUsingExistingEtablissement, setIsUsingExistingEtablissement] = useState(null);
+  const [fetchedFormations, setFetchedFormations] = useState([]);
+  const [actionType, setActionType] = useState(null);
   const [userContext] = useContext(UserContext);
 
+  const timer = useRef();
+  const navigate = useNavigate();
+  const toast = useToast();
+
   const formik = useFormik({
-    initialValues: {
-      nomCampagne: campagne ? campagne.nomCampagne : "",
-      cfa: campagne ? campagne.cfa : "",
-      formation: campagne ? campagne.formation : "",
-      startDate: campagne ? campagne.startDate : "",
-      endDate: campagne ? campagne.endDate : "",
-      seats: campagne ? campagne.seats : "0",
-      questionnaireId: campagne ? campagne.questionnaireId : "",
-    },
+    initialValues: getInitialValues(campagne),
     validationSchema,
     onSubmit: async (values) => {
-      const campagneId = campagne && !isDuplicating ? campagne._id : null;
-
-      const { success, message } = await submitHandler(
-        { ...values },
-        campagneId,
-        userContext.token
+      const { status, description } = await submitHandler(
+        actionType,
+        values,
+        userContext,
+        isUsingExistingEtablissement,
+        campagne
       );
 
       toast({
-        description: success ? message : "Une erreur est survenue",
-        status: success ? "success" : "error",
+        description,
+        status,
         duration: 5000,
         isClosable: true,
       });
 
-      if (success && isDuplicating) {
-        navigate(0);
-      }
-
-      if (success) {
+      if (status === "success") {
         navigate("/campagnes/gestion");
       }
     },
   });
+
+  useEffect(() => {
+    if (campagne && !isDuplicating) {
+      setActionType(ACTION_TYPES.EDIT);
+    }
+    if (campagne && isDuplicating) {
+      setActionType(ACTION_TYPES.DUPLICATE);
+    }
+    if (!campagne && !isDuplicating) {
+      setActionType(ACTION_TYPES.CREATE);
+    }
+  }, [campagne, isDuplicating]);
+
+  useEffect(() => {
+    const getExistingEtablissements = async () => {
+      const result = await _get(`/api/etablissements/`, userContext.token);
+      setExistingEtablissements(result);
+    };
+    getExistingEtablissements();
+  }, []);
+
+  useEffect(() => {
+    if (formik.values.existingEtablissement) {
+      setIsUsingExistingEtablissement(true);
+    } else {
+      setIsUsingExistingEtablissement(false);
+    }
+  }, [formik.values.existingEtablissement]);
+
+  useEffect(() => {
+    const getFormations = async () => {
+      const siret =
+        fetchedEtablissement[0]?.siret || // when using new etablissement
+        fetchedEtablissement[0]?.data?.siret || // when using existing etablissement
+        campagne.etablissement.data.siret; // when editing
+
+      const result = await _get(
+        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?query={"etablissement_gestionnaire_siret":"${siret}"}&page=1&limit=500`
+      );
+
+      // sort by alphabetical order
+      const orderedFormations = result.formations.sort((a, b) =>
+        a.intitule_long > b.intitule_long ? 1 : b.intitule_long > a.intitule_long ? -1 : 0
+      );
+
+      // filter by niveau
+      const filteredFormations = orderedFormations.filter(
+        (formation) => formation.niveau === "3 (CAP...)" || formation.niveau === "4 (BAC...)"
+      );
+
+      setFetchedFormations(filteredFormations);
+    };
+
+    // fetch when etablissement is selected or when editing
+    if (
+      fetchedEtablissement?.length > 0 ||
+      actionType === ACTION_TYPES.EDIT ||
+      actionType === ACTION_TYPES.DUPLICATE
+    ) {
+      getFormations();
+    }
+  }, [fetchedEtablissement, actionType]);
+
+  const debouncedSiret = (value, callback) => {
+    clearTimeout(timer.current);
+    timer.current = setTimeout(async () => {
+      const result = await _get(
+        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${value}"}&page=1&limit=1`
+      );
+
+      if (result.etablissements?.length > 0) {
+        callback(result.etablissements);
+        setFetchedEtablissement(result.etablissements);
+        formik.setFieldValue("etablissement", result.etablissements[0]);
+      } else {
+        callback([]);
+      }
+    }, 500);
+  };
 
   return (
     <Flex
@@ -139,39 +395,114 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
               />
               <FormErrorMessage>{formik.errors.nomCampagne}</FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={!!formik.errors.cfa && formik.touched.cfa}>
-              <FormLabel htmlFor="cfa">CFA</FormLabel>
+            <FormControl
+              isInvalid={
+                !!formik.errors.existingEtablissement && formik.touched.existingEtablissement
+              }
+              isDisabled={showAddEtablissement}
+            >
+              <FormLabel htmlFor="existingEtablissement">Établissements existants</FormLabel>
               <Select
-                id="cfa"
-                name="cfa"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.cfa}
-                placeholder="Choisir un CFA"
+                placeholder="Sélectionner un établissement existant"
+                size="md"
+                options={existingEtablissements}
+                getOptionLabel={(option) => option.data.onisep_nom || option.data.enseigne}
+                getOptionValue={(option) => option._id}
+                onChange={(option) => {
+                  const value = option ? [option] : [];
+                  setIsUsingExistingEtablissement(true);
+                  setFetchedEtablissement(value);
+                  formik.setFieldValue("existingEtablissement", value);
+                  formik.setFieldValue("formation", []);
+                }}
+                value={
+                  formik.values.existingEtablissement ||
+                  (isUsingExistingEtablissement && existingEtablissements)
+                }
+                isSearchable
+                isClearable
+              />
+              <FormErrorMessage>{formik.errors.existingEtablissement}</FormErrorMessage>
+              <Text
+                fontSize="xs"
+                mt="10px"
+                textDecoration="underline"
+                color="purple.500"
+                cursor="pointer"
+                w="max-content"
+                onClick={() => {
+                  setFetchedEtablissement([]);
+                  setShowAddEtablissement(!showAddEtablissement);
+                  formik.setFieldValue("existingEtablissement", []);
+                  formik.setFieldValue("etablissement", []);
+                  formik.setFieldValue("formation", []);
+                }}
               >
-                <option value="cfa1">CFA 1</option>
-                <option value="cfa2">CFA 2</option>
-                <option value="cfa3">CFA 3</option>
-              </Select>
-              <FormErrorMessage>{formik.errors.cfa}</FormErrorMessage>
+                {showAddEtablissement
+                  ? "Choisir un établissement existant"
+                  : "Ajouter un établissement"}
+              </Text>
             </FormControl>
-            <FormControl isInvalid={!!formik.errors.formation && formik.touched.formation}>
-              <FormLabel htmlFor="formation">Formation</FormLabel>
-              <Select
-                id="formation"
-                name="formation"
-                variant="filled"
-                onChange={formik.handleChange}
-                value={formik.values.formation}
-                placeholder="Choisir une formation"
+            {showAddEtablissement && (
+              <FormControl
+                isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}
               >
-                <option value="formation1">Formation 1</option>
-                <option value="formation2">Formation 2</option>
-                <option value="formation3">Formation 3</option>
-              </Select>
-              <FormErrorMessage>{formik.errors.formation}</FormErrorMessage>
-            </FormControl>
-            <HStack spacing={6} align="flex-start">
+                <FormLabel htmlFor="etablissement">Établissement</FormLabel>
+                <AsyncSelect
+                  placeholder="Entrer un SIRET"
+                  size="md"
+                  getOptionLabel={(option) => option.onisep_nom || option.enseigne}
+                  getOptionValue={(option) => option.siret}
+                  backspaceRemovesValue
+                  escapeClearsValue
+                  loadOptions={(inputValue, callback) => {
+                    const existingEtablissementFound = existingEtablissementsChecker(
+                      existingEtablissements,
+                      inputValue
+                    );
+                    if (existingEtablissementFound) {
+                      setIsUsingExistingEtablissement(true);
+                      setFetchedEtablissement([existingEtablissementFound]);
+                      setShowAddEtablissement(false);
+                      formik.setFieldValue("existingEtablissement", [existingEtablissementFound]);
+                      callback([]);
+                      toast({
+                        description: "L'établissement existe déjà et a été sélectionné",
+                        status: "info",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    } else {
+                      setIsUsingExistingEtablissement(false);
+                      debouncedSiret(inputValue, callback);
+                    }
+                  }}
+                />
+                <FormErrorMessage>{formik.errors.etablissement}</FormErrorMessage>
+              </FormControl>
+            )}
+            {(fetchedEtablissement.length || campagne?.formation?._id) && (
+              <FormControl isInvalid={!!formik.errors.formation && formik.touched.formation}>
+                <FormLabel htmlFor="formation">Formation</FormLabel>
+                <Select
+                  placeholder="Sélectionner une formation"
+                  size="md"
+                  options={fetchedFormations}
+                  getOptionLabel={(option) =>
+                    `${option.intitule_long} - ${option.tags.join(", ")} \n ${
+                      option.lieu_formation_adresse_computed
+                    }`
+                  }
+                  getOptionValue={(option) => option._id}
+                  formatOptionLabel={formatOptionLabel}
+                  onChange={(option) => formik.setFieldValue("formation", option)}
+                  value={formik.values.formation?.data || formik.values.formation}
+                  isSearchable
+                />
+                <FormErrorMessage>{formik.errors.formation}</FormErrorMessage>
+              </FormControl>
+            )}
+            <HStack spacing={6} align="flex-start" alignItems="center">
               <FormControl isInvalid={!!formik.errors.startDate && formik.touched.startDate}>
                 <FormLabel htmlFor="startDate">Date de début</FormLabel>
                 <input
@@ -194,26 +525,27 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
                 />
                 <FormErrorMessage>{formik.errors.endDate}</FormErrorMessage>
               </FormControl>
+              <FormControl isInvalid={!!formik.errors.seats && formik.touched.seats}>
+                <FormLabel htmlFor="seats">Nombre de place</FormLabel>
+                <NumberInput
+                  id="seats"
+                  name="seats"
+                  min="0"
+                  max="100"
+                  size="sm"
+                  variant="filled"
+                  onChange={(value) => formik.setFieldValue("seats", value)}
+                  value={formik.values.seats}
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+                <FormErrorMessage>{formik.errors.seats}</FormErrorMessage>
+              </FormControl>
             </HStack>
-            <FormControl isInvalid={!!formik.errors.seats && formik.touched.seats}>
-              <FormLabel htmlFor="seats">Nombre de place</FormLabel>
-              <NumberInput
-                variant="filled"
-                min="0"
-                max="100"
-                value={formik.values.seats}
-                onChange={(value) => formik.setFieldValue("seats", value)}
-                id="seats"
-                name="seats"
-              >
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-              <FormErrorMessage>{formik.errors.seats}</FormErrorMessage>
-            </FormControl>
             <FormControl
               isInvalid={!!formik.errors.questionnaireId && formik.touched.questionnaireId}
             >
