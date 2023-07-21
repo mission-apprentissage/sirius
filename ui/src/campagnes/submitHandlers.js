@@ -1,5 +1,71 @@
 import { _post, _put, _delete } from "../utils/httpClient";
 
+export const creationSubmitHandler = async (values, userContext) => {
+  const { etablissement, formation, localEtablissement } = values;
+
+  let etablissementResult;
+  let updatedEtablissementResult;
+
+  // création de la campagne et de la formation dans tout les cas
+  const campagneResult = await _post(
+    `/api/campagnes/`,
+    {
+      nomCampagne: values.nomCampagne,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      seats: values.seats,
+      questionnaireId: values.questionnaireId,
+    },
+    userContext.token
+  );
+
+  const formationResult = await _post(
+    `/api/formations/`,
+    {
+      data: formation,
+      campagneId: campagneResult._id,
+      createdBy: userContext.currentUserId,
+    },
+    userContext.token
+  );
+
+  //1er cas : utilisation d'un établissement déjà existant
+  if (localEtablissement) {
+    updatedEtablissementResult = await _put(
+      `/api/etablissements/${localEtablissement._id}`,
+      {
+        formationIds: [...localEtablissement.formationIds, formationResult._id],
+      },
+      userContext.token
+    );
+  }
+
+  //2ème cas : utilisation d'un nouvel établissement
+  if (etablissement) {
+    etablissementResult = await _post(
+      `/api/etablissements/`,
+      {
+        data: etablissement,
+        formationIds: [formationResult._id],
+        createdBy: userContext.currentUserId,
+      },
+      userContext.token
+    );
+  }
+
+  return campagneResult._id &&
+    formationResult._id &&
+    (updatedEtablissementResult.modifiedCount || etablissementResult._id)
+    ? {
+        status: "success",
+        description: "La campagne a été créée",
+      }
+    : {
+        status: "error",
+        description: "Une erreur est survenue",
+      };
+};
+
 export const editionSubmitHandler = async (values, previousValues, userContext) => {
   const { etablissement, formation, localEtablissement } = values;
 
