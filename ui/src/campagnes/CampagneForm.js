@@ -1,8 +1,5 @@
-import React, { useState, useContext, useRef, useEffect } from "react";
-import * as Yup from "yup";
-import { useFormik } from "formik";
+import React, { useState, useRef } from "react";
 import { useToast } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -21,366 +18,92 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Select, AsyncSelect } from "chakra-react-select";
-import { _post, _put, _get, _delete } from "../utils/httpClient";
-import { UserContext } from "../context/UserContext";
+import { _get } from "../utils/httpClient";
 import QuestionnaireSelector from "./QuestionnaireSelector";
-
-const validationSchema = Yup.object({
-  nomCampagne: Yup.string().required("Ce champ est obligatoire"),
-  formation: Yup.object().required("Ce champ est obligatoire"),
-  startDate: Yup.string().required("Ce champ est obligatoire"),
-  endDate: Yup.string().required("Ce champ est obligatoire"),
-  seats: Yup.string().required("Ce champ est obligatoire"),
-  questionnaireId: Yup.string().required("Ce champ est obligatoire"),
-});
+import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
+import useFetchLocalEtablissements from "../hooks/useFetchLocalEtablissements";
 
 const formatOptionLabel = (props) => {
   return (
-    <Box pointerEvents="none" onClick={(e) => e.preventDefault()}>
+    <Box>
       <Text>{props.intitule_long}</Text>
       <Text fontSize="xs">
         {props.lieu_formation_adresse_computed || props.lieu_formation_adresse}
       </Text>
-      <Text fontSize="xs">{props.tags.join(" - ")}</Text>
+      <Text fontSize="xs">{props.tags?.join(" - ")}</Text>
     </Box>
   );
 };
 
-const existingEtablissementsChecker = (existingEtablissements, inputSiret) =>
-  existingEtablissements.find((etablissement) => etablissement.data.siret === inputSiret);
+const localEtablissementsChecker = (localEtablissements, inputSiret) =>
+  localEtablissements.find((etablissement) => etablissement.data.siret === inputSiret);
 
-const ACTION_TYPES = {
-  CREATE: "CREATE",
-  EDIT: "EDIT",
-  DUPLICATE: "DUPLICATE",
-};
-
-const editionSubmitHandler = async (
-  values,
-  previousValues,
-  isUsingExistingEtablissement,
-  userContext
-) => {
-  const { etablissement, formation, existingEtablissement, ...rest } = values;
-
-  const hasEtablissementChanged =
-    previousValues?.etablissement?._id !== etablissement?._id ||
-    (isUsingExistingEtablissement &&
-      existingEtablissement?._id !== previousValues?.etablissement?._id);
-
-  const hasFormationChanged = previousValues?.formation?._id !== formation?._id;
-
-  let etablissementResult;
-  let formationResult;
-  let deletedFormation;
-  let etablissementWithoutPreviousFormationId;
-
-  const campagneResult = await _put(
-    `/api/campagnes/${previousValues._id}`,
-    {
-      ...rest,
-    },
-    userContext.token
-  );
-
-  if (hasFormationChanged) {
-    deletedFormation = await _delete(
-      `/api/formations/${previousValues.formation._id}`,
-      userContext.token
-    );
-
-    formationResult = await _post(
-      `/api/formations/`,
-      {
-        data: formation,
-        campagneId: previousValues._id,
-        createdBy: userContext.currentUserId,
-      },
-      userContext.token
-    );
-  }
-
-  if (hasEtablissementChanged) {
-    const formationIdsWithoutPreviousFormation = previousValues.etablissement.formationIds.filter(
-      (formationId) => formationId !== previousValues.formation._id
-    );
-
-    etablissementWithoutPreviousFormationId = await _put(
-      `/api/etablissements/${previousValues.etablissement._id}`,
-      {
-        formationIds: [...formationIdsWithoutPreviousFormation],
-      },
-      userContext.token
-    );
-    if (!isUsingExistingEtablissement) {
-      etablissementResult = await _post(
-        `/api/etablissements/`,
-        {
-          data: etablissement,
-          formationIds: [formationResult._id],
-          createdBy: userContext.currentUserId,
-        },
-        userContext.token
-      );
-    } else {
-      etablissementResult = await _put(
-        `/api/etablissements/${existingEtablissement[0]._id}`,
-        {
-          formationIds: [...existingEtablissement[0].formationIds, formationResult._id],
-        },
-        userContext.token
-      );
-    }
-  } else {
-    const formationIdsWithoutPreviousFormation = previousValues.etablissement.formationIds.filter(
-      (formationId) => formationId !== previousValues.formation._id
-    );
-
-    etablissementWithoutPreviousFormationId = await _put(
-      `/api/etablissements/${previousValues.etablissement._id}`,
-      {
-        formationIds: [...formationIdsWithoutPreviousFormation, formationResult._id],
-      },
-      userContext.token
-    );
-  }
-
-  return (!hasEtablissementChanged && !hasFormationChanged && campagneResult.modifiedCount) ||
-    (hasFormationChanged &&
-      formationResult._id &&
-      etablissementWithoutPreviousFormationId.modifiedCount &&
-      deletedFormation.deletedCount) ||
-    (hasEtablissementChanged &&
-      (etablissementResult._id || etablissementResult.modifiedCount) &&
-      formationResult._id &&
-      deletedFormation.modifiedCount)
-    ? {
-        status: "success",
-        description: "La campagne a été mise à jour",
-      }
-    : {
-        status: "error",
-        description: "Une erreur est survenue",
-      };
-};
-
-const creationSubmitHandler = async (values, isUsingExistingEtablissement, userContext) => {
-  const { etablissement, formation, existingEtablissement, ...rest } = values;
-
-  let etablissementResult;
-  const campagneResult = await _post(
-    `/api/campagnes/`,
-    {
-      ...rest,
-    },
-    userContext.token
-  );
-  const formationResult = await _post(
-    `/api/formations/`,
-    {
-      data: formation,
-      campagneId: campagneResult._id,
-      createdBy: userContext.currentUserId,
-    },
-    userContext.token
-  );
-
-  if (!isUsingExistingEtablissement) {
-    etablissementResult = await _post(
-      `/api/etablissements/`,
-      {
-        data: etablissement,
-        formationIds: [formationResult._id],
-        createdBy: userContext.currentUserId,
-      },
-      userContext.token
-    );
-  } else {
-    const id = existingEtablissement[0]?._id || existingEtablissement._id;
-    etablissementResult = await _put(
-      `/api/etablissements/${id}`,
-      {
-        formationIds: [
-          ...(existingEtablissement[0]?.formationIds || existingEtablissement.formationIds),
-          formationResult._id,
-        ],
-      },
-      userContext.token
-    );
-  }
-
-  return campagneResult._id &&
-    formationResult._id &&
-    (etablissementResult._id || etablissementResult.modifiedCount)
-    ? {
-        status: "success",
-        description: "La campagne a été créée",
-      }
-    : {
-        status: "error",
-        description: "Une erreur est survenue",
-      };
-};
-
-const submitHandler = async (
-  actionType,
-  values,
-  userContext,
-  isUsingExistingEtablissement,
-  previousValues
-) => {
-  switch (actionType) {
-    case ACTION_TYPES.CREATE:
-      return await creationSubmitHandler(values, isUsingExistingEtablissement, userContext);
-    case ACTION_TYPES.DUPLICATE:
-      return await creationSubmitHandler(values, isUsingExistingEtablissement, userContext);
-    case ACTION_TYPES.EDIT:
-      return await editionSubmitHandler(
-        values,
-        previousValues,
-        isUsingExistingEtablissement,
-        userContext
-      );
-  }
-};
-
-const getInitialValues = (campagne) => ({
-  nomCampagne: campagne ? campagne.nomCampagne : "",
-  etablissement: campagne ? campagne.etablissement : "",
-  existingEtablissement: campagne ? campagne.etablissement : "",
-  formation: campagne ? campagne.formation : "",
-  startDate: campagne ? campagne.startDate : "",
-  endDate: campagne ? campagne.endDate : "",
-  seats: campagne ? campagne.seats : "0",
-  questionnaireId: campagne ? campagne.questionnaireId : "",
-});
-
-const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
+const CampagneForm = ({ formik, buttonMessage }) => {
   const [showAddEtablissement, setShowAddEtablissement] = useState(false);
-  const [existingEtablissements, setExistingEtablissements] = useState(null);
-  const [fetchedEtablissement, setFetchedEtablissement] = useState([]);
-  const [isUsingExistingEtablissement, setIsUsingExistingEtablissement] = useState(null);
-  const [fetchedFormations, setFetchedFormations] = useState([]);
-  const [actionType, setActionType] = useState(null);
-  const [userContext] = useContext(UserContext);
-
+  const [inputSiret, setInputSiret] = useState(null);
+  const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
   const timer = useRef();
-  const navigate = useNavigate();
   const toast = useToast();
 
-  const formik = useFormik({
-    initialValues: getInitialValues(campagne),
-    validationSchema,
-    onSubmit: async (values) => {
-      const { status, description } = await submitHandler(
-        actionType,
-        values,
-        userContext,
-        isUsingExistingEtablissement,
-        campagne
-      );
+  const [fetchedLocalEtablissements, loadingLocalEtablissements, errorLocalEtablissements] =
+    useFetchLocalEtablissements();
+  const [fetchedFormations, loadingFormations, errorFormations] = useFetchRemoteFormations(
+    inputSiret || formik.values.localEtablissement?.data?.siret
+  );
 
-      toast({
-        description,
-        status,
-        duration: 5000,
-        isClosable: true,
-      });
-
-      if (status === "success") {
-        navigate("/campagnes/gestion");
-      }
-    },
-  });
-
-  useEffect(() => {
-    if (campagne && !isDuplicating) {
-      setActionType(ACTION_TYPES.EDIT);
-    }
-    if (campagne && isDuplicating) {
-      setActionType(ACTION_TYPES.DUPLICATE);
-    }
-    if (!campagne && !isDuplicating) {
-      setActionType(ACTION_TYPES.CREATE);
-    }
-  }, [campagne, isDuplicating]);
-
-  useEffect(() => {
-    const getExistingEtablissements = async () => {
-      const result = await _get(`/api/etablissements/`, userContext.token);
-      setExistingEtablissements(result);
-    };
-    getExistingEtablissements();
-  }, []);
-
-  useEffect(() => {
-    if (formik.values.existingEtablissement) {
-      setIsUsingExistingEtablissement(true);
-    } else {
-      setIsUsingExistingEtablissement(false);
-    }
-  }, [formik.values.existingEtablissement]);
-
-  useEffect(() => {
-    const getFormations = async () => {
-      const siret =
-        fetchedEtablissement[0]?.siret || // when using new etablissement
-        fetchedEtablissement[0]?.data?.siret || // when using existing etablissement
-        campagne.etablissement.data.siret; // when editing
-
-      const result = await _get(
-        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?query={"etablissement_gestionnaire_siret":"${siret}"}&page=1&limit=500`
-      );
-
-      // sort by alphabetical order
-      const orderedFormations = result.formations.sort((a, b) =>
-        a.intitule_long > b.intitule_long ? 1 : b.intitule_long > a.intitule_long ? -1 : 0
-      );
-
-      // filter by niveau
-      const filteredFormations = orderedFormations.filter(
-        (formation) => formation.niveau === "3 (CAP...)" || formation.niveau === "4 (BAC...)"
-      );
-
-      setFetchedFormations(filteredFormations);
-    };
-
-    // fetch when etablissement is selected or when editing
-    if (
-      fetchedEtablissement?.length > 0 ||
-      actionType === ACTION_TYPES.EDIT ||
-      actionType === ACTION_TYPES.DUPLICATE
-    ) {
-      getFormations();
-    }
-  }, [fetchedEtablissement, actionType]);
-
-  const debouncedSiret = (value, callback) => {
+  const debouncedSiret = (callback, siret) => {
     clearTimeout(timer.current);
     timer.current = setTimeout(async () => {
       const result = await _get(
-        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${value}"}&page=1&limit=1`
+        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siret}"}&page=1&limit=1`
       );
 
       if (result.etablissements?.length > 0) {
         callback(result.etablissements);
-        setFetchedEtablissement(result.etablissements);
         formik.setFieldValue("etablissement", result.etablissements[0]);
       } else {
-        callback([]);
+        callback(null);
       }
     }, 500);
   };
 
+  const loadEtablissementOptionsHandler = (inputValue, callback) => {
+    setIsLoadingRemoteEtablissement(true);
+    const localEtablissementFound = localEtablissementsChecker(
+      fetchedLocalEtablissements,
+      inputValue
+    );
+    if (localEtablissementFound) {
+      setShowAddEtablissement(false);
+      formik.setFieldValue("localEtablissement", localEtablissementFound);
+      callback(null);
+      toast({
+        description: "L'établissement existe déjà et a été sélectionné",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+      });
+      setIsLoadingRemoteEtablissement(false);
+    } else {
+      setInputSiret(inputValue);
+      debouncedSiret(callback, inputValue);
+      setIsLoadingRemoteEtablissement(false);
+    }
+  };
+
+  if (errorLocalEtablissements || errorFormations) {
+    toast({
+      title: "Une erreur s'est produite",
+      description: errorLocalEtablissements?.message || errorFormations?.message,
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+
   return (
-    <Flex
-      align="center"
-      justify="center"
-      m="auto"
-      width={isDuplicating ? "100%" : "80%"}
-      py={isDuplicating ? "0" : "5"}
-    >
-      <Box bg="white" p={6} rounded="md" w="100%" boxShadow={isDuplicating ? "none" : "md"}>
+    <Flex align="center" justify="center" m="auto" width="80%" py="5">
+      <Box bg="white" p={6} rounded="md" w="100%" boxShadow="md">
         <form onSubmit={formik.handleSubmit}>
           <VStack spacing={6} align="flex-start">
             <FormControl isInvalid={!!formik.errors.nomCampagne && formik.touched.nomCampagne}>
@@ -396,33 +119,28 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
               <FormErrorMessage>{formik.errors.nomCampagne}</FormErrorMessage>
             </FormControl>
             <FormControl
-              isInvalid={
-                !!formik.errors.existingEtablissement && formik.touched.existingEtablissement
+              isInvalid={!!formik.errors.localEtablissement && formik.touched.localEtablissement}
+              isDisabled={
+                showAddEtablissement || loadingLocalEtablissements || errorLocalEtablissements
               }
-              isDisabled={showAddEtablissement}
             >
-              <FormLabel htmlFor="existingEtablissement">Établissements existants</FormLabel>
+              <FormLabel htmlFor="localEtablissements">Établissements existants</FormLabel>
               <Select
                 placeholder="Sélectionner un établissement existant"
                 size="md"
-                options={existingEtablissements}
-                getOptionLabel={(option) => option.data.onisep_nom || option.data.enseigne}
-                getOptionValue={(option) => option._id}
+                options={fetchedLocalEtablissements}
+                getOptionLabel={(option) => option?.data?.onisep_nom || option?.data?.enseigne}
+                getOptionValue={(option) => option?._id}
                 onChange={(option) => {
-                  const value = option ? [option] : [];
-                  setIsUsingExistingEtablissement(true);
-                  setFetchedEtablissement(value);
-                  formik.setFieldValue("existingEtablissement", value);
-                  formik.setFieldValue("formation", []);
+                  formik.setFieldValue("localEtablissement", option);
+                  formik.setFieldValue("formation", null);
                 }}
-                value={
-                  formik.values.existingEtablissement ||
-                  (isUsingExistingEtablissement && existingEtablissements)
-                }
+                value={formik.values.localEtablissement}
+                isLoading={loadingLocalEtablissements}
                 isSearchable
                 isClearable
               />
-              <FormErrorMessage>{formik.errors.existingEtablissement}</FormErrorMessage>
+              <FormErrorMessage>{formik.errors.localEtablissement}</FormErrorMessage>
               <Text
                 fontSize="xs"
                 mt="10px"
@@ -431,11 +149,10 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
                 cursor="pointer"
                 w="max-content"
                 onClick={() => {
-                  setFetchedEtablissement([]);
                   setShowAddEtablissement(!showAddEtablissement);
-                  formik.setFieldValue("existingEtablissement", []);
-                  formik.setFieldValue("etablissement", []);
-                  formik.setFieldValue("formation", []);
+                  formik.setFieldValue("localEtablissement", null);
+                  formik.setFieldValue("etablissement", null);
+                  formik.setFieldValue("formation", null);
                 }}
               >
                 {showAddEtablissement
@@ -446,43 +163,28 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
             {showAddEtablissement && (
               <FormControl
                 isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}
+                isDisabled={isLoadingRemoteEtablissement}
               >
                 <FormLabel htmlFor="etablissement">Établissement</FormLabel>
                 <AsyncSelect
                   placeholder="Entrer un SIRET"
                   size="md"
-                  getOptionLabel={(option) => option.onisep_nom || option.enseigne}
-                  getOptionValue={(option) => option.siret}
+                  getOptionLabel={(option) => option?.onisep_nom || option?.enseigne}
+                  getOptionValue={(option) => option?.siret}
                   backspaceRemovesValue
                   escapeClearsValue
-                  loadOptions={(inputValue, callback) => {
-                    const existingEtablissementFound = existingEtablissementsChecker(
-                      existingEtablissements,
-                      inputValue
-                    );
-                    if (existingEtablissementFound) {
-                      setIsUsingExistingEtablissement(true);
-                      setFetchedEtablissement([existingEtablissementFound]);
-                      setShowAddEtablissement(false);
-                      formik.setFieldValue("existingEtablissement", [existingEtablissementFound]);
-                      callback([]);
-                      toast({
-                        description: "L'établissement existe déjà et a été sélectionné",
-                        status: "info",
-                        duration: 5000,
-                        isClosable: true,
-                      });
-                    } else {
-                      setIsUsingExistingEtablissement(false);
-                      debouncedSiret(inputValue, callback);
-                    }
-                  }}
+                  isClearable
+                  loadOptions={loadEtablissementOptionsHandler}
+                  isLoading={isLoadingRemoteEtablissement}
                 />
                 <FormErrorMessage>{formik.errors.etablissement}</FormErrorMessage>
               </FormControl>
             )}
-            {(fetchedEtablissement.length || campagne?.formation?._id) && (
-              <FormControl isInvalid={!!formik.errors.formation && formik.touched.formation}>
+            {(formik.values.localEtablissement || formik.values.etablissement) && (
+              <FormControl
+                isInvalid={!!formik.errors.formation && formik.touched.formation}
+                isDisabled={loadingFormations || errorFormations}
+              >
                 <FormLabel htmlFor="formation">Formation</FormLabel>
                 <Select
                   placeholder="Sélectionner une formation"
@@ -498,6 +200,7 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
                   onChange={(option) => formik.setFieldValue("formation", option)}
                   value={formik.values.formation?.data || formik.values.formation}
                   isSearchable
+                  isLoading={loadingFormations}
                 />
                 <FormErrorMessage>{formik.errors.formation}</FormErrorMessage>
               </FormControl>
@@ -557,7 +260,7 @@ const CampagneForm = ({ campagne = null, isDuplicating = false }) => {
               <FormErrorMessage>{formik.errors.questionnaireId}</FormErrorMessage>
             </FormControl>
             <Button type="submit" colorScheme="purple" width="full">
-              {isDuplicating ? "Dupliquer" : "Envoyer"}
+              {buttonMessage}
             </Button>
           </VStack>
         </form>
