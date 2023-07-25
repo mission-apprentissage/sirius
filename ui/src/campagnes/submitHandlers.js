@@ -55,7 +55,7 @@ export const creationSubmitHandler = async (values, userContext) => {
 
   return campagneResult._id &&
     formationResult._id &&
-    (updatedEtablissementResult.modifiedCount || etablissementResult._id)
+    (updatedEtablissementResult?.modifiedCount || etablissementResult?._id)
     ? {
         status: "success",
         description: "La campagne a été créée",
@@ -185,7 +185,7 @@ export const editionSubmitHandler = async (values, previousValues, userContext) 
     formationResult?._id
   );
 
-  const isSuccessCase1 = campagneResult.modifiedCount;
+  const isSuccessCase1 = campagneResult?.modifiedCount;
   const isSuccessCase2 =
     isCampagneAndFormationSuccess && updatedPreviousEtablissementResult?.modifiedCount;
   const isSuccessCase3 = isCampagneAndFormationSuccess && updatedEtablissementResult?.modifiedCount;
