@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { _get } from "../utils/httpClient";
 
-const useFetchRemoteEtablissement = () => {
+const useFetchLocalEtablissement = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,4 +25,4 @@ const useFetchRemoteEtablissement = () => {
   return [data, loading, error];
 };
 
-export default useFetchRemoteEtablissement;
+export default useFetchLocalEtablissement;
