@@ -26,7 +26,6 @@ import { useNavigate } from "react-router-dom";
 import { _delete } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
-import DuplicateCampagneModal from "./DuplicateCampagneModal";
 import DeleteCampagneConfirmationModal from "./DeleteCampagneConfirmationModal";
 import ExcelCampagneExport from "./CampagneExport";
 import LinkCampagneModal from "./LinkCampagneModal";
@@ -36,8 +35,6 @@ const CampagneTable = ({
   navigate,
   setCampagneLink,
   onOpenLink,
-  setCampagneToDuplicate,
-  onOpenDuplication,
   setCampagneToDelete,
   onOpenDeletion,
 }) => {
@@ -134,10 +131,7 @@ const CampagneTable = ({
                     variant="outline"
                     colorScheme="purple"
                     icon={<CopyIcon />}
-                    onClick={() => {
-                      setCampagneToDuplicate(campagne);
-                      onOpenDuplication();
-                    }}
+                    onClick={() => navigate(`/campagnes/${campagne._id}/duplication`)}
                     mx={2}
                   />
                   <IconButton
@@ -197,7 +191,6 @@ const ViewCampagnes = () => {
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [filteredCampagne, setFilteredCampagne] = useState([]);
   const [campagneLink, setCampagneLink] = useState(null);
-  const [campagneToDuplicate, setCampagneToDuplicate] = useState(null);
   const [campagneToDelete, setCampagneToDelete] = useState(null);
   const [searchCampagneTerm, setSearchCampagneTerm] = useState(null);
 
@@ -205,11 +198,6 @@ const ViewCampagnes = () => {
   const toast = useToast();
 
   const { isOpen: isOpenLink, onOpen: onOpenLink, onClose: onCloseLink } = useDisclosure();
-  const {
-    isOpen: isOpenDuplication,
-    onOpen: onOpenDuplication,
-    onClose: onCloseDuplication,
-  } = useDisclosure();
   const {
     isOpen: isOpenDeletion,
     onOpen: onOpenDeletion,
@@ -318,9 +306,7 @@ const ViewCampagnes = () => {
               navigate={navigate}
               setCampagneLink={setCampagneLink}
               onOpenLink={onOpenLink}
-              onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
-              setCampagneToDuplicate={setCampagneToDuplicate}
               setCampagneToDelete={setCampagneToDelete}
               onOpenDeletion={onOpenDeletion}
             />
@@ -331,9 +317,7 @@ const ViewCampagnes = () => {
               navigate={navigate}
               setCampagneLink={setCampagneLink}
               onOpenLink={onOpenLink}
-              onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
-              setCampagneToDuplicate={setCampagneToDuplicate}
               setCampagneToDelete={setCampagneToDelete}
               onOpenDeletion={onOpenDeletion}
             />
@@ -344,20 +328,13 @@ const ViewCampagnes = () => {
               navigate={navigate}
               setCampagneLink={setCampagneLink}
               onOpenLink={onOpenLink}
-              onOpenDuplication={onOpenDuplication}
               setDeletedCampagneId={setDeletedCampagneId}
-              setCampagneToDuplicate={setCampagneToDuplicate}
               setCampagneToDelete={setCampagneToDelete}
               onOpenDeletion={onOpenDeletion}
             />
           </TabPanel>
         </TabPanels>
       </Tabs>
-      <DuplicateCampagneModal
-        isOpen={isOpenDuplication}
-        onClose={onCloseDuplication}
-        campagne={campagneToDuplicate}
-      />
       <DeleteCampagneConfirmationModal
         isOpen={isOpenDeletion}
         onClose={onCloseDeletion}
