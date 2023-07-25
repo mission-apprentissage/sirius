@@ -2,9 +2,17 @@ const etablissementsDao = require("../dao/etablissements.dao");
 
 const createEtablissement = async (etablissement) => {
   try {
-    const createdetablissement = await etablissementsDao.create(etablissement);
+    const existingEtablissementQuery = {
+      "data._id": etablissement.data._id,
+    };
+    const existingEtablissement = await etablissementsDao.getAll(existingEtablissementQuery);
 
-    return { success: true, body: createdetablissement };
+    if (existingEtablissement.length) {
+      throw new Error("Etablissement déjà existant");
+    }
+    const createdEtablissement = await etablissementsDao.create(etablissement);
+
+    return { success: true, body: createdEtablissement };
   } catch (error) {
     return { success: false, body: error };
   }

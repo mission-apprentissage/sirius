@@ -1,10 +1,17 @@
 const etablissementsService = require("../services/etablissements.service");
-const { BasicError, EtablissementNotFoundError } = require("../errors");
+const {
+  BasicError,
+  EtablissementNotFoundError,
+  EtablissementAlreadyExistingError,
+  ErrorMessage,
+} = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 
 const createEtablissement = tryCatch(async (req, res) => {
   const { success, body } = await etablissementsService.createEtablissement(req.body);
 
+  if (!success && body.message === ErrorMessage.EtablissementAlreadyExistingError)
+    throw new EtablissementAlreadyExistingError();
   if (!success) throw new BasicError();
 
   return res.status(201).json(body);

@@ -24,6 +24,7 @@ const ErrorMessage = {
   NoSeatsAvailable: "La campagne n'a plus de places disponibles",
   EtablissementNotFoundError: "Etablissement inconnu",
   FormationNotFoundError: "Formation inconnue",
+  EtablissementAlreadyExistingError: "Etablissement déjà existant",
 };
 
 const Errors = {
@@ -106,6 +107,15 @@ const Errors = {
 
     get status() {
       return 404;
+    }
+  },
+  EtablissementAlreadyExistingError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.EtablissementAlreadyExistingError, extra);
+    }
+
+    get status() {
+      return 400;
     }
   },
 };
