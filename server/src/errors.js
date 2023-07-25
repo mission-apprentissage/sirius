@@ -25,6 +25,7 @@ const ErrorMessage = {
   EtablissementNotFoundError: "Etablissement inconnu",
   FormationNotFoundError: "Formation inconnue",
   EtablissementAlreadyExistingError: "Etablissement déjà existant",
+  FormationAlreadyExistingError: "Formation déjà existante",
 };
 
 const Errors = {
@@ -112,6 +113,15 @@ const Errors = {
   EtablissementAlreadyExistingError: class NotFoundError extends BasicError {
     constructor(message, extra) {
       super(message || ErrorMessage.EtablissementAlreadyExistingError, extra);
+    }
+
+    get status() {
+      return 400;
+    }
+  },
+  FormationAlreadyExistingError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.FormationAlreadyExistingError, extra);
     }
 
     get status() {

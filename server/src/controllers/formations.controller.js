@@ -1,10 +1,12 @@
 const formationsService = require("../services/formations.service");
-const { BasicError, FormationNotFoundError } = require("../errors");
+const { BasicError, FormationNotFoundError, FormationAlreadyExistingError, ErrorMessage } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 
 const createFormation = tryCatch(async (req, res) => {
   const { success, body } = await formationsService.createFormation(req.body);
 
+  if (!success && body.message === ErrorMessage.FormationAlreadyExistingError)
+    throw new FormationAlreadyExistingError();
   if (!success) throw new BasicError();
 
   return res.status(201).json(body);
