@@ -24,7 +24,7 @@ import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
 import useFetchLocalEtablissements from "../hooks/useFetchLocalEtablissements";
 import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
 
-const formatOptionLabel = (props, isFormationAlreadyAdded) => {
+const formatOptionLabel = (props, isFormationAlreadyAdded = null) => {
   props.isDisabled = isFormationAlreadyAdded;
   return (
     <Box>
@@ -210,11 +210,17 @@ const CampagneForm = ({ formik, buttonMessage }) => {
                   }
                   getOptionValue={(option) => option._id}
                   formatOptionLabel={(props) => {
-                    const localFormationIds = fetchedLocalFormations?.map(
-                      (formation) => formation.data._id
-                    );
-                    const isFormationAlreadyAdded = localFormationIds?.includes(props.id);
-                    return formatOptionLabel(props, isFormationAlreadyAdded);
+                    const initialFormationId = formik.initialValues.formation._id;
+                    // allow same formaiton in edition mode
+                    if (!initialFormationId) {
+                      const localFormationIds = fetchedLocalFormations?.map(
+                        (formation) => formation.data._id
+                      );
+
+                      const isFormationAlreadyAdded = localFormationIds?.includes(props.id);
+                      return formatOptionLabel(props, isFormationAlreadyAdded);
+                    }
+                    return formatOptionLabel(props);
                   }}
                   onChange={(option) => formik.setFieldValue("formation", option)}
                   value={formik.values.formation?.data || formik.values.formation}
