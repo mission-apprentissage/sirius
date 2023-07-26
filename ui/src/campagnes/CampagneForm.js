@@ -22,8 +22,10 @@ import { _get } from "../utils/httpClient";
 import QuestionnaireSelector from "./QuestionnaireSelector";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
 import useFetchLocalEtablissements from "../hooks/useFetchLocalEtablissements";
+import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
 
-const formatOptionLabel = (props) => {
+const formatOptionLabel = (props, isFormationAlreadyAdded) => {
+  props.isDisabled = isFormationAlreadyAdded;
   return (
     <Box>
       <Text>{props.intitule_long}</Text>
@@ -47,9 +49,15 @@ const CampagneForm = ({ formik, buttonMessage }) => {
 
   const [fetchedLocalEtablissements, loadingLocalEtablissements, errorLocalEtablissements] =
     useFetchLocalEtablissements();
-  const [fetchedFormations, loadingFormations, errorFormations] = useFetchRemoteFormations(
-    inputSiret || formik.values.localEtablissement?.data?.siret
-  );
+  const [fetchedRemoteFormations, loadingRemoteFormations, errorRemoteFormations] =
+    useFetchRemoteFormations(inputSiret || formik.values.localEtablissement?.data?.siret);
+
+  const localFormationQuery = formik.values.localEtablissement?.formationIds
+    ?.map((id) => `id=${id}`)
+    .join("&");
+
+  const [fetchedLocalFormations, loadingLocalFormations, errorLocalFormations] =
+    useFetchLocalFormations(localFormationQuery);
 
   const debouncedSiret = (callback, siret) => {
     clearTimeout(timer.current);
@@ -91,10 +99,10 @@ const CampagneForm = ({ formik, buttonMessage }) => {
     }
   };
 
-  if (errorLocalEtablissements || errorFormations) {
+  if (errorLocalEtablissements || errorRemoteFormations) {
     toast({
       title: "Une erreur s'est produite",
-      description: errorLocalEtablissements?.message || errorFormations?.message,
+      description: errorLocalEtablissements?.message || errorRemoteFormations?.message,
       status: "error",
       duration: 5000,
       isClosable: true,
@@ -183,24 +191,35 @@ const CampagneForm = ({ formik, buttonMessage }) => {
             {(formik.values.localEtablissement || formik.values.etablissement) && (
               <FormControl
                 isInvalid={!!formik.errors.formation && formik.touched.formation}
-                isDisabled={loadingFormations || errorFormations}
+                isDisabled={
+                  loadingRemoteFormations ||
+                  errorRemoteFormations ||
+                  loadingLocalFormations ||
+                  errorLocalFormations
+                }
               >
                 <FormLabel htmlFor="formation">Formation</FormLabel>
                 <Select
                   placeholder="Sélectionner une formation"
                   size="md"
-                  options={fetchedFormations}
+                  options={fetchedRemoteFormations}
                   getOptionLabel={(option) =>
                     `${option.intitule_long} - ${option.tags.join(", ")} \n ${
                       option.lieu_formation_adresse_computed
                     }`
                   }
                   getOptionValue={(option) => option._id}
-                  formatOptionLabel={formatOptionLabel}
+                  formatOptionLabel={(props) => {
+                    const localFormationIds = fetchedLocalFormations?.map(
+                      (formation) => formation.data._id
+                    );
+                    const isFormationAlreadyAdded = localFormationIds?.includes(props.id);
+                    return formatOptionLabel(props, isFormationAlreadyAdded);
+                  }}
                   onChange={(option) => formik.setFieldValue("formation", option)}
                   value={formik.values.formation?.data || formik.values.formation}
                   isSearchable
-                  isLoading={loadingFormations}
+                  isLoading={loadingRemoteFormations || loadingLocalFormations}
                 />
                 <FormErrorMessage>{formik.errors.formation}</FormErrorMessage>
               </FormControl>
