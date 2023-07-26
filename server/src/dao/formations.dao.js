@@ -5,7 +5,11 @@ const create = async (formation) => {
 };
 
 const getAll = async (query) => {
-  return Formation.find({ ...query, deletedAt: null }).lean();
+  let queryBuilder;
+  if (query.id.length) {
+    queryBuilder = { _id: { $in: query.id } };
+  }
+  return Formation.find({ ...queryBuilder, deletedAt: null }).lean();
 };
 
 const getOne = (id) => {
