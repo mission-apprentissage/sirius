@@ -56,8 +56,7 @@ const CampagneForm = ({ formik, buttonMessage }) => {
     ?.map((id) => `id=${id}`)
     .join("&");
 
-  const [fetchedLocalFormations, loadingLocalFormations, errorLocalFormations] =
-    useFetchLocalFormations(localFormationQuery);
+  const [fetchedLocalFormations] = useFetchLocalFormations(localFormationQuery);
 
   const debouncedSiret = (callback, siret) => {
     clearTimeout(timer.current);
@@ -191,12 +190,7 @@ const CampagneForm = ({ formik, buttonMessage }) => {
             {(formik.values.localEtablissement || formik.values.etablissement) && (
               <FormControl
                 isInvalid={!!formik.errors.formation && formik.touched.formation}
-                isDisabled={
-                  loadingRemoteFormations ||
-                  errorRemoteFormations ||
-                  loadingLocalFormations ||
-                  errorLocalFormations
-                }
+                isDisabled={loadingRemoteFormations || errorRemoteFormations}
               >
                 <FormLabel htmlFor="formation">Formation</FormLabel>
                 <Select
@@ -225,7 +219,7 @@ const CampagneForm = ({ formik, buttonMessage }) => {
                   onChange={(option) => formik.setFieldValue("formation", option)}
                   value={formik.values.formation?.data || formik.values.formation}
                   isSearchable
-                  isLoading={loadingRemoteFormations || loadingLocalFormations}
+                  isLoading={loadingRemoteFormations}
                 />
                 <FormErrorMessage>{formik.errors.formation}</FormErrorMessage>
               </FormControl>
