@@ -79,8 +79,8 @@ export const editionSubmitHandler = async (values, previousValues, userContext) 
 
   // 2ème cas : même établissement mais formation différente
   const isSameEtablissementButDifferentFormation = !!(
-    values.localEtablissement?._id === previousValues.etablissement._id &&
-    values.formation._id !== previousValues.formation._id
+    values.localEtablissement?._id === previousValues.etablissement?._id &&
+    values.formation?._id !== previousValues.formation?._id
   );
 
   // 3ème cas : établissement différent mais déjà connu localement et formation différente

@@ -53,6 +53,7 @@ const CampagneForm = ({ formik, buttonMessage }) => {
     useFetchRemoteFormations(inputSiret || formik.values.localEtablissement?.data?.siret);
 
   const localFormationQuery = formik.values.localEtablissement?.formationIds
+    ?.filter(Boolean)
     ?.map((id) => `id=${id}`)
     .join("&");
 
@@ -204,7 +205,7 @@ const CampagneForm = ({ formik, buttonMessage }) => {
                   }
                   getOptionValue={(option) => option._id}
                   formatOptionLabel={(props) => {
-                    const initialFormationId = formik.initialValues.formation._id;
+                    const initialFormationId = formik.initialValues.formation?._id;
                     // allow same formaiton in edition mode
                     if (!initialFormationId) {
                       const localFormationIds = fetchedLocalFormations?.map(
