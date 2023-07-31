@@ -6,7 +6,7 @@ const create = async (formation) => {
 
 const getAll = async (query) => {
   let queryBuilder;
-  if (query.id.length) {
+  if (query.id?.length) {
     queryBuilder = { _id: { $in: query.id } };
   }
   return Formation.find({ ...queryBuilder, deletedAt: null }).lean();
@@ -14,6 +14,13 @@ const getAll = async (query) => {
 
 const getOne = (id) => {
   return Formation.findById(id).lean();
+};
+
+const getOneByDataId = (id) => {
+  const query = {
+    "data._id": id,
+  };
+  return Formation.find({ ...query, deletedAt: null }).lean();
 };
 
 const deleteOne = async (id) => {
@@ -28,6 +35,7 @@ module.exports = {
   create,
   getAll,
   getOne,
+  getOneByDataId,
   deleteOne,
   update,
 };

@@ -2,11 +2,7 @@ const formationsDao = require("../dao/formations.dao");
 
 const createFormation = async (formation) => {
   try {
-    const existingFormationQuery = {
-      "data._id": formation.data._id,
-    };
-    const existingFormation = await formationsDao.getAll(existingFormationQuery);
-
+    const existingFormation = await formationsDao.getOneByDataId(formation.data._id);
     if (existingFormation.length) {
       throw new Error("Formation déjà existante");
     }
