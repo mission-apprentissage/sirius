@@ -6,7 +6,7 @@ const create = async (formation) => {
 
 const getAll = async (query) => {
   let queryBuilder;
-  if (query.id?.length) {
+  if (query.id) {
     queryBuilder = { _id: { $in: query.id } };
   }
   return Formation.find({ ...queryBuilder, deletedAt: null }).lean();
