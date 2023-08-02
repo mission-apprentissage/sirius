@@ -79,15 +79,16 @@ export const editionSubmitHandler = async (values, previousValues, userContext) 
 
   // 2ème cas : même établissement mais formation différente
   const isSameEtablissementButDifferentFormation = !!(
-    values.localEtablissement?._id === previousValues.etablissement?._id &&
+    values.localEtablissement &&
+    values.localEtablissement._id === previousValues.etablissement?._id &&
     values.formation?._id !== previousValues.formation?._id
   );
 
   // 3ème cas : établissement différent mais déjà connu localement et formation différente
   const isDifferentEtablissementButAlreadyKnownLocallyAndDifferentFormation = !!(
     values?.localEtablissement &&
-    values?.localEtablissement._id !== previousValues.etablissement._id &&
-    values.formation._id !== previousValues.formation._id
+    values?.localEtablissement?._id !== previousValues.etablissement?._id &&
+    values.formation?._id !== previousValues.formation?._id
   );
 
   // 4ème cas : établissement différent inconnu localement et formation différente
@@ -114,10 +115,12 @@ export const editionSubmitHandler = async (values, previousValues, userContext) 
     isDifferentEtablissementAndUnknownLocallyAndDifferentFormation
   ) {
     // Suppression de la formation courante dans les cas 2,3,4
-    deletedFormation = await _delete(
-      `/api/formations/${previousValues?.formation?._id}`,
-      userContext.token
-    );
+    if (previousValues?.formation?._id) {
+      deletedFormation = await _delete(
+        `/api/formations/${previousValues?.formation?._id}`,
+        userContext.token
+      );
+    }
 
     // Ajout d'une nouvelle formation dans les cas 2,3,4
     formationResult = await _post(
@@ -137,22 +140,25 @@ export const editionSubmitHandler = async (values, previousValues, userContext) 
     isDifferentEtablissementButAlreadyKnownLocallyAndDifferentFormation ||
     isDifferentEtablissementAndUnknownLocallyAndDifferentFormation
   ) {
-    const formationIdsWithoutPreviousFormation = previousValues.etablissement.formationIds.filter(
-      (formationId) => formationId !== previousValues.formation._id
-    );
+    if (previousValues.etablissement?.formationIds) {
+      const formationIdsWithoutPreviousFormation =
+        previousValues.etablissement?.formationIds?.filter(
+          (formationId) => formationId !== previousValues.formation._id
+        );
 
-    // Ajout de l'id de la nouvelle formation dans le cas 2 sinon uniquement retrait de l'id précédent dans le cas 3 et 4
-    const formationIds = isSameEtablissementButDifferentFormation
-      ? [...formationIdsWithoutPreviousFormation, formationResult._id]
-      : formationIdsWithoutPreviousFormation;
+      // Ajout de l'id de la nouvelle formation dans le cas 2 sinon uniquement retrait de l'id précédent dans le cas 3 et 4
+      const formationIds = isSameEtablissementButDifferentFormation
+        ? [...formationIdsWithoutPreviousFormation, formationResult?._id]
+        : formationIdsWithoutPreviousFormation;
 
-    updatedPreviousEtablissementResult = await _put(
-      `/api/etablissements/${previousValues.etablissement._id}`,
-      {
-        formationIds: formationIds,
-      },
-      userContext.token
-    );
+      updatedPreviousEtablissementResult = await _put(
+        `/api/etablissements/${previousValues?.etablissement?._id}`,
+        {
+          formationIds: formationIds,
+        },
+        userContext.token
+      );
+    }
 
     // Mise à jour de l'établissement déjà connu dans le cas 3
     if (isDifferentEtablissementButAlreadyKnownLocallyAndDifferentFormation) {
