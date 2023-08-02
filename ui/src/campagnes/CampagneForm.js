@@ -137,7 +137,11 @@ const CampagneForm = ({ formik, buttonMessage }) => {
                 placeholder="Sélectionner un établissement existant"
                 size="md"
                 options={fetchedLocalEtablissements}
-                getOptionLabel={(option) => option?.data?.onisep_nom || option?.data?.enseigne}
+                getOptionLabel={(option) =>
+                  option?.data?.onisep_nom ||
+                  option?.data?.enseigne ||
+                  option?.data?.entreprise_raison_sociale
+                }
                 getOptionValue={(option) => option?._id}
                 onChange={(option) => {
                   formik.setFieldValue("localEtablissement", option);
@@ -177,7 +181,9 @@ const CampagneForm = ({ formik, buttonMessage }) => {
                 <AsyncSelect
                   placeholder="Entrer un SIRET"
                   size="md"
-                  getOptionLabel={(option) => option?.onisep_nom || option?.enseigne}
+                  getOptionLabel={(option) =>
+                    option?.onisep_nom || option?.enseigne || option?.entreprise_raison_sociale
+                  }
                   getOptionValue={(option) => option?.siret}
                   backspaceRemovesValue
                   escapeClearsValue

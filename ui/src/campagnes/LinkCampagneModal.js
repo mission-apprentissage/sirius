@@ -29,7 +29,8 @@ const LinkCampagneModal = ({ isOpen, onClose, campagne }) => {
                   <>
                     <Text fontSize="lg">
                       {campagne.etablissement?.data?.onisep_nom ||
-                        campagne.etablissement?.data?.enseigne}
+                        campagne.etablissement?.data?.enseigne ||
+                        campagne.etablissement?.data?.entreprise_raison_sociale}
                     </Text>
                     <Text fontSize="lg">{campagne.formation?.data?.intitule_long}</Text>
                   </>

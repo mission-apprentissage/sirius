@@ -47,7 +47,9 @@ const createWs = (campagnes) => {
         Math.max(
           ...campagnes.map(
             (row) =>
-              row.etablissement?.data?.enseigne.length || row.etablissement?.data?.onisep_nom.length
+              row.etablissement?.data?.enseigne.length ||
+              row.etablissement?.data?.onisep_nom.length ||
+              row.etablissement?.data?.entreprise_raison_sociale
           )
         ) + 10,
     },
@@ -109,7 +111,9 @@ const exportedDataFilter = (campagnes) =>
     id: campagne._id,
     nomCampagne: campagne.nomCampagne,
     etablissement:
-      campagne.etablissement?.data?.enseigne || campagne.etablissement?.data?.onisep_nom,
+      campagne.etablissement?.data?.enseigne ||
+      campagne.etablissement?.data?.onisep_nom ||
+      campagne.etablissement?.data?.entreprise_raison_sociale,
     formation: campagne.formation?.data?.intitule_long,
     startDate: new Date(campagne.startDate).toLocaleDateString("fr-FR"),
     endDate: new Date(campagne.endDate).toLocaleDateString("fr-FR"),
