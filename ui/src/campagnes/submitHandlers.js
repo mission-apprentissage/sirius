@@ -115,7 +115,7 @@ export const editionSubmitHandler = async (values, previousValues, userContext) 
   ) {
     // Suppression de la formation courante dans les cas 2,3,4
     deletedFormation = await _delete(
-      `/api/formations/${previousValues.formation._id}`,
+      `/api/formations/${previousValues?.formation?._id}`,
       userContext.token
     );
 
@@ -124,7 +124,7 @@ export const editionSubmitHandler = async (values, previousValues, userContext) 
       `/api/formations/`,
       {
         data: formation,
-        campagneId: previousValues._id,
+        campagneId: previousValues?._id,
         createdBy: userContext.currentUserId,
       },
       userContext.token
