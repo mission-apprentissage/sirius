@@ -1,11 +1,19 @@
 const express = require("express");
 const validator = require("../middlewares/validatorMiddleware");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
-const loginSchema = require("../validators/users.validators");
-const { loginUser, refreshTokenUser, getCurrentUser, logoutUser } = require("../controllers/users.controller");
+const { loginSchema, subscribeSchema } = require("../validators/users.validators");
+const {
+  loginUser,
+  refreshTokenUser,
+  getCurrentUser,
+  logoutUser,
+  createUser,
+} = require("../controllers/users.controller");
 
-const temoignages = () => {
+const users = () => {
   const router = express.Router();
+
+  router.post("/api/users/", validator(subscribeSchema), (req, res, next) => createUser(req, res, next));
 
   router.post("/api/users/login/", validator(loginSchema), verifyUser, (req, res, next) => loginUser(req, res, next));
 
@@ -18,4 +26,4 @@ const temoignages = () => {
   return router;
 };
 
-module.exports = temoignages;
+module.exports = users;

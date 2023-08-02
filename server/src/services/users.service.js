@@ -3,6 +3,15 @@ const config = require("../config");
 const usersDao = require("../dao/users.dao");
 const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
 
+const createUser = async (user) => {
+  try {
+    const newUser = await usersDao.create(user);
+    return { success: true, body: newUser };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 const loginUser = async (id) => {
   try {
     const token = getToken({ _id: id });
@@ -58,4 +67,4 @@ const logoutUser = async (id, refreshToken) => {
   }
 };
 
-module.exports = { loginUser, refreshTokenUser, logoutUser };
+module.exports = { loginUser, refreshTokenUser, logoutUser, createUser };

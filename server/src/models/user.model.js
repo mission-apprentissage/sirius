@@ -23,6 +23,26 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  permission: {
+    type: String,
+    default: "user",
+    required: true,
+  },
+  validated: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
+  comment: {
+    type: String,
+    default: "",
+  },
+  siret: {
+    type: String,
+  },
+  etablissement: {
+    type: Object,
+  },
   authStrategy: {
     type: String,
     default: STRATEGIES.local,
@@ -40,7 +60,13 @@ userSchema.set("toJSON", {
   },
 });
 
-userSchema.plugin(passportLocalMongoose);
+const options = {
+  errorMessages: {
+    UserExistsError: "Un utilisateur avec cet email existe déjà",
+  },
+};
+
+userSchema.plugin(passportLocalMongoose, options);
 
 const User = mongoose.model("User", userSchema);
 

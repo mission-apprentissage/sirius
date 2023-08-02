@@ -26,6 +26,7 @@ const ErrorMessage = {
   FormationNotFoundError: "Formation inconnue",
   EtablissementAlreadyExistingError: "Etablissement déjà existant",
   FormationAlreadyExistingError: "Formation déjà existante",
+  UserAlreadyExistsError: "Un utilisateur avec cet email existe déjà",
 };
 
 const Errors = {
@@ -122,6 +123,15 @@ const Errors = {
   FormationAlreadyExistingError: class NotFoundError extends BasicError {
     constructor(message, extra) {
       super(message || ErrorMessage.FormationAlreadyExistingError, extra);
+    }
+
+    get status() {
+      return 400;
+    }
+  },
+  UserAlreadyExistsError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.UserAlreadyExistsError, extra);
     }
 
     get status() {
