@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
-import { editionSubmitHandler } from "./submitHandlers";
+import { creationSubmitHandler } from "./submitHandlers";
 import CampagneForm from "./CampagneForm";
 
 const validationSchema = Yup.object({
@@ -21,14 +21,14 @@ const validationSchema = Yup.object({
 const getInitialValues = (campagne) => ({
   nomCampagne: campagne ? campagne.nomCampagne : "",
   localEtablissement: campagne ? campagne.etablissement : "",
-  formation: campagne ? campagne.formation : "",
+  formation: "",
   startDate: campagne ? campagne.startDate : "",
   endDate: campagne ? campagne.endDate : "",
   seats: campagne ? campagne.seats : "0",
   questionnaireId: campagne ? campagne.questionnaireId : "",
 });
 
-const EditCampagne = () => {
+const DuplicateCampagne = () => {
   const { id } = useParams();
   const toast = useToast();
   const [userContext] = useContext(UserContext);
@@ -58,7 +58,7 @@ const EditCampagne = () => {
       initialValues={getInitialValues(campagne)}
       validationSchema={validationSchema}
       onSubmit={async (values) => {
-        const { status, description } = await editionSubmitHandler(values, campagne, userContext);
+        const { status, description } = await creationSubmitHandler(values, userContext);
 
         toast({
           description,
@@ -72,9 +72,9 @@ const EditCampagne = () => {
         }
       }}
     >
-      {(formik) => <CampagneForm formik={formik} buttonMessage="Éditer" />}
+      {(formik) => <CampagneForm formik={formik} buttonMessage="Dupliquer" />}
     </Formik>
   );
 };
 
-export default EditCampagne;
+export default DuplicateCampagne;

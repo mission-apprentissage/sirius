@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
-  Center,
   IconButton,
   Spinner,
   Table,
@@ -10,16 +9,7 @@ import {
   Th,
   Td,
   TableContainer,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
-  Text,
-  VStack,
-  Link,
   useToast,
   Tooltip,
   Box,
@@ -32,22 +22,19 @@ import {
 } from "@chakra-ui/react";
 import { DeleteIcon, ViewIcon, LinkIcon, EditIcon, CopyIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
-import QRCode from "react-qr-code";
 
 import { _delete } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
-import DuplicateCampagneModal from "./DuplicateCampagneModal";
 import DeleteCampagneConfirmationModal from "./DeleteCampagneConfirmationModal";
 import ExcelCampagneExport from "./CampagneExport";
+import LinkCampagneModal from "./LinkCampagneModal";
 
 const CampagneTable = ({
   campagnes,
   navigate,
-  setCampagneLinks,
-  onOpenLinks,
-  setCampagneToDuplicate,
-  onOpenDuplication,
+  setCampagneLink,
+  onOpenLink,
   setCampagneToDelete,
   onOpenDeletion,
 }) => {
@@ -59,10 +46,10 @@ const CampagneTable = ({
             <Tr>
               <Th>Liens</Th>
               <Th># réponses</Th>
+              <Th>Établissement</Th>
+              <Th>Formation</Th>
               <Th>Nom de la campagne</Th>
               <Th>Template</Th>
-              <Th>CFA</Th>
-              <Th>Formation</Th>
               <Th>Début</Th>
               <Th>Fin</Th>
               <Th>Actions</Th>
@@ -80,13 +67,41 @@ const CampagneTable = ({
                     colorScheme="purple"
                     icon={<LinkIcon />}
                     onClick={() => {
-                      setCampagneLinks(campagne);
-                      onOpenLinks();
+                      setCampagneLink(campagne);
+                      onOpenLink();
                     }}
                   />
                 </Td>
                 <Td>
                   {campagne.temoignagesCount} / {campagne.seats || "∞"}
+                </Td>
+                <Td sx={{ maxWidth: "400px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {(campagne.etablissement?.data?.enseigne ||
+                    campagne.etablissement?.data?.onisep_nom) && (
+                    <Tooltip
+                      label={`${campagne.etablissement?.data?.onisep_nom} - ${campagne.etablissement?.data?.enseigne} - ${campagne.etablissement?.data?.siret}`}
+                      hasArrow
+                      arrowSize={15}
+                    >
+                      {campagne.etablissement?.data?.onisep_nom ||
+                        campagne.etablissement?.data?.enseigne}
+                    </Tooltip>
+                  )}
+                </Td>
+                <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {campagne.formation?.data?.intitule_long && (
+                    <Tooltip
+                      label={`${
+                        campagne.formation?.data?.intitule_long
+                      } - ${campagne.formation?.data?.tags.join(", ")} - ${
+                        campagne.formation?.data?.lieu_formation_adresse_computed
+                      }`}
+                      hasArrow
+                      arrowSize={15}
+                    >
+                      {campagne.formation?.data?.intitule_long}
+                    </Tooltip>
+                  )}
                 </Td>
                 <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                   <Tooltip label={campagne.nomCampagne} hasArrow arrowSize={15}>
@@ -100,8 +115,6 @@ const CampagneTable = ({
                       : "N/A"}
                   </Tooltip>
                 </Td>
-                <Td>{campagne.cfa}</Td>
-                <Td>{campagne.formation}</Td>
                 <Td>{campagne.startDate}</Td>
                 <Td>{campagne.endDate}</Td>
                 <Td>
@@ -118,10 +131,7 @@ const CampagneTable = ({
                     variant="outline"
                     colorScheme="purple"
                     icon={<CopyIcon />}
-                    onClick={() => {
-                      setCampagneToDuplicate(campagne);
-                      onOpenDuplication();
-                    }}
+                    onClick={() => navigate(`/campagnes/${campagne._id}/duplication`)}
                     mx={2}
                   />
                   <IconButton
@@ -180,20 +190,14 @@ const ViewCampagnes = () => {
   const [deletedCampagneId, setDeletedCampagneId] = useState(null);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [filteredCampagne, setFilteredCampagne] = useState([]);
-  const [campagneLinks, setCampagneLinks] = useState(null);
-  const [campagneToDuplicate, setCampagneToDuplicate] = useState(null);
+  const [campagneLink, setCampagneLink] = useState(null);
   const [campagneToDelete, setCampagneToDelete] = useState(null);
   const [searchCampagneTerm, setSearchCampagneTerm] = useState(null);
 
   const navigate = useNavigate();
   const toast = useToast();
 
-  const { isOpen: isOpenLinks, onOpen: onOpenLinks, onClose: onCloseLinks } = useDisclosure();
-  const {
-    isOpen: isOpenDuplication,
-    onOpen: onOpenDuplication,
-    onClose: onCloseDuplication,
-  } = useDisclosure();
+  const { isOpen: isOpenLink, onOpen: onOpenLink, onClose: onCloseLink } = useDisclosure();
   const {
     isOpen: isOpenDeletion,
     onOpen: onOpenDeletion,
@@ -300,11 +304,9 @@ const ViewCampagnes = () => {
             <CampagneTable
               campagnes={currentCampagnes}
               navigate={navigate}
-              setCampagneLinks={setCampagneLinks}
-              onOpenLinks={onOpenLinks}
-              onOpenDuplication={onOpenDuplication}
+              setCampagneLink={setCampagneLink}
+              onOpenLink={onOpenLink}
               setDeletedCampagneId={setDeletedCampagneId}
-              setCampagneToDuplicate={setCampagneToDuplicate}
               setCampagneToDelete={setCampagneToDelete}
               onOpenDeletion={onOpenDeletion}
             />
@@ -313,11 +315,9 @@ const ViewCampagnes = () => {
             <CampagneTable
               campagnes={notStartedCampagnes}
               navigate={navigate}
-              setCampagneLinks={setCampagneLinks}
-              onOpenLinks={onOpenLinks}
-              onOpenDuplication={onOpenDuplication}
+              setCampagneLink={setCampagneLink}
+              onOpenLink={onOpenLink}
               setDeletedCampagneId={setDeletedCampagneId}
-              setCampagneToDuplicate={setCampagneToDuplicate}
               setCampagneToDelete={setCampagneToDelete}
               onOpenDeletion={onOpenDeletion}
             />
@@ -326,59 +326,22 @@ const ViewCampagnes = () => {
             <CampagneTable
               campagnes={endedCampagnes}
               navigate={navigate}
-              setCampagneLinks={setCampagneLinks}
-              onOpenLinks={onOpenLinks}
-              onOpenDuplication={onOpenDuplication}
+              setCampagneLink={setCampagneLink}
+              onOpenLink={onOpenLink}
               setDeletedCampagneId={setDeletedCampagneId}
-              setCampagneToDuplicate={setCampagneToDuplicate}
               setCampagneToDelete={setCampagneToDelete}
               onOpenDeletion={onOpenDeletion}
             />
           </TabPanel>
         </TabPanels>
       </Tabs>
-      <DuplicateCampagneModal
-        isOpen={isOpenDuplication}
-        onOpen={onOpenDuplication}
-        onClose={onCloseDuplication}
-        campagne={campagneToDuplicate}
-      />
       <DeleteCampagneConfirmationModal
         isOpen={isOpenDeletion}
-        onOpen={onOpenDeletion}
         onClose={onCloseDeletion}
         campagne={campagneToDelete}
         setDeletedCampagneId={setDeletedCampagneId}
       />
-      <Modal onClose={onCloseLinks} isOpen={isOpenLinks} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Lien et QR code</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {/* TODO: replace with env var */}
-            {campagneLinks && (
-              <Center>
-                <VStack spacing={6}>
-                  <Text fontSize="lg">{campagneLinks.nomCampagne}</Text>
-                  <QRCode
-                    value={`${window.location.protocol}//${window.location.hostname}/campagnes/${campagneLinks._id}`}
-                    fgColor="#6B46C1"
-                  />
-                  <Link
-                    href={`/campagnes/${campagneLinks._id}`}
-                    isExternal
-                    mt={4}
-                    fontSize="sm"
-                    wordBreak="break-all"
-                    maxW="100%"
-                  >{`${window.location.protocol}//${window.location.hostname}/campagnes/${campagneLinks._id}`}</Link>
-                </VStack>
-              </Center>
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <LinkCampagneModal isOpen={isOpenLink} onClose={onCloseLink} campagne={campagneLink} />
     </Box>
   );
 };

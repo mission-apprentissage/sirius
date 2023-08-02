@@ -15,7 +15,7 @@ const Heading = [
     nomCampagne: "Nom de la campagne",
     seats: "Places",
     temoignagesCount: "Nombre de témoignages",
-    cfa: "CFA",
+    etablissement: "Établissement",
     formation: "Formation",
     startDate: "Date de début",
     endDate: "Date de fin",
@@ -27,11 +27,11 @@ const createWs = (campagnes) => {
   campagnes.map((campagne) => delete campagne.id);
   const ws = utils.json_to_sheet(Heading, {
     header: [
-      "nomCampagne",
       "seats",
       "temoignagesCount",
-      "cfa",
+      "etablissement",
       "formation",
+      "nomCampagne",
       "startDate",
       "endDate",
       "link",
@@ -40,11 +40,19 @@ const createWs = (campagnes) => {
     origin: 0,
   });
   ws["!cols"] = [
-    { wch: Math.max(...campagnes.map((row) => row.nomCampagne.length)) },
     { wch: Math.max(...campagnes.map((row) => row.seats.length)) },
     { wch: 20 },
-    { wch: Math.max(...campagnes.map((row) => row.cfa.length)) },
-    { wch: Math.max(...campagnes.map((row) => row.formation.length)) },
+    {
+      wch:
+        Math.max(
+          ...campagnes.map(
+            (row) =>
+              row.etablissement?.data?.enseigne.length || row.etablissement?.data?.onisep_nom.length
+          )
+        ) + 10,
+    },
+    { wch: Math.max(...campagnes.map((row) => row.formation?.data?.intitule_long.length)) + 10 },
+    { wch: Math.max(...campagnes.map((row) => row.nomCampagne.length)) },
     { wch: Math.max(...campagnes.map((row) => row.startDate.length)) + 3 },
     {
       wch: Math.max(...campagnes.map((row) => row.endDate.length)) + 3,
@@ -56,11 +64,11 @@ const createWs = (campagnes) => {
 
   utils.sheet_add_json(ws, campagnes, {
     header: [
-      "nomCampagne",
       "seats",
       "temoignagesCount",
-      "cfa",
+      "etablissement",
       "formation",
+      "nomCampagne",
       "startDate",
       "endDate",
       "link",
@@ -100,8 +108,9 @@ const exportedDataFilter = (campagnes) =>
   campagnes.map((campagne) => ({
     id: campagne._id,
     nomCampagne: campagne.nomCampagne,
-    cfa: campagne.cfa,
-    formation: campagne.formation,
+    etablissement:
+      campagne.etablissement?.data?.enseigne || campagne.etablissement?.data?.onisep_nom,
+    formation: campagne.formation?.data?.intitule_long,
     startDate: new Date(campagne.startDate).toLocaleDateString("fr-FR"),
     endDate: new Date(campagne.endDate).toLocaleDateString("fr-FR"),
     link: `${window.location.protocol}//${window.location.hostname}/campagnes/${campagne._id}`,

@@ -22,6 +22,10 @@ const ErrorMessage = {
   CampagneNotStarted: "La campagne n'a pas encore commencé",
   CampagneEnded: "La campagne est terminée",
   NoSeatsAvailable: "La campagne n'a plus de places disponibles",
+  EtablissementNotFoundError: "Etablissement inconnu",
+  FormationNotFoundError: "Formation inconnue",
+  EtablissementAlreadyExistingError: "Etablissement déjà existant",
+  FormationAlreadyExistingError: "Formation déjà existante",
 };
 
 const Errors = {
@@ -86,6 +90,42 @@ const Errors = {
 
     get status() {
       return 403;
+    }
+  },
+  EtablissementNotFoundError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.EtablissementNotFoundError, extra);
+    }
+
+    get status() {
+      return 404;
+    }
+  },
+  FormationNotFoundError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.FormationNotFoundError, extra);
+    }
+
+    get status() {
+      return 404;
+    }
+  },
+  EtablissementAlreadyExistingError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.EtablissementAlreadyExistingError, extra);
+    }
+
+    get status() {
+      return 400;
+    }
+  },
+  FormationAlreadyExistingError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.FormationAlreadyExistingError, extra);
+    }
+
+    get status() {
+      return 400;
     }
   },
 };

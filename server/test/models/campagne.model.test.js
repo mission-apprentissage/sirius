@@ -9,7 +9,7 @@ describe(__filename, () => {
 
     createdCampagne.validate((err) => {
       expect(err.errors.nomCampagne).to.exist;
-      expect(err.errors.cfa).to.exist;
+      expect(err.errors.etablissement).to.exist;
       expect(err.errors.formation).to.exist;
       expect(err.errors.startDate).to.exist;
       expect(err.errors.endDate).to.exist;

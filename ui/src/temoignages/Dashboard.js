@@ -14,8 +14,6 @@ import {
   StepSeparator,
   StepStatus,
   Stepper,
-  FormLabel,
-  Switch,
 } from "@chakra-ui/react";
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import * as echarts from "echarts/core";
@@ -27,14 +25,9 @@ import {
   VisualMapComponent,
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
-import {
-  matchIdAndQuestions,
-  matchCardTypeAndQuestions,
-  getMedianDuration,
-  getChampsLibreRate,
-} from "../utils/temoignage";
+import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
-import CampagneSelector from "./Components/CampagneSelector";
+import DashboardHeader from "./Components/DashboardHeader";
 
 echarts.use([
   TooltipComponent,
@@ -257,117 +250,17 @@ const Dashboard = () => {
 
   const categories = getCategoriesWithEmojis(selectedCampagne?.questionnaire);
 
-  const medianDuration = getMedianDuration(temoignages);
-
-  const champsLibreRate = getChampsLibreRate(selectedCampagne?.questionnaireUI, temoignages);
-
   return (
     <Flex direction="column" w="100%" m="auto" bgColor="white">
       <Flex direction="column" w="100%" m="auto" bgColor="white">
-        <Box p="64px 72px 32px 72px" bgColor="#FAF5FF" boxShadow="md">
-          <HStack mb={4} w="100%">
-            {selectedCampagne && (
-              <>
-                <Text color="purple.600" fontSize="5xl" textTransform="uppercase">
-                  CFA{" "}
-                  <Text as="span" fontWeight="semibold">
-                    {selectedCampagne.cfa}
-                  </Text>
-                </Text>
-                <Text color="purple.600" fontSize="3xl" px="24px">
-                  •
-                </Text>
-              </>
-            )}
-            <Box w={selectedCampagne ? "590px" : "100%"}>
-              <CampagneSelector
-                temoignagesSetter={setTemoignages}
-                selectedCampagneSetter={setSelectedCampagne}
-              />
-            </Box>
-            {selectedCampagne && (
-              <>
-                <Text color="purple.600" fontSize="3xl" px="24px">
-                  •
-                </Text>
-                <Text color="purple.600" fontSize="lg">
-                  <Text as="span" fontSize="2xl">
-                    {new Date(selectedCampagne.startDate).toLocaleDateString("fr-FR")}
-                  </Text>{" "}
-                  au{" "}
-                  <Text as="span" fontSize="2xl">
-                    {new Date(selectedCampagne.endDate).toLocaleDateString("fr-FR")}
-                  </Text>
-                </Text>
-              </>
-            )}
-          </HStack>
-          {selectedCampagne && (
-            <>
-              <HStack w="100%">
-                <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" pr="32px">
-                  <Tag
-                    fontSize="2xl"
-                    colorScheme="purple"
-                    color="purple.600"
-                    fontWeight="semibold"
-                    mr="5px"
-                    textAlign="center"
-                  >
-                    {temoignages.length}{" "}
-                    {selectedCampagne?.seats ? `/ ${selectedCampagne.seats}` : ""}
-                  </Tag>
-                  <Text fontSize="xl" color="purple.600">
-                    TÉMOIGNAGE{temoignages.length > 1 && "S"} RECUEILLI
-                    {temoignages.length > 1 && "S"}
-                  </Text>
-                </Box>
-                <Box display="flex" alignItems="center" borderRight="2px solid #6B46C1" px="32px">
-                  <Tag
-                    fontSize="2xl"
-                    colorScheme="purple"
-                    color="purple.600"
-                    fontWeight="semibold"
-                    mr="5px"
-                    textAlign="center"
-                  >
-                    {medianDuration}
-                  </Tag>
-                  <Text fontSize="xl" color="purple.600">
-                    TEMPS MÉDIAN DE PASSATION
-                  </Text>
-                </Box>
-                <Box display="flex" alignItems="center" pl="32px">
-                  <Tag
-                    fontSize="2xl"
-                    colorScheme="purple"
-                    color="purple.600"
-                    fontWeight="semibold"
-                    mr="5px"
-                    textAlign="center"
-                  >
-                    {champsLibreRate + "%"}
-                  </Tag>
-                  <Text fontSize="xl" color="purple.600">
-                    TAUX DE RÉPONSE CHAMPS LIBRES
-                  </Text>
-                </Box>
-              </HStack>
-              <Box mt="40px" display="flex">
-                <FormLabel htmlFor="isChecked" color="purple.500">
-                  Affichage verbatims
-                </FormLabel>
-                <Switch
-                  id="isChecked"
-                  isChecked={isVerbatimsDisplayed}
-                  colorScheme="purple"
-                  onChange={() => setIsVerbatimsDisplayed(!isVerbatimsDisplayed)}
-                />
-              </Box>
-            </>
-          )}
-        </Box>
-
+        <DashboardHeader
+          temoignagesSetter={setTemoignages}
+          temoignages={temoignages}
+          verbatimsDisplayedSetter={setIsVerbatimsDisplayed}
+          campagneSetter={setSelectedCampagne}
+          campagne={selectedCampagne}
+          isVerbatimsDisplayed={isVerbatimsDisplayed}
+        />
         {categories.length > 0 && (
           <Box w="calc(100% - 27px)" ml="27px" mt="60px">
             <Stepper

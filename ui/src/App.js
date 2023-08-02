@@ -8,9 +8,10 @@ import QuestionnairesManaging from "./questionnaires/Managing";
 import QuestionnaireForm from "./questionnaires/QuestionnaireForm";
 import EditQuestionnaire from "./questionnaires/EditQuestionnaire";
 import PreviewQuestionnaire from "./questionnaires/PreviewQuestionnaire";
-import CampagneForm from "./campagnes/CampagneForm";
+import CreateCampagne from "./campagnes/CreateCampagne";
 import AnswerCampagne from "./campagnes/AnswerCampagne";
 import EditCampagne from "./campagnes/EditCampagne";
+import DuplicateCampagne from "./campagnes/DuplicateCampagne";
 import Login from "./users/Login";
 import MentionsInformation from "./legal/MentionsInformation";
 import CGU from "./legal/CGU";
@@ -22,8 +23,9 @@ function App() {
       <Routes>
         <Route element={<ProtectedRoute />}>
           <Route exact path="/" element={<Navigate to="/campagnes/gestion" />} />
-          <Route exact path="/campagnes/ajout" element={<CampagneForm />} />
+          <Route exact path="/campagnes/ajout" element={<CreateCampagne />} />
           <Route exact path="/campagnes/:id/edition" element={<EditCampagne />} />
+          <Route exact path="/campagnes/:id/duplication" element={<DuplicateCampagne />} />
           <Route exact path="/campagnes/gestion" element={<ViewCampagnes />} />
           <Route exact path="/temoignages/dashboard" element={<TemoignagesDashboard />} />
           <Route exact path="/temoignages/gestion" element={<TemoignagesManaging />} />
