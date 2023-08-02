@@ -13,6 +13,8 @@ import {
   InputRightElement,
   useToast,
   FormErrorMessage,
+  Link,
+  Text,
 } from "@chakra-ui/react";
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
@@ -147,6 +149,9 @@ const Login = () => {
               >
                 Connexion
               </Button>
+              <Text color="purple.300" fontSize="sm" textAlign="center">
+                <Link href="/inscription">S'inscrire en tant qu'établissement</Link>
+              </Text>
             </Stack>
           </form>
         </Box>

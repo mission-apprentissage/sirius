@@ -56,8 +56,7 @@ const Signup = () => {
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async ({ username, password, firstName, lastName, comment, etablissement }, rest) => {
-      console.log(etablissement.siret);
+    onSubmit: async ({ username, password, firstName, lastName, comment, etablissement }) => {
       setIsSubmitting(true);
       const resultUser = await _post(`/api/users/`, {
         firstName: firstName,

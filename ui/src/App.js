@@ -13,6 +13,7 @@ import AnswerCampagne from "./campagnes/AnswerCampagne";
 import EditCampagne from "./campagnes/EditCampagne";
 import DuplicateCampagne from "./campagnes/DuplicateCampagne";
 import Login from "./users/Login";
+import Signup from "./users/Signup";
 import MentionsInformation from "./legal/MentionsInformation";
 import CGU from "./legal/CGU";
 import PolitiqueConfidentialite from "./legal/PolitiqueConfidentialite";
@@ -35,6 +36,7 @@ function App() {
           <Route exact path="/questionnaires/:id/apercu" element={<PreviewQuestionnaire />} />
         </Route>
         <Route exact path="/connexion" element={<Login />} />
+        <Route exact path="/inscription" element={<Signup />} />
         <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
         <Route exact path="/mentions-information" element={<MentionsInformation />} />
         <Route exact path="/cgu" element={<CGU />} />
