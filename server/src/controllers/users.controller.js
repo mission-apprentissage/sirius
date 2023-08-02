@@ -1,7 +1,16 @@
 const usersService = require("../services/users.service");
-const { BasicError, UnauthorizedError } = require("../errors");
+const { BasicError, UnauthorizedError, UserAlreadyExistsError } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
+
+const createUser = tryCatch(async (req, res) => {
+  const { success, body } = await usersService.createUser(req.body);
+
+  if (!success && body.name === "UserExistsError") throw new UserAlreadyExistsError();
+  if (!success) throw new BasicError();
+
+  res.status(201).json(body);
+});
 
 const loginUser = tryCatch(async (req, res) => {
   const { success, body } = await usersService.loginUser(req.user._id);
@@ -48,4 +57,4 @@ const logoutUser = tryCatch(async (req, res) => {
   res.status(200).json({ success: true });
 });
 
-module.exports = { loginUser, refreshTokenUser, getCurrentUser, logoutUser };
+module.exports = { loginUser, refreshTokenUser, getCurrentUser, logoutUser, createUser };

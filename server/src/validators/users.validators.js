@@ -5,4 +5,14 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
-module.exports = loginSchema;
+const subscribeSchema = Joi.object({
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  comment: Joi.string(),
+  siret: Joi.string().required(),
+  username: Joi.string().required(),
+  password: Joi.string().required(),
+  etablissement: Joi.object().required(),
+});
+
+module.exports = { loginSchema, subscribeSchema };

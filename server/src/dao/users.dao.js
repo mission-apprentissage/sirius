@@ -8,8 +8,11 @@ const update = (id, user) => {
   return User.updateOne({ _id: id }, user);
 };
 
-const create = (user) => {
-  return User.create(user);
+const create = ({ username, firstName, lastName, password, comment, etablissement, siret }) => {
+  return User.register(
+    new User({ username: username.toLowerCase(), firstName, lastName, comment, etablissement, siret }),
+    password
+  );
 };
 
 module.exports = {
