@@ -58,7 +58,10 @@ const EtablissementSelector = ({ selectedEtablissementSetter = null }) => {
         allEtablissements.length > 0
           ? allEtablissements.map((etablissement) => ({
               value: etablissement._id,
-              label: etablissement?.data?.onisep_nom || etablissement?.data?.enseigne,
+              label:
+                etablissement?.data?.onisep_nom ||
+                etablissement?.data?.enseigne ||
+                etablissement?.entreprise_raison_sociale,
             }))
           : []
       }

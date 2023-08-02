@@ -77,14 +77,16 @@ const CampagneTable = ({
                 </Td>
                 <Td sx={{ maxWidth: "400px", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {(campagne.etablissement?.data?.enseigne ||
-                    campagne.etablissement?.data?.onisep_nom) && (
+                    campagne.etablissement?.data?.onisep_nom ||
+                    campagne.etablissement?.data?.entreprise_raison_sociale) && (
                     <Tooltip
                       label={`${campagne.etablissement?.data?.onisep_nom} - ${campagne.etablissement?.data?.enseigne} - ${campagne.etablissement?.data?.siret}`}
                       hasArrow
                       arrowSize={15}
                     >
                       {campagne.etablissement?.data?.onisep_nom ||
-                        campagne.etablissement?.data?.enseigne}
+                        campagne.etablissement?.data?.enseigne ||
+                        campagne.etablissement?.data?.entreprise_raison_sociale}
                     </Tooltip>
                   )}
                 </Td>
