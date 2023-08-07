@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import {
   Box,
   Flex,
@@ -22,6 +23,8 @@ import {
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import MileySmall from "../assets/images/miley_small.png";
 import Logo from "../assets/images/logo.svg";
+import { ROLES } from "../constants";
+import { UserContext } from "../context/UserContext";
 
 const NAV_ITEMS = [
   {
@@ -31,13 +34,16 @@ const NAV_ITEMS = [
         label: "Ajout",
         subLabel: "Ajouter une campagne",
         href: "/campagnes/ajout",
+        roles: [ROLES.ADMIN, ROLES.USER],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les campagnes",
         href: "/campagnes/gestion",
+        roles: [ROLES.ADMIN, ROLES.USER],
       },
     ],
+    roles: [ROLES.ADMIN, ROLES.USER],
   },
   {
     label: "Témoignages",
@@ -46,13 +52,16 @@ const NAV_ITEMS = [
         label: "Dashboard",
         subLabel: "Afficher les statistiques d'une campagne",
         href: "/temoignages/dashboard",
+        roles: [ROLES.ADMIN, ROLES.USER],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les témoignages d'une campagne",
         href: "/temoignages/gestion",
+        roles: [ROLES.ADMIN],
       },
     ],
+    roles: [ROLES.ADMIN, ROLES.USER],
   },
   {
     label: "Questionnaires",
@@ -61,15 +70,35 @@ const NAV_ITEMS = [
         label: "Ajout",
         subLabel: "Ajouter un questionnaire",
         href: "/questionnaires/ajout",
+        roles: [ROLES.ADMIN],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les questionnaires",
         href: "/questionnaires/gestion",
+        roles: [ROLES.ADMIN],
       },
     ],
+    roles: [ROLES.ADMIN],
   },
 ];
+
+const filterNavItemsByRole = (items, currentUserRole) => {
+  return items.reduce((acc, item) => {
+    if (item.roles.includes(currentUserRole)) {
+      const filteredChildren = item.children
+        ? filterNavItemsByRole(item.children, currentUserRole)
+        : undefined;
+
+      acc.push({
+        ...item,
+        children: filteredChildren,
+      });
+    }
+
+    return acc;
+  }, []);
+};
 
 const MenuWithSubnavigation = () => {
   const { isOpen, onToggle } = useDisclosure();
@@ -129,9 +158,13 @@ const MenuWithSubnavigation = () => {
 };
 
 const DesktopNav = () => {
+  const [userContext] = useContext(UserContext);
+
+  const filteredNavItems = filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole);
+
   return (
     <Stack direction="row" spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
+      {filteredNavItems.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
             <PopoverTrigger>
@@ -193,9 +226,13 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
 };
 
 const MobileNav = () => {
+  const [userContext] = useContext(UserContext);
+
+  const filteredNavItems = filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole);
+
   return (
     <Stack bg="white" p={4} display={{ md: "none" }}>
-      {NAV_ITEMS.map((navItem) => (
+      {filteredNavItems.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
