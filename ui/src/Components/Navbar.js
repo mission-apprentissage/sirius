@@ -81,6 +81,18 @@ const NAV_ITEMS = [
     ],
     roles: [ROLES.ADMIN],
   },
+  {
+    label: "Utilisateurs",
+    children: [
+      {
+        label: "Gestion",
+        subLabel: "Gérer les utilisateurs",
+        href: "/utilisateurs/gestion",
+        roles: [ROLES.ADMIN],
+      },
+    ],
+    roles: [ROLES.ADMIN],
+  },
 ];
 
 const filterNavItemsByRole = (items, currentUserRole) => {
