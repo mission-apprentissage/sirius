@@ -17,6 +17,7 @@ import Signup from "./users/Signup";
 import MentionsInformation from "./legal/MentionsInformation";
 import CGU from "./legal/CGU";
 import PolitiqueConfidentialite from "./legal/PolitiqueConfidentialite";
+import UsersManaging from "./users/Managing";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route exact path="/questionnaires/ajout" element={<QuestionnaireForm />} />
           <Route exact path="/questionnaires/:id/edition" element={<EditQuestionnaire />} />
           <Route exact path="/questionnaires/:id/apercu" element={<PreviewQuestionnaire />} />
+          <Route exact path="/utilisateurs/gestion" element={<UsersManaging />} />
         </Route>
         <Route exact path="/connexion" element={<Login />} />
         <Route exact path="/inscription" element={<Signup />} />
