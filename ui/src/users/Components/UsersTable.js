@@ -15,17 +15,7 @@ import {
 import { UserContext } from "../../context/UserContext";
 import ChangeUserStatusConfirmationModal from "./ChangeUserStatusConfirmationModal";
 import ChangeUserRoleConfirmationModal from "./ChangeUserRoleConfirmationModal";
-
-const ROLES = {
-  ADMIN: "ADMIN",
-  USER: "USER",
-};
-
-const STATUS = {
-  PENDING: "PENDING",
-  ACTIVE: "ACTIVE",
-  INACTIVE: "INACTIVE",
-};
+import { ROLES, STATUS } from "../../constants";
 
 const UsersTable = ({ users, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
