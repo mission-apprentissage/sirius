@@ -5,7 +5,7 @@ const getOne = (id) => {
 };
 
 const update = (id, user) => {
-  return User.updateOne({ _id: id }, user);
+  return User.updateOne({ _id: id, deletedAt: null }, user);
 };
 
 const create = ({ username, firstName, lastName, password, comment, etablissement, siret }) => {

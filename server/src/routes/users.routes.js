@@ -1,7 +1,8 @@
 const express = require("express");
 const validator = require("../middlewares/validatorMiddleware");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
-const { loginSchema, subscribeSchema } = require("../validators/users.validators");
+const { hasPermissionToEditUser } = require("../middlewares/hasPermissionToEditUser");
+const { loginSchema, subscribeSchema, updateSchema } = require("../validators/users.validators");
 const {
   loginUser,
   refreshTokenUser,
@@ -9,6 +10,7 @@ const {
   logoutUser,
   createUser,
   getUsers,
+  updateUser,
 } = require("../controllers/users.controller");
 
 const users = () => {
@@ -25,6 +27,10 @@ const users = () => {
   router.get("/api/users/logout/", verifyUser, (req, res, next) => logoutUser(req, res, next));
 
   router.get("/api/users/", verifyUser, (req, res, next) => getUsers(req, res, next));
+
+  router.put("/api/users/:id", verifyUser, hasPermissionToEditUser, validator(updateSchema), (req, res, next) =>
+    updateUser(req, res, next)
+  );
 
   return router;
 };

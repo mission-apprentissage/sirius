@@ -65,4 +65,14 @@ const getUsers = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-module.exports = { loginUser, refreshTokenUser, getCurrentUser, logoutUser, createUser, getUsers };
+const updateUser = tryCatch(async (req, res) => {
+  const { id } = req.params;
+
+  const { success, body: updatedUser } = await usersService.updateUser(id, req.body);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(updatedUser);
+});
+
+module.exports = { loginUser, refreshTokenUser, getCurrentUser, logoutUser, createUser, getUsers, updateUser };

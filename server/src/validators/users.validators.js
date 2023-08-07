@@ -15,4 +15,15 @@ const subscribeSchema = Joi.object({
   etablissement: Joi.object().required(),
 });
 
-module.exports = { loginSchema, subscribeSchema };
+const updateSchema = Joi.object({
+  firstName: Joi.string(),
+  lastName: Joi.string(),
+  siret: Joi.string(),
+  username: Joi.string(),
+  password: Joi.string(),
+  etablissement: Joi.object(),
+  status: Joi.string(),
+  role: Joi.string(),
+});
+
+module.exports = { loginSchema, subscribeSchema, updateSchema };
