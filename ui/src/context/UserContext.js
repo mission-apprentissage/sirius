@@ -19,6 +19,8 @@ const UserProvider = (props) => {
           token: result.token,
           loading: false,
           currentUserId: decodedToken._id,
+          currentUserRole: decodedToken.role,
+          currentUserStatus: decodedToken.status,
         };
       });
     } else {
