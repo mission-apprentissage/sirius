@@ -15,8 +15,13 @@ const create = ({ username, firstName, lastName, password, comment, etablissemen
   );
 };
 
+const getAll = () => {
+  return User.find().select("-refreshToken -authStrategy").lean();
+};
+
 module.exports = {
   getOne,
   update,
   create,
+  getAll,
 };

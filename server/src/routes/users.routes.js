@@ -8,6 +8,7 @@ const {
   getCurrentUser,
   logoutUser,
   createUser,
+  getUsers,
 } = require("../controllers/users.controller");
 
 const users = () => {
@@ -22,6 +23,8 @@ const users = () => {
   router.get("/api/users/me/", verifyUser, (req, res, next) => getCurrentUser(req, res, next));
 
   router.get("/api/users/logout/", verifyUser, (req, res, next) => logoutUser(req, res, next));
+
+  router.get("/api/users/", verifyUser, (req, res, next) => getUsers(req, res, next));
 
   return router;
 };

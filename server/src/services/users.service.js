@@ -67,4 +67,13 @@ const logoutUser = async (id, refreshToken) => {
   }
 };
 
-module.exports = { loginUser, refreshTokenUser, logoutUser, createUser };
+const getUsers = async () => {
+  try {
+    const users = await usersDao.getAll();
+    return { success: true, body: users };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { loginUser, refreshTokenUser, logoutUser, createUser, getUsers };

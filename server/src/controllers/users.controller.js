@@ -57,4 +57,12 @@ const logoutUser = tryCatch(async (req, res) => {
   res.status(200).json({ success: true });
 });
 
-module.exports = { loginUser, refreshTokenUser, getCurrentUser, logoutUser, createUser };
+const getUsers = tryCatch(async (req, res) => {
+  const { success, body } = await usersService.getUsers();
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
+module.exports = { loginUser, refreshTokenUser, getCurrentUser, logoutUser, createUser, getUsers };
