@@ -19,7 +19,7 @@ const ChangeUserStatusConfirmationModal = ({
   onClose,
   isOpen,
   selectedStatus,
-  setHasDataChange,
+  setRefetchData,
 }) => {
   const [userContext] = useContext(UserContext);
   const toast = useToast();
@@ -39,7 +39,7 @@ const ChangeUserStatusConfirmationModal = ({
         status: "success",
         duration: 5000,
       });
-      setHasDataChange(true);
+      setRefetchData(true);
     } else {
       toast({
         title: "Une erreur est survenue",
