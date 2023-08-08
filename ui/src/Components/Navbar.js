@@ -23,7 +23,7 @@ import {
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import MileySmall from "../assets/images/miley_small.png";
 import Logo from "../assets/images/logo.svg";
-import { ROLES } from "../constants";
+import { ROLES, STATUS } from "../constants";
 import { UserContext } from "../context/UserContext";
 
 const NAV_ITEMS = [
@@ -171,8 +171,10 @@ const MenuWithSubnavigation = () => {
 
 const DesktopNav = () => {
   const [userContext] = useContext(UserContext);
-
-  const filteredNavItems = filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole);
+  const isActive = userContext.currentUserStatus === STATUS.ACTIVE;
+  const filteredNavItems = isActive
+    ? filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole)
+    : [];
 
   return (
     <Stack direction="row" spacing={4}>
@@ -239,8 +241,11 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
 
 const MobileNav = () => {
   const [userContext] = useContext(UserContext);
+  const isActive = userContext.currentUserStatus === STATUS.ACTIVE;
 
-  const filteredNavItems = filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole);
+  const filteredNavItems = isActive
+    ? filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole)
+    : [];
 
   return (
     <Stack bg="white" p={4} display={{ md: "none" }}>

@@ -14,6 +14,7 @@ import EditCampagne from "./campagnes/EditCampagne";
 import DuplicateCampagne from "./campagnes/DuplicateCampagne";
 import Login from "./users/Login";
 import Signup from "./users/Signup";
+import PendingAccount from "./users/PendingAccount";
 import MentionsInformation from "./legal/MentionsInformation";
 import CGU from "./legal/CGU";
 import PolitiqueConfidentialite from "./legal/PolitiqueConfidentialite";
@@ -39,6 +40,7 @@ function App() {
         </Route>
         <Route exact path="/connexion" element={<Login />} />
         <Route exact path="/inscription" element={<Signup />} />
+        <Route exact path="/compte-desactive" element={<PendingAccount />} />
         <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
         <Route exact path="/mentions-information" element={<MentionsInformation />} />
         <Route exact path="/cgu" element={<CGU />} />
