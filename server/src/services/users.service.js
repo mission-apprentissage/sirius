@@ -16,8 +16,13 @@ const loginUser = async (id) => {
   try {
     const user = await usersDao.getOne(id);
 
-    const token = getToken({ _id: id, role: user.role, status: user.status });
-    const refreshToken = getRefreshToken({ _id: id, role: user.role, status: user.status });
+    const token = getToken({ _id: id, role: user.role, status: user.status, siret: user.siret });
+    const refreshToken = getRefreshToken({
+      _id: id,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+    });
 
     user.refreshToken.push({ refreshToken });
 
@@ -38,8 +43,13 @@ const refreshTokenUser = async (refreshToken) => {
 
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
 
-    const token = getToken({ _id: userId, role: user.role, status: user.status });
-    const newRefreshToken = getRefreshToken({ _id: userId, role: user.role, status: user.status });
+    const token = getToken({ _id: userId, role: user.role, status: user.status, siret: user.siret });
+    const newRefreshToken = getRefreshToken({
+      _id: userId,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+    });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 
     await usersDao.update(user.id, user);

@@ -21,6 +21,7 @@ const UserProvider = (props) => {
           currentUserId: decodedToken._id,
           currentUserRole: decodedToken.role,
           currentUserStatus: decodedToken.status,
+          siret: decodedToken.siret,
         };
       });
     } else {
