@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import {
   Box,
@@ -17,12 +17,11 @@ import {
   NumberDecrementStepper,
   Text,
 } from "@chakra-ui/react";
-import { Select, AsyncSelect } from "chakra-react-select";
-import { _get } from "../utils/httpClient";
+import { Select } from "chakra-react-select";
 import QuestionnaireSelector from "./QuestionnaireSelector";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
-import useFetchLocalEtablissements from "../hooks/useFetchLocalEtablissements";
 import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
+import EtablissementPicker from "./Components/EtablissementPicker";
 
 const formatOptionLabel = (props, isFormationAlreadyAdded = null) => {
   props.isDisabled = isFormationAlreadyAdded;
@@ -37,18 +36,10 @@ const formatOptionLabel = (props, isFormationAlreadyAdded = null) => {
   );
 };
 
-const localEtablissementsChecker = (localEtablissements, inputSiret) =>
-  localEtablissements.find((etablissement) => etablissement.data.siret === inputSiret);
-
-const CampagneForm = ({ formik, buttonMessage }) => {
-  const [showAddEtablissement, setShowAddEtablissement] = useState(false);
+const CampagneForm = ({ formik, buttonMessage, siret }) => {
   const [inputSiret, setInputSiret] = useState(null);
-  const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
-  const timer = useRef();
   const toast = useToast();
 
-  const [fetchedLocalEtablissements, loadingLocalEtablissements, errorLocalEtablissements] =
-    useFetchLocalEtablissements();
   const [fetchedRemoteFormations, loadingRemoteFormations, errorRemoteFormations] =
     useFetchRemoteFormations(inputSiret || formik.values.localEtablissement?.data?.siret);
 
@@ -59,50 +50,10 @@ const CampagneForm = ({ formik, buttonMessage }) => {
 
   const [fetchedLocalFormations] = useFetchLocalFormations(localFormationQuery);
 
-  const debouncedSiret = (callback, siret) => {
-    clearTimeout(timer.current);
-    timer.current = setTimeout(async () => {
-      const result = await _get(
-        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siret}"}&page=1&limit=1`
-      );
-
-      if (result.etablissements?.length > 0) {
-        callback(result.etablissements);
-        formik.setFieldValue("etablissement", result.etablissements[0]);
-      } else {
-        callback(null);
-      }
-    }, 500);
-  };
-
-  const loadEtablissementOptionsHandler = (inputValue, callback) => {
-    setIsLoadingRemoteEtablissement(true);
-    const localEtablissementFound = localEtablissementsChecker(
-      fetchedLocalEtablissements,
-      inputValue
-    );
-    if (localEtablissementFound) {
-      setShowAddEtablissement(false);
-      formik.setFieldValue("localEtablissement", localEtablissementFound);
-      callback(null);
-      toast({
-        description: "L'établissement existe déjà et a été sélectionné",
-        status: "info",
-        duration: 5000,
-        isClosable: true,
-      });
-      setIsLoadingRemoteEtablissement(false);
-    } else {
-      setInputSiret(inputValue);
-      debouncedSiret(callback, inputValue);
-      setIsLoadingRemoteEtablissement(false);
-    }
-  };
-
-  if (errorLocalEtablissements || errorRemoteFormations) {
+  if (errorRemoteFormations) {
     toast({
       title: "Une erreur s'est produite",
-      description: errorLocalEtablissements?.message || errorRemoteFormations?.message,
+      description: errorRemoteFormations?.message,
       status: "error",
       duration: 5000,
       isClosable: true,
@@ -126,74 +77,7 @@ const CampagneForm = ({ formik, buttonMessage }) => {
               />
               <FormErrorMessage>{formik.errors.nomCampagne}</FormErrorMessage>
             </FormControl>
-            <FormControl
-              isInvalid={!!formik.errors.localEtablissement && formik.touched.localEtablissement}
-              isDisabled={
-                showAddEtablissement || loadingLocalEtablissements || errorLocalEtablissements
-              }
-            >
-              <FormLabel htmlFor="localEtablissements">Établissements existants</FormLabel>
-              <Select
-                placeholder="Sélectionner un établissement existant"
-                size="md"
-                options={fetchedLocalEtablissements}
-                getOptionLabel={(option) =>
-                  option?.data?.onisep_nom ||
-                  option?.data?.enseigne ||
-                  option?.data?.entreprise_raison_sociale
-                }
-                getOptionValue={(option) => option?._id}
-                onChange={(option) => {
-                  formik.setFieldValue("localEtablissement", option);
-                  formik.setFieldValue("formation", null);
-                }}
-                value={formik.values.localEtablissement}
-                isLoading={loadingLocalEtablissements}
-                isSearchable
-                isClearable
-              />
-              <FormErrorMessage>{formik.errors.localEtablissement}</FormErrorMessage>
-              <Text
-                fontSize="xs"
-                mt="10px"
-                textDecoration="underline"
-                color="purple.500"
-                cursor="pointer"
-                w="max-content"
-                onClick={() => {
-                  setShowAddEtablissement(!showAddEtablissement);
-                  formik.setFieldValue("localEtablissement", null);
-                  formik.setFieldValue("etablissement", null);
-                  formik.setFieldValue("formation", null);
-                }}
-              >
-                {showAddEtablissement
-                  ? "Choisir un établissement existant"
-                  : "Ajouter un établissement"}
-              </Text>
-            </FormControl>
-            {showAddEtablissement && (
-              <FormControl
-                isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}
-                isDisabled={isLoadingRemoteEtablissement}
-              >
-                <FormLabel htmlFor="etablissement">Établissement</FormLabel>
-                <AsyncSelect
-                  placeholder="Entrer un SIRET"
-                  size="md"
-                  getOptionLabel={(option) =>
-                    option?.onisep_nom || option?.enseigne || option?.entreprise_raison_sociale
-                  }
-                  getOptionValue={(option) => option?.siret}
-                  backspaceRemovesValue
-                  escapeClearsValue
-                  isClearable
-                  loadOptions={loadEtablissementOptionsHandler}
-                  isLoading={isLoadingRemoteEtablissement}
-                />
-                <FormErrorMessage>{formik.errors.etablissement}</FormErrorMessage>
-              </FormControl>
-            )}
+            <EtablissementPicker formik={formik} setInputSiret={setInputSiret} />
             {(formik.values.localEtablissement || formik.values.etablissement) && (
               <FormControl
                 isInvalid={!!formik.errors.formation && formik.touched.formation}
