@@ -2,12 +2,13 @@ import React, { useContext } from "react";
 import { Flex, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { STATUS } from "../constants";
 
 const PendingAccount = () => {
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
 
-  if (!userContext.currentUserStatus === "PENDING") {
+  if (userContext.currentUserStatus === STATUS.ACTIVE) {
     navigate("/");
   }
 
