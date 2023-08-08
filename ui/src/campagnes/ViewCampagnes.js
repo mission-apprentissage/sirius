@@ -29,6 +29,7 @@ import { UserContext } from "../context/UserContext";
 import DeleteCampagneConfirmationModal from "./DeleteCampagneConfirmationModal";
 import ExcelCampagneExport from "./CampagneExport";
 import LinkCampagneModal from "./LinkCampagneModal";
+import { ROLES } from "../constants";
 
 const CampagneTable = ({
   campagnes,
@@ -206,7 +207,10 @@ const ViewCampagnes = () => {
     onClose: onCloseDeletion,
   } = useDisclosure();
 
-  const [campagnes, loading, error] = useGet(`/api/campagnes/`);
+  const campagneQuery =
+    userContext.currentUserRole === ROLES.USER ? `?siret=${userContext.siret}` : "";
+
+  const [campagnes, loading, error] = useGet(`/api/campagnes${campagneQuery}`);
 
   useEffect(() => {
     if (campagnes.length > 0) {
