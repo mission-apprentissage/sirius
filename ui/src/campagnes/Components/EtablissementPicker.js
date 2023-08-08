@@ -1,13 +1,15 @@
-import React, { useState, useRef } from "react";
-import { FormControl, FormErrorMessage, FormLabel, Text, useToast } from "@chakra-ui/react";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { FormControl, FormErrorMessage, FormLabel, Text, useToast, Box } from "@chakra-ui/react";
 import { Select, AsyncSelect } from "chakra-react-select";
 import { _get } from "../../utils/httpClient";
 import useFetchLocalEtablissements from "../../hooks/useFetchLocalEtablissements";
+import { UserContext } from "../../context/UserContext";
 
 const localEtablissementsChecker = (localEtablissements, inputSiret) =>
   localEtablissements.find((etablissement) => etablissement.data.siret === inputSiret);
 
-const EtablissementPicker = ({ formik, setInputSiret }) => {
+const EtablissementPicker = ({ formik, setInputSiret, siret }) => {
+  const [userContext] = useContext(UserContext);
   const [showAddEtablissement, setShowAddEtablissement] = useState(false);
   const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
   const timer = useRef();
@@ -15,6 +17,19 @@ const EtablissementPicker = ({ formik, setInputSiret }) => {
 
   const [fetchedLocalEtablissements, loadingLocalEtablissements, errorLocalEtablissements] =
     useFetchLocalEtablissements();
+
+  // Le SIRET est fourni dans le cas où un utilisateur non admin veut créer une campagne
+  useEffect(() => {
+    const fetchLocalEtablissement = async () => {
+      const result = await _get(`/api/etablissements?data.siret=${siret}`, userContext.token);
+      if (result?.length > 0) {
+        formik.setFieldValue("localEtablissement", result[0]);
+      }
+    };
+    if (siret) {
+      fetchLocalEtablissement();
+    }
+  }, [siret]);
 
   const debouncedSiret = (callback, siret) => {
     clearTimeout(timer.current);
@@ -64,6 +79,19 @@ const EtablissementPicker = ({ formik, setInputSiret }) => {
       duration: 5000,
       isClosable: true,
     });
+  }
+
+  if (siret) {
+    return (
+      <Box>
+        <Text mb="5px">Établissement</Text>
+        <Text as="span">
+          {formik.values.localEtablissement?.data?.onisep_nom ||
+            formik.values.localEtablissement?.data?.enseigne ||
+            formik.values.localEtablissement?.data?.entreprise_raison_sociale}
+        </Text>
+      </Box>
+    );
   }
 
   return (

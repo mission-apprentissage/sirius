@@ -39,7 +39,7 @@ const CampagneForm = ({ formik, buttonMessage, siret }) => {
               />
               <FormErrorMessage>{formik.errors.nomCampagne}</FormErrorMessage>
             </FormControl>
-            <EtablissementPicker formik={formik} setInputSiret={setInputSiret} />
+            <EtablissementPicker formik={formik} setInputSiret={setInputSiret} siret={siret} />
             <FormationPicker formik={formik} inputSiret={inputSiret} />
             <HStack spacing={6} align="flex-start" alignItems="center">
               <FormControl isInvalid={!!formik.errors.startDate && formik.touched.startDate}>
