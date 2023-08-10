@@ -12,6 +12,7 @@ const {
   getUsers,
   updateUser,
 } = require("../controllers/users.controller");
+const { isAdmin } = require("../middlewares/isAdmin");
 
 const users = () => {
   const router = express.Router();
@@ -26,7 +27,7 @@ const users = () => {
 
   router.get("/api/users/logout/", verifyUser, (req, res, next) => logoutUser(req, res, next));
 
-  router.get("/api/users/", verifyUser, (req, res, next) => getUsers(req, res, next));
+  router.get("/api/users/", verifyUser, isAdmin, (req, res, next) => getUsers(req, res, next));
 
   router.put("/api/users/:id", verifyUser, hasPermissionToEditUser, validator(updateSchema), (req, res, next) =>
     updateUser(req, res, next)
