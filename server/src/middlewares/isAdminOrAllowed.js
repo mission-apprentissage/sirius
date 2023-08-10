@@ -1,5 +1,5 @@
 const { UnauthorizedError } = require("../errors");
-const { ROLES, STATUS } = require("../constants");
+const { USER_ROLES, USER_STATUS } = require("../constants");
 const campagnesService = require("../services/campagnes.service");
 const etablissementsService = require("../services/etablissements.service");
 const formationsService = require("../services/formations.service");
@@ -16,11 +16,11 @@ const TYPES = {
 const isAdminOrAllowed = async (req, next, type) => {
   const { status, role, siret } = req.user;
 
-  if (role === ROLES.ADMIN && status === STATUS.ACTIVE) {
+  if (role === USER_ROLES.ADMIN && status === USER_STATUS.ACTIVE) {
     return next();
   }
 
-  if (role === ROLES.USER && status === STATUS.ACTIVE) {
+  if (role === USER_ROLES.ETABLISSEMENT && status === USER_STATUS.ACTIVE) {
     // check campagneId
     if (type === TYPES.CAMPAGNE_ID) {
       const query = { id: req.params.id, siret: siret };

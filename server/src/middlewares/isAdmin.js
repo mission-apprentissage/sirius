@@ -1,10 +1,10 @@
 const { UnauthorizedError } = require("../errors");
-const { ROLES, STATUS } = require("../constants");
+const { USER_ROLES, USER_STATUS } = require("../constants");
 
 const isAdmin = async (req, res, next) => {
   const { status, role } = req.user;
 
-  if (role === ROLES.ADMIN && status === STATUS.ACTIVE) {
+  if (role === USER_ROLES.ADMIN && status === USER_STATUS.ACTIVE) {
     return next();
   }
 

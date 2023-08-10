@@ -1,12 +1,12 @@
-const ROLES = {
+const USER_ROLES = {
   ADMIN: "ADMIN",
-  USER: "USER",
+  ETABLISSEMENT: "ETABLISSEMENT",
 };
 
-const STATUS = {
+const USER_STATUS = {
   PENDING: "PENDING",
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",
 };
 
-module.exports = { ROLES, STATUS };
+module.exports = { USER_ROLES, USER_STATUS };

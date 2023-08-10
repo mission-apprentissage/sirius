@@ -23,7 +23,7 @@ import {
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import MileySmall from "../assets/images/miley_small.png";
 import Logo from "../assets/images/logo.svg";
-import { ROLES, STATUS } from "../constants";
+import { USER_ROLES, USER_STATUS } from "../constants";
 import { UserContext } from "../context/UserContext";
 
 const NAV_ITEMS = [
@@ -34,16 +34,16 @@ const NAV_ITEMS = [
         label: "Ajout",
         subLabel: "Ajouter une campagne",
         href: "/campagnes/ajout",
-        roles: [ROLES.ADMIN, ROLES.USER],
+        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les campagnes",
         href: "/campagnes/gestion",
-        roles: [ROLES.ADMIN, ROLES.USER],
+        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
       },
     ],
-    roles: [ROLES.ADMIN, ROLES.USER],
+    roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
   },
   {
     label: "Témoignages",
@@ -52,16 +52,16 @@ const NAV_ITEMS = [
         label: "Dashboard",
         subLabel: "Afficher les statistiques d'une campagne",
         href: "/temoignages/dashboard",
-        roles: [ROLES.ADMIN, ROLES.USER],
+        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les témoignages d'une campagne",
         href: "/temoignages/gestion",
-        roles: [ROLES.ADMIN],
+        roles: [USER_ROLES.ADMIN],
       },
     ],
-    roles: [ROLES.ADMIN, ROLES.USER],
+    roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
   },
   {
     label: "Questionnaires",
@@ -70,16 +70,16 @@ const NAV_ITEMS = [
         label: "Ajout",
         subLabel: "Ajouter un questionnaire",
         href: "/questionnaires/ajout",
-        roles: [ROLES.ADMIN],
+        roles: [USER_ROLES.ADMIN],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les questionnaires",
         href: "/questionnaires/gestion",
-        roles: [ROLES.ADMIN],
+        roles: [USER_ROLES.ADMIN],
       },
     ],
-    roles: [ROLES.ADMIN],
+    roles: [USER_ROLES.ADMIN],
   },
   {
     label: "Utilisateurs",
@@ -88,10 +88,10 @@ const NAV_ITEMS = [
         label: "Gestion",
         subLabel: "Gérer les utilisateurs",
         href: "/utilisateurs/gestion",
-        roles: [ROLES.ADMIN],
+        roles: [USER_ROLES.ADMIN],
       },
     ],
-    roles: [ROLES.ADMIN],
+    roles: [USER_ROLES.ADMIN],
   },
 ];
 
@@ -171,7 +171,7 @@ const MenuWithSubnavigation = () => {
 
 const DesktopNav = () => {
   const [userContext] = useContext(UserContext);
-  const isActive = userContext.currentUserStatus === STATUS.ACTIVE;
+  const isActive = userContext.currentUserStatus === USER_STATUS.ACTIVE;
   const filteredNavItems = isActive
     ? filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole)
     : [];
@@ -241,7 +241,7 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
 
 const MobileNav = () => {
   const [userContext] = useContext(UserContext);
-  const isActive = userContext.currentUserStatus === STATUS.ACTIVE;
+  const isActive = userContext.currentUserStatus === USER_STATUS.ACTIVE;
 
   const filteredNavItems = isActive
     ? filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole)

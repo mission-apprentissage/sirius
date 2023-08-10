@@ -1,9 +1,9 @@
-export const ROLES = {
+export const USER_ROLES = {
   ADMIN: "ADMIN",
-  USER: "USER",
+  ETABLISSEMENT: "ETABLISSEMENT",
 };
 
-export const STATUS = {
+export const USER_STATUS = {
   PENDING: "PENDING",
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",

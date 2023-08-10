@@ -15,7 +15,7 @@ import {
 import { UserContext } from "../../context/UserContext";
 import ChangeUserStatusConfirmationModal from "./ChangeUserStatusConfirmationModal";
 import ChangeUserRoleConfirmationModal from "./ChangeUserRoleConfirmationModal";
-import { ROLES, STATUS } from "../../constants";
+import { USER_ROLES, USER_STATUS } from "../../constants";
 
 const UsersTable = ({ users, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
@@ -87,7 +87,7 @@ const UsersTable = ({ users, setRefetchData }) => {
                     <Td minW="150px">
                       {user._id === userContext.currentUserId ? (
                         <Tooltip label="Vous ne pouvez pas modifier votre propre status" hasArrow>
-                          <span>{STATUS[user.status]}</span>
+                          <span>{USER_STATUS[user.status]}</span>
                         </Tooltip>
                       ) : (
                         <Select
@@ -97,9 +97,9 @@ const UsersTable = ({ users, setRefetchData }) => {
                             setSelectedStatus(e.target.value);
                             onOpenStatusConfirmation();
                           }}
-                          defaultValue={STATUS[user.status]}
+                          defaultValue={USER_STATUS[user.status]}
                         >
-                          {Object.keys(STATUS).map((status) => (
+                          {Object.keys(USER_STATUS).map((status) => (
                             <option key={status} value={status}>
                               {status}
                             </option>
@@ -110,7 +110,7 @@ const UsersTable = ({ users, setRefetchData }) => {
                     <Td minW="150px">
                       {user._id === userContext.currentUserId ? (
                         <Tooltip label="Vous ne pouvez pas modifier votre propre role" hasArrow>
-                          <span>{ROLES[user.role]}</span>
+                          <span>{USER_ROLES[user.role]}</span>
                         </Tooltip>
                       ) : (
                         <Select
@@ -120,9 +120,9 @@ const UsersTable = ({ users, setRefetchData }) => {
                             setSelectedRole(e.target.value);
                             onOpenRoleConfirmation();
                           }}
-                          defaultValue={ROLES[user.role]}
+                          defaultValue={USER_ROLES[user.role]}
                         >
-                          {Object.keys(ROLES).map((role) => (
+                          {Object.keys(USER_ROLES).map((role) => (
                             <option key={role} value={role}>
                               {role}
                             </option>

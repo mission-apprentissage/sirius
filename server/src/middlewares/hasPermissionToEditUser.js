@@ -1,5 +1,5 @@
 const { UnauthorizedError } = require("../errors");
-const { ROLES, STATUS } = require("../constants");
+const { USER_ROLES, USER_STATUS } = require("../constants");
 
 const hasPermissionToEditUser = (req, res, next) => {
   const userIdToEdit = req.params.id;
@@ -7,12 +7,12 @@ const hasPermissionToEditUser = (req, res, next) => {
   const currentUserStatus = req.user.status;
   const currentUserRole = req.user.role;
 
-  if (currentUserRole === ROLES.ADMIN && currentUserStatus === STATUS.ACTIVE) {
+  if (currentUserRole === USER_ROLES.ADMIN && currentUserStatus === USER_STATUS.ACTIVE) {
     return next();
   }
 
   if (
-    currentUserStatus === STATUS.ACTIVE &&
+    currentUserStatus === USER_STATUS.ACTIVE &&
     userIdToEdit === currentUserId.toString() &&
     !req.body.status &&
     !req.body.role
