@@ -95,7 +95,7 @@ const FormationSelector = ({
       placeholder="Formations"
       isSearchable
       isLoading={loadingFormations}
-      isDisabled={!!errorFormations}
+      isDisabled={!!errorFormations || !formations?.length}
       chakraStyles={styles}
       getOptionLabel={(option) =>
         `${option.data?.intitule_long} - ${option.data?.tags.join(", ")} \n ${

@@ -21,6 +21,7 @@ const useFetchLocalFormations = (query = null) => {
     if (query) {
       fetchData();
     }
+    setLoading(false);
   }, [query]);
 
   return [data, loading, error];
