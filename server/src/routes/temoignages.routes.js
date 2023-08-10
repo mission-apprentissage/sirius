@@ -8,6 +8,7 @@ const {
   updateTemoignage,
 } = require("../controllers/temoignages.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
+const { isAdmin } = require("../middlewares/isAdmin");
 
 const temoignages = () => {
   const router = express.Router();
@@ -20,7 +21,7 @@ const temoignages = () => {
     getTemoignages(req, res, next);
   });
 
-  router.delete("/api/temoignages/:id", verifyUser, (req, res, next) => {
+  router.delete("/api/temoignages/:id", verifyUser, isAdmin, (req, res, next) => {
     deleteTemoignage(req, res, next);
   });
 
