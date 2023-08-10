@@ -9,9 +9,9 @@ const getCampagnes = async (query) => {
   }
 };
 
-const getOneCampagne = async (id) => {
+const getOneCampagne = async (query) => {
   try {
-    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(id);
+    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(query);
     return { success: true, body: campagne[0] };
   } catch (error) {
     return { success: false, body: error };

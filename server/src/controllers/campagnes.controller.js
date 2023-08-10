@@ -11,7 +11,8 @@ const getCampagnes = tryCatch(async (req, res) => {
 });
 
 const getCampagne = tryCatch(async (req, res) => {
-  const { success, body } = await campagnesService.getOneCampagne(req.params.id);
+  const query = { id: req.params.id };
+  const { success, body } = await campagnesService.getOneCampagne(query);
 
   if (!success) throw new BasicError();
   if (!body) throw new CampagneNotFoundError();

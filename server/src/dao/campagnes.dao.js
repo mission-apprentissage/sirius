@@ -164,8 +164,8 @@ const getAllWithTemoignageCountAndTemplateName = async (query) => {
   ]);
 };
 
-const getOneWithTemoignagneCountAndTemplateName = async (id) => {
-  const idToObjectId = ObjectId(id);
+const getOneWithTemoignagneCountAndTemplateName = async (query) => {
+  const idToObjectId = ObjectId(query.id);
   return Campagne.aggregate([
     {
       $match: {
@@ -176,7 +176,7 @@ const getOneWithTemoignagneCountAndTemplateName = async (id) => {
     ...temoignageCountQuery,
     ...questionnaireTemplateQuery,
     ...formationQuery,
-    ...etablissementQuery(),
+    ...etablissementQuery(query.siret),
   ]);
 };
 
