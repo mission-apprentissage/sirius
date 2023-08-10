@@ -49,10 +49,7 @@ const DashboardHeader = ({
                 selectedEtablissement?.data?.entreprise_raison_sociale}
             </Text>
           ) : (
-            <EtablissementSelector
-              temoignagesSetter={temoignagesSetter}
-              selectedEtablissementSetter={setSelectedEtablissement}
-            />
+            <EtablissementSelector selectedEtablissementSetter={setSelectedEtablissement} />
           )}
         </Box>
         {selectedFormation && (

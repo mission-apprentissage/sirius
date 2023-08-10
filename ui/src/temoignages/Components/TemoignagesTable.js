@@ -48,8 +48,8 @@ const TemoignagesTable = ({ temoignages }) => {
 
       if (result?.modifiedCount === 1) {
         toast({
-          title: "Campagne supprimée",
-          description: "La campagne a bien été supprimée",
+          title: "Témoignage supprimé",
+          description: "Le témoignage a bien été supprimée",
           status: "success",
           duration: 5000,
           isClosable: true,

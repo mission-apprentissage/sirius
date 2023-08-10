@@ -50,9 +50,9 @@ const formatOptionLabel = (props) => {
 
 const FormationSelector = ({
   temoignagesSetter,
-  selectedFormationSetter = null,
+  selectedFormationSetter = () => null,
   formationIds,
-  campagneSetter,
+  campagneSetter = () => null,
 }) => {
   const [userContext] = useContext(UserContext);
   const localFormationQuery = formationIds
