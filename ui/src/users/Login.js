@@ -64,7 +64,7 @@ const Login = () => {
           return { ...oldValues, token: result.token };
         });
         setIsSubmitting(false);
-        navigate("/campagnes");
+        navigate("/campagnes/gestion");
       } else if (result.statusCode === 401) {
         toast({
           title: "Une erreur est survenue",

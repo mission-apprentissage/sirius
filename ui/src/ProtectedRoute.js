@@ -10,7 +10,7 @@ const ProtectedRoute = () => {
   const isActive = userContext?.currentUserStatus === STATUS.ACTIVE;
 
   if (userContext.loading) return <Spinner />;
-  if (!isActive) return <Navigate to="/compte-desactive" />;
+  if (userContext.token && !isActive) return <Navigate to="/compte-desactive" />;
   return isAuthenticated ? <Outlet /> : <Navigate to="/connexion" />;
 };
 
