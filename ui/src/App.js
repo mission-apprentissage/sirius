@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminProtectedRoute from "./AdminProtectedRoute";
 import ViewCampagnes from "./campagnes/ViewCampagnes";
 import TemoignagesDashboard from "./temoignages/Dashboard";
 import TemoignagesManaging from "./temoignages/Managing";
@@ -30,6 +31,8 @@ function App() {
         <Route exact path="/campagnes/:id/duplication" element={<DuplicateCampagne />} />
         <Route exact path="/campagnes/gestion" element={<ViewCampagnes />} />
         <Route exact path="/temoignages/dashboard" element={<TemoignagesDashboard />} />
+      </Route>
+      <Route element={<AdminProtectedRoute />}>
         <Route exact path="/temoignages/gestion" element={<TemoignagesManaging />} />
         <Route exact path="/questionnaires/gestion" element={<QuestionnairesManaging />} />
         <Route exact path="/questionnaires/ajout" element={<QuestionnaireForm />} />
