@@ -19,12 +19,15 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
+  useToast,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 import MileySmall from "../assets/images/miley_small.png";
 import Logo from "../assets/images/logo.svg";
 import { USER_ROLES, USER_STATUS } from "../constants";
 import { UserContext } from "../context/UserContext";
+import { _get } from "../utils/httpClient";
 
 const NAV_ITEMS = [
   {
@@ -113,7 +116,26 @@ const filterNavItemsByRole = (items, currentUserRole) => {
 };
 
 const MenuWithSubnavigation = () => {
+  const [userContext] = useContext(UserContext);
   const { isOpen, onToggle } = useDisclosure();
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  const handleLogout = async () => {
+    const result = await _get(`/api/users/logout`, userContext.token);
+
+    if (result.success) {
+      navigate(0);
+    } else {
+      toast({
+        title: "Une erreur est survenue",
+        description: "Merci de réessayer",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <Box>
@@ -156,7 +178,7 @@ const MenuWithSubnavigation = () => {
             <MenuList>
               <MenuItem>Profil</MenuItem>
               <MenuDivider />
-              <MenuItem>Se déconnecter</MenuItem>
+              <MenuItem onClick={handleLogout}>Se déconnecter</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
