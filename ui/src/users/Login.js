@@ -20,6 +20,7 @@ import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate, useNavigate } from "react-router-dom";
+import jwt from "jwt-decode";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import Miley from "../assets/images/miley.png";
@@ -61,7 +62,16 @@ const Login = () => {
           isClosable: true,
         });
         setUserContext((oldValues) => {
-          return { ...oldValues, token: result.token };
+          const decodedToken = jwt(result.token);
+
+          return {
+            ...oldValues,
+            token: result.token,
+            currentUserId: decodedToken._id,
+            currentUserRole: decodedToken.role,
+            currentUserStatus: decodedToken.status,
+            siret: decodedToken.siret,
+          };
         });
         setIsSubmitting(false);
         navigate("/campagnes/gestion");
