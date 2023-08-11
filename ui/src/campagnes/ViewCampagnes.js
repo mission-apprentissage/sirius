@@ -263,7 +263,7 @@ const ViewCampagnes = () => {
     setSearchCampagneTerm(value);
   };
 
-  if (loading || error || !displayedCampagnes.length) return <Spinner size="xl" />;
+  if (loading || error) return <Spinner size="xl" />;
 
   const campagnesSource = searchCampagneTerm ? filteredCampagne : displayedCampagnes;
 
