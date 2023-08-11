@@ -4,11 +4,12 @@ const create = async (questionnaire) => {
   return Questionnaire.create(questionnaire);
 };
 
-const getAllWithCreatorName = async () => {
+const getAllWithCreatorName = async (query) => {
   return Questionnaire.aggregate([
     {
       $match: {
         deletedAt: null,
+        ...query,
       },
     },
     {
