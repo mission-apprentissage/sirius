@@ -2,7 +2,7 @@ const express = require("express");
 const validator = require("../middlewares/validatorMiddleware");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { hasPermissionToEditUser } = require("../middlewares/hasPermissionToEditUser");
-const { loginSchema, subscribeSchema, updateSchema } = require("../validators/users.validators");
+const { loginSchema, subscribeSchema, updateSchema, forgotPasswordSchema } = require("../validators/users.validators");
 const {
   loginUser,
   refreshTokenUser,
@@ -11,6 +11,7 @@ const {
   createUser,
   getUsers,
   updateUser,
+  forgotPassword,
 } = require("../controllers/users.controller");
 const { isAdmin } = require("../middlewares/isAdmin");
 
@@ -31,6 +32,10 @@ const users = () => {
 
   router.put("/api/users/:id", verifyUser, hasPermissionToEditUser, validator(updateSchema), (req, res, next) =>
     updateUser(req, res, next)
+  );
+
+  router.post("/api/users/forgot-password/", validator(forgotPasswordSchema), (req, res, next) =>
+    forgotPassword(req, res, next)
   );
 
   return router;

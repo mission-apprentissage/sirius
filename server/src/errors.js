@@ -27,6 +27,7 @@ const ErrorMessage = {
   EtablissementAlreadyExistingError: "Etablissement déjà existant",
   FormationAlreadyExistingError: "Formation déjà existante",
   UserAlreadyExistsError: "Un utilisateur avec cet email existe déjà",
+  UserNotFound: "Utilisateur inconnu",
 };
 
 const Errors = {
@@ -136,6 +137,15 @@ const Errors = {
 
     get status() {
       return 400;
+    }
+  },
+  UserNotFound: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.UserNotFound, extra);
+    }
+
+    get status() {
+      return 404;
     }
   },
 };

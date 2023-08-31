@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../config");
 const usersDao = require("../dao/users.dao");
 const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
+const { ErrorMessage } = require("../errors");
 
 const createUser = async (user) => {
   try {
@@ -95,4 +96,17 @@ const updateUser = async (id, user) => {
   }
 };
 
-module.exports = { loginUser, refreshTokenUser, logoutUser, createUser, getUsers, updateUser };
+const forgotPassword = async (email) => {
+  try {
+    const user = await usersDao.getOneByEmail(email);
+
+    if (!user) {
+      return { success: false, body: ErrorMessage.UserNotFound };
+    }
+    return { success: true, body: user };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { loginUser, refreshTokenUser, logoutUser, createUser, getUsers, updateUser, forgotPassword };

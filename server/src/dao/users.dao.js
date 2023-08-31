@@ -4,6 +4,10 @@ const getOne = (id) => {
   return User.findById(id).lean();
 };
 
+const getOneByEmail = (email) => {
+  return User.findOne({ username: email }).select("-refreshToken -authStrategy").lean();
+};
+
 const update = (id, user) => {
   return User.updateOne({ _id: id, deletedAt: null }, user);
 };
@@ -24,4 +28,5 @@ module.exports = {
   update,
   create,
   getAll,
+  getOneByEmail,
 };

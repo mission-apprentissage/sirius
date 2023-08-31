@@ -1,7 +1,10 @@
+const jwt = require("jsonwebtoken");
 const usersService = require("../services/users.service");
-const { BasicError, UnauthorizedError, UserAlreadyExistsError } = require("../errors");
+const { BasicError, UnauthorizedError, UserAlreadyExistsError, UserNotFound, ErrorMessage } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
+const { shootTemplate } = require("../modules/mailer");
+const config = require("../config");
 
 const createUser = tryCatch(async (req, res) => {
   const { success, body } = await usersService.createUser(req.body);
@@ -75,4 +78,40 @@ const updateUser = tryCatch(async (req, res) => {
   return res.status(200).json(updatedUser);
 });
 
-module.exports = { loginUser, refreshTokenUser, getCurrentUser, logoutUser, createUser, getUsers, updateUser };
+const forgotPassword = tryCatch(async (req, res) => {
+  const { success, body } = await usersService.forgotPassword(req.body.email);
+
+  if (!success && body === ErrorMessage.UserNotFound) return res.status(200).json({ success: true });
+  if (!success) throw new BasicError();
+
+  const resetPasswordToken = jwt.sign({ email: body.username }, config.auth.jwtSecret, {
+    expiresIn: "1h",
+  });
+
+  await shootTemplate({
+    template: "reset_password",
+    subject: "Sirius : réinitialisation du mot de passe",
+    to: body.username,
+    data: {
+      resetPasswordToken,
+      recipient: {
+        email: body.username,
+        firstname: body.firstName,
+        lastname: body.lastName,
+      },
+    },
+  });
+
+  return res.status(200).json({ success: true });
+});
+
+module.exports = {
+  loginUser,
+  refreshTokenUser,
+  getCurrentUser,
+  logoutUser,
+  createUser,
+  getUsers,
+  updateUser,
+  forgotPassword,
+};
