@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const usersService = require("../services/users.service");
-const { BasicError, UnauthorizedError, UserAlreadyExistsError, UserNotFound, ErrorMessage } = require("../errors");
+const { BasicError, UnauthorizedError, UserAlreadyExistsError, ErrorMessage } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
 const { shootTemplate } = require("../modules/mailer");
