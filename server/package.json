@@ -32,6 +32,7 @@
     "iconv-lite": "0.6.3",
     "injecti": "1.0.5",
     "joi": "17.7.0",
+    "joi-password-complexity": "5.2.0",
     "jsonwebtoken": "9.0.0",
     "lodash": "4.17.21",
     "mjml": "4.14.1",
