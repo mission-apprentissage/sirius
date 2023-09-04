@@ -113,7 +113,7 @@ const Signup = () => {
     setIsLoadingRemoteEtablissement(false);
   };
 
-  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes" />;
+  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">

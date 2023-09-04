@@ -96,7 +96,7 @@ const Login = () => {
     },
   });
 
-  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes" />;
+  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
@@ -159,6 +159,9 @@ const Login = () => {
               >
                 Connexion
               </Button>
+              <Text color="purple.300" fontSize="sm" textAlign="center">
+                <Link href="/reinitialisation-mot-de-passe">Mot de passe oublié</Link>
+              </Text>
               <Text color="purple.300" fontSize="sm" textAlign="center">
                 <Link href="/inscription">S'inscrire en tant qu'établissement</Link>
               </Text>

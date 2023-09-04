@@ -16,6 +16,8 @@ import DuplicateCampagne from "./campagnes/DuplicateCampagne";
 import Login from "./users/Login";
 import Signup from "./users/Signup";
 import PendingAccount from "./users/PendingAccount";
+import ResetPassword from "./users/ResetPassword";
+import ChangePassword from "./users/ChangePassword";
 import MentionsInformation from "./legal/MentionsInformation";
 import CGU from "./legal/CGU";
 import PolitiqueConfidentialite from "./legal/PolitiqueConfidentialite";
@@ -41,6 +43,8 @@ function App() {
         <Route exact path="/utilisateurs/gestion" element={<UsersManaging />} />
       </Route>
       <Route exact path="/connexion" element={<Login />} />
+      <Route exact path="/reinitialisation-mot-de-passe" element={<ResetPassword />} />
+      <Route exact path="/modification-mot-de-passe" element={<ChangePassword />} />
       <Route exact path="/inscription" element={<Signup />} />
       <Route exact path="/compte-desactive" element={<PendingAccount />} />
       <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
