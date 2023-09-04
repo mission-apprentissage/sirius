@@ -112,7 +112,7 @@ const forgotPassword = async (email) => {
 
 const resetPassword = async (token, password) => {
   try {
-    const decryptedToken = jwt.verify(token, config.auth.refreshTokenSecret);
+    const decryptedToken = jwt.verify(token, config.auth.jwtSecret);
 
     const user = await User.findByUsername(decryptedToken.email);
 
