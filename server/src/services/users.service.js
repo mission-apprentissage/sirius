@@ -3,6 +3,7 @@ const config = require("../config");
 const usersDao = require("../dao/users.dao");
 const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
 const { ErrorMessage } = require("../errors");
+const User = require("../models/user.model");
 
 const createUser = async (user) => {
   try {
@@ -109,4 +110,29 @@ const forgotPassword = async (email) => {
   }
 };
 
-module.exports = { loginUser, refreshTokenUser, logoutUser, createUser, getUsers, updateUser, forgotPassword };
+const resetPassword = async (token, password) => {
+  try {
+    const decryptedToken = jwt.verify(token, config.auth.refreshTokenSecret);
+
+    const user = await User.findByUsername(decryptedToken.email);
+
+    const updatedUser = user.setPassword(password, async () => {
+      return user.save();
+    });
+
+    return { success: true, body: updatedUser };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = {
+  loginUser,
+  refreshTokenUser,
+  logoutUser,
+  createUser,
+  getUsers,
+  updateUser,
+  forgotPassword,
+  resetPassword,
+};

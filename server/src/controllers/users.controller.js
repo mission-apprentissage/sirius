@@ -105,6 +105,15 @@ const forgotPassword = tryCatch(async (req, res) => {
   return res.status(200).json({ success: true });
 });
 
+const resetPassword = tryCatch(async (req, res) => {
+  const { success, body } = await usersService.resetPassword(req.body.token, req.body.password);
+
+  if (!success && body === ErrorMessage.UserNotFound) throw new UnauthorizedError();
+  if (!success) throw new BasicError();
+
+  return res.status(200).json({ success: true });
+});
+
 module.exports = {
   loginUser,
   refreshTokenUser,
@@ -114,4 +123,5 @@ module.exports = {
   getUsers,
   updateUser,
   forgotPassword,
+  resetPassword,
 };
