@@ -97,7 +97,7 @@ const ResetPassword = () => {
               {isSubmitted ? (
                 <Text align="center" color="purple.500">
                   Votre mot de passe a été modifié, vous pouvez maintenant vous{" "}
-                  <Link to="/connexion">connecter</Link>.
+                  <Link href="/connexion">connecter</Link>.
                 </Text>
               ) : (
                 <>
