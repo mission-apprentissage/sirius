@@ -22,6 +22,7 @@ import { Navigate } from "react-router-dom";
 import { AsyncSelect } from "chakra-react-select";
 import { _post, _get } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
+import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
 import Miley from "../assets/images/miley.png";
 
 const validationSchema = Yup.object({
@@ -32,7 +33,9 @@ const validationSchema = Yup.object({
   firstName: Yup.string().required("Ce champ est obligatoire"),
   etablissement: Yup.object().required("Ce champ est obligatoire"),
   comment: Yup.string(),
-  password: Yup.string().required("Ce champ est obligatoire"),
+  password: Yup.string()
+    .required("Ce champ est obligatoire")
+    .matches(passwordComplexityRegex, passwordComplexityMessage),
 });
 
 const Signup = () => {

@@ -22,13 +22,17 @@ import * as Yup from "yup";
 import { Navigate, useLocation } from "react-router-dom";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
+import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
 import Miley from "../assets/images/miley.png";
 
 const validationSchema = Yup.object({
-  password: Yup.string().required("Ce champ est obligatoire"),
+  password: Yup.string()
+    .required("Ce champ est obligatoire")
+    .matches(passwordComplexityRegex, passwordComplexityMessage),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Les mots de passe ne correspondent pas")
-    .required("Ce champ est obligatoire"),
+    .required("Ce champ est obligatoire")
+    .matches(passwordComplexityRegex, passwordComplexityMessage),
 });
 
 const ResetPassword = () => {
