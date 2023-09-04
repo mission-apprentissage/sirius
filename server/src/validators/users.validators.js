@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const passwordComplexity = require("joi-password-complexity");
 
 const loginSchema = Joi.object({
   username: Joi.string().email().required(),
@@ -11,7 +12,7 @@ const subscribeSchema = Joi.object({
   comment: Joi.string(),
   siret: Joi.string().required(),
   username: Joi.string().email().required(),
-  password: Joi.string().required(),
+  password: passwordComplexity(),
   etablissement: Joi.object().required(),
 });
 
@@ -20,7 +21,6 @@ const updateSchema = Joi.object({
   lastName: Joi.string(),
   siret: Joi.string(),
   username: Joi.string().email(),
-  password: Joi.string(),
   etablissement: Joi.object(),
   status: Joi.string(),
   role: Joi.string(),
@@ -31,7 +31,7 @@ const forgotPasswordSchema = Joi.object({
 });
 
 const resetPasswordSchema = Joi.object({
-  password: Joi.string().required(),
+  password: passwordComplexity(),
   token: Joi.string().required(),
 });
 
