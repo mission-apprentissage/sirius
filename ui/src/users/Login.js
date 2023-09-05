@@ -92,6 +92,15 @@ const Login = () => {
           isClosable: true,
         });
         setIsSubmitting(false);
+      } else if (result.statusCode === 403) {
+        toast({
+          title: "Une erreur est survenue",
+          description: "Votre adresse email n'est pas confirmée",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
       }
     },
   });

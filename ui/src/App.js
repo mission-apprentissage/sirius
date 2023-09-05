@@ -18,6 +18,7 @@ import Signup from "./users/Signup";
 import PendingAccount from "./users/PendingAccount";
 import ResetPassword from "./users/ResetPassword";
 import ChangePassword from "./users/ChangePassword";
+import Confirmation from "./users/Confirmation";
 import MentionsInformation from "./legal/MentionsInformation";
 import CGU from "./legal/CGU";
 import PolitiqueConfidentialite from "./legal/PolitiqueConfidentialite";
@@ -46,6 +47,7 @@ function App() {
       <Route exact path="/reinitialisation-mot-de-passe" element={<ResetPassword />} />
       <Route exact path="/modification-mot-de-passe" element={<ChangePassword />} />
       <Route exact path="/inscription" element={<Signup />} />
+      <Route exact path="/confirmer-utilisateur" element={<Confirmation />} />
       <Route exact path="/compte-desactive" element={<PendingAccount />} />
       <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
       <Route exact path="/mentions-information" element={<MentionsInformation />} />

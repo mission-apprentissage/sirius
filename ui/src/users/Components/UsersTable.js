@@ -12,6 +12,7 @@ import {
   Box,
   Select,
 } from "@chakra-ui/react";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { UserContext } from "../../context/UserContext";
 import ChangeUserStatusConfirmationModal from "./ChangeUserStatusConfirmationModal";
 import ChangeUserRoleConfirmationModal from "./ChangeUserRoleConfirmationModal";
@@ -45,6 +46,7 @@ const UsersTable = ({ users, setRefetchData }) => {
                 <Th>Prénom</Th>
                 <Th>Nom</Th>
                 <Th>Email</Th>
+                <Th>Email confirmé</Th>
                 <Th>SIRET</Th>
                 <Th>Établissement</Th>
                 <Th>Commentaire</Th>
@@ -59,6 +61,7 @@ const UsersTable = ({ users, setRefetchData }) => {
                     <Td>{user.firstName}</Td>
                     <Td>{user.lastName}</Td>
                     <Td>{user.email}</Td>
+                    <Th>{user.emailConfirmed ? <CheckIcon /> : <CloseIcon />}</Th>
                     <Td>{user.siret}</Td>
                     <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {(user.etablissement?.onisep_nom ||

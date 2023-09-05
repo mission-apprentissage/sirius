@@ -235,8 +235,9 @@ const Signup = () => {
               borderRadius="md"
             >
               <Text color="purple.500" textAlign="center">
-                Votre demande d'inscription a bien été prise en compte, nous la traiterons dans les
-                plus brefs délais.
+                Votre demande d'inscription a bien été prise en compte, merci de bien vouloir
+                cliquer sur le lien de confirmation qui vous a été envoyé par email. Nous
+                vérifierons ensuite votre demande dans les plus brefs délais.
               </Text>
             </Stack>
           )}
