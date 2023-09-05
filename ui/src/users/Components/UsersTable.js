@@ -58,7 +58,7 @@ const UsersTable = ({ users, setRefetchData }) => {
                   <Tr key={user._id}>
                     <Td>{user.firstName}</Td>
                     <Td>{user.lastName}</Td>
-                    <Td>{user.username}</Td>
+                    <Td>{user.email}</Td>
                     <Td>{user.siret}</Td>
                     <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {(user.etablissement?.onisep_nom ||

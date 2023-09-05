@@ -23,7 +23,7 @@ httpTests(__filename, ({ startServer }) => {
       authStrategy: loggedInUserResponse.user.authStrategy,
       firstName: loggedInUserResponse.user.firstName,
       lastName: loggedInUserResponse.user.lastName,
-      username: loggedInUserResponse.user.username.toLowerCase(),
+      email: loggedInUserResponse.user.email.toLowerCase(),
       _id: meRequest.body._id,
       __v: 0,
     });

@@ -84,18 +84,18 @@ const forgotPassword = tryCatch(async (req, res) => {
   if (!success && body === ErrorMessage.UserNotFound) return res.status(200).json({ success: true });
   if (!success) throw new BasicError();
 
-  const resetPasswordToken = jwt.sign({ email: body.username }, config.auth.jwtSecret, {
+  const resetPasswordToken = jwt.sign({ email: body.email }, config.auth.jwtSecret, {
     expiresIn: "1h",
   });
 
   await shootTemplate({
     template: "reset_password",
     subject: "Sirius : réinitialisation du mot de passe",
-    to: body.username,
+    to: body.email,
     data: {
       resetPasswordToken,
       recipient: {
-        email: body.username,
+        email: body.email,
         firstname: body.firstName,
         lastname: body.lastName,
       },

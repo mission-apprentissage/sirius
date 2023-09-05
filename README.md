@@ -48,7 +48,7 @@ La base de données MongoDB contient **6 collections**.
 - **Formations** : _id, data, campagneId, deletedAt, createdBy, createdAt, updatedAt. *(le champs data contient les informations récupéré sur le catalogue de formations)*
 - **Questionnaires** : _id, nom, questionnaire, questionnaireUI, isValidated, deletedAt, createdBy, createdAt, updatedAt
 - **Temoignages** : _id, campagneId, responses, createdAt, updatedAt
-- **Users** : _id, firstName, lastName, username, role, status, comment, siret, etablissement, authStrategy, refreshToken, salt, hash
+- **Users** : _id, firstName, lastName, email, role, status, comment, siret, etablissement, authStrategy, refreshToken, salt, hash
 
 ### Variable d'environnement
 

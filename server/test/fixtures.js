@@ -41,7 +41,7 @@ const newUser = (custom = {}, hasId = false) => {
       ...(hasId && { _id: ObjectId(faker.database.mongodbObjectId()) }),
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
-      username: faker.internet.email(),
+      email: faker.internet.email(),
       authStrategy: STRATEGIES.local,
       refreshToken: [{ _id: ObjectId(faker.database.mongodbObjectId()), refreshToken: "refreshToken" }],
     },

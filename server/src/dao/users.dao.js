@@ -5,16 +5,16 @@ const getOne = (id) => {
 };
 
 const getOneByEmail = (email) => {
-  return User.findOne({ username: email }).select("-refreshToken -authStrategy").lean();
+  return User.findOne({ email: email }).select("-refreshToken -authStrategy").lean();
 };
 
 const update = (id, user) => {
   return User.updateOne({ _id: id, deletedAt: null }, user);
 };
 
-const create = ({ username, firstName, lastName, password, comment, etablissement, siret }) => {
+const create = ({ email, firstName, lastName, password, comment, etablissement, siret }) => {
   return User.register(
-    new User({ username: username.toLowerCase(), firstName, lastName, comment, etablissement, siret }),
+    new User({ email: email.toLowerCase(), firstName, lastName, comment, etablissement, siret }),
     password
   );
 };

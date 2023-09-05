@@ -22,7 +22,7 @@ const getAllWithCreatorName = async (query) => {
     },
     {
       $project: {
-        "createdBy.username": 0,
+        "createdBy.email": 0,
         "createdBy.authStrategy": 0,
         "createdBy.createdAt": 0,
         "createdBy.updatedAt": 0,

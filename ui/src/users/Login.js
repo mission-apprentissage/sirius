@@ -26,7 +26,7 @@ import { UserContext } from "../context/UserContext";
 import Miley from "../assets/images/miley.png";
 
 const validationSchema = Yup.object({
-  username: Yup.string()
+  email: Yup.string()
     .email("Le champ n'est pas au bon format")
     .required("Ce champ est obligatoire"),
   password: Yup.string().required("Ce champ est obligatoire"),
@@ -43,14 +43,14 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async ({ username, password }) => {
+    onSubmit: async ({ email, password }) => {
       setIsSubmitting(true);
       const result = await _post(`/api/users/login`, {
-        username: username.toLowerCase(),
+        email: email.toLowerCase(),
         password,
       });
 
@@ -112,21 +112,21 @@ const Login = () => {
               boxShadow="md"
               borderRadius="md"
             >
-              <FormControl isInvalid={!!formik.errors.username && formik.touched.username}>
+              <FormControl isInvalid={!!formik.errors.email && formik.touched.email}>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none" color="gray.300">
                     <EmailIcon />
                   </InputLeftElement>
                   <Input
-                    id="username"
-                    name="username"
+                    id="email"
+                    name="email"
                     type="text"
                     placeholder="Adresse email"
                     onChange={formik.handleChange}
-                    value={formik.values.username}
+                    value={formik.values.email}
                   />
                 </InputGroup>
-                <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
+                <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!formik.errors.password && formik.touched.password}>
                 <InputGroup>
