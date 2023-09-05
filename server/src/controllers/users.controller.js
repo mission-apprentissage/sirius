@@ -12,6 +12,24 @@ const createUser = tryCatch(async (req, res) => {
   if (!success && body.name === "UserExistsError") throw new UserAlreadyExistsError();
   if (!success) throw new BasicError();
 
+  const confirmationToken = jwt.sign({ email: body.email }, config.auth.jwtSecret, {
+    expiresIn: "1y",
+  });
+
+  await shootTemplate({
+    template: "confirm_user",
+    subject: "Sirius : activation de votre compte",
+    to: body.email,
+    data: {
+      confirmationToken,
+      recipient: {
+        email: body.email,
+        firstname: body.firstName,
+        lastname: body.lastName,
+      },
+    },
+  });
+
   res.status(201).json(body);
 });
 
@@ -114,6 +132,15 @@ const resetPassword = tryCatch(async (req, res) => {
   return res.status(200).json({ success: true });
 });
 
+const confirmUser = tryCatch(async (req, res) => {
+  const { success, body } = await usersService.confirmUser(req.body.token);
+
+  if (!success && body === ErrorMessage.UserNotFound) throw new UnauthorizedError();
+  if (!success) throw new BasicError();
+
+  return res.status(200).json({ success: true });
+});
+
 module.exports = {
   loginUser,
   refreshTokenUser,
@@ -124,4 +151,5 @@ module.exports = {
   updateUser,
   forgotPassword,
   resetPassword,
+  confirmUser,
 };

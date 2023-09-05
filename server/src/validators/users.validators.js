@@ -35,4 +35,15 @@ const resetPasswordSchema = Joi.object({
   token: Joi.string().required(),
 });
 
-module.exports = { loginSchema, subscribeSchema, updateSchema, forgotPasswordSchema, resetPasswordSchema };
+const confirmSchema = Joi.object({
+  token: Joi.string().required(),
+});
+
+module.exports = {
+  loginSchema,
+  subscribeSchema,
+  updateSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  confirmSchema,
+};

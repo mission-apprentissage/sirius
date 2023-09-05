@@ -8,6 +8,7 @@ const {
   updateSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  confirmSchema,
 } = require("../validators/users.validators");
 const {
   loginUser,
@@ -19,6 +20,7 @@ const {
   updateUser,
   forgotPassword,
   resetPassword,
+  confirmUser,
 } = require("../controllers/users.controller");
 const { isAdmin } = require("../middlewares/isAdmin");
 
@@ -48,6 +50,8 @@ const users = () => {
   router.post("/api/users/reset-password/", validator(resetPasswordSchema), (req, res, next) =>
     resetPassword(req, res, next)
   );
+
+  router.post("/api/users/confirm/", validator(confirmSchema), (req, res, next) => confirmUser(req, res, next));
 
   return router;
 };

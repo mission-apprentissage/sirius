@@ -126,6 +126,22 @@ const resetPassword = async (token, password) => {
   }
 };
 
+const confirmUser = async (token) => {
+  try {
+    const decryptedToken = jwt.verify(token, config.auth.jwtSecret);
+
+    const user = await User.findByUsername(decryptedToken.email);
+
+    user.emailConfirmed = true;
+
+    const updatedUser = await usersDao.update(user.id, user);
+
+    return { success: true, body: updatedUser };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   loginUser,
   refreshTokenUser,
@@ -135,4 +151,5 @@ module.exports = {
   updateUser,
   forgotPassword,
   resetPassword,
+  confirmUser,
 };
