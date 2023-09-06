@@ -91,6 +91,14 @@ const Signup = () => {
           isClosable: true,
         });
         setIsSubmitting(false);
+      } else if (resultUser.statusCode === 429) {
+        toast({
+          title: "Une erreur est survenue",
+          description: resultUser.message,
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
       }
     },
   });

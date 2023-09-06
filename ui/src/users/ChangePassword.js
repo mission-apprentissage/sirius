@@ -64,6 +64,15 @@ const ResetPassword = () => {
       if (result.success) {
         setIsSubmitted(true);
         setIsSubmitting(false);
+      } else if (result.statusCode === 429) {
+        toast({
+          title: "Une erreur est survenue",
+          description: result.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
       } else {
         toast({
           title: "Une erreur est survenue",

@@ -53,7 +53,6 @@ const Login = () => {
         email: email.toLowerCase(),
         password,
       });
-
       if (result.success) {
         toast({
           title: "Vous êtes connecté",
@@ -96,6 +95,15 @@ const Login = () => {
         toast({
           title: "Une erreur est survenue",
           description: "Votre adresse email n'est pas confirmée",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
+      } else if (result.statusCode === 429) {
+        toast({
+          title: "Une erreur est survenue",
+          description: result.message,
           status: "error",
           duration: 5000,
           isClosable: true,
