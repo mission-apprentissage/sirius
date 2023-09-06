@@ -1,0 +1,33 @@
+<mjml>
+    <%- include('./common/head.ejs'); %>
+    <mj-body background-color="#f9fafc">
+      <%- include('./common/header.ejs'); %>
+      <mj-wrapper padding="10px 20px">
+        <mj-section background-color="#ffffff" padding-top="0">
+          <mj-column>
+            <mj-text>
+              Bonjour <%= data.recipient.firstname %> <%= data.recipient.lastname
+              %>,<br />
+              <br />
+              Sirius est une plateforme permettant la collecte et la restitution des avis des apprentis.<br />
+              <br />
+              Votre compte est maintenant actif, vous pouvez vous connecter en suivant ce lien :<br />
+            </mj-text>
+            <mj-button
+              href="<%= utils.getPublicUrl(`/connexion`) %>"
+              background-color="#6B46C1"
+              color="white"
+            >
+              Me connecter
+            </mj-button>
+            <mj-text>
+              Pour toute question, contactez-nous à l'adresse suivante:
+              sirius@inserjeunes.beta.gouv.fr<br />
+            </mj-text>
+            <%- include('./common/signature.ejs'); %>
+          </mj-column>
+        </mj-section>
+      </mj-wrapper>
+    </mj-body>
+  </mjml>
+  
