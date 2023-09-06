@@ -142,6 +142,15 @@ const confirmUser = async (token) => {
   }
 };
 
+const getUserById = async (id) => {
+  try {
+    const user = await usersDao.getOne(id);
+    return { success: true, body: user };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   loginUser,
   refreshTokenUser,
@@ -152,4 +161,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   confirmUser,
+  getUserById,
 };

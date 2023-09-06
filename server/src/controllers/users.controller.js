@@ -5,6 +5,7 @@ const tryCatch = require("../utils/tryCatch.utils");
 const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
 const { shootTemplate } = require("../modules/mailer");
 const config = require("../config");
+const { USER_STATUS } = require("../constants");
 
 const createUser = tryCatch(async (req, res) => {
   const { success, body } = await usersService.createUser(req.body);
@@ -89,9 +90,25 @@ const getUsers = tryCatch(async (req, res) => {
 const updateUser = tryCatch(async (req, res) => {
   const { id } = req.params;
 
-  const { success, body: updatedUser } = await usersService.updateUser(id, req.body);
+  const { success: successOldUser, body: oldUser } = await usersService.getUserById(id);
+  const { success: successUpdatedUser, body: updatedUser } = await usersService.updateUser(id, req.body);
 
-  if (!success) throw new BasicError();
+  if (successOldUser && oldUser.status !== USER_STATUS.ACTIVE && req.body.status === USER_STATUS.ACTIVE) {
+    await shootTemplate({
+      template: "account_activated",
+      subject: "Sirius : votre inscription est validée",
+      to: oldUser.email,
+      data: {
+        recipient: {
+          email: oldUser.email,
+          firstname: oldUser.firstName,
+          lastname: oldUser.lastName,
+        },
+      },
+    });
+  }
+
+  if (!successUpdatedUser) throw new BasicError();
 
   return res.status(200).json(updatedUser);
 });
