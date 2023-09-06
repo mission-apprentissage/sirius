@@ -23,13 +23,16 @@ const {
   confirmUser,
 } = require("../controllers/users.controller");
 const { isAdmin } = require("../middlewares/isAdmin");
+const { rateLimiter } = require("../middlewares/rateLimiter");
 
 const users = () => {
   const router = express.Router();
 
-  router.post("/api/users/", validator(subscribeSchema), (req, res, next) => createUser(req, res, next));
+  router.post("/api/users/", rateLimiter, validator(subscribeSchema), (req, res, next) => createUser(req, res, next));
 
-  router.post("/api/users/login/", validator(loginSchema), verifyUser, (req, res, next) => loginUser(req, res, next));
+  router.post("/api/users/login/", rateLimiter, validator(loginSchema), verifyUser, (req, res, next) =>
+    loginUser(req, res, next)
+  );
 
   router.post("/api/users/refreshToken/", (req, res, next) => refreshTokenUser(req, res, next));
 
@@ -43,15 +46,17 @@ const users = () => {
     updateUser(req, res, next)
   );
 
-  router.post("/api/users/forgot-password/", validator(forgotPasswordSchema), (req, res, next) =>
+  router.post("/api/users/forgot-password/", rateLimiter, validator(forgotPasswordSchema), (req, res, next) =>
     forgotPassword(req, res, next)
   );
 
-  router.post("/api/users/reset-password/", validator(resetPasswordSchema), (req, res, next) =>
+  router.post("/api/users/reset-password/", rateLimiter, validator(resetPasswordSchema), (req, res, next) =>
     resetPassword(req, res, next)
   );
 
-  router.post("/api/users/confirm/", validator(confirmSchema), (req, res, next) => confirmUser(req, res, next));
+  router.post("/api/users/confirm/", rateLimiter, validator(confirmSchema), (req, res, next) =>
+    confirmUser(req, res, next)
+  );
 
   return router;
 };
