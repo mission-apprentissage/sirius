@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Card,
   CardHeader,
@@ -28,6 +28,8 @@ import { CanvasRenderer } from "echarts/renderers";
 import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
 import DashboardHeader from "./Components/DashboardHeader";
+import { UserContext } from "../context/UserContext";
+import { USER_ROLES } from "../constants";
 
 echarts.use([
   TooltipComponent,
@@ -235,6 +237,7 @@ const barOption = (responses) => {
 };
 
 const Dashboard = () => {
+  const [{ currentUserRole }] = useContext(UserContext);
   const [selectedCampagne, setSelectedCampagne] = useState(null);
   const [temoignages, setTemoignages] = useState([]);
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
@@ -320,7 +323,8 @@ const Dashboard = () => {
                             .filter(Boolean);
 
                           if (
-                            !isVerbatimsDisplayed &&
+                            (!isVerbatimsDisplayed ||
+                              currentUserRole === USER_ROLES.ETABLISSEMENT) &&
                             matchedCardTypeAndQuestions[question] === "text"
                           )
                             return null;
@@ -371,7 +375,8 @@ const Dashboard = () => {
                                         color="orange.900"
                                         mb="8px"
                                       >
-                                        ({responses.length} témoignage{responses.length > 1 && "s"})
+                                        ({responses.length} témoignage
+                                        {responses.length > 1 && "s"})
                                       </Text>
                                       {responses.map((response, index) => (
                                         <Text
