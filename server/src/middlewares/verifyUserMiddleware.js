@@ -1,5 +1,6 @@
 const passport = require("passport");
-const { UnauthorizedError } = require("../errors");
+const { UnauthorizedError, UnconfirmedEmail } = require("../errors");
+const { USER_STATUS } = require("../constants");
 
 const STRATEGIES = {
   local: "local",
@@ -8,7 +9,10 @@ const STRATEGIES = {
 
 const passportCallback = (req, res, next) => {
   return (error, user) => {
-    if (error || !user) {
+    if (user.emailConfirmed === false) {
+      return next(new UnconfirmedEmail());
+    }
+    if (error || !user || (req.url !== "/api/users/login" && user.status === USER_STATUS.INACTIVE)) {
       return next(new UnauthorizedError());
     }
 

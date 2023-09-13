@@ -106,43 +106,51 @@ const formationQuery = [
   },
 ];
 
-const etablissementQuery = [
-  {
-    $lookup: {
-      from: "etablissements",
-      let: { formationId: { $toString: "$formation._id" } },
-      pipeline: [
-        {
-          $match: {
-            $expr: {
-              $in: ["$$formationId", "$formationIds"],
+const etablissementQuery = (siret) => {
+  const etablissementMatch = siret ? { "etablissement.data.siret": siret } : {};
+  return [
+    {
+      $lookup: {
+        from: "etablissements",
+        let: { formationId: { $toString: "$formation._id" } },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $in: ["$$formationId", "$formationIds"],
+              },
             },
           },
-        },
-        {
-          $project: {
-            _id: { $toString: "$_id" },
-            formationIds: 1,
-            "data.onisep_nom": 1,
-            "data.enseigne": 1,
-            "data.siret": 1,
+          {
+            $project: {
+              _id: { $toString: "$_id" },
+              formationIds: 1,
+              "data.onisep_nom": 1,
+              "data.enseigne": 1,
+              "data.siret": 1,
+            },
           },
-        },
-        {
-          $limit: 1,
-        },
-      ],
-      as: "etablissement",
+          {
+            $limit: 1,
+          },
+        ],
+        as: "etablissement",
+      },
     },
-  },
-  {
-    $addFields: {
-      etablissement: { $arrayElemAt: ["$etablissement", 0] },
+    {
+      $addFields: {
+        etablissement: { $arrayElemAt: ["$etablissement", 0] },
+      },
     },
-  },
-];
+    {
+      $match: {
+        ...etablissementMatch,
+      },
+    },
+  ];
+};
 
-const getAllWithTemoignageCountAndTemplateName = async () => {
+const getAllWithTemoignageCountAndTemplateName = async (query) => {
   return Campagne.aggregate([
     {
       $match: {
@@ -152,12 +160,12 @@ const getAllWithTemoignageCountAndTemplateName = async () => {
     ...temoignageCountQuery,
     ...questionnaireTemplateQuery,
     ...formationQuery,
-    ...etablissementQuery,
+    ...etablissementQuery(query.siret),
   ]);
 };
 
-const getOneWithTemoignagneCountAndTemplateName = async (id) => {
-  const idToObjectId = ObjectId(id);
+const getOneWithTemoignagneCountAndTemplateName = async (query) => {
+  const idToObjectId = ObjectId(query.id);
   return Campagne.aggregate([
     {
       $match: {
@@ -168,7 +176,7 @@ const getOneWithTemoignagneCountAndTemplateName = async (id) => {
     ...temoignageCountQuery,
     ...questionnaireTemplateQuery,
     ...formationQuery,
-    ...etablissementQuery,
+    ...etablissementQuery(query.siret),
   ]);
 };
 

@@ -13,11 +13,12 @@ import {
   useToast,
   Tooltip,
   Box,
+  Switch,
 } from "@chakra-ui/react";
 import { DeleteIcon, ViewIcon, EditIcon, CopyIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
-import { _delete } from "../utils/httpClient";
+import { _delete, _put } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import DuplicateQuestionnaireModal from "./DuplicateQuestionnaireModal";
@@ -30,7 +31,30 @@ const QuestionnaireTable = ({
   onOpenDuplication,
   setQuestionnaireToDelete,
   onOpenDeletion,
+  token,
 }) => {
+  const toast = useToast();
+  const handleValidationChange = async (e, questionnaire) => {
+    const result = await _put(
+      `/api/questionnaires/${questionnaire._id}`,
+      {
+        isValidated: !questionnaire?.isValidated,
+      },
+      token
+    );
+
+    if (result.acknowledged) {
+      navigate(0);
+    } else {
+      toast({
+        title: "Une erreur est survenue",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <>
       <TableContainer my={4} p={2} rounded="md" w="100%" boxShadow="md" bg="white">
@@ -41,6 +65,7 @@ const QuestionnaireTable = ({
               <Th>Crée le</Th>
               <Th>Modifié le</Th>
               <Th>Crée par</Th>
+              <Th>Validé</Th>
               <Th>Actions</Th>
             </Tr>
           </Thead>
@@ -76,6 +101,13 @@ const QuestionnaireTable = ({
                 </Td>
                 <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {questionnaire.createdBy[0].firstName} {questionnaire.createdBy[0].lastName}
+                </Td>
+                <Td>
+                  <Switch
+                    size="md"
+                    isChecked={questionnaire.isValidated}
+                    onChange={(e) => handleValidationChange(e, questionnaire)}
+                  />
                 </Td>
                 <Td>
                   <IconButton
@@ -209,6 +241,7 @@ const Managing = () => {
             setQuestionnaireToDuplicate={setQuestionnaireToDuplicate}
             setQuestionnaireToDelete={setQuestionnaireToDelete}
             onOpenDeletion={onOpenDeletion}
+            token={userContext.token}
           />
           <DuplicateQuestionnaireModal
             isOpen={isOpenDuplication}

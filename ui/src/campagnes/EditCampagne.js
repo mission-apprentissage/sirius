@@ -72,7 +72,9 @@ const EditCampagne = () => {
         }
       }}
     >
-      {(formik) => <CampagneForm formik={formik} buttonMessage="Éditer" />}
+      {(formik) => (
+        <CampagneForm formik={formik} buttonMessage="Éditer" siret={userContext.siret} />
+      )}
     </Formik>
   );
 };

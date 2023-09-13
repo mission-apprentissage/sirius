@@ -3,7 +3,7 @@ const { BasicError, CampagneNotFoundError } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 
 const getCampagnes = tryCatch(async (req, res) => {
-  const { success, body } = await campagnesService.getCampagnes();
+  const { success, body } = await campagnesService.getCampagnes(req.query);
 
   if (!success) throw new BasicError();
 
@@ -11,7 +11,8 @@ const getCampagnes = tryCatch(async (req, res) => {
 });
 
 const getCampagne = tryCatch(async (req, res) => {
-  const { success, body } = await campagnesService.getOneCampagne(req.params.id);
+  const query = { id: req.params.id };
+  const { success, body } = await campagnesService.getOneCampagne(query);
 
   if (!success) throw new BasicError();
   if (!body) throw new CampagneNotFoundError();

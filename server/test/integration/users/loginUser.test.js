@@ -11,10 +11,10 @@ httpTests(__filename, ({ startServer }) => {
     const { httpClient } = await startServer();
 
     const user = newUser({ password: "toto" });
-    await createUser(user.username, user.password, user.firstName, user.lastName);
+    await createUser(user.email, user.password, user.firstName, user.lastName);
 
     const login = {
-      username: user.username.toLowerCase(),
+      email: user.email.toLowerCase(),
       password: user.password,
     };
     const response = await httpClient.post("/api/users/login").send(login);
@@ -30,7 +30,7 @@ httpTests(__filename, ({ startServer }) => {
 
     const user = newUser({ password: "toto" });
     const login = {
-      username: user.username.toLowerCase(),
+      email: user.email.toLowerCase(),
     };
     const response = await httpClient.post("/api/users/login").send(login);
 

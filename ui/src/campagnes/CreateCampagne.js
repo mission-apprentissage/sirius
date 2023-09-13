@@ -50,7 +50,7 @@ const CreateCampagne = () => {
         }
       }}
     >
-      {(formik) => <CampagneForm formik={formik} buttonMessage="Créer" />}
+      {(formik) => <CampagneForm formik={formik} buttonMessage="Créer" siret={userContext.siret} />}
     </Formik>
   );
 };

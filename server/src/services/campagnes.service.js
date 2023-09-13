@@ -1,17 +1,17 @@
 const campagnesDao = require("../dao/campagnes.dao");
 
-const getCampagnes = async () => {
+const getCampagnes = async (query) => {
   try {
-    const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName();
+    const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(query);
     return { success: true, body: campagnes };
   } catch (error) {
     return { success: false, body: error };
   }
 };
 
-const getOneCampagne = async (id) => {
+const getOneCampagne = async (query) => {
   try {
-    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(id);
+    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(query);
     return { success: true, body: campagne[0] };
   } catch (error) {
     return { success: false, body: error };
@@ -23,7 +23,6 @@ const createCampagne = async (campagne) => {
     const createdCampagne = await campagnesDao.create(campagne);
     return { success: true, body: createdCampagne };
   } catch (error) {
-    console.log(error);
     return { success: false, body: error };
   }
 };

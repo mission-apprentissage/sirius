@@ -72,7 +72,9 @@ const DuplicateCampagne = () => {
         }
       }}
     >
-      {(formik) => <CampagneForm formik={formik} buttonMessage="Dupliquer" />}
+      {(formik) => (
+        <CampagneForm formik={formik} buttonMessage="Dupliquer" siret={userContext.siret} />
+      )}
     </Formik>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useToast } from "@chakra-ui/react";
+import { HStack, useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -18,6 +18,7 @@ import {
   AccordionPanel,
   AccordionIcon,
   Text,
+  Switch,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import { _post, _put } from "../utils/httpClient";
@@ -71,6 +72,7 @@ const submitHandler = async (values, editedQuestionnaireId, userContext) => {
 const validationSchema = (isQuestionnaireValid, isQuestionnaireUIValid) =>
   Yup.object({
     nom: Yup.string().required("Ce champ est obligatoire"),
+    isValidated: Yup.boolean().default(false),
     questionnaire: Yup.string()
       .required("Ce champ est obligatoire")
       .test("is-json", "Le questionnaire doit être un JSON valide", () => isQuestionnaireValid),
@@ -97,6 +99,7 @@ const QuestionnaireForm = ({ editedQuestionnaire = null, duplicatedQuestionnaire
   const formik = useFormik({
     initialValues: {
       nom: currentQuestionnaire ? currentQuestionnaire.nom : "",
+      isValidated: currentQuestionnaire ? currentQuestionnaire.isValidated : false,
       questionnaire: JSON.stringify(currentQuestionnaire?.questionnaire || {}),
       questionnaireUI: JSON.stringify(currentQuestionnaire?.questionnaireUI || {}),
     },
@@ -153,6 +156,18 @@ const QuestionnaireForm = ({ editedQuestionnaire = null, duplicatedQuestionnaire
                 value={formik.values.nom}
               />
               <FormErrorMessage>{formik.errors.nom}</FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={!!formik.errors.isValidated && formik.touched.isValidated}>
+              <HStack>
+                <FormLabel htmlFor="isValidated">Validé</FormLabel>
+                <Switch
+                  id="isValidated"
+                  name="isValidated"
+                  isChecked={formik.values.isValidated}
+                  onChange={formik.handleChange}
+                />
+              </HStack>
+              <FormErrorMessage>{formik.errors.isValidated}</FormErrorMessage>
             </FormControl>
             <Accordion allowToggle w="100%">
               <AccordionItem>

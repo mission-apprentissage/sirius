@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const passportLocalMongoose = require("passport-local-mongoose");
 const { STRATEGIES } = require("../middlewares/verifyUserMiddleware");
+const { USER_ROLES, USER_STATUS } = require("../constants");
 
 const Session = new mongoose.Schema({
   refreshToken: {
@@ -18,10 +19,23 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  username: {
+  email: {
     type: String,
     required: true,
     unique: true,
+  },
+  emailConfirmed: {
+    type: Boolean,
+    default: false,
+  },
+  role: {
+    type: String,
+    default: USER_ROLES.ETABLISSEMENT,
+    required: true,
+  },
+  status: {
+    type: String,
+    default: USER_STATUS.PENDING,
   },
   permission: {
     type: String,
@@ -61,6 +75,7 @@ userSchema.set("toJSON", {
 });
 
 const options = {
+  usernameField: "email",
   errorMessages: {
     UserExistsError: "Un utilisateur avec cet email existe déjà",
   },

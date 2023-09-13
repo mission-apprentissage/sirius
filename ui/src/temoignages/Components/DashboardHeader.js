@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Text, HStack, Box, Tag, FormLabel, Switch } from "@chakra-ui/react";
 import { getMedianDuration, getChampsLibreRate } from "../../utils/temoignage";
 import EtablissementSelector from "./EtablissementSelector";
 import FormationSelector from "./FormationSelector";
+import { UserContext } from "../../context/UserContext";
+import { _get } from "../../utils/httpClient";
 
 const DashboardHeader = ({
   temoignagesSetter,
@@ -12,8 +14,25 @@ const DashboardHeader = ({
   campagne,
   isVerbatimsDisplayed,
 }) => {
+  const [userContext] = useContext(UserContext);
   const [selectedEtablissement, setSelectedEtablissement] = useState(null);
   const [selectedFormation, setSelectedFormation] = useState(null);
+
+  // Le SIRET est fourni dans le cas où un utilisateur non admin veut accéder à son dashboard de témoignages
+  useEffect(() => {
+    const fetchLocalEtablissement = async () => {
+      const result = await _get(
+        `/api/etablissements?data.siret=${userContext.siret}`,
+        userContext.token
+      );
+      if (result?.length > 0) {
+        setSelectedEtablissement(result[0]);
+      }
+    };
+    if (userContext.siret) {
+      fetchLocalEtablissement();
+    }
+  }, [userContext.siret]);
 
   const medianDuration = getMedianDuration(temoignages);
 
@@ -22,16 +41,16 @@ const DashboardHeader = ({
   return (
     <Box p="64px 72px 32px 72px" bgColor="#FAF5FF" boxShadow="md">
       <HStack mb={4} w="100%">
-        {selectedFormation && (
-          <Text color="purple.600" fontSize="5xl" textTransform="uppercase">
-            CFA
-          </Text>
-        )}
         <Box w={selectedFormation ? "400px" : "100%"}>
-          <EtablissementSelector
-            temoignagesSetter={temoignagesSetter}
-            selectedEtablissementSetter={setSelectedEtablissement}
-          />
+          {userContext.siret ? (
+            <Text fontSize="xl" color="purple.500" fontWeight="semibold">
+              {selectedEtablissement?.data?.onisep_nom ||
+                selectedEtablissement?.data?.enseigne ||
+                selectedEtablissement?.data?.entreprise_raison_sociale}
+            </Text>
+          ) : (
+            <EtablissementSelector selectedEtablissementSetter={setSelectedEtablissement} />
+          )}
         </Box>
         {selectedFormation && (
           <Text color="purple.600" fontSize="3xl" px="24px">

@@ -1,46 +1,64 @@
-const nodemailer = require("nodemailer");
-const { omit } = require("lodash");
-const htmlToText = require("nodemailer-html-to-text").htmlToText;
-const mjml = require("mjml");
-const { promisify } = require("util");
 const ejs = require("ejs");
-const renderFile = promisify(ejs.renderFile);
+const { inject } = require("injecti");
+const _ = require("lodash");
+const mjml = require("mjml");
+const nodemailer = require("nodemailer");
+const { htmlToText } = require("nodemailer-html-to-text");
+const path = require("path");
+const config = require("../config");
 
-const createTransporter = (smtp) => {
-  let needsAuthentication = !!smtp.auth.user;
+const basePath = path.join(__dirname, "../../");
 
-  let transporter = nodemailer.createTransport(needsAuthentication ? smtp : omit(smtp, ["auth"]));
-  transporter.use("compile", htmlToText({ ignoreImage: true }));
+function createTransporter(smtp) {
+  const needsAuthentication = !!smtp.auth.user;
+  const transporter = nodemailer.createTransport(needsAuthentication ? smtp : _.omit(smtp, ["auth"]));
+  transporter.use("compile", htmlToText());
   return transporter;
+}
+
+const [shootEmail] = inject(
+  { transporter: createTransporter({ ...config.smtp, secure: false }) },
+  (deps) =>
+    async ({ to, subject, html }) => {
+      const { messageId } = await deps.transporter.sendMail({
+        from: config.smtp.email_from,
+        to,
+        subject,
+        html,
+      });
+
+      return messageId;
+    }
+);
+
+const shootTemplate = async ({ to, subject, template, data }) => {
+  const html = await generateHtml({
+    to,
+    data,
+    subject,
+    templateFile: path.join(basePath, `/emails/${template}.mjml.ejs`),
+  });
+
+  await shootEmail({ html, subject, to });
 };
 
-module.exports = (config, transporter = createTransporter(config.smtp)) => {
-  let utils = { getPublicUrl: (path) => `${config.publicUrl}${path}` };
+function getPublicUrl(filepath) {
+  return `${config.publicUrl}${filepath}`;
+}
 
-  let renderEmail = async (email, data = {}) => {
-    let buffer = await renderFile(email.template, {
-      email,
-      data,
-      utils,
-    });
-    let { html } = mjml(buffer.toString(), { minify: true });
-    return html;
-  };
+async function generateHtml({ to, subject, templateFile, data }) {
+  const buffer = await ejs.renderFile(templateFile, {
+    to,
+    subject,
+    data,
+    utils: { getPublicUrl },
+  });
 
-  return {
-    renderEmail,
-    sendEmail: async (email, data) => {
-      return transporter.sendMail({
-        from: "sirius@apprentissage.beta.gouv.fr",
-        to: email.to,
-        subject: email.subject,
-        html: await renderEmail(email, data),
-        list: {
-          help: "https://app.gitbook.com/@mission-apprentissage/s/general/les-nouveaux-services/anotea-apprentissage",
-          unsubscribe: utils.getPublicUrl(`/api/unsubscribe/${email.to}`),
-        },
-        ...(process.env.SIRIUS_SMTP_BCC ? { bcc: process.env.SIRIUS_SMTP_BCC } : {}),
-      });
-    },
-  };
+  const { html } = mjml(buffer.toString(), { minify: true });
+  return html;
+}
+
+module.exports = {
+  shootEmail,
+  shootTemplate,
 };

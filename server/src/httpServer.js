@@ -19,6 +19,7 @@ module.exports = async (components) => {
   const { db, config, logger } = components;
 
   const app = express();
+  app.set("trust proxy", 1);
   app.use(helmet.contentSecurityPolicy());
   app.use(bodyParser.json());
   app.use(cookieParser(config.auth.cookieSecret));

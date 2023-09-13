@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const config = require("../config");
 const usersDao = require("../dao/users.dao");
 const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
+const { ErrorMessage } = require("../errors");
+const User = require("../models/user.model");
 
 const createUser = async (user) => {
   try {
@@ -14,10 +16,15 @@ const createUser = async (user) => {
 
 const loginUser = async (id) => {
   try {
-    const token = getToken({ _id: id });
-    const refreshToken = getRefreshToken({ _id: id });
-
     const user = await usersDao.getOne(id);
+
+    const token = getToken({ _id: id, role: user.role, status: user.status, siret: user.siret });
+    const refreshToken = getRefreshToken({
+      _id: id,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+    });
 
     user.refreshToken.push({ refreshToken });
 
@@ -38,8 +45,13 @@ const refreshTokenUser = async (refreshToken) => {
 
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
 
-    const token = getToken({ _id: userId });
-    const newRefreshToken = getRefreshToken({ _id: userId });
+    const token = getToken({ _id: userId, role: user.role, status: user.status, siret: user.siret });
+    const newRefreshToken = getRefreshToken({
+      _id: userId,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+    });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 
     await usersDao.update(user.id, user);
@@ -67,4 +79,87 @@ const logoutUser = async (id, refreshToken) => {
   }
 };
 
-module.exports = { loginUser, refreshTokenUser, logoutUser, createUser };
+const getUsers = async () => {
+  try {
+    const users = await usersDao.getAll();
+    return { success: true, body: users };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+const updateUser = async (id, user) => {
+  try {
+    const updatedUser = await usersDao.update(id, user);
+    return { success: true, body: updatedUser };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+const forgotPassword = async (email) => {
+  try {
+    const user = await usersDao.getOneByEmail(email);
+
+    if (!user) {
+      return { success: false, body: ErrorMessage.UserNotFound };
+    }
+    return { success: true, body: user };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+const resetPassword = async (token, password) => {
+  try {
+    const decryptedToken = jwt.verify(token, config.auth.jwtSecret);
+
+    const user = await User.findByUsername(decryptedToken.email);
+
+    const updatedUser = user.setPassword(password, async () => {
+      return user.save();
+    });
+
+    return { success: true, body: updatedUser };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+const confirmUser = async (token) => {
+  try {
+    const decryptedToken = jwt.verify(token, config.auth.jwtSecret);
+
+    const user = await User.findByUsername(decryptedToken.email);
+
+    user.emailConfirmed = true;
+
+    const updatedUser = await usersDao.update(user.id, user);
+
+    return { success: true, body: updatedUser };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+const getUserById = async (id) => {
+  try {
+    const user = await usersDao.getOne(id);
+    return { success: true, body: user };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = {
+  loginUser,
+  refreshTokenUser,
+  logoutUser,
+  createUser,
+  getUsers,
+  updateUser,
+  forgotPassword,
+  resetPassword,
+  confirmUser,
+  getUserById,
+};

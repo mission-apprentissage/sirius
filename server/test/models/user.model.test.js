@@ -10,7 +10,7 @@ describe(__filename, () => {
     createdUser.validate((err) => {
       expect(err.errors.firstName).to.exist;
       expect(err.errors.lastName).to.exist;
-      expect(err.errors.username).to.exist;
+      expect(err.errors.email).to.exist;
       done();
     });
   });

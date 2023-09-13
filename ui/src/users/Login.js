@@ -20,12 +20,13 @@ import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate, useNavigate } from "react-router-dom";
+import jwt from "jwt-decode";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import Miley from "../assets/images/miley.png";
 
 const validationSchema = Yup.object({
-  username: Yup.string()
+  email: Yup.string()
     .email("Le champ n'est pas au bon format")
     .required("Ce champ est obligatoire"),
   password: Yup.string().required("Ce champ est obligatoire"),
@@ -42,17 +43,16 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async ({ username, password }) => {
+    onSubmit: async ({ email, password }) => {
       setIsSubmitting(true);
       const result = await _post(`/api/users/login`, {
-        username: username.toLowerCase(),
+        email: email.toLowerCase(),
         password,
       });
-
       if (result.success) {
         toast({
           title: "Vous êtes connecté",
@@ -61,10 +61,19 @@ const Login = () => {
           isClosable: true,
         });
         setUserContext((oldValues) => {
-          return { ...oldValues, token: result.token };
+          const decodedToken = jwt(result.token);
+
+          return {
+            ...oldValues,
+            token: result.token,
+            currentUserId: decodedToken._id,
+            currentUserRole: decodedToken.role,
+            currentUserStatus: decodedToken.status,
+            siret: decodedToken.siret,
+          };
         });
         setIsSubmitting(false);
-        navigate("/campagnes");
+        navigate("/campagnes/gestion");
       } else if (result.statusCode === 401) {
         toast({
           title: "Une erreur est survenue",
@@ -82,11 +91,29 @@ const Login = () => {
           isClosable: true,
         });
         setIsSubmitting(false);
+      } else if (result.statusCode === 403) {
+        toast({
+          title: "Une erreur est survenue",
+          description: "Votre adresse email n'est pas confirmée",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
+      } else if (result.statusCode === 429) {
+        toast({
+          title: "Une erreur est survenue",
+          description: result.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
       }
     },
   });
 
-  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes" />;
+  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
@@ -102,21 +129,21 @@ const Login = () => {
               boxShadow="md"
               borderRadius="md"
             >
-              <FormControl isInvalid={!!formik.errors.username && formik.touched.username}>
+              <FormControl isInvalid={!!formik.errors.email && formik.touched.email}>
                 <InputGroup>
                   <InputLeftElement pointerEvents="none" color="gray.300">
                     <EmailIcon />
                   </InputLeftElement>
                   <Input
-                    id="username"
-                    name="username"
+                    id="email"
+                    name="email"
                     type="text"
                     placeholder="Adresse email"
                     onChange={formik.handleChange}
-                    value={formik.values.username}
+                    value={formik.values.email}
                   />
                 </InputGroup>
-                <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
+                <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={!!formik.errors.password && formik.touched.password}>
                 <InputGroup>
@@ -149,6 +176,9 @@ const Login = () => {
               >
                 Connexion
               </Button>
+              <Text color="purple.300" fontSize="sm" textAlign="center">
+                <Link href="/reinitialisation-mot-de-passe">Mot de passe oublié</Link>
+              </Text>
               <Text color="purple.300" fontSize="sm" textAlign="center">
                 <Link href="/inscription">S'inscrire en tant qu'établissement</Link>
               </Text>

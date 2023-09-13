@@ -22,17 +22,20 @@ import { Navigate } from "react-router-dom";
 import { AsyncSelect } from "chakra-react-select";
 import { _post, _get } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
+import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
 import Miley from "../assets/images/miley.png";
 
 const validationSchema = Yup.object({
-  username: Yup.string()
+  email: Yup.string()
     .email("Le champ n'est pas au bon format")
     .required("Ce champ est obligatoire"),
   lastName: Yup.string().required("Ce champ est obligatoire"),
   firstName: Yup.string().required("Ce champ est obligatoire"),
   etablissement: Yup.object().required("Ce champ est obligatoire"),
   comment: Yup.string(),
-  password: Yup.string().required("Ce champ est obligatoire"),
+  password: Yup.string()
+    .required("Ce champ est obligatoire")
+    .matches(passwordComplexityRegex, passwordComplexityMessage),
 });
 
 const Signup = () => {
@@ -52,17 +55,17 @@ const Signup = () => {
       lastName: "",
       etablissement: "",
       comment: "",
-      username: "",
+      email: "",
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: async ({ username, password, firstName, lastName, comment, etablissement }) => {
+    onSubmit: async ({ email, password, firstName, lastName, comment, etablissement }) => {
       setIsSubmitting(true);
       const resultUser = await _post(`/api/users/`, {
         firstName: firstName,
         lastName: lastName,
         comment: comment,
-        username: username.toLowerCase(),
+        email: email.toLowerCase(),
         password,
         siret: etablissement.siret,
         etablissement: etablissement,
@@ -84,6 +87,14 @@ const Signup = () => {
         toast({
           title: "Une erreur est survenue",
           description: "Merci de réessayer",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsSubmitting(false);
+      } else if (resultUser.statusCode === 429) {
+        toast({
+          title: "Une erreur est survenue",
+          description: resultUser.message,
           duration: 5000,
           isClosable: true,
         });
@@ -113,7 +124,7 @@ const Signup = () => {
     setIsLoadingRemoteEtablissement(false);
   };
 
-  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes" />;
+  if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
@@ -152,16 +163,16 @@ const Signup = () => {
                   />
                   <FormErrorMessage>{formik.errors.lastName}</FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={!!formik.errors.username && formik.touched.username}>
+                <FormControl isInvalid={!!formik.errors.email && formik.touched.email}>
                   <Input
-                    id="username"
-                    name="username"
+                    id="email"
+                    name="email"
                     type="text"
                     placeholder="Email"
                     onChange={formik.handleChange}
-                    value={formik.values.username}
+                    value={formik.values.email}
                   />
-                  <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
+                  <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
                 </FormControl>
                 <FormControl isInvalid={!!formik.errors.password && formik.touched.password}>
                   <InputGroup>
@@ -232,8 +243,9 @@ const Signup = () => {
               borderRadius="md"
             >
               <Text color="purple.500" textAlign="center">
-                Votre demande d'inscription a bien été prise en compte, nous la traiterons dans les
-                plus brefs délais.
+                Votre demande d'inscription a bien été prise en compte, merci de bien vouloir
+                cliquer sur le lien de confirmation qui vous a été envoyé par email. Nous
+                vérifierons ensuite votre demande dans les plus brefs délais.
               </Text>
             </Stack>
           )}

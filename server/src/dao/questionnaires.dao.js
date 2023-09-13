@@ -4,11 +4,12 @@ const create = async (questionnaire) => {
   return Questionnaire.create(questionnaire);
 };
 
-const getAllWithCreatorName = async () => {
+const getAllWithCreatorName = async (query) => {
   return Questionnaire.aggregate([
     {
       $match: {
         deletedAt: null,
+        ...query,
       },
     },
     {
@@ -21,7 +22,7 @@ const getAllWithCreatorName = async () => {
     },
     {
       $project: {
-        "createdBy.username": 0,
+        "createdBy.email": 0,
         "createdBy.authStrategy": 0,
         "createdBy.createdAt": 0,
         "createdBy.updatedAt": 0,

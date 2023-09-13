@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import {
   Box,
   Flex,
@@ -18,10 +19,15 @@ import {
   MenuList,
   MenuItem,
   MenuDivider,
+  useToast,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 import MileySmall from "../assets/images/miley_small.png";
 import Logo from "../assets/images/logo.svg";
+import { USER_ROLES, USER_STATUS } from "../constants";
+import { UserContext } from "../context/UserContext";
+import { _get } from "../utils/httpClient";
 
 const NAV_ITEMS = [
   {
@@ -31,13 +37,16 @@ const NAV_ITEMS = [
         label: "Ajout",
         subLabel: "Ajouter une campagne",
         href: "/campagnes/ajout",
+        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les campagnes",
         href: "/campagnes/gestion",
+        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
       },
     ],
+    roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
   },
   {
     label: "Témoignages",
@@ -46,13 +55,16 @@ const NAV_ITEMS = [
         label: "Dashboard",
         subLabel: "Afficher les statistiques d'une campagne",
         href: "/temoignages/dashboard",
+        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les témoignages d'une campagne",
         href: "/temoignages/gestion",
+        roles: [USER_ROLES.ADMIN],
       },
     ],
+    roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
   },
   {
     label: "Questionnaires",
@@ -61,18 +73,69 @@ const NAV_ITEMS = [
         label: "Ajout",
         subLabel: "Ajouter un questionnaire",
         href: "/questionnaires/ajout",
+        roles: [USER_ROLES.ADMIN],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les questionnaires",
         href: "/questionnaires/gestion",
+        roles: [USER_ROLES.ADMIN],
       },
     ],
+    roles: [USER_ROLES.ADMIN],
+  },
+  {
+    label: "Utilisateurs",
+    children: [
+      {
+        label: "Gestion",
+        subLabel: "Gérer les utilisateurs",
+        href: "/utilisateurs/gestion",
+        roles: [USER_ROLES.ADMIN],
+      },
+    ],
+    roles: [USER_ROLES.ADMIN],
   },
 ];
 
+const filterNavItemsByRole = (items, currentUserRole) => {
+  return items.reduce((acc, item) => {
+    if (item.roles.includes(currentUserRole)) {
+      const filteredChildren = item.children
+        ? filterNavItemsByRole(item.children, currentUserRole)
+        : undefined;
+
+      acc.push({
+        ...item,
+        children: filteredChildren,
+      });
+    }
+
+    return acc;
+  }, []);
+};
+
 const MenuWithSubnavigation = () => {
+  const [userContext] = useContext(UserContext);
   const { isOpen, onToggle } = useDisclosure();
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  const handleLogout = async () => {
+    const result = await _get(`/api/users/logout`, userContext.token);
+
+    if (result.success) {
+      navigate(0);
+    } else {
+      toast({
+        title: "Une erreur est survenue",
+        description: "Merci de réessayer",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <Box>
@@ -115,7 +178,7 @@ const MenuWithSubnavigation = () => {
             <MenuList>
               <MenuItem>Profil</MenuItem>
               <MenuDivider />
-              <MenuItem>Se déconnecter</MenuItem>
+              <MenuItem onClick={handleLogout}>Se déconnecter</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
@@ -129,9 +192,15 @@ const MenuWithSubnavigation = () => {
 };
 
 const DesktopNav = () => {
+  const [userContext] = useContext(UserContext);
+  const isActive = userContext.currentUserStatus === USER_STATUS.ACTIVE;
+  const filteredNavItems = isActive
+    ? filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole)
+    : [];
+
   return (
     <Stack direction="row" spacing={4}>
-      {NAV_ITEMS.map((navItem) => (
+      {filteredNavItems.map((navItem) => (
         <Box key={navItem.label}>
           <Popover trigger="hover" placement="bottom-start">
             <PopoverTrigger>
@@ -193,9 +262,16 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
 };
 
 const MobileNav = () => {
+  const [userContext] = useContext(UserContext);
+  const isActive = userContext.currentUserStatus === USER_STATUS.ACTIVE;
+
+  const filteredNavItems = isActive
+    ? filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole)
+    : [];
+
   return (
     <Stack bg="white" p={4} display={{ md: "none" }}>
-      {NAV_ITEMS.map((navItem) => (
+      {filteredNavItems.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>

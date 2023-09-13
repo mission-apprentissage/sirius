@@ -1,0 +1,119 @@
+import React, { useContext } from "react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
+  Button,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
+import { _put, _post, _get } from "../../utils/httpClient";
+import { UserContext } from "../../context/UserContext";
+import { USER_STATUS } from "../../constants";
+
+const ChangeUserStatusConfirmationModal = ({
+  user,
+  onClose,
+  isOpen,
+  selectedStatus,
+  setRefetchData,
+}) => {
+  const [userContext] = useContext(UserContext);
+  const toast = useToast();
+
+  if (!user) return null;
+
+  const handleChangeStatusConfirmation = async () => {
+    let etablissementResult;
+
+    const isActivatingUser =
+      selectedStatus === USER_STATUS.ACTIVE &&
+      (user.status === USER_STATUS.INACTIVE || user.status === USER_STATUS.PENDING);
+
+    const existingEtablissement = await _get(
+      `/api/etablissements?data.siret=${user.siret}`,
+      userContext.token
+    );
+
+    const isExistingEtablissement = existingEtablissement.length > 0;
+
+    if (isActivatingUser && !isExistingEtablissement) {
+      etablissementResult = await _post(
+        `/api/etablissements/`,
+        {
+          data: user.etablissement,
+          createdBy: user._id,
+        },
+        userContext.token
+      );
+    }
+
+    const userResult = await _put(
+      `/api/users/${user._id}`,
+      { status: selectedStatus },
+      userContext.token
+    );
+
+    if (
+      userResult.modifiedCount === 1 &&
+      ((isActivatingUser && (etablissementResult?._id || isExistingEtablissement)) ||
+        !isActivatingUser)
+    ) {
+      toast({
+        title: "Status modifié",
+        description: "Le status a bien été modifié",
+        status: "success",
+        duration: 5000,
+      });
+    } else {
+      toast({
+        title: "Une erreur est survenue",
+        status: "error",
+        duration: 5000,
+      });
+    }
+
+    setRefetchData(true);
+    onClose();
+  };
+
+  return (
+    <Modal onClose={onClose} isOpen={isOpen} isCentered size="xl">
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader textAlign="center">Confirmation de changement de status</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody textAlign="center" mt="15">
+          Le status de
+          <Text fontWeight="semibold">
+            {user.firstName} {user.lastName}
+          </Text>
+          sera modifié de{" "}
+          <Text as="span" fontWeight="semibold">
+            {user.status}
+          </Text>{" "}
+          à{" "}
+          <Text as="span" fontWeight="semibold">
+            {selectedStatus}
+          </Text>
+        </ModalBody>
+        <ModalFooter alignItems="center" justifyContent="center" mt="15">
+          <Button
+            size="lg"
+            variant="solid"
+            colorScheme="purple"
+            onClick={handleChangeStatusConfirmation}
+          >
+            Confirmer
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export default ChangeUserStatusConfirmationModal;
