@@ -10,7 +10,7 @@ const useFetchRemoteFormations = (siret) => {
     const fetchData = async () => {
       try {
         const response = await _get(
-          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?query={"etablissement_gestionnaire_siret":"${siret}", "published": "true", "catalogue_published": "true", "niveau":["3 (CAP...)","4 (BAC...)"]}&page=1&limit=500`
+          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?query={"$or":[{"etablissement_formateur_siret":${siret}},{"etablissement_gestionnaire_siret":${siret}}], "published": "true", "catalogue_published": "true", "niveau":["3 (CAP...)","4 (BAC...)"]}&page=1&limit=500`
         );
 
         // sort by alphabetical order
