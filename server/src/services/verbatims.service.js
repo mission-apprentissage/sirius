@@ -11,7 +11,10 @@ const {
 } = require("../utils/verbatims.utils");
 
 const getVerbatims = async (query) => {
-  const { questionnaireId } = query;
+  const questionnaireId = query.questionnaireId;
+  const etablissementSiret = query.etablissementSiret || null;
+  const formationId = query.formationId || null;
+
   try {
     const questionnaire = await questionnairesDao.getOne(questionnaireId);
 
@@ -44,7 +47,19 @@ const getVerbatims = async (query) => {
       titles
     );
 
-    return { success: true, body: verbatimsWithCampagneName };
+    let filteredVerbatims = [];
+
+    if (etablissementSiret) {
+      filteredVerbatims = verbatimsWithCampagneName.filter(
+        (verbatim) => verbatim.etablissementSiret === etablissementSiret
+      );
+    }
+
+    if (formationId) {
+      filteredVerbatims = verbatimsWithCampagneName.filter((verbatim) => verbatim.formationId === formationId);
+    }
+
+    return { success: true, body: filteredVerbatims.length ? filteredVerbatims : verbatimsWithCampagneName };
   } catch (error) {
     return { success: false, body: error };
   }

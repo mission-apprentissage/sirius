@@ -51,7 +51,9 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
           createdAt: verbatim.createdAt,
           campagneId: verbatim.campagneId,
           formation: verbatim.formation ? verbatim.formation.data.intitule_long : "",
+          formationId: verbatim.formation ? verbatim.formation._id : "",
           etablissement: verbatim.etablissement ? verbatim.etablissement.data.onisep_nom : "",
+          etablissementSiret: verbatim.etablissement ? verbatim.etablissement.data.siret : "",
         }
       : null;
   });
@@ -65,7 +67,7 @@ const appendVerbatimsWithCampagneNameAndRestructure = (
   const flattenVerbatims = [];
 
   verbatimsWithChampsLibre.filter(Boolean).forEach((item) => {
-    const { temoignageId, createdAt, campagneId, formation, etablissement } = item;
+    const { temoignageId, createdAt, campagneId, formation, formationId, etablissement, etablissementSiret } = item;
     const campagne = campagnesByQuestionnaireId.find((campagne) => campagne._id.toString() === campagneId);
     for (const key in item.verbatims) {
       const newObject = {
@@ -75,7 +77,9 @@ const appendVerbatimsWithCampagneNameAndRestructure = (
         value: item.verbatims[key],
         title: titles[key],
         formation,
+        formationId,
         etablissement,
+        etablissementSiret,
         campagneName: campagne && campagne.nomCampagne ? campagne.nomCampagne : "",
       };
 
@@ -92,6 +96,8 @@ const appendFormationAndEtablissementToVerbatims = (temoignages, campagnesByQues
       ...temoignage,
       etablissement: campagne && campagne.etablissement ? campagne.etablissement : null,
       formation: campagne && campagne.formation ? campagne.formation : null,
+      etablissementSiret: campagne && campagne.etablissementSiret ? campagne.etablissementSiret : null,
+      formationId: campagne && campagne.formationId ? campagne.formationId : null,
     };
   });
   return result;
