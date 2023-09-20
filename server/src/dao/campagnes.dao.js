@@ -192,10 +192,24 @@ const update = async (id, updatedCampagne) => {
   return Campagne.updateOne({ _id: id, deletedAt: null }, updatedCampagne);
 };
 
+const getAll = async (query) => {
+  return Campagne.aggregate([
+    {
+      $match: {
+        deletedAt: null,
+        ...query,
+      },
+    },
+    ...formationQuery,
+    ...etablissementQuery(),
+  ]);
+};
+
 module.exports = {
   getAllWithTemoignageCountAndTemplateName,
   getOneWithTemoignagneCountAndTemplateName,
   create,
   deleteOne,
   update,
+  getAll,
 };
