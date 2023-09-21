@@ -49,7 +49,13 @@ const CustomEmojisRadios = (props) => {
         </Box>
       )}
       <Box as="fieldset" mx="5">
-        <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">
+        <FormLabel
+          as="legend"
+          fontSize="2xl"
+          fontWeight="semibold"
+          color="orange.500"
+          requiredIndicator={null}
+        >
           {props.label}
         </FormLabel>
         <Text fontSize="xs" color="orange.900">

@@ -1,4 +1,4 @@
-import { Box, Wrap, useRadioGroup, useRadio, FormLabel, Text, Tag, Badge } from "@chakra-ui/react";
+import { Box, Wrap, useRadioGroup, useRadio, FormLabel, Text, Tag } from "@chakra-ui/react";
 
 const RadioCard = (props) => {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -49,7 +49,13 @@ const CustomRadios = (props) => {
         </Box>
       )}
       <Box as="fieldset" mx="5">
-        <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">
+        <FormLabel
+          as="legend"
+          fontSize="2xl"
+          fontWeight="semibold"
+          color="orange.500"
+          requiredIndicator={null}
+        >
           {props.label}
         </FormLabel>
         <Text fontSize="xs" color="orange.900">

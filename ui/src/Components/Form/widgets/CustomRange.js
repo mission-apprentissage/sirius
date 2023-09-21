@@ -8,7 +8,6 @@ import {
   Box,
   useBreakpoint,
   FormLabel,
-  Badge,
   Text,
 } from "@chakra-ui/react";
 
@@ -24,7 +23,13 @@ const CustomRange = (props) => {
 
   return (
     <Box mx={isMobile ? "0" : "5"}>
-      <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">
+      <FormLabel
+        as="legend"
+        fontSize="2xl"
+        fontWeight="semibold"
+        color="orange.500"
+        requiredIndicator={null}
+      >
         {props.label}
       </FormLabel>
       <Text fontSize="xs" color="orange.900">

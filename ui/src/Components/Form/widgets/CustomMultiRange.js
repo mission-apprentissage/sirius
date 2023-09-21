@@ -7,7 +7,6 @@ import {
   useBreakpoint,
   FormLabel,
   SliderFilledTrack,
-  Badge,
   SliderMark,
   Text,
 } from "@chakra-ui/react";
@@ -41,7 +40,13 @@ const CustomMultiRange = (props) => {
 
   return (
     <Box mx={isMobile ? "0" : "5"}>
-      <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">
+      <FormLabel
+        as="legend"
+        fontSize="2xl"
+        fontWeight="semibold"
+        color="orange.500"
+        requiredIndicator={null}
+      >
         {props.schema.title}
       </FormLabel>
       <Text fontSize="xs" color="orange.900">
