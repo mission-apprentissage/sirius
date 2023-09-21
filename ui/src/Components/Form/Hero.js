@@ -27,29 +27,30 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
     <>
       <Stack direction="column" w="100%" m="auto">
         <Box w="80%" mx="auto" my="5">
-          <Stack direction={isMobile ? "column" : "row"}>
-            <Box w={isMobile ? "100%" : "50%"}>
+          <Stack
+            direction={isMobile ? "column-reverse" : "row"}
+            alignItems={isMobile ? "inherit" : "center"}
+          >
+            <Box w="50%" display={isMobile ? "none" : "inherit"} flexDirection="column">
               <Image src={shareTemoignage} alt="" objectFit="contain" w="80%" m="auto" />
-              <Text
-                color="purple.900"
-                fontSize="xs"
-                textAlign="center"
-                mt="2"
-                display={isMobile ? "none" : "inherit"}
-              >
-                Chloé (3e) - Nazir (3e prépa-métier) - Alba (3e SEGPA)
+              <Text color="purple.900" fontSize="14px" textAlign="center" mt="4">
+                <Text as="span" mr="2">
+                  ⏳ 5-10 minutes
+                </Text>
+                <Text as="span" ml="2">
+                  😎 Anonyme
+                </Text>
               </Text>
             </Box>
             <Box w={isMobile ? "100%" : "50%"}>
-              <Box display="flex" flexDirection={isMobile ? "column-reverse" : "column"}>
+              <Box display="flex" flexDirection="column">
                 <Text
-                  fontSize="2xl"
+                  fontSize="3xl"
                   color="purple.900"
-                  fontWeight="semibold"
+                  fontWeight="600"
                   textAlign={isMobile ? "center" : "inherit"}
                 >
-                  Aide ces jeunes à préciser leurs choix d’orientation en répondant à leurs
-                  questions sur ta formation en apprentissage
+                  Tu es apprenti·e ?
                 </Text>
                 <Text
                   fontSize="lg"
@@ -57,125 +58,134 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                   mt="5"
                   mb={isMobile ? "5" : "0"}
                   textAlign={isMobile ? "center" : "inherit"}
+                  fontWeight="600"
                 >
-                  Répondre à ce questionnaire te prendra entre 5 et 10 minutes et ton anonymat sera
-                  respecté.
+                  Partage ton expérience aux plus jeunes pour les aider dans leurs choix
+                  d’orientation !
                 </Text>
               </Box>
-              <Button
-                size="lg"
-                variant="solid"
-                colorScheme="purple"
-                rightIcon={<ArrowForwardIcon />}
-                mt="10"
-                onClick={onOpen}
+              <Box w={isMobile ? "100%" : "50%"} display={isMobile ? "inherit" : "none"}>
+                <Image src={shareTemoignage} alt="" objectFit="contain" w="80%" m="auto" />
+                <Text color="purple.900" fontSize="14px" textAlign="center" mt="4">
+                  <Text as="span" mr="2">
+                    ⏳ 5-10 minutes
+                  </Text>
+                  <Text as="span" ml="2">
+                    😎 Anonyme
+                  </Text>
+                </Text>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent={isMobile ? "center" : "inherit"}
+                alignItems="center"
+                mt="5"
               >
-                Je partage mon témoignage
-              </Button>
+                <Button
+                  size="lg"
+                  variant="solid"
+                  colorScheme="purple"
+                  rightIcon={<ArrowForwardIcon />}
+                  onClick={onOpen}
+                >
+                  Répondre
+                </Button>
+              </Box>
             </Box>
           </Stack>
         </Box>
         <Box bgColor="white" w="100%" pt="10px">
-          <Box w={isMobile ? "90%" : "50%"} mx="auto" my="35">
-            <Text fontWeight="bold" color="purple.900" fontSize="xl" textAlign="center">
-              Flemme de répondre ?
+          <Box w={isMobile ? "80%" : "50%"} mx="auto" my="35">
+            <Text fontWeight="600" color="purple.900" fontSize="3xl" textAlign="center">
+              Flemme de répondre au questionnaire ?
             </Text>
-            <Text color="purple.900" fontSize="xl" textAlign="center">
-              3 raisons pour te convaincre
+            <Text color="purple.900" fontSize="sm" textAlign="center" mt="5" mb="10">
+              3 raisons de le faire :
             </Text>
             <Stack
               direction={isMobile ? "column" : "row"}
-              spacing="8"
-              my="5"
               alignItems={isMobile ? "center" : "inherit"}
               display="flex"
+              spacing="3"
             >
               <Box
-                bgColor="purple.200"
-                shadow="md"
-                width={isMobile ? "90%" : "250px"}
-                borderRadius="12"
+                width={isMobile ? "100%" : "250px"}
                 display="flex"
-                flexDirection="column"
-                justifyContent="flex-start"
+                flexDirection={isMobile ? "row" : "column"}
+                justifyContent="center"
                 alignItems="center"
+                ml="5"
               >
-                <Text fontSize="5xl" my="20px">
-                  💬
-                </Text>
-                <Text
-                  fontSize="md"
-                  lineHeight="6"
-                  color="purple.900"
-                  textAlign="center"
-                  mb="20px"
-                  mx="15px"
-                >
-                  Personne n’est plus qualifié que toi pour
-                  <b> renseigner les collégien·nes sur l’apprentissage</b>
-                </Text>
-              </Box>
-              <Box
-                bgColor="purple.200"
-                shadow="md"
-                width={isMobile ? "90%" : "250px"}
-                borderRadius="12"
-                display="flex"
-                flexDirection="column"
-                justifyContent="flex-start"
-                alignItems="center"
-              >
-                <Text fontSize="5xl" my="20px">
+                <Text fontSize="48px" my="20px">
                   👷🏻‍♀️️
                 </Text>
                 <Text
                   fontSize="md"
                   lineHeight="6"
                   color="purple.900"
-                  textAlign="center"
-                  mb="20px"
+                  textAlign={isMobile ? "left" : "center"}
                   mx="15px"
+                  fontWeight="400"
                 >
-                  <b>On te propose un espace pour t’exprimer</b>, faire le bilan de ton expérience
-                  d’apprenti·e
+                  <Text as="span" fontWeight="600">
+                    Tu sais mieux que tout le monde
+                  </Text>{" "}
+                  ce que vit un·e apprenti·e au quotidien
                 </Text>
               </Box>
               <Box
-                bgColor="purple.200"
-                shadow="md"
-                width={isMobile ? "90%" : "250px"}
-                borderRadius="12"
+                width={isMobile ? "100%" : "250px"}
                 display="flex"
-                flexDirection="column"
-                justifyContent="flex-start"
+                flexDirection={isMobile ? "row" : "column"}
+                justifyContent="center"
                 alignItems="center"
+                ml="5"
               >
-                <Text fontSize="5xl" my="20px">
-                  👨🏽‍🎓
+                <Text fontSize="48px" my="20px">
+                  💬
                 </Text>
                 <Text
                   fontSize="md"
                   lineHeight="6"
                   color="purple.900"
-                  textAlign="center"
-                  mb="20px"
+                  textAlign={isMobile ? "left" : "center"}
                   mx="15px"
+                  fontWeight="400"
                 >
-                  Avec ton témoignage, tu participes à <b>l’amélioration de ta formation en CFA</b>
+                  <Text as="span">Tu pourras</Text>
+                  <Text as="span" fontWeight="600">
+                    {" "}
+                    prendre du recul sur ton expérience
+                  </Text>{" "}
+                  en apprentissage
                 </Text>
               </Box>
-              <Button
-                size="lg"
-                variant="solid"
-                colorScheme="purple"
-                rightIcon={<ArrowForwardIcon />}
-                mt="10"
-                onClick={onOpen}
-                display={isMobile ? "inherit" : "none"}
+              <Box
+                width={isMobile ? "100%" : "250px"}
+                display="flex"
+                flexDirection={isMobile ? "row" : "column"}
+                justifyContent="center"
+                alignItems="center"
+                ml="5"
               >
-                Je partage mon témoignage
-              </Button>
+                <Text fontSize="48px" my="20px">
+                  🏫
+                </Text>
+                <Text
+                  fontSize="md"
+                  lineHeight="6"
+                  color="purple.900"
+                  textAlign={isMobile ? "left" : "center"}
+                  mx="15px"
+                  fontWeight="600"
+                >
+                  Tu participeras à l’amélioration de ton CFA
+                </Text>
+              </Box>
             </Stack>
+            <Box width="100%" textAlign="center" mt="10">
+              <Text fontSize="sm">Alors, tu veux bien nous aider ?</Text>
+            </Box>
           </Box>
         </Box>
         <Footer />
