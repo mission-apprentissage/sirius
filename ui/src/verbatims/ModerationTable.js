@@ -127,11 +127,16 @@ const ModerationTable = ({
           <Tbody>
             {verbatims?.map((verbatim) => {
               const status = VERBATIM_STATUS[verbatim.value.status] || VERBATIM_STATUS.PENDING;
+
+              const displayedVerbatim =
+                typeof verbatim.value === "object"
+                  ? verbatim.value?.content
+                  : verbatim.value?.content || verbatim?.value || "";
               return (
                 <Tr key={verbatim.temoignageId + verbatim.key}>
                   <Td>
                     <Text sx={{ whiteSpace: "normal", wordWrap: "break-word", minWidth: "400px" }}>
-                      {verbatim.value?.content || verbatim.value}
+                      {displayedVerbatim}
                     </Text>
                   </Td>
                   <Td>
