@@ -43,6 +43,9 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
         champsLibre[field] = verbatim.reponses[field];
       }
     }
+    if (verbatim && verbatim.etablissement && verbatim.etablissement.data) {
+      console.log("yo", verbatim.etablissement.data);
+    }
 
     return Object.keys(champsLibre).length
       ? {
@@ -53,7 +56,7 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
           formation: verbatim.formation ? verbatim.formation.data.intitule_long : "",
           formationId: verbatim.formation ? verbatim.formation._id : "",
           etablissement: verbatim.etablissement
-            ? verbatim.etablissement.data.onisep_nom ||
+            ? verbatim.etablissement.data.enseigne ||
               verbatim.etablissement.data.onisep_nom ||
               verbatim.etablissement.data.entreprise_raison_sociale
             : "",

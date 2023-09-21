@@ -107,7 +107,7 @@ const ModerationTable = ({
     }
   };
 
-  if (loadingVerbatims || errorVerbatims) return <Spinner />;
+  if (loadingVerbatims || errorVerbatims || !verbatims.length) return <Spinner />;
 
   return (
     <Box w="90%" m="25px auto">
