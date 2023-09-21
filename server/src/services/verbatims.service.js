@@ -79,7 +79,6 @@ const patchVerbatim = async (id, updatedVerbatim) => {
 
     return { success: true, body: updatedTemoignage };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };
