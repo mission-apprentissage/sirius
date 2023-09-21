@@ -382,7 +382,11 @@ const Dashboard = () => {
                                           mb="8px"
                                           textAlign="center"
                                         >
-                                          « {response?.content || response} »
+                                          «
+                                          {typeof response === "object"
+                                            ? response?.content
+                                            : response?.content || response || ""}{" "}
+                                          »
                                         </Text>
                                       ))}
                                     </Flex>
