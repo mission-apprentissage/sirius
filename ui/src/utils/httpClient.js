@@ -39,3 +39,12 @@ export const _delete = async (path, token = null) => {
     credentials: "same-origin",
   }).then((res) => res.json());
 };
+
+export const _patch = async (path, body = {}, token = null) => {
+  return fetch(`${path}`, {
+    method: "PATCH",
+    headers: getHeaders(token),
+    body: JSON.stringify(body),
+    credentials: "same-origin",
+  }).then((res) => res.json());
+};
