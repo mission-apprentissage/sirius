@@ -9,7 +9,7 @@ const loginSchema = Joi.object({
 const subscribeSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  comment: Joi.string(),
+  comment: Joi.string().allow(null, ""),
   siret: Joi.string().required(),
   email: Joi.string().email().required(),
   password: passwordComplexity(),
