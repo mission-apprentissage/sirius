@@ -8,3 +8,11 @@ export const USER_STATUS = {
   ACTIVE: "ACTIVE",
   INACTIVE: "INACTIVE",
 };
+
+export const VERBATIM_STATUS = {
+  PENDING: "PENDING",
+  VALIDATED: "VALIDATED",
+  TO_FIX: "TO_FIX",
+  ALERT: "ALERT",
+  REJECTED: "REJECTED",
+};

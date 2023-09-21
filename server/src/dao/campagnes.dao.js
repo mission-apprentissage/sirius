@@ -164,6 +164,10 @@ const getAllWithTemoignageCountAndTemplateName = async (query) => {
   ]);
 };
 
+const getOne = async (id) => {
+  return Campagne.findOne({ _id: id, deletedAt: null }).lean();
+};
+
 const getOneWithTemoignagneCountAndTemplateName = async (query) => {
   const idToObjectId = ObjectId(query.id);
   return Campagne.aggregate([
@@ -192,10 +196,25 @@ const update = async (id, updatedCampagne) => {
   return Campagne.updateOne({ _id: id, deletedAt: null }, updatedCampagne);
 };
 
+const getAll = async (query) => {
+  return Campagne.aggregate([
+    {
+      $match: {
+        deletedAt: null,
+        ...query,
+      },
+    },
+    ...formationQuery,
+    ...etablissementQuery(),
+  ]);
+};
+
 module.exports = {
   getAllWithTemoignageCountAndTemplateName,
   getOneWithTemoignagneCountAndTemplateName,
   create,
   deleteOne,
   update,
+  getAll,
+  getOne,
 };

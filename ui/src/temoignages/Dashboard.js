@@ -386,7 +386,7 @@ const Dashboard = () => {
                                           mb="8px"
                                           textAlign="center"
                                         >
-                                          « {response} »
+                                          « {response?.content || response} »
                                         </Text>
                                       ))}
                                     </Flex>

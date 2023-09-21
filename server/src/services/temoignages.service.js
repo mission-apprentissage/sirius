@@ -1,6 +1,8 @@
 const temoignagesDao = require("../dao/temoignages.dao");
 const campagnesDao = require("../dao/campagnes.dao");
+const questionnairesDao = require("../dao/questionnaires.dao");
 const { ErrorMessage } = require("../errors");
+const { getChampsLibreField } = require("../utils/verbatims.utils");
 
 const createTemoignage = async (temoignage) => {
   try {
@@ -31,6 +33,20 @@ const createTemoignage = async (temoignage) => {
 const getTemoignages = async (query) => {
   try {
     const temoignages = await temoignagesDao.getAll(query);
+    const campagne = await campagnesDao.getOne(query.campagneId);
+    const questionnaire = await questionnairesDao.getOne(campagne.questionnaireId);
+
+    const verbatimsFields = getChampsLibreField(questionnaire.questionnaireUI);
+
+    temoignages.forEach((item) => {
+      const reponses = item.reponses;
+      for (const key of verbatimsFields) {
+        if (reponses[key] && reponses[key].status !== "VALIDATED") {
+          delete reponses[key];
+        }
+      }
+    });
+
     return { success: true, body: temoignages };
   } catch (error) {
     return { success: false, body: error };

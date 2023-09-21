@@ -12,7 +12,7 @@ const users = require("./routes/users.routes");
 const questionnaires = require("./routes/questionnaires.routes");
 const etablissements = require("./routes/etablissements.routes");
 const formations = require("./routes/formations.routes");
-
+const verbatims = require("./routes/verbatims.routes");
 const { version } = require("../package.json");
 
 module.exports = async (components) => {
@@ -30,6 +30,8 @@ module.exports = async (components) => {
   app.use(questionnaires());
   app.use(etablissements());
   app.use(formations());
+  app.use(formations());
+  app.use(verbatims());
   app.use(passport.initialize());
 
   app.disable("x-powered-by");

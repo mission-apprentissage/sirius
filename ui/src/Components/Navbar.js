@@ -96,6 +96,18 @@ const NAV_ITEMS = [
     ],
     roles: [USER_ROLES.ADMIN],
   },
+  {
+    label: "Verbatims",
+    children: [
+      {
+        label: "Modération",
+        subLabel: "Modérer les verbatims",
+        href: "/verbatims/moderation",
+        roles: [USER_ROLES.ADMIN],
+      },
+    ],
+    roles: [USER_ROLES.ADMIN],
+  },
 ];
 
 const filterNavItemsByRole = (items, currentUserRole) => {

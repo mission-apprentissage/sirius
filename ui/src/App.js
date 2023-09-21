@@ -23,6 +23,7 @@ import MentionsInformation from "./legal/MentionsInformation";
 import CGU from "./legal/CGU";
 import PolitiqueConfidentialite from "./legal/PolitiqueConfidentialite";
 import UsersManaging from "./users/Managing";
+import VerbatimsModeration from "./verbatims/Moderation";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route exact path="/questionnaires/:id/edition" element={<EditQuestionnaire />} />
         <Route exact path="/questionnaires/:id/apercu" element={<PreviewQuestionnaire />} />
         <Route exact path="/utilisateurs/gestion" element={<UsersManaging />} />
+        <Route exact path="/verbatims/moderation" element={<VerbatimsModeration />} />
       </Route>
       <Route exact path="/connexion" element={<Login />} />
       <Route exact path="/reinitialisation-mot-de-passe" element={<ResetPassword />} />
