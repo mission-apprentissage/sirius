@@ -43,9 +43,6 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
         champsLibre[field] = verbatim.reponses[field];
       }
     }
-    if (verbatim && verbatim.etablissement && verbatim.etablissement.data) {
-      console.log("yo", verbatim.etablissement.data);
-    }
 
     return Object.keys(champsLibre).length
       ? {
