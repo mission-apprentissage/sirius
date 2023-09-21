@@ -323,8 +323,7 @@ const Dashboard = () => {
                             .filter(Boolean);
 
                           if (
-                            (!isVerbatimsDisplayed ||
-                              currentUserRole === USER_ROLES.ETABLISSEMENT) &&
+                            !isVerbatimsDisplayed &&
                             matchedCardTypeAndQuestions[question] === "text"
                           )
                             return null;
