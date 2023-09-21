@@ -15,6 +15,7 @@ import {
 
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import shareTemoignage from "../../assets/images/share_temoignage.svg";
+import mains from "../../assets/images/mains.svg";
 import Footer from "../Footer";
 
 const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoignageCount }) => {
@@ -209,43 +210,40 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
+      <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            <Text color="purple.500">Mention d’information – Champs libres - Sirius</Text>
+        <ModalContent py="8" px="4" bgColor="gray.100" width="90%" borderRadius="20px">
+          <ModalHeader textAlign="center" color="purple.600">
+            <Text fontWeight="600" fontSize="md">
+              Mention d’information Sirius
+            </Text>
+            <Text fontWeight="400" fontSize="sm">
+              Champs libres
+            </Text>
           </ModalHeader>
           <ModalBody>
-            <Stack>
-              <Text>
-                Attention à vos{" "}
-                <Text as="span" fontWeight="semibold" color="purple.500">
-                  données
-                </Text>
-                , elles sont{" "}
-                <Text as="span" fontWeight="semibold" color="purple.500">
-                  importantes
-                </Text>{" "}
-                pour nous !
+            <Stack textAlign="center">
+              <Text fontWeight="600" fontSize="14px" color="purple.900">
+                Attention à vos données, elles sont importantes pour nous !
               </Text>
-              <Text>
+              <Image src={mains} alt="" objectFit="contain" w="80%" mx="auto" my="5" />
+              <Text color="purple.900">
                 C’est pour cela que nous invitons à nous communiquer les{" "}
-                <Text as="span" fontWeight="semibold" color="purple.500">
-                  seules informations et données strictement nécessaires.
+                <Text as="span" fontWeight="semibold">
+                  seules informations et données strictement{" "}
                 </Text>
+                nécessaires.
               </Text>
-              <Text>
-                Notamment, ne communiquez pas vos opinions{" "}
-                <Text as="span" fontWeight="semibold" color="purple.500">
-                  philosophiques, syndicales, politiques ou sur votre vie sexuelle.{" "}
-                </Text>
+              <Text color="purple.900">
+                Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques ou
+                sur votre vie sexuelle.{" "}
               </Text>
-              <Text fontWeight="semibold" color="purple.500">
+              <Text fontWeight="semibold" color="purple.900">
                 Ces données sont trop personnelles !
               </Text>
             </Stack>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter display="flex" justifyContent="center" alignItems="center">
             <Button
               size="lg"
               variant="solid"
