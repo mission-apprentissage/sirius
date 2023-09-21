@@ -27,7 +27,6 @@ const formations = () => {
     "/api/formations/",
     verifyUser,
     (req, res, next) => isAdminOrAllowed(req, next, TYPES.FORMATION_IDS),
-    verifyUser,
     (req, res, next) => {
       getFormations(req, res, next);
     }

@@ -65,7 +65,7 @@ const isAdminOrAllowed = async (req, next, type) => {
 
       const formationsSiret = formations.map((formation) => ({
         siretGestionnaire: formation.data.etablissement_gestionnaire_siret,
-        siretformateur: formation.data.etablissement_formateur_siret,
+        siretFormateur: formation.data.etablissement_formateur_siret,
       }));
 
       const isOwnFormations = formationsSiret.every(
