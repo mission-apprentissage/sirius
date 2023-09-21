@@ -49,17 +49,7 @@ const CustomRadios = (props) => {
         </Box>
       )}
       <Box as="fieldset" mx="5">
-        <FormLabel
-          as="legend"
-          fontSize="2xl"
-          fontWeight="semibold"
-          color="orange.500"
-          requiredIndicator={
-            <Badge bgColor="orange.500" color="white" ml="2">
-              *
-            </Badge>
-          }
-        >
+        <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">
           {props.label}
         </FormLabel>
         <Text fontSize="xs" color="orange.900">
