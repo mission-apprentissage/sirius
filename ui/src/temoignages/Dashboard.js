@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -28,8 +28,6 @@ import { CanvasRenderer } from "echarts/renderers";
 import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
 import DashboardHeader from "./Components/DashboardHeader";
-import { UserContext } from "../context/UserContext";
-import { USER_ROLES } from "../constants";
 
 echarts.use([
   TooltipComponent,
@@ -237,7 +235,6 @@ const barOption = (responses) => {
 };
 
 const Dashboard = () => {
-  const [{ currentUserRole }] = useContext(UserContext);
   const [selectedCampagne, setSelectedCampagne] = useState(null);
   const [temoignages, setTemoignages] = useState([]);
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
