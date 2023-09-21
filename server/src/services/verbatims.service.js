@@ -65,4 +65,23 @@ const getVerbatims = async (query) => {
   }
 };
 
-module.exports = { getVerbatims };
+const patchVerbatim = async (id, updatedVerbatim) => {
+  try {
+    const temoignageToUpdate = await temoignagesDao.getOne(id);
+
+    if (!temoignageToUpdate) {
+      return { success: false, body: ErrorMessage.TemoignageNotFoundError };
+    }
+
+    temoignageToUpdate.reponses[updatedVerbatim.questionId] = updatedVerbatim.payload;
+
+    const updatedTemoignage = await temoignagesDao.update(id, temoignageToUpdate);
+
+    return { success: true, body: updatedTemoignage };
+  } catch (error) {
+    console.log({ error });
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { getVerbatims, patchVerbatim };
