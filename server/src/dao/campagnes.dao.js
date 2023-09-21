@@ -127,6 +127,7 @@ const etablissementQuery = (siret) => {
               formationIds: 1,
               "data.onisep_nom": 1,
               "data.enseigne": 1,
+              "data.entreprise_raison_sociale": 1,
               "data.siret": 1,
             },
           },
