@@ -12,12 +12,16 @@ const deleteOne = async (id) => {
   return Temoignage.updateOne({ _id: id }, { deletedAt: new Date() });
 };
 
-const update = async (id, updatedCampagne) => {
-  return Temoignage.updateOne({ _id: id, deletedAt: null }, updatedCampagne);
+const update = async (id, updatedTemoignage) => {
+  return Temoignage.updateOne({ _id: id, deletedAt: null }, updatedTemoignage);
 };
 
 const countByCampagne = async (id) => {
   return Temoignage.countDocuments({ campagneId: id, deletedAt: null });
+};
+
+const getOne = async (id) => {
+  return Temoignage.findOne({ _id: id, deletedAt: null });
 };
 
 module.exports = {
@@ -26,4 +30,5 @@ module.exports = {
   deleteOne,
   update,
   countByCampagne,
+  getOne,
 };

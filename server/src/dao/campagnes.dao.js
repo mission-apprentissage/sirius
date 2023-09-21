@@ -164,6 +164,10 @@ const getAllWithTemoignageCountAndTemplateName = async (query) => {
   ]);
 };
 
+const getOne = async (id) => {
+  return Campagne.findOne({ _id: id, deletedAt: null }).lean();
+};
+
 const getOneWithTemoignagneCountAndTemplateName = async (query) => {
   const idToObjectId = ObjectId(query.id);
   return Campagne.aggregate([
@@ -212,4 +216,5 @@ module.exports = {
   deleteOne,
   update,
   getAll,
+  getOne,
 };
