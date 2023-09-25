@@ -33,6 +33,15 @@ export const Stepper = ({
     return;
   };
 
+  const progressValue = () => {
+    let value = 0;
+    for (let i = 0; i < currentCategoryIndex; i++) {
+      value += categories[i].questionCount;
+    }
+    value += currentQuestionIndex;
+    return (value * 100) / categories.reduce((acc, curr) => acc + curr.questionCount, 0);
+  };
+
   return (
     <Box display="flex" flexDirection="column" w="100%">
       <Box
@@ -81,11 +90,7 @@ export const Stepper = ({
             {categories[currentCategoryIndex].title}
           </Text>
         )}
-        <Progress
-          colorScheme="purple"
-          hasStripe
-          value={(currentQuestionIndex * 100) / categories[currentCategoryIndex].questionCount}
-        />
+        <Progress colorScheme="purple" hasStripe value={progressValue()} />
       </Box>
       <Box w="auto" mb="5">
         <Button
