@@ -26,8 +26,7 @@ const RadioCard = (props) => {
 };
 
 const CustomEmojisRadios = (props) => {
-  const options = props.options.enumOptions.map((option) => option.label);
-  const emojis = props.uiSchema.emojis;
+  const emojisMapping = props.uiSchema.emojisMapping;
 
   const { getRadioProps } = useRadioGroup({
     name: props.id,
@@ -70,14 +69,14 @@ const CustomEmojisRadios = (props) => {
           justifyContent="space-evenly"
           alignItems="space-evenly"
         >
-          {options.map((value, index) => {
-            const radio = getRadioProps({ value });
+          {emojisMapping.map((emojiMapping, index) => {
+            const radio = getRadioProps({ value: emojiMapping.value });
             return (
               <Box key={index}>
                 <Text textAlign="center" mb="3" fontSize="30px">
-                  {emojis[index]}
+                  {emojiMapping.emoji}
                 </Text>
-                <RadioCard {...radio}>{value}</RadioCard>
+                <RadioCard {...radio}>{emojiMapping.value}</RadioCard>
               </Box>
             );
           })}
