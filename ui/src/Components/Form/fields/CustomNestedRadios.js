@@ -5,12 +5,12 @@ import {
   useRadio,
   FormLabel,
   Text,
-  useBreakpoint,
   RadioGroup,
   Stack,
   Radio,
 } from "@chakra-ui/react";
 import { CustomCheckboxes, CustomTextareaPrecision } from "../widgets";
+import DidYouKnow from "../DidYouKnow";
 
 function RadioCard(props) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -50,8 +50,6 @@ const otherInputGetter = (dependencies, props, value) => {
 };
 
 const CustomNestedRadios = (props) => {
-  const breakpoint = useBreakpoint({ ssr: false });
-  const isMobile = breakpoint === "base";
   const [nestedValues, setNestedValues] = useState(null);
   const [parentValue, setparentValue] = useState("");
   const options = props.schema.enum;
@@ -73,36 +71,7 @@ const CustomNestedRadios = (props) => {
 
   return (
     <>
-      {props.schema.info && (
-        <Box
-          bgColor="purple.50"
-          width="100%"
-          display="flex"
-          p="4"
-          mb="4"
-          alignItems="center"
-          justifyContent={isMobile ? "center" : "initial"}
-        >
-          <Box
-            bgColor="purple.500"
-            borderRadius="100%"
-            width="38px"
-            height="38px"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            w={isMobile ? "100px" : "40px"}
-          >
-            <Text fontSize="2xl">💡</Text>
-          </Box>
-          <Box ml="2">
-            <Text color="purple.600" fontWeight="semibold">
-              Le savais-tu ?
-            </Text>
-            <Text color="purple.600">{props.schema.info}</Text>
-          </Box>
-        </Box>
-      )}
+      {props.schema.info && <DidYouKnow content={props.schema.info} />}
       <Box as="fieldset" mx="5">
         <>
           <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">

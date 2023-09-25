@@ -7,6 +7,7 @@ import {
   Text,
   useBreakpoint,
 } from "@chakra-ui/react";
+import DidYouKnow from "../DidYouKnow";
 
 const CheckboxCard = (props) => {
   const { getInputProps, getCheckboxProps } = useCheckbox({ ...props, required: false }); // native required on multiple checkboxes is not supported
@@ -53,35 +54,37 @@ const CustomCheckboxes = (props) => {
   });
 
   return (
-    <Box as="fieldset" mx={isMobile ? "0" : "5"}>
-      {!props.standalone && (
-        <>
-          <FormLabel
-            as="legend"
-            fontSize="2xl"
-            fontWeight="semibold"
-            color="orange.500"
-            requiredIndicator={null}
-          >
-            {props.label}
-          </FormLabel>
-          <Text fontSize="xs" color="orange.900">
-            (plusieurs choix de réponses possibles)
-          </Text>
-        </>
-      )}
-      <Wrap spacing={2} direction="row" mt={4}>
-        {options.map((value) => {
-          const checkbox = getCheckboxProps({ value });
-
-          return (
-            <CheckboxCard key={value} {...checkbox}>
-              {value}
-            </CheckboxCard>
-          );
-        })}
-      </Wrap>
-    </Box>
+    <>
+      {props.schema.info && <DidYouKnow content={props.schema.info} />}
+      <Box as="fieldset" mx={isMobile ? "0" : "5"}>
+        {!props.standalone && (
+          <>
+            <FormLabel
+              as="legend"
+              fontSize="2xl"
+              fontWeight="semibold"
+              color="orange.500"
+              requiredIndicator={null}
+            >
+              {props.label}
+            </FormLabel>
+            <Text fontSize="xs" color="orange.900">
+              (plusieurs choix de réponses possibles)
+            </Text>
+          </>
+        )}
+        <Wrap spacing={2} direction="row" mt={4}>
+          {options.map((value) => {
+            const checkbox = getCheckboxProps({ value });
+            return (
+              <CheckboxCard key={value} {...checkbox}>
+                {value}
+              </CheckboxCard>
+            );
+          })}
+        </Wrap>
+      </Box>
+    </>
   );
 };
 

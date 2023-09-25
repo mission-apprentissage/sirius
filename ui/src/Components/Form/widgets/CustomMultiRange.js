@@ -10,6 +10,7 @@ import {
   SliderMark,
   Text,
 } from "@chakra-ui/react";
+import DidYouKnow from "../DidYouKnow";
 
 const emojiGetter = (value) => {
   switch (value) {
@@ -39,83 +40,91 @@ const CustomMultiRange = (props) => {
   }, []);
 
   return (
-    <Box mx={isMobile ? "0" : "5"}>
-      <FormLabel
-        as="legend"
-        fontSize="2xl"
-        fontWeight="semibold"
-        color="orange.500"
-        requiredIndicator={null}
-      >
-        {props.schema.title}
-      </FormLabel>
-      <Text fontSize="xs" color="orange.900">
-        (Pour chacune de ces propositions déplace le curseur sur l’émoji qui se rapproche le plus de
-        ton ressenti)
-      </Text>
-      <Box pt={2} pb={isMobile ? 6 : 2} w={isMobile ? "100%" : "90%"} m="auto">
-        {props.schema.questions.map((question, index) => (
-          <Box
-            key={index}
-            w={isMobile ? "80%" : "100%"}
-            display="flex"
-            flexDirection={isMobile ? "column" : "row"}
-            alignItems="center"
-            bgColor={index % 2 !== 0 ? "white" : "orange.100"}
-            py="5"
-            px="5"
-            margin="auto"
-            mt="2"
-          >
-            <Box w={isMobile ? "100%" : "50%"} color="orange.800" fontSize="sm" textAlign="center">
-              {question}
-            </Box>
-            <Box w={isMobile ? "100%" : "50%"}>
-              <Slider
-                id="slider"
-                defaultValue={0}
-                min={0}
-                max={3}
-                colorScheme="orange"
-                w="100%"
-                height={isMobile ? "50px" : "inherit"}
-                onChangeStart={() => setIsSliderClicked(index)}
-                onChangeEnd={() => setIsSliderClicked(null)}
-                onChange={(value) => {
-                  setCurrentValue((prev) => {
-                    prev[index] = { ...prev[index], value };
-                    return prev;
-                  });
-                  props.onChange(currentValue);
-                }}
+    <>
+      {props.schema.info && <DidYouKnow content={props.schema.info} />}
+      <Box mx={isMobile ? "0" : "5"}>
+        <FormLabel
+          as="legend"
+          fontSize="2xl"
+          fontWeight="semibold"
+          color="orange.500"
+          requiredIndicator={null}
+        >
+          {props.schema.title}
+        </FormLabel>
+        <Text fontSize="xs" color="orange.900">
+          (Pour chacune de ces propositions déplace le curseur sur l’émoji qui se rapproche le plus
+          de ton ressenti)
+        </Text>
+        <Box pt={2} pb={isMobile ? 6 : 2} w={isMobile ? "100%" : "90%"} m="auto">
+          {props.schema.questions.map((question, index) => (
+            <Box
+              key={index}
+              w={isMobile ? "80%" : "100%"}
+              display="flex"
+              flexDirection={isMobile ? "column" : "row"}
+              alignItems="center"
+              bgColor={index % 2 !== 0 ? "white" : "orange.100"}
+              py="5"
+              px="5"
+              margin="auto"
+              mt="2"
+            >
+              <Box
+                w={isMobile ? "100%" : "50%"}
+                color="orange.800"
+                fontSize="sm"
+                textAlign="center"
               >
-                {isSliderClicked === index && (
-                  <SliderMark
-                    value={currentValue[index]?.value || 0}
-                    textAlign="center"
-                    bg="orange.500"
-                    color="white"
-                    mt={isMobile ? "-20px" : "-40px"}
-                    ml="-55"
-                    minWidth="100px"
-                    px="2"
-                    borderRadius="md"
-                  >
-                    {labels[currentValue[index]?.value || 0]}
-                  </SliderMark>
-                )}
-                <SliderTrack colorScheme="orange">
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb fontSize={26}>
-                  {emojiGetter(currentValue[index]?.value || 0)}
-                </SliderThumb>
-              </Slider>
+                {question}
+              </Box>
+              <Box w={isMobile ? "100%" : "50%"}>
+                <Slider
+                  id="slider"
+                  defaultValue={0}
+                  min={0}
+                  max={3}
+                  colorScheme="orange"
+                  w="100%"
+                  height={isMobile ? "50px" : "inherit"}
+                  onChangeStart={() => setIsSliderClicked(index)}
+                  onChangeEnd={() => setIsSliderClicked(null)}
+                  onChange={(value) => {
+                    setCurrentValue((prev) => {
+                      prev[index] = { ...prev[index], value };
+                      return prev;
+                    });
+                    props.onChange(currentValue);
+                  }}
+                >
+                  {isSliderClicked === index && (
+                    <SliderMark
+                      value={currentValue[index]?.value || 0}
+                      textAlign="center"
+                      bg="orange.500"
+                      color="white"
+                      mt={isMobile ? "-20px" : "-40px"}
+                      ml="-55"
+                      minWidth="100px"
+                      px="2"
+                      borderRadius="md"
+                    >
+                      {labels[currentValue[index]?.value || 0]}
+                    </SliderMark>
+                  )}
+                  <SliderTrack colorScheme="orange">
+                    <SliderFilledTrack />
+                  </SliderTrack>
+                  <SliderThumb fontSize={26}>
+                    {emojiGetter(currentValue[index]?.value || 0)}
+                  </SliderThumb>
+                </Slider>
+              </Box>
             </Box>
-          </Box>
-        ))}
+          ))}
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 
