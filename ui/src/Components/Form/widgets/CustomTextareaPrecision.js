@@ -12,8 +12,10 @@ import {
   Stack,
   Text,
   HStack,
+  Image,
 } from "@chakra-ui/react";
-import { InfoOutlineIcon } from "@chakra-ui/icons";
+import { InfoIcon } from "@chakra-ui/icons";
+import mains from "../../../assets/images/mains.svg";
 
 const CustomTextareaPrecision = (props) => {
   const breakpoint = useBreakpoint({ ssr: false });
@@ -33,9 +35,9 @@ const CustomTextareaPrecision = (props) => {
         />
         <Popover>
           <PopoverTrigger>
-            <HStack w="fit-content">
-              <InfoOutlineIcon color="purple.500" boxSize={4} />
-              <Text color="purple.500" fontSize="sm">
+            <HStack mt="10px" w="fit-content">
+              <InfoIcon color="orange.800" boxSize={4} />
+              <Text color="orange.800" fontSize="sm" sx={{ marginTop: "0px" }} fontStyle="italic">
                 Mention d’information – Champs libres
               </Text>
             </HStack>
@@ -44,31 +46,29 @@ const CustomTextareaPrecision = (props) => {
             <PopoverArrow />
             <PopoverCloseButton />
             <PopoverBody>
-              <Stack>
-                <Text>
-                  Attention à vos{" "}
-                  <Text as="span" fontWeight="semibold" color="purple.500">
-                    données
-                  </Text>
-                  , elles sont{" "}
-                  <Text as="span" fontWeight="semibold" color="purple.500">
-                    importantes
-                  </Text>{" "}
-                  pour nous !
+              <Stack textAlign="center">
+                <Text fontWeight="600" fontSize="md">
+                  Mention d’information Sirius
                 </Text>
-                <Text>
+                <Text fontWeight="400" fontSize="sm">
+                  Champs libres
+                </Text>
+                <Text fontWeight="600" fontSize="14px" color="purple.900">
+                  Attention à vos données, elles sont importantes pour nous !
+                </Text>
+                <Image src={mains} alt="" objectFit="contain" w="80%" mx="auto" my="5" />
+                <Text color="purple.900">
                   C’est pour cela que nous invitons à nous communiquer les{" "}
-                  <Text as="span" fontWeight="semibold" color="purple.500">
-                    seules informations et données strictement nécessaires.
+                  <Text as="span" fontWeight="semibold">
+                    seules informations et données strictement{" "}
                   </Text>
+                  nécessaires.
                 </Text>
-                <Text>
-                  Notamment, ne communiquez pas vos opinions{" "}
-                  <Text as="span" fontWeight="semibold" color="purple.500">
-                    philosophiques, syndicales, politiques ou sur votre vie sexuelle.{" "}
-                  </Text>
+                <Text color="purple.900">
+                  Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques
+                  ou sur votre vie sexuelle.{" "}
                 </Text>
-                <Text fontWeight="semibold" color="purple.500">
+                <Text fontWeight="semibold" color="purple.900">
                   Ces données sont trop personnelles !
                 </Text>
               </Stack>

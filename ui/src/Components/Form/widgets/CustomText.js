@@ -1,4 +1,5 @@
 import { FormControl, FormLabel, Input, Box } from "@chakra-ui/react";
+import parse from "html-react-parser";
 import DidYouKnow from "../DidYouKnow";
 
 const CustomText = (props) => {
@@ -14,7 +15,7 @@ const CustomText = (props) => {
             focusBorderColor="purple.400"
             value={props.value}
           />
-          <FormLabel>{props.label}</FormLabel>
+          <FormLabel>{parse(props.label)}</FormLabel>
         </FormControl>
       </Box>
     </>

@@ -8,6 +8,7 @@ import {
   NumberDecrementStepper,
   Box,
 } from "@chakra-ui/react";
+import parse from "html-react-parser";
 import DidYouKnow from "../DidYouKnow";
 
 const CustomUpDown = (props) => {
@@ -32,7 +33,7 @@ const CustomUpDown = (props) => {
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          <FormLabel>{props.label}</FormLabel>
+          <FormLabel>{parse(props.label)}</FormLabel>
         </FormControl>
       </Box>
     </>

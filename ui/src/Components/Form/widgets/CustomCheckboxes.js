@@ -7,6 +7,7 @@ import {
   Text,
   useBreakpoint,
 } from "@chakra-ui/react";
+import parse from "html-react-parser";
 import DidYouKnow from "../DidYouKnow";
 
 const CheckboxCard = (props) => {
@@ -59,14 +60,8 @@ const CustomCheckboxes = (props) => {
       <Box as="fieldset" mx={isMobile ? "0" : "5"}>
         {!props.standalone && (
           <>
-            <FormLabel
-              as="legend"
-              fontSize="2xl"
-              fontWeight="semibold"
-              color="orange.500"
-              requiredIndicator={null}
-            >
-              {props.label}
+            <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+              {parse(props.label)}
             </FormLabel>
             <Text fontSize="xs" color="orange.900">
               (plusieurs choix de réponses possibles)

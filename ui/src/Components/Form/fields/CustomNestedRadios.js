@@ -9,6 +9,7 @@ import {
   Stack,
   Radio,
 } from "@chakra-ui/react";
+import parse from "html-react-parser";
 import { CustomCheckboxes, CustomTextareaPrecision } from "../widgets";
 import DidYouKnow from "../DidYouKnow";
 
@@ -74,8 +75,8 @@ const CustomNestedRadios = (props) => {
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
       <Box as="fieldset" mx="5">
         <>
-          <FormLabel as="legend" fontSize="2xl" fontWeight="semibold" color="orange.500">
-            {props.schema.title}
+          <FormLabel as="legend" fontSize="2xl" color="orange.500">
+            {parse(props.schema.title)}
           </FormLabel>
           <Text fontSize="xs" color="orange.900">
             (Plusieurs choix de sous-réponses possibles)

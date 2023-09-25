@@ -1,4 +1,5 @@
 import { Box, Text, useBreakpoint } from "@chakra-ui/react";
+import parse from "html-react-parser";
 
 const DidYouKnow = (content) => {
   const breakpoint = useBreakpoint({ ssr: false });
@@ -30,7 +31,7 @@ const DidYouKnow = (content) => {
         <Text color="purple.600" fontWeight="semibold">
           Le savais-tu ?
         </Text>
-        <Text color="purple.600">{content}</Text>
+        <Text color="purple.600">{parse(content)}</Text>
       </Box>
     </Box>
   );

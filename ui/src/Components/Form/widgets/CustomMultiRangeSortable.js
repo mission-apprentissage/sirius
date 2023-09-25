@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { DragHandleIcon } from "@chakra-ui/icons";
 import { ReactSortable } from "react-sortablejs";
+import parse from "html-react-parser";
 import DidYouKnow from "../DidYouKnow";
 
 const emojiGetter = (value) => {
@@ -57,14 +58,8 @@ const CustomMultiRangeSortable = (props) => {
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
       <Box mx={isMobile ? "0" : "5"}>
-        <FormLabel
-          as="legend"
-          fontSize="2xl"
-          fontWeight="semibold"
-          color="orange.500"
-          requiredIndicator={null}
-        >
-          {props.schema.title}
+        <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+          {parse(props.schema.title)}
         </FormLabel>
         <Box
           pt={2}

@@ -26,6 +26,9 @@ export const theme = extendTheme({
         backgroundColor: "purple.100",
         overflowX: "hidden",
       },
+      strong: {
+        fontWeight: "semibold",
+      },
     },
   },
   components: {

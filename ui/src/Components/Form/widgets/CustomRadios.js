@@ -1,4 +1,5 @@
 import { Box, Wrap, useRadioGroup, useRadio, FormLabel, Text, Tag } from "@chakra-ui/react";
+import parse from "html-react-parser";
 import DidYouKnow from "../DidYouKnow";
 
 const RadioCard = (props) => {
@@ -40,14 +41,8 @@ const CustomRadios = (props) => {
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
       <Box as="fieldset" mx="5">
-        <FormLabel
-          as="legend"
-          fontSize="2xl"
-          fontWeight="semibold"
-          color="orange.500"
-          requiredIndicator={null}
-        >
-          {props.label}
+        <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+          {parse(props.label)}
         </FormLabel>
         <Text fontSize="xs" color="orange.900">
           (une seule réponse possible)

@@ -8,6 +8,7 @@ import {
   useRadio,
   Tag,
 } from "@chakra-ui/react";
+import parse from "html-react-parser";
 import DidYouKnow from "../DidYouKnow";
 
 const RadioCard = (props) => {
@@ -54,14 +55,8 @@ const CustomMultiEmojisRadios = (props) => {
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
       <Box mx={isMobile ? "0" : "5"}>
-        <FormLabel
-          as="legend"
-          fontSize="2xl"
-          fontWeight="semibold"
-          color="orange.500"
-          requiredIndicator={null}
-        >
-          {props.schema.title}
+        <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+          {parse(props.schema.title)}
         </FormLabel>
         <Text fontSize="xs" color="orange.900">
           Pour chaque proposition, sélectionne la réponse qui se rapproche le plus de ton ressenti

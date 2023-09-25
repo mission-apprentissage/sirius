@@ -15,6 +15,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { InfoIcon } from "@chakra-ui/icons";
+import parse from "html-react-parser";
 import nadia from "../../../assets/images/nadia.svg";
 import johan from "../../../assets/images/johan.svg";
 import salomee from "../../../assets/images/salomee.svg";
@@ -62,7 +63,7 @@ const CustomMessageReceived = (props) => {
       >
         {props.schema.legend && (
           <Text fontSize="md" fontWeight="400" color="orange.600" my="3">
-            {props.schema.legend}
+            {parse(props.schema.legend)}
           </Text>
         )}
       </Box>
@@ -83,13 +84,12 @@ const CustomMessageReceived = (props) => {
         >
           <Text
             fontSize="md"
-            fontWeight="semibold"
             color="orange.800"
             textAlign="center"
             mx={isMobile ? "2" : "12"}
             lineHeight="24px"
           >
-            « {props.label} »
+            « {parse(props.label)} »
           </Text>
         </Box>
       </Box>

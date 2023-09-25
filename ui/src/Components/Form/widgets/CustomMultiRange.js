@@ -10,6 +10,7 @@ import {
   SliderMark,
   Text,
 } from "@chakra-ui/react";
+import parse from "html-react-parser";
 import DidYouKnow from "../DidYouKnow";
 
 const emojiGetter = (value) => {
@@ -43,14 +44,8 @@ const CustomMultiRange = (props) => {
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
       <Box mx={isMobile ? "0" : "5"}>
-        <FormLabel
-          as="legend"
-          fontSize="2xl"
-          fontWeight="semibold"
-          color="orange.500"
-          requiredIndicator={null}
-        >
-          {props.schema.title}
+        <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+          {parse(props.schema.title)}
         </FormLabel>
         <Text fontSize="xs" color="orange.900">
           (Pour chacune de ces propositions déplace le curseur sur l’émoji qui se rapproche le plus
