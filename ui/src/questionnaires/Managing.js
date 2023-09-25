@@ -100,7 +100,7 @@ const QuestionnaireTable = ({
                   </Tooltip>
                 </Td>
                 <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {questionnaire.createdBy[0].firstName} {questionnaire.createdBy[0].lastName}
+                  {questionnaire.createdBy[0]?.firstName} {questionnaire.createdBy[0]?.lastName}
                 </Td>
                 <Td>
                   <Switch
