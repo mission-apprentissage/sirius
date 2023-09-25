@@ -14,12 +14,13 @@ import {
   HStack,
   Stack,
 } from "@chakra-ui/react";
-import { InfoOutlineIcon } from "@chakra-ui/icons";
+import { InfoIcon } from "@chakra-ui/icons";
 import nadia from "../../../assets/images/nadia.svg";
 import johan from "../../../assets/images/johan.svg";
 import salomee from "../../../assets/images/salomee.svg";
 import nazir from "../../../assets/images/nazir.svg";
 import samy from "../../../assets/images/samy.svg";
+import mains from "../../../assets/images/mains.svg";
 
 const CustomMessageReceived = (props) => {
   const breakpoint = useBreakpoint({ ssr: false });
@@ -43,10 +44,28 @@ const CustomMessageReceived = (props) => {
   };
 
   return (
-    <Box mx={isMobile ? "0" : "5"}>
-      <Text fontSize="2xl" fontWeight="semibold" color="cyan.800" mb="5">
-        📬 Tu as reçu un message !
-      </Text>
+    <Box
+      mx={isMobile ? "0" : "5"}
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Image src={pictoGetter()} alt="" maxW="300px" w="70%" my="5" />
+      <Box
+        w={isMobile ? "100%" : "50%"}
+        m="auto"
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+      >
+        {props.schema.legend && (
+          <Text fontSize="md" fontWeight="400" color="orange.600" my="3">
+            {props.schema.legend}
+          </Text>
+        )}
+      </Box>
       <Box
         display="flex"
         flexDirection={isMobile ? "column" : "row"}
@@ -54,11 +73,18 @@ const CustomMessageReceived = (props) => {
         alignItems="center"
         mb="5"
       >
-        <Box w={isMobile ? "100%" : "50%"}>
+        <Box
+          w={isMobile ? "100%" : "50%"}
+          border="1px"
+          borderColor="orange.500"
+          py="5"
+          px="3"
+          borderRadius="0px 20px 20px 20px"
+        >
           <Text
             fontSize="md"
             fontWeight="semibold"
-            color="cyan.800"
+            color="orange.800"
             textAlign="center"
             mx={isMobile ? "2" : "12"}
             lineHeight="24px"
@@ -66,37 +92,25 @@ const CustomMessageReceived = (props) => {
             « {props.label} »
           </Text>
         </Box>
-        <Box
-          w={isMobile ? "100%" : "50%"}
-          m="auto"
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Image src={pictoGetter()} alt="" maxW="300px" w="70%" />
-          {props.schema.legend && (
-            <Text fontSize="xs" fontWeight="semibold" color="teal.900" mt="2">
-              {props.schema.legend}
-            </Text>
-          )}
-        </Box>
       </Box>
       <FormControl id={props.id}>
         <Textarea
           onChange={(e) => props.onChange(e.target.value)}
-          placeholder="Note ici ta réponse à cette question, elle sera transmise au jeune qui te l’a posée !"
-          borderColor="purple.50"
-          bgColor="purple.50"
-          focusBorderColor="purple.50"
+          placeholder="Répondre"
+          borderColor="#FEEBCB"
+          bgColor="#FFFAF0"
+          focusBorderColor="#FEEBCB"
           mt="10px"
           value={props.value}
+          borderRadius="20px 20px 0px 20px"
+          color="orange.800"
+          _placeholder={{ color: "orange.800" }}
         />
         <Popover>
           <PopoverTrigger>
             <HStack mt="10px" w="fit-content">
-              <InfoOutlineIcon color="purple.500" boxSize={4} />
-              <Text color="purple.500" fontSize="sm" sx={{ marginTop: "0px" }}>
+              <InfoIcon color="orange.800" boxSize={4} />
+              <Text color="orange.800" fontSize="sm" sx={{ marginTop: "0px" }} fontStyle="italic">
                 Mention d’information – Champs libres
               </Text>
             </HStack>
@@ -105,31 +119,29 @@ const CustomMessageReceived = (props) => {
             <PopoverArrow />
             <PopoverCloseButton />
             <PopoverBody>
-              <Stack>
-                <Text>
-                  Attention à vos{" "}
-                  <Text as="span" fontWeight="semibold" color="purple.500">
-                    données
-                  </Text>
-                  , elles sont{" "}
-                  <Text as="span" fontWeight="semibold" color="purple.500">
-                    importantes
-                  </Text>{" "}
-                  pour nous !
+              <Stack textAlign="center">
+                <Text fontWeight="600" fontSize="md">
+                  Mention d’information Sirius
                 </Text>
-                <Text>
+                <Text fontWeight="400" fontSize="sm">
+                  Champs libres
+                </Text>
+                <Text fontWeight="600" fontSize="14px" color="purple.900">
+                  Attention à vos données, elles sont importantes pour nous !
+                </Text>
+                <Image src={mains} alt="" objectFit="contain" w="80%" mx="auto" my="5" />
+                <Text color="purple.900">
                   C’est pour cela que nous invitons à nous communiquer les{" "}
-                  <Text as="span" fontWeight="semibold" color="purple.500">
-                    seules informations et données strictement nécessaires.
+                  <Text as="span" fontWeight="semibold">
+                    seules informations et données strictement{" "}
                   </Text>
+                  nécessaires.
                 </Text>
-                <Text>
-                  Notamment, ne communiquez pas vos opinions{" "}
-                  <Text as="span" fontWeight="semibold" color="purple.500">
-                    philosophiques, syndicales, politiques ou sur votre vie sexuelle.{" "}
-                  </Text>
+                <Text color="purple.900">
+                  Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques
+                  ou sur votre vie sexuelle.{" "}
                 </Text>
-                <Text fontWeight="semibold" color="purple.500">
+                <Text fontWeight="semibold" color="purple.900">
                   Ces données sont trop personnelles !
                 </Text>
               </Stack>
