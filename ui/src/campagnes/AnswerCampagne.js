@@ -18,6 +18,7 @@ import {
   CustomMessageReceived,
   CustomMultiRangeSortable,
   CustomEmojisRadios,
+  CustomMultiEmojisRadios,
 } from "../Components/Form/widgets";
 import { CustomNestedRadios } from "../Components/Form/fields";
 import { Stepper } from "../Components/Stepper";
@@ -43,6 +44,7 @@ const widgets = {
   customMessageReceived: CustomMessageReceived,
   customMultiRangeSortableWidget: CustomMultiRangeSortable,
   customEmojiRadioWidget: CustomEmojisRadios,
+  customMultiEmojiRadioWidget: CustomMultiEmojisRadios,
 };
 
 const fields = {
