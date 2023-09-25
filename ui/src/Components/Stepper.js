@@ -51,6 +51,12 @@ export const Stepper = ({
       >
         {categories.map((category, index) => {
           const isCurrent = index === currentCategoryIndex;
+          const isFinished = index < currentCategoryIndex;
+          const getBgColor = () => {
+            if (isCurrent) return "purple.500";
+            if (isFinished) return "purple.200";
+            if (!isFinished && !isCurrent) return "gray.50";
+          };
           return (
             <Box
               key={index}
@@ -64,7 +70,7 @@ export const Stepper = ({
             >
               <Box
                 borderRadius={isCurrent ? "40px" : "100%"}
-                bgColor={isCurrent ? "purple.500" : "purple.200"}
+                bgColor={getBgColor}
                 w={isCurrent ? "auto" : "50px"}
                 h="50px"
                 fontSize={isMobile ? "2xl" : "lg"}
