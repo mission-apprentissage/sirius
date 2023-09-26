@@ -20,18 +20,20 @@ import mains from "../../../assets/images/mains.svg";
 const CustomTextareaPrecision = (props) => {
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
+
   return (
     <Box mx={isMobile ? "0" : "5"}>
       <FormControl id={props.id} width="100%" spacing="2">
         <Textarea
           onChange={(e) => props.onChange(e.target.value)}
           placeholder="Tu peux préciser si tu le souhaites !"
-          borderColor="purple.50"
-          bgColor="gray.200"
-          focusBorderColor="purple.50"
+          borderColor="#FEEBCB"
+          bgColor="orange.50"
+          focusBorderColor="#FEEBCB"
           my="10px"
           value={props.value}
           size="md"
+          _placeholder={{ color: "orange.800" }}
         />
         <Popover>
           <PopoverTrigger>

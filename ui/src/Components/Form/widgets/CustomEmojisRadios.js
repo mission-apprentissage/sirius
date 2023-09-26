@@ -39,7 +39,7 @@ const CustomEmojisRadios = (props) => {
   return (
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
-      <Box as="fieldset" mx="5">
+      <Box as="fieldset">
         <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
           {parse(props.label)}
         </FormLabel>

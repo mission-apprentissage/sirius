@@ -56,7 +56,7 @@ const CustomCheckboxes = (props) => {
 
   return (
     <>
-      {props.schema.info && <DidYouKnow content={props.schema.info} />}
+      {props.schema?.info && <DidYouKnow content={props.schema.info} />}
       <Box as="fieldset" mx={isMobile ? "0" : "5"}>
         {!props.standalone && (
           <>
@@ -64,7 +64,7 @@ const CustomCheckboxes = (props) => {
               {parse(props.label)}
             </FormLabel>
             <Text fontSize="xs" color="orange.900">
-              (plusieurs choix de réponses possibles)
+              <i> Tu peux sélectionner plusieurs réponses </i>😉
             </Text>
           </>
         )}

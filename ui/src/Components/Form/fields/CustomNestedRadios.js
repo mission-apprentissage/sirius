@@ -44,17 +44,17 @@ function RadioCard(props) {
 }
 
 const otherInputGetter = (dependencies, props, value) => {
-  const otherInput = dependencies.find((dep) =>
+  const otherInput = dependencies?.find((dep) =>
     dep.properties[props.name].contains.enum.includes(value)
   );
-  return otherInput.properties[props.name + "Autre"];
+  return otherInput?.properties[props.name + "Autre"];
 };
 
 const CustomNestedRadios = (props) => {
   const [nestedValues, setNestedValues] = useState(null);
   const [parentValue, setparentValue] = useState("");
   const options = props.schema.enum;
-  const dependencies = props.registry.rootSchema.dependencies[props.name].oneOf;
+  const dependencies = props.registry.rootSchema.dependencies[props.name]?.oneOf;
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: props.name,
     onChange: setparentValue,
@@ -75,11 +75,11 @@ const CustomNestedRadios = (props) => {
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
       <Box as="fieldset" mx="5">
         <>
-          <FormLabel as="legend" fontSize="2xl" color="orange.500">
-            {parse(props.schema.title)}
+          <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+            {props.schema.title && parse(props.schema.title)}
           </FormLabel>
           <Text fontSize="xs" color="orange.900">
-            (Plusieurs choix de sous-réponses possibles)
+            Tu peux sélectionner plusieurs réponses 😉
           </Text>
         </>
         <Stack mt="4">

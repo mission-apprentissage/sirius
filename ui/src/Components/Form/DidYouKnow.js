@@ -1,10 +1,11 @@
 import { Box, Text, useBreakpoint } from "@chakra-ui/react";
 import parse from "html-react-parser";
 
-const DidYouKnow = (content) => {
+const DidYouKnow = ({ content }) => {
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
   if (!content) return null;
+
   return (
     <Box
       bgColor="purple.50"
@@ -18,12 +19,12 @@ const DidYouKnow = (content) => {
       <Box
         bgColor="purple.500"
         borderRadius="100%"
-        width="38px"
-        height="38px"
+        width="40px"
+        height="40px"
         display="flex"
         justifyContent="center"
         alignItems="center"
-        w={isMobile ? "100px" : "40px"}
+        w={isMobile ? "90px" : "40px"}
       >
         <Text fontSize="2xl">💡</Text>
       </Box>
