@@ -235,6 +235,99 @@ const barOption = (responses) => {
   };
 };
 
+const multiEmojiOption = (responses) => {
+  const zero = barResponsesFormatting(responses).map((response) => {
+    return response.value.filter((value) => value === "Pas vraiment" || value === "Pas ok").length;
+  });
+
+  const one = barResponsesFormatting(responses).map((response) => {
+    return response.value.filter((value) => value === "Moyen").length;
+  });
+
+  const two = barResponsesFormatting(responses).map((response) => {
+    return response.value.filter((value) => value === "Oui" || value === "Bien").length;
+  });
+  const labelFormatter = (param) => {
+    if (param.data == 0) return "";
+    return param.data;
+  };
+
+  const questions = [...new Set(responses.map((response) => response.label))];
+
+  return {
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "shadow",
+      },
+    },
+    legend: {
+      textStyle: {
+        fontSize: "36px",
+      },
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true,
+      overflow: "allow",
+    },
+    xAxis: {
+      type: "value",
+      scale: false,
+    },
+    yAxis: {
+      type: "category",
+      data: questions,
+    },
+    series: [
+      {
+        name: "😫",
+        type: "bar",
+        stack: "total",
+        label: {
+          show: true,
+          formatter: labelFormatter,
+        },
+        emphasis: {
+          focus: "series",
+        },
+        data: zero,
+        color: "#9C4221",
+      },
+      {
+        name: "🤔",
+        type: "bar",
+        stack: "total",
+        label: {
+          show: true,
+          formatter: labelFormatter,
+        },
+        emphasis: {
+          focus: "series",
+        },
+        data: one,
+        color: "#DD6B20",
+      },
+      {
+        name: "😝",
+        type: "bar",
+        stack: "total",
+        label: {
+          show: true,
+          formatter: labelFormatter,
+        },
+        emphasis: {
+          focus: "series",
+        },
+        data: two,
+        color: "#FAC858",
+      },
+    ],
+  };
+};
+
 const Dashboard = () => {
   const [selectedCampagne, setSelectedCampagne] = useState(null);
   const [temoignages, setTemoignages] = useState([]);
@@ -402,6 +495,26 @@ const Dashboard = () => {
                                     <ReactEChartsCore
                                       echarts={echarts}
                                       option={barOption(responses)}
+                                    />
+                                  )}
+                                  {matchedCardTypeAndQuestions[question]?.type === "emoji" && (
+                                    <ReactEChartsCore
+                                      echarts={echarts}
+                                      option={pieOption(
+                                        pieResponsesFormatting(
+                                          responses,
+                                          matchedCardTypeAndQuestions[question]?.mapping
+                                        )
+                                      )}
+                                    />
+                                  )}
+                                  {matchedCardTypeAndQuestions[question]?.type === "multiEmoji" && (
+                                    <ReactEChartsCore
+                                      echarts={echarts}
+                                      option={multiEmojiOption(
+                                        responses,
+                                        matchedCardTypeAndQuestions[question]?.mapping
+                                      )}
                                     />
                                   )}
                                 </CardBody>
