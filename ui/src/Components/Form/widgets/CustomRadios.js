@@ -21,6 +21,7 @@ const RadioCard = (props) => {
           color: "white",
         }}
         colorScheme="orange"
+        p="2"
       >
         {props.children}
       </Tag>

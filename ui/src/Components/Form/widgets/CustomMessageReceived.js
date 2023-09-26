@@ -73,6 +73,7 @@ const CustomMessageReceived = (props) => {
         justifyContent="center"
         alignItems="center"
         mb="5"
+        w="100%"
       >
         <Box
           w={isMobile ? "100%" : "50%"}

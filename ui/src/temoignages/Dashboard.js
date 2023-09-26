@@ -25,6 +25,7 @@ import {
   VisualMapComponent,
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
+import parse from "html-react-parser";
 import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../utils/temoignage";
 import { getCategoriesWithEmojis } from "../campagnes/utils";
 import DashboardHeader from "./Components/DashboardHeader";
@@ -352,7 +353,7 @@ const Dashboard = () => {
                                     lineHeight="28px"
                                     margin="auto"
                                   >
-                                    {matchedIdAndQuestions[question]}
+                                    {parse(matchedIdAndQuestions[question])}
                                   </Heading>
                                 </CardHeader>
                                 <CardBody>

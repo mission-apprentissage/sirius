@@ -24,11 +24,11 @@ const DidYouKnow = ({ content }) => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        w={isMobile ? "90px" : "40px"}
+        w="40px"
       >
         <Text fontSize="2xl">💡</Text>
       </Box>
-      <Box ml="2">
+      <Box ml="2" w="calc(100% - 40px)">
         <Text color="purple.600" fontWeight="semibold">
           Le savais-tu ?
         </Text>
