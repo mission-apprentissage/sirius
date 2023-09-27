@@ -24,14 +24,13 @@ const CheckboxCard = (props) => {
         cursor="pointer"
         borderRadius="md"
         _checked={{
-          bg: "orange.500",
-          color: "white",
-          borderColor: "orange.500",
+          bg: "brand.red.500",
+          color: "brand.black.500",
         }}
         px={2}
         py={1}
-        color="orange.800"
-        bgColor="orange.100"
+        color="brand.black.500"
+        bgColor="brand.pink.400"
       >
         {props.children}
       </Box>
@@ -40,8 +39,6 @@ const CheckboxCard = (props) => {
 };
 
 const CustomCheckboxes = (props) => {
-  const breakpoint = useBreakpoint({ ssr: false });
-  const isMobile = breakpoint === "base";
   const options = props.standalone
     ? props.enum
     : props.options.enumOptions.map((option) => option.label);
@@ -57,14 +54,14 @@ const CustomCheckboxes = (props) => {
   return (
     <>
       {props.schema?.info && <DidYouKnow content={props.schema.info} />}
-      <Box as="fieldset" mx={isMobile ? "0" : "5"}>
+      <Box as="fieldset" mx="2">
         {!props.standalone && (
           <>
-            <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+            <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
               {parse(props.label)}
             </FormLabel>
-            <Text fontSize="xs" color="orange.900">
-              <i> Tu peux sélectionner plusieurs réponses </i>😉
+            <Text fontSize="xs" color="brand.blue.700">
+              <i>Tu peux sélectionner plusieurs réponses</i> 😉
             </Text>
           </>
         )}

@@ -20,21 +20,31 @@ function RadioCard(props) {
   const checkbox = getCheckboxProps();
   return (
     <Box as="label" display="flex">
-      <Radio colorScheme="orange" {...input} style={{}}>
+      <Radio
+        borderColor="brand.pink.400"
+        color="brand.black.500"
+        _checked={{
+          borderColor: "brand.red.500",
+          bg: "brand.black.500",
+        }}
+        {...input}
+        style={{}}
+      >
         <Box
           {...checkbox}
           cursor="pointer"
           borderRadius="md"
           _checked={{
-            bg: "orange.500",
-            color: "white",
-            borderColor: "orange.500",
+            bg: "brand.red.500",
+            color: "brand.black.500",
           }}
           px={2}
           py={1}
           width="fit-content"
           ml="2"
-          color="gray.400"
+          bgColor="brand.pink.400"
+          color="brand.black.500"
+          my="2"
         >
           {props.children}
         </Box>
@@ -73,12 +83,12 @@ const CustomNestedRadios = (props) => {
   return (
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
-      <Box as="fieldset" mx="5">
+      <Box as="fieldset" mx="2">
         <>
-          <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+          <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
             {props.schema.title && parse(props.schema.title)}
           </FormLabel>
-          <Text fontSize="xs" color="orange.900">
+          <Text fontSize="xs" color="brand.blue.700">
             Tu peux sélectionner plusieurs réponses 😉
           </Text>
         </>

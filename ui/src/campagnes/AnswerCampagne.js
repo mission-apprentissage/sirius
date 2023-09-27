@@ -176,7 +176,6 @@ const AnswerCampagne = () => {
           rounded="md"
           w={isMobile ? "100%" : "80%"}
           m="auto"
-          boxShadow="md"
           minHeight={isMobile ? "100vh" : "inherit"}
         >
           <Stepper
@@ -211,7 +210,9 @@ const AnswerCampagne = () => {
                   borderRadius="md"
                   type="submit"
                   variant="solid"
-                  colorScheme="purple"
+                  bgColor="brand.blue.700"
+                  color="white"
+                  colorScheme="brand.blue"
                   rightIcon={<ChevronRightIcon />}
                   mt="25px"
                 >

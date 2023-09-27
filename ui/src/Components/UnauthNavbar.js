@@ -13,7 +13,7 @@ const UnauthNavbar = () => {
           <Link href="/">
             <img src={Logo} alt="Logo Sirius" />
           </Link>
-          <Text display={isMobile ? "none" : "inherit"} color="purple.500" ml="5">
+          <Text display={isMobile ? "none" : "inherit"} color="brand.blue.700" ml="5">
             recueillir les témoignages d’apprenti·es pour aider les plus jeunes à choisir une
             formation en apprentissage
           </Text>

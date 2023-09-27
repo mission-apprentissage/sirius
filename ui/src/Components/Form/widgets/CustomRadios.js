@@ -17,10 +17,15 @@ const RadioCard = (props) => {
         size="lg"
         variant={input.checked ? "solid" : "subtle"}
         _hover={{
-          backgroundColor: "orange.500",
-          color: "white",
+          bg: "brand.red.500",
+          color: "brand.black.500",
         }}
-        colorScheme="orange"
+        _checked={{
+          bg: "brand.red.500",
+          color: "brand.black.500",
+        }}
+        color="brand.black.500"
+        bgColor="brand.pink.400"
         p="2"
       >
         {props.children}
@@ -41,12 +46,12 @@ const CustomRadios = (props) => {
   return (
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
-      <Box as="fieldset" mx="5">
-        <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+      <Box as="fieldset" mx="2">
+        <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
           {parse(props.label)}
         </FormLabel>
-        <Text fontSize="xs" color="orange.900">
-          (une seule réponse possible)
+        <Text fontSize="xs" color="brand.blue.700">
+          une seule réponse possible
         </Text>
         <Wrap spacing={2} direction="row" mt={4}>
           {options.map((value) => {

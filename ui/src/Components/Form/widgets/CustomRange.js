@@ -27,11 +27,11 @@ const CustomRange = (props) => {
   return (
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
-      <Box mx={isMobile ? "0" : "5"}>
-        <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+      <Box mx="2">
+        <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
           {parse(props.label)}
         </FormLabel>
-        <Text fontSize="xs" color="orange.900">
+        <Text fontSize="xs" color="brand.blue.700">
           (Déplace le curseur sur l’émoji qui se rapproche le plus de ton ressenti)
         </Text>
         <Box
@@ -46,7 +46,6 @@ const CustomRange = (props) => {
             defaultValue={savedValue}
             min={0}
             max={props.schema.enum.length - 1}
-            colorScheme="orange"
             w="100%"
             m="auto"
             orientation="horizontal"
@@ -73,9 +72,11 @@ const CustomRange = (props) => {
                   }
                   minHeight={isMobile ? "20px" : "inherit"}
                   bgColor={
-                    index === props.schema.enum.indexOf(props.value) ? "orange.500" : "orange.50"
+                    index === props.schema.enum.indexOf(props.value)
+                      ? "brand.red.500"
+                      : "brand.pink.400"
                   }
-                  color={index === props.schema.enum.indexOf(props.value) ? "white" : "orange.800"}
+                  color={index === props.schema.enum.indexOf(props.value) ? "black" : "black"}
                   borderRadius="md"
                   fontWeight="semibold"
                   py="1"
@@ -89,7 +90,7 @@ const CustomRange = (props) => {
                 </SliderMark>
               );
             })}
-            <SliderTrack colorScheme="orange">
+            <SliderTrack colorScheme="brand.blue">
               <SliderFilledTrack />
             </SliderTrack>
             <SliderThumb left={isMobile ? "inherit" : "inherit"} fontSize="xl">

@@ -16,14 +16,14 @@ const Footer = () => {
         pb="4"
       >
         <Image src={gouv} alt="" w="150px" />
-        <Text color="purple.900">
+        <Text color="brand.black.500">
           <Link
             href="https://travail-emploi.gouv.fr/"
             target="_blank"
             rel="noreferrer"
             textDecoration="underline"
             fontWeight="semibold"
-            color="purple.900"
+            color="brand.black.500"
           >
             Sirius
           </Link>{" "}
@@ -45,7 +45,7 @@ const Footer = () => {
               rel="noreferrer"
               textDecoration="underline"
               fontWeight="semibold"
-              color="purple.900"
+              color="brand.black.500"
             >
               onisep.fr
             </Link>
@@ -57,7 +57,7 @@ const Footer = () => {
               rel="noreferrer"
               textDecoration="underline"
               fontWeight="semibold"
-              color="purple.900"
+              color="brand.black.500"
             >
               Ministère du travail
             </Link>

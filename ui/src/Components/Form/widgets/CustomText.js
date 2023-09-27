@@ -6,7 +6,7 @@ const CustomText = (props) => {
   return (
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
-      <Box mx="5">
+      <Box mx="2">
         <FormControl variant="floating" id={props.id}>
           <Input
             onChange={(e) => props.onChange(e.target.value)}

@@ -34,7 +34,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
           >
             <Box w="50%" display={isMobile ? "none" : "inherit"} flexDirection="column">
               <Image src={shareTemoignage} alt="" objectFit="contain" w="80%" m="auto" />
-              <Text color="purple.900" fontSize="14px" textAlign="center" mt="4">
+              <Text color="brand.black.500" fontSize="14px" textAlign="center" mt="4">
                 <Text as="span" mr="2">
                   ⏳ 5-10 minutes
                 </Text>
@@ -47,7 +47,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
               <Box display="flex" flexDirection="column">
                 <Text
                   fontSize="3xl"
-                  color="purple.900"
+                  color="brand.red.500"
                   fontWeight="600"
                   textAlign={isMobile ? "center" : "inherit"}
                 >
@@ -55,7 +55,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                 </Text>
                 <Text
                   fontSize="lg"
-                  color="purple.900"
+                  color="brand.blue.700"
                   mt="5"
                   mb={isMobile ? "5" : "0"}
                   textAlign={isMobile ? "center" : "inherit"}
@@ -67,7 +67,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
               </Box>
               <Box w={isMobile ? "100%" : "50%"} display={isMobile ? "inherit" : "none"}>
                 <Image src={shareTemoignage} alt="" objectFit="contain" w="80%" m="auto" />
-                <Text color="purple.900" fontSize="14px" textAlign="center" mt="4">
+                <Text color="brand.black.500" fontSize="14px" textAlign="center" mt="4">
                   <Text as="span" mr="2">
                     ⏳ 5-10 minutes
                   </Text>
@@ -85,7 +85,8 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                 <Button
                   size="lg"
                   variant="solid"
-                  colorScheme="purple"
+                  bgColor="brand.blue.700"
+                  color="white"
                   rightIcon={<ArrowForwardIcon />}
                   onClick={onOpen}
                 >
@@ -97,10 +98,10 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
         </Box>
         <Box bgColor="white" w="100%" pt="10px">
           <Box w={isMobile ? "80%" : "50%"} mx="auto" my="35">
-            <Text fontWeight="600" color="purple.900" fontSize="3xl" textAlign="center">
+            <Text fontWeight="600" color="brand.blue.700" fontSize="3xl" textAlign="center">
               Flemme de répondre au questionnaire ?
             </Text>
-            <Text color="purple.900" fontSize="sm" textAlign="center" mt="5" mb="10">
+            <Text color="brand.blue.700" fontSize="sm" textAlign="center" mt="5" mb="10">
               3 raisons de le faire :
             </Text>
             <Stack
@@ -123,7 +124,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                 <Text
                   fontSize="md"
                   lineHeight="6"
-                  color="purple.900"
+                  color="brand.black.500"
                   textAlign={isMobile ? "left" : "center"}
                   mx="15px"
                   fontWeight="400"
@@ -148,7 +149,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                 <Text
                   fontSize="md"
                   lineHeight="6"
-                  color="purple.900"
+                  color="brand.black.500"
                   textAlign={isMobile ? "left" : "center"}
                   mx="15px"
                   fontWeight="400"
@@ -175,7 +176,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                 <Text
                   fontSize="md"
                   lineHeight="6"
-                  color="purple.900"
+                  color="brand.black.500"
                   textAlign={isMobile ? "left" : "center"}
                   mx="15px"
                   fontWeight="600"
@@ -185,15 +186,17 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
               </Box>
             </Stack>
             <Box width="100%" textAlign="center" mt="10">
-              <Text fontSize="sm">Alors, tu veux bien nous aider ?</Text>
+              <Text fontSize="sm" color="brand.blue.700">
+                Alors, tu veux bien nous aider ?
+              </Text>
             </Box>
           </Box>
         </Box>
         <Footer />
       </Stack>
-      <Modal isOpen={isCampagneActive} isCentered>
+      <Modal isOpen={isCampagneActive} size="sm" isCentered>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent y="8" px="4" bgColor="brand.blue.100" width="90%" borderRadius="20px">
           <ModalHeader textAlign="center">La campagne n'est pas ouverte</ModalHeader>
           <ModalBody textAlign="center" pb="5">
             La campagne est ouverte du {new Date(startDate).toLocaleDateString()} au{" "}
@@ -201,9 +204,9 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={!hasOpenSeats} isCentered>
+      <Modal isOpen={!hasOpenSeats} size="sm" isCentered>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent y="8" px="4" bgColor="brand.blue.100" width="90%" borderRadius="20px">
           <ModalHeader textAlign="center">La campagne n'a plus de places disponibles</ModalHeader>
           <ModalBody textAlign="center" pb="5">
             La campagne n'a plus de place disponible. Merci de contacter un administrateur.
@@ -212,8 +215,8 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
       </Modal>
       <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
         <ModalOverlay />
-        <ModalContent py="8" px="4" bgColor="gray.100" width="90%" borderRadius="20px">
-          <ModalHeader textAlign="center" color="purple.600">
+        <ModalContent py="8" px="4" bgColor="brand.blue.100" width="90%" borderRadius="20px">
+          <ModalHeader textAlign="center" color="brand.blue.700">
             <Text fontWeight="600" fontSize="md">
               Mention d’information Sirius
             </Text>
@@ -223,22 +226,22 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
           </ModalHeader>
           <ModalBody>
             <Stack textAlign="center">
-              <Text fontWeight="600" fontSize="14px" color="purple.900">
+              <Text fontWeight="600" fontSize="14px" color="brand.black.500">
                 Attention à vos données, elles sont importantes pour nous !
               </Text>
               <Image src={mains} alt="" objectFit="contain" w="80%" mx="auto" my="5" />
-              <Text color="purple.900">
+              <Text color="brand.black.500">
                 C’est pour cela que nous invitons à nous communiquer les{" "}
                 <Text as="span" fontWeight="semibold">
                   seules informations et données strictement{" "}
                 </Text>
                 nécessaires.
               </Text>
-              <Text color="purple.900">
+              <Text color="brand.black.500">
                 Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques ou
                 sur votre vie sexuelle.{" "}
               </Text>
-              <Text fontWeight="semibold" color="purple.900">
+              <Text fontWeight="semibold" color="brand.black.500">
                 Ces données sont trop personnelles !
               </Text>
             </Stack>
@@ -247,9 +250,10 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
             <Button
               size="lg"
               variant="solid"
-              colorScheme="purple"
               rightIcon={<ArrowForwardIcon />}
               onClick={() => setStartedAnswering(true)}
+              bgColor="brand.blue.700"
+              color="white"
             >
               C'est parti !
             </Button>

@@ -18,7 +18,7 @@ const RadioCard = (props) => {
   const checkbox = getCheckboxProps();
 
   return (
-    <Box as="label">
+    <Box as="label" maxWidth="50px">
       <input {...input} />
       <Tag
         {...checkbox}
@@ -26,10 +26,18 @@ const RadioCard = (props) => {
         size="lg"
         variant={input.checked ? "solid" : "subtle"}
         _hover={{
-          backgroundColor: "orange.500",
-          color: "white",
+          bg: "brand.red.500",
+          color: "brand.black.500",
         }}
-        colorScheme="orange"
+        _checked={{
+          bg: "brand.red.500",
+          color: "brand.black.500",
+        }}
+        color="brand.black.500"
+        bgColor="brand.pink.400"
+        maxWidth="100px"
+        textAlign="center"
+        p="2"
       >
         {props.children}
       </Tag>
@@ -54,11 +62,11 @@ const CustomMultiEmojisRadios = (props) => {
   return (
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
-      <Box mx={isMobile ? "0" : "5"}>
-        <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+      <Box mx="0">
+        <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
           {parse(props.schema.title)}
         </FormLabel>
-        <Text fontSize="xs" color="orange.900">
+        <Text fontSize="xs" color="brand.blue.700">
           Pour chaque proposition, sélectionne la réponse qui se rapproche le plus de ton ressenti
           😉
         </Text>
@@ -79,19 +87,19 @@ const CustomMultiEmojisRadios = (props) => {
             return (
               <Box
                 key={index}
-                w="100%"
+                w="calc(100% + 48px)"
+                ml="-24px"
                 display="flex"
                 flexDirection={isMobile ? "column" : "row"}
-                bgColor={index % 2 !== 0 ? "white" : "gray.50"}
+                bgColor={index % 2 !== 0 ? "white" : "brand.blue.100"}
                 alignItems={isMobile ? "intial" : "center"}
                 py="5"
-                px="5"
-                margin="auto"
+                px="16"
                 mt="2"
               >
                 <Box
                   w={isMobile ? "100%" : "50%"}
-                  color="orange.800"
+                  color="brand.blue.700"
                   fontSize="sm"
                   textAlign="center"
                 >

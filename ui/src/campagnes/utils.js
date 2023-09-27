@@ -92,7 +92,7 @@ export const getNextButtonLabel = (isLastCategory, isLastQuestionInCategory) => 
   if (isLastCategory && isLastQuestionInCategory) {
     return "Terminer";
   } else if (isLastQuestionInCategory) {
-    return "Passer à la partie suivante";
+    return "Partie suivante";
   } else {
     return "Suivant";
   }

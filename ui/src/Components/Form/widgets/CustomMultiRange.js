@@ -43,11 +43,11 @@ const CustomMultiRange = (props) => {
   return (
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
-      <Box mx={isMobile ? "0" : "5"}>
-        <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+      <Box>
+        <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
           {parse(props.schema.title)}
         </FormLabel>
-        <Text fontSize="xs" color="orange.900">
+        <Text fontSize="xs" color="brand.blue.700">
           (Pour chacune de ces propositions déplace le curseur sur l’émoji qui se rapproche le plus
           de ton ressenti)
         </Text>
@@ -55,19 +55,20 @@ const CustomMultiRange = (props) => {
           {props.schema.questions.map((question, index) => (
             <Box
               key={index}
-              w={isMobile ? "80%" : "100%"}
               display="flex"
               flexDirection={isMobile ? "column" : "row"}
               alignItems="center"
-              bgColor={index % 2 !== 0 ? "white" : "orange.100"}
+              bgColor={index % 2 !== 0 ? "white" : "brand.blue.100"}
               py="5"
-              px="5"
+              px="16"
               margin="auto"
               mt="2"
+              w="calc(100% + 48px)"
+              ml="-24px"
             >
               <Box
                 w={isMobile ? "100%" : "50%"}
-                color="orange.800"
+                color="brand.blue.700"
                 fontSize="sm"
                 textAlign="center"
               >
@@ -79,7 +80,7 @@ const CustomMultiRange = (props) => {
                   defaultValue={0}
                   min={0}
                   max={3}
-                  colorScheme="orange"
+                  colorScheme="brand.blue"
                   w="100%"
                   height={isMobile ? "50px" : "inherit"}
                   onChangeStart={() => setIsSliderClicked(index)}
@@ -96,7 +97,7 @@ const CustomMultiRange = (props) => {
                     <SliderMark
                       value={currentValue[index]?.value || 0}
                       textAlign="center"
-                      bg="orange.500"
+                      bg="brand.blue.700"
                       color="white"
                       mt={isMobile ? "-20px" : "-40px"}
                       ml="-55"
@@ -107,7 +108,7 @@ const CustomMultiRange = (props) => {
                       {labels[currentValue[index]?.value || 0]}
                     </SliderMark>
                   )}
-                  <SliderTrack colorScheme="orange">
+                  <SliderTrack colorScheme="brand.blue">
                     <SliderFilledTrack />
                   </SliderTrack>
                   <SliderThumb fontSize={26}>

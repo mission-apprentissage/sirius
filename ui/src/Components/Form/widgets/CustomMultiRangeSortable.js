@@ -57,8 +57,8 @@ const CustomMultiRangeSortable = (props) => {
   return (
     <>
       {props.schema.info && <DidYouKnow content={props.schema.info} />}
-      <Box mx={isMobile ? "0" : "5"}>
-        <FormLabel as="legend" fontSize="2xl" color="orange.500" requiredIndicator={null}>
+      <Box mx="5">
+        <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
           {parse(props.schema.title)}
         </FormLabel>
         <Box
@@ -135,7 +135,7 @@ const CustomMultiRangeSortable = (props) => {
                           <SliderMark
                             value={list[index]?.value || 0}
                             textAlign="center"
-                            bg="orange.500"
+                            bg="brand.blue.700"
                             color="white"
                             mt="-40px"
                             ml="-55"

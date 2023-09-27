@@ -8,8 +8,9 @@ const DidYouKnow = ({ content }) => {
 
   return (
     <Box
-      bgColor="purple.50"
-      width="100%"
+      bgColor="brand.blue.100"
+      width="calc(100% + 48px)"
+      ml="-24px"
       display="flex"
       p="4"
       mb="4"
@@ -17,7 +18,7 @@ const DidYouKnow = ({ content }) => {
       justifyContent={isMobile ? "center" : "initial"}
     >
       <Box
-        bgColor="purple.500"
+        bgColor="brand.blue.700"
         borderRadius="100%"
         width="40px"
         height="40px"
@@ -29,10 +30,10 @@ const DidYouKnow = ({ content }) => {
         <Text fontSize="2xl">💡</Text>
       </Box>
       <Box ml="2" w="calc(100% - 40px)">
-        <Text color="purple.600" fontWeight="semibold">
+        <Text color="brand.blue.700" fontWeight="semibold">
           Le savais-tu ?
         </Text>
-        <Text color="purple.600">{parse(content)}</Text>
+        <Text color="brand.blue.700">{parse(content)}</Text>
       </Box>
     </Box>
   );

@@ -53,9 +53,9 @@ export const Stepper = ({
           const isCurrent = index === currentCategoryIndex;
           const isFinished = index < currentCategoryIndex;
           const getBgColor = () => {
-            if (isCurrent) return "purple.500";
-            if (isFinished) return "purple.200";
-            if (!isFinished && !isCurrent) return "gray.50";
+            if (isCurrent) return "brand.blue.700";
+            if (isFinished) return "brand.blue.400";
+            if (!isFinished && !isCurrent) return "brand.blue.100";
           };
           return (
             <Box
@@ -92,20 +92,20 @@ export const Stepper = ({
       </Box>
       <Box w="100%" my="5">
         {isMobile && (
-          <Text mb="2" color="purple.500">
+          <Text mb="2" color="brand.blue.700">
             {categories[currentCategoryIndex].title}
           </Text>
         )}
-        <Progress colorScheme="purple" hasStripe value={progressValue()} />
+        <Progress colorScheme="progressBar" hasStripe isAnimated value={progressValue()} />
       </Box>
       <Box w="auto" mb="5">
         <Button
           size="xs"
           variant="solid"
-          colorScheme="purple"
           leftIcon={!isMobile && <ArrowBackIcon />}
-          color="black"
-          bgColor="purple.300"
+          color="white"
+          bgColor="brand.blue.700"
+          colorScheme="brand.blue"
           onClick={goBackHandler}
         >
           {isMobile ? (
