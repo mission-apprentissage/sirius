@@ -15,10 +15,8 @@ export const Stepper = ({
   const isMobile = breakpoint === "base";
 
   if (categories.length === 0) return null;
-
   const goBackButtonLabelGetter = () => {
-    if (currentCategoryIndex === 0 && currentQuestionIndex === 0) return "Quitter le questionnaire";
-    if (currentQuestionIndex === 0) return "Revenir à la partie précédente";
+    if (currentCategoryIndex === 0 && currentQuestionIndex === 0) return "Quitter";
     return "Précédent";
   };
 
@@ -26,7 +24,7 @@ export const Stepper = ({
     if (currentCategoryIndex === 0 && currentQuestionIndex === 0) return navigate(0);
     if (currentQuestionIndex === 0) {
       setCurrentCategoryIndex(currentCategoryIndex - 1);
-      setCurrentQuestionIndex(0);
+      setCurrentQuestionIndex(categories[currentCategoryIndex - 1].questionCount - 1);
       return;
     }
     setCurrentQuestionIndex(currentQuestionIndex - 1);
@@ -102,17 +100,13 @@ export const Stepper = ({
         <Button
           size="xs"
           variant="solid"
-          leftIcon={!isMobile && <ArrowBackIcon />}
+          leftIcon={<ArrowBackIcon />}
           color="white"
           bgColor="brand.blue.700"
           colorScheme="brand.blue"
           onClick={goBackHandler}
         >
-          {isMobile ? (
-            <ArrowBackIcon />
-          ) : (
-            goBackButtonLabelGetter(currentCategoryIndex, currentQuestionIndex)
-          )}
+          {goBackButtonLabelGetter(currentCategoryIndex, currentQuestionIndex)}
         </Button>
       </Box>
     </Box>

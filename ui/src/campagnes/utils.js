@@ -68,7 +68,7 @@ export const transformErrors = (errors) => {
         error.message = "Pas si vite ! Réponse obligatoire 😉";
         break;
       default:
-        error.message = "Erreur de validation";
+        error.message = "Pas si vite ! Réponse obligatoire 😉";
         break;
     }
     return error;

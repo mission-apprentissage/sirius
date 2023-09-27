@@ -21,7 +21,9 @@ function RadioCard(props) {
   return (
     <Box as="label" display="flex">
       <Radio
-        borderColor="brand.pink.400"
+        borderColor={
+          props.isFormTouchedAndCurrentElemNotChecked ? "brand.blue.100" : "brand.pink.400"
+        }
         color="brand.black.500"
         _checked={{
           borderColor: "brand.red.500",
@@ -42,8 +44,8 @@ function RadioCard(props) {
           py={1}
           width="fit-content"
           ml="2"
-          bgColor="brand.pink.400"
-          color="brand.black.500"
+          bgColor={props.isFormTouchedAndCurrentElemNotChecked ? "white" : "brand.pink.400"}
+          color={props.isFormTouchedAndCurrentElemNotChecked ? "#A0AEC0" : "brand.black.500"}
           my="2"
         >
           {props.children}
@@ -88,19 +90,23 @@ const CustomNestedRadios = (props) => {
           <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
             {props.schema.title && parse(props.schema.title)}
           </FormLabel>
-          <Text fontSize="xs" color="brand.blue.700">
-            Tu peux sélectionner plusieurs réponses 😉
-          </Text>
         </>
         <Stack mt="4">
           <RadioGroup {...group}>
             {options.map((value) => {
               const radio = getRadioProps({ value });
               const otherInput = otherInputGetter(dependencies, props, value);
+              const isFormTouchedAndCurrentElemNotChecked =
+                !!props.formData && props.formData !== value;
 
               return (
                 <Fragment key={value}>
-                  <RadioCard {...radio}>{value}</RadioCard>
+                  <RadioCard
+                    {...radio}
+                    isFormTouchedAndCurrentElemNotChecked={isFormTouchedAndCurrentElemNotChecked}
+                  >
+                    {value}
+                  </RadioCard>
                   {parentValue === value && otherInput && (
                     <Box ml="3" mb="5">
                       <NestedInput
@@ -125,7 +131,12 @@ const CustomNestedRadios = (props) => {
 const NestedInput = (props) => {
   if (props.type === "checkboxes") {
     return (
-      <CustomCheckboxes {...props} standalone={true} onChange={props.onChange} id={props.id} />
+      <>
+        <Text fontSize="xs" color="brand.blue.700" my="2">
+          Tu peux sélectionner plusieurs réponses 😉
+        </Text>{" "}
+        <CustomCheckboxes {...props} standalone={true} onChange={props.onChange} id={props.id} />
+      </>
     );
   }
   if (props.type === "textarea") {

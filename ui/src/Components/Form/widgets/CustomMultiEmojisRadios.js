@@ -103,7 +103,7 @@ const CustomMultiEmojisRadios = (props) => {
                   fontSize="sm"
                   textAlign="center"
                 >
-                  {question}
+                  {parse(question)}
                 </Box>
                 <Box
                   direction="row"

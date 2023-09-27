@@ -89,6 +89,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                   color="white"
                   rightIcon={<ArrowForwardIcon />}
                   onClick={onOpen}
+                  colorScheme="brand.blue"
                 >
                   Répondre
                 </Button>
@@ -107,6 +108,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
             <Stack
               direction={isMobile ? "column" : "row"}
               alignItems={isMobile ? "center" : "inherit"}
+              justifyContent="center"
               display="flex"
               spacing="3"
             >
@@ -254,6 +256,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
               onClick={() => setStartedAnswering(true)}
               bgColor="brand.blue.700"
               color="white"
+              colorScheme="brand.blue"
             >
               C'est parti !
             </Button>
