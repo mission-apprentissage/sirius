@@ -1,10 +1,17 @@
 import { Box, Image, Text, Link, useBreakpoint } from "@chakra-ui/react";
 import gouv from "../assets/images/gouv.svg";
+
 const Footer = () => {
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
   return (
-    <Box w="100%" display="flex" flexDirection="column" px={isMobile ? "2" : "28"}>
+    <Box
+      w="100%"
+      display="flex"
+      flexDirection="column"
+      px={isMobile ? "2" : "28"}
+      bgColor="brand.blue.100"
+    >
       <Box
         display="flex"
         flexDirection={isMobile ? "column" : "row"}

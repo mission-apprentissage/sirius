@@ -149,7 +149,6 @@ const PolitiqueConfidentialite = () => {
           </Text>
         </Stack>
       </Box>
-      <Footer />
     </Stack>
   );
 };

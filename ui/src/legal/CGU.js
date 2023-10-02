@@ -118,7 +118,6 @@ const CGU = () => {
           </Text>
         </Stack>
       </Box>
-      <Footer />
     </Stack>
   );
 };

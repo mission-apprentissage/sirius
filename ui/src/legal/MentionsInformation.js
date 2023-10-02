@@ -225,7 +225,6 @@ const MentionsInformation = () => {
           </Text>
         </Stack>
       </Box>
-      <Footer />
     </Stack>
   );
 };
