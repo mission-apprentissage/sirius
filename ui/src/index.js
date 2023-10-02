@@ -9,7 +9,6 @@ import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
 import { UserProvider } from "./context/UserContext";
-import Layout from "./Components/Layout";
 
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
@@ -101,9 +100,7 @@ root.render(
     <ChakraProvider theme={theme}>
       <UserProvider>
         <Router>
-          <Layout>
-            <App />
-          </Layout>
+          <App />
         </Router>
       </UserProvider>
     </ChakraProvider>

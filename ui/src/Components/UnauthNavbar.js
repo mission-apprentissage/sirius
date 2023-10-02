@@ -10,9 +10,7 @@ const UnauthNavbar = () => {
     <>
       <Box bg="white" px={4}>
         <Flex h={16} alignItems="center" justifyContent={isMobile ? "center" : "flex-start"}>
-          <Link href="/">
-            <img src={Logo} alt="Logo Sirius" />
-          </Link>
+          <img src={Logo} alt="Logo Sirius" />
           <Text display={isMobile ? "none" : "inherit"} color="brand.blue.700" ml="5">
             recueillir les témoignages d’apprenti·es pour aider les plus jeunes à choisir une
             formation en apprentissage
