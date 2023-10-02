@@ -16,6 +16,8 @@ import {
   CustomUpDown,
   CustomMessageReceived,
   CustomMultiRangeSortable,
+  CustomEmojisRadios,
+  CustomMultiEmojisRadios,
 } from "../Components/Form/widgets";
 import { CustomNestedRadios } from "../Components/Form/fields";
 import { Stepper } from "../Components/Stepper";
@@ -40,6 +42,8 @@ const widgets = {
   customMultiRangeWidget: CustomMultiRange,
   customMessageReceived: CustomMessageReceived,
   customMultiRangeSortableWidget: CustomMultiRangeSortable,
+  customEmojiRadioWidget: CustomEmojisRadios,
+  customMultiEmojiRadioWidget: CustomMultiEmojisRadios,
 };
 
 const fields = {
@@ -122,7 +126,6 @@ const PreviewQuestionnaire = () => {
           rounded="md"
           w={isMobile ? "100%" : "80%"}
           m="auto"
-          boxShadow="md"
           minHeight={isMobile ? "100vh" : "inherit"}
         >
           <Stepper
@@ -157,7 +160,9 @@ const PreviewQuestionnaire = () => {
                   borderRadius="md"
                   type="submit"
                   variant="solid"
-                  colorScheme="purple"
+                  bgColor="brand.blue.700"
+                  color="white"
+                  colorScheme="brand.blue"
                   rightIcon={<ChevronRightIcon />}
                   mt="25px"
                 >
