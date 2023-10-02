@@ -4,10 +4,11 @@ import {
   useCheckbox,
   Wrap,
   FormLabel,
-  Badge,
   Text,
   useBreakpoint,
 } from "@chakra-ui/react";
+import parse from "html-react-parser";
+import DidYouKnow from "../DidYouKnow";
 
 const CheckboxCard = (props) => {
   const { getInputProps, getCheckboxProps } = useCheckbox({ ...props, required: false }); // native required on multiple checkboxes is not supported
@@ -23,14 +24,13 @@ const CheckboxCard = (props) => {
         cursor="pointer"
         borderRadius="md"
         _checked={{
-          bg: "orange.500",
-          color: "white",
-          borderColor: "orange.500",
+          bg: "brand.red.500",
+          color: "brand.black.500",
         }}
         px={2}
         py={1}
-        color="orange.800"
-        bgColor="orange.100"
+        color="brand.black.500"
+        bgColor="brand.pink.400"
       >
         {props.children}
       </Box>
@@ -39,8 +39,6 @@ const CheckboxCard = (props) => {
 };
 
 const CustomCheckboxes = (props) => {
-  const breakpoint = useBreakpoint({ ssr: false });
-  const isMobile = breakpoint === "base";
   const options = props.standalone
     ? props.enum
     : props.options.enumOptions.map((option) => option.label);
@@ -54,39 +52,31 @@ const CustomCheckboxes = (props) => {
   });
 
   return (
-    <Box as="fieldset" mx={isMobile ? "0" : "5"}>
-      {!props.standalone && (
-        <>
-          <FormLabel
-            as="legend"
-            fontSize="2xl"
-            fontWeight="semibold"
-            color="orange.500"
-            requiredIndicator={
-              <Badge bgColor="orange.500" color="white" ml="2">
-                *
-              </Badge>
-            }
-          >
-            {props.label}
-          </FormLabel>
-          <Text fontSize="xs" color="orange.900">
-            (plusieurs choix de réponses possibles)
-          </Text>
-        </>
-      )}
-      <Wrap spacing={2} direction="row" mt={4}>
-        {options.map((value) => {
-          const checkbox = getCheckboxProps({ value });
-
-          return (
-            <CheckboxCard key={value} {...checkbox}>
-              {value}
-            </CheckboxCard>
-          );
-        })}
-      </Wrap>
-    </Box>
+    <>
+      {props.schema?.info && <DidYouKnow content={props.schema.info} />}
+      <Box as="fieldset" mx="2">
+        {!props.standalone && (
+          <>
+            <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
+              {parse(props.label)}
+            </FormLabel>
+            <Text fontSize="xs" color="brand.blue.700">
+              <i>Tu peux sélectionner plusieurs réponses</i> 😉
+            </Text>
+          </>
+        )}
+        <Wrap spacing={2} direction="row" mt={4}>
+          {options.map((value) => {
+            const checkbox = getCheckboxProps({ value });
+            return (
+              <CheckboxCard key={value} {...checkbox}>
+                {value}
+              </CheckboxCard>
+            );
+          })}
+        </Wrap>
+      </Box>
+    </>
   );
 };
 

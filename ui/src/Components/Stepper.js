@@ -15,10 +15,8 @@ export const Stepper = ({
   const isMobile = breakpoint === "base";
 
   if (categories.length === 0) return null;
-
   const goBackButtonLabelGetter = () => {
-    if (currentCategoryIndex === 0 && currentQuestionIndex === 0) return "Quitter le questionnaire";
-    if (currentQuestionIndex === 0) return "Revenir à la partie précédente";
+    if (currentCategoryIndex === 0 && currentQuestionIndex === 0) return "Quitter";
     return "Précédent";
   };
 
@@ -26,11 +24,20 @@ export const Stepper = ({
     if (currentCategoryIndex === 0 && currentQuestionIndex === 0) return navigate(0);
     if (currentQuestionIndex === 0) {
       setCurrentCategoryIndex(currentCategoryIndex - 1);
-      setCurrentQuestionIndex(0);
+      setCurrentQuestionIndex(categories[currentCategoryIndex - 1].questionCount - 1);
       return;
     }
     setCurrentQuestionIndex(currentQuestionIndex - 1);
     return;
+  };
+
+  const progressValue = () => {
+    let value = 0;
+    for (let i = 0; i < currentCategoryIndex; i++) {
+      value += categories[i].questionCount;
+    }
+    value += currentQuestionIndex;
+    return (value * 100) / categories.reduce((acc, curr) => acc + curr.questionCount, 0);
   };
 
   return (
@@ -42,6 +49,12 @@ export const Stepper = ({
       >
         {categories.map((category, index) => {
           const isCurrent = index === currentCategoryIndex;
+          const isFinished = index < currentCategoryIndex;
+          const getBgColor = () => {
+            if (isCurrent) return "brand.blue.700";
+            if (isFinished) return "brand.blue.400";
+            if (!isFinished && !isCurrent) return "brand.blue.100";
+          };
           return (
             <Box
               key={index}
@@ -55,7 +68,7 @@ export const Stepper = ({
             >
               <Box
                 borderRadius={isCurrent ? "40px" : "100%"}
-                bgColor={isCurrent ? "purple.500" : "purple.200"}
+                bgColor={getBgColor}
                 w={isCurrent ? "auto" : "50px"}
                 h="50px"
                 fontSize={isMobile ? "2xl" : "lg"}
@@ -77,31 +90,23 @@ export const Stepper = ({
       </Box>
       <Box w="100%" my="5">
         {isMobile && (
-          <Text mb="2" color="purple.500">
+          <Text mb="2" color="brand.blue.700">
             {categories[currentCategoryIndex].title}
           </Text>
         )}
-        <Progress
-          colorScheme="purple"
-          hasStripe
-          value={(currentQuestionIndex * 100) / categories[currentCategoryIndex].questionCount}
-        />
+        <Progress colorScheme="progressBar" hasStripe isAnimated value={progressValue()} />
       </Box>
       <Box w="auto" mb="5">
         <Button
           size="xs"
           variant="solid"
-          colorScheme="purple"
-          leftIcon={!isMobile && <ArrowBackIcon />}
-          color="black"
-          bgColor="purple.300"
+          leftIcon={<ArrowBackIcon />}
+          color="white"
+          bgColor="brand.blue.700"
+          colorScheme="brand.blue"
           onClick={goBackHandler}
         >
-          {isMobile ? (
-            <ArrowBackIcon />
-          ) : (
-            goBackButtonLabelGetter(currentCategoryIndex, currentQuestionIndex)
-          )}
+          {goBackButtonLabelGetter(currentCategoryIndex, currentQuestionIndex)}
         </Button>
       </Box>
     </Box>

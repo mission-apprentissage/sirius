@@ -157,9 +157,6 @@ const MenuWithSubnavigation = () => {
         minH="60px"
         py={{ base: 2 }}
         px={{ base: 4 }}
-        borderBottom={1}
-        borderStyle="solid"
-        borderColor="gray.200"
         align="center"
       >
         <Flex ml={{ base: -2 }} display={{ base: "flex", md: "none" }}>

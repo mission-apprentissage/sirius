@@ -5,7 +5,7 @@ const ErrorTemplate = (props) => {
   if (!errors || errors?.length === 0) return null;
 
   return (
-    <Stack spacing={2} color="orange.500" mt="5" ml="5">
+    <Stack spacing={2} color="brand.blue.700" mt="5">
       {errors?.map((error) => (
         <Text key={error} display="flex" alignItems="center">
           <InfoIcon mr="2" />

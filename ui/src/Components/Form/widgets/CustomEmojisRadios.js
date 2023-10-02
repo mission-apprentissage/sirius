@@ -1,4 +1,4 @@
-import { Box, Wrap, useRadioGroup, useRadio, FormLabel, Text, Tag } from "@chakra-ui/react";
+import { Box, useRadioGroup, useRadio, FormLabel, Text, Tag } from "@chakra-ui/react";
 import parse from "html-react-parser";
 import DidYouKnow from "../DidYouKnow";
 
@@ -7,7 +7,6 @@ const RadioCard = (props) => {
 
   const input = getInputProps();
   const checkbox = getCheckboxProps();
-
   return (
     <Box as="label">
       <input {...input} />
@@ -26,7 +25,6 @@ const RadioCard = (props) => {
         }}
         color="brand.black.500"
         bgColor="brand.pink.400"
-        p="2"
       >
         {props.children}
       </Tag>
@@ -34,8 +32,8 @@ const RadioCard = (props) => {
   );
 };
 
-const CustomRadios = (props) => {
-  const options = props.options.enumOptions.map((option) => option.label);
+const CustomEmojisRadios = (props) => {
+  const emojisMapping = props.uiSchema.emojisMapping;
 
   const { getRadioProps } = useRadioGroup({
     name: props.id,
@@ -51,21 +49,32 @@ const CustomRadios = (props) => {
           {parse(props.label)}
         </FormLabel>
         <Text fontSize="xs" color="brand.blue.700">
-          une seule réponse possible
+          Sélectionne la réponse qui se rapproche le plus de ton ressenti 😉
         </Text>
-        <Wrap spacing={2} direction="row" mt={4}>
-          {options.map((value) => {
-            const radio = getRadioProps({ value });
+        <Box
+          spacing={2}
+          direction="row"
+          mt={4}
+          display="flex"
+          flexDirection="row"
+          justifyContent="space-evenly"
+          alignItems="space-evenly"
+        >
+          {emojisMapping.map((emojiMapping, index) => {
+            const radio = getRadioProps({ value: emojiMapping.value });
             return (
-              <RadioCard key={value} {...radio}>
-                {value}
-              </RadioCard>
+              <Box key={index}>
+                <Text textAlign="center" mb="3" fontSize="30px">
+                  {emojiMapping.emoji}
+                </Text>
+                <RadioCard {...radio}>{emojiMapping.value}</RadioCard>
+              </Box>
             );
           })}
-        </Wrap>
+        </Box>
       </Box>
     </>
   );
 };
 
-export default CustomRadios;
+export default CustomEmojisRadios;

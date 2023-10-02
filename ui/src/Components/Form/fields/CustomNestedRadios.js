@@ -5,12 +5,13 @@ import {
   useRadio,
   FormLabel,
   Text,
-  Badge,
   RadioGroup,
   Stack,
   Radio,
 } from "@chakra-ui/react";
+import parse from "html-react-parser";
 import { CustomCheckboxes, CustomTextareaPrecision } from "../widgets";
+import DidYouKnow from "../DidYouKnow";
 
 function RadioCard(props) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -19,21 +20,33 @@ function RadioCard(props) {
   const checkbox = getCheckboxProps();
   return (
     <Box as="label" display="flex">
-      <Radio colorScheme="orange" {...input} style={{}}>
+      <Radio
+        borderColor={
+          props.isFormTouchedAndCurrentElemNotChecked ? "brand.blue.100" : "brand.pink.400"
+        }
+        color="brand.black.500"
+        _checked={{
+          borderColor: "brand.red.500",
+          bg: "brand.black.500",
+        }}
+        {...input}
+        style={{}}
+      >
         <Box
           {...checkbox}
           cursor="pointer"
           borderRadius="md"
           _checked={{
-            bg: "orange.500",
-            color: "white",
-            borderColor: "orange.500",
+            bg: "brand.red.500",
+            color: "brand.black.500",
           }}
           px={2}
           py={1}
           width="fit-content"
           ml="2"
-          color="gray.400"
+          bgColor={props.isFormTouchedAndCurrentElemNotChecked ? "white" : "brand.pink.400"}
+          color={props.isFormTouchedAndCurrentElemNotChecked ? "#A0AEC0" : "brand.black.500"}
+          my="2"
         >
           {props.children}
         </Box>
@@ -43,17 +56,17 @@ function RadioCard(props) {
 }
 
 const otherInputGetter = (dependencies, props, value) => {
-  const otherInput = dependencies.find((dep) =>
+  const otherInput = dependencies?.find((dep) =>
     dep.properties[props.name].contains.enum.includes(value)
   );
-  return otherInput.properties[props.name + "Autre"];
+  return otherInput?.properties[props.name + "Autre"];
 };
 
 const CustomNestedRadios = (props) => {
   const [nestedValues, setNestedValues] = useState(null);
   const [parentValue, setparentValue] = useState("");
   const options = props.schema.enum;
-  const dependencies = props.registry.rootSchema.dependencies[props.name].oneOf;
+  const dependencies = props.registry.rootSchema.dependencies[props.name]?.oneOf;
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: props.name,
     onChange: setparentValue,
@@ -71,45 +84,29 @@ const CustomNestedRadios = (props) => {
 
   return (
     <>
-      {props.schema.info && (
-        <Box bgColor="orange.50" width="90%" mx="5" display="flex" p="4" mb="4">
-          <Text fontSize="3xl">💡</Text>
-          <Box ml="2">
-            <Text color="orange.500" fontWeight="bold">
-              Le savais-tu ?
-            </Text>
-            <Text color="orange.500">{props.schema.info}</Text>
-          </Box>
-        </Box>
-      )}
-      <Box as="fieldset" mx="5">
+      {props.schema.info && <DidYouKnow content={props.schema.info} />}
+      <Box as="fieldset" mx="2">
         <>
-          <FormLabel
-            as="legend"
-            fontSize="2xl"
-            fontWeight="semibold"
-            color="orange.500"
-            requiredIndicator={
-              <Badge bgColor="orange.500" color="white" ml="2">
-                *
-              </Badge>
-            }
-          >
-            {props.schema.title}
+          <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
+            {props.schema.title && parse(props.schema.title)}
           </FormLabel>
-          <Text fontSize="xs" color="orange.900">
-            (Plusieurs choix de sous-réponses possibles)
-          </Text>
         </>
         <Stack mt="4">
           <RadioGroup {...group}>
             {options.map((value) => {
               const radio = getRadioProps({ value });
               const otherInput = otherInputGetter(dependencies, props, value);
+              const isFormTouchedAndCurrentElemNotChecked =
+                !!props.formData && props.formData !== value;
 
               return (
                 <Fragment key={value}>
-                  <RadioCard {...radio}>{value}</RadioCard>
+                  <RadioCard
+                    {...radio}
+                    isFormTouchedAndCurrentElemNotChecked={isFormTouchedAndCurrentElemNotChecked}
+                  >
+                    {value}
+                  </RadioCard>
                   {parentValue === value && otherInput && (
                     <Box ml="3" mb="5">
                       <NestedInput
@@ -134,7 +131,12 @@ const CustomNestedRadios = (props) => {
 const NestedInput = (props) => {
   if (props.type === "checkboxes") {
     return (
-      <CustomCheckboxes {...props} standalone={true} onChange={props.onChange} id={props.id} />
+      <>
+        <Text fontSize="xs" color="brand.blue.700" my="2">
+          Tu peux sélectionner plusieurs réponses 😉
+        </Text>{" "}
+        <CustomCheckboxes {...props} standalone={true} onChange={props.onChange} id={props.id} />
+      </>
     );
   }
   if (props.type === "textarea") {

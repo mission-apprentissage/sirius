@@ -23,8 +23,11 @@ export const theme = extendTheme({
         fontWeight: 400,
         lineHeight: 1.3,
         color: "#222",
-        backgroundColor: "purple.100",
+        backgroundColor: "brand.blue.100",
         overflowX: "hidden",
+      },
+      strong: {
+        fontWeight: "semibold",
       },
     },
   },
@@ -60,6 +63,32 @@ export const theme = extendTheme({
           },
         },
       },
+    },
+  },
+  colors: {
+    brand: {
+      red: {
+        500: "#F95C5E",
+      },
+      pink: {
+        900: "#A94645",
+        400: "#FCBFB7",
+        50: "#FEF4F3",
+      },
+      blue: {
+        700: "#000091",
+        500: "#6A6AF4",
+        400: "#CACAFB",
+        300: "#E3E3FD",
+        100: "#F5F5FE",
+      },
+      black: {
+        500: "#161616",
+      },
+    },
+    progressBar: {
+      700: "#000091",
+      500: "#4747B0",
     },
   },
 });

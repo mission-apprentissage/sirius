@@ -7,13 +7,14 @@ import {
   useBreakpoint,
   FormLabel,
   SliderFilledTrack,
-  Badge,
   ListItem,
   OrderedList,
   SliderMark,
 } from "@chakra-ui/react";
 import { DragHandleIcon } from "@chakra-ui/icons";
 import { ReactSortable } from "react-sortablejs";
+import parse from "html-react-parser";
+import DidYouKnow from "../DidYouKnow";
 
 const emojiGetter = (value) => {
   switch (value) {
@@ -54,120 +55,113 @@ const CustomMultiRangeSortable = (props) => {
   }, [list]);
 
   return (
-    <Box mx={isMobile ? "0" : "5"}>
-      <FormLabel
-        as="legend"
-        fontSize="2xl"
-        fontWeight="semibold"
-        color="orange.500"
-        requiredIndicator={
-          <Badge bgColor="orange.500" color="white" ml="2">
-            *
-          </Badge>
-        }
-      >
-        {props.schema.title}
-      </FormLabel>
-      <Box
-        pt={2}
-        pb={isMobile ? 6 : 2}
-        w={isMobile ? "100%" : "90%"}
-        m="auto"
-        display="flex"
-        flexDirection="row"
-      >
-        <ReactSortable
-          list={list}
-          setList={setList}
-          animation={250}
-          tag={OrderedList}
-          style={{ listStyle: "none", marginLeft: "0" }}
+    <>
+      {props.schema.info && <DidYouKnow content={props.schema.info} />}
+      <Box mx="5">
+        <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
+          {parse(props.schema.title)}
+        </FormLabel>
+        <Box
+          pt={2}
+          pb={isMobile ? 6 : 2}
+          w={isMobile ? "100%" : "90%"}
+          m="auto"
+          display="flex"
+          flexDirection="row"
         >
-          {list.map((question, index) => {
-            return (
-              <ListItem
-                key={question.id}
-                w="100%"
-                bgColor={index % 2 !== 0 ? "white" : "orange.100"}
-                py="5"
-                px="5"
-                sx={{ counterIncrement: "custom" }}
-                display="inline-flex"
-                cursor="grab"
-                borderLeft={isMobile ? "5px solid #CBD5E0" : "none"}
-                mb={isMobile ? "5" : "0"}
-                _before={{
-                  content: isMobile ? "none" : `counter(custom) " "`,
-                  width: "20px",
-                  display: "inline-block",
-                }}
-              >
-                <Box
-                  display="flex"
-                  flexDirection={isMobile ? "column" : "row"}
-                  alignItems="center"
-                  w="calc(100% - 20px)"
+          <ReactSortable
+            list={list}
+            setList={setList}
+            animation={250}
+            tag={OrderedList}
+            style={{ listStyle: "none", marginLeft: "0" }}
+          >
+            {list.map((question, index) => {
+              return (
+                <ListItem
+                  key={question.id}
+                  w="100%"
+                  bgColor={index % 2 !== 0 ? "white" : "orange.100"}
+                  py="5"
+                  px="5"
+                  sx={{ counterIncrement: "custom" }}
+                  display="inline-flex"
+                  cursor="grab"
+                  borderLeft={isMobile ? "5px solid #CBD5E0" : "none"}
+                  mb={isMobile ? "5" : "0"}
+                  _before={{
+                    content: isMobile ? "none" : `counter(custom) " "`,
+                    width: "20px",
+                    display: "inline-block",
+                  }}
                 >
-                  <Box display="flex" w={isMobile ? "100%" : "50%"}>
-                    <DragHandleIcon
-                      display={isMobile ? "inherit" : "none"}
-                      width="15px"
-                      mr="15px"
-                      color="gray.300"
-                    />
-                    <Box w="90%" textAlign="center">
-                      {question?.label}
+                  <Box
+                    display="flex"
+                    flexDirection={isMobile ? "column" : "row"}
+                    alignItems="center"
+                    w="calc(100% - 20px)"
+                  >
+                    <Box display="flex" w={isMobile ? "100%" : "50%"}>
+                      <DragHandleIcon
+                        display={isMobile ? "inherit" : "none"}
+                        width="15px"
+                        mr="15px"
+                        color="gray.300"
+                      />
+                      <Box w="90%" textAlign="center">
+                        {question?.label}
+                      </Box>
+                    </Box>
+                    <Box w={isMobile ? "100%" : "50%"}>
+                      <Slider
+                        id="slider"
+                        defaultValue={0}
+                        min={0}
+                        max={3}
+                        colorScheme="orange"
+                        w="100%"
+                        height={isMobile ? "50px" : "inherit"}
+                        onChangeStart={() => setIsSliderClicked(index)}
+                        onChangeEnd={() => setIsSliderClicked(null)}
+                        onChange={(value) => {
+                          setList((prev) => {
+                            prev[index] = { ...prev[index], value };
+                            return prev;
+                          });
+                          props.onChange(list);
+                        }}
+                      >
+                        {isSliderClicked === index && (
+                          <SliderMark
+                            value={list[index]?.value || 0}
+                            textAlign="center"
+                            bg="brand.blue.700"
+                            color="white"
+                            mt="-40px"
+                            ml="-55"
+                            minWidth="100px"
+                            px="2"
+                            borderRadius="md"
+                          >
+                            {labels[list[index]?.value]}
+                          </SliderMark>
+                        )}
+                        <SliderTrack>
+                          <SliderFilledTrack />
+                        </SliderTrack>
+                        <SliderThumb fontSize={26}>
+                          {emojiGetter(list[index]?.value || 0)}
+                        </SliderThumb>
+                      </Slider>
                     </Box>
                   </Box>
-                  <Box w={isMobile ? "100%" : "50%"}>
-                    <Slider
-                      id="slider"
-                      defaultValue={0}
-                      min={0}
-                      max={3}
-                      colorScheme="orange"
-                      w="100%"
-                      height={isMobile ? "50px" : "inherit"}
-                      onChangeStart={() => setIsSliderClicked(index)}
-                      onChangeEnd={() => setIsSliderClicked(null)}
-                      onChange={(value) => {
-                        setList((prev) => {
-                          prev[index] = { ...prev[index], value };
-                          return prev;
-                        });
-                        props.onChange(list);
-                      }}
-                    >
-                      {isSliderClicked === index && (
-                        <SliderMark
-                          value={list[index]?.value || 0}
-                          textAlign="center"
-                          bg="orange.500"
-                          color="white"
-                          mt="-40px"
-                          ml="-55"
-                          minWidth="100px"
-                          px="2"
-                          borderRadius="md"
-                        >
-                          {labels[list[index]?.value]}
-                        </SliderMark>
-                      )}
-                      <SliderTrack>
-                        <SliderFilledTrack />
-                      </SliderTrack>
-                      <SliderThumb fontSize={26}>
-                        {emojiGetter(list[index]?.value || 0)}
-                      </SliderThumb>
-                    </Slider>
-                  </Box>
-                </Box>
-              </ListItem>
-            );
-          })}
-        </ReactSortable>
+                </ListItem>
+              );
+            })}
+          </ReactSortable>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

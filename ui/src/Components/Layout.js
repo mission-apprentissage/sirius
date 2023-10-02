@@ -13,7 +13,7 @@ const Layout = ({ children }) => {
   return (
     <>
       {isAuthenticated ? <Navbar /> : <UnauthNavbar />}
-      <Container maxW="container.xl" bg="purple.100" p="0" m="0" maxWidth="100%">
+      <Container maxW="container.xl" bg="brand.blue.100" p="0" m="0" maxWidth="100%">
         <Flex w="100%">{children}</Flex>
       </Container>
     </>

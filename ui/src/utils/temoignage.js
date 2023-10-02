@@ -28,27 +28,43 @@ export const matchCardTypeAndQuestions = (campagne) => {
   }
 
   const questionnaire = campagne.questionnaire.properties;
+  const ui = campagne.questionnaireUI;
   const results = [];
 
   Object.keys(questionnaire).forEach((category) => {
     const obj = {};
     const properties = questionnaire[category].properties;
+    //TODO refacto using type from questionnaireUI
     Object.keys(properties).forEach((question) => {
       if (
         properties[question].type === "array" &&
-        properties[question].hasOwnProperty("questions")
+        properties[question].hasOwnProperty("questions") &&
+        !properties[question].hasOwnProperty("subType")
       ) {
         obj[question] = "bar";
       } else if (
         (properties[question].type === "string" && properties[question].hasOwnProperty("enum")) ||
-        properties[question].type === "array"
+        (properties[question].type === "array" && !properties[question].hasOwnProperty("subType"))
       ) {
         obj[question] = "pie";
       } else if (
         properties[question].type === "string" &&
-        !properties[question].hasOwnProperty("enum")
+        !properties[question].hasOwnProperty("enum") &&
+        !properties[question].hasOwnProperty("subType")
       ) {
         obj[question] = "text";
+      } else if (
+        properties[question].type === "string" &&
+        properties[question].subType === "emoji"
+      ) {
+        const uiData = ui[category][question];
+        obj[question] = { type: "emoji", mapping: uiData.emojisMapping };
+      } else if (
+        properties[question].type === "array" &&
+        properties[question].subType === "multiEmoji"
+      ) {
+        const uiData = ui[category][question];
+        obj[question] = { type: "multiEmoji", mapping: uiData.emojisMapping };
       }
     });
     results.push(obj);
