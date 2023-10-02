@@ -252,7 +252,11 @@ const multiEmojiOption = (responses) => {
     return param.data;
   };
 
-  const questions = [...new Set(responses.map((response) => response.label))];
+  const removeHTMLTagRegex = /(<([^>]+)>)/gi;
+
+  const questions = [
+    ...new Set(responses.map((response) => response.label.replace(removeHTMLTagRegex, ""))),
+  ];
 
   return {
     tooltip: {
