@@ -1,29 +1,26 @@
 import React, { useState, useContext } from "react";
 import {
   Flex,
-  Heading,
   Input,
   Button,
-  InputGroup,
   Stack,
-  InputLeftElement,
   Box,
-  Avatar,
   FormControl,
-  InputRightElement,
   useToast,
   FormErrorMessage,
   Link,
   Text,
+  Image,
+  useBreakpoint,
 } from "@chakra-ui/react";
-import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate, useNavigate } from "react-router-dom";
 import jwt from "jwt-decode";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
-import Miley from "../assets/images/miley.png";
+import UnderConstruction from "../assets/images/under_construction.svg";
+import InputPassword from "./Components/InputPassword";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -35,11 +32,10 @@ const validationSchema = Yup.object({
 const Login = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const [showPassword, setShowPassword] = useState(false);
+  const breakpoint = useBreakpoint({ ssr: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userContext, setUserContext] = useContext(UserContext);
-
-  const handleShowClick = () => setShowPassword(!showPassword);
+  const isMobile = breakpoint === "base";
 
   const formik = useFormik({
     initialValues: {
@@ -118,69 +114,64 @@ const Login = () => {
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
       <Stack flexDir="column" mb="2" justifyContent="center" alignItems="center">
-        <Avatar size="lg" src={Miley} alt="" />
-        <Heading color="purple.400">Bienvenue</Heading>
-        <Box maxW="400px">
+        <Image src={UnderConstruction} alt="" />
+        <Box w={isMobile ? "100%" : "400px"} mt={isMobile ? "32px" : "64px"}>
           <form onSubmit={formik.handleSubmit}>
-            <Stack
-              spacing={4}
-              p="2rem"
-              backgroundColor="whiteAlpha.900"
-              boxShadow="md"
-              borderRadius="md"
-            >
-              <FormControl isInvalid={!!formik.errors.email && formik.touched.email}>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none" color="gray.300">
-                    <EmailIcon />
-                  </InputLeftElement>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="text"
-                    placeholder="Adresse email"
-                    onChange={formik.handleChange}
-                    value={formik.values.email}
-                  />
-                </InputGroup>
+            <Stack>
+              <Text color="brand.blue.700" fontSize="xl" my="0">
+                Établissement
+              </Text>
+              <Text color="brand.blue.700" fontSize="3xl" fontWeight="600" my="0">
+                Se connecter
+              </Text>
+              <FormControl isInvalid={!!formik.errors.email && formik.touched.email} mt="6px">
+                <Input
+                  id="email"
+                  name="email"
+                  type="text"
+                  placeholder="Email"
+                  onChange={formik.handleChange}
+                  value={formik.values.email}
+                  size="lg"
+                  color="brand.black.500"
+                  _placeholder={{ color: "brand.black.500" }}
+                  borderColor="brand.blue.400"
+                />
                 <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={!!formik.errors.password && formik.touched.password}>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none" color="gray.300">
-                    <LockIcon />
-                  </InputLeftElement>
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Mot de passe"
-                    onChange={formik.handleChange}
-                    value={formik.values.password}
-                  />
-                  <InputRightElement mr="5px">
-                    <Button h="1.75rem" size="sm" onClick={handleShowClick}>
-                      {showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-                <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
-              </FormControl>
-              <Button
-                borderRadius="md"
-                type="submit"
-                variant="solid"
-                colorScheme="purple"
-                width="full"
-                isLoading={isSubmitting}
-              >
-                Connexion
-              </Button>
-              <Text color="purple.300" fontSize="sm" textAlign="center">
-                <Link href="/reinitialisation-mot-de-passe">Mot de passe oublié</Link>
+              <InputPassword
+                handleChange={formik.handleChange}
+                value={formik.values.password}
+                error={formik.errors.password}
+                touched={formik.touched.password}
+              />
+              <Text color="brand.blue.700" fontSize="sm" textDecoration="underline">
+                <Link href="/reinitialisation-mot-de-passe">Mot de passe oublié ?</Link>
               </Text>
-              <Text color="purple.300" fontSize="sm" textAlign="center">
-                <Link href="/inscription">S'inscrire en tant qu'établissement</Link>
+              <Box display="flex" alignItems="center" justifyContent="center" mt="16px">
+                <Button
+                  borderRadius="md"
+                  type="submit"
+                  variant="solid"
+                  bgColor="brand.blue.700"
+                  color="white"
+                  colorScheme="brand.blue"
+                  width="min-content"
+                  isLoading={isSubmitting}
+                >
+                  Connexion
+                </Button>
+              </Box>
+              <Text
+                color="brand.blue.700"
+                fontSize="sm"
+                textAlign="center"
+                mt={isMobile ? "32px" : "64px"}
+              >
+                Pas d'identifiant ? {isMobile ? <br /> : null}
+                <Link href="/inscription" textDecoration="underline">
+                  M'inscrire en tant qu'établissement
+                </Link>
               </Text>
             </Stack>
           </form>

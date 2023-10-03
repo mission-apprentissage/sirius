@@ -1,21 +1,19 @@
 import React, { useState, useContext, useRef } from "react";
 import {
   Flex,
-  Heading,
   Input,
   Button,
-  InputGroup,
   Stack,
   Box,
-  Avatar,
   FormControl,
-  InputRightElement,
   useToast,
   FormErrorMessage,
   Textarea,
   Text,
+  Image,
+  useBreakpoint,
+  Link,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate } from "react-router-dom";
@@ -23,7 +21,8 @@ import { AsyncSelect } from "chakra-react-select";
 import { _post, _get } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
-import Miley from "../assets/images/miley.png";
+import UnderConstruction from "../assets/images/under_construction.svg";
+import InputPassword from "./Components/InputPassword";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -41,13 +40,13 @@ const validationSchema = Yup.object({
 const Signup = () => {
   const timer = useRef();
   const toast = useToast();
-  const [showPassword, setShowPassword] = useState(false);
+  const breakpoint = useBreakpoint({ ssr: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [userContext] = useContext(UserContext);
   const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
 
-  const handleShowClick = () => setShowPassword(!showPassword);
+  const isMobile = breakpoint === "base";
 
   const formik = useFormik({
     initialValues: {
@@ -128,19 +127,23 @@ const Signup = () => {
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
-      <Stack flexDir="column" mb="2" justifyContent="center" alignItems="center">
-        <Avatar size="lg" src={Miley} alt="" />
-        <Heading color="purple.400">S'inscrire en tant qu'établissement</Heading>
-        <Box w="600px">
+      <Stack
+        spacing="64px"
+        flexDir={isMobile ? "column" : "row"}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Image src={UnderConstruction} alt="" w="300px" />
+        <Box w={isMobile ? "100%" : "400px"}>
+          <Text color="brand.blue.700" fontSize="xl" my="0">
+            Établissement
+          </Text>
+          <Text color="brand.blue.700" fontSize="3xl" fontWeight="600" my="0">
+            S'inscrire
+          </Text>
           {!isSuccessful ? (
             <form onSubmit={formik.handleSubmit}>
-              <Stack
-                spacing={4}
-                p="2rem"
-                backgroundColor="whiteAlpha.900"
-                boxShadow="md"
-                borderRadius="md"
-              >
+              <Stack spacing="16px" mt="16px">
                 <FormControl isInvalid={!!formik.errors.firstName && formik.touched.firstName}>
                   <Input
                     id="firstName"
@@ -149,6 +152,10 @@ const Signup = () => {
                     placeholder="Prénom"
                     onChange={formik.handleChange}
                     value={formik.values.firstName}
+                    size="lg"
+                    color="brand.black.500"
+                    _placeholder={{ color: "brand.black.500" }}
+                    borderColor="brand.blue.400"
                   />
                   <FormErrorMessage>{formik.errors.firstName}</FormErrorMessage>
                 </FormControl>
@@ -160,6 +167,10 @@ const Signup = () => {
                     placeholder="Nom"
                     onChange={formik.handleChange}
                     value={formik.values.lastName}
+                    size="lg"
+                    color="brand.black.500"
+                    _placeholder={{ color: "brand.black.500" }}
+                    borderColor="brand.blue.400"
                   />
                   <FormErrorMessage>{formik.errors.lastName}</FormErrorMessage>
                 </FormControl>
@@ -171,34 +182,25 @@ const Signup = () => {
                     placeholder="Email"
                     onChange={formik.handleChange}
                     value={formik.values.email}
+                    size="lg"
+                    color="brand.black.500"
+                    _placeholder={{ color: "brand.black.500" }}
+                    borderColor="brand.blue.400"
                   />
                   <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={!!formik.errors.password && formik.touched.password}>
-                  <InputGroup>
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Mot de passe"
-                      onChange={formik.handleChange}
-                      value={formik.values.password}
-                    />
-                    <InputRightElement mr="5px">
-                      <Button h="1.75rem" size="sm" onClick={handleShowClick}>
-                        {showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                      </Button>
-                    </InputRightElement>
-                  </InputGroup>
-                  <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
-                </FormControl>
+                <InputPassword
+                  handleChange={formik.handleChange}
+                  value={formik.values.password}
+                  error={formik.errors.password}
+                  touched={formik.touched.password}
+                />
                 <FormControl
                   isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}
                   isDisabled={isLoadingRemoteEtablissement}
                 >
                   <AsyncSelect
-                    placeholder="Entrez le SIRET de votre établissement"
-                    size="md"
+                    placeholder="SIRET de votre établissement"
                     getOptionLabel={(option) =>
                       option?.onisep_nom || option?.enseigne || option?.entreprise_raison_sociale
                     }
@@ -208,6 +210,28 @@ const Signup = () => {
                     isClearable
                     loadOptions={loadEtablissementOptionsHandler}
                     isLoading={isLoadingRemoteEtablissement}
+                    size="lg"
+                    color="brand.black.500"
+                    _placeholder={{ color: "brand.black.500" }}
+                    borderColor="brand.blue.400"
+                    chakraStyles={{
+                      placeholder: (baseStyles) => ({
+                        ...baseStyles,
+                        color: "brand.black.500",
+                      }),
+                      dropdownIndicator: () => ({
+                        display: "none",
+                      }),
+                      container: (baseStyles) => ({
+                        ...baseStyles,
+                        borderColor: "brand.blue.400",
+                      }),
+                      clearIndicator: (baseStyles) => ({
+                        ...baseStyles,
+                        color: "brand.blue.400",
+                        backgroundColor: "transparent",
+                      }),
+                    }}
                   />
                   <FormErrorMessage>{formik.errors.etablissement}</FormErrorMessage>
                 </FormControl>
@@ -216,33 +240,47 @@ const Signup = () => {
                     id="comment"
                     name="comment"
                     type="text"
-                    placeholder="Commentaire"
+                    placeholder="Commentaire (facultatif)"
                     onChange={formik.handleChange}
                     value={formik.values.comment}
+                    size="lg"
+                    color="brand.black.500"
+                    _placeholder={{ color: "brand.black.500" }}
+                    borderColor="brand.blue.400"
                   />
                   <FormErrorMessage>{formik.errors.comment}</FormErrorMessage>
                 </FormControl>
-                <Button
-                  borderRadius="md"
-                  type="submit"
-                  variant="solid"
-                  colorScheme="purple"
-                  width="full"
-                  isLoading={isSubmitting}
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  flexDirection="column"
+                  mt="16px"
                 >
-                  Inscription
-                </Button>
+                  <Button
+                    borderRadius="md"
+                    type="submit"
+                    variant="solid"
+                    bgColor="brand.blue.700"
+                    color="white"
+                    colorScheme="brand.blue"
+                    width="min-content"
+                    isLoading={isSubmitting}
+                  >
+                    Valider
+                  </Button>
+                  <Text color="brand.blue.700" fontSize="sm" mt={isMobile ? "32px" : "64px"}>
+                    Déjà inscrit ?{" "}
+                    <Link href="/connexion" textDecoration="underline">
+                      Me connecter
+                    </Link>
+                  </Text>
+                </Box>
               </Stack>
             </form>
           ) : (
-            <Stack
-              spacing={4}
-              p="2rem"
-              backgroundColor="whiteAlpha.900"
-              boxShadow="md"
-              borderRadius="md"
-            >
-              <Text color="purple.500" textAlign="center">
+            <Stack spacing={4} p="2rem">
+              <Text color="brand.blue.700" textAlign="center">
                 Votre demande d'inscription a bien été prise en compte, merci de bien vouloir
                 cliquer sur le lien de confirmation qui vous a été envoyé par email. Nous
                 vérifierons ensuite votre demande dans les plus brefs délais.
