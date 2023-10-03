@@ -1,13 +1,10 @@
 import React, { useState, useContext } from "react";
 import {
   Flex,
-  Input,
   Button,
   Stack,
   Box,
-  FormControl,
   useToast,
-  FormErrorMessage,
   Link,
   Text,
   Image,
@@ -21,6 +18,7 @@ import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import UnderConstruction from "../assets/images/under_construction.svg";
 import InputPassword from "./Components/InputPassword";
+import InputText from "./Components/InputText";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -124,21 +122,7 @@ const Login = () => {
               <Text color="brand.blue.700" fontSize="3xl" fontWeight="600" my="0">
                 Se connecter
               </Text>
-              <FormControl isInvalid={!!formik.errors.email && formik.touched.email} mt="6px">
-                <Input
-                  id="email"
-                  name="email"
-                  type="text"
-                  placeholder="Email"
-                  onChange={formik.handleChange}
-                  value={formik.values.email}
-                  size="lg"
-                  color="brand.black.500"
-                  _placeholder={{ color: "brand.black.500" }}
-                  borderColor="brand.blue.400"
-                />
-                <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
-              </FormControl>
+              <InputText id="email" name="email" type="email" placeholder="Email" formik={formik} />
               <InputPassword
                 handleChange={formik.handleChange}
                 value={formik.values.password}

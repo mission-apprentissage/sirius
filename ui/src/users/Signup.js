@@ -23,6 +23,7 @@ import { UserContext } from "../context/UserContext";
 import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
 import UnderConstruction from "../assets/images/under_construction.svg";
 import InputPassword from "./Components/InputPassword";
+import InputText from "./Components/InputText";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -144,51 +145,15 @@ const Signup = () => {
           {!isSuccessful ? (
             <form onSubmit={formik.handleSubmit}>
               <Stack spacing="16px" mt="16px">
-                <FormControl isInvalid={!!formik.errors.firstName && formik.touched.firstName}>
-                  <Input
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    placeholder="Prénom"
-                    onChange={formik.handleChange}
-                    value={formik.values.firstName}
-                    size="lg"
-                    color="brand.black.500"
-                    _placeholder={{ color: "brand.black.500" }}
-                    borderColor="brand.blue.400"
-                  />
-                  <FormErrorMessage>{formik.errors.firstName}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={!!formik.errors.lastName && formik.touched.lastName}>
-                  <Input
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    placeholder="Nom"
-                    onChange={formik.handleChange}
-                    value={formik.values.lastName}
-                    size="lg"
-                    color="brand.black.500"
-                    _placeholder={{ color: "brand.black.500" }}
-                    borderColor="brand.blue.400"
-                  />
-                  <FormErrorMessage>{formik.errors.lastName}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={!!formik.errors.email && formik.touched.email}>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="text"
-                    placeholder="Email"
-                    onChange={formik.handleChange}
-                    value={formik.values.email}
-                    size="lg"
-                    color="brand.black.500"
-                    _placeholder={{ color: "brand.black.500" }}
-                    borderColor="brand.blue.400"
-                  />
-                  <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
-                </FormControl>
+                <InputText id="firstName" name="firstName" placeholder="Prénom" formik={formik} />
+                <InputText id="lastName" name="lastName" placeholder="Nom" formik={formik} />
+                <InputText
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Email"
+                  formik={formik}
+                />
                 <InputPassword
                   handleChange={formik.handleChange}
                   value={formik.values.password}
