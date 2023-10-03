@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Flex, Container, Spinner } from "@chakra-ui/react";
+import { Flex, Box, Spinner, useBreakpoint } from "@chakra-ui/react";
 import Navbar from "./Navbar";
 import UnauthNavbar from "./UnauthNavbar";
 import { UserContext } from "../context/UserContext";
@@ -7,15 +7,27 @@ import { UserContext } from "../context/UserContext";
 const Layout = ({ children }) => {
   const [userContext] = useContext(UserContext);
   const isAuthenticated = userContext?.token;
+  const breakpoint = useBreakpoint();
+
+  const isMobile = breakpoint === "base";
 
   if (userContext.loading) return <Spinner />;
 
   return (
     <>
       {isAuthenticated ? <Navbar /> : <UnauthNavbar />}
-      <Container maxW="container.xl" bg="brand.blue.100" p="0" m="0" maxWidth="100%">
-        <Flex w="100%">{children}</Flex>
-      </Container>
+      <Box
+        w="100%"
+        bg="white"
+        m="0"
+        px={isMobile ? "16px" : "64px"}
+        py="0"
+        minHeight="100vh"
+        display="flex"
+        flexDirection="column"
+      >
+        <Flex>{children}</Flex>
+      </Box>
     </>
   );
 };

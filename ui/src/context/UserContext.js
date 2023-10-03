@@ -22,6 +22,10 @@ const UserProvider = (props) => {
           currentUserRole: decodedToken.role,
           currentUserStatus: decodedToken.status,
           siret: decodedToken.siret,
+          firstName: decodedToken.firstName,
+          lastName: decodedToken.lastName,
+          email: decodedToken.email,
+          etablissementLabel: decodedToken.etablissementLabel,
         };
       });
     } else {

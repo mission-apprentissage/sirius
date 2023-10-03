@@ -4,6 +4,7 @@ const usersDao = require("../dao/users.dao");
 const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
 const { ErrorMessage } = require("../errors");
 const User = require("../models/user.model");
+const { USER_ROLES } = require("../constants");
 
 const createUser = async (user) => {
   try {
@@ -45,12 +46,31 @@ const refreshTokenUser = async (refreshToken) => {
 
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
 
-    const token = getToken({ _id: userId, role: user.role, status: user.status, siret: user.siret });
+    const token = getToken({
+      _id: userId,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN && {
+        etablissementLabel:
+          user.etablissement.enseigne || user.etablissement.onisep_nom || user.etablissement.entreprise_raison_sociale,
+      }),
+    });
     const newRefreshToken = getRefreshToken({
       _id: userId,
       role: user.role,
       status: user.status,
       siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN && {
+        etablissementLabel:
+          user.etablissement.enseigne || user.etablissement.onisep_nom || user.etablissement.entreprise_raison_sociale,
+      }),
     });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 
