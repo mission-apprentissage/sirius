@@ -84,6 +84,9 @@ export const theme = extendTheme({
       black: {
         500: "#161616",
       },
+      gray: {
+        700: "#2D3748",
+      },
     },
     progressBar: {
       700: "#000091",

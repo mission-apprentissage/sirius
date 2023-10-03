@@ -87,7 +87,7 @@ const Header = ({ hasActionButton, title, img, children }) => {
         )}
       </Stack>
       <Stack direction="row" w="100%" py={isMobile ? "24px" : "65px"}>
-        <Stack direction="column" w="80%">
+        <Stack display="flex" direction="column" w={isMobile ? "100%" : "calc(100% - 400px)"}>
           {title && (
             <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">
               {title}
@@ -95,7 +95,7 @@ const Header = ({ hasActionButton, title, img, children }) => {
           )}
           {children}
         </Stack>
-        {img && !isMobile && <Image src={img} maxW="350px" alt="" />}
+        {img && !isMobile && <Image src={img} maxW="300px" ml="100px" alt="" />}
       </Stack>
     </Stack>
   );
