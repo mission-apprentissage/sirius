@@ -20,8 +20,8 @@ import { _post, _get } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
 import UnderConstruction from "../assets/images/under_construction.svg";
-import InputPassword from "./Components/InputPassword";
-import InputText from "./Components/InputText";
+import InputPassword from "../Components/Form/InputPassword";
+import InputText from "../Components/Form/InputText";
 import Button from "../Components/Form/Button";
 
 const validationSchema = Yup.object({
