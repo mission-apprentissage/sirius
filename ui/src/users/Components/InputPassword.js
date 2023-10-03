@@ -11,21 +11,21 @@ import {
 import HiOutlineEye from "../../assets/icons/HiOutlineEye.svg";
 import HiOutlineEyeOff from "../../assets/icons/HiOutlineEyeOff.svg";
 
-const InputPassword = ({ handleChange, value, error, touched }) => {
+const InputPassword = ({ id, name, formik }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowClick = () => setShowPassword(!showPassword);
 
   return (
-    <FormControl isInvalid={!!error && touched}>
+    <FormControl isInvalid={!!formik.errors[name] && formik.touched[name]}>
       <InputGroup>
         <Input
-          id="password"
-          name="password"
+          id={id}
+          name={name}
           type={showPassword ? "text" : "password"}
           placeholder="Mot de passe"
-          onChange={handleChange}
-          value={value}
+          onChange={formik.handleChange}
+          value={formik.values[name]}
           size="lg"
           color="brand.black.500"
           _placeholder={{ color: "brand.black.500" }}
@@ -59,7 +59,7 @@ const InputPassword = ({ handleChange, value, error, touched }) => {
           )}
         </InputRightElement>
       </InputGroup>
-      <FormErrorMessage>{error}</FormErrorMessage>
+      <FormErrorMessage>{formik.errors[name]}</FormErrorMessage>
     </FormControl>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useState, useContext, useRef } from "react";
 import {
   Flex,
-  Input,
   Button,
   Stack,
   Box,
@@ -154,12 +153,7 @@ const Signup = () => {
                   placeholder="Email"
                   formik={formik}
                 />
-                <InputPassword
-                  handleChange={formik.handleChange}
-                  value={formik.values.password}
-                  error={formik.errors.password}
-                  touched={formik.touched.password}
-                />
+                <InputPassword id="password" name="password" formik={formik} />
                 <FormControl
                   isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}
                   isDisabled={isLoadingRemoteEtablissement}

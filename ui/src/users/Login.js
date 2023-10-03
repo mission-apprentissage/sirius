@@ -123,12 +123,7 @@ const Login = () => {
                 Se connecter
               </Text>
               <InputText id="email" name="email" type="email" placeholder="Email" formik={formik} />
-              <InputPassword
-                handleChange={formik.handleChange}
-                value={formik.values.password}
-                error={formik.errors.password}
-                touched={formik.touched.password}
-              />
+              <InputPassword id="password" name="password" formik={formik} />
               <Text color="brand.blue.700" fontSize="sm" textDecoration="underline">
                 <Link href="/reinitialisation-mot-de-passe">Mot de passe oublié ?</Link>
               </Text>
