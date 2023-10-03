@@ -1,7 +1,6 @@
 import React, { useState, useContext, useRef } from "react";
 import {
   Flex,
-  Button,
   Stack,
   Box,
   FormControl,
@@ -23,6 +22,7 @@ import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/val
 import UnderConstruction from "../assets/images/under_construction.svg";
 import InputPassword from "./Components/InputPassword";
 import InputText from "./Components/InputText";
+import Button from "../Components/Form/Button";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -216,18 +216,7 @@ const Signup = () => {
                   flexDirection="column"
                   mt="16px"
                 >
-                  <Button
-                    borderRadius="md"
-                    type="submit"
-                    variant="solid"
-                    bgColor="brand.blue.700"
-                    color="white"
-                    colorScheme="brand.blue"
-                    width="min-content"
-                    isLoading={isSubmitting}
-                  >
-                    Valider
-                  </Button>
+                  <Button isLoading={isSubmitting}>Valider</Button>
                   <Text color="brand.blue.700" fontSize="sm" mt={isMobile ? "32px" : "64px"}>
                     Déjà inscrit ?{" "}
                     <Link href="/connexion" textDecoration="underline">

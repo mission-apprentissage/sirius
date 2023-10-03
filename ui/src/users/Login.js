@@ -1,15 +1,5 @@
 import React, { useState, useContext } from "react";
-import {
-  Flex,
-  Button,
-  Stack,
-  Box,
-  useToast,
-  Link,
-  Text,
-  Image,
-  useBreakpoint,
-} from "@chakra-ui/react";
+import { Flex, Stack, Box, useToast, Link, Text, Image, useBreakpoint } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -19,6 +9,7 @@ import { UserContext } from "../context/UserContext";
 import UnderConstruction from "../assets/images/under_construction.svg";
 import InputPassword from "./Components/InputPassword";
 import InputText from "./Components/InputText";
+import Button from "../Components/Form/Button";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -128,18 +119,7 @@ const Login = () => {
                 <Link href="/reinitialisation-mot-de-passe">Mot de passe oublié ?</Link>
               </Text>
               <Box display="flex" alignItems="center" justifyContent="center" mt="16px">
-                <Button
-                  borderRadius="md"
-                  type="submit"
-                  variant="solid"
-                  bgColor="brand.blue.700"
-                  color="white"
-                  colorScheme="brand.blue"
-                  width="min-content"
-                  isLoading={isSubmitting}
-                >
-                  Connexion
-                </Button>
+                <Button isLoading={isSubmitting}>Connexion</Button>
               </Box>
               <Text
                 color="brand.blue.700"
