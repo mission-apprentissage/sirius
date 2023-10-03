@@ -1,8 +1,16 @@
 const campagnesDao = require("../dao/campagnes.dao");
-
+const { getChampsLibreRate } = require("../utils/verbatims.utils");
+const { getMedianDuration } = require("../utils/campagnes.utils");
 const getCampagnes = async (query) => {
   try {
     const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(query);
+    campagnes.forEach((campagne) => {
+      campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
+    });
+    campagnes.forEach((campagne) => {
+      campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
+      delete campagne.temoignagesList;
+    });
     return { success: true, body: campagnes };
   } catch (error) {
     return { success: false, body: error };

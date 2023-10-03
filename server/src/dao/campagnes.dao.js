@@ -28,9 +28,6 @@ const temoignageCountQuery = [
       temoignagesCount: { $size: "$temoignagesList" },
     },
   },
-  {
-    $unset: ["temoignagesList"],
-  },
 ];
 
 const questionnaireTemplateQuery = [
