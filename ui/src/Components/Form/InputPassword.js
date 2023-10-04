@@ -11,7 +11,13 @@ import {
 import HiOutlineEye from "../../assets/icons/HiOutlineEye.svg";
 import HiOutlineEyeOff from "../../assets/icons/HiOutlineEyeOff.svg";
 
-const InputPassword = ({ id, name, formik }) => {
+const InputPassword = ({
+  id,
+  name,
+  formik,
+  noErrorMessage = false,
+  placeholder = "Mot de passe",
+}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowClick = () => setShowPassword(!showPassword);
@@ -23,7 +29,7 @@ const InputPassword = ({ id, name, formik }) => {
           id={id}
           name={name}
           type={showPassword ? "text" : "password"}
-          placeholder="Mot de passe"
+          placeholder={placeholder}
           onChange={formik.handleChange}
           value={formik.values[name]}
           size="lg"
@@ -59,7 +65,7 @@ const InputPassword = ({ id, name, formik }) => {
           )}
         </InputRightElement>
       </InputGroup>
-      <FormErrorMessage>{formik.errors[name]}</FormErrorMessage>
+      {!noErrorMessage && <FormErrorMessage>{formik.errors[name]}</FormErrorMessage>}
     </FormControl>
   );
 };
