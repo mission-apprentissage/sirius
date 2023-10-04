@@ -4,8 +4,6 @@ import {
   Stack,
   Box,
   FormControl,
-  useToast,
-  FormErrorMessage,
   Textarea,
   Text,
   Image,
@@ -20,29 +18,31 @@ import { _post, _get } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
 import UnderConstruction from "../assets/images/under_construction.svg";
+import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
 import InputPassword from "../Components/Form/InputPassword";
 import InputText from "../Components/Form/InputText";
 import Button from "../Components/Form/Button";
+import FormError from "../Components/Form/FormError";
+
+const requiredFieldMessage = "Ces champs sont obligatoires";
 
 const validationSchema = Yup.object({
-  email: Yup.string()
-    .email("Le champ n'est pas au bon format")
-    .required("Ce champ est obligatoire"),
-  lastName: Yup.string().required("Ce champ est obligatoire"),
-  firstName: Yup.string().required("Ce champ est obligatoire"),
-  etablissement: Yup.object().required("Ce champ est obligatoire"),
+  email: Yup.string().email("L'email n'est pas au bon format").required(requiredFieldMessage),
+  lastName: Yup.string().required(requiredFieldMessage),
+  firstName: Yup.string().required(requiredFieldMessage),
+  etablissement: Yup.object().required(requiredFieldMessage),
   comment: Yup.string(),
   password: Yup.string()
-    .required("Ce champ est obligatoire")
+    .required(requiredFieldMessage)
     .matches(passwordComplexityRegex, passwordComplexityMessage),
 });
 
 const Signup = () => {
   const timer = useRef();
-  const toast = useToast();
   const breakpoint = useBreakpoint({ ssr: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
+  const [error, setError] = useState(null);
   const [userContext] = useContext(UserContext);
   const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
 
@@ -71,32 +71,17 @@ const Signup = () => {
       });
 
       if (resultUser._id) {
+        setError(null);
         setIsSuccessful(true);
         setIsSubmitting(false);
       } else if (resultUser.statusCode === 400) {
-        toast({
-          title: "Une erreur est survenue",
-          description: resultUser.message,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+        setError(resultUser.message);
         setIsSubmitting(false);
       } else if (resultUser.statusCode === 500) {
-        toast({
-          title: "Une erreur est survenue",
-          description: "Merci de réessayer",
-          duration: 5000,
-          isClosable: true,
-        });
+        setError("Merci de réessayer");
         setIsSubmitting(false);
       } else if (resultUser.statusCode === 429) {
-        toast({
-          title: "Une erreur est survenue",
-          description: resultUser.message,
-          duration: 5000,
-          isClosable: true,
-        });
+        setError(resultUser.message);
         setIsSubmitting(false);
       }
     },
@@ -133,27 +118,47 @@ const Signup = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <Image src={UnderConstruction} alt="" w="300px" />
+        <Image src={isSuccessful ? SiriusInTheSky : UnderConstruction} alt="" w="300px" />
         <Box w={isMobile ? "100%" : "400px"}>
-          <Text color="brand.blue.700" fontSize="xl" my="0">
-            Établissement
-          </Text>
+          {!isSuccessful && (
+            <Text color="brand.blue.700" fontSize="xl" my="0">
+              Établissement
+            </Text>
+          )}
           <Text color="brand.blue.700" fontSize="3xl" fontWeight="600" my="0">
-            S'inscrire
+            {isSuccessful ? "Inscription enregistrée !" : "S'inscrire"}
           </Text>
+          <FormError
+            title="L'inscription a échouée"
+            hasError={(Object.keys(formik.errors).length || error) && formik.submitCount}
+            errorMessages={[...new Set(Object.values(formik.errors)), error]}
+          />
           {!isSuccessful ? (
             <form onSubmit={formik.handleSubmit}>
               <Stack spacing="16px" mt="16px">
-                <InputText id="firstName" name="firstName" placeholder="Prénom" formik={formik} />
-                <InputText id="lastName" name="lastName" placeholder="Nom" formik={formik} />
+                <InputText
+                  id="firstName"
+                  name="firstName"
+                  placeholder="Prénom"
+                  formik={formik}
+                  noErrorMessage
+                />
+                <InputText
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Nom"
+                  formik={formik}
+                  noErrorMessage
+                />
                 <InputText
                   id="email"
                   name="email"
                   type="email"
                   placeholder="Email"
                   formik={formik}
+                  noErrorMessage
                 />
-                <InputPassword id="password" name="password" formik={formik} />
+                <InputPassword id="password" name="password" formik={formik} noErrorMessage />
                 <FormControl
                   isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}
                   isDisabled={isLoadingRemoteEtablissement}
@@ -192,7 +197,6 @@ const Signup = () => {
                       }),
                     }}
                   />
-                  <FormErrorMessage>{formik.errors.etablissement}</FormErrorMessage>
                 </FormControl>
                 <FormControl isInvalid={!!formik.errors.comment && formik.touched.comment}>
                   <Textarea
@@ -207,7 +211,6 @@ const Signup = () => {
                     _placeholder={{ color: "brand.black.500" }}
                     borderColor="brand.blue.400"
                   />
-                  <FormErrorMessage>{formik.errors.comment}</FormErrorMessage>
                 </FormControl>
                 <Box
                   display="flex"
@@ -227,13 +230,12 @@ const Signup = () => {
               </Stack>
             </form>
           ) : (
-            <Stack spacing={4} p="2rem">
-              <Text color="brand.blue.700" textAlign="center">
-                Votre demande d'inscription a bien été prise en compte, merci de bien vouloir
-                cliquer sur le lien de confirmation qui vous a été envoyé par email. Nous
-                vérifierons ensuite votre demande dans les plus brefs délais.
-              </Text>
-            </Stack>
+            <Text color="brand.blue.700" mt="15px">
+              Votre demande d'inscription a bien été prise en compte, merci de bien vouloir cliquer
+              sur le lien de confirmation qui vous a été envoyé par email. <br />
+              <br />
+              Nous vérifierons ensuite votre demande dans les plus brefs délais.
+            </Text>
           )}
         </Box>
       </Stack>
