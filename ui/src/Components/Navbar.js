@@ -37,16 +37,16 @@ const NAV_ITEMS = [
         label: "Ajout",
         subLabel: "Ajouter une campagne",
         href: "/campagnes/ajout",
-        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+        roles: [USER_ROLES.ADMIN],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les campagnes",
         href: "/campagnes/gestion",
-        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+        roles: [USER_ROLES.ADMIN],
       },
     ],
-    roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+    roles: [USER_ROLES.ADMIN],
   },
   {
     label: "Témoignages",
@@ -55,7 +55,7 @@ const NAV_ITEMS = [
         label: "Dashboard",
         subLabel: "Afficher les statistiques d'une campagne",
         href: "/temoignages/dashboard",
-        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+        roles: [USER_ROLES.ADMIN],
       },
       {
         label: "Gestion",
@@ -64,7 +64,7 @@ const NAV_ITEMS = [
         roles: [USER_ROLES.ADMIN],
       },
     ],
-    roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+    roles: [USER_ROLES.ADMIN],
   },
   {
     label: "Questionnaires",
@@ -152,7 +152,7 @@ const MenuWithSubnavigation = () => {
   return (
     <Box>
       <Flex
-        bg="white"
+        bgColor="brand.blue.100"
         color="gray.600"
         minH="60px"
         py={{ base: 2 }}
@@ -168,7 +168,7 @@ const MenuWithSubnavigation = () => {
           />
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }} alignItems="center">
-          <Box>
+          <Box ml="50px">
             <Link href="/">
               <img src={Logo} alt="Logo Sirius" />
             </Link>
