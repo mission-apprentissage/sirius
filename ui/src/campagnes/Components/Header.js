@@ -29,7 +29,7 @@ const Header = ({ hasActionButton, title, img, children }) => {
         alignItems={isMobile ? "flex-start" : "flex-end"}
         justifyContent="space-between"
       >
-        <Stack>
+        <Stack w={isMobile ? "100%" : "60%"}>
           <Text color="brand.blue.700" fontSize="xl" fontWeight="600">
             Vous êtes connecté en tant que :
           </Text>
@@ -51,23 +51,20 @@ const Header = ({ hasActionButton, title, img, children }) => {
         </Stack>
         {hasActionButton && (
           <>
-            <Button
-              isLink
-              onClick={() => navigate("/campagnes/ajout")}
-              leftIcon={<Image src={IoAddSharp} alt="" />}
-              w={isMobile ? "100%" : "min-content"}
+            <Flex
+              alignItems="space-between"
+              direction={isMobile ? "column" : "row"}
+              w={isMobile ? "100%" : "40%"}
             >
-              Créer campagne
-            </Button>
-            <Flex alignItems="space-between">
               <Button
                 isLink
                 onClick={() => navigate("/questionnaires//apercu")} //TODO questionnaire preview link
                 leftIcon={<Image src={GoEye} alt="" />}
                 variant="outline"
                 mx={isMobile ? "0" : "8px"}
-                mr={isMobile ? "4px" : "8px"}
-                w={isMobile ? "calc(50% - 12x)" : "min-content"}
+                mr={isMobile ? "0" : "8px"}
+                mt={isMobile ? "8px" : "0"}
+                w={isMobile ? "100%" : "min-content"}
               >
                 Questionnaire
               </Button>
@@ -77,10 +74,22 @@ const Header = ({ hasActionButton, title, img, children }) => {
                 leftIcon={<Image src={MdQuestionAnswer} alt="" />}
                 variant="outline"
                 mx={isMobile ? "0" : "8px"}
-                ml={isMobile ? "4px" : "8px"}
-                w={isMobile ? "calc(50% - 12px)" : "min-content"}
+                mr={isMobile ? "0" : "8px"}
+                mt={isMobile ? "8px" : "0"}
+                w={isMobile ? "100%" : "min-content"}
               >
-                Dashboard
+                Résultat
+              </Button>
+              <Button
+                isLink
+                onClick={() => navigate("/campagnes/ajout")}
+                leftIcon={<Image src={IoAddSharp} alt="" />}
+                mx={isMobile ? "0" : "8px"}
+                mr={isMobile ? "0" : "8px"}
+                mt={isMobile ? "8px" : "0"}
+                w={isMobile ? "100%" : "min-content"}
+              >
+                Créer campagne
               </Button>
             </Flex>
           </>
