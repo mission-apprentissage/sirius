@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import jwt from "jwt-decode";
 import { _post } from "../utils/httpClient";
 
@@ -9,7 +9,7 @@ let initialState = { loading: true, token: null };
 const UserProvider = (props) => {
   const [user, setUser] = useState(initialState);
 
-  const verifyUser = useCallback(async () => {
+  const verifyUser = async () => {
     const result = await _post(`/api/users/refreshToken`);
     if (result.success) {
       const decodedToken = jwt(result.token);
@@ -34,11 +34,11 @@ const UserProvider = (props) => {
       });
     }
     setTimeout(verifyUser, 60 * 5 * 1000);
-  }, [setUser]);
+  };
 
   useEffect(() => {
     verifyUser();
-  }, [verifyUser]);
+  }, []);
 
   return <UserContext.Provider value={[user, setUser]}>{props.children}</UserContext.Provider>;
 };
