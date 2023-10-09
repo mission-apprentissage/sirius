@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminProtectedRoute from "./AdminProtectedRoute";
-import ViewCampagnes from "./campagnes/ViewCampagnes";
+import ManageCampagnes from "./campagnes/ManageCampagnes";
 import TemoignagesDashboard from "./temoignages/Dashboard";
 import TemoignagesManaging from "./temoignages/Managing";
 import QuestionnairesManaging from "./questionnaires/Managing";
@@ -11,8 +11,6 @@ import EditQuestionnaire from "./questionnaires/EditQuestionnaire";
 import PreviewQuestionnaire from "./questionnaires/PreviewQuestionnaire";
 import CreateCampagne from "./campagnes/CreateCampagne";
 import AnswerCampagne from "./campagnes/AnswerCampagne";
-import EditCampagne from "./campagnes/EditCampagne";
-import DuplicateCampagne from "./campagnes/DuplicateCampagne";
 import Login from "./users/Login";
 import Signup from "./users/Signup";
 import PendingAccount from "./users/PendingAccount";
@@ -38,9 +36,7 @@ function App() {
       >
         <Route exact path="/" element={<Navigate to="/campagnes/gestion" />} />
         <Route exact path="/campagnes/ajout" element={<CreateCampagne />} />
-        <Route exact path="/campagnes/:id/edition" element={<EditCampagne />} />
-        <Route exact path="/campagnes/:id/duplication" element={<DuplicateCampagne />} />
-        <Route exact path="/campagnes/gestion" element={<ViewCampagnes />} />
+        <Route exact path="/campagnes/gestion" element={<ManageCampagnes />} />
         <Route exact path="/temoignages/dashboard" element={<TemoignagesDashboard />} />
       </Route>
       <Route
