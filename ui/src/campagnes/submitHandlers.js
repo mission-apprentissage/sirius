@@ -207,3 +207,17 @@ export const editionSubmitHandler = async (values, previousValues, userContext) 
         description: "Une erreur est survenue",
       };
 };
+
+export const simpleEditionSubmitHandler = async (campagneId, values, userContext) => {
+  const campagneResult = await _put(`/api/campagnes/${campagneId}`, values, userContext.token);
+
+  return campagneResult?.modifiedCount
+    ? {
+        status: "success",
+        description: "La campagne a été mise à jour",
+      }
+    : {
+        status: "error",
+        description: "Une erreur est survenue",
+      };
+};
