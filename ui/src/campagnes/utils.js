@@ -97,3 +97,16 @@ export const getNextButtonLabel = (isLastCategory, isLastQuestionInCategory) => 
     return "Suivant";
   }
 };
+
+const padTo2Digits = (num) => {
+  return num.toString().padStart(2, "0");
+};
+
+export const formatDate = (date) => {
+  const typedDate = new Date(date);
+  return [
+    padTo2Digits(typedDate.getDate()),
+    padTo2Digits(typedDate.getMonth() + 1),
+    typedDate.getFullYear(),
+  ].join("/");
+};

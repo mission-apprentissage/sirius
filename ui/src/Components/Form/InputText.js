@@ -5,6 +5,11 @@ import {
   FormControl,
   FormErrorMessage,
   InputRightElement,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
 
 const InputText = ({
@@ -25,19 +30,42 @@ const InputText = ({
       }
     >
       <InputGroup w="100%">
-        <Input
-          id={id}
-          name={name}
-          type={type}
-          placeholder={placeholder}
-          onChange={formik?.handleChange}
-          value={formik?.values[name]}
-          size="lg"
-          color="brand.black.500"
-          _placeholder={{ color: "brand.black.500" }}
-          borderColor="brand.blue.400"
-          {...props}
-        />
+        {(type === "text" || type === "date") && (
+          <Input
+            id={id}
+            name={name}
+            type={type}
+            placeholder={placeholder}
+            onChange={formik?.handleChange}
+            value={formik?.values[name]}
+            size="lg"
+            color="brand.black.500"
+            _placeholder={{ color: "brand.black.500" }}
+            borderColor="brand.blue.400"
+            {...props}
+          />
+        )}
+        {type === "number" && (
+          <NumberInput
+            id={id}
+            name={name}
+            type={type}
+            placeholder={placeholder}
+            onChange={formik?.handleChange}
+            value={formik?.values[name]}
+            size="lg"
+            step={1}
+            min={0}
+            max={150}
+            {...props}
+          >
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+        )}
         {rightElement && (
           <InputRightElement {...rightElementProps}>{rightElement}</InputRightElement>
         )}
