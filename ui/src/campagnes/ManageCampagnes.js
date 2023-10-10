@@ -8,6 +8,11 @@ import Team from "../assets/images/team.svg";
 import Statistics from "./Components/Statistics";
 import ManageCampagneTable from "./Components/ManageCampagneTable";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
+import {
+  orderCampagnesByDiplomeType,
+  uniqueDiplomeTypesFromCampagne,
+  orderFormationsByDiplomeType,
+} from "./utils";
 
 export const sortingOptions = [
   { label: "Formation (A-Z)", value: { id: "Formation", desc: false } },
@@ -24,36 +29,6 @@ export const sortingOptions = [
   { label: "Complétion (1-0)", value: { id: "Complétion", desc: true } },
 ];
 
-const uniqueDiplomeTypesFromCampagne = (campagnes) => [
-  ...new Set(campagnes.map((campagne) => campagne.formation?.data?.diplome)),
-];
-
-const uniqueDiplomeTypesFromFormation = (formations) => [
-  ...new Set(formations?.map((formation) => formation?.diplome)),
-];
-
-const orderCampagnesByDiplomeType = (campagnes) => {
-  const orderedCampagnes = {};
-  uniqueDiplomeTypesFromCampagne(campagnes)?.forEach((diplomeType) => {
-    const campagnesByDiplomeType = campagnes.filter(
-      (campagne) => campagne.formation?.data?.diplome === diplomeType
-    );
-    orderedCampagnes[diplomeType] = campagnesByDiplomeType;
-  });
-  return orderedCampagnes;
-};
-
-const orderFormationsByDiplomeType = (formations) => {
-  const orderedFormations = {};
-  uniqueDiplomeTypesFromFormation(formations)?.forEach((diplomeType) => {
-    const formationsByDiplomeType = formations.filter(
-      (formation) => formation?.diplome === diplomeType
-    );
-    orderedFormations[diplomeType] = formationsByDiplomeType;
-  });
-  return orderedFormations;
-};
-
 const ViewCampagnes = () => {
   const [userContext] = useContext(UserContext);
 
@@ -66,27 +41,32 @@ const ViewCampagnes = () => {
     userContext.siret
   );
 
-  if (loadingCampagnes || loadingFormations || errorCampagnes || errorFormations)
-    return <Spinner size="xl" />;
-
   return (
     <Stack direction="column" w="100%">
       <Header hasActionButton title="Statistiques" img={Team}>
-        {campagnes.length && <Statistics campagnes={campagnes} />}
+        {(loadingCampagnes || errorCampagnes) && !campagnes.length ? (
+          <Spinner size="xl" />
+        ) : (
+          <Statistics campagnes={campagnes} />
+        )}
       </Header>
       <Text fontSize="5xl" fontWeight="600" w="100%" color="brand.blue.700">
         Gérer mes campagnes
       </Text>
       <Box>
-        {uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
-          <ManageCampagneTable
-            key={diplomeType}
-            diplomeType={diplomeType}
-            campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
-            formations={orderFormationsByDiplomeType(formations)[diplomeType]}
-            userContext={userContext}
-          />
-        ))}
+        {loadingCampagnes || loadingFormations || errorCampagnes || errorFormations ? (
+          <Spinner size="xl" />
+        ) : (
+          uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
+            <ManageCampagneTable
+              key={diplomeType}
+              diplomeType={diplomeType}
+              campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
+              formations={orderFormationsByDiplomeType(formations)[diplomeType]}
+              userContext={userContext}
+            />
+          ))
+        )}
       </Box>
     </Stack>
   );
