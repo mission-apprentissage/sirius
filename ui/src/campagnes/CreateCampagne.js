@@ -6,6 +6,7 @@ import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
 import useFetchLocalEtablissements from "../hooks/useFetchLocalEtablissements";
 import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
 import Step1 from "./CreateCampagnes/Step1";
+import Step2 from "./CreateCampagnes/Step2";
 
 const CreateCampagne = () => {
   const [allDiplomesSelectedFormations, setAllDiplomesSelectedFormations] = useState([]);
@@ -38,10 +39,13 @@ const CreateCampagne = () => {
           }
           remoteFormations={remoteFormations}
           localFormations={localFormations}
+          allDiplomesSelectedFormations={allDiplomesSelectedFormations}
           setAllDiplomesSelectedFormations={setAllDiplomesSelectedFormations}
         />
       )}
-      {step === 2 && <></>}
+      {step === 2 && (
+        <Step2 allDiplomesSelectedFormations={allDiplomesSelectedFormations} setStep={setStep} />
+      )}
       <Box display="flex" justifyContent="center" w="100%" mb="25px">
         <Button isDisabled={!allDiplomesSelectedFormations.length} onClick={() => setStep(2)}>
           Sélectionner {allDiplomesSelectedFormations.length} formation

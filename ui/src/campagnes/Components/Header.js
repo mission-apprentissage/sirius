@@ -30,7 +30,7 @@ const Header = ({
   hasActionButton,
   hasGoBackButton,
   goBackLabel,
-  goBackUrl,
+  goBackOnClick,
   title,
   img,
   children,
@@ -122,7 +122,6 @@ const Header = ({
               <ModalOverlay />
               <ModalContent p="42px" bgColor="brand.blue.100" width="100%" borderRadius="20px">
                 <ModalCloseButton />
-
                 <ModalHeader color="brand.blue.700">
                   <Text fontWeight="600" fontSize="30px" mb="16px">
                     Résultats
@@ -152,12 +151,7 @@ const Header = ({
       </Stack>
       <Box my={isMobile ? "24px" : "65px"}>
         {hasGoBackButton && (
-          <Button
-            variant="outline"
-            onClick={() => navigate(goBackUrl)}
-            leftIcon={<ArrowBackIcon />}
-            mb="24px"
-          >
+          <Button variant="outline" onClick={goBackOnClick} leftIcon={<ArrowBackIcon />} mb="24px">
             {goBackLabel}
           </Button>
         )}

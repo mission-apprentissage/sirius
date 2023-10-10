@@ -39,6 +39,7 @@ const CheckboxIcon = ({ isChecked, isIndeterminate, as, ...rest }) => {
 const CreateCampagneTable = ({
   diplomeType,
   formations,
+  allDiplomesSelectedFormations,
   setAllDiplomesSelectedFormations,
   existingFormationCatalogueIds,
 }) => {
@@ -46,6 +47,20 @@ const CreateCampagneTable = ({
   const [search, setSearch] = useState([]);
   const [displayedFormations, setDisplayedFormations] = useState([]);
   const [selectedFormations, setSelectedFormations] = useState([]);
+
+  useEffect(() => {
+    if (allDiplomesSelectedFormations.length) {
+      setSelectedFormations(
+        formations
+          .map((formation) => formation._id)
+          .filter(
+            (formationId) =>
+              allDiplomesSelectedFormations?.includes(formationId) &&
+              !existingFormationCatalogueIds?.includes(formationId)
+          )
+      );
+    }
+  }, [allDiplomesSelectedFormations]);
 
   useEffect(() => {
     if (!displayedFormations.length && formations.length) {

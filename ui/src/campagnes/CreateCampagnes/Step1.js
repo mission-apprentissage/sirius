@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Spinner, Box, Text, Stack } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import Header from "../Components/Header";
 import Blackboard from "../../assets/images/blackboard.svg";
@@ -12,9 +13,11 @@ const Step1 = ({
   isLoading,
   remoteFormations,
   localFormations,
+  allDiplomesSelectedFormations,
   setAllDiplomesSelectedFormations,
 }) => {
   const [userContext] = useContext(UserContext);
+  const navigate = useNavigate();
 
   const existingFormationCatalogueIds = localFormations?.map((formation) => formation.data._id);
 
@@ -25,7 +28,7 @@ const Step1 = ({
         img={Blackboard}
         hasGoBackButton
         goBackLabel="Retour gestion des campagnes"
-        goBackUrl="/campagnes/gestion"
+        goBackOnClick={() => navigate("/campagnes/gestion")}
       >
         <Text fontWeight="600" color="brand.black.500">
           Lorsque vous sélectionnez une formation vous créez une campagne Sirius.
@@ -53,6 +56,7 @@ const Step1 = ({
               diplomeType={diplomeType}
               formations={orderFormationsByDiplomeType(remoteFormations)[diplomeType]}
               userContext={userContext}
+              allDiplomesSelectedFormations={allDiplomesSelectedFormations}
               setAllDiplomesSelectedFormations={setAllDiplomesSelectedFormations}
               existingFormationCatalogueIds={existingFormationCatalogueIds}
             />
