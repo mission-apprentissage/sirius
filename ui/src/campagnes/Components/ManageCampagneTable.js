@@ -47,7 +47,7 @@ const diplomeTypeMatcher = {
 
 const columnHelper = createColumnHelper();
 
-const getColumns = (selectedCampagnes, setSelectedCampagnes, handleCellUpdate) => [
+const getColumns = (handleCellUpdate) => [
   columnHelper.accessor(
     (row) => [
       row.formation.data.intitule_long,
