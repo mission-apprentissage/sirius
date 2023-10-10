@@ -13,6 +13,7 @@ import {
   uniqueDiplomeTypesFromCampagne,
   orderFormationsByDiplomeType,
 } from "./utils";
+import FormError from "../Components/Form/FormError";
 
 export const sortingOptions = [
   { label: "Formation (A-Z)", value: { id: "Formation", desc: false } },
@@ -54,8 +55,10 @@ const ViewCampagnes = () => {
         Gérer mes campagnes
       </Text>
       <Box>
-        {loadingCampagnes || loadingFormations || errorCampagnes || errorFormations ? (
+        {loadingCampagnes || loadingFormations ? (
           <Spinner size="xl" />
+        ) : errorCampagnes || errorFormations ? (
+          <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
         ) : (
           uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
             <ManageCampagneTable
