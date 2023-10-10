@@ -1,5 +1,20 @@
 import React, { useContext } from "react";
-import { Box, Spinner, Text, Stack, Image, Flex, useBreakpoint } from "@chakra-ui/react";
+import {
+  Box,
+  Spinner,
+  Text,
+  Stack,
+  Image,
+  Flex,
+  useBreakpoint,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  useDisclosure,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
@@ -9,6 +24,7 @@ import IoAddSharp from "../../assets/icons/IoAddSharp.svg";
 import HiUser from "../../assets/icons/HiUser.svg";
 import GoEye from "../../assets/icons/GoEye.svg";
 import MdQuestionAnswer from "../../assets/icons/MdQuestionAnswer.svg";
+import designer from "../../assets/images/designer.svg";
 
 const Header = ({
   hasActionButton,
@@ -22,6 +38,7 @@ const Header = ({
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
   const breakpoint = useBreakpoint();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isMobile = breakpoint === "base";
 
@@ -79,7 +96,7 @@ const Header = ({
               </Button>
               <Button
                 isLink
-                onClick={() => navigate("/temoignages/dashboard")}
+                onClick={onOpen}
                 leftIcon={<Image src={MdQuestionAnswer} alt="" />}
                 variant="outline"
                 mx={isMobile ? "0" : "8px"}
@@ -101,6 +118,35 @@ const Header = ({
                 Créer campagne
               </Button>
             </Flex>
+            <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
+              <ModalOverlay />
+              <ModalContent p="42px" bgColor="brand.blue.100" width="100%" borderRadius="20px">
+                <ModalCloseButton />
+
+                <ModalHeader color="brand.blue.700">
+                  <Text fontWeight="600" fontSize="30px" mb="16px">
+                    Résultats
+                  </Text>
+                  <Text fontWeight="600" fontSize="16px" color="brand.black.500">
+                    Cette fonctionnalité de la plateforme est en cours de développement.
+                  </Text>
+                </ModalHeader>
+                <ModalBody>
+                  <Stack
+                    direction="horizontal"
+                    alignItems="center"
+                    justifyContent="center"
+                    mt="24px"
+                  >
+                    <Image src={designer} alt="" objectFit="contain" w="180px" mr="24px" />
+                    <Text color="brand.black.500">
+                      Nos équipes vous donneront très bientôt accès à la visualisation des réponses
+                      du questionnaire Sirius.
+                    </Text>
+                  </Stack>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
           </>
         )}
       </Stack>
