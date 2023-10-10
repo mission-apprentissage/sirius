@@ -30,7 +30,7 @@ const InputText = ({
       }
     >
       <InputGroup w="100%">
-        {(type === "text" || type === "date") && (
+        {(type === "text" || type === "date" || type === "email") && (
           <Input
             id={id}
             name={name}
