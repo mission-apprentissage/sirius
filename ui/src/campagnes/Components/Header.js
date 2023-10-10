@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
-import { Spinner, Text, Stack, Image, Flex, useBreakpoint } from "@chakra-ui/react";
+import { Box, Spinner, Text, Stack, Image, Flex, useBreakpoint } from "@chakra-ui/react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import Button from "../../Components/Form/Button";
@@ -9,7 +10,15 @@ import HiUser from "../../assets/icons/HiUser.svg";
 import GoEye from "../../assets/icons/GoEye.svg";
 import MdQuestionAnswer from "../../assets/icons/MdQuestionAnswer.svg";
 
-const Header = ({ hasActionButton, title, img, children }) => {
+const Header = ({
+  hasActionButton,
+  hasGoBackButton,
+  goBackLabel,
+  goBackUrl,
+  title,
+  img,
+  children,
+}) => {
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
   const breakpoint = useBreakpoint();
@@ -95,17 +104,29 @@ const Header = ({ hasActionButton, title, img, children }) => {
           </>
         )}
       </Stack>
-      <Stack direction="row" w="100%" py={isMobile ? "24px" : "65px"}>
-        <Stack display="flex" direction="column" w={isMobile ? "100%" : "calc(100% - 400px)"}>
-          {title && (
-            <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">
-              {title}
-            </Text>
-          )}
-          {children}
+      <Box my={isMobile ? "24px" : "65px"}>
+        {hasGoBackButton && (
+          <Button
+            variant="outline"
+            onClick={() => navigate(goBackUrl)}
+            leftIcon={<ArrowBackIcon />}
+            mb="24px"
+          >
+            {goBackLabel}
+          </Button>
+        )}
+        <Stack direction="row" w="100%">
+          <Stack display="flex" direction="column" w={isMobile ? "100%" : "calc(100% - 400px)"}>
+            {title && (
+              <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">
+                {title}
+              </Text>
+            )}
+            {children}
+          </Stack>
+          {img && !isMobile && <Image src={img} maxW="300px" ml="100px" alt="" />}
         </Stack>
-        {img && !isMobile && <Image src={img} maxW="300px" ml="100px" alt="" />}
-      </Stack>
+      </Box>
     </Stack>
   );
 };
