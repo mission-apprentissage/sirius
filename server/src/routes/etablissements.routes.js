@@ -32,7 +32,6 @@ const etablissements = () => {
     "/api/etablissements/:id",
     verifyUser,
     (req, res, next) => isAdminOrAllowed(req, next, TYPES.ETABLISSEMENT_ID),
-    verifyUser,
     (req, res, next) => {
       getEtablissement(req, res, next);
     }
