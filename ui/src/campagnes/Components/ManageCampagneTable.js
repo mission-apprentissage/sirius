@@ -37,13 +37,7 @@ import IoInformationCircleOutline from "../../assets/icons/IoInformationCircleOu
 import Button from "../../Components/Form/Button";
 import { simpleEditionSubmitHandler } from "../submitHandlers";
 import CellInput from "./CellInput";
-
-const diplomeTypeMatcher = {
-  "CERTIFICAT D'APTITUDES PROFESSIONNELLES": "Certificat d’Aptitude Professionnelle",
-  "MENTION COMPLEMENTAIRE": "Mention Complémentaire",
-  "BREVET PROFESSIONNEL": "Brevet Professionnel",
-  "BAC PROFESSIONNEL": "Bac Professionnel",
-};
+import { DIPLOME_TYPE_MATCHER } from "../../constants";
 
 const columnHelper = createColumnHelper();
 
@@ -232,7 +226,7 @@ const ManageCampagneTable = ({ diplomeType, campagnes, formations, userContext }
               my="15px"
             >
               <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
-                {diplomeTypeMatcher[diplomeType] || diplomeType}
+                {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
               </Text>
               <Text mx="10px">|</Text>
               <Text color="brand.blue.700">
