@@ -110,3 +110,33 @@ export const formatDate = (date) => {
     typedDate.getFullYear(),
   ].join("/");
 };
+
+export const uniqueDiplomeTypesFromCampagne = (campagnes) => [
+  ...new Set(campagnes.map((campagne) => campagne.formation?.data?.diplome)),
+];
+
+export const uniqueDiplomeTypesFromFormation = (formations) => [
+  ...new Set(formations?.map((formation) => formation?.diplome)),
+];
+
+export const orderCampagnesByDiplomeType = (campagnes) => {
+  const orderedCampagnes = {};
+  uniqueDiplomeTypesFromCampagne(campagnes)?.forEach((diplomeType) => {
+    const campagnesByDiplomeType = campagnes.filter(
+      (campagne) => campagne.formation?.data?.diplome === diplomeType
+    );
+    orderedCampagnes[diplomeType] = campagnesByDiplomeType;
+  });
+  return orderedCampagnes;
+};
+
+export const orderFormationsByDiplomeType = (formations) => {
+  const orderedFormations = {};
+  uniqueDiplomeTypesFromFormation(formations)?.forEach((diplomeType) => {
+    const formationsByDiplomeType = formations.filter(
+      (formation) => formation?.diplome === diplomeType
+    );
+    orderedFormations[diplomeType] = formationsByDiplomeType;
+  });
+  return orderedFormations;
+};
