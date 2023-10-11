@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Spinner, Box, Text, Stack } from "@chakra-ui/react";
+import { Spinner, Accordion, Text, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import Header from "../Components/Header";
@@ -49,7 +49,7 @@ const Step1 = ({
       ) : hasError ? (
         <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
       ) : (
-        <Box>
+        <Accordion allowToggle>
           {uniqueDiplomeTypesFromFormation(remoteFormations)?.map((diplomeType) => (
             <CreateCampagneTable
               key={diplomeType}
@@ -61,7 +61,7 @@ const Step1 = ({
               existingFormationCatalogueIds={existingFormationCatalogueIds}
             />
           ))}
-        </Box>
+        </Accordion>
       )}
     </Stack>
   );

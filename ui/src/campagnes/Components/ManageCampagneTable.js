@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
-  Accordion,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
@@ -127,7 +126,18 @@ const getColumns = (handleCellUpdate) => [
         type="number"
       />
     ),
-    header: "Apprenti·es",
+    header: (
+      <Box display="flex" flexDirection="row" justifyContent="flex-start" w="100%">
+        <Text mr="3px">Apprenti·es</Text>
+        <Tooltip
+          label={
+            <Text>Jeunes inscrits dans la formation au moment de la création de la campagne</Text>
+          }
+        >
+          <Image src={IoInformationCircleOutline} />
+        </Tooltip>
+      </Box>
+    ),
     meta: {
       isNumeric: true,
     },
@@ -203,158 +213,157 @@ const ManageCampagneTable = ({ diplomeType, campagnes, formations, userContext }
   });
 
   return (
-    <Accordion allowToggle>
-      <AccordionItem
-        sx={{
-          border: "1px solid #CACAFB",
-          borderRadius: "12px",
-          margin: "15px 0",
-        }}
-      >
-        <h2>
-          <AccordionButton
-            _hover={{
-              backgroundColor: "transparent",
-            }}
+    <AccordionItem
+      sx={{
+        border: "1px solid #CACAFB",
+        borderRadius: "12px",
+        margin: "15px 0",
+      }}
+    >
+      <h2>
+        <AccordionButton
+          _hover={{
+            backgroundColor: "transparent",
+          }}
+        >
+          <Box
+            display="flex"
+            textAlign="left"
+            flexDirection="row"
+            alignItems="center"
+            w="60%"
+            my="15px"
           >
-            <Box
-              display="flex"
-              textAlign="left"
-              flexDirection="row"
-              alignItems="center"
-              w="60%"
-              my="15px"
-            >
-              <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
-                {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
-              </Text>
-              <Text mx="10px">|</Text>
-              <Text color="brand.blue.700">
-                {campagnes.length}/{formations.length} campagne{campagnes.length > 1 ? "s" : ""}{" "}
-                créée
-                {campagnes.length > 1 ? "s" : ""}
-              </Text>
-            </Box>
-            <Box
-              display="flex"
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="flex-end"
-              my="15px"
-              mr="16px"
-              w="40%"
-            >
-              <Button as="div" leftIcon={<DownloadIcon />} variant="filled" ml="auto" size="md">
-                Télécharger les supports de partage
-              </Button>
-            </Box>
-            <AccordionIcon color="brand.blue.700" fontSize="34px" />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4} px="0" overflowX="auto">
-          <Stack direction="column" mx="15px">
-            <Stack direction="row" mt="32px" mb="20px">
-              <InputGroup w="325px">
-                <Input
-                  id="search"
-                  name="search"
-                  type="text"
-                  placeholder="Rechercher une formation"
-                  onChange={handleSearch}
-                  value={search}
-                  size="lg"
-                  color="brand.black.500"
-                  _placeholder={{ color: "brand.black.500", fontSize: "16px" }}
-                  borderColor="brand.blue.400"
-                  fontSize="16px"
-                />
-                <InputRightElement h="100%">
-                  <SearchIcon color="brand.black.500" />
-                </InputRightElement>
-              </InputGroup>
-              <Select
-                id="sorting"
-                name="sorting"
-                variant="outline"
+            <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
+              {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
+            </Text>
+            <Text mx="10px">|</Text>
+            <Text color="brand.blue.700">
+              {campagnes.length}/{formations.length} campagne{campagnes.length > 1 ? "s" : ""} créée
+              {campagnes.length > 1 ? "s" : ""}
+            </Text>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="flex-end"
+            my="15px"
+            mr="16px"
+            w="40%"
+          >
+            <Button as="div" leftIcon={<DownloadIcon />} variant="filled" ml="auto" size="md">
+              Télécharger les supports de partage
+            </Button>
+          </Box>
+          <AccordionIcon color="brand.blue.700" fontSize="34px" />
+        </AccordionButton>
+      </h2>
+      <AccordionPanel pb={4} px="0" overflowX="auto">
+        <Stack direction="column" mx="15px">
+          <Stack direction="row" mt="32px" mb="20px">
+            <InputGroup w="325px">
+              <Input
+                id="search"
+                name="search"
+                type="text"
+                placeholder="Rechercher une formation"
+                onChange={handleSearch}
+                value={search}
                 size="lg"
-                placeholder="Trier AZ"
+                color="brand.black.500"
+                _placeholder={{ color: "brand.black.500", fontSize: "16px" }}
                 borderColor="brand.blue.400"
-                onChange={(event) => setSorting([JSON.parse(event.target.value)])}
-                value={JSON.stringify(sorting[0])}
-                w="325px"
-              >
-                {sortingOptions.map((option) => (
-                  <option key={option.label} value={JSON.stringify(option.value)}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
-            </Stack>
+                fontSize="16px"
+              />
+              <InputRightElement h="100%">
+                <SearchIcon color="brand.black.500" />
+              </InputRightElement>
+            </InputGroup>
+            <Select
+              id="sorting"
+              name="sorting"
+              variant="outline"
+              size="lg"
+              placeholder="Trier AZ"
+              borderColor="brand.blue.400"
+              onChange={(event) =>
+                setSorting(event.target.value ? [JSON.parse(event.target.value)] : [])
+              }
+              value={JSON.stringify(sorting[0])}
+              w="325px"
+            >
+              {sortingOptions.map((option) => (
+                <option key={option.label} value={JSON.stringify(option.value)}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
           </Stack>
-          <Table>
-            <Thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <Tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    const meta = header.column.columnDef.meta;
-                    return (
-                      <Th
-                        key={header.id}
-                        onClick={header.column.getToggleSortingHandler()}
-                        isNumeric={meta?.isNumeric}
-                        color="brand.blue.700"
-                        textTransform="none"
-                        fontSize="14px"
-                        fontWeight="400"
-                        borderColor="brand.blue.400"
-                        px="15px"
-                      >
-                        <Box display="flex" w="calc(100% + 16px)">
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          <chakra.span pl="4px">
-                            {header.column.getIsSorted() ? (
-                              header.column.getIsSorted() === "desc" ? (
-                                <TriangleDownIcon aria-label="sorted descending" />
-                              ) : (
-                                <TriangleUpIcon aria-label="sorted ascending" />
-                              )
-                            ) : null}
-                          </chakra.span>
-                        </Box>
-                      </Th>
-                    );
-                  })}
-                </Tr>
-              ))}
-            </Thead>
-            <Tbody>
-              {table.getRowModel().rows.map((row, index) => (
-                <Tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <Td
-                        key={cell.id}
-                        px="15px"
-                        fontSize="14px"
-                        borderColor={
-                          index === table.getRowModel().rows.length - 1
-                            ? "transparent"
-                            : "brand.blue.400"
-                        }
-                      >
-                        <Box display="flex" maxW="300px">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </Box>
-                      </Td>
-                    );
-                  })}
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </AccordionPanel>
-      </AccordionItem>
-    </Accordion>
+        </Stack>
+        <Table>
+          <Thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  const meta = header.column.columnDef.meta;
+                  return (
+                    <Th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      isNumeric={meta?.isNumeric}
+                      color="brand.blue.700"
+                      textTransform="none"
+                      fontSize="14px"
+                      fontWeight="400"
+                      borderColor="brand.blue.400"
+                      px="15px"
+                    >
+                      <Box display="flex" w="calc(100% + 16px)">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        <chakra.span pl="4px">
+                          {header.column.getIsSorted() ? (
+                            header.column.getIsSorted() === "desc" ? (
+                              <TriangleDownIcon aria-label="sorted descending" />
+                            ) : (
+                              <TriangleUpIcon aria-label="sorted ascending" />
+                            )
+                          ) : null}
+                        </chakra.span>
+                      </Box>
+                    </Th>
+                  );
+                })}
+              </Tr>
+            ))}
+          </Thead>
+          <Tbody>
+            {table.getRowModel().rows.map((row, index) => (
+              <Tr key={row.id}>
+                {row.getVisibleCells().map((cell) => {
+                  return (
+                    <Td
+                      key={cell.id}
+                      px="15px"
+                      fontSize="14px"
+                      borderColor={
+                        index === table.getRowModel().rows.length - 1
+                          ? "transparent"
+                          : "brand.blue.400"
+                      }
+                    >
+                      <Box display="flex" maxW="300px">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Box>
+                    </Td>
+                  );
+                })}
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </AccordionPanel>
+    </AccordionItem>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Spinner, Box, Text, Stack } from "@chakra-ui/react";
+import { Spinner, Box, Text, Stack, Accordion } from "@chakra-ui/react";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import { USER_ROLES } from "../constants";
@@ -60,15 +60,17 @@ const ViewCampagnes = () => {
         ) : errorCampagnes || errorFormations ? (
           <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
         ) : (
-          uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
-            <ManageCampagneTable
-              key={diplomeType}
-              diplomeType={diplomeType}
-              campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
-              formations={orderFormationsByDiplomeType(formations)[diplomeType]}
-              userContext={userContext}
-            />
-          ))
+          <Accordion allowToggle>
+            {uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
+              <ManageCampagneTable
+                key={diplomeType}
+                diplomeType={diplomeType}
+                campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
+                formations={orderFormationsByDiplomeType(formations)[diplomeType]}
+                userContext={userContext}
+              />
+            ))}
+          </Accordion>
         )}
       </Box>
     </Stack>

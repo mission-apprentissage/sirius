@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
-  Accordion,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
@@ -114,226 +113,224 @@ const CreateCampagneTable = ({
     );
 
   return (
-    <Accordion allowToggle>
-      <AccordionItem
-        sx={{
-          border: "1px solid #CACAFB",
-          borderRadius: "12px",
-          margin: "15px 0",
-        }}
-      >
-        <h2>
-          <AccordionButton
-            _hover={{
-              backgroundColor: "transparent",
-            }}
+    <AccordionItem
+      sx={{
+        border: "1px solid #CACAFB",
+        borderRadius: "12px",
+        margin: "15px 0",
+      }}
+    >
+      <h2>
+        <AccordionButton
+          _hover={{
+            backgroundColor: "transparent",
+          }}
+        >
+          <Box
+            display="flex"
+            textAlign="left"
+            flexDirection="row"
+            alignItems="center"
+            w="100%"
+            my="15px"
           >
-            <Box
-              display="flex"
-              textAlign="left"
-              flexDirection="row"
-              alignItems="center"
-              w="100%"
-              my="15px"
-            >
-              <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
-                {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
-              </Text>
-              <Text mx="10px">|</Text>
-              <Text color="brand.blue.700">
-                {selectedFormations.length}/{formations.length} formation
-                {selectedFormations.length > 1 ? "s" : ""} sélectionnée
-                {selectedFormations.length > 1 ? "s" : ""}
-              </Text>
-            </Box>
-            <AccordionIcon color="brand.blue.700" fontSize="34px" />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4} px="0" overflowX="auto">
-          <Stack direction="column" mx="15px">
-            <Stack direction="row" mt="32px" mb="20px">
-              <Checkbox
-                id="selectAll"
-                size="lg"
-                borderColor="brand.blue.400"
-                isChecked={selectedFormations.length}
-                mr="20px"
-                icon={<CheckboxIcon as={allCheckedIcon} />}
-                _checked={{
-                  "& .chakra-checkbox__control": { backgroundColor: "brand.blue.700" },
-                }}
-                _hover={{
-                  "& .chakra-checkbox__control": {
-                    backgroundColor: selectedFormations.length ? "brand.blue.700" : "transparent",
-                  },
-                }}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedFormations(
-                      formations
+            <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
+              {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
+            </Text>
+            <Text mx="10px">|</Text>
+            <Text color="brand.blue.700">
+              {selectedFormations.length}/{formations.length} formation
+              {selectedFormations.length > 1 ? "s" : ""} sélectionnée
+              {selectedFormations.length > 1 ? "s" : ""}
+            </Text>
+          </Box>
+          <AccordionIcon color="brand.blue.700" fontSize="34px" />
+        </AccordionButton>
+      </h2>
+      <AccordionPanel pb={4} px="0" overflowX="auto">
+        <Stack direction="column" mx="15px">
+          <Stack direction="row" mt="32px" mb="20px">
+            <Checkbox
+              id="selectAll"
+              size="lg"
+              borderColor="brand.blue.400"
+              isChecked={selectedFormations.length}
+              mr="20px"
+              icon={<CheckboxIcon as={allCheckedIcon} />}
+              _checked={{
+                "& .chakra-checkbox__control": { backgroundColor: "brand.blue.700" },
+              }}
+              _hover={{
+                "& .chakra-checkbox__control": {
+                  backgroundColor: selectedFormations.length ? "brand.blue.700" : "transparent",
+                },
+              }}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedFormations(
+                    formations
+                      .map((formation) => formation._id)
+                      .filter(
+                        (formationId) => !existingFormationCatalogueIds?.includes(formationId)
+                      )
+                  );
+                  setAllDiplomesSelectedFormations((prevValue) => [
+                    ...new Set([
+                      ...prevValue,
+                      ...formations
                         .map((formation) => formation._id)
                         .filter(
                           (formationId) => !existingFormationCatalogueIds?.includes(formationId)
-                        )
+                        ),
+                    ]),
+                  ]);
+                } else {
+                  setSelectedFormations([]);
+                  setAllDiplomesSelectedFormations((prevValue) => {
+                    const filtered = prevValue.filter(
+                      (id) => !formations.map((formation) => formation._id).includes(id)
                     );
-                    setAllDiplomesSelectedFormations((prevValue) => [
-                      ...new Set([
-                        ...prevValue,
-                        ...formations
-                          .map((formation) => formation._id)
-                          .filter(
-                            (formationId) => !existingFormationCatalogueIds?.includes(formationId)
-                          ),
-                      ]),
-                    ]);
-                  } else {
-                    setSelectedFormations([]);
-                    setAllDiplomesSelectedFormations((prevValue) => {
-                      const filtered = prevValue.filter(
-                        (id) => !formations.map((formation) => formation._id).includes(id)
-                      );
-                      return filtered;
-                    });
-                  }
-                }}
-              >
-                <Text fontSize="16px" color="brand.black.500">
-                  {selectedFormations.length
-                    ? `${selectedFormations.length} formation${
-                        selectedFormations.length > 1 ? "s" : ""
-                      } sélectionnée${selectedFormations.length > 1 ? "s" : ""}`
-                    : "Tout sélectionner"}
-                </Text>
-              </Checkbox>
-              <InputGroup w="325px">
-                <Input
-                  id="search"
-                  name="search"
-                  type="text"
-                  placeholder="Rechercher une formation"
-                  onChange={handleSearch}
-                  value={search}
-                  size="lg"
-                  color="brand.black.500"
-                  _placeholder={{ color: "brand.black.500", fontSize: "16px" }}
-                  borderColor="brand.blue.400"
-                  fontSize="16px"
-                />
-                <InputRightElement h="100%">
-                  <SearchIcon color="brand.black.500" />
-                </InputRightElement>
-              </InputGroup>
-              <Select
-                id="sorting"
-                name="sorting"
-                variant="outline"
+                    return filtered;
+                  });
+                }
+              }}
+            >
+              <Text fontSize="16px" color="brand.black.500">
+                {selectedFormations.length
+                  ? `${selectedFormations.length} formation${
+                      selectedFormations.length > 1 ? "s" : ""
+                    } sélectionnée${selectedFormations.length > 1 ? "s" : ""}`
+                  : "Tout sélectionner"}
+              </Text>
+            </Checkbox>
+            <InputGroup w="325px">
+              <Input
+                id="search"
+                name="search"
+                type="text"
+                placeholder="Rechercher une formation"
+                onChange={handleSearch}
+                value={search}
                 size="lg"
-                placeholder="Trier AZ"
+                color="brand.black.500"
+                _placeholder={{ color: "brand.black.500", fontSize: "16px" }}
                 borderColor="brand.blue.400"
-                onChange={(event) => setSorting([JSON.parse(event.target.value)])}
-                value={JSON.stringify(sorting[0])}
-                w="325px"
-              >
-                {sortingOptions.map((option) => (
-                  <option key={option.label} value={JSON.stringify(option.value)}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
-            </Stack>
+                fontSize="16px"
+              />
+              <InputRightElement h="100%">
+                <SearchIcon color="brand.black.500" />
+              </InputRightElement>
+            </InputGroup>
+            <Select
+              id="sorting"
+              name="sorting"
+              variant="outline"
+              size="lg"
+              placeholder="Trier AZ"
+              borderColor="brand.blue.400"
+              onChange={(event) =>
+                setSorting(event.target.value ? [JSON.parse(event.target.value)] : [])
+              }
+              value={JSON.stringify(sorting[0])}
+              w="325px"
+            >
+              {sortingOptions.map((option) => (
+                <option key={option.label} value={JSON.stringify(option.value)}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
           </Stack>
-          <Grid templateColumns="repeat(4, 1fr)" mx="55px">
-            {displayedFormations.map((formation, index) => (
-              <Tooltip
-                key={formation.cle_ministere_educatif}
-                isDisabled={!existingFormationCatalogueIds?.includes(formation._id)}
-                label="Cette formation est déjà liée à une campagne. Vous ne pouvez pas la sélectionner."
+        </Stack>
+        <Grid templateColumns="repeat(4, 1fr)" mx="55px">
+          {displayedFormations.map((formation, index) => (
+            <Tooltip
+              key={formation.cle_ministere_educatif}
+              isDisabled={!existingFormationCatalogueIds?.includes(formation._id)}
+              label="Cette formation est déjà liée à une campagne. Vous ne pouvez pas la sélectionner."
+            >
+              <GridItem
+                fontSize="14px"
+                borderBottom={index < displayedFormations.length - 3 ? "1px solid #CACAFB" : "none"}
+                py="12px"
               >
-                <GridItem
-                  fontSize="14px"
-                  borderBottom={
-                    index < displayedFormations.length - 3 ? "1px solid #CACAFB" : "none"
-                  }
-                  py="12px"
-                >
-                  <Stack direction="row">
-                    <Checkbox
-                      id={formation.id}
-                      disabled={existingFormationCatalogueIds?.includes(formation._id)}
-                      size="lg"
-                      pr="8px"
-                      borderColor="brand.blue.400"
-                      isChecked={selectedFormations.includes(formation.id)}
-                      _checked={{
-                        "& .chakra-checkbox__control": { backgroundColor: "brand.blue.700" },
-                      }}
-                      _hover={{
-                        "& .chakra-checkbox__control": {
-                          backgroundColor: selectedFormations.includes(formation.id)
-                            ? "brand.blue.700"
-                            : existingFormationCatalogueIds?.includes(formation._id)
-                            ? "gray.100"
-                            : "transparent",
-                        },
-                      }}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedFormations([...selectedFormations, formation.id]);
-                          setAllDiplomesSelectedFormations((prev) => [...prev, formation.id]);
-                        } else {
-                          setSelectedFormations(
-                            selectedFormations.filter((id) => id !== formation.id)
-                          );
-                          setAllDiplomesSelectedFormations((prev) =>
-                            prev.filter((id) => id !== formation.id)
-                          );
-                        }
-                      }}
-                    />
-                    <Stack
-                      spacing={0}
-                      disabled={true}
+                <Stack direction="row">
+                  <Checkbox
+                    id={formation.id}
+                    disabled={existingFormationCatalogueIds?.includes(formation._id)}
+                    size="lg"
+                    pr="8px"
+                    borderColor="brand.blue.400"
+                    isChecked={selectedFormations.includes(formation.id)}
+                    _checked={{
+                      "& .chakra-checkbox__control": { backgroundColor: "brand.blue.700" },
+                    }}
+                    _hover={{
+                      "& .chakra-checkbox__control": {
+                        backgroundColor: selectedFormations.includes(formation.id)
+                          ? "brand.blue.700"
+                          : existingFormationCatalogueIds?.includes(formation._id)
+                          ? "gray.100"
+                          : "transparent",
+                      },
+                    }}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedFormations([...selectedFormations, formation.id]);
+                        setAllDiplomesSelectedFormations((prev) => [...prev, formation.id]);
+                      } else {
+                        setSelectedFormations(
+                          selectedFormations.filter((id) => id !== formation.id)
+                        );
+                        setAllDiplomesSelectedFormations((prev) =>
+                          prev.filter((id) => id !== formation.id)
+                        );
+                      }
+                    }}
+                  />
+                  <Stack
+                    spacing={0}
+                    disabled={true}
+                    color={
+                      existingFormationCatalogueIds?.includes(formation._id)
+                        ? "gray.400"
+                        : "initial"
+                    }
+                  >
+                    <Text fontWeight="600" mb="4px">
+                      {formation.intitule_long}
+                    </Text>
+                    <Text mb="4px">{formation.localite}</Text>
+                    <Text mb="4px">{formation.tags?.join("-")}</Text>
+                    <Link
+                      href={`https://catalogue-apprentissage.intercariforef.org/formation/${formation.id}`}
+                      target="_blank"
+                      display="flex"
+                      alignItems="center"
                       color={
                         existingFormationCatalogueIds?.includes(formation._id)
                           ? "gray.400"
-                          : "initial"
+                          : "brand.blue.700"
                       }
                     >
-                      <Text fontWeight="600" mb="4px">
-                        {formation.intitule_long}
-                      </Text>
-                      <Text mb="4px">{formation.localite}</Text>
-                      <Text mb="4px">{formation.tags?.join("-")}</Text>
-                      <Link
-                        href={`https://catalogue-apprentissage.intercariforef.org/formation/${formation.id}`}
-                        target="_blank"
-                        display="flex"
-                        alignItems="center"
+                      <ExternalLinkIcon
+                        mr="5px"
                         color={
                           existingFormationCatalogueIds?.includes(formation._id)
                             ? "gray.400"
                             : "brand.blue.700"
                         }
-                      >
-                        <ExternalLinkIcon
-                          mr="5px"
-                          color={
-                            existingFormationCatalogueIds?.includes(formation._id)
-                              ? "gray.400"
-                              : "brand.blue.700"
-                          }
-                        />
-                        Voir détail formation (CARIF OREF)
-                      </Link>
-                    </Stack>
+                      />
+                      Voir détail formation (CARIF OREF)
+                    </Link>
                   </Stack>
-                </GridItem>
-              </Tooltip>
-            ))}
-          </Grid>
-        </AccordionPanel>
-      </AccordionItem>
-    </Accordion>
+                </Stack>
+              </GridItem>
+            </Tooltip>
+          ))}
+        </Grid>
+      </AccordionPanel>
+    </AccordionItem>
   );
 };
 
