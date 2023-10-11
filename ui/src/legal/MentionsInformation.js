@@ -1,26 +1,17 @@
 import { Box, Stack, Text, UnorderedList, ListItem, useBreakpoint, Link } from "@chakra-ui/react";
-import Footer from "../Components/Footer";
 
 const MentionsInformation = () => {
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
 
   return (
-    <Stack direction="column" w="100%" m="auto">
-      <Box
-        w={isMobile ? "90%" : "70%"}
-        bg="white"
-        p={6}
-        rounded="md"
-        boxShadow="md"
-        m="auto"
-        mt={isMobile ? "5" : "auto"}
-      >
+    <Stack direction="column" w="100%" m="auto" my="32px" color="brand.blue.700">
+      <Box w={isMobile ? "90%" : "70%"} bg="white" p={6} m="auto" mt={isMobile ? "5" : "auto"}>
         <Stack spacing="4">
-          <Text fontSize="3xl" fontWeight="semibold" textAlign="center" mb="3">
+          <Text fontSize="3xl" fontWeight="semibold" mb="32px">
             Mentions d'information
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold">
             Qui sommes-nous ?
           </Text>
           <Text>
@@ -43,7 +34,7 @@ const MentionsInformation = () => {
             </Link>{" "}
             et aux articles L.313-6 et D.313-14 à D.313-33 du Code de l'Éducation.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Quel est l’objectif de ce questionnaire d’enquête ?
           </Text>
           <Text>
@@ -52,7 +43,7 @@ const MentionsInformation = () => {
             l’apprentissage, grâce aux avis des apprentis en cours de formation ou ayant obtenu leur
             certification.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Quelle est la licéité de ce traitement de données ?
           </Text>
           <Text>
@@ -85,7 +76,7 @@ const MentionsInformation = () => {
             La licéité du traitement est donc celle de l’article 6-1 e) du RGPD, soit une mission
             d’intérêt public.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Pourquoi recevez-vous ce mail et d’où viennent vos données ?
           </Text>
           <Text>
@@ -102,7 +93,7 @@ const MentionsInformation = () => {
           <Text>
             Les avis sont collectés par l’envoi d’un mail avec un lien vers un questionnaire.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Quelles sont les données collectées par Sirius ?
           </Text>
           <Text>
@@ -134,11 +125,11 @@ const MentionsInformation = () => {
               <ListItem>Avis et commentaires libres</ListItem>
             </UnorderedList>
           </Box>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Cookies
           </Text>
           <Text>Aucun cookie n’est utilisé sur le questionnaire</Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             À qui sont transmises vos données ?
           </Text>
           <Text>
@@ -154,7 +145,7 @@ const MentionsInformation = () => {
           <Text>
             Aucun transfert de données en dehors de l’Union européenne n’est mis en œuvre.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Combien de temps les données sont-elles conservées ?
           </Text>
           <Text>
@@ -162,7 +153,7 @@ const MentionsInformation = () => {
             réponse au questionnaire, afin que vous puissiez exercer votre droit d’accès,
             d’opposition, de rectification ou de limitation.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Comment exercer vos droits ?
           </Text>
           <Text>

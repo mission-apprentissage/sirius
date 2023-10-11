@@ -14,31 +14,22 @@ import {
   UnorderedList,
   ListItem,
 } from "@chakra-ui/react";
-import Footer from "../Components/Footer";
 
 const PolitiqueConfidentialite = () => {
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
 
   return (
-    <Stack direction="column" w="100%" m="auto">
-      <Box
-        w={isMobile ? "90%" : "70%"}
-        bg="white"
-        p={6}
-        rounded="md"
-        boxShadow="md"
-        m="auto"
-        mt={isMobile ? "5" : "auto"}
-      >
+    <Stack direction="column" w="100%" m="auto" my="32px" color="brand.blue.700">
+      <Box w={isMobile ? "90%" : "70%"} bg="white" p={6} m="auto" mt={isMobile ? "5" : "auto"}>
         <Stack spacing="4">
-          <Text fontSize="3xl" fontWeight="semibold" textAlign="center" mb="3">
+          <Text fontSize="3xl" fontWeight="semibold" mb="32px">
             Politique de confidentialité
           </Text>
-          <Text fontSize="3xl" fontWeight="semibold" textAlign="center" mb="3">
+          <Text fontSize="3xl" fontWeight="semibold" mb="32px">
             SIRIUS
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Qui est responsable de Sirius ?
           </Text>
           <Text>
@@ -50,7 +41,7 @@ const PolitiqueConfidentialite = () => {
             Le responsable de traitement est la Délégation générale à l’emploi et à la formation
             professionnelle, représentée par Monsieur Bruno Lucas.{" "}
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Quelles sont les données que nous traitons ?
           </Text>
           <Text>
@@ -59,17 +50,17 @@ const PolitiqueConfidentialite = () => {
             doivent pas faire l’objet d’informations relatives aux opinions philosophiques,
             syndicales, religieuses ou à l’orientation sexuelle. Ces données sont trop sensibles !
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Qui nous aide à traiter les données ?
           </Text>
           <TableContainer>
             <Table variant="simple">
               <Thead>
                 <Tr>
-                  <Th>Sous-traitant</Th>
-                  <Th>Pays destinataire</Th>
-                  <Th>Traitement réalisé</Th>
-                  <Th>Garanties</Th>
+                  <Th color="brand.blue.700">Sous-traitant</Th>
+                  <Th color="brand.blue.700">Pays destinataire</Th>
+                  <Th color="brand.blue.700">Traitement réalisé</Th>
+                  <Th color="brand.blue.700">Garanties</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -99,7 +90,7 @@ const PolitiqueConfidentialite = () => {
               </Tbody>
             </Table>
           </TableContainer>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Quels sont vos droits ?
           </Text>
           <Text>Vous bénéficiez d’un :</Text>
@@ -111,7 +102,7 @@ const PolitiqueConfidentialite = () => {
               <ListItem>Droit d’opposition.</ListItem>
             </UnorderedList>
           </Box>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Cookies
           </Text>
           <Text>

@@ -3,6 +3,7 @@ import { Flex, Box, Spinner, useBreakpoint } from "@chakra-ui/react";
 import Navbar from "./Navbar";
 import UnauthNavbar from "./UnauthNavbar";
 import { UserContext } from "../context/UserContext";
+import Footer from "./Footer";
 
 const Layout = ({ children }) => {
   const [userContext] = useContext(UserContext);
@@ -28,6 +29,7 @@ const Layout = ({ children }) => {
       >
         <Flex>{children}</Flex>
       </Box>
+      <Footer />
     </>
   );
 };
