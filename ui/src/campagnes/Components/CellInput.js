@@ -8,8 +8,22 @@ import IoCheckmarkCircleOutline from "../../assets/icons/IoCheckmarkCircleOutlin
 import IoCloseCircleOutline from "../../assets/icons/IoCloseCircleOutline.svg";
 import FiEdit from "../../assets/icons/FiEdit.svg";
 
-const CellTextInput = ({ id, name, info, handleCellUpdate, type }) => {
-  const [isEditing, setIsEditing] = useState(false);
+const CellTextInput = ({
+  id,
+  name,
+  info,
+  handleCellUpdate = null,
+  type,
+  isEditingAtStart = false,
+  placeholder = "",
+  rightElement = null,
+  rightElementProps = null,
+  noRightElement = false,
+  style = {},
+  formik = null,
+  onChange = null,
+}) => {
+  const [isEditing, setIsEditing] = useState(isEditingAtStart);
   const [value, setValue] = useState(info.getValue());
   const [isSuccess, setIsSuccess] = useState(false);
   const [isFail, setIsFail] = useState(false);
@@ -23,7 +37,65 @@ const CellTextInput = ({ id, name, info, handleCellUpdate, type }) => {
   const isNumber = type === "number";
 
   const displayedValue =
-    type === "date" ? formatDate(value || info.getValue()) : value || info.getValue();
+    type === "date" && !isEditingAtStart
+      ? formatDate(value || info.getValue())
+      : value || info.getValue();
+
+  const rightElementClickHandler = async () => {
+    const { _id, nomCampagne, startDate, endDate, seats, questionnaireId } = info.row.original;
+    const result = await handleCellUpdate(_id, {
+      nomCampagne,
+      startDate,
+      endDate,
+      seats,
+      questionnaireId,
+      [name]: value,
+    });
+    if (result.status === "success") {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsEditing(false);
+        setIsSuccess(false);
+      }, 800);
+    } else {
+      setIsFail(true);
+      setValue(info.getValue());
+      setTimeout(() => {
+        setIsEditing(false);
+        setIsFail(false);
+      }, 800);
+    }
+  };
+
+  const rightElementGetter = noRightElement ? null : rightElement ? (
+    rightElement
+  ) : (
+    <animated.div
+      style={{
+        ...rightElementSpring,
+      }}
+    >
+      <Image
+        src={isFail ? IoCloseCircleOutline : IoCheckmarkCircleOutline}
+        minW="18px"
+        maxW="18px"
+      />
+    </animated.div>
+  );
+
+  const rightElementPropsGetter = noRightElement
+    ? null
+    : rightElementProps
+    ? rightElementProps
+    : {
+        right: isNumber ? "40px" : "2px",
+        top: isNumber ? "3px" : "0",
+        width: "20px",
+        cursor: "pointer",
+        onClick: rightElementClickHandler,
+      };
+
+  const seatsUnlimitedValue = name === "seats" && value === 0 ? "Illimité" : value;
 
   return (
     <Box display="flex" flexDirection="row" alignItems="center" w="100%">
@@ -37,10 +109,17 @@ const CellTextInput = ({ id, name, info, handleCellUpdate, type }) => {
           id={id}
           name={name}
           type={type}
+          placeholder={placeholder}
           noErrorMessage
           w={isNumber ? "150px" : "100%"}
-          value={value}
-          onChange={(e) => setValue(isNumber ? e : e.target.value)}
+          value={formik?.values[name] ? formik?.values[name] : seatsUnlimitedValue}
+          onChange={
+            onChange
+              ? onChange
+              : formik?.onChange
+              ? formik.onChange
+              : (e) => setValue(e.target?.value ? e.target.value : e)
+          }
           size="md"
           fontSize="14px"
           p="4px"
@@ -48,52 +127,11 @@ const CellTextInput = ({ id, name, info, handleCellUpdate, type }) => {
           sx={{
             ...(isSuccess ? { border: "1px solid #48BB78" } : {}),
             ...(isFail ? { border: "1px solid red" } : {}),
+            ...style,
           }}
-          rightElement={
-            <animated.div
-              style={{
-                ...rightElementSpring,
-              }}
-            >
-              <Image
-                src={isFail ? IoCloseCircleOutline : IoCheckmarkCircleOutline}
-                minW="18px"
-                maxW="18px"
-              />
-            </animated.div>
-          }
-          rightElementProps={{
-            right: isNumber ? "40px" : "2px",
-            top: isNumber ? "3px" : "0",
-            width: "20px",
-            cursor: "pointer",
-            onClick: async () => {
-              const { _id, nomCampagne, startDate, endDate, seats, questionnaireId } =
-                info.row.original;
-              const result = await handleCellUpdate(_id, {
-                nomCampagne,
-                startDate,
-                endDate,
-                seats,
-                questionnaireId,
-                [name]: value,
-              });
-              if (result.status === "success") {
-                setIsSuccess(true);
-                setTimeout(() => {
-                  setIsEditing(false);
-                  setIsSuccess(false);
-                }, 800);
-              } else {
-                setIsFail(true);
-                setValue(info.getValue());
-                setTimeout(() => {
-                  setIsEditing(false);
-                  setIsFail(false);
-                }, 800);
-              }
-            },
-          }}
+          rightElement={rightElementGetter}
+          rightElementProps={rightElementPropsGetter}
+          _placeholder={{ color: "gray.600" }}
         />
       )}
       {!isEditing && (

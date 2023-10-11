@@ -21,6 +21,8 @@ const InputText = ({
   noErrorMessage = false,
   rightElement,
   rightElementProps,
+  onChange,
+  value,
   ...props
 }) => {
   return (
@@ -36,8 +38,10 @@ const InputText = ({
             name={name}
             type={type}
             placeholder={placeholder}
-            onChange={formik?.handleChange}
-            value={formik?.values[name]}
+            onChange={(e) =>
+              onChange(e?.target?.value || e) || formik?.handleChange(e.target.value)
+            }
+            value={value || formik?.values[name]}
             size="lg"
             color="brand.black.500"
             _placeholder={{ color: "brand.black.500" }}
@@ -49,17 +53,17 @@ const InputText = ({
           <NumberInput
             id={id}
             name={name}
-            type={type}
-            placeholder={placeholder}
-            onChange={formik?.handleChange}
-            value={formik?.values[name]}
+            onChange={(e) =>
+              onChange(e?.target?.value || e) || formik?.handleChange(e.target.value)
+            }
+            value={value || formik?.values[name]}
             size="lg"
             step={1}
             min={0}
             max={150}
             {...props}
           >
-            <NumberInputField />
+            <NumberInputField placeholder={placeholder} _placeholder={props._placeholder} />
             <NumberInputStepper>
               <NumberIncrementStepper />
               <NumberDecrementStepper />
