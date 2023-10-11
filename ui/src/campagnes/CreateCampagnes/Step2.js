@@ -1,23 +1,13 @@
 import React, { useContext } from "react";
-import { Spinner, Box, Text, Stack } from "@chakra-ui/react";
+import { Accordion, Box, Text, Stack } from "@chakra-ui/react";
 import { UserContext } from "../../context/UserContext";
 import Header from "../Components/Header";
 import Search from "../../assets/images/search.svg";
-import CreateCampagneTable from "../Components/CreateCampagneTable";
+import ConfigureCampagneTable from "../Components/ConfigureCampagneTable";
 import { uniqueDiplomeTypesFromFormation, orderFormationsByDiplomeType } from "../utils";
-import FormError from "../../Components/Form/FormError";
 
-const Step2 = ({
-  hasError,
-  isLoading,
-  remoteFormations,
-  localFormations,
-  setAllDiplomesSelectedFormations,
-  setStep,
-}) => {
+const Step2 = ({ selectedFormations, allDiplomesSelectedFormations, setStep, formik }) => {
   const [userContext] = useContext(UserContext);
-
-  const existingFormationCatalogueIds = localFormations?.map((formation) => formation.data._id);
 
   return (
     <Stack direction="column" w="100%" mb="25px">
@@ -35,7 +25,21 @@ const Step2 = ({
           Dans cette première version de Sirius, seules les formations infra-bac sont disponibles
         </Text>
       </Header>
-      <Box></Box>
+      <Box>
+        <Accordion allowToggle>
+          {uniqueDiplomeTypesFromFormation(selectedFormations)?.map((diplomeType, index) => (
+            <ConfigureCampagneTable
+              key={diplomeType}
+              index={index}
+              diplomeType={diplomeType}
+              formations={orderFormationsByDiplomeType(selectedFormations)[diplomeType]}
+              userContext={userContext}
+              allDiplomesSelectedFormations={allDiplomesSelectedFormations}
+              formik={formik}
+            />
+          ))}
+        </Accordion>
+      </Box>
     </Stack>
   );
 };
