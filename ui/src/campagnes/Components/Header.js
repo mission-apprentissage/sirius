@@ -155,7 +155,7 @@ const Header = ({
             {goBackLabel}
           </Button>
         )}
-        <Stack direction="row" w="100%">
+        <Stack direction="row" w="100%" alignItems="center">
           <Stack display="flex" direction="column" w={isMobile ? "100%" : "calc(100% - 400px)"}>
             {title && (
               <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">
