@@ -8,17 +8,10 @@ import { uniqueDiplomeTypesFromFormation, orderFormationsByDiplomeType } from ".
 
 const Step2 = ({ selectedFormations, allDiplomesSelectedFormations, setStep, formik }) => {
   const [userContext] = useContext(UserContext);
-  /*const formationCountByDiplomeType = orderFormationsByDiplomeType(selectedFormations).map(
-    (diplomeType) => {
-      return {
-        diplomeType,
-        count: orderFormationsByDiplomeType(selectedFormations)[diplomeType].length,
-      };
-    }
-  );*/
 
   const orderedFormationByDiplomeType = orderFormationsByDiplomeType(selectedFormations);
   const formationCountByDiplomeType = {};
+
   for (const key in orderedFormationByDiplomeType) {
     if (orderedFormationByDiplomeType.hasOwnProperty(key)) {
       const value = orderedFormationByDiplomeType[key];
