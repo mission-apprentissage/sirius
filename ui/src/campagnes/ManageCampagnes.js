@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
-import { Spinner, Box, Text, Stack, Accordion } from "@chakra-ui/react";
+import { Spinner, Box, Text, Stack, Accordion, Image, useBreakpoint } from "@chakra-ui/react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import { USER_ROLES } from "../constants";
@@ -14,6 +15,9 @@ import {
   orderFormationsByDiplomeType,
 } from "./utils";
 import FormError from "../Components/Form/FormError";
+import Button from "../Components/Form/Button";
+import IoAddSharp from "../assets/icons/IoAddSharp.svg";
+import FormSuccess from "../Components/Form/FormSuccess";
 
 export const sortingOptions = [
   { label: "Formation (A-Z)", value: { id: "Formation", desc: false } },
@@ -32,6 +36,15 @@ export const sortingOptions = [
 
 const ViewCampagnes = () => {
   const [userContext] = useContext(UserContext);
+  const navigate = useNavigate();
+  const breakpoint = useBreakpoint({ ssr: false });
+  const isMobile = breakpoint === "base";
+
+  const { search } = useLocation();
+  const param = new URLSearchParams(search);
+
+  const status = param.get("status");
+  const count = param.get("count");
 
   const campagneQuery =
     userContext.currentUserRole === USER_ROLES.ETABLISSEMENT ? `?siret=${userContext.siret}` : "";
@@ -51,6 +64,19 @@ const ViewCampagnes = () => {
           <Statistics campagnes={campagnes} />
         )}
       </Header>
+      {status === "error" && (
+        <FormError
+          title="Une erreur est survenue lors de la création des campagnes"
+          hasError
+          errorMessages={["Merci de réessayer ou de contacter le support"]}
+        />
+      )}
+      {status === "success" && (
+        <FormSuccess
+          title={`${count} campagnes ont été créées`}
+          successMessages={["Vous pouvez la retrouver dans la liste ci-dessous"]}
+        />
+      )}
       <Text fontSize="5xl" fontWeight="600" w="100%" color="brand.blue.700">
         Gérer mes campagnes
       </Text>
@@ -60,16 +86,32 @@ const ViewCampagnes = () => {
         ) : errorCampagnes || errorFormations ? (
           <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
         ) : (
-          <Accordion allowToggle>
-            {uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
-              <ManageCampagneTable
-                key={diplomeType}
-                diplomeType={diplomeType}
-                campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
-                formations={orderFormationsByDiplomeType(formations)[diplomeType]}
-                userContext={userContext}
-              />
-            ))}
+          <Accordion allowMultiple>
+            {campagnes.length ? (
+              uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
+                <ManageCampagneTable
+                  key={diplomeType}
+                  diplomeType={diplomeType}
+                  campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
+                  formations={orderFormationsByDiplomeType(formations)[diplomeType]}
+                  userContext={userContext}
+                />
+              ))
+            ) : (
+              <Box display="flex" w="100%" justifyContent="center" mt="25px">
+                <Button
+                  isLink
+                  onClick={() => navigate("/campagnes/ajout")}
+                  leftIcon={<Image src={IoAddSharp} alt="" />}
+                  mx={isMobile ? "0" : "8px"}
+                  mr={isMobile ? "0" : "8px"}
+                  mt={isMobile ? "8px" : "0"}
+                  w={isMobile ? "100%" : "min-content"}
+                >
+                  Créer une première campagne
+                </Button>
+              </Box>
+            )}
           </Accordion>
         )}
       </Box>
