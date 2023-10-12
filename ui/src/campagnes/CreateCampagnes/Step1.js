@@ -49,7 +49,7 @@ const Step1 = ({
       ) : hasError ? (
         <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
       ) : (
-        <Accordion allowToggle>
+        <Accordion allowMultiple>
           {uniqueDiplomeTypesFromFormation(remoteFormations)?.map((diplomeType) => (
             <CreateCampagneTable
               key={diplomeType}
