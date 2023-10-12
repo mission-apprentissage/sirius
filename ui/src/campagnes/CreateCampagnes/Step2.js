@@ -8,6 +8,23 @@ import { uniqueDiplomeTypesFromFormation, orderFormationsByDiplomeType } from ".
 
 const Step2 = ({ selectedFormations, allDiplomesSelectedFormations, setStep, formik }) => {
   const [userContext] = useContext(UserContext);
+  /*const formationCountByDiplomeType = orderFormationsByDiplomeType(selectedFormations).map(
+    (diplomeType) => {
+      return {
+        diplomeType,
+        count: orderFormationsByDiplomeType(selectedFormations)[diplomeType].length,
+      };
+    }
+  );*/
+
+  const orderedFormationByDiplomeType = orderFormationsByDiplomeType(selectedFormations);
+  const formationCountByDiplomeType = {};
+  for (const key in orderedFormationByDiplomeType) {
+    if (orderedFormationByDiplomeType.hasOwnProperty(key)) {
+      const value = orderedFormationByDiplomeType[key];
+      formationCountByDiplomeType[key] = value.length;
+    }
+  }
 
   return (
     <Stack direction="column" w="100%" mb="25px">
@@ -26,7 +43,7 @@ const Step2 = ({ selectedFormations, allDiplomesSelectedFormations, setStep, for
         </Text>
       </Header>
       <Box>
-        <Accordion allowToggle>
+        <Accordion allowMultiple>
           {uniqueDiplomeTypesFromFormation(selectedFormations)?.map((diplomeType, index) => (
             <ConfigureCampagneTable
               key={diplomeType}
@@ -36,6 +53,18 @@ const Step2 = ({ selectedFormations, allDiplomesSelectedFormations, setStep, for
               userContext={userContext}
               allDiplomesSelectedFormations={allDiplomesSelectedFormations}
               formik={formik}
+              offset={() => {
+                if (index === 0) return 0;
+                let offset = 0;
+                for (let i = 0; i < index; i++) {
+                  offset +=
+                    formationCountByDiplomeType[
+                      uniqueDiplomeTypesFromFormation(selectedFormations)[i]
+                    ];
+                }
+
+                return offset;
+              }}
             />
           ))}
         </Accordion>
