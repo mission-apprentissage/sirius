@@ -23,15 +23,16 @@ const Statistics = ({ campagnes }) => {
   const campagnesCount = campagnes.length;
   const finishedCampagnesCount = getFinishedCampagnes(campagnes).length;
   const answererCount = getAnswererCount(campagnes);
-  const champsLibreRate = getChampsLibreRate(campagnes);
-  const medianDuration = getMedianDuration(campagnes);
+  const champsLibreRate = campagnes.length ? getChampsLibreRate(campagnes) : "0";
+  const medianDuration = campagnes.length ? getMedianDuration(campagnes) : "0 min";
+  const pluralOrNot = campagnes.length > 1 ? "s" : "";
 
   return (
     <SimpleGrid spacing={3} templateColumns="repeat(auto-fill, minmax(170px, 1fr))" w="100%">
       <Card variant="filled" bgColor="brand.blue.100" borderRadius="12px">
         <CardHeader pb="0">
           <Text fontSize="sm" fontWeight="500" color="brand.gray.700">
-            Campagne(s) créée(s)
+            Campagne{pluralOrNot} créée{pluralOrNot}
           </Text>
         </CardHeader>
         <CardBody pt="5px">
@@ -43,7 +44,7 @@ const Statistics = ({ campagnes }) => {
       <Card variant="filled" bgColor="brand.blue.100" borderRadius="12px">
         <CardHeader pb="0">
           <Text fontSize="sm" fontWeight="500" color="brand.gray.700">
-            Campagne(s) finie(s)
+            Campagne{pluralOrNot} finie{pluralOrNot}
           </Text>
         </CardHeader>
         <CardBody pt="5px">
@@ -55,7 +56,7 @@ const Statistics = ({ campagnes }) => {
       <Card variant="filled" bgColor="brand.blue.100" borderRadius="12px">
         <CardHeader pb="0">
           <Text fontSize="sm" fontWeight="500" color="brand.gray.700">
-            Nombre de répondant(s)
+            Nombre de répondant{pluralOrNot}
           </Text>
         </CardHeader>
         <CardBody pt="5px">
