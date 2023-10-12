@@ -239,8 +239,9 @@ const ManageCampagneTable = ({ diplomeType, campagnes, formations, userContext }
             </Text>
             <Text mx="10px">|</Text>
             <Text color="brand.blue.700">
-              {campagnes.length}/{formations.length} campagne{campagnes.length > 1 ? "s" : ""} créée
-              {campagnes.length > 1 ? "s" : ""}
+              {campagnes?.length}/{formations?.length} campagne{campagnes?.length > 1 ? "s" : ""}{" "}
+              créée
+              {campagnes?.length > 1 ? "s" : ""}
             </Text>
           </Box>
           <Box
