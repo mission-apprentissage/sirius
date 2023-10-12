@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const createCampagneSchema = Joi.object({
-  nomCampagne: Joi.string().required(),
+  nomCampagne: Joi.string().allow(""),
   startDate: Joi.date().required(),
   endDate: Joi.date().min(1).required(),
   questionnaireId: Joi.string().required(),
