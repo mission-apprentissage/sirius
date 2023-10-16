@@ -19,12 +19,31 @@ const loginUser = async (id) => {
   try {
     const user = await usersDao.getOne(id);
 
-    const token = getToken({ _id: id, role: user.role, status: user.status, siret: user.siret });
+    const token = getToken({
+      _id: id,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN && {
+        etablissementLabel:
+          user.etablissement.onisep_nom || user.etablissement.enseigne || user.etablissement.entreprise_raison_sociale,
+      }),
+    });
     const refreshToken = getRefreshToken({
       _id: id,
       role: user.role,
       status: user.status,
       siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN && {
+        etablissementLabel:
+          user.etablissement.onisep_nom || user.etablissement.enseigne || user.etablissement.entreprise_raison_sociale,
+      }),
     });
 
     user.refreshToken.push({ refreshToken });

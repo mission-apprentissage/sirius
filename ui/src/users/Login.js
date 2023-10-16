@@ -67,10 +67,15 @@ const Login = () => {
           return {
             ...oldValues,
             token: result.token,
+            loading: false,
             currentUserId: decodedToken._id,
             currentUserRole: decodedToken.role,
             currentUserStatus: decodedToken.status,
             siret: decodedToken.siret,
+            firstName: decodedToken.firstName,
+            lastName: decodedToken.lastName,
+            email: decodedToken.email,
+            etablissementLabel: decodedToken.etablissementLabel,
           };
         });
         setIsSubmitting(false);

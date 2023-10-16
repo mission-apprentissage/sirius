@@ -63,14 +63,14 @@ const Header = ({
             <Stack direction="row" align="center">
               <Image src={IoSchoolSharp} alt="" />
               <Text color="brand.blue.700" fontSize="lg">
-                {userContext?.etablissementLabel}
+                {userContext.etablissementLabel}
               </Text>
             </Stack>
             {!hasActionButton && !isMobile && <Text mx="10px">-</Text>}
             <Stack direction="row" align="center">
               <Image src={HiUser} alt="" />
               <Text color="brand.blue.700" fontSize="lg">
-                {userContext?.firstName} {userContext?.lastName} - {userContext?.email}
+                {userContext.firstName} {userContext.lastName} - {userContext.email}
               </Text>
             </Stack>
           </Stack>
