@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Spinner, Box, Text, Stack, Accordion, Image, useBreakpoint } from "@chakra-ui/react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import { USER_ROLES } from "../constants";
@@ -37,14 +37,16 @@ export const sortingOptions = [
 const ViewCampagnes = () => {
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const breakpoint = useBreakpoint({ ssr: false });
+  const [counter, setCounter] = useState(5);
+
   const isMobile = breakpoint === "base";
 
-  const { search } = useLocation();
-  const param = new URLSearchParams(search);
+  const params = new URLSearchParams(searchParams);
 
-  const status = param.get("status");
-  const count = param.get("count");
+  const status = params.get("status");
+  const count = params.get("count");
 
   const campagneQuery =
     userContext.currentUserRole === USER_ROLES.ETABLISSEMENT ? `?siret=${userContext.siret}` : "";
@@ -54,6 +56,20 @@ const ViewCampagnes = () => {
   const [formations, loadingFormations, errorFormations] = useFetchRemoteFormations(
     userContext.siret
   );
+
+  useEffect(() => {
+    if (status || count) {
+      counter > 0 &&
+        setTimeout(() => {
+          setCounter(counter - 1);
+          if (counter === 1) {
+            searchParams.delete("status");
+            searchParams.delete("count");
+            setSearchParams(searchParams);
+          }
+        }, 1000);
+    }
+  }, [counter]);
 
   return (
     <Stack direction="column" w="100%">

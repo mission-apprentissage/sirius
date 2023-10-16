@@ -65,6 +65,7 @@ const CreateCampagne = () => {
     //validationSchema: validationSchema,
     onSubmit: async (values) => {
       const mergeCampagneValuesAndInitialValues = initialValues.map((initialValue, index) => ({
+        nomCampagne: "",
         ...initialValue,
         ...values.campagnes[index],
       }));
