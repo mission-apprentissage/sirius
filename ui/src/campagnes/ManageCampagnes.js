@@ -73,8 +73,8 @@ const ViewCampagnes = () => {
       )}
       {status === "success" && (
         <FormSuccess
-          title={`${count} campagnes ont été créées`}
-          successMessages={["Vous pouvez la retrouver dans la liste ci-dessous"]}
+          title={`${count || 0} ${count > 1 ? "campagnes ont été créées" : "campagne a été créée"}`}
+          message={[`Vous pouvez ${count > 1 ? "les" : "la"} retrouver dans la liste ci-dessous`]}
         />
       )}
       <Text fontSize="5xl" fontWeight="600" w="100%" color="brand.blue.700">

@@ -6,7 +6,7 @@ const FormSuccess = ({ title, message }) => {
       <AlertIcon />
       <Box>
         {title && <AlertTitle fontWeight="600">{title}</AlertTitle>}
-        <AlertDescription display="inline-block">{message}</AlertDescription>
+        {message && <AlertDescription display="inline-block">{message}</AlertDescription>}
       </Box>
     </Alert>
   );
