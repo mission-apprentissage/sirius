@@ -3,7 +3,6 @@ import {
   Flex,
   Stack,
   Box,
-  useToast,
   Link,
   Text,
   Image,
@@ -34,7 +33,6 @@ const validationSchema = Yup.object({
 
 const Login = () => {
   const navigate = useNavigate();
-  const toast = useToast();
   const breakpoint = useBreakpoint({ ssr: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -63,12 +61,6 @@ const Login = () => {
         password,
       });
       if (result.success) {
-        toast({
-          title: "Vous êtes connecté",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
         setUserContext((oldValues) => {
           const decodedToken = jwt(result.token);
 
