@@ -27,7 +27,7 @@ const updateSchema = Joi.object({
 });
 
 const forgotPasswordSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: false }).required(),
 });
 
 const resetPasswordSchema = Joi.object({

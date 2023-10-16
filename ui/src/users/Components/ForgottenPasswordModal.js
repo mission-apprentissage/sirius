@@ -15,10 +15,11 @@ import InputText from "../../Components/Form/InputText";
 import Button from "../../Components/Form/Button";
 import FormError from "../../Components/Form/FormError";
 import FormSuccess from "../../Components/Form/FormSuccess";
+import { emailWithTLDRegex } from "../../constants";
 
 const validationSchema = Yup.object({
   email: Yup.string()
-    .email("L'email n'est pas au bon format")
+    .matches(emailWithTLDRegex, "L'email n'est pas au bon format")
     .required("Tous les champs doivent être complétés"),
 });
 

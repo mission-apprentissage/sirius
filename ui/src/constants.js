@@ -27,3 +27,5 @@ export const DIPLOME_TYPE_MATCHER = {
   "TH DE NIV 4 ORGANISMES GESTIONNAIRES DIVERS":
     "Titre Homologué de Niveau 4 Organismes Gestionnaires Divers",
 };
+
+export const emailWithTLDRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;

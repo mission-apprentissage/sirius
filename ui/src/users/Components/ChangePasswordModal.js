@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -8,14 +8,13 @@ import {
   Text,
   Box,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { _post } from "../../utils/httpClient";
-import InputText from "../../Components/Form/InputText";
 import Button from "../../Components/Form/Button";
 import FormError from "../../Components/Form/FormError";
 import FormSuccess from "../../Components/Form/FormSuccess";
-import { UserContext } from "../../context/UserContext";
 
 import { passwordComplexityRegex, passwordComplexityMessage } from "../../utils/validators";
 import InputPassword from "../../Components/Form/InputPassword";
@@ -30,12 +29,12 @@ const validationSchema = Yup.object({
     .matches(passwordComplexityRegex, passwordComplexityMessage),
 });
 
-const ChangePasswordModal = ({ onClose, isOpen, token }) => {
+const ChangePasswordModal = ({ isOpen, token }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
-
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
 
   const formik = useFormik({
@@ -46,7 +45,7 @@ const ChangePasswordModal = ({ onClose, isOpen, token }) => {
     validationSchema: validationSchema,
     onSubmit: async ({ password }) => {
       setIsSubmitting(true);
-      const result = await _post(`/api/users/forgot-password`, {
+      const result = await _post(`/api/users/reset-password`, {
         password: password,
         token: token,
       });
@@ -66,7 +65,7 @@ const ChangePasswordModal = ({ onClose, isOpen, token }) => {
   const errorMessages = [...new Set(Object.values(formik.errors)), error];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
+    <Modal isOpen={isOpen} onClose={() => navigate("/connexion")} isCentered size="xl">
       <ModalOverlay />
       <ModalContent bgColor="brand.blue.100">
         <ModalCloseButton />
@@ -115,7 +114,7 @@ const ChangePasswordModal = ({ onClose, isOpen, token }) => {
           )}
           {isSubmitted && (
             <Box display="flex" alignItems="center" justifyContent="center" mt="16px">
-              <Button>Fermer</Button>
+              <Button onClick={() => navigate("/connexion")}>Fermer</Button>
             </Box>
           )}
         </ModalBody>

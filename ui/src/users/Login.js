@@ -23,8 +23,7 @@ import Button from "../Components/Form/Button";
 import ForgottenPasswordModal from "./Components/ForgottenPasswordModal";
 import ChangePasswordModal from "./Components/ChangePasswordModal";
 import FormError from "../Components/Form/FormError";
-
-const emailWithTLDRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+import { emailWithTLDRegex } from "../constants";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -45,7 +44,6 @@ const Login = () => {
     onOpen: onOpenForgottenPassword,
     onClose: onCloseForgottenPassword,
   } = useDisclosure();
-  const { onClose: onCloseChangePassword } = useDisclosure();
 
   const { search } = useLocation();
   const token = new URLSearchParams(search).get("token");
@@ -102,8 +100,6 @@ const Login = () => {
   });
 
   if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
-
-  console.log(formik.errors);
 
   const errorMessages = [...new Set(Object.values(formik.errors)), error];
 
@@ -167,7 +163,7 @@ const Login = () => {
           </Box>
         </Stack>
       </Flex>
-      <ChangePasswordModal token={token} isOpen={!!token} onClose={onCloseChangePassword} />
+      <ChangePasswordModal token={token} isOpen={!!token} />
     </>
   );
 };
