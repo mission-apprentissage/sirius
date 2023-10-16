@@ -185,8 +185,6 @@ const MenuWithSubnavigation = () => {
               <Avatar size="sm" src={MileySmall} />
             </MenuButton>
             <MenuList>
-              <MenuItem>Profil</MenuItem>
-              <MenuDivider />
               <MenuItem onClick={handleLogout}>Se déconnecter</MenuItem>
             </MenuList>
           </Menu>

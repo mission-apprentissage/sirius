@@ -20,6 +20,7 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import Button from "../../Components/Form/Button";
+import { useGet } from "../../common/hooks/httpHooks";
 import IoSchoolSharp from "../../assets/icons/IoSchoolSharp.svg";
 import IoAddSharp from "../../assets/icons/IoAddSharp.svg";
 import HiUser from "../../assets/icons/HiUser.svg";
@@ -47,6 +48,12 @@ const Header = ({
   if (userContext.loading) return <Spinner />;
 
   if (!userContext.token) return null;
+
+  const [questionnaires, loadingQuestionnaires, errorQuestionnaires] =
+    useGet(`/api/questionnaires/`);
+
+  const validatedQuestionnaire =
+    questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
 
   return (
     <Stack w="100%">
@@ -86,13 +93,22 @@ const Header = ({
             >
               <Button
                 isLink
-                onClick={() => navigate("/questionnaires//apercu")} //TODO questionnaire preview link
+                onClick={() =>
+                  navigate(
+                    `/questionnaires/${
+                      validatedQuestionnaire?.length && validatedQuestionnaire[0]._id
+                    }/apercu`
+                  )
+                }
+                target="_blank"
                 leftIcon={<Image src={GoEye} alt="" />}
                 variant="outline"
                 mx={isMobile ? "0" : "8px"}
                 mr={isMobile ? "0" : "8px"}
                 mt={isMobile ? "8px" : "0"}
                 w={isMobile ? "100%" : "min-content"}
+                isLoading={loadingQuestionnaires}
+                isDisabled={errorQuestionnaires || validatedQuestionnaire?.length === 0}
               >
                 Questionnaire
               </Button>

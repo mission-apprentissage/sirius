@@ -50,7 +50,6 @@ function App() {
         <Route exact path="/questionnaires/gestion" element={<QuestionnairesManaging />} />
         <Route exact path="/questionnaires/ajout" element={<QuestionnaireForm />} />
         <Route exact path="/questionnaires/:id/edition" element={<EditQuestionnaire />} />
-        <Route exact path="/questionnaires/:id/apercu" element={<PreviewQuestionnaire />} />
         <Route exact path="/utilisateurs/gestion" element={<UsersManaging />} />
         <Route exact path="/verbatims/moderation" element={<VerbatimsModeration />} />
       </Route>
@@ -86,6 +85,7 @@ function App() {
         }
       >
         <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
+        <Route exact path="/questionnaires/:id/apercu" element={<PreviewQuestionnaire />} />
       </Route>
     </Routes>
   );
