@@ -18,7 +18,7 @@ import { _get } from "../utils/httpClient";
 const validationSchema = Yup.object({
   nomCampagne: Yup.string().email().required(),
   startDate: Yup.date().required(),
-  endDate: Yup.date().min(1).required(),
+  endDate: Yup.date().required(),
   questionnaireId: Yup.string().required(),
   seats: Yup.number().min(0).required(),
 });
