@@ -65,7 +65,6 @@ function App() {
         <Route exact path="/modification-mot-de-passe" element={<Login />} />
         <Route exact path="/inscription" element={<Signup />} />
         <Route exact path="/confirmer-utilisateur" element={<Confirmation />} />
-        <Route exact path="/compte-desactive" element={<PendingAccount />} />
       </Route>
       <Route
         element={
@@ -77,6 +76,7 @@ function App() {
         <Route exact path="/mentions-information" element={<MentionsInformation />} />
         <Route exact path="/cgu" element={<CGU />} />
         <Route exact path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+        <Route exact path="/compte-desactive" element={<PendingAccount />} />
       </Route>
       <Route
         element={
