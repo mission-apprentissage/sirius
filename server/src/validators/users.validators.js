@@ -11,7 +11,7 @@ const subscribeSchema = Joi.object({
   lastName: Joi.string().required(),
   comment: Joi.string().allow(null, ""),
   siret: Joi.string().required(),
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: false }).required(),
   password: passwordComplexity(),
   etablissement: Joi.object().required(),
 });

@@ -24,9 +24,11 @@ import ForgottenPasswordModal from "./Components/ForgottenPasswordModal";
 import ChangePasswordModal from "./Components/ChangePasswordModal";
 import FormError from "../Components/Form/FormError";
 
+const emailWithTLDRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
 const validationSchema = Yup.object({
   email: Yup.string()
-    .email("L'email n'est pas au bon format")
+    .matches(emailWithTLDRegex, "L'email n'est pas au bon format")
     .required("Tous les champs doivent être complétés"),
   password: Yup.string().required("Tous les champs doivent être complétés"),
 });
@@ -100,6 +102,8 @@ const Login = () => {
   });
 
   if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
+
+  console.log(formik.errors);
 
   const errorMessages = [...new Set(Object.values(formik.errors)), error];
 
