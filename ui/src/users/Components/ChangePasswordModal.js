@@ -102,7 +102,7 @@ const ChangePasswordModal = ({ onClose, isOpen, token }) => {
               <InputPassword
                 id="confirmPassword"
                 name="confirmPassword"
-                placeholder="Confirmatez le mot de passe"
+                placeholder="Confirmer le mot de passe"
                 formik={formik}
                 showPassword={showPasswordConfirmation}
                 setShowPassword={setShowPasswordConfirmation}
