@@ -104,6 +104,10 @@ const renderEndDateCell = (info, formik, data, setData, formationCountOffset) =>
         style={{ width: "80%", paddingRight: "10px" }}
         size="md"
         _placeholder={{ color: "gray.600" }}
+        min={
+          formik.values.campagnes[info.row.index + formationCountOffset]?.startDate ||
+          formateDateToInputFormat(new Date())
+        }
       />
     );
   }, [info, formik.values.campagnes[info.row.index + formationCountOffset]?.endDate, data]);
