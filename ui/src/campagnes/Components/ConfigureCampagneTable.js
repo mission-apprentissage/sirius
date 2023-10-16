@@ -144,7 +144,7 @@ const renderSeatsCell = (info, formik, data, setData, formationCountOffset) => {
 };
 
 const getColumns = (formik, formationCountOffset) => [
-  columnHelper.accessor((row) => [row.intitule_long, row.localite, row.tags], {
+  columnHelper.accessor((row) => [row.intitule_long, row.localite, row.duree, row.tags], {
     cell: (info) => {
       return (
         <Box display="flex" flexDirection="column">
@@ -154,8 +154,13 @@ const getColumns = (formik, formationCountOffset) => [
           <Text color="brand.black.500" textAlign="left">
             {info.getValue()[1]}
           </Text>
-          <Text color="brand.black.500" textAlign="left">
-            {info.getValue()[2].join("-")}
+          {info.getValue()[2] && parseInt(info.getValue()[2]) && (
+            <Text color="brand.black.500" textAlign="left">
+              En {info.getValue()[2]} an{parseInt(info.getValue()[2]) > 1 && "s"}
+            </Text>
+          )}
+          <Text color="brand.black.500" textAlign="left" mb="4px">
+            {info.getValue()[3].join("-")}
           </Text>
         </Box>
       );

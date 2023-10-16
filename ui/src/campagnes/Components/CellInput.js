@@ -98,7 +98,7 @@ const CellTextInput = ({
   const seatsUnlimitedValue = name === "seats" && value === 0 ? "Illimité" : value;
 
   return (
-    <Box display="flex" flexDirection="row" alignItems="center" w="100%">
+    <Box display="flex" flexDirection="row" alignItems="center">
       {!isEditing && (
         <Text w="calc(100% - 22px)" textAlign={type === "number" ? "center" : "left"}>
           {displayedValue}

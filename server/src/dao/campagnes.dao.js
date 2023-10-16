@@ -89,6 +89,7 @@ const formationQuery = [
             "data.lieu_formation_adresse_computed": 1,
             "data.diplome": 1,
             "data.localite": 1,
+            "data.duree": 1,
           },
         },
         {

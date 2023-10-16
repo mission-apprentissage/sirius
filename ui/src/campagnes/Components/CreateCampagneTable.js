@@ -306,6 +306,11 @@ const CreateCampagneTable = ({
                       {formation.intitule_long}
                     </Text>
                     <Text mb="4px">{formation.localite}</Text>
+                    {formation.duree && parseInt(formation.duree) && (
+                      <Text mb="4px">
+                        En {formation.duree} an{parseInt(formation.duree) > 1 && "s"}
+                      </Text>
+                    )}
                     <Text mb="4px">{formation.tags?.join("-")}</Text>
                     <Link
                       href={`https://catalogue-apprentissage.intercariforef.org/formation/${formation.id}`}

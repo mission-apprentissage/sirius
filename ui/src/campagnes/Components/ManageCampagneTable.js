@@ -45,6 +45,7 @@ const getColumns = (handleCellUpdate) => [
     (row) => [
       row.formation.data.intitule_long,
       row.formation.data.localite,
+      row.formation.data.duree,
       row.formation.data.tags,
     ],
     {
@@ -57,8 +58,13 @@ const getColumns = (handleCellUpdate) => [
             <Text color="brand.black.500" textAlign="left">
               {info.getValue()[1]}
             </Text>
+            {info.getValue()[2] && parseInt(info.getValue()[2]) && (
+              <Text>
+                En {info.getValue()[2]} an{parseInt(info.getValue()[2]) > 1 && "s"}
+              </Text>
+            )}
             <Text color="brand.black.500" textAlign="left">
-              {info.getValue()[2].join("-")}
+              {info.getValue()[3].join("-")}
             </Text>
           </Box>
         );
