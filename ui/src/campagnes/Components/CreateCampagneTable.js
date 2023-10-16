@@ -251,7 +251,12 @@ const CreateCampagneTable = ({
             >
               <GridItem
                 fontSize="14px"
-                borderBottom={index < displayedFormations.length - 3 ? "1px solid #CACAFB" : "none"}
+                borderBottom={
+                  index < displayedFormations.length - (displayedFormations.length % 4) &&
+                  displayedFormations.length > 4
+                    ? "1px solid #CACAFB"
+                    : "none"
+                }
                 py="12px"
               >
                 <Stack direction="row">
