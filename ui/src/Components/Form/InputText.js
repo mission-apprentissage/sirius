@@ -38,7 +38,12 @@ const InputText = ({
             name={name}
             type={type}
             placeholder={placeholder}
-            onChange={onChange ? (e) => onChange(e?.target?.value || e) : formik?.handleChange}
+            onChange={
+              onChange
+                ? (e) =>
+                    onChange(e?.target?.value || e?.target?.value === "" ? e?.target?.value : e)
+                : formik?.handleChange
+            }
             value={value || formik?.values[name]}
             size="lg"
             color="brand.black.500"
