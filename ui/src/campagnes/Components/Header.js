@@ -14,6 +14,7 @@ import {
   ModalBody,
   useDisclosure,
   ModalCloseButton,
+  Tooltip,
 } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +35,7 @@ const Header = ({
   title,
   img,
   children,
+  allCampagneCreated = false,
 }) => {
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
@@ -114,8 +116,15 @@ const Header = ({
                 mr={isMobile ? "0" : "8px"}
                 mt={isMobile ? "8px" : "0"}
                 w={isMobile ? "100%" : "min-content"}
+                isDisabled={allCampagneCreated}
               >
-                Créer campagne
+                <Tooltip
+                  label={<Text>Toutes les campagnes ont été créées.</Text>}
+                  position="bottom"
+                  isDisabled={!allCampagneCreated}
+                >
+                  Créer campagne
+                </Tooltip>
               </Button>
             </Flex>
             <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>

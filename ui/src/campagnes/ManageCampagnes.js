@@ -73,7 +73,12 @@ const ViewCampagnes = () => {
 
   return (
     <Stack direction="column" w="100%">
-      <Header hasActionButton title="Statistiques" img={Team}>
+      <Header
+        hasActionButton
+        title="Statistiques"
+        img={Team}
+        allCampagneCreated={campagnes?.length === formations?.length}
+      >
         {(loadingCampagnes || errorCampagnes) && !campagnes.length ? (
           <Spinner size="xl" />
         ) : (
