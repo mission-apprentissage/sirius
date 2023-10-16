@@ -26,6 +26,10 @@ export const DIPLOME_TYPE_MATCHER = {
   "TH DE NIV 4 DES CHAMBRES DE METIERS": "Titre Homologué de Niveau 4 des Chambres de Métiers",
   "TH DE NIV 4 ORGANISMES GESTIONNAIRES DIVERS":
     "Titre Homologué de Niveau 4 Organismes Gestionnaires Divers",
+  "TH DE NIV 4 MINISTERE DU TRAVAIL - AFPA":
+    "Titre Homologué de Niveau 4 Ministère du Travail - AFPA",
+  "TH DE NIV 5 MINISTERE DU TRAVAIL - AFPA":
+    "Titre Homologué de Niveau 5 Ministère du Travail - AFPA",
 };
 
 export const emailWithTLDRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
