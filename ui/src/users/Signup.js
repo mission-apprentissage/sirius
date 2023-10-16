@@ -23,11 +23,14 @@ import InputPassword from "../Components/Form/InputPassword";
 import InputText from "../Components/Form/InputText";
 import Button from "../Components/Form/Button";
 import FormError from "../Components/Form/FormError";
+import { emailWithTLDRegex } from "../constants";
 
 const requiredFieldMessage = "Ces champs sont obligatoires";
 
 const validationSchema = Yup.object({
-  email: Yup.string().email("L'email n'est pas au bon format").required(requiredFieldMessage),
+  email: Yup.string()
+    .matches(emailWithTLDRegex, "L'email n'est pas au bon format")
+    .required(requiredFieldMessage),
   lastName: Yup.string().required(requiredFieldMessage),
   firstName: Yup.string().required(requiredFieldMessage),
   etablissement: Yup.object().required(requiredFieldMessage),
