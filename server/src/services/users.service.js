@@ -56,7 +56,7 @@ const refreshTokenUser = async (refreshToken) => {
       email: user.email,
       ...(user.role !== USER_ROLES.ADMIN && {
         etablissementLabel:
-          user.etablissement.enseigne || user.etablissement.onisep_nom || user.etablissement.entreprise_raison_sociale,
+          user.etablissement.onisep_nom || user.etablissement.enseigne || user.etablissement.entreprise_raison_sociale,
       }),
     });
     const newRefreshToken = getRefreshToken({
@@ -69,7 +69,7 @@ const refreshTokenUser = async (refreshToken) => {
       email: user.email,
       ...(user.role !== USER_ROLES.ADMIN && {
         etablissementLabel:
-          user.etablissement.enseigne || user.etablissement.onisep_nom || user.etablissement.entreprise_raison_sociale,
+          user.etablissement.onisep_nom || user.etablissement.enseigne || user.etablissement.entreprise_raison_sociale,
       }),
     });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };

@@ -24,6 +24,7 @@ import InputText from "../Components/Form/InputText";
 import Button from "../Components/Form/Button";
 import FormError from "../Components/Form/FormError";
 import { emailWithTLDRegex } from "../constants";
+import { etablissementLabelGetter } from "../utils/etablissement";
 
 const requiredFieldMessage = "Ces champs sont obligatoires";
 
@@ -168,9 +169,7 @@ const Signup = () => {
                 >
                   <AsyncSelect
                     placeholder="SIRET de votre établissement"
-                    getOptionLabel={(option) =>
-                      option?.onisep_nom || option?.enseigne || option?.entreprise_raison_sociale
-                    }
+                    getOptionLabel={(option) => etablissementLabelGetter(option)}
                     getOptionValue={(option) => option?.siret}
                     backspaceRemovesValue
                     escapeClearsValue

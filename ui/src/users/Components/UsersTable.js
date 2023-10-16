@@ -17,6 +17,7 @@ import { UserContext } from "../../context/UserContext";
 import ChangeUserStatusConfirmationModal from "./ChangeUserStatusConfirmationModal";
 import ChangeUserRoleConfirmationModal from "./ChangeUserRoleConfirmationModal";
 import { USER_ROLES, USER_STATUS } from "../../constants";
+import { etablissementLabelGetter } from "../../utils/etablissement";
 
 const UsersTable = ({ users, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
@@ -64,9 +65,7 @@ const UsersTable = ({ users, setRefetchData }) => {
                     <Th>{user.emailConfirmed ? <CheckIcon /> : <CloseIcon />}</Th>
                     <Td>{user.siret}</Td>
                     <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {(user.etablissement?.onisep_nom ||
-                        user.etablissement?.enseigne ||
-                        user.etablissement?.entreprise_raison_sociale) && (
+                      {etablissementLabelGetter(user.etablissement) && (
                         <Tooltip
                           label={`${user.etablissement?.onisep_nom} - 
                           ${user.etablissement?.enseigne} -
@@ -74,9 +73,7 @@ const UsersTable = ({ users, setRefetchData }) => {
                           hasArrow
                           arrowSize={15}
                         >
-                          {user.etablissement?.onisep_nom ||
-                            user.etablissement?.enseigne ||
-                            user.etablissement?.entreprise_raison_sociale}
+                          {etablissementLabelGetter(user.etablissement)}
                         </Tooltip>
                       )}
                     </Td>

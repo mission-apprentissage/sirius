@@ -68,8 +68,8 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
           formation: verbatim.formation ? verbatim.formation.data.intitule_long : "",
           formationId: verbatim.formation ? verbatim.formation._id : "",
           etablissement: verbatim.etablissement
-            ? verbatim.etablissement.data.enseigne ||
-              verbatim.etablissement.data.onisep_nom ||
+            ? verbatim.etablissement.data.onisep_nom ||
+              verbatim.etablissement.data.enseigne ||
               verbatim.etablissement.data.entreprise_raison_sociale
             : "",
           etablissementSiret: verbatim.etablissement ? verbatim.etablissement.data.siret : "",

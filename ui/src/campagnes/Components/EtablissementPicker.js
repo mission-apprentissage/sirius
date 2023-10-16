@@ -4,6 +4,7 @@ import { Select, AsyncSelect } from "chakra-react-select";
 import { _get } from "../../utils/httpClient";
 import useFetchLocalEtablissements from "../../hooks/useFetchLocalEtablissements";
 import { UserContext } from "../../context/UserContext";
+import { etablissementLabelGetter } from "../../utils/etablissement";
 
 const localEtablissementsChecker = (localEtablissements, inputSiret) =>
   localEtablissements.find((etablissement) => etablissement.data.siret === inputSiret);
@@ -85,11 +86,7 @@ const EtablissementPicker = ({ formik, setInputSiret, siret }) => {
     return (
       <Box>
         <Text mb="5px">Établissement</Text>
-        <Text as="span">
-          {formik.values.localEtablissement?.data?.onisep_nom ||
-            formik.values.localEtablissement?.data?.enseigne ||
-            formik.values.localEtablissement?.data?.entreprise_raison_sociale}
-        </Text>
+        <Text as="span">{etablissementLabelGetter(formik.values.localEtablissement?.data)}</Text>
       </Box>
     );
   }
@@ -105,11 +102,7 @@ const EtablissementPicker = ({ formik, setInputSiret, siret }) => {
           placeholder="Sélectionner un établissement existant"
           size="md"
           options={fetchedLocalEtablissements}
-          getOptionLabel={(option) =>
-            option?.data?.onisep_nom ||
-            option?.data?.enseigne ||
-            option?.data?.entreprise_raison_sociale
-          }
+          getOptionLabel={(option) => etablissementLabelGetter(option?.data)}
           getOptionValue={(option) => option?._id}
           onChange={(option) => {
             formik.setFieldValue("localEtablissement", option);
@@ -147,9 +140,7 @@ const EtablissementPicker = ({ formik, setInputSiret, siret }) => {
           <AsyncSelect
             placeholder="Entrer un SIRET"
             size="md"
-            getOptionLabel={(option) =>
-              option?.onisep_nom || option?.enseigne || option?.entreprise_raison_sociale
-            }
+            getOptionLabel={(option) => etablissementLabelGetter(option?.data)}
             getOptionValue={(option) => option?.siret}
             backspaceRemovesValue
             escapeClearsValue

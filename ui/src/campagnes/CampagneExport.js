@@ -6,6 +6,7 @@ import { DownloadIcon } from "@chakra-ui/icons";
 import QRCode from "react-qr-code";
 import html2canvas from "html2canvas";
 import JSZip from "jszip";
+import { etablissementLabelGetter } from "../utils/etablissement";
 
 const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
 const fileExtension = ".xlsx";
@@ -45,12 +46,7 @@ const createWs = (campagnes) => {
     {
       wch:
         Math.max(
-          ...campagnes.map(
-            (row) =>
-              row.etablissement?.data?.enseigne.length ||
-              row.etablissement?.data?.onisep_nom.length ||
-              row.etablissement?.data?.entreprise_raison_sociale
-          )
+          ...campagnes.map((row) => etablissementLabelGetter(row.etablissement?.data).length || 0)
         ) + 10,
     },
     { wch: Math.max(...campagnes.map((row) => row.formation?.data?.intitule_long.length)) + 10 },
@@ -110,10 +106,7 @@ const exportedDataFilter = (campagnes) =>
   campagnes.map((campagne) => ({
     id: campagne._id,
     nomCampagne: campagne.nomCampagne,
-    etablissement:
-      campagne.etablissement?.data?.enseigne ||
-      campagne.etablissement?.data?.onisep_nom ||
-      campagne.etablissement?.data?.entreprise_raison_sociale,
+    etablissement: etablissementLabelGetter(campagne.etablissement?.data),
     formation: campagne.formation?.data?.intitule_long,
     startDate: new Date(campagne.startDate).toLocaleDateString("fr-FR"),
     endDate: new Date(campagne.endDate).toLocaleDateString("fr-FR"),

@@ -5,6 +5,7 @@ import EtablissementSelector from "./EtablissementSelector";
 import FormationSelector from "./FormationSelector";
 import { UserContext } from "../../context/UserContext";
 import { _get } from "../../utils/httpClient";
+import { etablissementLabelGetter } from "../../utils/etablissement";
 
 const DashboardHeader = ({
   temoignagesSetter,
@@ -44,9 +45,7 @@ const DashboardHeader = ({
         <Box w={selectedFormation ? "400px" : "100%"}>
           {userContext.siret ? (
             <Text fontSize="xl" color="purple.500" fontWeight="semibold">
-              {selectedEtablissement?.data?.onisep_nom ||
-                selectedEtablissement?.data?.enseigne ||
-                selectedEtablissement?.data?.entreprise_raison_sociale}
+              {etablissementLabelGetter(selectedEtablissement?.data)}
             </Text>
           ) : (
             <EtablissementSelector selectedEtablissementSetter={setSelectedEtablissement} />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select } from "chakra-react-select";
 import useFetchLocalEtablissements from "../../hooks/useFetchLocalEtablissements";
+import { etablissementLabelGetter } from "../../utils/etablissement";
 
 const styles = {
   control: (baseStyles) => ({
@@ -58,10 +59,7 @@ const EtablissementSelector = ({ selectedEtablissementSetter = null }) => {
         allEtablissements.length > 0
           ? allEtablissements.map((etablissement) => ({
               value: etablissement._id,
-              label:
-                etablissement?.data?.onisep_nom ||
-                etablissement?.data?.enseigne ||
-                etablissement?.entreprise_raison_sociale,
+              label: etablissementLabelGetter(etablissement?.data),
             }))
           : []
       }
