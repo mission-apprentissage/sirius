@@ -23,6 +23,7 @@ const InputText = ({
   rightElementProps,
   onChange,
   value,
+  subType = null,
   ...props
 }) => {
   return (
@@ -66,7 +67,11 @@ const InputText = ({
             max={150}
             {...props}
           >
-            <NumberInputField placeholder={placeholder} _placeholder={props._placeholder} />
+            {value == "0" && subType === "seats" ? (
+              <Input value="Illimité" onChange={() => null} pr="32px" />
+            ) : (
+              <NumberInputField placeholder={placeholder} _placeholder={props._placeholder} />
+            )}
             <NumberInputStepper>
               <NumberIncrementStepper />
               <NumberDecrementStepper />

@@ -122,6 +122,7 @@ const renderSeatsCell = (info, formik, data, setData, formationCountOffset) => {
         id={`campagnes.${info.row.index}.seats`}
         name={`campagnes.${info.row.index}.seats`}
         type="number"
+        subType="seats"
         onBlur={() =>
           formik.setFieldValue(
             `campagnes.${info.row.index + formationCountOffset}.seats`,
@@ -129,11 +130,12 @@ const renderSeatsCell = (info, formik, data, setData, formationCountOffset) => {
           )
         }
         onChange={(value) => setData(value)}
-        value={data == "0" ? "Illimité" : data}
+        value={data}
         style={{ width: "80%" }}
         size="md"
-        placeholder={"Illimité"}
+        placeholder="Illimité"
         _placeholder={{ color: "brand.black.500" }}
+        min={0}
       />
     );
   }, [info, formik.values.campagnes[info.row.index + formationCountOffset]?.seats, data]);

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Spinner, Box, Text, Stack, Accordion, Image, useBreakpoint } from "@chakra-ui/react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import { USER_ROLES } from "../constants";
