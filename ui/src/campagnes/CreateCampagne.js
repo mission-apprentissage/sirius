@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import { Box, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import Button from "../Components/Form/Button";
 import { UserContext } from "../context/UserContext";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
@@ -15,17 +14,10 @@ import { formateDateToInputFormat } from "./utils";
 import { useGet } from "../common/hooks/httpHooks";
 import { _get } from "../utils/httpClient";
 
-const validationSchema = Yup.object({
-  nomCampagne: Yup.string().email().required(),
-  startDate: Yup.date().required(),
-  endDate: Yup.date().required(),
-  questionnaireId: Yup.string().required(),
-  seats: Yup.number().min(0).required(),
-});
-
 const CreateCampagne = () => {
   const [allDiplomesSelectedFormations, setAllDiplomesSelectedFormations] = useState([]);
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -62,13 +54,9 @@ const CreateCampagne = () => {
 
   const formik = useFormik({
     initialValues: { campagnes: initialValues },
-    //validationSchema: validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values) => {
-      const mergeCampagneValuesAndInitialValues = initialValues.map((initialValue, index) => ({
-        nomCampagne: "",
-        ...initialValue,
-        ...values.campagnes[index],
-      }));
+      setIsSubmitting(true);
 
       const formations = remoteFormations.filter((remoteFormation) =>
         allDiplomesSelectedFormations.includes(remoteFormation.id)
@@ -76,7 +64,7 @@ const CreateCampagne = () => {
 
       const results = [];
 
-      for (const campagne of mergeCampagneValuesAndInitialValues) {
+      for (const campagne of values.campagnes) {
         const [freshLocalEtablissement] = await _get(
           `/api/etablissements?data.siret=${userContext.siret}`,
           userContext.token
@@ -97,7 +85,7 @@ const CreateCampagne = () => {
       }
 
       const isAllSuccess = results.every((result) => result.status === "success");
-
+      setIsSubmitting(false);
       if (isAllSuccess) {
         navigate(`/campagnes/gestion?status=success&count=${results.length}`);
       } else {
@@ -150,7 +138,11 @@ const CreateCampagne = () => {
           </Button>
         )}
         {step === 2 && (
-          <Button isDisabled={!allDiplomesSelectedFormations.length} onClick={formik.submitForm}>
+          <Button
+            isDisabled={!allDiplomesSelectedFormations.length}
+            onClick={formik.submitForm}
+            isLoading={isSubmitting}
+          >
             Créer {allDiplomesSelectedFormations.length} campagne
             {allDiplomesSelectedFormations.length > 1 ? "s" : ""}{" "}
           </Button>
