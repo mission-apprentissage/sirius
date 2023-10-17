@@ -11,6 +11,7 @@ import {
   Tooltip,
   Box,
   Select,
+  Text,
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { UserContext } from "../../context/UserContext";
@@ -63,7 +64,19 @@ const UsersTable = ({ users, setRefetchData }) => {
                     <Td>{user.lastName}</Td>
                     <Td>{user.email}</Td>
                     <Th>{user.emailConfirmed ? <CheckIcon /> : <CloseIcon />}</Th>
-                    <Td>{user.siret}</Td>
+                    <Td>
+                      {user.siret && user.siret}
+                      {user.etablissements?.map((etablissement) => (
+                        <Tooltip
+                          key={etablissement.siret}
+                          label={etablissementLabelGetter(etablissement)}
+                          hasArrow
+                          arrowSize={15}
+                        >
+                          <Text>{etablissement.siret}</Text>
+                        </Tooltip>
+                      ))}
+                    </Td>
                     <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {etablissementLabelGetter(user.etablissement) && (
                         <Tooltip
