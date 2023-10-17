@@ -16,8 +16,9 @@ import {
   ModalCloseButton,
   Tooltip,
 } from "@chakra-ui/react";
+import { Select } from "chakra-react-select";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import Button from "../../Components/Form/Button";
 import { useGet } from "../../common/hooks/httpHooks";
@@ -27,6 +28,49 @@ import HiUser from "../../assets/icons/HiUser.svg";
 import GoEye from "../../assets/icons/GoEye.svg";
 import MdQuestionAnswer from "../../assets/icons/MdQuestionAnswer.svg";
 import designer from "../../assets/images/designer.svg";
+import { etablissementLabelGetter } from "../../utils/etablissement";
+
+const MultiEtablissementsPicker = ({ etablissements, userContext }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+
+  const currentEtablissementSiret = params.get("etablissement");
+
+  if (!etablissements?.length) return null;
+
+  const defaultValue = currentEtablissementSiret
+    ? {
+        value: currentEtablissementSiret.siret,
+        label: etablissementLabelGetter(
+          userContext.etablissements.find(
+            (etablissement) => etablissement.siret === currentEtablissementSiret
+          )
+        ),
+      }
+    : {
+        value: etablissements[0].siret,
+        label: etablissementLabelGetter(etablissements[0]),
+      };
+  return (
+    <Select
+      id="etablissement"
+      name="etablissement"
+      variant="outline"
+      size="lg"
+      placeholder="Choix de l'établissement"
+      isSearchable
+      defaultValue={defaultValue}
+      options={
+        etablissements.length > 0 &&
+        etablissements.map((etablissement) => ({
+          value: etablissement.siret,
+          label: etablissementLabelGetter(etablissement),
+        }))
+      }
+      onChange={({ value }) => setSearchParams({ etablissement: value })}
+    />
+  );
+};
 
 const Header = ({
   hasActionButton,
@@ -37,11 +81,13 @@ const Header = ({
   img,
   children,
   allCampagneCreated = false,
+  allowEtablissementChange = false,
 }) => {
-  const [userContext] = useContext(UserContext);
+  const [userContext, setUserContext] = useContext(UserContext);
   const navigate = useNavigate();
   const breakpoint = useBreakpoint();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [searchParams] = useSearchParams();
 
   const isMobile = breakpoint === "base";
 
@@ -64,16 +110,27 @@ const Header = ({
         alignItems={isMobile ? "flex-start" : "flex-end"}
         justifyContent="space-between"
       >
-        <Stack w={isMobile ? "100%" : "60%"}>
+        <Stack w={isMobile || !hasActionButton ? "100%" : "60%"}>
           <Text color="brand.blue.700" fontSize="xl" fontWeight="600">
             Vous êtes connecté en tant que :
           </Text>
           <Stack direction={hasActionButton || isMobile ? "column" : "row"}>
             <Stack direction="row" align="center">
               <Image src={IoSchoolSharp} alt="" />
-              <Text color="brand.blue.700" fontSize="lg">
-                {userContext.etablissementLabel}
-              </Text>
+              {userContext.etablissementLabel ||
+              userContext.etablissements?.length === 1 ||
+              !allowEtablissementChange ? (
+                <Text color="brand.blue.700" fontSize="lg">
+                  {userContext.etablissementLabel ||
+                    etablissementLabelGetter(userContext.etablissements[0])}
+                </Text>
+              ) : (
+                <MultiEtablissementsPicker
+                  etablissements={userContext.etablissements}
+                  userContext={userContext}
+                  setUserContext={setUserContext}
+                />
+              )}
             </Stack>
             {!hasActionButton && !isMobile && <Text mx="10px">-</Text>}
             <Stack direction="row" align="center">
@@ -126,7 +183,9 @@ const Header = ({
               </Button>
               <Button
                 isLink
-                onClick={() => navigate("/campagnes/ajout")}
+                onClick={() =>
+                  navigate({ pathname: "/campagnes/ajout", search: searchParams.toString() })
+                }
                 leftIcon={<Image src={IoAddSharp} alt="" />}
                 mx={isMobile ? "0" : "8px"}
                 mr={isMobile ? "0" : "8px"}
