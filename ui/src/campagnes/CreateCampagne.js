@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Box, Stack } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useFormik } from "formik";
 import Button from "../Components/Form/Button";
 import { UserContext } from "../context/UserContext";
@@ -14,18 +14,22 @@ import { formateDateToInputFormat } from "./utils";
 import { useGet } from "../common/hooks/httpHooks";
 import { _get } from "../utils/httpClient";
 
-const CreateCampagne = () => {
+const CreateCampagne = ({ etablissementSiret }) => {
   const [allDiplomesSelectedFormations, setAllDiplomesSelectedFormations] = useState([]);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const currentEtablissementSiret =
+    userContext.siret || etablissementSiret || userContext.etablissements[0].siret;
 
   const [remoteFormations, loadingRemoteFormations, errorRemoteFormations] =
-    useFetchRemoteFormations(userContext.siret);
+    useFetchRemoteFormations(currentEtablissementSiret);
 
   const [localEtablissement, loadingLocalEtablissement, errorLocalEtablissement] =
-    useFetchLocalEtablissements(userContext.siret);
+    useFetchLocalEtablissements(currentEtablissementSiret);
 
   const localFormationQuery =
     localEtablissement?.length &&
@@ -66,7 +70,7 @@ const CreateCampagne = () => {
 
       for (const campagne of values.campagnes) {
         const [freshLocalEtablissement] = await _get(
-          `/api/etablissements?data.siret=${userContext.siret}`,
+          `/api/etablissements?data.siret=${currentEtablissementSiret}`,
           userContext.token
         );
         const { formationId, ...cleanUpCampagne } = campagne;
@@ -87,9 +91,15 @@ const CreateCampagne = () => {
       const isAllSuccess = results.every((result) => result.status === "success");
       setIsSubmitting(false);
       if (isAllSuccess) {
-        navigate(`/campagnes/gestion?status=success&count=${results.length}`);
+        navigate({
+          pathname: `/campagnes/gestion`,
+          search: `${searchParams.toString()}&status=success&count=${results.length}`,
+        });
       } else {
-        navigate(`/campagnes/gestion?status=error`);
+        navigate({
+          pathname: `/campagnes/gestion`,
+          search: `${searchParams.toString()}&status=error`,
+        });
       }
     },
   });

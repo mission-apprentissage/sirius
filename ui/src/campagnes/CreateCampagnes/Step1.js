@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Spinner, Accordion, Text, Stack } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import Header from "../Components/Header";
 import Blackboard from "../../assets/images/blackboard.svg";
@@ -18,6 +18,7 @@ const Step1 = ({
 }) => {
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const existingFormationCatalogueIds = localFormations?.map((formation) => formation.data._id);
 
@@ -28,7 +29,9 @@ const Step1 = ({
         img={Blackboard}
         hasGoBackButton
         goBackLabel="Retour gestion des campagnes"
-        goBackOnClick={() => navigate("/campagnes/gestion")}
+        goBackOnClick={() =>
+          navigate({ pathname: "/campagnes/gestion", search: searchParams.toString() })
+        }
       >
         <Text fontWeight="600" color="brand.black.500">
           Lorsque vous sélectionnez une formation vous créez une campagne Sirius.
@@ -49,10 +52,10 @@ const Step1 = ({
       ) : hasError ? (
         <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
       ) : (
-        <Accordion allowMultiple>
-          {uniqueDiplomeTypesFromFormation(remoteFormations)?.map((diplomeType) => (
+        <Accordion allowMultiple defaultIndex={null}>
+          {uniqueDiplomeTypesFromFormation(remoteFormations)?.map((diplomeType, index) => (
             <CreateCampagneTable
-              key={diplomeType}
+              key={remoteFormations[index].id}
               diplomeType={diplomeType}
               formations={orderFormationsByDiplomeType(remoteFormations)[diplomeType]}
               userContext={userContext}
