@@ -48,14 +48,18 @@ const ViewCampagnes = () => {
   const status = params.get("status");
   const count = params.get("count");
 
+  const currentEtablissementSiret =
+    userContext.siret || params.get("etablissement") || userContext.etablissements[0].siret;
+
   const campagneQuery =
-    userContext.currentUserRole === USER_ROLES.ETABLISSEMENT ? `?siret=${userContext.siret}` : "";
+    userContext.currentUserRole === USER_ROLES.ETABLISSEMENT
+      ? `?siret=${currentEtablissementSiret}`
+      : "";
 
   const [campagnes, loadingCampagnes, errorCampagnes] = useGet(`/api/campagnes${campagneQuery}`);
 
-  const [formations, loadingFormations, errorFormations] = useFetchRemoteFormations(
-    userContext.siret
-  );
+  const [formations, loadingFormations, errorFormations] =
+    useFetchRemoteFormations(currentEtablissementSiret);
 
   useEffect(() => {
     if (status || count) {
@@ -78,6 +82,7 @@ const ViewCampagnes = () => {
         title="Statistiques"
         img={Team}
         allCampagneCreated={campagnes?.length === formations?.length}
+        allowEtablissementChange={true}
       >
         {(loadingCampagnes || errorCampagnes) && !campagnes.length ? (
           <Spinner size="xl" />
@@ -122,7 +127,9 @@ const ViewCampagnes = () => {
               <Box display="flex" w="100%" justifyContent="center" mt="25px">
                 <Button
                   isLink
-                  onClick={() => navigate("/campagnes/ajout")}
+                  onClick={() =>
+                    navigate({ pathname: "/campagnes/ajout", search: searchParams.toString() })
+                  }
                   leftIcon={<Image src={IoAddSharp} alt="" />}
                   mx={isMobile ? "0" : "8px"}
                   mr={isMobile ? "0" : "8px"}
