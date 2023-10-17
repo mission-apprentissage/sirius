@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet, useSearchParams } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import ManageCampagnes from "./campagnes/ManageCampagnes";
@@ -25,6 +25,10 @@ import AnonymousLayout from "./Components/AnonymousLayout";
 import QuestionnaireLayout from "./Components/QuestionnaireLayout";
 
 function App() {
+  const [searchParams] = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const etablissementSiret = params.get("etablissement");
+
   return (
     <Routes>
       <Route
@@ -35,8 +39,16 @@ function App() {
         }
       >
         <Route exact path="/" element={<Navigate to="/campagnes/gestion" />} />
-        <Route exact path="/campagnes/ajout" element={<CreateCampagne />} />
-        <Route exact path="/campagnes/gestion" element={<ManageCampagnes />} />
+        <Route
+          exact
+          path="/campagnes/ajout"
+          element={<CreateCampagne etablissementSiret={etablissementSiret} />}
+        />
+        <Route
+          exact
+          path="/campagnes/gestion"
+          element={<ManageCampagnes etablissementSiret={etablissementSiret} />}
+        />
         <Route exact path="/temoignages/dashboard" element={<TemoignagesDashboard />} />
       </Route>
       <Route

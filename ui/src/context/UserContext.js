@@ -26,6 +26,7 @@ const UserProvider = (props) => {
           lastName: decodedToken.lastName,
           email: decodedToken.email,
           etablissementLabel: decodedToken.etablissementLabel,
+          etablissements: decodedToken.etablissements,
         };
       });
     } else {

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext } from "react";
 import {
   Flex,
   Stack,
@@ -10,11 +10,11 @@ import {
   useBreakpoint,
   Link,
 } from "@chakra-ui/react";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate } from "react-router-dom";
-import { AsyncSelect } from "chakra-react-select";
-import { _post, _get } from "../utils/httpClient";
+import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
 import UnderConstruction from "../assets/images/under_construction.svg";
@@ -24,7 +24,7 @@ import InputText from "../Components/Form/InputText";
 import Button from "../Components/Form/Button";
 import FormError from "../Components/Form/FormError";
 import { emailWithTLDRegex } from "../constants";
-import { etablissementLabelGetter } from "../utils/etablissement";
+import EtablissementInput from "./Components/EtablissementInput";
 
 const requiredFieldMessage = "Ces champs sont obligatoires";
 
@@ -34,21 +34,20 @@ const validationSchema = Yup.object({
     .required(requiredFieldMessage),
   lastName: Yup.string().required(requiredFieldMessage),
   firstName: Yup.string().required(requiredFieldMessage),
-  etablissement: Yup.object().required(requiredFieldMessage),
   comment: Yup.string(),
   password: Yup.string()
     .required(requiredFieldMessage)
     .matches(passwordComplexityRegex, passwordComplexityMessage),
+  etablissements: Yup.array().of(Yup.object()),
 });
 
 const Signup = () => {
-  const timer = useRef();
   const breakpoint = useBreakpoint({ ssr: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [error, setError] = useState(null);
   const [userContext] = useContext(UserContext);
-  const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
+  const [etablissements, setEtablissements] = useState([""]);
 
   const isMobile = breakpoint === "base";
 
@@ -56,13 +55,13 @@ const Signup = () => {
     initialValues: {
       firstName: "",
       lastName: "",
-      etablissement: "",
       comment: "",
       email: "",
       password: "",
+      etablissements: [],
     },
     validationSchema: validationSchema,
-    onSubmit: async ({ email, password, firstName, lastName, comment, etablissement }) => {
+    onSubmit: async ({ email, password, firstName, lastName, comment, etablissements }) => {
       setIsSubmitting(true);
       const resultUser = await _post(`/api/users/`, {
         firstName: firstName,
@@ -70,8 +69,7 @@ const Signup = () => {
         comment: comment,
         email: email.toLowerCase(),
         password,
-        siret: etablissement.siret,
-        etablissement: etablissement,
+        etablissements,
       });
 
       if (resultUser._id) {
@@ -91,28 +89,23 @@ const Signup = () => {
     },
   });
 
-  const debouncedSiret = (callback, siret) => {
-    clearTimeout(timer.current);
-    timer.current = setTimeout(async () => {
-      const result = await _get(
-        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siret}"}&page=1&limit=1`
-      );
-
-      if (result.etablissements?.length > 0) {
-        callback(result.etablissements);
-        formik.setFieldValue("etablissement", result.etablissements[0]);
-      } else {
-        callback(null);
-      }
-    }, 500);
+  const addEtablissementField = () => {
+    setEtablissements([...etablissements, {}]);
   };
 
-  const loadEtablissementOptionsHandler = (inputValue, callback) => {
-    debouncedSiret(callback, inputValue);
-    setIsLoadingRemoteEtablissement(false);
+  const handleDeleteEtablissement = (index) => {
+    setEtablissements((prevValues) => {
+      const updatedEtablissements = [...prevValues];
+      updatedEtablissements.splice(index, 1);
+      return updatedEtablissements;
+    });
   };
 
   if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
+
+  console.log("formik.values", formik.values);
+
+  console.log({ etablissements });
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
@@ -163,43 +156,39 @@ const Signup = () => {
                   noErrorMessage
                 />
                 <InputPassword id="password" name="password" formik={formik} noErrorMessage />
-                <FormControl
-                  isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}
-                  isDisabled={isLoadingRemoteEtablissement}
+                {etablissements.map((etablissement, index) => (
+                  <Stack
+                    direction="row"
+                    key={index}
+                    width={index > 0 ? "calc(100% + 25px)" : "100%"}
+                    alignItems="center"
+                  >
+                    <EtablissementInput
+                      key={index}
+                      formik={formik}
+                      setEtablissements={setEtablissements}
+                    />
+                    {index > 0 && (
+                      <DeleteIcon
+                        cursor="pointer"
+                        color="brand.red.500"
+                        onClick={() => handleDeleteEtablissement(index)}
+                      />
+                    )}
+                  </Stack>
+                ))}
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  cursor="pointer"
+                  onClick={addEtablissementField}
+                  mb="10px"
                 >
-                  <AsyncSelect
-                    placeholder="SIRET de votre établissement"
-                    getOptionLabel={(option) => etablissementLabelGetter(option)}
-                    getOptionValue={(option) => option?.siret}
-                    backspaceRemovesValue
-                    escapeClearsValue
-                    isClearable
-                    loadOptions={loadEtablissementOptionsHandler}
-                    isLoading={isLoadingRemoteEtablissement}
-                    size="lg"
-                    color="brand.black.500"
-                    _placeholder={{ color: "brand.black.500" }}
-                    borderColor="brand.blue.400"
-                    chakraStyles={{
-                      placeholder: (baseStyles) => ({
-                        ...baseStyles,
-                        color: "brand.black.500",
-                      }),
-                      dropdownIndicator: () => ({
-                        display: "none",
-                      }),
-                      container: (baseStyles) => ({
-                        ...baseStyles,
-                        borderColor: "brand.blue.400",
-                      }),
-                      clearIndicator: (baseStyles) => ({
-                        ...baseStyles,
-                        color: "brand.blue.400",
-                        backgroundColor: "transparent",
-                      }),
-                    }}
-                  />
-                </FormControl>
+                  <AddIcon boxSize="10px" color="brand.blue.700" />
+                  <Text fontSize="sm" color="brand.blue.700">
+                    Ajouter un SIRET
+                  </Text>
+                </Stack>
                 <FormControl isInvalid={!!formik.errors.comment && formik.touched.comment}>
                   <Textarea
                     id="comment"

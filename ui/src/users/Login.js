@@ -61,9 +61,9 @@ const Login = () => {
         password,
       });
       if (result.success) {
-        setUserContext((oldValues) => {
-          const decodedToken = jwt(result.token);
+        const decodedToken = jwt(result.token);
 
+        setUserContext((oldValues) => {
           return {
             ...oldValues,
             token: result.token,
@@ -76,10 +76,15 @@ const Login = () => {
             lastName: decodedToken.lastName,
             email: decodedToken.email,
             etablissementLabel: decodedToken.etablissementLabel,
+            etablissements: decodedToken.etablissements,
           };
         });
+        const siret = decodedToken.siret || decodedToken.etablissements[0].siret;
         setIsSubmitting(false);
-        navigate("/campagnes/gestion");
+        navigate({ pathname: "/campagnes/gestion", search: `?etablissement=${siret}` });
+      } else if (result.statusCode === 400) {
+        setError("Erreur de validation");
+        setIsSubmitting(false);
       } else if (result.statusCode === 401) {
         setError("Mauvais email ou mot de passe");
         setIsSubmitting(false);
