@@ -34,14 +34,14 @@ import { sortingOptions } from "../ManageCampagnes";
 import IoInformationCircleOutline from "../../assets/icons/IoInformationCircleOutline.svg";
 import { formateDateToInputFormat } from "../utils";
 import FiEdit from "../../assets/icons/FiEdit.svg";
-import InputText from "../../Components/Form/InputText";
+import InputConfigure from "../../Components/Form/InputConfigure";
 
 const columnHelper = createColumnHelper();
 
 const renderNomCampagneCell = (info, formik, data, setData, formationCountOffset) => {
   const cellContent = useMemo(() => {
     return (
-      <InputText
+      <InputConfigure
         id={`campagnes.${info.row.index}.nomCampagne`}
         name={`campagnes.${info.row.index}.nomCampagne`}
         info={info}
@@ -70,7 +70,7 @@ const renderNomCampagneCell = (info, formik, data, setData, formationCountOffset
 const renderStartDateCell = (info, formik, data, setData, formationCountOffset) => {
   const cellContent = useMemo(() => {
     return (
-      <InputText
+      <InputConfigure
         id={`campagnes.${info.row.index}.startDate`}
         name={`campagnes.${info.row.index}.startDate`}
         type="date"
@@ -92,7 +92,7 @@ const renderStartDateCell = (info, formik, data, setData, formationCountOffset) 
 const renderEndDateCell = (info, formik, data, setData, formationCountOffset) => {
   const cellContent = useMemo(() => {
     return (
-      <InputText
+      <InputConfigure
         id={`campagnes.${info.row.index}.endDate`}
         name={`campagnes.${info.row.index}.endDate`}
         type="date"
@@ -118,7 +118,7 @@ const renderEndDateCell = (info, formik, data, setData, formationCountOffset) =>
 const renderSeatsCell = (info, formik, data, setData, formationCountOffset) => {
   const cellContent = useMemo(() => {
     return (
-      <InputText
+      <InputConfigure
         id={`campagnes.${info.row.index}.seats`}
         name={`campagnes.${info.row.index}.seats`}
         type="number"

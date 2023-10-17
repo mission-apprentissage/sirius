@@ -36,6 +36,7 @@ import IoInformationCircleOutline from "../../assets/icons/IoInformationCircleOu
 import Button from "../../Components/Form/Button";
 import { simpleEditionSubmitHandler } from "../submitHandlers";
 import CellInput from "./CellInput";
+import CellInputSeats from "./CellInputSeats";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
 
 const columnHelper = createColumnHelper();
@@ -124,13 +125,7 @@ const getColumns = (handleCellUpdate) => [
   }),
   columnHelper.accessor("seats", {
     cell: (info) => (
-      <CellInput
-        id="seats"
-        name="seats"
-        info={info}
-        handleCellUpdate={handleCellUpdate}
-        type="number"
-      />
+      <CellInputSeats id="seats" name="seats" info={info} handleCellUpdate={handleCellUpdate} />
     ),
     header: (
       <Box display="flex" flexDirection="row" justifyContent="flex-start" w="100%">

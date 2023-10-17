@@ -1,13 +1,23 @@
 import React, { useState } from "react";
-import { Box, Text, Image, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import {
+  Input,
+  InputGroup,
+  InputRightElement,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Image,
+  Text,
+  Box,
+} from "@chakra-ui/react";
 import { useSpring, animated } from "@react-spring/web";
-import { formatDate } from "../utils";
-
 import IoCheckmarkCircleOutline from "../../assets/icons/IoCheckmarkCircleOutline.svg";
 import IoCloseCircleOutline from "../../assets/icons/IoCloseCircleOutline.svg";
 import FiEdit from "../../assets/icons/FiEdit.svg";
 
-const CellTextInput = ({ id, name, info, handleCellUpdate = null, type }) => {
+const CellInputSeats = ({ id, name, info, handleCellUpdate, placeholder, ...props }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(info.getValue());
   const [isSuccess, setIsSuccess] = useState(false);
@@ -18,8 +28,6 @@ const CellTextInput = ({ id, name, info, handleCellUpdate = null, type }) => {
     transform: isSuccess || isFail ? "translateY(-20px)" : "translateY(0px)",
     config: { duration: 800, delay: 200 },
   });
-
-  const displayedValue = type === "date" ? formatDate(value || info.getValue()) : value;
 
   const rightElementClickHandler = async () => {
     const { _id, nomCampagne, startDate, endDate, seats, questionnaireId } = info.row.original;
@@ -63,50 +71,55 @@ const CellTextInput = ({ id, name, info, handleCellUpdate = null, type }) => {
   );
 
   const rightElementProps = {
-    right: "2px",
-    top: "0",
+    right: "30px",
     width: "20px",
     cursor: "pointer",
     onClick: rightElementClickHandler,
   };
 
-  return (
-    <Box display="flex" flexDirection="row" alignItems="center">
-      {isEditing ? (
-        <InputGroup>
-          <Input
-            id={id}
-            name={name}
-            type={type}
-            onChange={(e) => setValue(e.target?.value)}
-            value={value}
-            size="md"
-            color="brand.black.500"
-            _placeholder={{ color: "brand.black.500" }}
-            borderColor="brand.blue.400"
-            p="4px"
-            pr="25px"
+  const seatsUnlimitedValue = value == "0" ? "Illimité" : value;
+
+  return isEditing ? (
+    <InputGroup w="150px">
+      <NumberInput
+        id={id}
+        name={name}
+        onChange={(e) => setValue(e)}
+        value={value}
+        size="md"
+        fontSize="14px"
+        step={1}
+        min={0}
+        max={150}
+        {...props}
+      >
+        {value == "0" ? (
+          <Input value="Illimité" onChange={() => null} pr="32px" />
+        ) : (
+          <NumberInputField
+            placeholder={placeholder}
+            _placeholder={props._placeholder}
             sx={{
               ...(isSuccess ? { border: "1px solid #48BB78" } : {}),
               ...(isFail ? { border: "1px solid red" } : {}),
             }}
-            rightElement={rightElement}
-            rightElementProps={rightElementProps}
           />
-          <InputRightElement {...rightElementProps}>{rightElement}</InputRightElement>
-        </InputGroup>
-      ) : (
-        <>
-          <Text w="calc(100% - 22px)" textAlign={type === "number" ? "center" : "left"}>
-            {displayedValue}
-          </Text>
-          <Box cursor="pointer" ml="10px" onClick={() => setIsEditing(true)}>
-            <Image src={FiEdit} alt="Édition" minW="12px" maxW="12px" />
-          </Box>
-        </>
-      )}
+        )}
+        <NumberInputStepper>
+          <NumberIncrementStepper />
+          <NumberDecrementStepper />
+        </NumberInputStepper>
+      </NumberInput>
+      <InputRightElement {...rightElementProps}>{rightElement}</InputRightElement>
+    </InputGroup>
+  ) : (
+    <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" w="100%">
+      <Text textAlign="center">{seatsUnlimitedValue}</Text>
+      <Box cursor="pointer" ml="10px" onClick={() => setIsEditing(true)}>
+        <Image src={FiEdit} alt="Édition" minW="12px" maxW="12px" />
+      </Box>
     </Box>
   );
 };
 
-export default CellTextInput;
+export default CellInputSeats;
