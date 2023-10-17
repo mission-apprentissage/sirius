@@ -27,10 +27,14 @@ const loginUser = async (id) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN && {
-        etablissementLabel:
-          user.etablissement.onisep_nom || user.etablissement.enseigne || user.etablissement.entreprise_raison_sociale,
-      }),
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      etablissements: user.etablissements,
     });
     const refreshToken = getRefreshToken({
       _id: id,
@@ -40,10 +44,14 @@ const loginUser = async (id) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN && {
-        etablissementLabel:
-          user.etablissement.onisep_nom || user.etablissement.enseigne || user.etablissement.entreprise_raison_sociale,
-      }),
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      etablissements: user.etablissements,
     });
 
     user.refreshToken.push({ refreshToken });
@@ -73,10 +81,14 @@ const refreshTokenUser = async (refreshToken) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN && {
-        etablissementLabel:
-          user.etablissement.onisep_nom || user.etablissement.enseigne || user.etablissement.entreprise_raison_sociale,
-      }),
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      etablissements: user.etablissements,
     });
     const newRefreshToken = getRefreshToken({
       _id: userId,
@@ -86,10 +98,14 @@ const refreshTokenUser = async (refreshToken) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN && {
-        etablissementLabel:
-          user.etablissement.onisep_nom || user.etablissement.enseigne || user.etablissement.entreprise_raison_sociale,
-      }),
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      etablissements: user.etablissements,
     });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 
