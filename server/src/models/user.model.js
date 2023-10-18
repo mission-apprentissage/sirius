@@ -62,6 +62,12 @@ const userSchema = new mongoose.Schema({
   refreshToken: {
     type: [Session],
   },
+  siret: {
+    type: String,
+  },
+  etablissement: {
+    type: Object,
+  },
 });
 
 //Remove refreshToken from the response

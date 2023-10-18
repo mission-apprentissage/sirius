@@ -136,15 +136,15 @@ const Header = ({
           <Stack direction={hasActionButton || isMobile ? "column" : "row"}>
             <Stack direction="row" align="center">
               <Image src={IoSchoolSharp} alt="" />
-              {etablissementsContext.etablissements?.length === 1 || !allowEtablissementChange ? (
-                <Text color="brand.blue.700" fontSize="lg">
-                  {etablissementsContext.etablissementLabel}
-                </Text>
-              ) : (
+              {etablissementsContext.etablissements?.length > 1 && allowEtablissementChange ? (
                 <MultiEtablissementsPicker
                   etablissementsContext={etablissementsContext}
                   setEtablissementsContext={setEtablissementsContext}
                 />
+              ) : (
+                <Text color="brand.blue.700" fontSize="lg">
+                  {etablissementsContext.etablissementLabel}
+                </Text>
               )}
             </Stack>
             {!hasActionButton && !isMobile && <Text mx="10px">-</Text>}

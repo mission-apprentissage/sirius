@@ -76,6 +76,7 @@ const Login = () => {
             firstName: decodedToken.firstName,
             lastName: decodedToken.lastName,
             email: decodedToken.email,
+            siret: decodedToken.siret,
           };
         });
         if (decodedToken.role === USER_ROLES.ETABLISSEMENT) {
@@ -86,7 +87,7 @@ const Login = () => {
               etablissementLabel:
                 decodedToken.etablissementLabel ||
                 etablissementLabelGetter(decodedToken.etablissements[0]),
-              etablissements: decodedToken.etablissements,
+              etablissements: decodedToken.etablissements || [],
             })
           );
         }
