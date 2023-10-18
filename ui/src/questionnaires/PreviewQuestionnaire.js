@@ -90,15 +90,6 @@ const PreviewQuestionnaire = () => {
   }, [previewedQuestionnaire]);
 
   const onSubmitHandler = async (formData, isLastQuestion) => {
-    if (isLastQuestionInCategory) {
-      setCurrentCategoryIndex(currentCategoryIndex + 1);
-      setCurrentQuestionIndex(0);
-    } else {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-
-    setAnswers({ ...answers, ...formData });
-
     if (isLastQuestion) {
       setIsTemoignageSent(true);
       return;
