@@ -1,7 +1,6 @@
 <mjml>
   <%- include('./common/head.ejs'); %>
   <mj-body background-color="#f9fafc">
-    <%- include('./common/header.ejs'); %>
     <mj-wrapper padding="10px 20px">
       <mj-section background-color="#ffffff" padding-top="0">
         <mj-column>
@@ -9,7 +8,7 @@
             Bonjour <%= data.recipient.firstname %> <%= data.recipient.lastname
             %>,<br />
             <br />
-            Sirius est une plateforme permettant la collecte et la restitution des avis des apprentis.<br />
+            Nous avons bien pris en compte votre demande d’accès à Sirius. <br />
             <br />
             Pour y accéder, activez votre compte en cliquant sur le lien
             ci-dessous :<br />
@@ -23,7 +22,7 @@
           </mj-button>
           <mj-text>
             Pour toute question, contactez-nous à l'adresse suivante:
-            sirius@inserjeunes.beta.gouv.fr<br />
+            contact-sirius@inserjeunes.beta.gouv.fr<br />
           </mj-text>
           <%- include('./common/signature.ejs'); %>
         </mj-column>
