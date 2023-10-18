@@ -15,7 +15,6 @@ import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import jwt from "jwt-decode";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
-import { EtablissementsContext } from "../context/EtablissementsContext";
 
 import UnderConstruction from "../assets/images/under_construction.svg";
 import InputPassword from "../Components/Form/InputPassword";
@@ -25,7 +24,6 @@ import ForgottenPasswordModal from "./Components/ForgottenPasswordModal";
 import ChangePasswordModal from "./Components/ChangePasswordModal";
 import FormError from "../Components/Form/FormError";
 import { USER_ROLES, emailWithTLDRegex } from "../constants";
-import { _get } from "../utils/httpClient";
 import { etablissementLabelGetter } from "../utils/etablissement";
 
 const validationSchema = Yup.object({
@@ -41,7 +39,6 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [userContext, setUserContext] = useContext(UserContext);
-  const [etablissementsContext, setEtablissementsContext] = useContext(EtablissementsContext);
 
   const {
     isOpen: isOpenForgottenPassword,

@@ -82,9 +82,7 @@ const CreateCampagne = () => {
           const { formationId, ...rest } = campagne;
           return {
             ...rest,
-            formation: formationsWithCreator.find(
-              (formation) => formation.id === campagne.formationId
-            ),
+            formation: formationsWithCreator.find((formation) => formation.id === formationId),
           };
         }),
       };

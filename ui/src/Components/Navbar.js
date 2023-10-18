@@ -18,7 +18,6 @@ import {
   Avatar,
   MenuList,
   MenuItem,
-  MenuDivider,
   useToast,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";

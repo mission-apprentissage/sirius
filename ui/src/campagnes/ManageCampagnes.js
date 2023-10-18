@@ -1,10 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Spinner, Box, Text, Stack, Accordion, Image, useBreakpoint } from "@chakra-ui/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import { EtablissementsContext } from "../context/EtablissementsContext";
-import { USER_ROLES } from "../constants";
 import Header from "./Components/Header";
 import Team from "../assets/images/team.svg";
 import Statistics from "./Components/Statistics";

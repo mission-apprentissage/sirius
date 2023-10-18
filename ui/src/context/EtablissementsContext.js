@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import jwt from "jwt-decode";
 import { _get } from "../utils/httpClient";
 import { UserContext } from "./UserContext";
 import { USER_ROLES } from "../constants";
