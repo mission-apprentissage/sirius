@@ -8,6 +8,7 @@ const {
   deleteCampagne,
   updateCampagne,
   createMultiCampagne,
+  getExport,
 } = require("../controllers/campagnes.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdminOrAllowed, TYPES } = require("../middlewares/isAdminOrAllowed");
@@ -58,6 +59,15 @@ const campagnes = () => {
     validator(createCampagneSchema),
     (req, res, next) => {
       updateCampagne(req, res, next);
+    }
+  );
+
+  router.get(
+    "/api/campagnes/export/:id",
+    verifyUser,
+    (req, res, next) => isAdminOrAllowed(req, next, TYPES.SIRET),
+    (req, res, next) => {
+      getExport(req, res, next);
     }
   );
 

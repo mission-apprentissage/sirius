@@ -8,6 +8,8 @@ const getAll = async (query) => {
   let queryBuilder;
   if (query.id) {
     queryBuilder = { _id: { $in: query.id } };
+  } else {
+    queryBuilder = { ...query };
   }
   return Formation.find({ ...queryBuilder, deletedAt: null }).lean();
 };

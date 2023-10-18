@@ -38,10 +38,11 @@ import { simpleEditionSubmitHandler } from "../submitHandlers";
 import CellInput from "./CellInput";
 import CellInputSeats from "./CellInputSeats";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
+import { _getBlob } from "../../utils/httpClient";
 
 const columnHelper = createColumnHelper();
 
-const getColumns = (handleCellUpdate) => [
+const getColumns = (handleCellUpdate, userContext) => [
   columnHelper.accessor(
     (row) => [
       row.formation.data.intitule_long,
@@ -156,12 +157,25 @@ const getColumns = (handleCellUpdate) => [
       },
     }
   ),
-  columnHelper.accessor((row) => row._id, {
+  columnHelper.accessor((row) => [row._id, row.nomCampagne, row.formation.data.intitule_long], {
     cell: (info) => (
       <IconButton
         bgColor="transparent"
         aria-label="share"
-        onClick={() => console.log(info.getValue())}
+        onClick={async () => {
+          const response = await _getBlob(
+            `/api/campagnes/export/${info.getValue()[0]}`,
+            userContext.token
+          );
+
+          const url = window.URL.createObjectURL(response);
+          const a = document.createElement("a");
+          a.href = url;
+
+          a.download = `${info.getValue()[1] || info.getValue()[2]}`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        }}
         icon={<Image src={CkDownload} alt="Partage" />}
       />
     ),
@@ -201,7 +215,7 @@ const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userCont
   };
 
   const table = useReactTable({
-    columns: getColumns(handleCellUpdate),
+    columns: getColumns(handleCellUpdate, userContext),
     data: displayedCampagnes,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
