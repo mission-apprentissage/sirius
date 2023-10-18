@@ -1,5 +1,18 @@
 import { _post, _put, _delete } from "../utils/httpClient";
 
+export const multiCreationSubmitHandler = async (payload, userContext) => {
+  const result = await _post(`/api/campagnes/multi`, payload, userContext.token);
+  return result.createdCount
+    ? {
+        status: "success",
+        createdCount: result.createdCount,
+      }
+    : {
+        status: "error",
+        description: "Une erreur est survenue",
+      };
+};
+
 export const creationSubmitHandler = async (values, userContext) => {
   const { etablissement, formation, localEtablissement } = values;
 

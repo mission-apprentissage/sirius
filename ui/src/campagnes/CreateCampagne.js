@@ -10,10 +10,9 @@ import useFetchLocalEtablissements from "../hooks/useFetchLocalEtablissements";
 import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
 import Step1 from "./CreateCampagnes/Step1";
 import Step2 from "./CreateCampagnes/Step2";
-import { creationSubmitHandler } from "./submitHandlers";
+import { multiCreationSubmitHandler } from "./submitHandlers";
 import { formateDateToInputFormat } from "./utils";
 import { useGet } from "../common/hooks/httpHooks";
-import { _get } from "../utils/httpClient";
 
 const CreateCampagne = () => {
   const [allDiplomesSelectedFormations, setAllDiplomesSelectedFormations] = useState([]);
@@ -45,51 +44,56 @@ const CreateCampagne = () => {
   const validatedQuestionnaire =
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
 
-  const initialValues = allDiplomesSelectedFormations.map((allDiplomesSelectedFormation) => ({
-    nomCampagne: "",
-    startDate: formateDateToInputFormat(new Date()),
-    endDate: formateDateToInputFormat(new Date(), 1),
-    seats: 0,
-    formationId: allDiplomesSelectedFormation,
-    questionnaireId: validatedQuestionnaire[0]?._id,
-  }));
+  const initialValues = allDiplomesSelectedFormations.reduce(
+    (accumulator, allDiplomesSelectedFormation) => {
+      accumulator[allDiplomesSelectedFormation] = {
+        nomCampagne: "",
+        startDate: formateDateToInputFormat(new Date()),
+        endDate: formateDateToInputFormat(new Date(), 1),
+        seats: 0,
+        formationId: allDiplomesSelectedFormation,
+        questionnaireId: validatedQuestionnaire[0]?._id,
+      };
+      return accumulator;
+    },
+    {}
+  );
 
   const formik = useFormik({
-    initialValues: { campagnes: initialValues },
+    initialValues: initialValues,
     enableReinitialize: true,
     onSubmit: async (values) => {
       setIsSubmitting(true);
+
+      const formattedValues = Object.values(values);
 
       const formations = remoteFormations.filter((remoteFormation) =>
         allDiplomesSelectedFormations.includes(remoteFormation.id)
       );
 
-      const results = [];
+      const formationsWithCreator = formations.map((formation) => ({
+        ...formation,
+        createdBy: userContext.currentUserId,
+      }));
 
-      for (const campagne of values.campagnes) {
-        const [freshLocalEtablissement] = await _get(
-          `/api/etablissements?data.siret=${etablissementsContext.siret}`,
-          userContext.token
-        );
-        const { formationId, ...cleanUpCampagne } = campagne;
+      const payload = {
+        etablissementSiret: etablissementsContext.siret,
+        campagnes: formattedValues.map((campagne) => {
+          const { formationId, ...rest } = campagne;
+          return {
+            ...rest,
+            formation: formationsWithCreator.find(
+              (formation) => formation.id === campagne.formationId
+            ),
+          };
+        }),
+      };
 
-        const formation = formations.find((formation) => formation._id === formationId);
-        const result = await creationSubmitHandler(
-          {
-            formation: formation,
-            ...cleanUpCampagne,
-            localEtablissement: freshLocalEtablissement,
-          },
-          userContext
-        );
+      const result = await multiCreationSubmitHandler(payload, userContext);
 
-        results.push(result);
-      }
-
-      const isAllSuccess = results.every((result) => result.status === "success");
       setIsSubmitting(false);
-      if (isAllSuccess) {
-        navigate(`/campagnes/gestion?status=success&count=${results.length}`);
+      if (result.status === "success") {
+        navigate(`/campagnes/gestion?status=success&count=${result.createdCount}`);
       } else {
         navigate(`/campagnes/gestion?status=error`);
       }

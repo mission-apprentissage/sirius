@@ -46,18 +46,6 @@ const Step2 = ({ selectedFormations, allDiplomesSelectedFormations, setStep, for
               userContext={userContext}
               allDiplomesSelectedFormations={allDiplomesSelectedFormations}
               formik={formik}
-              offset={() => {
-                if (index === 0) return 0;
-                let offset = 0;
-                for (let i = 0; i < index; i++) {
-                  offset +=
-                    formationCountByDiplomeType[
-                      uniqueDiplomeTypesFromFormation(selectedFormations)[i]
-                    ];
-                }
-
-                return offset;
-              }}
             />
           ))}
         </Accordion>

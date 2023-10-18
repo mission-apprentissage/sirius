@@ -38,45 +38,38 @@ import InputConfigure from "../../Components/Form/InputConfigure";
 
 const columnHelper = createColumnHelper();
 
-const renderNomCampagneCell = (info, formik, data, setData, formationCountOffset) => {
+const renderNomCampagneCell = (info, formik, data, setData, formationId) => {
   const cellContent = useMemo(() => {
     return (
       <InputConfigure
-        id={`campagnes.${info.row.index}.nomCampagne`}
-        name={`campagnes.${info.row.index}.nomCampagne`}
+        id={`${formationId}.nomCampagne`}
+        name={`${formationId}.nomCampagne`}
         info={info}
         type="text"
         placeholder="Nommer (facultatif)"
         rightElement={<Image src={FiEdit} alt="Édition" w="20px" />}
         rightElementProps={{ width: "20px", marginRight: "10px" }}
         style={{ paddingLeft: "10px" }}
-        onBlur={() =>
-          formik.setFieldValue(
-            `campagnes.${info.row.index + formationCountOffset}.nomCampagne`,
-            data
-          )
-        }
+        onBlur={() => formik.setFieldValue(`${formationId}.nomCampagne`, data)}
         onChange={(value) => setData(value)}
         value={data}
         size="md"
         _placeholder={{ color: "gray.600" }}
       />
     );
-  }, [info, formik.values.campagnes[info.row.index + formationCountOffset]?.nomCampagne, data]);
+  }, [info, formik.values[formationId]?.nomCampagne, data]);
 
   return cellContent;
 };
 
-const renderStartDateCell = (info, formik, data, setData, formationCountOffset) => {
+const renderStartDateCell = (info, formik, data, setData, formationId) => {
   const cellContent = useMemo(() => {
     return (
       <InputConfigure
-        id={`campagnes.${info.row.index}.startDate`}
-        name={`campagnes.${info.row.index}.startDate`}
+        id={`${formationId}.startDate`}
+        name={`${formationId}.startDate`}
         type="date"
-        onBlur={() =>
-          formik.setFieldValue(`campagnes.${info.row.index + formationCountOffset}.startDate`, data)
-        }
+        onBlur={() => formik.setFieldValue(`${formationId}.startDate`, data)}
         onChange={(value) => setData(value)}
         value={data}
         style={{ width: "80%", paddingRight: "10px" }}
@@ -84,51 +77,41 @@ const renderStartDateCell = (info, formik, data, setData, formationCountOffset) 
         _placeholder={{ color: "gray.600" }}
       />
     );
-  }, [info, formik.values.campagnes[info.row.index + formationCountOffset]?.startDate, data]);
+  }, [info, formik.values[formationId]?.startDate, data]);
 
   return cellContent;
 };
 
-const renderEndDateCell = (info, formik, data, setData, formationCountOffset) => {
+const renderEndDateCell = (info, formik, data, setData, formationId) => {
   const cellContent = useMemo(() => {
     return (
       <InputConfigure
-        id={`campagnes.${info.row.index}.endDate`}
-        name={`campagnes.${info.row.index}.endDate`}
+        id={`${formationId}.endDate`}
+        name={`${formationId}.endDate`}
         type="date"
-        onBlur={() =>
-          formik.setFieldValue(`campagnes.${info.row.index + formationCountOffset}.endDate`, data)
-        }
+        onBlur={() => formik.setFieldValue(`${formationId}.endDate`, data)}
         onChange={(value) => setData(value)}
         value={data}
         style={{ width: "80%", paddingRight: "10px" }}
         size="md"
         _placeholder={{ color: "gray.600" }}
-        min={
-          formik.values.campagnes[info.row.index + formationCountOffset]?.startDate ||
-          formateDateToInputFormat(new Date())
-        }
+        min={formik.values[formationId]?.startDate || formateDateToInputFormat(new Date())}
       />
     );
-  }, [info, formik.values.campagnes[info.row.index + formationCountOffset]?.endDate, data]);
+  }, [info, formik.values[formationId]?.endDate, data]);
 
   return cellContent;
 };
 
-const renderSeatsCell = (info, formik, data, setData, formationCountOffset) => {
+const renderSeatsCell = (info, formik, data, setData, formationId) => {
   const cellContent = useMemo(() => {
     return (
       <InputConfigure
-        id={`campagnes.${info.row.index}.seats`}
-        name={`campagnes.${info.row.index}.seats`}
+        id={`${formationId}.seats`}
+        name={`${formationId}.seats`}
         type="number"
         subType="seats"
-        onBlur={() =>
-          formik.setFieldValue(
-            `campagnes.${info.row.index + formationCountOffset}.seats`,
-            Number(data)
-          )
-        }
+        onBlur={() => formik.setFieldValue(`${formationId}.seats`, Number(data))}
         onChange={(value) => setData(value)}
         value={data}
         style={{ width: "80%" }}
@@ -138,12 +121,12 @@ const renderSeatsCell = (info, formik, data, setData, formationCountOffset) => {
         min={0}
       />
     );
-  }, [info, formik.values.campagnes[info.row.index + formationCountOffset]?.seats, data]);
+  }, [info, formik.values[formationId]?.seats, data]);
 
   return cellContent;
 };
 
-const getColumns = (formik, formationCountOffset) => [
+const getColumns = (formik) => [
   columnHelper.accessor((row) => [row.intitule_long, row.localite, row.duree, row.tags], {
     cell: (info) => {
       return (
@@ -170,11 +153,10 @@ const getColumns = (formik, formationCountOffset) => [
   columnHelper.accessor(() => "", {
     id: "nomCampagne",
     cell: (info) => {
-      const [data, setData] = useState(
-        formik.values.campagnes[info.row.index + formationCountOffset]?.nomCampagne || ""
-      );
+      const formationId = info.row.original._id;
+      const [data, setData] = useState(formik.values[formationId]?.nomCampagne || "");
 
-      return renderNomCampagneCell(info, formik, data, setData, formationCountOffset);
+      return renderNomCampagneCell(info, formik, data, setData, formationId);
     },
 
     header: () => (
@@ -197,39 +179,37 @@ const getColumns = (formik, formationCountOffset) => [
   columnHelper.accessor(() => formateDateToInputFormat(new Date()), {
     id: "startDate",
     cell: (info) => {
+      const formationId = info.row.original._id;
+
       const [data, setData] = useState(
-        formik.values.campagnes[info.row.index + formationCountOffset]?.startDate ||
-          info.getValue() ||
-          ""
+        formik.values[formationId]?.startDate || info.getValue() || ""
       );
 
-      return renderStartDateCell(info, formik, data, setData, formationCountOffset);
+      return renderStartDateCell(info, formik, data, setData, formationId);
     },
     header: "Début campagne",
   }),
   columnHelper.accessor(() => formateDateToInputFormat(new Date(), 1), {
     id: "endDate",
     cell: (info) => {
+      const formationId = info.row.original._id;
+
       const [data, setData] = useState(
-        formik.values.campagnes[info.row.index + formationCountOffset]?.endDate ||
-          info.getValue() ||
-          ""
+        formik.values[formationId]?.endDate || info.getValue() || ""
       );
 
-      return renderEndDateCell(info, formik, data, setData, formationCountOffset);
+      return renderEndDateCell(info, formik, data, setData, formationId);
     },
     header: "Fin campagne",
   }),
   columnHelper.accessor(() => 0, {
     id: "seats",
     cell: (info) => {
-      const [data, setData] = useState(
-        formik.values.campagnes[info.row.index + formationCountOffset]?.seats ||
-          info.getValue() ||
-          ""
-      );
+      const formationId = info.row.original._id;
 
-      return renderSeatsCell(info, formik, data, setData, formationCountOffset);
+      const [data, setData] = useState(formik.values[formationId]?.seats || info.getValue() || "");
+
+      return renderSeatsCell(info, formik, data, setData, formationId);
     },
     header: (
       <Box display="flex" flexDirection="row" justifyContent="flex-start" w="100%">
@@ -255,14 +235,11 @@ const ConfigureCampagneTable = ({
   allDiplomesSelectedFormations,
   existingFormationCatalogueIds,
   formik,
-  offset,
 }) => {
   const [sorting, setSorting] = useState([]);
   const [search, setSearch] = useState([]);
   const [displayedFormations, setDisplayedFormations] = useState([]);
   const [selectedFormations, setSelectedFormations] = useState([]);
-
-  const formationCountOffset = offset();
 
   useEffect(() => {
     if (allDiplomesSelectedFormations.length) {
@@ -298,7 +275,7 @@ const ConfigureCampagneTable = ({
   };
 
   const table = useReactTable({
-    columns: getColumns(formik, formationCountOffset),
+    columns: getColumns(formik),
     data: formations,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
