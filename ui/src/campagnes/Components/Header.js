@@ -17,9 +17,10 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { UserContext } from "../../context/UserContext";
+import { EtablissementsContext } from "../../context/EtablissementsContext";
 import Button from "../../Components/Form/Button";
 import { useGet } from "../../common/hooks/httpHooks";
 import IoSchoolSharp from "../../assets/icons/IoSchoolSharp.svg";
@@ -30,27 +31,45 @@ import MdQuestionAnswer from "../../assets/icons/MdQuestionAnswer.svg";
 import designer from "../../assets/images/designer.svg";
 import { etablissementLabelGetter } from "../../utils/etablissement";
 
-const MultiEtablissementsPicker = ({ etablissements, userContext }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+const MultiEtablissementsPicker = ({ etablissementsContext, setEtablissementsContext }) => {
+  if (!etablissementsContext.etablissements?.length) return null;
 
-  const currentEtablissementSiret = params.get("etablissement");
-
-  if (!etablissements?.length) return null;
-
-  const defaultValue = currentEtablissementSiret
+  const defaultValue = etablissementsContext.siret
     ? {
-        value: currentEtablissementSiret.siret,
+        value: etablissementsContext.siret,
         label: etablissementLabelGetter(
-          userContext.etablissements.find(
-            (etablissement) => etablissement.siret === currentEtablissementSiret
+          etablissementsContext.etablissements.find(
+            (etablissement) => etablissement.siret === etablissementsContext.siret
           )
         ),
       }
     : {
-        value: etablissements[0].siret,
-        label: etablissementLabelGetter(etablissements[0]),
+        value: etablissementsContext.etablissements[0].siret,
+        label: etablissementLabelGetter(etablissementsContext.etablissements[0]),
       };
+
+  const onChangeHandler = ({ value }) => {
+    const persistedEtablissements = JSON.parse(localStorage.getItem("etablissements"));
+
+    const etablissement = persistedEtablissements.etablissements.find(
+      (etablissement) => etablissement.siret === value
+    );
+
+    setEtablissementsContext({
+      ...etablissementsContext,
+      siret: value,
+      etablissementLabel: etablissementLabelGetter(etablissement),
+    });
+    localStorage.setItem(
+      "etablissements",
+      JSON.stringify({
+        siret: value,
+        etablissementLabel: etablissementLabelGetter(etablissement),
+        etablissements: persistedEtablissements.etablissements,
+      })
+    );
+  };
+
   return (
     <Select
       id="etablissement"
@@ -61,13 +80,13 @@ const MultiEtablissementsPicker = ({ etablissements, userContext }) => {
       isSearchable
       defaultValue={defaultValue}
       options={
-        etablissements.length > 0 &&
-        etablissements.map((etablissement) => ({
+        etablissementsContext.etablissements.length > 0 &&
+        etablissementsContext.etablissements.map((etablissement) => ({
           value: etablissement.siret,
           label: etablissementLabelGetter(etablissement),
         }))
       }
-      onChange={({ value }) => setSearchParams({ etablissement: value })}
+      onChange={onChangeHandler}
     />
   );
 };
@@ -83,11 +102,11 @@ const Header = ({
   allCampagneCreated = false,
   allowEtablissementChange = false,
 }) => {
-  const [userContext, setUserContext] = useContext(UserContext);
+  const [userContext] = useContext(UserContext);
+  const [etablissementsContext, setEtablissementsContext] = useContext(EtablissementsContext);
   const navigate = useNavigate();
   const breakpoint = useBreakpoint();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [searchParams] = useSearchParams();
 
   const isMobile = breakpoint === "base";
 
@@ -117,18 +136,14 @@ const Header = ({
           <Stack direction={hasActionButton || isMobile ? "column" : "row"}>
             <Stack direction="row" align="center">
               <Image src={IoSchoolSharp} alt="" />
-              {userContext.etablissementLabel ||
-              userContext.etablissements?.length === 1 ||
-              !allowEtablissementChange ? (
+              {etablissementsContext.etablissements?.length === 1 || !allowEtablissementChange ? (
                 <Text color="brand.blue.700" fontSize="lg">
-                  {userContext.etablissementLabel ||
-                    etablissementLabelGetter(userContext.etablissements[0])}
+                  {etablissementsContext.etablissementLabel}
                 </Text>
               ) : (
                 <MultiEtablissementsPicker
-                  etablissements={userContext.etablissements}
-                  userContext={userContext}
-                  setUserContext={setUserContext}
+                  etablissementsContext={etablissementsContext}
+                  setEtablissementsContext={setEtablissementsContext}
                 />
               )}
             </Stack>
@@ -183,9 +198,7 @@ const Header = ({
               </Button>
               <Button
                 isLink
-                onClick={() =>
-                  navigate({ pathname: "/campagnes/ajout", search: searchParams.toString() })
-                }
+                onClick={() => navigate("/campagnes/ajout")}
                 leftIcon={<Image src={IoAddSharp} alt="" />}
                 mx={isMobile ? "0" : "8px"}
                 mr={isMobile ? "0" : "8px"}

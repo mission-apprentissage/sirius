@@ -9,6 +9,7 @@ import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
 import { UserProvider } from "./context/UserContext";
+import { EtablissementsProvider } from "./context/EtablissementsContext";
 
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
@@ -102,9 +103,11 @@ root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <UserProvider>
-        <Router>
-          <App />
-        </Router>
+        <EtablissementsProvider>
+          <Router>
+            <App />
+          </Router>
+        </EtablissementsProvider>
       </UserProvider>
     </ChakraProvider>
   </React.StrictMode>

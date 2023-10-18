@@ -3,6 +3,7 @@ import { Spinner, Box, Text, Stack, Accordion, Image, useBreakpoint } from "@cha
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
+import { EtablissementsContext } from "../context/EtablissementsContext";
 import { USER_ROLES } from "../constants";
 import Header from "./Components/Header";
 import Team from "../assets/images/team.svg";
@@ -18,6 +19,7 @@ import FormError from "../Components/Form/FormError";
 import Button from "../Components/Form/Button";
 import IoAddSharp from "../assets/icons/IoAddSharp.svg";
 import FormSuccess from "../Components/Form/FormSuccess";
+import useFetchCampagnes from "../hooks/useFetchCampagnes";
 
 export const sortingOptions = [
   { label: "Formation (A-Z)", value: { id: "Formation", desc: false } },
@@ -36,6 +38,7 @@ export const sortingOptions = [
 
 const ViewCampagnes = () => {
   const [userContext] = useContext(UserContext);
+  const [etablissementsContext] = useContext(EtablissementsContext);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const breakpoint = useBreakpoint({ ssr: false });
@@ -48,18 +51,15 @@ const ViewCampagnes = () => {
   const status = params.get("status");
   const count = params.get("count");
 
-  const currentEtablissementSiret =
-    userContext.siret || params.get("etablissement") || userContext.etablissements[0].siret;
+  const campagneQuery = etablissementsContext.siret
+    ? `?siret=${etablissementsContext.siret}`
+    : null;
 
-  const campagneQuery =
-    userContext.currentUserRole === USER_ROLES.ETABLISSEMENT
-      ? `?siret=${currentEtablissementSiret}`
-      : "";
+  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes(campagneQuery);
 
-  const [campagnes, loadingCampagnes, errorCampagnes] = useGet(`/api/campagnes${campagneQuery}`);
-
-  const [formations, loadingFormations, errorFormations] =
-    useFetchRemoteFormations(currentEtablissementSiret);
+  const [formations, loadingFormations, errorFormations] = useFetchRemoteFormations(
+    etablissementsContext.siret
+  );
 
   useEffect(() => {
     if (status || count) {
@@ -75,13 +75,17 @@ const ViewCampagnes = () => {
     }
   }, [counter]);
 
+  if (!campagnes || !formations) return <Spinner size="xl" />;
+
+  const isAllCampagneCreated = campagnes && formations && campagnes?.length === formations?.length;
+
   return (
     <Stack direction="column" w="100%">
       <Header
         hasActionButton
         title="Statistiques"
         img={Team}
-        allCampagneCreated={campagnes?.length === formations?.length}
+        allCampagneCreated={isAllCampagneCreated}
         allowEtablissementChange={true}
       >
         {(loadingCampagnes || errorCampagnes) && !campagnes.length ? (
@@ -127,9 +131,7 @@ const ViewCampagnes = () => {
               <Box display="flex" w="100%" justifyContent="center" mt="25px">
                 <Button
                   isLink
-                  onClick={() =>
-                    navigate({ pathname: "/campagnes/ajout", search: searchParams.toString() })
-                  }
+                  onClick={() => navigate("/campagnes/ajout")}
                   leftIcon={<Image src={IoAddSharp} alt="" />}
                   mx={isMobile ? "0" : "8px"}
                   mr={isMobile ? "0" : "8px"}

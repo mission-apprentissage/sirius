@@ -103,10 +103,6 @@ const Signup = () => {
 
   if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
 
-  console.log("formik.values", formik.values);
-
-  console.log({ etablissements });
-
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
       <Stack

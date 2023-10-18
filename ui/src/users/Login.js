@@ -15,6 +15,8 @@ import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import jwt from "jwt-decode";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
+import { EtablissementsContext } from "../context/EtablissementsContext";
+
 import UnderConstruction from "../assets/images/under_construction.svg";
 import InputPassword from "../Components/Form/InputPassword";
 import InputText from "../Components/Form/InputText";
@@ -22,7 +24,9 @@ import Button from "../Components/Form/Button";
 import ForgottenPasswordModal from "./Components/ForgottenPasswordModal";
 import ChangePasswordModal from "./Components/ChangePasswordModal";
 import FormError from "../Components/Form/FormError";
-import { emailWithTLDRegex } from "../constants";
+import { USER_ROLES, emailWithTLDRegex } from "../constants";
+import { _get } from "../utils/httpClient";
+import { etablissementLabelGetter } from "../utils/etablissement";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -37,6 +41,8 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [userContext, setUserContext] = useContext(UserContext);
+  const [etablissementsContext, setEtablissementsContext] = useContext(EtablissementsContext);
+
   const {
     isOpen: isOpenForgottenPassword,
     onOpen: onOpenForgottenPassword,
@@ -62,7 +68,6 @@ const Login = () => {
       });
       if (result.success) {
         const decodedToken = jwt(result.token);
-
         setUserContext((oldValues) => {
           return {
             ...oldValues,
@@ -71,17 +76,26 @@ const Login = () => {
             currentUserId: decodedToken._id,
             currentUserRole: decodedToken.role,
             currentUserStatus: decodedToken.status,
-            siret: decodedToken.siret,
             firstName: decodedToken.firstName,
             lastName: decodedToken.lastName,
             email: decodedToken.email,
-            etablissementLabel: decodedToken.etablissementLabel,
-            etablissements: decodedToken.etablissements,
           };
         });
-        const siret = decodedToken.siret || decodedToken.etablissements[0].siret;
+        if (decodedToken.role === USER_ROLES.ETABLISSEMENT) {
+          localStorage.setItem(
+            "etablissements",
+            JSON.stringify({
+              siret: decodedToken.siret || decodedToken.etablissements[0].siret,
+              etablissementLabel:
+                decodedToken.etablissementLabel ||
+                etablissementLabelGetter(decodedToken.etablissements[0]),
+              etablissements: decodedToken.etablissements,
+            })
+          );
+        }
+
         setIsSubmitting(false);
-        navigate({ pathname: "/campagnes/gestion", search: `?etablissement=${siret}` });
+        navigate("/campagnes/gestion");
       } else if (result.statusCode === 400) {
         setError("Erreur de validation");
         setIsSubmitting(false);

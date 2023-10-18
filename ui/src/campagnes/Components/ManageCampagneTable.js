@@ -172,15 +172,13 @@ const getColumns = (handleCellUpdate) => [
   }),
 ];
 
-const ManageCampagneTable = ({ diplomeType, campagnes, formations, userContext }) => {
+const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userContext }) => {
   const [sorting, setSorting] = useState([]);
   const [search, setSearch] = useState([]);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
 
   useEffect(() => {
-    if (!displayedCampagnes.length && campagnes.length) {
-      setDisplayedCampagnes(campagnes);
-    }
+    setDisplayedCampagnes(campagnes);
   }, [campagnes]);
 
   const handleSearch = (event) => {

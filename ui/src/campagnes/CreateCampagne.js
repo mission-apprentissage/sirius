@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
 import { Box, Stack } from "@chakra-ui/react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import Button from "../Components/Form/Button";
 import { UserContext } from "../context/UserContext";
+import { EtablissementsContext } from "../context/EtablissementsContext";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
 import useFetchLocalEtablissements from "../hooks/useFetchLocalEtablissements";
 import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
@@ -14,22 +15,19 @@ import { formateDateToInputFormat } from "./utils";
 import { useGet } from "../common/hooks/httpHooks";
 import { _get } from "../utils/httpClient";
 
-const CreateCampagne = ({ etablissementSiret }) => {
+const CreateCampagne = () => {
   const [allDiplomesSelectedFormations, setAllDiplomesSelectedFormations] = useState([]);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userContext] = useContext(UserContext);
+  const [etablissementsContext] = useContext(EtablissementsContext);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-
-  const currentEtablissementSiret =
-    userContext.siret || etablissementSiret || userContext.etablissements[0].siret;
 
   const [remoteFormations, loadingRemoteFormations, errorRemoteFormations] =
-    useFetchRemoteFormations(currentEtablissementSiret);
+    useFetchRemoteFormations(etablissementsContext.siret);
 
   const [localEtablissement, loadingLocalEtablissement, errorLocalEtablissement] =
-    useFetchLocalEtablissements(currentEtablissementSiret);
+    useFetchLocalEtablissements(etablissementsContext.siret);
 
   const localFormationQuery =
     localEtablissement?.length &&
@@ -70,7 +68,7 @@ const CreateCampagne = ({ etablissementSiret }) => {
 
       for (const campagne of values.campagnes) {
         const [freshLocalEtablissement] = await _get(
-          `/api/etablissements?data.siret=${currentEtablissementSiret}`,
+          `/api/etablissements?data.siret=${etablissementsContext.siret}`,
           userContext.token
         );
         const { formationId, ...cleanUpCampagne } = campagne;
@@ -91,15 +89,9 @@ const CreateCampagne = ({ etablissementSiret }) => {
       const isAllSuccess = results.every((result) => result.status === "success");
       setIsSubmitting(false);
       if (isAllSuccess) {
-        navigate({
-          pathname: `/campagnes/gestion`,
-          search: `${searchParams.toString()}&status=success&count=${results.length}`,
-        });
+        navigate(`/campagnes/gestion?status=success&count=${results.length}`);
       } else {
-        navigate({
-          pathname: `/campagnes/gestion`,
-          search: `${searchParams.toString()}&status=error`,
-        });
+        navigate(`/campagnes/gestion?status=error`);
       }
     },
   });

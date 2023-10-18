@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Spinner, Accordion, Text, Stack } from "@chakra-ui/react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import Header from "../Components/Header";
 import Blackboard from "../../assets/images/blackboard.svg";
@@ -18,7 +18,6 @@ const Step1 = ({
 }) => {
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const existingFormationCatalogueIds = localFormations?.map((formation) => formation.data._id);
 
@@ -29,9 +28,7 @@ const Step1 = ({
         img={Blackboard}
         hasGoBackButton
         goBackLabel="Retour gestion des campagnes"
-        goBackOnClick={() =>
-          navigate({ pathname: "/campagnes/gestion", search: searchParams.toString() })
-        }
+        goBackOnClick={() => navigate("/campagnes/gestion")}
       >
         <Text fontWeight="600" color="brand.black.500">
           Lorsque vous sélectionnez une formation vous créez une campagne Sirius.
