@@ -22,7 +22,7 @@ const questionnaires = () => {
     getQuestionnaires(req, res, next);
   });
 
-  router.get("/api/questionnaires/:id", verifyUser, (req, res, next) => {
+  router.get("/api/questionnaires/:id", (req, res, next) => {
     getQuestionnaire(req, res, next);
   });
 
