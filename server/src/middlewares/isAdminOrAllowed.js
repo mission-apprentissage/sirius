@@ -33,7 +33,8 @@ const isAdminOrAllowed = async (req, next, type) => {
 
     //check SIRET
     if (type === TYPES.SIRET) {
-      const siretToVerify = req.params.siret || req.query.siret || req.body.siret || req.query["data.siret"];
+      const siretToVerify =
+        req.params.siret || req.query.siret || req.body.siret || req.query["data.siret"] || req.body.etablissementSiret;
       if (siret === siretToVerify || multipleSiret.includes(siretToVerify)) return next();
     }
 

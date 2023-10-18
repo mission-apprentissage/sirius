@@ -1,6 +1,10 @@
 const campagnesDao = require("../dao/campagnes.dao");
+const formationsDao = require("../dao/formations.dao");
+const etablissementsDao = require("../dao/etablissements.dao");
+
 const { getChampsLibreRate } = require("../utils/verbatims.utils");
 const { getMedianDuration } = require("../utils/campagnes.utils");
+
 const getCampagnes = async (query) => {
   try {
     const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(query);
@@ -53,4 +57,33 @@ const updateCampagne = async (id, updatedCampagne) => {
   }
 };
 
-module.exports = { getCampagnes, getOneCampagne, createCampagne, deleteCampagne, updateCampagne };
+const createMultiCampagne = async ({ campagnes, etablissementSiret }) => {
+  try {
+    const formationsIds = [];
+
+    for (const campagne of campagnes) {
+      // eslint-disable-next-line no-unused-vars
+      const { formation } = campagne;
+
+      const createdCampagne = await campagnesDao.create(campagne);
+      const createdFormation = await formationsDao.create({
+        data: formation,
+        campagneId: createdCampagne._id,
+        createdBy: formation.createdBy,
+      });
+
+      formationsIds.push(createdFormation._id.toString());
+    }
+
+    const etablissement = await etablissementsDao.getAll({ "data.siret": etablissementSiret });
+
+    await etablissementsDao.update(etablissement[0]._id, {
+      formationIds: [...etablissement[0].formationIds, ...formationsIds],
+    });
+    return { success: true, body: { createdCount: formationsIds.length } };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { getCampagnes, getOneCampagne, createCampagne, deleteCampagne, updateCampagne, createMultiCampagne };
