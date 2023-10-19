@@ -15,6 +15,21 @@ const getChampsLibreField = (questionnaireUI) => {
   return fieldsWithCustomMessageReceived;
 };
 
+const getChampsLibreRate = (questionnaireUI, temoignages) => {
+  const champsLibreField = getChampsLibreField(questionnaireUI);
+
+  const champsLibresFieldsCountWithAnswer = temoignages.reduce((acc, cur) => {
+    const answers = Object.keys(cur.reponses);
+    const count = answers.filter((answer) => champsLibreField.includes(answer)).length;
+    return acc + count;
+  }, 0);
+
+  const champsLibresFieldsCount = champsLibreField.length * temoignages.length;
+
+  const rate = Math.round((champsLibresFieldsCountWithAnswer / champsLibresFieldsCount) * 100);
+  return rate || 0;
+};
+
 const findTitlesInJSON = (jsonData, keysToFind) => {
   const titles = {};
 
@@ -53,8 +68,8 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
           formation: verbatim.formation ? verbatim.formation.data.intitule_long : "",
           formationId: verbatim.formation ? verbatim.formation._id : "",
           etablissement: verbatim.etablissement
-            ? verbatim.etablissement.data.enseigne ||
-              verbatim.etablissement.data.onisep_nom ||
+            ? verbatim.etablissement.data.onisep_nom ||
+              verbatim.etablissement.data.enseigne ||
               verbatim.etablissement.data.entreprise_raison_sociale
             : "",
           etablissementSiret: verbatim.etablissement ? verbatim.etablissement.data.siret : "",
@@ -109,6 +124,7 @@ const appendFormationAndEtablissementToVerbatims = (temoignages, campagnesByQues
 
 module.exports = {
   getChampsLibreField,
+  getChampsLibreRate,
   findTitlesInJSON,
   filterChampsLibresAndFlatten,
   appendVerbatimsWithCampagneNameAndRestructure,

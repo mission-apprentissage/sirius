@@ -14,7 +14,9 @@ const TYPES = {
 };
 
 const isAdminOrAllowed = async (req, next, type) => {
-  const { status, role, siret } = req.user;
+  const { status, role, siret, etablissements } = req.user;
+
+  const multipleSiret = etablissements.map((etablissement) => etablissement.siret);
 
   if (role === USER_ROLES.ADMIN && status === USER_STATUS.ACTIVE) {
     return next();
@@ -31,14 +33,15 @@ const isAdminOrAllowed = async (req, next, type) => {
 
     //check SIRET
     if (type === TYPES.SIRET) {
-      const siretToVerify = req.params.siret || req.query.siret || req.body.siret || req.query["data.siret"];
-      if (siret === siretToVerify) return next();
+      const siretToVerify =
+        req.params.siret || req.query.siret || req.body.siret || req.query["data.siret"] || req.body.etablissementSiret;
+      if (siret === siretToVerify || multipleSiret.includes(siretToVerify)) return next();
     }
 
     //check etablissementId
     if (type === TYPES.ETABLISSEMENT_ID) {
       const { body } = await etablissementsService.getEtablissement(req.params.id);
-      if (body && body.data.siret === siret) return next();
+      if ((body && body.data.siret === siret) || multipleSiret.includes(body.data.siret)) return next();
     }
 
     //check formation related to etablissement siret
@@ -46,7 +49,13 @@ const isAdminOrAllowed = async (req, next, type) => {
       const siretGestionnaire = req.body.data.etablissement_gestionnaire_siret;
       const siretFormateur = req.body.data.etablissement_formateur_siret;
 
-      if (siret === siretGestionnaire || siret === siretFormateur) return next();
+      if (
+        siret === siretGestionnaire ||
+        siret === siretFormateur ||
+        multipleSiret.includes(siretGestionnaire) ||
+        multipleSiret.includes(siretFormateur)
+      )
+        return next();
     }
 
     //check formationId
@@ -56,7 +65,13 @@ const isAdminOrAllowed = async (req, next, type) => {
       const siretGestionnaire = body.data.etablissement_gestionnaire_siret;
       const siretFormateur = body.data.etablissement_formateur_siret;
 
-      if (siret === siretGestionnaire || siret === siretFormateur) return next();
+      if (
+        siret === siretGestionnaire ||
+        siret === siretFormateur ||
+        multipleSiret.includes(siretGestionnaire) ||
+        multipleSiret.includes(siretFormateur)
+      )
+        return next();
     }
 
     //check formationIds
@@ -69,7 +84,11 @@ const isAdminOrAllowed = async (req, next, type) => {
       }));
 
       const isOwnFormations = formationsSiret.every(
-        (formationSiret) => siret === formationSiret.siretGestionnaire || siret === formationSiret.siretFormateur
+        (formationSiret) =>
+          siret === formationSiret.siretGestionnaire ||
+          siret === formationSiret.siretFormateur ||
+          multipleSiret.includes(formationSiret.siretGestionnaire) ||
+          multipleSiret.includes(formationSiret.siretFormateur)
       );
 
       if (req.query.id.length && isOwnFormations) return next();

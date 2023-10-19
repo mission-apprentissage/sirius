@@ -11,12 +11,14 @@ import {
   Tooltip,
   Box,
   Select,
+  Text,
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { UserContext } from "../../context/UserContext";
 import ChangeUserStatusConfirmationModal from "./ChangeUserStatusConfirmationModal";
 import ChangeUserRoleConfirmationModal from "./ChangeUserRoleConfirmationModal";
 import { USER_ROLES, USER_STATUS } from "../../constants";
+import { etablissementLabelGetter } from "../../utils/etablissement";
 
 const UsersTable = ({ users, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
@@ -62,11 +64,21 @@ const UsersTable = ({ users, setRefetchData }) => {
                     <Td>{user.lastName}</Td>
                     <Td>{user.email}</Td>
                     <Th>{user.emailConfirmed ? <CheckIcon /> : <CloseIcon />}</Th>
-                    <Td>{user.siret}</Td>
+                    <Td>
+                      {user.siret && user.siret}
+                      {user.etablissements?.map((etablissement) => (
+                        <Tooltip
+                          key={etablissement.siret}
+                          label={etablissementLabelGetter(etablissement)}
+                          hasArrow
+                          arrowSize={15}
+                        >
+                          <Text>{etablissement.siret}</Text>
+                        </Tooltip>
+                      ))}
+                    </Td>
                     <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {(user.etablissement?.onisep_nom ||
-                        user.etablissement?.enseigne ||
-                        user.etablissement?.entreprise_raison_sociale) && (
+                      {etablissementLabelGetter(user.etablissement) && (
                         <Tooltip
                           label={`${user.etablissement?.onisep_nom} - 
                           ${user.etablissement?.enseigne} -
@@ -74,9 +86,7 @@ const UsersTable = ({ users, setRefetchData }) => {
                           hasArrow
                           arrowSize={15}
                         >
-                          {user.etablissement?.onisep_nom ||
-                            user.etablissement?.enseigne ||
-                            user.etablissement?.entreprise_raison_sociale}
+                          {etablissementLabelGetter(user.etablissement)}
                         </Tooltip>
                       )}
                     </Td>

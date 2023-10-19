@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { _get } from "../utils/httpClient";
 
-const useFetchLocalEtablissement = () => {
+const useFetchLocalEtablissements = (siret) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -11,7 +11,8 @@ const useFetchLocalEtablissement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await _get(`/api/etablissements/`, userContext.token);
+        const query = siret ? `?data.siret=${siret}` : "";
+        const response = await _get(`/api/etablissements${query}`, userContext.token);
         setData(response);
         setLoading(false);
       } catch (error) {
@@ -20,9 +21,9 @@ const useFetchLocalEtablissement = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [siret]);
 
   return [data, loading, error];
 };
 
-export default useFetchLocalEtablissement;
+export default useFetchLocalEtablissements;

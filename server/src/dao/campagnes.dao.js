@@ -28,9 +28,6 @@ const temoignageCountQuery = [
       temoignagesCount: { $size: "$temoignagesList" },
     },
   },
-  {
-    $unset: ["temoignagesList"],
-  },
 ];
 
 const questionnaireTemplateQuery = [
@@ -90,6 +87,9 @@ const formationQuery = [
             "data.intitule_long": 1,
             "data.tags": 1,
             "data.lieu_formation_adresse_computed": 1,
+            "data.diplome": 1,
+            "data.localite": 1,
+            "data.duree": 1,
           },
         },
         {

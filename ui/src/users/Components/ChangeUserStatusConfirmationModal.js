@@ -28,29 +28,67 @@ const ChangeUserStatusConfirmationModal = ({
   if (!user) return null;
 
   const handleChangeStatusConfirmation = async () => {
-    let etablissementResult;
-
     const isActivatingUser =
       selectedStatus === USER_STATUS.ACTIVE &&
       (user.status === USER_STATUS.INACTIVE || user.status === USER_STATUS.PENDING);
 
-    const existingEtablissement = await _get(
-      `/api/etablissements?data.siret=${user.siret}`,
-      userContext.token
-    );
+    let existingEtablissements = [];
 
-    const isExistingEtablissement = existingEtablissement.length > 0;
-
-    if (isActivatingUser && !isExistingEtablissement) {
-      etablissementResult = await _post(
-        `/api/etablissements/`,
-        {
-          data: user.etablissement,
-          createdBy: user._id,
-        },
+    user.etablissements.forEach(async (etablissement) => {
+      const result = await _get(
+        `/api/etablissements?data.siret=${etablissement.siret}`,
         userContext.token
       );
-    }
+      existingEtablissements.push(result[0]);
+    });
+
+    const isExistingEtablissements = existingEtablissements.length > 0;
+
+    const filteredEtablissementsToCreate = user.etablissements.filter(
+      (etablissement) =>
+        !existingEtablissements.find((existingEtablissement) => {
+          return existingEtablissement.siret === etablissement.siret;
+        })
+    );
+
+    const getRemoteEtablissementsToCreate = async () => {
+      const remoteEtablissementsToCreate = [];
+
+      for (const etablissement of filteredEtablissementsToCreate) {
+        const result = await _get(
+          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${etablissement.siret}"}&page=1&limit=1`
+        );
+
+        if (result.etablissements?.length > 0) {
+          remoteEtablissementsToCreate.push(result.etablissements[0]);
+        }
+      }
+
+      return remoteEtablissementsToCreate;
+    };
+
+    const remoteEtablissementsToCreate = await getRemoteEtablissementsToCreate();
+
+    const createLocalEtablissements = async () => {
+      const localEtablissementsCreated = [];
+
+      for (const etablissement of remoteEtablissementsToCreate) {
+        const result = await _post(
+          `/api/etablissements/`,
+          {
+            data: etablissement,
+            createdBy: user._id,
+          },
+          userContext.token
+        );
+
+        localEtablissementsCreated.push(result);
+      }
+
+      return localEtablissementsCreated;
+    };
+
+    const localEtablissementsCreatedResult = await createLocalEtablissements();
 
     const userResult = await _put(
       `/api/users/${user._id}`,
@@ -58,9 +96,13 @@ const ChangeUserStatusConfirmationModal = ({
       userContext.token
     );
 
+    const isEtablissementCreationSuccess = localEtablissementsCreatedResult.every(
+      (result) => result._id
+    );
+
     if (
       userResult.modifiedCount === 1 &&
-      ((isActivatingUser && (etablissementResult?._id || isExistingEtablissement)) ||
+      ((isActivatingUser && (isEtablissementCreationSuccess || isExistingEtablissements)) ||
         !isActivatingUser)
     ) {
       toast({

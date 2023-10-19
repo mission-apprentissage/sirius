@@ -10,10 +10,9 @@ const subscribeSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   comment: Joi.string().allow(null, ""),
-  siret: Joi.string().required(),
-  email: Joi.string().email().required(),
+  etablissements: Joi.array().required(),
+  email: Joi.string().email({ tlds: false }).required(),
   password: passwordComplexity(),
-  etablissement: Joi.object().required(),
 });
 
 const updateSchema = Joi.object({
@@ -27,7 +26,7 @@ const updateSchema = Joi.object({
 });
 
 const forgotPasswordSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: false }).required(),
 });
 
 const resetPasswordSchema = Joi.object({

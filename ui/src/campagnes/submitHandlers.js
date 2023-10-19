@@ -1,5 +1,18 @@
 import { _post, _put, _delete } from "../utils/httpClient";
 
+export const multiCreationSubmitHandler = async (payload, userContext) => {
+  const result = await _post(`/api/campagnes/multi`, payload, userContext.token);
+  return result.createdCount
+    ? {
+        status: "success",
+        createdCount: result.createdCount,
+      }
+    : {
+        status: "error",
+        description: "Une erreur est survenue",
+      };
+};
+
 export const creationSubmitHandler = async (values, userContext) => {
   const { etablissement, formation, localEtablissement } = values;
 
@@ -198,6 +211,20 @@ export const editionSubmitHandler = async (values, previousValues, userContext) 
   const isSuccessCase4 = isCampagneAndFormationSuccess && etablissementResult?._id;
 
   return isSuccessCase1 || isSuccessCase2 || isSuccessCase3 || isSuccessCase4
+    ? {
+        status: "success",
+        description: "La campagne a été mise à jour",
+      }
+    : {
+        status: "error",
+        description: "Une erreur est survenue",
+      };
+};
+
+export const simpleEditionSubmitHandler = async (campagneId, values, userContext) => {
+  const campagneResult = await _put(`/api/campagnes/${campagneId}`, values, userContext.token);
+
+  return campagneResult?.modifiedCount
     ? {
         status: "success",
         description: "La campagne a été mise à jour",

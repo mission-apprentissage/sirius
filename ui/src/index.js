@@ -9,7 +9,7 @@ import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
 import { UserProvider } from "./context/UserContext";
-import Layout from "./Components/Layout";
+import { EtablissementsProvider } from "./context/EtablissementsContext";
 
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
@@ -85,6 +85,9 @@ export const theme = extendTheme({
       black: {
         500: "#161616",
       },
+      gray: {
+        700: "#2D3748",
+      },
     },
     progressBar: {
       700: "#000091",
@@ -100,11 +103,11 @@ root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <UserProvider>
-        <Router>
-          <Layout>
+        <EtablissementsProvider>
+          <Router>
             <App />
-          </Layout>
-        </Router>
+          </Router>
+        </EtablissementsProvider>
       </UserProvider>
     </ChakraProvider>
   </React.StrictMode>

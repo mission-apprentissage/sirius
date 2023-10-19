@@ -4,6 +4,7 @@ const usersDao = require("../dao/users.dao");
 const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
 const { ErrorMessage } = require("../errors");
 const User = require("../models/user.model");
+const { USER_ROLES } = require("../constants");
 
 const createUser = async (user) => {
   try {
@@ -18,12 +19,39 @@ const loginUser = async (id) => {
   try {
     const user = await usersDao.getOne(id);
 
-    const token = getToken({ _id: id, role: user.role, status: user.status, siret: user.siret });
+    const token = getToken({
+      _id: id,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      etablissements: user.etablissements,
+    });
     const refreshToken = getRefreshToken({
       _id: id,
       role: user.role,
       status: user.status,
       siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      etablissements: user.etablissements,
     });
 
     user.refreshToken.push({ refreshToken });
@@ -45,12 +73,39 @@ const refreshTokenUser = async (refreshToken) => {
 
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
 
-    const token = getToken({ _id: userId, role: user.role, status: user.status, siret: user.siret });
+    const token = getToken({
+      _id: userId,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      etablissements: user.etablissements,
+    });
     const newRefreshToken = getRefreshToken({
       _id: userId,
       role: user.role,
       status: user.status,
       siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      etablissements: user.etablissements,
     });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 

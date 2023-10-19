@@ -97,3 +97,54 @@ export const getNextButtonLabel = (isLastCategory, isLastQuestionInCategory) => 
     return "Suivant";
   }
 };
+
+const padTo2Digits = (num) => {
+  return num.toString().padStart(2, "0");
+};
+
+export const formatDate = (date) => {
+  const typedDate = new Date(date);
+  return [
+    padTo2Digits(typedDate.getDate()),
+    padTo2Digits(typedDate.getMonth() + 1),
+    typedDate.getFullYear(),
+  ].join("/");
+};
+
+export const formateDateToInputFormat = (date, monthsAdded = 0) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1 + monthsAdded).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return year + "-" + month + "-" + day;
+};
+
+export const uniqueDiplomeTypesFromCampagne = (campagnes) => [
+  ...new Set(campagnes.map((campagne) => campagne.formation?.data?.diplome)),
+];
+
+export const uniqueDiplomeTypesFromFormation = (formations) => [
+  ...new Set(formations?.map((formation) => formation?.diplome)),
+];
+
+export const orderCampagnesByDiplomeType = (campagnes) => {
+  const orderedCampagnes = {};
+  uniqueDiplomeTypesFromCampagne(campagnes)?.forEach((diplomeType) => {
+    const campagnesByDiplomeType = campagnes.filter(
+      (campagne) => campagne.formation?.data?.diplome === diplomeType
+    );
+    orderedCampagnes[diplomeType] = campagnesByDiplomeType;
+  });
+  return orderedCampagnes;
+};
+
+export const orderFormationsByDiplomeType = (formations) => {
+  const orderedFormations = {};
+  uniqueDiplomeTypesFromFormation(formations)?.forEach((diplomeType) => {
+    const formationsByDiplomeType = formations.filter(
+      (formation) => formation?.diplome === diplomeType
+    );
+    orderedFormations[diplomeType] = formationsByDiplomeType;
+  });
+  return orderedFormations;
+};

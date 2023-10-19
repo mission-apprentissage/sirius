@@ -18,7 +18,6 @@ import {
   Avatar,
   MenuList,
   MenuItem,
-  MenuDivider,
   useToast,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
@@ -37,16 +36,16 @@ const NAV_ITEMS = [
         label: "Ajout",
         subLabel: "Ajouter une campagne",
         href: "/campagnes/ajout",
-        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+        roles: [USER_ROLES.ADMIN],
       },
       {
         label: "Gestion",
         subLabel: "Gérer les campagnes",
         href: "/campagnes/gestion",
-        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+        roles: [USER_ROLES.ADMIN],
       },
     ],
-    roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+    roles: [USER_ROLES.ADMIN],
   },
   {
     label: "Témoignages",
@@ -55,7 +54,7 @@ const NAV_ITEMS = [
         label: "Dashboard",
         subLabel: "Afficher les statistiques d'une campagne",
         href: "/temoignages/dashboard",
-        roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+        roles: [USER_ROLES.ADMIN],
       },
       {
         label: "Gestion",
@@ -64,7 +63,7 @@ const NAV_ITEMS = [
         roles: [USER_ROLES.ADMIN],
       },
     ],
-    roles: [USER_ROLES.ADMIN, USER_ROLES.ETABLISSEMENT],
+    roles: [USER_ROLES.ADMIN],
   },
   {
     label: "Questionnaires",
@@ -135,8 +134,8 @@ const MenuWithSubnavigation = () => {
 
   const handleLogout = async () => {
     const result = await _get(`/api/users/logout`, userContext.token);
-
     if (result.success) {
+      localStorage.removeItem("etablissements");
       navigate(0);
     } else {
       toast({
@@ -152,7 +151,7 @@ const MenuWithSubnavigation = () => {
   return (
     <Box>
       <Flex
-        bg="white"
+        bgColor="brand.blue.100"
         color="gray.600"
         minH="60px"
         py={{ base: 2 }}
@@ -168,7 +167,7 @@ const MenuWithSubnavigation = () => {
           />
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }} alignItems="center">
-          <Box>
+          <Box ml="50px">
             <Link href="/">
               <img src={Logo} alt="Logo Sirius" />
             </Link>
@@ -185,8 +184,6 @@ const MenuWithSubnavigation = () => {
               <Avatar size="sm" src={MileySmall} />
             </MenuButton>
             <MenuList>
-              <MenuItem>Profil</MenuItem>
-              <MenuDivider />
               <MenuItem onClick={handleLogout}>Se déconnecter</MenuItem>
             </MenuList>
           </Menu>

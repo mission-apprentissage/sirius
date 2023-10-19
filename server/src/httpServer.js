@@ -21,7 +21,7 @@ module.exports = async (components) => {
   const app = express();
   app.set("trust proxy", 1);
   app.use(helmet.contentSecurityPolicy());
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({ limit: "50mb" }));
   app.use(cookieParser(config.auth.cookieSecret));
   app.use(logMiddleware(logger));
   app.use(campagnes());

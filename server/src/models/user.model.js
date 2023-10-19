@@ -51,11 +51,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  siret: {
-    type: String,
-  },
-  etablissement: {
-    type: Object,
+  etablissements: {
+    type: Array,
+    required: true,
   },
   authStrategy: {
     type: String,
@@ -63,6 +61,12 @@ const userSchema = new mongoose.Schema({
   },
   refreshToken: {
     type: [Session],
+  },
+  siret: {
+    type: String,
+  },
+  etablissement: {
+    type: Object,
   },
 });
 

@@ -1,26 +1,17 @@
 import { Box, Stack, Text, useBreakpoint } from "@chakra-ui/react";
-import Footer from "../Components/Footer";
 
 const CGU = () => {
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
 
   return (
-    <Stack direction="column" w="100%" m="auto">
-      <Box
-        w={isMobile ? "90%" : "70%"}
-        bg="white"
-        p={6}
-        rounded="md"
-        boxShadow="md"
-        m="auto"
-        mt={isMobile ? "5" : "auto"}
-      >
+    <Stack direction="column" w="100%" m="auto" my="32px" color="brand.blue.700">
+      <Box w={isMobile ? "90%" : "70%"} p={6} m="auto" mt={isMobile ? "5" : "auto"}>
         <Stack spacing="4">
-          <Text fontSize="3xl" fontWeight="semibold" textAlign="center" mb="3">
+          <Text fontSize="3xl" fontWeight="semibold" mb="32px">
             CONDITIONS GÉNÉRALES D’UTILISATION
           </Text>
-          <Text fontSize="3xl" fontWeight="semibold" textAlign="center" mb="3">
+          <Text fontSize="3xl" fontWeight="semibold" mb="32px">
             SIRIUS
           </Text>
           <Text>
@@ -28,14 +19,14 @@ const CGU = () => {
             juridique de “Sirius” et définissent les conditions d’accès et d’utilisation des
             services par l’Utilisateur.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Article 1 - Champ d’application
           </Text>
           <Text>
             Sirius est gratuit et réservé aux apprentis signataires d’un contrat en apprentissage
             référencé dans la base de données DECA.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Article 2 – Objet
           </Text>
           <Text>
@@ -44,7 +35,7 @@ const CGU = () => {
             leurs choix d’orientation et pour améliorer l’information sur les centres de formation
             d’apprentis.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Article 3 – Définitions
           </Text>
           <Text>
@@ -55,7 +46,7 @@ const CGU = () => {
             Les « Services » sont les fonctionnalités offertes par la plateforme pour répondre à ses
             finalités.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Article 4 - Fonctionnalités
           </Text>
           <Text>
@@ -63,10 +54,10 @@ const CGU = () => {
             plusieurs choix de réponses sont possibles et répondre à des messages de collégiens pour
             leur donner un retour d’expérience.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Article 5 - Responsabilités
           </Text>
-          <Text fontSize="md" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             5.1 L’éditeur de « Sirius »
           </Text>
           <Text>
@@ -84,7 +75,7 @@ const CGU = () => {
             préavis, le site pour des raisons de maintenance ou pour tout autre motif jugé
             nécessaire.
           </Text>
-          <Text fontSize="md" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             5.2 L’Utilisateur
           </Text>
           <Text>
@@ -107,7 +98,7 @@ const CGU = () => {
             Il veille particulièrement aux données sensibles notamment les données relatives aux
             opinions philosophiques, syndicales et religieuses.
           </Text>
-          <Text fontSize="lg" fontWeight="semibold">
+          <Text fontSize="md" fontWeight="semibold" mt="32px">
             Article 6 - Mise à jour des conditions d’utilisation
           </Text>
           <Text>
@@ -118,7 +109,6 @@ const CGU = () => {
           </Text>
         </Stack>
       </Box>
-      <Footer />
     </Stack>
   );
 };

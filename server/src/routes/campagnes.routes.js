@@ -1,12 +1,14 @@
 const express = require("express");
 const validator = require("../middlewares/validatorMiddleware");
-const createCampagneSchema = require("../validators/campagnes.validators");
+const { createCampagneSchema, createMultiCampagneSchema } = require("../validators/campagnes.validators");
 const {
   getCampagnes,
   getCampagne,
   createCampagne,
   deleteCampagne,
   updateCampagne,
+  createMultiCampagne,
+  getExport,
 } = require("../controllers/campagnes.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdminOrAllowed, TYPES } = require("../middlewares/isAdminOrAllowed");
@@ -26,6 +28,16 @@ const campagnes = () => {
   router.post("/api/campagnes/", verifyUser, validator(createCampagneSchema), (req, res, next) => {
     createCampagne(req, res, next);
   });
+
+  router.post(
+    "/api/campagnes/multi",
+    verifyUser,
+    (req, res, next) => isAdminOrAllowed(req, next, TYPES.SIRET),
+    validator(createMultiCampagneSchema),
+    (req, res, next) => {
+      createMultiCampagne(req, res, next);
+    }
+  );
 
   router.get("/api/campagnes/:id", (req, res, next) => {
     getCampagne(req, res, next);
@@ -47,6 +59,15 @@ const campagnes = () => {
     validator(createCampagneSchema),
     (req, res, next) => {
       updateCampagne(req, res, next);
+    }
+  );
+
+  router.get(
+    "/api/campagnes/export/:id",
+    verifyUser,
+    (req, res, next) => isAdminOrAllowed(req, next, TYPES.SIRET),
+    (req, res, next) => {
+      getExport(req, res, next);
     }
   );
 

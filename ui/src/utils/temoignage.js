@@ -99,6 +99,7 @@ export const msToTime = (duration) => {
 
   if (minutes === "00") return seconds + " sec";
   if (hours === "00") return minutes + " min " + seconds;
+  return hours + " h " + minutes + " min " + seconds;
 };
 
 export const getMedianDuration = (answers) => {

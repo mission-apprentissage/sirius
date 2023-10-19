@@ -6,6 +6,14 @@ const getHeaders = (token) => {
   };
 };
 
+export const _getBlob = async (path, token = null) => {
+  return fetch(`${path}`, {
+    method: "GET",
+    headers: getHeaders(token),
+    credentials: "same-origin",
+  }).then((res) => res.blob());
+};
+
 export const _get = async (path, token = null) => {
   return fetch(`${path}`, {
     method: "GET",

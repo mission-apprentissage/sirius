@@ -1,65 +1,67 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext } from "react";
 import {
   Flex,
-  Heading,
-  Input,
-  Button,
-  InputGroup,
   Stack,
   Box,
-  Avatar,
   FormControl,
-  InputRightElement,
-  useToast,
-  FormErrorMessage,
   Textarea,
   Text,
+  Image,
+  useBreakpoint,
+  Link,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate } from "react-router-dom";
-import { AsyncSelect } from "chakra-react-select";
-import { _post, _get } from "../utils/httpClient";
+import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
-import Miley from "../assets/images/miley.png";
+import Support from "../assets/images/support.svg";
+import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
+import InputPassword from "../Components/Form/InputPassword";
+import InputText from "../Components/Form/InputText";
+import Button from "../Components/Form/Button";
+import FormError from "../Components/Form/FormError";
+import { emailWithTLDRegex } from "../constants";
+import EtablissementInput from "./Components/EtablissementInput";
+
+const requiredFieldMessage = "Ces champs sont obligatoires";
 
 const validationSchema = Yup.object({
   email: Yup.string()
-    .email("Le champ n'est pas au bon format")
-    .required("Ce champ est obligatoire"),
-  lastName: Yup.string().required("Ce champ est obligatoire"),
-  firstName: Yup.string().required("Ce champ est obligatoire"),
-  etablissement: Yup.object().required("Ce champ est obligatoire"),
+    .matches(emailWithTLDRegex, "L'email n'est pas au bon format")
+    .required(requiredFieldMessage),
+  lastName: Yup.string().required(requiredFieldMessage),
+  firstName: Yup.string().required(requiredFieldMessage),
   comment: Yup.string(),
   password: Yup.string()
-    .required("Ce champ est obligatoire")
+    .required(requiredFieldMessage)
     .matches(passwordComplexityRegex, passwordComplexityMessage),
+  etablissements: Yup.array().of(Yup.object()),
 });
 
 const Signup = () => {
-  const timer = useRef();
-  const toast = useToast();
-  const [showPassword, setShowPassword] = useState(false);
+  const breakpoint = useBreakpoint({ ssr: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
+  const [error, setError] = useState(null);
   const [userContext] = useContext(UserContext);
-  const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
+  const [etablissements, setEtablissements] = useState([""]);
 
-  const handleShowClick = () => setShowPassword(!showPassword);
+  const isMobile = breakpoint === "base";
 
   const formik = useFormik({
     initialValues: {
       firstName: "",
       lastName: "",
-      etablissement: "",
       comment: "",
       email: "",
       password: "",
+      etablissements: [],
     },
     validationSchema: validationSchema,
-    onSubmit: async ({ email, password, firstName, lastName, comment, etablissement }) => {
+    onSubmit: async ({ email, password, firstName, lastName, comment, etablissements }) => {
       setIsSubmitting(true);
       const resultUser = await _post(`/api/users/`, {
         firstName: firstName,
@@ -67,187 +69,165 @@ const Signup = () => {
         comment: comment,
         email: email.toLowerCase(),
         password,
-        siret: etablissement.siret,
-        etablissement: etablissement,
+        etablissements,
       });
 
       if (resultUser._id) {
+        setError(null);
         setIsSuccessful(true);
         setIsSubmitting(false);
       } else if (resultUser.statusCode === 400) {
-        toast({
-          title: "Une erreur est survenue",
-          description: resultUser.message,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+        setError(resultUser.message);
         setIsSubmitting(false);
       } else if (resultUser.statusCode === 500) {
-        toast({
-          title: "Une erreur est survenue",
-          description: "Merci de réessayer",
-          duration: 5000,
-          isClosable: true,
-        });
+        setError("Merci de réessayer");
         setIsSubmitting(false);
       } else if (resultUser.statusCode === 429) {
-        toast({
-          title: "Une erreur est survenue",
-          description: resultUser.message,
-          duration: 5000,
-          isClosable: true,
-        });
+        setError(resultUser.message);
         setIsSubmitting(false);
       }
     },
   });
 
-  const debouncedSiret = (callback, siret) => {
-    clearTimeout(timer.current);
-    timer.current = setTimeout(async () => {
-      const result = await _get(
-        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siret}"}&page=1&limit=1`
-      );
-
-      if (result.etablissements?.length > 0) {
-        callback(result.etablissements);
-        formik.setFieldValue("etablissement", result.etablissements[0]);
-      } else {
-        callback(null);
-      }
-    }, 500);
+  const addEtablissementField = () => {
+    setEtablissements([...etablissements, {}]);
   };
 
-  const loadEtablissementOptionsHandler = (inputValue, callback) => {
-    debouncedSiret(callback, inputValue);
-    setIsLoadingRemoteEtablissement(false);
+  const handleDeleteEtablissement = (index) => {
+    formik.setFieldValue("etablissements", etablissements.splice(index, 1));
+    setEtablissements((prevValues) => {
+      const updatedEtablissements = [...prevValues];
+      updatedEtablissements.splice(index, 1);
+      return updatedEtablissements;
+    });
   };
 
   if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
-      <Stack flexDir="column" mb="2" justifyContent="center" alignItems="center">
-        <Avatar size="lg" src={Miley} alt="" />
-        <Heading color="purple.400">S'inscrire en tant qu'établissement</Heading>
-        <Box w="600px">
+      <Stack
+        spacing="64px"
+        flexDir={isMobile ? "column" : "row"}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Image src={isSuccessful ? SiriusInTheSky : Support} alt="" w="300px" />
+        <Box w={isMobile ? "100%" : "400px"}>
+          {!isSuccessful && (
+            <Text color="brand.blue.700" fontSize="xl" my="0">
+              Établissement
+            </Text>
+          )}
+          <Text color="brand.blue.700" fontSize="3xl" fontWeight="600" my="0">
+            {isSuccessful ? "Inscription enregistrée !" : "S'inscrire"}
+          </Text>
+          <FormError
+            title="L'inscription a échouée"
+            hasError={(Object.keys(formik.errors).length || error) && formik.submitCount}
+            errorMessages={[...new Set(Object.values(formik.errors)), error]}
+          />
           {!isSuccessful ? (
             <form onSubmit={formik.handleSubmit}>
-              <Stack
-                spacing={4}
-                p="2rem"
-                backgroundColor="whiteAlpha.900"
-                boxShadow="md"
-                borderRadius="md"
-              >
-                <FormControl isInvalid={!!formik.errors.firstName && formik.touched.firstName}>
-                  <Input
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    placeholder="Prénom"
-                    onChange={formik.handleChange}
-                    value={formik.values.firstName}
-                  />
-                  <FormErrorMessage>{formik.errors.firstName}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={!!formik.errors.lastName && formik.touched.lastName}>
-                  <Input
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    placeholder="Nom"
-                    onChange={formik.handleChange}
-                    value={formik.values.lastName}
-                  />
-                  <FormErrorMessage>{formik.errors.lastName}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={!!formik.errors.email && formik.touched.email}>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="text"
-                    placeholder="Email"
-                    onChange={formik.handleChange}
-                    value={formik.values.email}
-                  />
-                  <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
-                </FormControl>
-                <FormControl isInvalid={!!formik.errors.password && formik.touched.password}>
-                  <InputGroup>
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Mot de passe"
-                      onChange={formik.handleChange}
-                      value={formik.values.password}
+              <Stack spacing="16px" mt="16px">
+                <InputText
+                  id="firstName"
+                  name="firstName"
+                  placeholder="Prénom"
+                  formik={formik}
+                  noErrorMessage
+                />
+                <InputText
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Nom"
+                  formik={formik}
+                  noErrorMessage
+                />
+                <InputText
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Email"
+                  formik={formik}
+                  noErrorMessage
+                />
+                <InputPassword id="password" name="password" formik={formik} noErrorMessage />
+                <Text fontSize="14px">
+                  Si votre position vous le permet, ajoutez plus d’un SIRET pour suivre les
+                  campagnes de plusieurs établissements
+                </Text>
+                {etablissements.map((etablissement, index) => (
+                  <Stack
+                    direction="row"
+                    key={index}
+                    width={index > 0 ? "calc(100% + 25px)" : "100%"}
+                    alignItems="center"
+                  >
+                    <EtablissementInput
+                      key={index}
+                      formik={formik}
+                      setEtablissements={setEtablissements}
                     />
-                    <InputRightElement mr="5px">
-                      <Button h="1.75rem" size="sm" onClick={handleShowClick}>
-                        {showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                      </Button>
-                    </InputRightElement>
-                  </InputGroup>
-                  <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
-                </FormControl>
-                <FormControl
-                  isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}
-                  isDisabled={isLoadingRemoteEtablissement}
+                    {index > 0 && (
+                      <DeleteIcon
+                        cursor="pointer"
+                        color="brand.red.500"
+                        onClick={() => handleDeleteEtablissement(index)}
+                      />
+                    )}
+                  </Stack>
+                ))}
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  cursor="pointer"
+                  onClick={addEtablissementField}
+                  mb="10px"
                 >
-                  <AsyncSelect
-                    placeholder="Entrez le SIRET de votre établissement"
-                    size="md"
-                    getOptionLabel={(option) =>
-                      option?.onisep_nom || option?.enseigne || option?.entreprise_raison_sociale
-                    }
-                    getOptionValue={(option) => option?.siret}
-                    backspaceRemovesValue
-                    escapeClearsValue
-                    isClearable
-                    loadOptions={loadEtablissementOptionsHandler}
-                    isLoading={isLoadingRemoteEtablissement}
-                  />
-                  <FormErrorMessage>{formik.errors.etablissement}</FormErrorMessage>
-                </FormControl>
+                  <AddIcon boxSize="10px" color="brand.blue.700" />
+                  <Text fontSize="sm" color="brand.blue.700">
+                    Ajouter un SIRET
+                  </Text>
+                </Stack>
                 <FormControl isInvalid={!!formik.errors.comment && formik.touched.comment}>
                   <Textarea
                     id="comment"
                     name="comment"
                     type="text"
-                    placeholder="Commentaire"
+                    placeholder="Commentaire (facultatif)"
                     onChange={formik.handleChange}
                     value={formik.values.comment}
+                    size="lg"
+                    color="brand.black.500"
+                    _placeholder={{ color: "brand.black.500" }}
+                    borderColor="brand.blue.400"
                   />
-                  <FormErrorMessage>{formik.errors.comment}</FormErrorMessage>
                 </FormControl>
-                <Button
-                  borderRadius="md"
-                  type="submit"
-                  variant="solid"
-                  colorScheme="purple"
-                  width="full"
-                  isLoading={isSubmitting}
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  flexDirection="column"
+                  mt="16px"
                 >
-                  Inscription
-                </Button>
+                  <Button isLoading={isSubmitting}>Valider</Button>
+                  <Text color="brand.blue.700" fontSize="sm" mt={isMobile ? "32px" : "64px"}>
+                    Déjà inscrit ?{" "}
+                    <Link href="/connexion" textDecoration="underline">
+                      Me connecter
+                    </Link>
+                  </Text>
+                </Box>
               </Stack>
             </form>
           ) : (
-            <Stack
-              spacing={4}
-              p="2rem"
-              backgroundColor="whiteAlpha.900"
-              boxShadow="md"
-              borderRadius="md"
-            >
-              <Text color="purple.500" textAlign="center">
-                Votre demande d'inscription a bien été prise en compte, merci de bien vouloir
-                cliquer sur le lien de confirmation qui vous a été envoyé par email. Nous
-                vérifierons ensuite votre demande dans les plus brefs délais.
-              </Text>
-            </Stack>
+            <Text color="brand.blue.700" mt="15px">
+              Votre demande d'inscription a bien été prise en compte, merci de bien vouloir cliquer
+              sur le lien de confirmation qui vous a été envoyé par email. <br />
+              <br />
+              Nous vérifierons ensuite votre demande dans les plus brefs délais.
+            </Text>
           )}
         </Box>
       </Stack>

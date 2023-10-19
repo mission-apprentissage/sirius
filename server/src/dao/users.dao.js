@@ -12,9 +12,9 @@ const update = (id, user) => {
   return User.updateOne({ _id: id, deletedAt: null }, user);
 };
 
-const create = ({ email, firstName, lastName, password, comment, etablissement, siret }) => {
+const create = ({ email, firstName, lastName, password, comment, etablissements }) => {
   return User.register(
-    new User({ email: email.toLowerCase(), firstName, lastName, comment, etablissement, siret }),
+    new User({ email: email.toLowerCase(), firstName, lastName, comment, etablissements }),
     password
   );
 };
