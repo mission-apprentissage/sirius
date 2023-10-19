@@ -94,6 +94,7 @@ const Signup = () => {
   };
 
   const handleDeleteEtablissement = (index) => {
+    formik.setFieldValue("etablissements", etablissements.splice(index, 1));
     setEtablissements((prevValues) => {
       const updatedEtablissements = [...prevValues];
       updatedEtablissements.splice(index, 1);
