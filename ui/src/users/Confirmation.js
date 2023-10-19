@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
 import { Flex, Text, Spinner, Stack, Image, Box, useBreakpoint } from "@chakra-ui/react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import useConfirmUser from "../hooks/useConfirmUser";
 import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
-import Button from "../Components/Form/Button";
 import FormError from "../Components/Form/FormError";
 
 const Confirmation = () => {
@@ -13,7 +12,6 @@ const Confirmation = () => {
   const [userContext] = useContext(UserContext);
   const [data, loading, error] = useConfirmUser(token);
   const breakpoint = useBreakpoint({ ssr: false });
-  const navigate = useNavigate();
 
   const isMobile = breakpoint === "base";
 
@@ -36,13 +34,10 @@ const Confirmation = () => {
             <Text color="brand.blue.700" fontSize="3xl" fontWeight="600" my="0">
               Inscription confirmée !
             </Text>
-
             <Text color="brand.blue.700" mt="15px">
-              Votre adresse email a bien été confirmé.
+              Votre adresse email a bien été confirmée. Notre équipe s’occupe de valider votre
+              compte. Vous recevrez un mail dès qu’il sera activé.
             </Text>
-            <Button mt="32px" onClick={() => navigate("/connexion")}>
-              Se connecter
-            </Button>
           </Box>
         ) : (
           <FormError
