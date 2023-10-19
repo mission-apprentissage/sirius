@@ -17,7 +17,7 @@ import { Navigate } from "react-router-dom";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { passwordComplexityRegex, passwordComplexityMessage } from "../utils/validators";
-import UnderConstruction from "../assets/images/under_construction.svg";
+import Support from "../assets/images/support.svg";
 import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
 import InputPassword from "../Components/Form/InputPassword";
 import InputText from "../Components/Form/InputText";
@@ -112,7 +112,7 @@ const Signup = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <Image src={isSuccessful ? SiriusInTheSky : UnderConstruction} alt="" w="300px" />
+        <Image src={isSuccessful ? SiriusInTheSky : Support} alt="" w="300px" />
         <Box w={isMobile ? "100%" : "400px"}>
           {!isSuccessful && (
             <Text color="brand.blue.700" fontSize="xl" my="0">
@@ -153,6 +153,10 @@ const Signup = () => {
                   noErrorMessage
                 />
                 <InputPassword id="password" name="password" formik={formik} noErrorMessage />
+                <Text fontSize="14px">
+                  Si votre position vous le permet, ajoutez plus d’un SIRET pour suivre les
+                  campagnes de plusieurs établissements
+                </Text>
                 {etablissements.map((etablissement, index) => (
                   <Stack
                     direction="row"

@@ -16,7 +16,7 @@ import jwt from "jwt-decode";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 
-import UnderConstruction from "../assets/images/under_construction.svg";
+import Support from "../assets/images/support.svg";
 import InputPassword from "../Components/Form/InputPassword";
 import InputText from "../Components/Form/InputText";
 import Button from "../Components/Form/Button";
@@ -121,7 +121,7 @@ const Login = () => {
     <>
       <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
         <Stack flexDir="column" mb="2" justifyContent="center" alignItems="center">
-          <Image src={UnderConstruction} alt="" />
+          <Image src={Support} alt="" />
           <Box w={isMobile ? "100%" : "400px"} mt={isMobile ? "32px" : "64px"}>
             <form onSubmit={formik.handleSubmit}>
               <Stack>
