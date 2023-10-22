@@ -94,7 +94,6 @@ const createMultiCampagne = async ({ campagnes, etablissementSiret }) => {
 
 const publicPath = path.join(__dirname, "..", "..", "src", "public");
 const pdfFilePath = path.join(publicPath, "export.pdf");
-const outputDir = path.join(__dirname, "..", "..", "src", "public", "exports");
 
 const fillParagraph = (text, font, fontSize, maxWidth) => {
   const paragraphs = text.split("\n");
@@ -103,7 +102,7 @@ const fillParagraph = (text, font, fontSize, maxWidth) => {
     if (font.widthOfTextAtSize(paragraph, fontSize) > maxWidth) {
       const words = paragraph.split(" ");
       const newParagraph = [];
-      const i = 0;
+      let i = 0;
       newParagraph[i] = [];
       for (let k = 0; k < words.length; k++) {
         const word = words[k];
@@ -175,17 +174,9 @@ const getExport = async (id) => {
       maxWidth: 400,
     });
 
-    const modifiedPdfBytes = await pdfDoc.save();
+    const modifiedPdfBytes = await pdfDoc.saveAsBase64();
 
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir);
-    }
-
-    const modifiedPdfPath = path.join(outputDir, campagneName + " - " + id + ".pdf");
-
-    fs.writeFileSync(modifiedPdfPath, modifiedPdfBytes);
-
-    return { success: true, body: { fileName: campagneName + " - " + id + ".pdf" } };
+    return { success: true, body: { data: modifiedPdfBytes, fileName: campagneName + ".pdf" } };
   } catch (error) {
     return { success: false, body: error };
   }
