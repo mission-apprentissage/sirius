@@ -191,6 +191,7 @@ const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userCont
   const [sorting, setSorting] = useState([]);
   const [search, setSearch] = useState([]);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
+  const [isLoadingDownload, setIsLoadingDownload] = useState(false);
 
   useEffect(() => {
     setDisplayedCampagnes(campagnes);
@@ -225,6 +226,24 @@ const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userCont
       sorting,
     },
   });
+
+  const handleDownload = async (e) => {
+    e.stopPropagation();
+    setIsLoadingDownload(true);
+    const campagneIds = campagnes.map((campagne) => campagne._id);
+
+    const response = await _get(`/api/campagnes/multiexport?ids=${campagneIds}`, userContext.token);
+
+    const base64Data = `data:application/pdf;base64,${response.data}`;
+
+    const a = document.createElement("a");
+    a.href = base64Data;
+    a.download = response.fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(base64Data);
+    setIsLoadingDownload(false);
+  };
 
   return (
     <AccordionItem
@@ -268,13 +287,15 @@ const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userCont
         >
           <Button
             as="div"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
+            onClick={handleDownload}
             leftIcon={<DownloadIcon />}
             variant="filled"
             ml="auto"
             size="md"
+            isLoading={isLoadingDownload}
+            _hover={{
+              backgroundColor: "brand.blue.700",
+            }}
           >
             Télécharger les supports de partage
           </Button>
