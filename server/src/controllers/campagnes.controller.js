@@ -63,7 +63,12 @@ const getExport = tryCatch(async (req, res) => {
 
 const getMultipleExport = tryCatch(async (req, res) => {
   const ids = req.query.ids.split(",");
-  const { success, body } = await campagnesService.getMultipleExport(ids);
+  const user = {
+    label: req.user.firstName + " " + req.user.lastName,
+    email: req.user.email,
+  };
+
+  const { success, body } = await campagnesService.getMultipleExport(ids, user);
 
   if (!success) throw new BasicError();
 

@@ -106,19 +106,30 @@ const getExport = async (id) => {
   }
 };
 
-const getMultipleExport = async (ids) => {
+const getMultipleExport = async (ids, user) => {
   try {
     const query = { _id: { $in: ids.map((id) => ObjectId(id)) } };
 
     const campagnes = await campagnesDao.getAll(query);
 
-    const payload = campagnes.map((campagne) => ({
+    const formattedCampagnes = campagnes.map((campagne) => ({
       campagneId: campagne._id.toString(),
       campagneName:
         campagne.nomCampagne || campagne.formation.data.intitule_long || campagne.formation.data.intitule_court,
+      localite: campagne.formation.data.localite,
+      tags: campagne.formation.data.tags,
+      duree: campagne.formation.data.duree,
     }));
 
-    const generatedPdf = await generateMultiplePdf(payload);
+    const etablissementLabel =
+      campagnes[0].etablissement.data.onisep_nom ||
+      campagnes[0].etablissement.data.enseigne ||
+      campagnes[0].etablissement.data.entreprise_raison_sociale ||
+      "";
+
+    const diplome = DIPLOME_TYPE_MATCHER[campagnes[0].formation.data.diplome];
+
+    const generatedPdf = await generateMultiplePdf(formattedCampagnes, diplome, etablissementLabel, user);
 
     const diplomeName = campagnes[0].formation.data.diplome;
 
