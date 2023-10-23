@@ -6,6 +6,7 @@ const formationsService = require("../services/formations.service");
 
 const TYPES = {
   CAMPAGNE_ID: "campagneId",
+  CAMPAGNE_IDS: "campagneIds",
   ETABLISSEMENT_ID: "etablissementId",
   FORMATION_ID: "formationId",
   FORMATION_IDS: "formationIds",
@@ -29,6 +30,26 @@ const isAdminOrAllowed = async (req, next, type) => {
       const { body } = await campagnesService.getOneCampagne(query);
 
       if (body) return next();
+    }
+
+    // check campagneIds
+    if (type === TYPES.CAMPAGNE_IDS) {
+      const ids = req.query.ids.split(",");
+
+      const campagneId = ids.map((id) => {
+        return async () => {
+          const query = { id, siret: siret };
+          const { body } = await campagnesService.getOneCampagne(query);
+
+          if (body.etablissement.data.siret === siret) {
+            return body._id.toString();
+          }
+        };
+      });
+
+      const results = await Promise.all(campagneId.map((getCampagneId) => getCampagneId()));
+
+      if (results.length === ids.length) return next();
     }
 
     //check SIRET
