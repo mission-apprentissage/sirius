@@ -61,6 +61,15 @@ const getExport = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getMultipleExport = tryCatch(async (req, res) => {
+  const ids = req.query.ids.split(",");
+  const { success, body } = await campagnesService.getMultipleExport(ids);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 module.exports = {
   getCampagnes,
   getCampagne,
@@ -69,4 +78,5 @@ module.exports = {
   updateCampagne,
   createMultiCampagne,
   getExport,
+  getMultipleExport,
 };

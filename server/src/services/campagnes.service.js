@@ -1,10 +1,13 @@
+const ObjectId = require("mongoose").mongo.ObjectId;
+
 const campagnesDao = require("../dao/campagnes.dao");
 const formationsDao = require("../dao/formations.dao");
 const etablissementsDao = require("../dao/etablissements.dao");
 
 const { getChampsLibreRate } = require("../utils/verbatims.utils");
 const { getMedianDuration } = require("../utils/campagnes.utils");
-const { generatePdf } = require("../modules/pdfExport");
+const { generatePdf, generateMultiplePdf } = require("../modules/pdfExport");
+const { DIPLOME_TYPE_MATCHER } = require("../constants");
 
 const getCampagnes = async (query) => {
   try {
@@ -103,6 +106,33 @@ const getExport = async (id) => {
   }
 };
 
+const getMultipleExport = async (ids) => {
+  try {
+    const query = { _id: { $in: ids.map((id) => ObjectId(id)) } };
+
+    const campagnes = await campagnesDao.getAll(query);
+
+    const payload = campagnes.map((campagne) => ({
+      campagneId: campagne._id.toString(),
+      campagneName:
+        campagne.nomCampagne || campagne.formation.data.intitule_long || campagne.formation.data.intitule_court,
+    }));
+
+    const generatedPdf = await generateMultiplePdf(payload);
+
+    const diplomeName = campagnes[0].formation.data.diplome;
+
+    const fileName = `campagnes Sirius - ${DIPLOME_TYPE_MATCHER[diplomeName] || diplomeName}.pdf`;
+
+    return {
+      success: true,
+      body: { data: generatedPdf, fileName },
+    };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   getCampagnes,
   getOneCampagne,
@@ -111,4 +141,5 @@ module.exports = {
   updateCampagne,
   createMultiCampagne,
   getExport,
+  getMultipleExport,
 };
