@@ -6,6 +6,7 @@ const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
 const { shootTemplate } = require("../modules/mailer");
 const config = require("../config");
 const { USER_STATUS } = require("../constants");
+const { sendToSlack } = require("../modules/slack");
 
 const createUser = tryCatch(async (req, res) => {
   const { success, body } = await usersService.createUser(req.body);
@@ -30,6 +31,38 @@ const createUser = tryCatch(async (req, res) => {
       },
     },
   });
+
+  const etablissementsDisplay = body.etablissements
+    .map((etablissement) => {
+      return `${etablissement.siret} - ${
+        etablissement.onisep_nom || etablissement.enseigne || etablissement.entreprise_raison_sociale
+      }`;
+    })
+    .join("\n");
+
+  await sendToSlack([
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*[${config.env.toUpperCase()}]*`,
+      },
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*${body.firstName} ${body.lastName}* vient de s'inscrire!`,
+      },
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*Prénom et nom:*\n${body.firstName} ${body.lastName}\n\n*Email:*\n${body.email}\n\n*Commentaire:* \n${body.comment}\n\n *Établissements:*\n ${etablissementsDisplay}`,
+      },
+    },
+  ]);
 
   res.status(201).json(body);
 });
