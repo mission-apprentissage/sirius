@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Input,
   InputGroup,
@@ -22,6 +22,7 @@ const CellInputSeats = ({ id, name, info, handleCellUpdate, placeholder, ...prop
   const [value, setValue] = useState(info.getValue());
   const [isSuccess, setIsSuccess] = useState(false);
   const [isFail, setIsFail] = useState(false);
+  const ref = useRef(null);
 
   const rightElementSpring = useSpring({
     opacity: isSuccess || isFail ? 0 : 1,
@@ -29,7 +30,7 @@ const CellInputSeats = ({ id, name, info, handleCellUpdate, placeholder, ...prop
     config: { duration: 800, delay: 200 },
   });
 
-  const rightElementClickHandler = async () => {
+  const submitHandler = async () => {
     const { _id, nomCampagne, startDate, endDate, seats, questionnaireId } = info.row.original;
     const result = await handleCellUpdate(_id, {
       nomCampagne,
@@ -56,6 +57,18 @@ const CellInputSeats = ({ id, name, info, handleCellUpdate, placeholder, ...prop
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        submitHandler();
+      }
+    };
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, [value]);
+
   const rightElement = (
     <animated.div
       style={{
@@ -74,7 +87,7 @@ const CellInputSeats = ({ id, name, info, handleCellUpdate, placeholder, ...prop
     right: "30px",
     width: "20px",
     cursor: "pointer",
-    onClick: rightElementClickHandler,
+    onClick: submitHandler,
   };
 
   const seatsUnlimitedValue = value == "0" ? "Illimité" : value;
@@ -91,6 +104,12 @@ const CellInputSeats = ({ id, name, info, handleCellUpdate, placeholder, ...prop
         step={1}
         min={0}
         max={150}
+        ref={ref}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            return submitHandler();
+          }
+        }}
         {...props}
       >
         {value == "0" ? (
@@ -113,7 +132,14 @@ const CellInputSeats = ({ id, name, info, handleCellUpdate, placeholder, ...prop
       <InputRightElement {...rightElementProps}>{rightElement}</InputRightElement>
     </InputGroup>
   ) : (
-    <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center" w="100%">
+    <Box
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="center"
+      w="100%"
+      onDoubleClick={() => setIsEditing(true)}
+    >
       <Text textAlign="center">{seatsUnlimitedValue}</Text>
       <Box cursor="pointer" ml="10px" onClick={() => setIsEditing(true)}>
         <Image src={FiEdit} alt="Édition" minW="12px" maxW="12px" />

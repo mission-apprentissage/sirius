@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Box, Text, Image, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { useSpring, animated } from "@react-spring/web";
 import { formatDate } from "../utils";
@@ -12,6 +12,7 @@ const CellTextInput = ({ id, name, info, handleCellUpdate = null, type }) => {
   const [value, setValue] = useState(info.getValue());
   const [isSuccess, setIsSuccess] = useState(false);
   const [isFail, setIsFail] = useState(false);
+  const ref = useRef(null);
 
   const rightElementSpring = useSpring({
     opacity: isSuccess || isFail ? 0 : 1,
@@ -21,7 +22,7 @@ const CellTextInput = ({ id, name, info, handleCellUpdate = null, type }) => {
 
   const displayedValue = type === "date" ? formatDate(value || info.getValue()) : value;
 
-  const rightElementClickHandler = async () => {
+  const submitHandler = async () => {
     const { _id, nomCampagne, startDate, endDate, seats, questionnaireId } = info.row.original;
     const result = await handleCellUpdate(_id, {
       nomCampagne,
@@ -48,6 +49,18 @@ const CellTextInput = ({ id, name, info, handleCellUpdate = null, type }) => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        submitHandler();
+      }
+    };
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, [value]);
+
   const rightElement = (
     <animated.div
       style={{
@@ -67,11 +80,16 @@ const CellTextInput = ({ id, name, info, handleCellUpdate = null, type }) => {
     top: "0",
     width: "20px",
     cursor: "pointer",
-    onClick: rightElementClickHandler,
+    onClick: submitHandler,
   };
 
   return (
-    <Box display="flex" flexDirection="row" alignItems="center">
+    <Box
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      onDoubleClick={() => setIsEditing(true)}
+    >
       {isEditing ? (
         <InputGroup>
           <Input
@@ -92,6 +110,12 @@ const CellTextInput = ({ id, name, info, handleCellUpdate = null, type }) => {
             }}
             rightElement={rightElement}
             rightElementProps={rightElementProps}
+            ref={ref}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                return submitHandler();
+              }
+            }}
           />
           <InputRightElement {...rightElementProps}>{rightElement}</InputRightElement>
         </InputGroup>
