@@ -2,7 +2,7 @@ const { App } = require("@slack/bolt");
 
 const config = require("../config");
 
-const sendToSlack = async (main, answer) => {
+const sendToSlack = async (main) => {
   if (!config.slack.channel) return;
 
   const slack = new App({
@@ -15,12 +15,8 @@ const sendToSlack = async (main, answer) => {
     blocks: main,
     channel: config.slack.channel,
   });
-  if (!answer) return;
-  await slack.client.chat.postMessage({
-    text: "",
-    blocks: answer,
-    thread_ts: sent.ts,
-  });
+
+  return sent.ok;
 };
 
 module.exports = {
