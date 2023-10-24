@@ -2,7 +2,6 @@ const env = require("env-var");
 module.exports = {
   env: env.get("SIRIUS_ENV").default("dev").asString(),
   publicUrl: env.get("SIRIUS_PUBLIC_URL").default("http://localhost").asString(),
-  slackWebhookUrl: env.get("SIRIUS_SLACK_WEBHOOK_URL").asString(),
   log: {
     type: env.get("SIRIUS_LOG_TYPE").default("console").asString(),
     level: env.get("SIRIUS_LOG_LEVEL").default("info").asString(),
@@ -27,5 +26,10 @@ module.exports = {
       pass: env.get("SIRIUS_SMTP_AUTH_PASS").asString(),
     },
     email_from: env.get("SIRIUS_EMAIL_FROM").default("sirius@test.fr").required().asString(),
+  },
+  slack: {
+    token: env.get("SIRIUS_SLACK_TOKEN").default("").asString(),
+    signingSecret: env.get("SIRIUS_SLACK_SIGNING_SECRET").default("").asString(),
+    channel: env.get("SIRIUS_SLACK_CHANNEL").default("").asString(),
   },
 };
