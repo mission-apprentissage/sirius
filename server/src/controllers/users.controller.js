@@ -34,7 +34,7 @@ const createUser = tryCatch(async (req, res) => {
 
   const etablissementsDisplay = body.etablissements
     .map((etablissement) => {
-      return `${etablissement.siret} - ${
+      return `• ${etablissement.siret} - ${
         etablissement.onisep_nom || etablissement.enseigne || etablissement.entreprise_raison_sociale
       }`;
     })
@@ -42,25 +42,46 @@ const createUser = tryCatch(async (req, res) => {
 
   await sendToSlack([
     {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: `:bell: *Nouvelle inscription en ${config.env.toUpperCase()}!* :bell:`,
+        emoji: true,
+      },
+    },
+    {
+      type: "divider",
+    },
+    {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*[${config.env.toUpperCase()}]*`,
+        text: `:star2: *Nom:* ${body.firstName} ${body.lastName}`,
       },
     },
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*${body.firstName} ${body.lastName}* vient de s'inscrire!`,
+        text: `:email: *Email:* ${body.email}`,
       },
     },
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*Prénom et nom:*\n${body.firstName} ${body.lastName}\n\n*Email:*\n${body.email}\n\n*Commentaire:* \n${body.comment}\n\n *Établissements:*\n ${etablissementsDisplay}`,
+        text: `:school: *Établissements:*\n${etablissementsDisplay}`,
       },
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `:memo: *Commentaire:* \n${body.comment}`,
+      },
+    },
+    {
+      type: "divider",
     },
   ]);
 
@@ -191,6 +212,61 @@ const confirmUser = tryCatch(async (req, res) => {
   return res.status(200).json({ success: true });
 });
 
+const supportUser = tryCatch(async (req, res) => {
+  const { title, message } = req.body;
+  const { email, firstName, lastName } = req.user;
+
+  const slackResponse = await sendToSlack([
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: `Demande d'aide en ${config.env.toUpperCase()}!`,
+        emoji: true,
+      },
+    },
+    {
+      type: "divider",
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `:raising_hand: *${firstName} ${lastName}* a besoin d'aide!`,
+      },
+    },
+    {
+      type: "divider",
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `:label: *Titre:*\n${title}`,
+      },
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `:envelope: *Email:*\n${email}`,
+      },
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `:pencil: *Message:*\n${message}`,
+      },
+    },
+    {
+      type: "divider",
+    },
+  ]);
+
+  return res.status(200).json({ success: slackResponse });
+});
+
 module.exports = {
   loginUser,
   refreshTokenUser,
@@ -202,4 +278,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   confirmUser,
+  supportUser,
 };
