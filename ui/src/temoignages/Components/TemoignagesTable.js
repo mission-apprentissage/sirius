@@ -89,7 +89,8 @@ const TemoignagesTable = ({ temoignages }) => {
           <Tbody>
             {displayedTemoignages?.map((temoignage) => {
               const duration = msToTime(
-                new Date(temoignage.updatedAt).getTime() - new Date(temoignage.createdAt).getTime()
+                new Date(temoignage.lastQuestionAt).getTime() -
+                  new Date(temoignage.createdAt).getTime()
               );
               return (
                 <Tr key={temoignage._id}>
