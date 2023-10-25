@@ -260,7 +260,7 @@ const multiEmojiOption = (responses) => {
   const removeHTMLTagRegex = /(<([^>]+)>)/gi;
 
   const questions = [
-    ...new Set(responses.map((response) => response.label.replace(removeHTMLTagRegex, ""))),
+    ...new Set(responses.map((response) => response.label?.replace(removeHTMLTagRegex, ""))),
   ];
 
   return {
