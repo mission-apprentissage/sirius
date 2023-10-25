@@ -52,21 +52,32 @@ const ResultatsPage = () => {
         goBackOnClick={() => navigate("/campagnes/gestion")}
       >
         <Text color="brand.blue.700" fontSize="5xl" fontWeight="600">
-          Statistiques {campagneId ? "de la campagne" : "des campagnes"}
+          Statistiques de la campagne
         </Text>
         {(loadingCampagnes || errorCampagnes) && !campagnes?.length ? (
           <Spinner size="xl" />
-        ) : campagne ? (
-          <CampagneStatistics campagne={campagne} />
         ) : (
-          <Statistics campagnes={campagnes} isLightWeight campagne={campagne} />
+          campagne && <CampagneStatistics campagne={campagne} />
         )}
       </Header>
-      {temoignages.length ? (
-        <ResultatsVisualisation campagne={campagne} temoignages={temoignages} />
+      {campagne ? (
+        temoignages.length ? (
+          <ResultatsVisualisation campagne={campagne} temoignages={temoignages} />
+        ) : (
+          <Text fontSize="2xl" color="brand.blue.700" w="100%" textAlign="center">
+            Il n'y a pas encore de réponses à cette campagne
+          </Text>
+        )
       ) : (
-        <Text fontSize="2xl" color="brand.blue.700" w="100%" textAlign="center">
-          Il n'y a pas encore de réponses à cette campagne
+        <Text
+          color="brand.blue.700"
+          fontSize="xl"
+          fontWeight="600"
+          mb="15px"
+          w="100%"
+          textAlign="center"
+        >
+          Sélectionnez une campagne pour voir ses résultats
         </Text>
       )}
     </Stack>
