@@ -3,7 +3,6 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import ManageCampagnes from "./campagnes/ManageCampagnes";
-import TemoignagesDashboard from "./temoignages/Dashboard";
 import TemoignagesManaging from "./temoignages/Managing";
 import QuestionnairesManaging from "./questionnaires/Managing";
 import QuestionnaireForm from "./questionnaires/QuestionnaireForm";
@@ -23,6 +22,7 @@ import VerbatimsModeration from "./verbatims/Moderation";
 import Layout from "./Components/Layout";
 import AnonymousLayout from "./Components/AnonymousLayout";
 import QuestionnaireLayout from "./Components/QuestionnaireLayout";
+import ResultatsPage from "./campagnes/ResultatsPage";
 
 function App() {
   return (
@@ -37,7 +37,7 @@ function App() {
         <Route exact path="/" element={<Navigate to="/campagnes/gestion" />} />
         <Route exact path="/campagnes/ajout" element={<CreateCampagne />} />
         <Route exact path="/campagnes/gestion" element={<ManageCampagnes />} />
-        <Route exact path="/temoignages/dashboard" element={<TemoignagesDashboard />} />
+        <Route exact path="/campagnes/resultats" element={<ResultatsPage />} />
       </Route>
       <Route
         element={
