@@ -495,22 +495,26 @@ const ResultatsVisualisation = ({ campagne, temoignages }) => {
                                     ({responses.length} témoignage
                                     {responses.length > 1 && "s"})
                                   </Text>
-                                  {responses.map((response, index) => (
-                                    <Text
-                                      fontSize="md"
-                                      color="brand.black.500"
-                                      key={index}
-                                      mb="8px"
-                                      textAlign="center"
-                                    >
-                                      «
-                                      {typeof response === "object"
-                                        ? response?.content
-                                        : response?.content || response || ""}
-                                      »
-                                    </Text>
-                                  ))}
-                                  {responses.length > 0 && (
+                                  {responses.map((response, index) => {
+                                    if (index > 4) return null;
+
+                                    return (
+                                      <Text
+                                        fontSize="md"
+                                        color="brand.black.500"
+                                        key={index}
+                                        mb="8px"
+                                        textAlign="center"
+                                      >
+                                        «
+                                        {typeof response === "object"
+                                          ? response?.content
+                                          : response?.content || response || ""}
+                                        »
+                                      </Text>
+                                    );
+                                  })}
+                                  {responses.length > 5 && (
                                     <HStack
                                       mt="32px"
                                       cursor="pointer"
@@ -524,7 +528,7 @@ const ResultatsVisualisation = ({ campagne, temoignages }) => {
                                     >
                                       <Image src={GoEye} />
                                       <Text textDecoration="underline" color="brand.blue.700">
-                                        Voir tous les verbatims
+                                        Voir tous les verbatim
                                       </Text>
                                     </HStack>
                                   )}
