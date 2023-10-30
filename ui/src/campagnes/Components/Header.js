@@ -227,7 +227,7 @@ const Header = ({
               mt={isMobile ? "8px" : "0"}
               w={isMobile ? "100%" : "min-content"}
             >
-              Résultat
+              Résultats
             </Button>
             <Button
               isLink
