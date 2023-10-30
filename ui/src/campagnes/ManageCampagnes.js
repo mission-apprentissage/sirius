@@ -41,6 +41,7 @@ const ViewCampagnes = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const breakpoint = useBreakpoint({ ssr: false });
   const [counter, setCounter] = useState(5);
+  const [shouldRefreshData, setShouldRefreshData] = useState(false);
 
   const isMobile = breakpoint === "base";
 
@@ -53,11 +54,20 @@ const ViewCampagnes = () => {
     ? `?siret=${etablissementsContext.siret}`
     : null;
 
-  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes(campagneQuery);
+  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes(
+    campagneQuery,
+    shouldRefreshData
+  );
 
   const [formations, loadingFormations, errorFormations] = useFetchRemoteFormations(
     etablissementsContext.siret
   );
+
+  useEffect(() => {
+    if (shouldRefreshData) {
+      setShouldRefreshData(false);
+    }
+  }, [shouldRefreshData]);
 
   useEffect(() => {
     if (status || count) {
@@ -122,6 +132,7 @@ const ViewCampagnes = () => {
                   diplomeType={diplomeType}
                   campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
                   formations={orderFormationsByDiplomeType(formations)[diplomeType]}
+                  setShouldRefreshData={setShouldRefreshData}
                   userContext={userContext}
                 />
               ))

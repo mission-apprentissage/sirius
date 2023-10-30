@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { _get } from "../utils/httpClient";
 
-const useFetchCampagnes = (query) => {
+const useFetchCampagnes = (query, shouldRefreshData) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ const useFetchCampagnes = (query) => {
     if (query || query === "") {
       fetchData();
     }
-  }, [query]);
+  }, [query, shouldRefreshData]);
 
   return [data, loading, error];
 };

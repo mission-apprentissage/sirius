@@ -186,7 +186,13 @@ const getColumns = (handleCellUpdate, userContext) => [
   }),
 ];
 
-const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userContext }) => {
+const ManageCampagneTable = ({
+  diplomeType,
+  campagnes = [],
+  formations,
+  setShouldRefreshData,
+  userContext,
+}) => {
   const [sorting, setSorting] = useState([]);
   const [search, setSearch] = useState([]);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
@@ -211,6 +217,7 @@ const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userCont
 
   const handleCellUpdate = async (campagneId, payload) => {
     const updatedCampagne = await simpleEditionSubmitHandler(campagneId, payload, userContext);
+    setShouldRefreshData(true);
     return updatedCampagne;
   };
 
