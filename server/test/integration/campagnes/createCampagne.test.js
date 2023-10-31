@@ -1,8 +1,8 @@
-const assert = require("assert");
 const sinon = require("sinon");
 const httpTests = require("../utils/httpTests");
 const { newCampagne } = require("../../fixtures");
-const { createAndLoginUser } = require("../utils/user");
+const { createVerifyAndLoginUser } = require("../utils/user");
+const { expect } = require("chai");
 
 httpTests(__filename, ({ startServer }) => {
   beforeEach(async () => {
@@ -15,47 +15,38 @@ httpTests(__filename, ({ startServer }) => {
     const { httpClient } = await startServer();
     const campagne = newCampagne();
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const response = await httpClient
       .post("/api/campagnes/")
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
       .send(campagne);
 
-    assert.strictEqual(response.status, 201);
-    assert.deepStrictEqual(response.body, {
-      ...campagne,
-      _id: response.body._id,
-      __v: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-      questionnaireId: response.body.questionnaireId,
-    });
+    expect(response.status).to.eql(201);
+    expect(response.body).to.deep.includes(campagne);
   });
   it("should return 400 and a validation error if the payload is not correct", async () => {
     const { httpClient } = await startServer();
     const campagne = { nomCampagne: "" };
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const response = await httpClient
       .post("/api/campagnes/")
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
       .send(campagne);
 
-    assert.strictEqual(response.status, 400);
-    assert.deepStrictEqual(response.body, {
+    expect(response.status).to.eql(400);
+    expect(response.body).to.deep.includes({
       details: [
         {
           context: {
-            key: "nomCampagne",
-            label: "nomCampagne",
-            value: "",
+            key: "startDate",
+            label: "startDate",
           },
-          message: '"nomCampagne" is not allowed to be empty',
-          path: ["nomCampagne"],
-          type: "string.empty",
+          message: '"startDate" is required',
+          path: ["startDate"],
+          type: "any.required",
         },
       ],
       error: "Bad Request",

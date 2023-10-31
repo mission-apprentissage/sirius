@@ -1,12 +1,14 @@
 const { expect } = require("chai");
 const { stub, restore } = require("sinon");
-const { newTemoignage, newCampagne } = require("../fixtures");
+const { newTemoignage, newCampagne, newQuestionnaire } = require("../fixtures");
 const temoignagesService = require("../../src/services/temoignages.service");
 const campagnesService = require("../../src/services/campagnes.service");
 const temoignagesDao = require("../../src/dao/temoignages.dao");
+const campagnesDao = require("../../src/dao/campagnes.dao");
+const questionnairesDao = require("../../src/dao/questionnaires.dao");
 
 describe(__filename, () => {
-  afterEach(() => {
+  afterEach(async () => {
     restore();
   });
 
@@ -37,9 +39,14 @@ describe(__filename, () => {
   describe("getTemoignages", () => {
     it("should be successful and returns temoignages", async () => {
       const temoignage = newTemoignage();
-      stub(temoignagesDao, "getAll").returns([temoignage]);
+      const campagne = newCampagne({}, true);
+      const questionnaire = newQuestionnaire({}, true);
 
-      const { success, body } = await temoignagesService.getTemoignages();
+      stub(temoignagesDao, "getAll").returns([temoignage]);
+      stub(campagnesDao, "getOne").returns(campagne);
+      stub(questionnairesDao, "getOne").returns(questionnaire);
+
+      const { success, body } = await temoignagesService.getTemoignages({ campagneId: campagne._id });
 
       expect(success).to.be.true;
       expect(body).to.be.an("array");

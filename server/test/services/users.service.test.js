@@ -7,7 +7,7 @@ const usersDao = require("../../src/dao/users.dao");
 const { getToken, getRefreshToken } = require("../../src/utils/authenticate.utils");
 
 describe(__filename, () => {
-  afterEach(() => {
+  afterEach(async () => {
     restore();
   });
 
@@ -19,6 +19,16 @@ describe(__filename, () => {
 
       const { success, body } = await usersService.loginUser(user._id);
 
+      const tokenPayload = {
+        _id: user._id.toString(),
+        role: user.role,
+        status: user.status,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        etablissements: user.etablissements,
+      };
+
       expect(userGetOneStub.getCall(0).args[0]).to.eql(user._id);
       expect(userUpdateStub.getCall(0).args[0]).to.eql(user._id);
       expect(userUpdateStub.getCall(0).args[1]).to.eql(user);
@@ -26,8 +36,8 @@ describe(__filename, () => {
       expect(success).to.be.true;
       expect(body).to.be.an("object");
       expect(body).to.deep.equal({
-        token: getToken({ _id: user._id }),
-        refreshToken: getRefreshToken({ _id: user._id }),
+        token: getToken(tokenPayload),
+        refreshToken: getRefreshToken(tokenPayload),
       });
     });
     it("should be unsuccessful and returns error if getOne DAO throws", async () => {
@@ -57,12 +67,22 @@ describe(__filename, () => {
 
       const { success, body } = await usersService.refreshTokenUser(user.refreshToken[0].refreshToken);
 
+      const tokenPayload = {
+        _id: user._id.toString(),
+        role: user.role,
+        status: user.status,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        etablissements: user.etablissements,
+      };
+
       expect(userGetOneStub.getCall(0).args[0]).to.eql(user._id.toString());
       expect(success).to.be.true;
       expect(body).to.be.an("object");
       expect(body).to.deep.equal({
-        token: getToken({ _id: user._id }),
-        newRefreshToken: getRefreshToken({ _id: user._id }),
+        token: getToken(tokenPayload),
+        newRefreshToken: getRefreshToken(tokenPayload),
       });
     });
     it("should be unsuccessful and returns error if getOne DAO throws", async () => {

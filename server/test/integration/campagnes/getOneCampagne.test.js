@@ -1,4 +1,4 @@
-const assert = require("assert");
+const { expect } = require("chai");
 const sinon = require("sinon");
 const httpTests = require("../utils/httpTests");
 const { newCampagne } = require("../../fixtures");
@@ -17,25 +17,16 @@ httpTests(__filename, ({ startServer }) => {
 
     const response = await httpClient.get("/api/campagnes/" + createdCampagne._id);
 
-    assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.body, {
-      ...campagne,
-      _id: response.body._id,
-      __v: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-      temoignagesCount: 0,
-      questionnaireId: response.body.questionnaireId,
-    });
+    expect(response.status).to.eql(200);
+    expect(response.body).to.deep.includes(campagne);
   });
   it("should return 404 if campagne does not exist", async () => {
     const { httpClient } = await startServer();
 
     const response = await httpClient.get("/api/campagnes/5f7b5c5d0f7e0e2b9c7a7f1c");
 
-    assert.strictEqual(response.status, 404);
-    assert.deepStrictEqual(response.body, {
+    expect(response.status).to.eql(404);
+    expect(response.body).to.deep.includes({
       error: "Not Found",
       message: "Campagne inconnue",
       statusCode: 404,

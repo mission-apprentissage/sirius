@@ -5,13 +5,13 @@ const campagnesService = require("../../src/services/campagnes.service");
 const campagnesDao = require("../../src/dao/campagnes.dao");
 
 describe(__filename, () => {
-  afterEach(() => {
+  afterEach(async () => {
     restore();
   });
 
   describe("getCampagnes", () => {
     it("should be successful and returns campagnes", async () => {
-      const campagne = newCampagne();
+      const campagne = newCampagne({ temoignagesList: [] });
       stub(campagnesDao, "getAllWithTemoignageCountAndTemplateName").returns([campagne]);
 
       const { success, body } = await campagnesService.getCampagnes();
@@ -31,7 +31,7 @@ describe(__filename, () => {
   });
   describe("getOneCampagne", () => {
     it("should be successful and returns one campagne", async () => {
-      const campagne = newCampagne({}, true);
+      const campagne = newCampagne({ temoignagesList: [] });
       stub(campagnesDao, "getOneWithTemoignagneCountAndTemplateName").returns([campagne]);
 
       const { success, body } = await campagnesService.getOneCampagne(campagne._id);

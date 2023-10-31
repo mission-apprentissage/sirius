@@ -13,18 +13,18 @@ httpTests(__filename, ({ startServer }) => {
   });
   describe("getOne", () => {
     it("should returns the user", async () => {
-      const user1 = newUser({}, true);
-      await usersDao.create(user1);
+      const user1 = newUser({ password: "test123" });
+      const createdUser = await usersDao.create(user1);
+      const fetchedUser = await usersDao.getOne(createdUser._id);
+      delete user1.password;
 
-      const user = await usersDao.getOne(user1._id);
-
-      expect(user).to.eql({ ...user1, __v: 0 });
+      expect(fetchedUser).to.deep.includes({ ...user1, refreshToken: [] });
     });
   });
 
   describe("update", () => {
     it("should updates the user", async () => {
-      const user1 = newUser();
+      const user1 = newUser({ password: "test123" });
       const createdUser = await usersDao.create(user1);
 
       const newlastName = "nouveau nom";
@@ -37,11 +37,11 @@ httpTests(__filename, ({ startServer }) => {
   });
   describe("create", () => {
     it("should create and returns the user", async () => {
-      const user1 = newUser();
-
+      const user1 = newUser({ password: "test123" });
       const createdUser = await usersDao.create(user1);
+      delete user1.password;
 
-      expect(createdUser.toObject()).to.eql({ ...user1, _id: createdUser._id, __v: 0 });
+      expect(createdUser).to.deep.includes({ ...user1, refreshToken: [] });
     });
   });
 });

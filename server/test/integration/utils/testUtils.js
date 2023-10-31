@@ -4,7 +4,6 @@ const connectToMongoDB = require("../../../src/modules/connectToMongoDB");
 const config = require("../../../src/config");
 const createComponents = require("../../../src/components");
 const logger = require("./fakeLogger.js");
-const createFakeMailer = require("./fakeMailer.js");
 
 let clientHolder = null;
 let connectToMongoForTests = async () => {
@@ -22,7 +21,6 @@ module.exports = {
     return createComponents({
       client,
       logger,
-      mailer: createFakeMailer(),
       ...options,
     });
   },

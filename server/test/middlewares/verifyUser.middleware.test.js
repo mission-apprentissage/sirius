@@ -14,7 +14,7 @@ describe(__filename, () => {
   const res = mockResponse();
   const next = stub();
 
-  afterEach(() => {
+  afterEach(async () => {
     restore();
     next.resetHistory();
   });

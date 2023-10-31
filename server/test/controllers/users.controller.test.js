@@ -20,7 +20,7 @@ describe(__filename, () => {
 
   const user1 = newUser();
 
-  afterEach(() => {
+  afterEach(async () => {
     next.resetHistory();
     res.status.resetHistory();
     res.json.resetHistory();

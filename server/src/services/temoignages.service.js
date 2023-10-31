@@ -34,7 +34,16 @@ const getTemoignages = async (query) => {
   try {
     const temoignages = await temoignagesDao.getAll(query);
     const campagne = await campagnesDao.getOne(query.campagneId);
+
+    if (!campagne) {
+      return { success: false, body: ErrorMessage.CampagneNotFoundError };
+    }
+
     const questionnaire = await questionnairesDao.getOne(campagne.questionnaireId);
+
+    if (!questionnaire) {
+      return { success: false, body: ErrorMessage.QuestionnaireNotFoundError };
+    }
 
     const verbatimsFields = getChampsLibreField(questionnaire.questionnaireUI);
 

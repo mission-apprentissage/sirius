@@ -18,7 +18,7 @@ describe(__filename, () => {
   const campagne1 = newCampagne();
   const campagne2 = newCampagne();
 
-  afterEach(() => {
+  afterEach(async () => {
     restore();
     next.resetHistory();
     res.status.resetHistory();

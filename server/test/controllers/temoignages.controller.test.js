@@ -18,7 +18,7 @@ describe(__filename, () => {
   const temoignage1 = newTemoignage();
   const temoignage2 = newTemoignage();
 
-  afterEach(() => {
+  afterEach(async () => {
     restore();
     next.resetHistory();
     res.status.resetHistory();

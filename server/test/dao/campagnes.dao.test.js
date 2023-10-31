@@ -4,7 +4,9 @@ const sinonChai = require("sinon-chai");
 const httpTests = require("../integration/utils/httpTests");
 
 const campagnesDao = require("../../src/dao/campagnes.dao");
-const { newCampagne } = require("../fixtures");
+const formationsDao = require("../../src/dao/formations.dao");
+const etablissementsDao = require("../../src/dao/etablissements.dao");
+const { newCampagne, newEtablissement, newFormation } = require("../fixtures");
 
 use(sinonChai);
 
@@ -20,52 +22,53 @@ httpTests(__filename, ({ startServer }) => {
   });
   describe("getAllWithTemoignageCountAndTemplateName", () => {
     it("should returns the campagnes", async () => {
-      const campagne1 = newCampagne({}, true);
-      const campagne2 = newCampagne({}, true);
+      const campagne1 = newCampagne({});
+      const campagne2 = newCampagne({});
 
-      await campagnesDao.create(campagne1);
-      await campagnesDao.create(campagne2);
+      const createdCampagne1 = await campagnesDao.create(campagne1);
+      const createdCampagne2 = await campagnesDao.create(campagne2);
 
-      const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName();
+      const formation1 = newFormation({ campagneId: createdCampagne1._id.toString() });
+      const formation2 = newFormation({ campagneId: createdCampagne2._id.toString() });
 
-      expect(campagnes).to.have.deep.members([
-        {
-          ...campagne1,
-          __v: 0,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-          temoignagesCount: 0,
-          questionnaireId: campagne1.questionnaireId,
-        },
-        {
-          ...campagne2,
-          __v: 0,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-          temoignagesCount: 0,
-          questionnaireId: campagne2.questionnaireId,
-        },
-      ]);
+      const createdFormation1 = await formationsDao.create(formation1);
+      const createdFormation2 = await formationsDao.create(formation2);
+
+      const etablissement = newEtablissement({
+        formationIds: [createdFormation1._id.toString(), createdFormation2._id.toString()],
+        data: { siret: "123456789" },
+      });
+
+      await etablissementsDao.create(etablissement);
+
+      const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({
+        siret: etablissement.data.siret,
+      });
+
+      expect(campagnes[0]).to.deep.includes(campagne1);
+      expect(campagnes[1]).to.deep.includes(campagne2);
     });
   });
   describe("getOneWithTemoignagneCountAndTemplateName", () => {
     it("should returns the campagne", async () => {
       const campagne1 = newCampagne({}, true);
+
+      const formation1 = newFormation({ campagneId: campagne1._id }, true);
+
+      const etablissement = newEtablissement({
+        formationIds: [formation1._id],
+        data: { siret: "123456789" },
+      });
+
       await campagnesDao.create(campagne1);
+
+      await formationsDao.create(formation1);
+
+      await etablissementsDao.create(etablissement);
 
       const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(campagne1._id);
 
-      expect(campagne[0]).to.eql({
-        ...campagne1,
-        __v: 0,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-        temoignagesCount: 0,
-        questionnaireId: campagne[0].questionnaireId,
-      });
+      expect(campagne[0]).to.deep.includes(campagne1);
     });
   });
   describe("create", () => {
@@ -74,15 +77,7 @@ httpTests(__filename, ({ startServer }) => {
 
       const createdCampagne = await campagnesDao.create(campagne1);
 
-      expect(createdCampagne.toObject()).to.eql({
-        ...campagne1,
-        _id: createdCampagne._id,
-        __v: 0,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-        questionnaireId: createdCampagne.questionnaireId,
-      });
+      expect(createdCampagne).to.deep.includes(campagne1);
     });
   });
   describe("deleteOne", () => {

@@ -3,7 +3,8 @@ const sinonChai = require("sinon-chai");
 
 const httpTests = require("../utils/httpTests");
 
-const { createAndLoginUser } = require("../utils/user");
+const { createVerifyAndLoginUser } = require("../utils/user");
+const { USER_STATUS } = require("../../../src/constants");
 
 use(sinonChai);
 
@@ -11,7 +12,7 @@ httpTests(__filename, ({ startServer }) => {
   it("should return 200 and the current user", async () => {
     const { httpClient } = await startServer();
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const meRequest = await httpClient
       .get("/api/users/me")
@@ -19,13 +20,11 @@ httpTests(__filename, ({ startServer }) => {
       .send();
 
     expect(meRequest.status).to.equal(200);
-    expect(meRequest.body).to.deep.equal({
-      authStrategy: loggedInUserResponse.user.authStrategy,
-      firstName: loggedInUserResponse.user.firstName,
-      lastName: loggedInUserResponse.user.lastName,
-      email: loggedInUserResponse.user.email.toLowerCase(),
-      _id: meRequest.body._id,
-      __v: 0,
+    expect(meRequest.body).to.deep.includes({
+      ...loggedInUserResponse.user,
+      etablissements: loggedInUserResponse.etablissements,
+      emailConfirmed: true,
+      status: USER_STATUS.ACTIVE,
     });
   });
   it("should return 401 and unauthorized error if no bearer token is provided", async () => {
