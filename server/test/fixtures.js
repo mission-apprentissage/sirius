@@ -100,7 +100,7 @@ const newQuestionnaire = (custom = {}, hasId = false) => {
       questionnaireUI: {},
       isValidated: false,
       deletedAt: null,
-      createdBy: ObjectId(faker.database.mongodbObjectId()),
+      createdBy: faker.database.mongodbObjectId(),
     },
     custom
   );
