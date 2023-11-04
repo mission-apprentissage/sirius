@@ -65,7 +65,7 @@ const newFormation = (custom = {}, hasId = false) => {
         localite: faker.address.city(),
         duree: 3,
       },
-      campagneId: null,
+      campagneId: faker.database.mongodbObjectId(),
       deletedAt: null,
       createdBy: ObjectId(faker.database.mongodbObjectId()),
     },
