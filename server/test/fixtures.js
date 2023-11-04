@@ -57,7 +57,14 @@ const newFormation = (custom = {}, hasId = false) => {
   return _.merge(
     {
       ...(hasId && { _id: ObjectId(faker.database.mongodbObjectId()) }),
-      data: {},
+      data: {
+        intitule_long: faker.lorem.words(),
+        tags: ["2020", "2021", "2022"],
+        lieu_formation_adresse_computed: faker.address.streetAddress(),
+        diplome: faker.lorem.words(),
+        localite: faker.address.city(),
+        duree: 3,
+      },
       campagneId: null,
       deletedAt: null,
       createdBy: ObjectId(faker.database.mongodbObjectId()),
@@ -70,6 +77,12 @@ const newEtablissement = (custom = {}, hasId = false) => {
   return _.merge(
     {
       ...(hasId && { _id: ObjectId(faker.database.mongodbObjectId()) }),
+      data: {
+        onisep_nom: faker.lorem.words(),
+        enseigne: faker.lorem.words(),
+        siret: "123456789",
+        entreprise_raison_sociale: faker.lorem.words(),
+      },
       formationIds: [],
       deletedAt: null,
       createdBy: faker.database.mongodbObjectId(),
