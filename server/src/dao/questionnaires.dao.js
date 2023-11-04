@@ -21,6 +21,12 @@ const getAllWithCreatorName = async (query) => {
       },
     },
     {
+      $unwind: {
+        path: "$createdBy",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         "createdBy.email": 0,
         "createdBy.authStrategy": 0,
@@ -29,6 +35,11 @@ const getAllWithCreatorName = async (query) => {
         "createdBy.salt": 0,
         "createdBy.hash": 0,
         "createdBy.refreshToken": 0,
+        "createdBy.emailConfirmed": 0,
+        "createdBy.role": 0,
+        "createdBy.status": 0,
+        "createdBy.comment": 0,
+        "createdBy.etablissements": 0,
       },
     },
   ]);
