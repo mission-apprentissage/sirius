@@ -45,6 +45,9 @@ const EtablissementInput = ({ formik, setEtablissements }) => {
     debouncedSiret(callback, inputValue);
     setIsLoadingRemoteEtablissement(false);
   };
+
+  const hasError = !!formik.errors.etablissements && !!formik.touched.etablissements;
+
   return (
     <FormControl isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}>
       <AsyncSelect
@@ -59,7 +62,13 @@ const EtablissementInput = ({ formik, setEtablissements }) => {
         size="lg"
         color="brand.black.500"
         _placeholder={{ color: "brand.black.500" }}
-        borderColor="brand.blue.400"
+        errorBorderColor="brand.red.500"
+        isInvalid={hasError}
+        onChange={(e) => {
+          if (!e) {
+            formik.setFieldValue("etablissements", []);
+          }
+        }}
         chakraStyles={{
           placeholder: (baseStyles) => ({
             ...baseStyles,

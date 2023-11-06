@@ -10,7 +10,7 @@ const subscribeSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   comment: Joi.string().allow(null, ""),
-  etablissements: Joi.array().required(),
+  etablissements: Joi.array().required().min(1),
   email: Joi.string().email({ tlds: false }).required(),
   password: passwordComplexity({
     min: 8,
