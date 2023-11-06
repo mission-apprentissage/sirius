@@ -12,7 +12,7 @@ const getMedian = (values) => {
 const getMedianDuration = (answers) => {
   if (answers.length === 0) return 0;
   const durations = answers.map(
-    (answer) => new Date(answer.updatedAt).getTime() - new Date(answer.createdAt).getTime()
+    (answer) => new Date(answer.lastQuestionAt).getTime() - new Date(answer.createdAt).getTime()
   );
 
   return getMedian(durations);

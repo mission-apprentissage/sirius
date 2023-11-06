@@ -51,12 +51,6 @@ const NAV_ITEMS = [
     label: "Témoignages",
     children: [
       {
-        label: "Dashboard",
-        subLabel: "Afficher les statistiques d'une campagne",
-        href: "/temoignages/dashboard",
-        roles: [USER_ROLES.ADMIN],
-      },
-      {
         label: "Gestion",
         subLabel: "Gérer les témoignages d'une campagne",
         href: "/temoignages/gestion",

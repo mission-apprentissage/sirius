@@ -5,6 +5,7 @@ const temoignageSchema = new mongoose.Schema(
     campagneId: { type: String, required: true },
     reponses: { type: Object, required: true },
     deletedAt: { type: Date, default: null },
+    lastQuestionAt: { type: Date, default: null },
   },
   { minimize: false, timestamps: true }
 );

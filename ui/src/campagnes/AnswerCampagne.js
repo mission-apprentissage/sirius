@@ -91,6 +91,7 @@ const AnswerCampagne = () => {
       const result = await _post(`/api/temoignages/`, {
         reponses: { ...answers, ...formData, ...nestedData },
         campagneId: id,
+        lastQuestionAt: new Date(),
       });
 
       if (result._id) {
@@ -127,6 +128,7 @@ const AnswerCampagne = () => {
     } else {
       const result = await _put(`/api/temoignages/${temoignageId}`, {
         reponses: { ...answers, ...formData, ...nestedData },
+        lastQuestionAt: new Date(),
       });
       if (!result.acknowledged) {
         if (result.statusCode === 403) {

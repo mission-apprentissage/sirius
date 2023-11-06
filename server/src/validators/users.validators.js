@@ -12,7 +12,10 @@ const subscribeSchema = Joi.object({
   comment: Joi.string().allow(null, ""),
   etablissements: Joi.array().required(),
   email: Joi.string().email({ tlds: false }).required(),
-  password: passwordComplexity(),
+  password: passwordComplexity({
+    min: 8,
+    max: 128,
+  }),
 });
 
 const updateSchema = Joi.object({
@@ -30,12 +33,20 @@ const forgotPasswordSchema = Joi.object({
 });
 
 const resetPasswordSchema = Joi.object({
-  password: passwordComplexity(),
+  password: passwordComplexity({
+    min: 8,
+    max: 128,
+  }),
   token: Joi.string().required(),
 });
 
 const confirmSchema = Joi.object({
   token: Joi.string().required(),
+});
+
+const supportSchema = Joi.object({
+  title: Joi.string().required(),
+  message: Joi.string().required(),
 });
 
 module.exports = {
@@ -45,4 +56,5 @@ module.exports = {
   forgotPasswordSchema,
   resetPasswordSchema,
   confirmSchema,
+  supportSchema,
 };
