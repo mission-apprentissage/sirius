@@ -38,6 +38,11 @@ const confirmSchema = Joi.object({
   token: Joi.string().required(),
 });
 
+const supportSchema = Joi.object({
+  title: Joi.string().required(),
+  message: Joi.string().required(),
+});
+
 module.exports = {
   loginSchema,
   subscribeSchema,
@@ -45,4 +50,5 @@ module.exports = {
   forgotPasswordSchema,
   resetPasswordSchema,
   confirmSchema,
+  supportSchema,
 };

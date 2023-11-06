@@ -1,5 +1,15 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Spinner, Box, Text, Stack, Accordion, Image, useBreakpoint } from "@chakra-ui/react";
+import {
+  Spinner,
+  Box,
+  Text,
+  Stack,
+  Accordion,
+  Image,
+  useBreakpoint,
+  useDisclosure,
+  Link,
+} from "@chakra-ui/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { EtablissementsContext } from "../context/EtablissementsContext";
@@ -18,6 +28,7 @@ import Button from "../Components/Form/Button";
 import IoAddSharp from "../assets/icons/IoAddSharp.svg";
 import FormSuccess from "../Components/Form/FormSuccess";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
+import SupportModal from "./Components/SupportModal";
 
 export const sortingOptions = [
   { label: "Formation (A-Z)", value: { id: "Formation", desc: false } },
@@ -41,7 +52,7 @@ const ViewCampagnes = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const breakpoint = useBreakpoint({ ssr: false });
   const [counter, setCounter] = useState(5);
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const isMobile = breakpoint === "base";
 
   const params = new URLSearchParams(searchParams);
@@ -143,6 +154,31 @@ const ViewCampagnes = () => {
           </Accordion>
         )}
       </Box>
+      <Box
+        display="flex"
+        mb="16px"
+        mt="50px"
+        justifyContent="space-between"
+        alignItems="center"
+        w="100%"
+      >
+        <Text fontWeight="600" color="#718096">
+          Un problème avec les formations affichées ?{" "}
+          <strong>
+            <Text as="u" cursor="pointer" onClick={onOpen}>
+              Dites le nous
+            </Text>
+          </strong>
+        </Text>
+        <Text color="#718096">
+          Formations extraites du{" "}
+          <Link href="https://catalogue-apprentissage.intercariforef.org/" target="_blank">
+            <u>Catalogue des offres de formations en apprentissage</u>
+          </Link>{" "}
+          du réseau des CARIF OREF
+        </Text>
+      </Box>
+      <SupportModal isOpen={isOpen} onClose={onClose} token={userContext.token} />
     </Stack>
   );
 };
