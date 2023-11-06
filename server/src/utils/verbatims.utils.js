@@ -1,4 +1,4 @@
-const getChampsLibreField = (questionnaireUI) => {
+const getChampsLibreField = (questionnaireUI, onlyOpenQuestions = false) => {
   const fieldsWithCustomMessageReceived = [];
 
   for (const category in questionnaireUI) {
@@ -6,8 +6,14 @@ const getChampsLibreField = (questionnaireUI) => {
 
     for (const field in categoryFields) {
       const widget = categoryFields[field]["ui:widget"];
-      if (widget === "customMessageReceived" || widget === "textarea") {
-        fieldsWithCustomMessageReceived.push(field);
+      if (onlyOpenQuestions) {
+        if (widget === "customMessageReceived") {
+          fieldsWithCustomMessageReceived.push(field);
+        }
+      } else {
+        if (widget === "customMessageReceived" || widget === "textarea") {
+          fieldsWithCustomMessageReceived.push(field);
+        }
       }
     }
   }
@@ -16,7 +22,7 @@ const getChampsLibreField = (questionnaireUI) => {
 };
 
 const getChampsLibreRate = (questionnaireUI, temoignages) => {
-  const champsLibreField = getChampsLibreField(questionnaireUI);
+  const champsLibreField = getChampsLibreField(questionnaireUI, true);
 
   const champsLibresFieldsCountWithAnswer = temoignages.reduce((acc, cur) => {
     const answers = Object.keys(cur.reponses);
