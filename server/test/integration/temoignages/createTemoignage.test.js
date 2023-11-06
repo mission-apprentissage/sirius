@@ -20,7 +20,7 @@ httpTests(__filename, ({ startServer }) => {
     const response = await httpClient.post("/api/temoignages/").send(temoignage);
 
     expect(response.status).to.eql(201);
-    expect(response.body).to.deep.includes(temoignage);
+    expect(response.body).to.deep.includes({ ...temoignage, lastQuestionAt: temoignage.lastQuestionAt.toISOString() });
   });
   it("should return 400 and a validation error if the payload is not correct", async () => {
     const { httpClient } = await startServer();

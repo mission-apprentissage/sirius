@@ -4,9 +4,6 @@ const httpTests = require("../utils/httpTests");
 const { newCampagne } = require("../../fixtures");
 
 httpTests(__filename, ({ startServer }) => {
-  beforeEach(async () => {
-    sinon.useFakeTimers(new Date());
-  });
   afterEach(async () => {
     sinon.restore();
   });

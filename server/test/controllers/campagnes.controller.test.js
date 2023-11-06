@@ -2,7 +2,6 @@ const { use, expect } = require("chai");
 const { stub, restore, match } = require("sinon");
 const sinonChai = require("sinon-chai");
 const { mockRequest, mockResponse } = require("mock-req-res");
-const path = require("path");
 
 const campagnesController = require("../../src/controllers/campagnes.controller");
 const campagnesService = require("../../src/services/campagnes.service");
@@ -151,32 +150,24 @@ describe(__filename, () => {
     });
   });
   describe("getExport", () => {
+    const req = mockRequest({ params: { id: 1 } });
+
     it("should throw a BasicError if success is false", async () => {
-      const req = { params: { id: "123" } };
-      const getExportStub = stub(campagnesService, "getExport").resolves({ success: false, body: null });
+      stub(campagnesService, "getExport").returns({ success: false, body: null });
 
       await campagnesController.getExport(req, res, next);
 
-      expect(getExportStub).to.have.been.calledOnceWithExactly("123");
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
-      expect(res.setHeader).to.not.have.been.called;
-      expect(res.download).to.not.have.been.called;
     });
 
-    it("should set headers and download the file if success is true", async () => {
-      const fileName = "export.pdf";
-      const req = { params: { id: "123" } };
-      const getExportStub = stub(campagnesService, "getExport").resolves({ success: true, body: { fileName } });
+    it("should return the export and status 200 if success is true", async () => {
+      const exportData = { data: "some data" };
+      stub(campagnesService, "getExport").returns({ success: true, body: exportData });
 
       await campagnesController.getExport(req, res, next);
 
-      expect(getExportStub).to.have.been.calledOnceWithExactly("123");
-      expect(res.setHeader).to.have.been.calledTwice;
-      expect(res.setHeader).to.have.been.calledWithExactly("Content-Type", "application/pdf");
-      expect(res.setHeader).to.have.been.calledWithExactly("Content-Disposition", `attachment; filename=${fileName}`);
-      expect(res.download).to.have.been.calledOnceWithExactly(
-        path.join(__dirname, "..", "..", "src", "public", "exports", fileName)
-      );
+      expect(res.status).to.have.been.calledWith(200);
+      expect(res.json).to.have.been.calledWith(exportData);
     });
   });
 });

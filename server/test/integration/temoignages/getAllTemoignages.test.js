@@ -34,8 +34,14 @@ httpTests(__filename, ({ startServer }) => {
 
     expect(response.status).to.eql(200);
 
-    expect(response.body[0]).to.deep.includes(temoignage1);
-    expect(response.body[1]).to.deep.includes(temoignage2);
+    expect(response.body[0]).to.deep.includes({
+      ...temoignage1,
+      lastQuestionAt: temoignage1.lastQuestionAt.toISOString(),
+    });
+    expect(response.body[1]).to.deep.includes({
+      ...temoignage2,
+      lastQuestionAt: temoignage2.lastQuestionAt.toISOString(),
+    });
   });
   it("should return 200 and an empty array if no temoignage exist", async () => {
     const { httpClient, components } = await startServer();

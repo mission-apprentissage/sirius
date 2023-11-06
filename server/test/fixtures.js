@@ -29,6 +29,7 @@ const newTemoignage = (custom = {}, hasId = false) => {
       reponses: {
         test: faker.lorem.paragraph(),
       },
+      lastQuestionAt: new Date(),
     },
     custom
   );
