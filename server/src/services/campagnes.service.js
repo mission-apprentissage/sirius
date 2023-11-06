@@ -1,7 +1,4 @@
-const path = require("path");
-const { PDFDocument, rgb, StandardFonts } = require("pdf-lib");
-const QRCode = require("qrcode");
-const fs = require("fs");
+const ObjectId = require("mongoose").mongo.ObjectId;
 
 const campagnesDao = require("../dao/campagnes.dao");
 const formationsDao = require("../dao/formations.dao");
@@ -9,7 +6,8 @@ const etablissementsDao = require("../dao/etablissements.dao");
 
 const { getChampsLibreRate } = require("../utils/verbatims.utils");
 const { getMedianDuration } = require("../utils/campagnes.utils");
-const config = require("../config");
+const { generatePdf, generateMultiplePdf } = require("../modules/pdfExport");
+const { DIPLOME_TYPE_MATCHER } = require("../constants");
 
 const getCampagnes = async (query) => {
   try {
@@ -92,35 +90,6 @@ const createMultiCampagne = async ({ campagnes, etablissementSiret }) => {
   }
 };
 
-const publicPath = path.join(__dirname, "..", "..", "src", "public");
-const pdfFilePath = path.join(publicPath, "export.pdf");
-const outputDir = path.join(__dirname, "..", "..", "src", "public", "exports");
-
-const fillParagraph = (text, font, fontSize, maxWidth) => {
-  const paragraphs = text.split("\n");
-  for (let index = 0; index < paragraphs.length; index++) {
-    const paragraph = paragraphs[index];
-    if (font.widthOfTextAtSize(paragraph, fontSize) > maxWidth) {
-      const words = paragraph.split(" ");
-      const newParagraph = [];
-      const i = 0;
-      newParagraph[i] = [];
-      for (let k = 0; k < words.length; k++) {
-        const word = words[k];
-        newParagraph[i].push(word);
-        if (font.widthOfTextAtSize(newParagraph[i].join(" "), fontSize) > maxWidth) {
-          newParagraph[i].splice(-1);
-          i = i + 1;
-          newParagraph[i] = [];
-          newParagraph[i].push(word);
-        }
-      }
-      paragraphs[index] = newParagraph.map((p) => p.join(" ")).join("\n");
-    }
-  }
-  return paragraphs.join("\n");
-};
-
 const getExport = async (id) => {
   try {
     const campagne = await campagnesDao.getOne(id);
@@ -129,63 +98,47 @@ const getExport = async (id) => {
 
     const campagneName = campagne.nomCampagne || formation[0].data.intitule_long || formation[0].data.intitule_court;
 
-    const qrCodeData = `${config.publicUrl}/campagnes/${campagne._id}`;
-    const qrCodeDataURL = await QRCode.toDataURL(qrCodeData, {
-      errorCorrectionLevel: "L",
-      width: 250,
-      color: { dark: "#000091" },
-    });
+    const generatedPdf = await generatePdf(campagne._id, campagneName);
 
-    const existingPdfBuffer = fs.readFileSync(pdfFilePath);
-    const pdfDoc = await PDFDocument.load(existingPdfBuffer);
-    const page = pdfDoc.getPages()[0];
+    return { success: true, body: { data: generatedPdf, fileName: campagneName + ".pdf" } };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
 
-    const qrCodeImage = await pdfDoc.embedPng(qrCodeDataURL);
+const getMultipleExport = async (ids, user) => {
+  try {
+    const query = { _id: { $in: ids.map((id) => ObjectId(id)) } };
 
-    const pageWidth = 595;
-    const pageHeight = 842;
+    const campagnes = await campagnesDao.getAll(query);
 
-    const qrCodeWidth = 250;
-    const qrCodeHeight = 250;
+    const formattedCampagnes = campagnes.map((campagne) => ({
+      campagneId: campagne._id.toString(),
+      campagneName:
+        campagne.nomCampagne || campagne.formation.data.intitule_long || campagne.formation.data.intitule_court,
+      localite: campagne.formation.data.localite,
+      tags: campagne.formation.data.tags,
+      duree: campagne.formation.data.duree,
+    }));
 
-    const x = (pageWidth - qrCodeWidth) / 2;
-    const y = pageHeight - qrCodeHeight - 400;
+    const etablissementLabel =
+      campagnes[0].etablissement.data.onisep_nom ||
+      campagnes[0].etablissement.data.enseigne ||
+      campagnes[0].etablissement.data.entreprise_raison_sociale ||
+      "";
 
-    page.drawImage(qrCodeImage, {
-      x,
-      y,
-      qrCodeWidth,
-      qrCodeHeight,
-    });
+    const diplome = DIPLOME_TYPE_MATCHER[campagnes[0].formation.data.diplome];
 
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontSize = 24; // You can adjust the font size
-    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const textWidth = helveticaFont.widthOfTextAtSize(campagneName, fontSize);
-    const maxWidth = 400;
+    const generatedPdf = await generateMultiplePdf(formattedCampagnes, diplome, etablissementLabel, user);
 
-    const breakedText = fillParagraph(campagneName, font, fontSize, maxWidth);
+    const diplomeName = campagnes[0].formation.data.diplome;
 
-    page.drawText(textWidth > maxWidth ? breakedText : campagneName, {
-      x: textWidth > maxWidth ? 98 : page.getWidth() / 2 - textWidth / 2,
-      y: y - 30,
-      size: fontSize,
-      font: font,
-      color: rgb(0, 0, 145 / 255),
-      maxWidth: 400,
-    });
+    const fileName = `campagnes Sirius - ${DIPLOME_TYPE_MATCHER[diplomeName] || diplomeName}.pdf`;
 
-    const modifiedPdfBytes = await pdfDoc.save();
-
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir);
-    }
-
-    const modifiedPdfPath = path.join(outputDir, campagneName + " - " + id + ".pdf");
-
-    fs.writeFileSync(modifiedPdfPath, modifiedPdfBytes);
-
-    return { success: true, body: { fileName: campagneName + " - " + id + ".pdf" } };
+    return {
+      success: true,
+      body: { data: generatedPdf, fileName },
+    };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -199,4 +152,5 @@ module.exports = {
   updateCampagne,
   createMultiCampagne,
   getExport,
+  getMultipleExport,
 };

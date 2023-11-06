@@ -38,7 +38,7 @@ import { simpleEditionSubmitHandler } from "../submitHandlers";
 import CellInput from "./CellInput";
 import CellInputSeats from "./CellInputSeats";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
-import { _getBlob } from "../../utils/httpClient";
+import { _get } from "../../utils/httpClient";
 
 const columnHelper = createColumnHelper();
 
@@ -163,18 +163,19 @@ const getColumns = (handleCellUpdate, userContext) => [
         bgColor="transparent"
         aria-label="share"
         onClick={async () => {
-          const response = await _getBlob(
+          const response = await _get(
             `/api/campagnes/export/${info.getValue()[0]}`,
             userContext.token
           );
 
-          const url = window.URL.createObjectURL(response);
-          const a = document.createElement("a");
-          a.href = url;
+          const base64Data = `data:application/pdf;base64,${response.data}`;
 
-          a.download = `${info.getValue()[1] || info.getValue()[2]}`;
+          const a = document.createElement("a");
+          a.href = base64Data;
+          a.download = response.fileName;
+          document.body.appendChild(a);
           a.click();
-          window.URL.revokeObjectURL(url);
+          window.URL.revokeObjectURL(base64Data);
         }}
         icon={<Image src={CkDownload} alt="Partage" />}
       />
@@ -190,6 +191,7 @@ const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userCont
   const [sorting, setSorting] = useState([]);
   const [search, setSearch] = useState([]);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
+  const [isLoadingDownload, setIsLoadingDownload] = useState(false);
 
   useEffect(() => {
     setDisplayedCampagnes(campagnes);
@@ -225,6 +227,24 @@ const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userCont
     },
   });
 
+  const handleDownload = async (e) => {
+    e.stopPropagation();
+    setIsLoadingDownload(true);
+    const campagneIds = campagnes.map((campagne) => campagne._id);
+
+    const response = await _get(`/api/campagnes/multiexport?ids=${campagneIds}`, userContext.token);
+
+    const base64Data = `data:application/pdf;base64,${response.data}`;
+
+    const a = document.createElement("a");
+    a.href = base64Data;
+    a.download = response.fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(base64Data);
+    setIsLoadingDownload(false);
+  };
+
   return (
     <AccordionItem
       sx={{
@@ -233,46 +253,55 @@ const ManageCampagneTable = ({ diplomeType, campagnes = [], formations, userCont
         margin: "15px 0",
       }}
     >
-      <h2>
-        <AccordionButton
-          _hover={{
-            backgroundColor: "transparent",
-          }}
+      <AccordionButton
+        _hover={{
+          backgroundColor: "transparent",
+        }}
+      >
+        <Box
+          display="flex"
+          textAlign="left"
+          flexDirection="row"
+          alignItems="center"
+          w="60%"
+          my="15px"
         >
-          <Box
-            display="flex"
-            textAlign="left"
-            flexDirection="row"
-            alignItems="center"
-            w="60%"
-            my="15px"
+          <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
+            {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
+          </Text>
+          <Text mx="10px">|</Text>
+          <Text color="brand.blue.700">
+            {campagnes?.length}/{formations?.length} campagne{campagnes?.length > 1 ? "s" : ""}{" "}
+            créée
+            {campagnes?.length > 1 ? "s" : ""}
+          </Text>
+        </Box>
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="flex-end"
+          my="15px"
+          mr="16px"
+          w="40%"
+        >
+          <Button
+            as="div"
+            onClick={handleDownload}
+            leftIcon={<DownloadIcon />}
+            variant="filled"
+            ml="auto"
+            size="md"
+            isLoading={isLoadingDownload}
+            _hover={{
+              backgroundColor: "brand.blue.700",
+            }}
           >
-            <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
-              {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
-            </Text>
-            <Text mx="10px">|</Text>
-            <Text color="brand.blue.700">
-              {campagnes?.length}/{formations?.length} campagne{campagnes?.length > 1 ? "s" : ""}{" "}
-              créée
-              {campagnes?.length > 1 ? "s" : ""}
-            </Text>
-          </Box>
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="flex-end"
-            my="15px"
-            mr="16px"
-            w="40%"
-          >
-            <Button as="div" leftIcon={<DownloadIcon />} variant="filled" ml="auto" size="md">
-              Télécharger les supports de partage
-            </Button>
-          </Box>
-          <AccordionIcon color="brand.blue.700" fontSize="34px" />
-        </AccordionButton>
-      </h2>
+            Télécharger les supports de partage
+          </Button>
+        </Box>
+        <AccordionIcon color="brand.blue.700" fontSize="34px" />
+      </AccordionButton>
       <AccordionPanel pb={4} px="0" overflowX="auto">
         <Stack direction="column" mx="15px">
           <Stack direction="row" mt="32px" mb="20px">

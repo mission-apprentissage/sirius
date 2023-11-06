@@ -9,6 +9,7 @@ const {
   updateCampagne,
   createMultiCampagne,
   getExport,
+  getMultipleExport,
 } = require("../controllers/campagnes.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdminOrAllowed, TYPES } = require("../middlewares/isAdminOrAllowed");
@@ -39,10 +40,6 @@ const campagnes = () => {
     }
   );
 
-  router.get("/api/campagnes/:id", (req, res, next) => {
-    getCampagne(req, res, next);
-  });
-
   router.delete(
     "/api/campagnes/:id",
     verifyUser,
@@ -65,11 +62,24 @@ const campagnes = () => {
   router.get(
     "/api/campagnes/export/:id",
     verifyUser,
-    (req, res, next) => isAdminOrAllowed(req, next, TYPES.SIRET),
+    (req, res, next) => isAdminOrAllowed(req, next, TYPES.CAMPAGNE_ID),
     (req, res, next) => {
       getExport(req, res, next);
     }
   );
+
+  router.get(
+    "/api/campagnes/multiexport",
+    verifyUser,
+    (req, res, next) => isAdminOrAllowed(req, next, TYPES.CAMPAGNE_IDS),
+    (req, res, next) => {
+      getMultipleExport(req, res, next);
+    }
+  );
+
+  router.get("/api/campagnes/:id", (req, res, next) => {
+    getCampagne(req, res, next);
+  });
 
   return router;
 };
