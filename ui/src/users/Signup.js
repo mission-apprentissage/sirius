@@ -38,7 +38,7 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .required(requiredFieldMessage)
     .matches(passwordComplexityRegex, passwordComplexityMessage),
-  etablissements: Yup.array().of(Yup.object()),
+  etablissements: Yup.array().of(Yup.object()).min(1, requiredFieldMessage),
 });
 
 const Signup = () => {
