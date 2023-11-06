@@ -170,4 +170,48 @@ describe(__filename, () => {
       expect(res.json).to.have.been.calledWith(exportData);
     });
   });
+  describe("getMultipleExport", () => {
+    it("should return a 200 status code and the exported data if successful", async () => {
+      const req = {
+        query: {
+          ids: "1,2,3",
+        },
+        user: {
+          firstName: "John",
+          lastName: "Doe",
+          email: "john.doe@example.com",
+        },
+      };
+      const res = {
+        status: stub().returnsThis(),
+        json: stub(),
+      };
+      const expectedResponse = { data: "exported data" };
+      stub(campagnesService, "getMultipleExport").resolves({ success: true, body: expectedResponse });
+
+      await campagnesController.getMultipleExport(req, res, next);
+
+      expect(res.status).to.have.been.calledWith(200);
+      expect(res.json).to.have.been.calledWith(expectedResponse);
+    });
+    it("should throw a BasicError if unsuccessful", async () => {
+      const req = {
+        query: {
+          ids: "1,2,3",
+        },
+        user: {
+          firstName: "John",
+          lastName: "Doe",
+          email: "john.doe@example.com",
+        },
+      };
+      const res = {
+        status: stub().returnsThis(),
+        json: stub(),
+      };
+      stub(campagnesService, "getMultipleExport").resolves({ success: false });
+      await campagnesController.getMultipleExport(req, res, next);
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
+    });
+  });
 });
