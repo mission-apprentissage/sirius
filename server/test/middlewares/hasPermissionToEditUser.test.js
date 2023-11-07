@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const sinon = require("sinon");
 const { hasPermissionToEditUser } = require("../../src/middlewares/hasPermissionToEditUser");
 const { USER_ROLES, USER_STATUS } = require("../../src/constants");
-const { ErrorMessage } = require("../../src/errors");
+const { UnauthorizedError } = require("../../src/errors");
 
 describe(__filename, () => {
   let req, res, next;
@@ -33,23 +33,23 @@ describe(__filename, () => {
     req.params.id = "456";
     hasPermissionToEditUser(req, res, next);
     expect(next.calledOnce).to.be.true;
-    expect(next.args[0][0].message).to.equal(ErrorMessage.UnauthorizedError);
+    expect(next.getCall(0).args[0]).to.be.an.instanceof(UnauthorizedError);
   });
   it("should not allow a user to change their own status or role", () => {
     req.body.status = USER_STATUS.INACTIVE;
     hasPermissionToEditUser(req, res, next);
     expect(next.calledOnce).to.be.true;
-    expect(next.args[0][0].message).to.equal(ErrorMessage.UnauthorizedError);
+    expect(next.getCall(0).args[0]).to.be.an.instanceof(UnauthorizedError);
 
     req.body = { role: USER_ROLES.ADMIN };
     hasPermissionToEditUser(req, res, next);
     expect(next.calledTwice).to.be.true;
-    expect(next.args[0][0].message).to.equal(ErrorMessage.UnauthorizedError);
+    expect(next.getCall(0).args[0]).to.be.an.instanceof(UnauthorizedError);
   });
 
   it("should return an UnauthorizedError if the user is not active", () => {
     req.user.status = USER_STATUS.INACTIVE;
     hasPermissionToEditUser(req, res, next);
-    expect(next.args[0][0].message).to.equal(ErrorMessage.UnauthorizedError);
+    expect(next.getCall(0).args[0]).to.be.an.instanceof(UnauthorizedError);
   });
 });

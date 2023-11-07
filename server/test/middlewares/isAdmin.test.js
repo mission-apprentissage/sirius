@@ -4,7 +4,7 @@ const sinonChai = require("sinon-chai");
 const expect = chai.expect;
 
 const { isAdmin } = require("../../src/middlewares/isAdmin");
-const { ErrorMessage } = require("../../src/errors");
+const { UnauthorizedError } = require("../../src/errors");
 const { USER_ROLES, USER_STATUS } = require("../../src/constants");
 chai.use(sinonChai);
 
@@ -39,7 +39,7 @@ describe(__filename, () => {
 
     await isAdmin(req, {}, next);
 
-    expect(next.args[0][0].message).to.equal(ErrorMessage.UnauthorizedError);
+    expect(next.getCall(0).args[0]).to.be.an.instanceof(UnauthorizedError);
   });
 
   it("should call next with UnauthorizedError if user is not active", async () => {
@@ -52,6 +52,6 @@ describe(__filename, () => {
 
     await isAdmin(req, {}, next);
 
-    expect(next.args[0][0].message).to.equal(ErrorMessage.UnauthorizedError);
+    expect(next.getCall(0).args[0]).to.be.an.instanceof(UnauthorizedError);
   });
 });
