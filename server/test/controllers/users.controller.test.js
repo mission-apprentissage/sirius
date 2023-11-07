@@ -6,6 +6,7 @@ const { faker } = require("@faker-js/faker");
 const ObjectId = require("mongoose").mongo.ObjectId;
 const jwt = require("jsonwebtoken");
 const mailer = require("../../src/modules/mailer");
+const slack = require("../../src/modules/slack");
 const {
   createUser,
   loginUser,
@@ -17,10 +18,11 @@ const {
   forgotPassword,
   resetPassword,
   confirmUser,
+  supportUser,
 } = require("../../src/controllers/users.controller");
 const usersService = require("../../src/services/users.service");
 const { BasicError, UnauthorizedError, UserAlreadyExistsError, ErrorMessage } = require("../../src/errors");
-const { newUser } = require("../fixtures");
+const { newUser, newEtablissement } = require("../fixtures");
 const { COOKIE_OPTIONS } = require("../../src/utils/authenticate.utils");
 const config = require("../../src/config");
 const { USER_STATUS } = require("../../src/constants");
@@ -44,22 +46,26 @@ describe(__filename, () => {
     reset();
   });
   describe("createUser", () => {
-    let req, res, shootTemplateStub, jwtSignStub;
+    let res, shootTemplateStub, sendToSlackStub, jwtSignStub;
 
     beforeEach(() => {
-      req = mockRequest({ body: newUser() });
       res = mockResponse();
       shootTemplateStub = stub().resolves();
+      sendToSlackStub = stub().resolves();
       jwtSignStub = stub().returns("token");
       stub(jwt, "sign").callsFake(jwtSignStub);
       stub(mailer, "shootTemplate").callsFake(shootTemplateStub);
+      stub(slack, "sendToSlack").callsFake(sendToSlackStub);
     });
 
     afterEach(() => {
       restore();
     });
 
-    it("should create a new user and send confirmation email", async () => {
+    it("should create a new user, send confirmation email and slack notification", async () => {
+      const etablissement = newEtablissement();
+      const req = mockRequest({ body: newUser({ etablissements: [{ ...etablissement.data }] }) });
+
       stub(usersService, "createUser").resolves({ success: true, body: req.body });
 
       await createUser(req, res);
@@ -81,6 +87,50 @@ describe(__filename, () => {
           },
         },
       });
+      expect(slack.sendToSlack).to.have.been.calledWith([
+        {
+          type: "header",
+          text: {
+            type: "plain_text",
+            text: `:bell: *Nouvelle inscription en ${config.env.toUpperCase()}!* :bell:`,
+            emoji: true,
+          },
+        },
+        {
+          type: "divider",
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `:star2: *Nom:* ${req.body.firstName} ${req.body.lastName}`,
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `:email: *Email:* ${req.body.email}`,
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `:school: *Établissements:*\n• ${etablissement.data.siret} - ${etablissement.data.onisep_nom}`,
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `:memo: *Commentaire:* \n${req.body.comment}`,
+          },
+        },
+        {
+          type: "divider",
+        },
+      ]);
       expect(res.status).to.have.been.calledWith(201);
       expect(res.json).to.have.been.calledWith(req.body);
     });
@@ -484,6 +534,81 @@ describe(__filename, () => {
       expect(usersService.confirmUser).to.have.been.calledWith(req.body.token);
       expect(res.status).not.to.have.been.called;
       expect(res.json).not.to.have.been.called;
+    });
+  });
+  describe("supportUser", () => {
+    let req, slackSendToSlackStub;
+
+    beforeEach(() => {
+      req = mockRequest({
+        body: {
+          title: "Test Title",
+          message: "Test Message",
+        },
+        user: {
+          email: "test@example.fr",
+          firstName: "Test",
+          lastName: "User",
+        },
+      });
+      slackSendToSlackStub = stub(slack, "sendToSlack").resolves(true);
+    });
+
+    it("should send a message to Slack with the correct format", async () => {
+      await supportUser(req, res);
+
+      expect(slackSendToSlackStub).to.have.been.calledWith([
+        {
+          type: "header",
+          text: {
+            type: "plain_text",
+            text: `Demande d'aide en ${config.env.toUpperCase()}!`,
+            emoji: true,
+          },
+        },
+        {
+          type: "divider",
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `:raising_hand: *${req.user.firstName} ${req.user.lastName}* a besoin d'aide!`,
+          },
+        },
+        {
+          type: "divider",
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `:label: *Titre:*\n${req.body.title}`,
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `:envelope: *Email:*\n${req.user.email}`,
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `:pencil: *Message:*\n${req.body.message}`,
+          },
+        },
+        {
+          type: "divider",
+        },
+      ]);
+    });
+    it("should return a success response", async () => {
+      await supportUser(req, res, next);
+      expect(res.status).to.have.been.calledWith(200);
+      expect(res.json).to.have.been.calledWith({ success: true });
     });
   });
 });

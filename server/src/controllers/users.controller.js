@@ -6,7 +6,7 @@ const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
 const mailer = require("../modules/mailer");
 const config = require("../config");
 const { USER_STATUS } = require("../constants");
-const { sendToSlack } = require("../modules/slack");
+const slack = require("../modules/slack");
 
 const createUser = tryCatch(async (req, res) => {
   const { success, body } = await usersService.createUser(req.body);
@@ -40,7 +40,7 @@ const createUser = tryCatch(async (req, res) => {
     })
     .join("\n");
 
-  await sendToSlack([
+  await slack.sendToSlack([
     {
       type: "header",
       text: {
@@ -224,7 +224,7 @@ const supportUser = tryCatch(async (req, res) => {
   const { title, message } = req.body;
   const { email, firstName, lastName } = req.user;
 
-  const slackResponse = await sendToSlack([
+  const slackResponse = await slack.sendToSlack([
     {
       type: "header",
       text: {
