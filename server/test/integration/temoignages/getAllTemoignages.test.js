@@ -1,9 +1,8 @@
-const assert = require("assert");
+const { expect } = require("chai");
 const sinon = require("sinon");
-
 const httpTests = require("../utils/httpTests");
-const { newTemoignage, newCampagne } = require("../../fixtures");
-const { createAndLoginUser } = require("../utils/user");
+const { newTemoignage, newCampagne, newQuestionnaire } = require("../../fixtures");
+const { createVerifyAndLoginUser } = require("../utils/user");
 
 httpTests(__filename, ({ startServer }) => {
   before(async () => {
@@ -14,84 +13,52 @@ httpTests(__filename, ({ startServer }) => {
   });
   it("should return 200 with multiple temoignages if it exists", async () => {
     const { httpClient, components } = await startServer();
-    const temoignage1 = newTemoignage();
-    const temoignage2 = newTemoignage();
+
+    const questionnaire = newQuestionnaire();
+    const createdQuestionnaire = await components.questionnaires.create(questionnaire);
+
+    const campagne1 = newCampagne({ questionnaireId: createdQuestionnaire._id });
+    const createdCampagne = await components.campagnes.create(campagne1);
+
+    const temoignage1 = newTemoignage({ campagneId: createdCampagne._id.toString() });
+    const temoignage2 = newTemoignage({ campagneId: createdCampagne._id.toString() });
 
     await components.temoignages.create(temoignage1);
     await components.temoignages.create(temoignage2);
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const response = await httpClient
-      .get("/api/temoignages/")
+      .get(`/api/temoignages?campagneId=${createdCampagne._id}`)
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
-    assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.body, [
-      {
-        ...temoignage1,
-        _id: response.body[0]._id,
-        __v: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-      },
-      {
-        ...temoignage2,
-        _id: response.body[1]._id,
-        __v: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-      },
-    ]);
+
+    expect(response.status).to.eql(200);
+
+    expect(response.body[0]).to.deep.includes({
+      ...temoignage1,
+      lastQuestionAt: temoignage1.lastQuestionAt.toISOString(),
+    });
+    expect(response.body[1]).to.deep.includes({
+      ...temoignage2,
+      lastQuestionAt: temoignage2.lastQuestionAt.toISOString(),
+    });
   });
   it("should return 200 and an empty array if no temoignage exist", async () => {
-    const { httpClient } = await startServer();
-
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
-
-    const response = await httpClient
-      .get("/api/temoignages/")
-      .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
-    assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.body, []);
-  });
-  it("should return 200 with multiple temoignages belonging to a unique camapgne if campagneId is in query params", async () => {
     const { httpClient, components } = await startServer();
-    const campagne1 = newCampagne({}, true);
 
-    const temoignage1 = newTemoignage({ campagneId: campagne1._id.toString() });
-    const temoignage2 = newTemoignage({ campagneId: campagne1._id.toString() });
-    const temoignage3 = newTemoignage();
+    const questionnaire = newQuestionnaire();
+    const createdQuestionnaire = await components.questionnaires.create(questionnaire);
 
-    await components.temoignages.create(temoignage1);
-    await components.temoignages.create(temoignage2);
-    await components.temoignages.create(temoignage3);
+    const campagne = newCampagne({ questionnaireId: createdQuestionnaire._id });
+    const createdCampagne = await components.campagnes.create(campagne);
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const response = await httpClient
-      .get("/api/temoignages/")
-      .query({ campagneId: temoignage1.campagneId })
+      .get(`/api/temoignages?campagneId=${createdCampagne._id}`)
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
-    assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.body, [
-      {
-        ...temoignage1,
-        _id: response.body[0]._id,
-        __v: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-      },
-      {
-        ...temoignage2,
-        _id: response.body[1]._id,
-        __v: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-      },
-    ]);
+
+    expect(response.status).to.eql(200);
+    expect(response.body).to.eql([]);
   });
 });

@@ -33,11 +33,12 @@ const getVerbatims = async (query) => {
 
     const query = { campagneId: { $in: campagnesByQuestionnaireId.map((campagne) => campagne._id) } };
     const temoignages = await temoignagesDao.getAll(query);
-    const verbatimsWithFormation = appendFormationAndEtablissementToVerbatims(temoignages, campagnesByQuestionnaireId);
 
     if (!temoignages) {
       return { success: false, body: ErrorMessage.TemoignageNotFoundError };
     }
+
+    const verbatimsWithFormation = appendFormationAndEtablissementToVerbatims(temoignages, campagnesByQuestionnaireId);
 
     const verbatimsWithChampsLibre = filterChampsLibresAndFlatten(verbatimsWithFormation, fieldsWithChampsLibre);
 

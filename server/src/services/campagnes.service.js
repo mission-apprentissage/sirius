@@ -6,7 +6,7 @@ const etablissementsDao = require("../dao/etablissements.dao");
 
 const { getChampsLibreRate } = require("../utils/verbatims.utils");
 const { getMedianDuration } = require("../utils/campagnes.utils");
-const { generatePdf, generateMultiplePdf } = require("../modules/pdfExport");
+const pdfExport = require("../modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER } = require("../constants");
 
 const getCampagnes = async (query) => {
@@ -98,7 +98,7 @@ const getExport = async (id) => {
 
     const campagneName = campagne.nomCampagne || formation[0].data.intitule_long || formation[0].data.intitule_court;
 
-    const generatedPdf = await generatePdf(campagne._id, campagneName);
+    const generatedPdf = await pdfExport.generatePdf(campagne._id, campagneName);
 
     return { success: true, body: { data: generatedPdf, fileName: campagneName + ".pdf" } };
   } catch (error) {
@@ -129,7 +129,7 @@ const getMultipleExport = async (ids, user) => {
 
     const diplome = DIPLOME_TYPE_MATCHER[campagnes[0].formation.data.diplome];
 
-    const generatedPdf = await generateMultiplePdf(formattedCampagnes, diplome, etablissementLabel, user);
+    const generatedPdf = await pdfExport.generateMultiplePdf(formattedCampagnes, diplome, etablissementLabel, user);
 
     const diplomeName = campagnes[0].formation.data.diplome;
 

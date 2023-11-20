@@ -2,7 +2,7 @@ const { use, expect } = require("chai");
 const sinonChai = require("sinon-chai");
 
 const httpTests = require("../utils/httpTests");
-const { createAndLoginUser } = require("../utils/user");
+const { createVerifyAndLoginUser } = require("../utils/user");
 
 use(sinonChai);
 
@@ -10,7 +10,7 @@ httpTests(__filename, ({ startServer }) => {
   it("should return 200 and delete refreshToken cookie", async () => {
     const { httpClient } = await startServer();
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const logoutRequest = await httpClient
       .get("/api/users/logout")
@@ -33,7 +33,7 @@ httpTests(__filename, ({ startServer }) => {
   it("should return 401 and unauthorized error if no signed cookie is provided", async () => {
     const { httpClient } = await startServer();
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const logoutRequest = await httpClient
       .get("/api/users/logout")

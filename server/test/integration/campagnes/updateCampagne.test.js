@@ -1,7 +1,7 @@
-const assert = require("assert");
+const { expect } = require("chai");
 const httpTests = require("../utils/httpTests");
 const { newCampagne } = require("../../fixtures");
-const { createAndLoginUser } = require("../utils/user");
+const { createVerifyAndLoginUser } = require("../utils/user");
 
 httpTests(__filename, ({ startServer }) => {
   it("should returns 200 and update the campagne", async () => {
@@ -9,7 +9,7 @@ httpTests(__filename, ({ startServer }) => {
     const campagne = newCampagne();
     const newCampagneName = "updatedCampagne";
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const existingCampagne = await httpClient
       .post("/api/campagnes/")
@@ -23,8 +23,8 @@ httpTests(__filename, ({ startServer }) => {
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
       .send(campagneWithNewName);
 
-    assert.strictEqual(updatedCampagne.status, 200);
-    assert.deepStrictEqual(updatedCampagne.body, {
+    expect(updatedCampagne.status).to.eql(200);
+    expect(updatedCampagne.body).to.eql({
       acknowledged: true,
       matchedCount: 1,
       modifiedCount: 1,
@@ -37,7 +37,7 @@ httpTests(__filename, ({ startServer }) => {
     const newCampagneName = "";
     const campagne = newCampagne();
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const existingCampagne = await httpClient
       .post("/api/campagnes/")
@@ -51,18 +51,17 @@ httpTests(__filename, ({ startServer }) => {
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`)
       .send(campagneWithNewName);
 
-    assert.strictEqual(updatedCampagne.status, 400);
-    assert.deepStrictEqual(updatedCampagne.body, {
+    expect(updatedCampagne.status).to.eql(400);
+    expect(updatedCampagne.body).to.eql({
       details: [
         {
           context: {
-            key: "nomCampagne",
-            label: "nomCampagne",
-            value: "",
+            key: "startDate",
+            label: "startDate",
           },
-          message: '"nomCampagne" is not allowed to be empty',
-          path: ["nomCampagne"],
-          type: "string.empty",
+          message: '"startDate" is required',
+          path: ["startDate"],
+          type: "any.required",
         },
       ],
       error: "Bad Request",

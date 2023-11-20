@@ -37,16 +37,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: USER_STATUS.PENDING,
   },
-  permission: {
-    type: String,
-    default: "user",
-    required: true,
-  },
-  validated: {
-    type: Boolean,
-    default: false,
-    required: true,
-  },
   comment: {
     type: String,
     default: "",

@@ -171,7 +171,11 @@ const resetPassword = async (token, password) => {
 
     const user = await User.findByUsername(decryptedToken.email);
 
-    const updatedUser = user.setPassword(password, async () => {
+    if (!user) {
+      return { success: false, body: ErrorMessage.UserNotFound };
+    }
+
+    const updatedUser = user?.setPassword(password, async () => {
       return user.save();
     });
 

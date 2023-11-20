@@ -5,7 +5,7 @@ const sinonChai = require("sinon-chai");
 const passport = require("passport");
 
 const { verifyUser, passportCallback } = require("../../src/middlewares/verifyUserMiddleware");
-const { UnauthorizedError } = require("../../src/errors");
+const { UnauthorizedError, UnconfirmedEmail } = require("../../src/errors");
 
 use(sinonChai);
 
@@ -14,7 +14,7 @@ describe(__filename, () => {
   const res = mockResponse();
   const next = stub();
 
-  afterEach(() => {
+  afterEach(async () => {
     restore();
     next.resetHistory();
   });
@@ -29,6 +29,15 @@ describe(__filename, () => {
 
       expect(req.user).to.eql(user);
       expect(next).to.have.been.calledWith();
+    });
+    it("should return an UnconfirmedEmail error if there is an error", async () => {
+      const user = { _id: "123", emailConfirmed: false };
+      const error = null;
+
+      const callback = passportCallback(req, res, next);
+      callback(error, user);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(UnconfirmedEmail);
     });
     it("should return an UnauthorizedError if there is an error", async () => {
       const user = { _id: "123" };

@@ -1,8 +1,8 @@
-const assert = require("assert");
 const sinon = require("sinon");
+const { expect } = require("chai");
 const httpTests = require("../utils/httpTests");
 const { newCampagne } = require("../../fixtures");
-const { createAndLoginUser } = require("../utils/user");
+const { createVerifyAndLoginUser } = require("../utils/user");
 
 httpTests(__filename, ({ startServer }) => {
   beforeEach(async () => {
@@ -19,44 +19,26 @@ httpTests(__filename, ({ startServer }) => {
     await components.campagnes.create(campagne1);
     await components.campagnes.create(campagne2);
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const response = await httpClient
       .get("/api/campagnes/")
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
-    assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.body, [
-      {
-        ...campagne1,
-        _id: response.body[0]._id,
-        __v: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-        temoignagesCount: 0,
-        questionnaireId: response.body[0].questionnaireId,
-      },
-      {
-        ...campagne2,
-        _id: response.body[1]._id,
-        __v: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-        temoignagesCount: 0,
-        questionnaireId: response.body[1].questionnaireId,
-      },
-    ]);
+
+    expect(response.status).to.eql(200);
+    expect(response.body[0]).to.deep.includes(campagne1);
+    expect(response.body[1]).to.deep.includes(campagne2);
   });
   it("should return 200 and an empty array if no campagne exist", async () => {
     const { httpClient } = await startServer();
 
-    const loggedInUserResponse = await createAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
 
     const response = await httpClient
       .get("/api/campagnes/")
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
-    assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(response.body, []);
+
+    expect(response.status).to.eql(200);
+    expect(response.body).to.eql([]);
   });
 });

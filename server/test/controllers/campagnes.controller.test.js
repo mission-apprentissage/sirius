@@ -18,7 +18,7 @@ describe(__filename, () => {
   const campagne1 = newCampagne();
   const campagne2 = newCampagne();
 
-  afterEach(() => {
+  afterEach(async () => {
     restore();
     next.resetHistory();
     res.status.resetHistory();
@@ -121,6 +121,97 @@ describe(__filename, () => {
 
       expect(res.status).to.have.been.calledWith(200);
       expect(res.json).to.have.been.calledWith(match(campagne1));
+    });
+  });
+  describe("createMultiCampagne", () => {
+    it("should return a 201 status code and the created campagnes if successful", async () => {
+      const req = { body: [{ name: "Campagne 1" }, { name: "Campagne 2" }] };
+      const expectedResponse = [
+        { id: 1, name: "Campagne 1" },
+        { id: 2, name: "Campagne 2" },
+      ];
+
+      stub(campagnesService, "createMultiCampagne").resolves({ success: true, body: expectedResponse });
+
+      await campagnesController.createMultiCampagne(req, res, next);
+
+      expect(res.status).to.have.been.calledWith(201);
+      expect(res.json).to.have.been.calledWith(expectedResponse);
+    });
+
+    it("should throw a BasicError if unsuccessful", async () => {
+      const req = { body: [{ name: "Campagne 1" }, { name: "Campagne 2" }] };
+
+      stub(campagnesService, "createMultiCampagne").resolves({ success: false });
+
+      await campagnesController.createMultiCampagne(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
+    });
+  });
+  describe("getExport", () => {
+    const req = mockRequest({ params: { id: 1 } });
+
+    it("should throw a BasicError if success is false", async () => {
+      stub(campagnesService, "getExport").returns({ success: false, body: null });
+
+      await campagnesController.getExport(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
+    });
+
+    it("should return the export and status 200 if success is true", async () => {
+      const exportData = { data: "some data" };
+      stub(campagnesService, "getExport").returns({ success: true, body: exportData });
+
+      await campagnesController.getExport(req, res, next);
+
+      expect(res.status).to.have.been.calledWith(200);
+      expect(res.json).to.have.been.calledWith(exportData);
+    });
+  });
+  describe("getMultipleExport", () => {
+    it("should return a 200 status code and the exported data if successful", async () => {
+      const req = {
+        query: {
+          ids: "1,2,3",
+        },
+        user: {
+          firstName: "John",
+          lastName: "Doe",
+          email: "john.doe@example.com",
+        },
+      };
+      const res = {
+        status: stub().returnsThis(),
+        json: stub(),
+      };
+      const expectedResponse = { data: "exported data" };
+      stub(campagnesService, "getMultipleExport").resolves({ success: true, body: expectedResponse });
+
+      await campagnesController.getMultipleExport(req, res, next);
+
+      expect(res.status).to.have.been.calledWith(200);
+      expect(res.json).to.have.been.calledWith(expectedResponse);
+    });
+    it("should throw a BasicError if unsuccessful", async () => {
+      const req = {
+        query: {
+          ids: "1,2,3",
+        },
+        user: {
+          firstName: "John",
+          lastName: "Doe",
+          email: "john.doe@example.com",
+        },
+      };
+      const res = {
+        status: stub().returnsThis(),
+        json: stub(),
+      };
+      stub(campagnesService, "getMultipleExport").resolves({ success: false });
+      await campagnesController.getMultipleExport(req, res, next);
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
   });
 });

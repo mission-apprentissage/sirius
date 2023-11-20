@@ -3,6 +3,7 @@ const sinonChai = require("sinon-chai");
 const httpTests = require("../utils/httpTests");
 const { newUser } = require("../../fixtures");
 const createUser = require("../../../src/db/createUser");
+const usersDao = require("../../../src/dao/users.dao");
 
 use(sinonChai);
 
@@ -11,7 +12,12 @@ httpTests(__filename, ({ startServer }) => {
     const { httpClient } = await startServer();
 
     const user = newUser({ password: "toto" });
-    await createUser(user.email, user.password, user.firstName, user.lastName);
+    const createdUser = await createUser(user.email, user.password, user.firstName, user.lastName, user.comment, []);
+
+    await usersDao.update(createdUser._id, {
+      ...createdUser.toObject(),
+      emailConfirmed: true,
+    });
 
     const login = {
       email: user.email.toLowerCase(),

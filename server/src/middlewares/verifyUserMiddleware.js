@@ -9,7 +9,7 @@ const STRATEGIES = {
 
 const passportCallback = (req, res, next) => {
   return (error, user) => {
-    if (user.emailConfirmed === false) {
+    if (user && user.emailConfirmed === false) {
       return next(new UnconfirmedEmail());
     }
     if (error || !user || (req.url !== "/api/users/login" && user.status === USER_STATUS.INACTIVE)) {

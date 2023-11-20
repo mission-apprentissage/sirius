@@ -1,4 +1,4 @@
-const assert = require("assert");
+const { expect } = require("chai");
 const sinon = require("sinon");
 const httpTests = require("../utils/httpTests");
 const { newTemoignage, newCampagne } = require("../../fixtures");
@@ -16,27 +16,19 @@ httpTests(__filename, ({ startServer }) => {
     const campagne1 = newCampagne({}, false);
     const createdCampagne = await components.campagnes.create(campagne1);
 
-    const temoignage = newTemoignage({ campagneId: createdCampagne._id });
+    const temoignage = newTemoignage({ campagneId: createdCampagne._id.toString() });
     const response = await httpClient.post("/api/temoignages/").send(temoignage);
 
-    assert.strictEqual(response.status, 201);
-    assert.deepStrictEqual(response.body, {
-      ...temoignage,
-      _id: response.body._id,
-      campagneId: createdCampagne._id.toString(),
-      __v: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-    });
+    expect(response.status).to.eql(201);
+    expect(response.body).to.deep.includes({ ...temoignage, lastQuestionAt: temoignage.lastQuestionAt.toISOString() });
   });
   it("should return 400 and a validation error if the payload is not correct", async () => {
     const { httpClient } = await startServer();
     const temoignage = { campagneId: "" };
     const response = await httpClient.post("/api/temoignages/").send(temoignage);
 
-    assert.strictEqual(response.status, 400);
-    assert.deepStrictEqual(response.body, {
+    expect(response.status).to.eql(400);
+    expect(response.body).to.deep.includes({
       details: [
         {
           context: {

@@ -8,9 +8,10 @@ const createTemoignage = async (temoignage) => {
   try {
     const campagneQuery = { id: temoignage.campagneId };
     const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(campagneQuery);
-    const temoignageCount = await temoignagesDao.countByCampagne(temoignage.campagneId);
 
     if (!campagne) throw new Error("Campagne not found");
+
+    const temoignageCount = await temoignagesDao.countByCampagne(temoignage.campagneId);
 
     if (new Date(campagne.startDate) > new Date()) {
       return { success: false, body: ErrorMessage.CampagneNotStarted };
@@ -34,7 +35,16 @@ const getTemoignages = async (query) => {
   try {
     const temoignages = await temoignagesDao.getAll(query);
     const campagne = await campagnesDao.getOne(query.campagneId);
+
+    if (!campagne) {
+      return { success: false, body: ErrorMessage.CampagneNotFoundError };
+    }
+
     const questionnaire = await questionnairesDao.getOne(campagne.questionnaireId);
+
+    if (!questionnaire) {
+      return { success: false, body: ErrorMessage.QuestionnaireNotFoundError };
+    }
 
     const verbatimsFields = getChampsLibreField(questionnaire.questionnaireUI);
 
@@ -64,24 +74,14 @@ const deleteTemoignage = async (id) => {
 
 const updateTemoignage = async (id, updatedTemoignage) => {
   try {
-    const temoignage = await temoignagesDao.update(id, updatedTemoignage);
-
-    const campagneQuery = { id: temoignage.campagneId };
+    const temoignageToUpdate = await temoignagesDao.getOne(id);
+    const campagneQuery = { id: temoignageToUpdate.campagneId };
     const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(campagneQuery);
 
-    const temoignageCount = await temoignagesDao.countByCampagne(temoignage.campagneId);
+    if (!campagne?.length) throw new Error("Campagne not found");
 
-    if (!campagne) throw new Error("Campagne not found");
+    const temoignage = await temoignagesDao.update(id, updatedTemoignage);
 
-    if (new Date(campagne.startDate) > new Date()) {
-      return { success: false, body: ErrorMessage.CampagneNotStarted };
-    }
-    if (new Date(campagne.endDate) < new Date()) {
-      return { success: false, body: ErrorMessage.CampagneEnded };
-    }
-    if (campagne.seats && temoignageCount >= campagne.seats) {
-      return { success: false, body: ErrorMessage.NoSeatsAvailable };
-    }
     return { success: true, body: temoignage };
   } catch (error) {
     return { success: false, body: error };

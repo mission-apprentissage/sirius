@@ -3,22 +3,22 @@ const usersService = require("../services/users.service");
 const { BasicError, UnauthorizedError, UserAlreadyExistsError, ErrorMessage } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
-const { shootTemplate } = require("../modules/mailer");
+const mailer = require("../modules/mailer");
 const config = require("../config");
 const { USER_STATUS } = require("../constants");
-const { sendToSlack } = require("../modules/slack");
+const slack = require("../modules/slack");
 
 const createUser = tryCatch(async (req, res) => {
   const { success, body } = await usersService.createUser(req.body);
 
-  if (!success && body.name === "UserExistsError") throw new UserAlreadyExistsError();
+  if (!success && body?.name === "UserExistsError") throw new UserAlreadyExistsError();
   if (!success) throw new BasicError();
 
   const confirmationToken = jwt.sign({ email: body.email }, config.auth.jwtSecret, {
     expiresIn: "1y",
   });
 
-  await shootTemplate({
+  await mailer.shootTemplate({
     template: "confirm_user",
     subject: "Sirius : activation de votre compte",
     to: body.email,
@@ -40,7 +40,7 @@ const createUser = tryCatch(async (req, res) => {
     })
     .join("\n");
 
-  await sendToSlack([
+  await slack.sendToSlack([
     {
       type: "header",
       text: {
@@ -145,10 +145,18 @@ const updateUser = tryCatch(async (req, res) => {
   const { id } = req.params;
 
   const { success: successOldUser, body: oldUser } = await usersService.getUserById(id);
+
+  if (!successOldUser) throw new BasicError();
+
   const { success: successUpdatedUser, body: updatedUser } = await usersService.updateUser(id, req.body);
 
-  if (successOldUser && oldUser.status !== USER_STATUS.ACTIVE && req.body.status === USER_STATUS.ACTIVE) {
-    await shootTemplate({
+  if (
+    successOldUser &&
+    successUpdatedUser &&
+    oldUser.status !== USER_STATUS.ACTIVE &&
+    req.body.status === USER_STATUS.ACTIVE
+  ) {
+    await mailer.shootTemplate({
       template: "account_activated",
       subject: "Sirius : votre inscription est validée",
       to: oldUser.email,
@@ -177,7 +185,7 @@ const forgotPassword = tryCatch(async (req, res) => {
     expiresIn: "1h",
   });
 
-  await shootTemplate({
+  await mailer.shootTemplate({
     template: "reset_password",
     subject: "Sirius : réinitialisation du mot de passe",
     to: body.email,
@@ -216,7 +224,7 @@ const supportUser = tryCatch(async (req, res) => {
   const { title, message } = req.body;
   const { email, firstName, lastName } = req.user;
 
-  const slackResponse = await sendToSlack([
+  const slackResponse = await slack.sendToSlack([
     {
       type: "header",
       text: {

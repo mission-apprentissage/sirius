@@ -1,24 +1,30 @@
 const { use, expect } = require("chai");
-const { stub, restore, match } = require("sinon");
+const { stub, restore } = require("sinon");
 const sinonChai = require("sinon-chai");
 const { mockRequest, mockResponse } = require("mock-req-res");
-
-const temoignagesController = require("../../src/controllers/temoignages.controller");
+const {
+  createTemoignage,
+  getTemoignages,
+  deleteTemoignage,
+  updateTemoignage,
+} = require("../../src/controllers/temoignages.controller");
 const temoignagesService = require("../../src/services/temoignages.service");
-const { BasicError, TemoignageNotFoundError } = require("../../src/errors");
-const { newTemoignage } = require("../fixtures");
+const {
+  BasicError,
+  TemoignageNotFoundError,
+  CampagneNotStarted,
+  ErrorMessage,
+  CampagneEnded,
+  NoSeatsAvailable,
+} = require("../../src/errors");
 
 use(sinonChai);
 
 describe(__filename, () => {
-  const req = mockRequest();
   const res = mockResponse();
   const next = stub();
 
-  const temoignage1 = newTemoignage();
-  const temoignage2 = newTemoignage();
-
-  afterEach(() => {
+  afterEach(async () => {
     restore();
     next.resetHistory();
     res.status.resetHistory();
@@ -26,60 +32,153 @@ describe(__filename, () => {
   });
 
   describe("createTemoignage", () => {
-    it("should throw a BasicError if success is false", async () => {
-      stub(temoignagesService, "createTemoignage").returns({ success: false, body: null });
+    const req = mockRequest({ body: { nom: "test" } });
 
-      await temoignagesController.createTemoignage(req, res, next);
+    it("should return a 201 status code and the created temoignage if successful", async () => {
+      const expectedResponse = { id: 1, name: "Test temoignage" };
+      stub(temoignagesService, "createTemoignage").resolves({ success: true, body: expectedResponse });
+
+      await createTemoignage(req, res, next);
+
+      expect(res.status.calledOnceWith(201)).to.be.true;
+      expect(res.status().json.calledOnceWith(expectedResponse)).to.be.true;
+      expect(next.notCalled).to.be.true;
+    });
+
+    it("should throw a CampagneNotStarted error if the campaign has not started", async () => {
+      stub(temoignagesService, "createTemoignage").resolves({ success: false, body: ErrorMessage.CampagneNotStarted });
+
+      await createTemoignage(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(CampagneNotStarted);
+    });
+
+    it("should throw a CampagneEnded error if the campaign has ended", async () => {
+      stub(temoignagesService, "createTemoignage").resolves({ success: false, body: ErrorMessage.CampagneEnded });
+
+      await createTemoignage(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(CampagneEnded);
+    });
+
+    it("should throw a NoSeatsAvailable error if there are no seats available", async () => {
+      stub(temoignagesService, "createTemoignage").resolves({ success: false, body: ErrorMessage.NoSeatsAvailable });
+
+      await createTemoignage(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(NoSeatsAvailable);
+    });
+
+    it("should throw a BasicError if the request fails for any other reason", async () => {
+      stub(temoignagesService, "createTemoignage").resolves({ success: false });
+
+      await createTemoignage(req, res, next);
 
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
-    });
-    it("should returns the created temoignage and status 201 if success is true", async () => {
-      stub(temoignagesService, "createTemoignage").returns({ success: true, body: temoignage1 });
-
-      await temoignagesController.createTemoignage(req, res, next);
-
-      expect(res.status).to.have.been.calledWith(201);
-      expect(res.json).to.have.been.calledWith(match(temoignage1));
     });
   });
   describe("getTemoignages", () => {
-    it("should throw a BasicError if success is false", async () => {
-      stub(temoignagesService, "getTemoignages").returns({ success: false, body: null });
+    const req = mockRequest({ query: { foo: "bar" } });
 
-      await temoignagesController.getTemoignages(req, res, next);
+    it("should return a 200 status code and the temoignages if successful", async () => {
+      const expectedResponse = [
+        { id: 1, name: "Test temoignage 1" },
+        { id: 2, name: "Test temoignage 2" },
+      ];
+      stub(temoignagesService, "getTemoignages").resolves({ success: true, body: expectedResponse });
+
+      await getTemoignages(req, res, next);
+
+      expect(res.status.calledOnceWith(200)).to.be.true;
+      expect(res.status().json.calledOnceWith(expectedResponse)).to.be.true;
+      expect(next.notCalled).to.be.true;
+    });
+
+    it("should throw a BasicError if the request fails for any reason", async () => {
+      stub(temoignagesService, "getTemoignages").resolves({ success: false });
+
+      await getTemoignages(req, res, next);
 
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
-    });
-    it("should returns temoignages and status 200 if success is true", async () => {
-      stub(temoignagesService, "getTemoignages").returns({ success: true, body: [temoignage1, temoignage2] });
-
-      await temoignagesController.getTemoignages(req, res, next);
-
-      expect(res.status).to.have.been.calledWith(200);
-      expect(res.json).to.have.been.calledWith(match([temoignage1, temoignage2]));
     });
   });
   describe("deleteTemoignage", () => {
-    it("should throw a BasicError if success is false", async () => {
-      stub(temoignagesService, "deleteTemoignage").returns({ success: false, body: null });
+    const req = mockRequest({ params: { id: "1" } });
 
-      await temoignagesController.deleteTemoignage(req, res, next);
+    it("should return a 200 status code and the deleted temoignage if successful", async () => {
+      const expectedResponse = { modifiedCount: 1 };
+      stub(temoignagesService, "deleteTemoignage").resolves({
+        success: true,
+        body: expectedResponse,
+      });
+
+      await deleteTemoignage(req, res, next);
+
+      expect(res.status.calledOnceWith(200)).to.be.true;
+      expect(res.status().json.calledOnceWith(expectedResponse)).to.be.true;
+      expect(next.notCalled).to.be.true;
+    });
+
+    it("should throw a TemoignageNotFoundError if the temoignage does not exist", async () => {
+      stub(temoignagesService, "deleteTemoignage").resolves({ success: true, body: {}, modifiedCount: 0 });
+
+      await deleteTemoignage(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(TemoignageNotFoundError);
+    });
+
+    it("should throw a BasicError if the request fails for any other reason", async () => {
+      stub(temoignagesService, "deleteTemoignage").resolves({ success: false });
+
+      await deleteTemoignage(req, res, next);
 
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
-    it("should throw a TemoignageNotFoundError if modifiedCount is not 1", async () => {
-      stub(temoignagesService, "deleteTemoignage").returns({ success: true, body: { modifiedCount: 0 } });
+  });
+  describe("updateTemoignage", () => {
+    const req = mockRequest({ params: { id: "1" }, body: { nom: "test" } });
 
-      await temoignagesController.deleteTemoignage(req, res, next);
-      expect(next.getCall(0).args[0]).to.be.an.instanceof(TemoignageNotFoundError);
+    it("should return a 200 status code and the updated temoignage if successful", async () => {
+      const expectedResponse = { id: 1, name: "Test temoignage" };
+      stub(temoignagesService, "updateTemoignage").resolves({ success: true, body: expectedResponse });
+
+      await updateTemoignage(req, res, next);
+
+      expect(res.status.calledOnceWith(200)).to.be.true;
+      expect(res.status().json.calledOnceWith(expectedResponse)).to.be.true;
+      expect(next.notCalled).to.be.true;
     });
-    it("should returns the modifiedCount and status 200 if success is true", async () => {
-      stub(temoignagesService, "deleteTemoignage").returns({ success: true, body: { modifiedCount: 1 } });
 
-      await temoignagesController.deleteTemoignage(req, res, next);
+    it("should throw a CampagneNotStarted error if the campaign has not started", async () => {
+      stub(temoignagesService, "updateTemoignage").resolves({ success: false, body: ErrorMessage.CampagneNotStarted });
 
-      expect(res.status).to.have.been.calledWith(200);
-      expect(res.json).to.have.been.calledWith(match({ modifiedCount: 1 }));
+      await updateTemoignage(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(CampagneNotStarted);
+    });
+
+    it("should throw a CampagneEnded error if the campaign has ended", async () => {
+      stub(temoignagesService, "updateTemoignage").resolves({ success: false, body: ErrorMessage.CampagneEnded });
+
+      await updateTemoignage(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(CampagneEnded);
+    });
+
+    it("should throw a NoSeatsAvailable error if there are no seats available", async () => {
+      stub(temoignagesService, "updateTemoignage").resolves({ success: false, body: ErrorMessage.NoSeatsAvailable });
+
+      await updateTemoignage(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(NoSeatsAvailable);
+    });
+
+    it("should throw a BasicError if the request fails for any other reason", async () => {
+      stub(temoignagesService, "updateTemoignage").resolves({ success: false });
+
+      await updateTemoignage(req, res, next);
+
+      expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
   });
 });
