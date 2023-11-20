@@ -22,7 +22,7 @@ const updateSchema = Joi.object({
   firstName: Joi.string(),
   lastName: Joi.string(),
   siret: Joi.string(),
-  email: Joi.string().email(),
+  email: Joi.string().email({ tlds: false }),
   etablissement: Joi.object(),
   status: Joi.string(),
   role: Joi.string(),
