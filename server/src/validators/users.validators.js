@@ -2,7 +2,7 @@ const Joi = require("joi");
 const passwordComplexity = require("joi-password-complexity");
 
 const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: false }).required(),
   password: Joi.string().required(),
 });
 
@@ -22,7 +22,7 @@ const updateSchema = Joi.object({
   firstName: Joi.string(),
   lastName: Joi.string(),
   siret: Joi.string(),
-  email: Joi.string().email(),
+  email: Joi.string().email({ tlds: false }),
   etablissement: Joi.object(),
   status: Joi.string(),
   role: Joi.string(),
