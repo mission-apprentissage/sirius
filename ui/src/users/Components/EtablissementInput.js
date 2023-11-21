@@ -4,7 +4,7 @@ import { AsyncSelect } from "chakra-react-select";
 import { etablissementLabelGetter } from "../../utils/etablissement";
 import { _get } from "../../utils/httpClient";
 
-const EtablissementInput = ({ formik, setEtablissements }) => {
+const EtablissementInput = ({ formik, setEtablissements, index }) => {
   const timer = useRef();
   const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
 
@@ -17,24 +17,6 @@ const EtablissementInput = ({ formik, setEtablissements }) => {
 
       if (result.etablissements?.length > 0) {
         callback(result.etablissements);
-        formik.setFieldValue("etablissements", [
-          ...formik.values.etablissements,
-          {
-            siret: result.etablissements[0].siret,
-            onisep_nom: result.etablissements[0].onisep_nom,
-            enseigne: result.etablissements[0].enseigne,
-            entreprise_raison_sociale: result.etablissements[0].entreprise_raison_sociale,
-          },
-        ]);
-        setEtablissements([
-          ...formik.values.etablissements,
-          {
-            siret: result.etablissements[0].siret,
-            onisep_nom: result.etablissements[0].onisep_nom,
-            enseigne: result.etablissements[0].enseigne,
-            entreprise_raison_sociale: result.etablissements[0].entreprise_raison_sociale,
-          },
-        ]);
       } else {
         callback(null);
       }
@@ -56,7 +38,7 @@ const EtablissementInput = ({ formik, setEtablissements }) => {
         getOptionValue={(option) => option?.siret}
         backspaceRemovesValue
         escapeClearsValue
-        isClearable
+        isClearable={index === 0}
         loadOptions={loadEtablissementOptionsHandler}
         isLoading={isLoadingRemoteEtablissement}
         size="lg"
@@ -64,9 +46,32 @@ const EtablissementInput = ({ formik, setEtablissements }) => {
         _placeholder={{ color: "brand.black.500" }}
         errorBorderColor="brand.red.500"
         isInvalid={hasError}
-        onChange={(e) => {
-          if (!e) {
-            formik.setFieldValue("etablissements", []);
+        onChange={(e, { action }) => {
+          if (e) {
+            const etablissements = [
+              ...formik.values.etablissements,
+              {
+                siret: e.siret,
+                onisep_nom: e.onisep_nom,
+                enseigne: e.enseigne,
+                entreprise_raison_sociale: e.entreprise_raison_sociale,
+              },
+            ];
+
+            formik.setFieldValue("etablissements", etablissements);
+            setEtablissements(etablissements);
+          } else {
+            if (action === "clear") {
+              if (index === 0) {
+                formik.setFieldValue("etablissements", [{}]);
+                setEtablissements([{}]);
+              } else {
+                const etablissements = [...formik.values.etablissements];
+                etablissements[index] = {};
+                formik.setFieldValue("etablissements", etablissements);
+                setEtablissements(etablissements);
+              }
+            }
           }
         }}
         chakraStyles={{

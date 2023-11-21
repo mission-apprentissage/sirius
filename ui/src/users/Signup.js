@@ -28,6 +28,10 @@ import EtablissementInput from "./Components/EtablissementInput";
 
 const requiredFieldMessage = "Ces champs sont obligatoires";
 
+const etablissementSchema = Yup.object({
+  siret: Yup.string().required(requiredFieldMessage),
+});
+
 const validationSchema = Yup.object({
   email: Yup.string()
     .matches(emailWithTLDRegex, "L'email n'est pas au bon format")
@@ -38,7 +42,13 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .required(requiredFieldMessage)
     .matches(passwordComplexityRegex, passwordComplexityMessage),
-  etablissements: Yup.array().of(Yup.object()).min(1, requiredFieldMessage),
+  etablissements: Yup.array()
+    .of(etablissementSchema)
+    .min(1, requiredFieldMessage)
+    .test("unique-siret", "Le SIRET doit être différent dans chaque champ", (etablissements) => {
+      const siretSet = new Set(etablissements.map((e) => e.siret));
+      return siretSet.size === etablissements.length;
+    }),
 });
 
 const Signup = () => {
@@ -63,13 +73,15 @@ const Signup = () => {
     validationSchema: validationSchema,
     onSubmit: async ({ email, password, firstName, lastName, comment, etablissements }) => {
       setIsSubmitting(true);
+      const etablissementsWitoutEmpty = etablissements.filter((e) => e.siret !== "");
+
       const resultUser = await _post(`/api/users/`, {
         firstName: firstName,
         lastName: lastName,
         comment: comment,
         email: email.toLowerCase(),
         password,
-        etablissements,
+        etablissements: etablissementsWitoutEmpty,
       });
 
       if (resultUser._id) {
@@ -165,9 +177,9 @@ const Signup = () => {
                     alignItems="center"
                   >
                     <EtablissementInput
-                      key={index}
                       formik={formik}
                       setEtablissements={setEtablissements}
+                      index={index}
                     />
                     {index > 0 && (
                       <DeleteIcon
