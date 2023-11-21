@@ -28,10 +28,6 @@ import EtablissementInput from "./Components/EtablissementInput";
 
 const requiredFieldMessage = "Ces champs sont obligatoires";
 
-const etablissementSchema = Yup.object({
-  siret: Yup.string().required(requiredFieldMessage),
-});
-
 const validationSchema = Yup.object({
   email: Yup.string()
     .matches(emailWithTLDRegex, "L'email n'est pas au bon format")
@@ -43,7 +39,6 @@ const validationSchema = Yup.object({
     .required(requiredFieldMessage)
     .matches(passwordComplexityRegex, passwordComplexityMessage),
   etablissements: Yup.array()
-    .of(etablissementSchema)
     .min(1, requiredFieldMessage)
     .test("unique-siret", "Le SIRET doit être différent dans chaque champ", (etablissements) => {
       const siretSet = new Set(etablissements.map((e) => e.siret));
