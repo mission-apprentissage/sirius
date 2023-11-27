@@ -110,7 +110,7 @@ const usersTableColumns = (
       const user = info.row.original;
 
       return (
-        <Box>
+        <Box minW="100px">
           {user._id === userContext.currentUserId ? (
             <Tooltip label="Vous ne pouvez pas modifier votre propre status" hasArrow>
               <span>{USER_STATUS[user.status]}</span>
