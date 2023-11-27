@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import useFetchUsers from "../hooks/useFetchUsers";
-import UsersTable from "./Components/UsersTable";
+import UsersTable from "./Components/UsersTable/UsersTable";
 
 const Managing = () => {
   const [refetchData, setRefetchData] = useState(false);

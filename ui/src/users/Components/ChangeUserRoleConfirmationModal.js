@@ -70,7 +70,7 @@ const ChangeUserRoleConfirmationModal = ({
           <Button
             size="lg"
             variant="solid"
-            colorScheme="purple"
+            colorScheme="brand.blue"
             onClick={handleChangeRoleConfirmation}
           >
             Confirmer
