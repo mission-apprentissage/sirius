@@ -110,6 +110,13 @@ const CreateCampagne = () => {
               errorQuestionnaires
             )
           }
+          errorMessages={
+            errorRemoteFormations
+              ? [
+                  "La connexion au catalogue de formation a échouée. Certaines informations et actions peuvent être indisponibles.",
+                ]
+              : []
+          }
           isLoading={
             !!(
               loadingRemoteFormations ||

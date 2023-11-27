@@ -11,6 +11,7 @@ import SupportModal from "../Components/SupportModal";
 
 const Step1 = ({
   hasError,
+  errorMessages,
   isLoading,
   remoteFormations,
   localFormations,
@@ -53,7 +54,7 @@ const Step1 = ({
         {isLoading ? (
           <Spinner size="xl" />
         ) : hasError ? (
-          <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
+          <FormError title="Une erreur est survenue" hasError errorMessages={errorMessages} />
         ) : (
           <Accordion allowMultiple defaultIndex={null}>
             {uniqueDiplomeTypesFromFormation(remoteFormations)?.map((diplomeType, index) => (

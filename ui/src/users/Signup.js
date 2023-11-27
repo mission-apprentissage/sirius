@@ -131,7 +131,7 @@ const Signup = () => {
           </Text>
           <FormError
             title="L'inscription a échouée"
-            hasError={(Object.keys(formik.errors).length || error) && formik.submitCount}
+            hasError={(Object.keys(formik.errors).length && formik.submitCount) || error}
             errorMessages={[...new Set(Object.values(formik.errors)), error]}
           />
           {!isSuccessful ? (
@@ -175,6 +175,7 @@ const Signup = () => {
                       formik={formik}
                       setEtablissements={setEtablissements}
                       index={index}
+                      setError={setError}
                     />
                     {index > 0 && (
                       <DeleteIcon
@@ -218,7 +219,9 @@ const Signup = () => {
                   flexDirection="column"
                   mt="16px"
                 >
-                  <Button isLoading={isSubmitting}>Valider</Button>
+                  <Button isLoading={isSubmitting} isDisabled={!!error}>
+                    Valider
+                  </Button>
                   <Text color="brand.blue.700" fontSize="sm" mt={isMobile ? "32px" : "64px"}>
                     Déjà inscrit ?{" "}
                     <Link href="/connexion" textDecoration="underline">
