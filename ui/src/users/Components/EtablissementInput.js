@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { FormControl, FormErrorMessage } from "@chakra-ui/react";
+import { FormControl, FormErrorMessage, Text } from "@chakra-ui/react";
 import { AsyncSelect } from "chakra-react-select";
 import { etablissementLabelGetter } from "../../utils/etablissement";
 import { _get } from "../../utils/httpClient";
@@ -22,7 +22,18 @@ const EtablissementInput = ({ formik, setEtablissements, index, setError }) => {
         }
       } catch (error) {
         setError(
-          "La connexion au catalogue de formation a échouée. L'inscription n'est pas disponible pour le moment. Merci de réessayer plus tard."
+          <>
+            <Text>
+              La connexion au catalogue de formation a échouée. L'inscription n'est pas disponible
+              pour le moment. Merci de réessayer plus tard.
+            </Text>
+            <Text>
+              Pour toute question, nous restons disponibles :{" "}
+              <a href="mailto:contact-sirius@inserjeunes.beta.gouv.fr">
+                <u>contact-sirius@inserjeunes.beta.gouv.fr</u>
+              </a>
+            </Text>
+          </>
         );
         callback(null);
       }
