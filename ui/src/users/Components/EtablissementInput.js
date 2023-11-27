@@ -4,20 +4,26 @@ import { AsyncSelect } from "chakra-react-select";
 import { etablissementLabelGetter } from "../../utils/etablissement";
 import { _get } from "../../utils/httpClient";
 
-const EtablissementInput = ({ formik, setEtablissements, index }) => {
+const EtablissementInput = ({ formik, setEtablissements, index, setError }) => {
   const timer = useRef();
   const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
 
   const debouncedSiret = (callback, siret) => {
     clearTimeout(timer.current);
     timer.current = setTimeout(async () => {
-      const result = await _get(
-        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siret}"}&page=1&limit=1`
-      );
-
-      if (result.etablissements?.length > 0) {
-        callback(result.etablissements);
-      } else {
+      try {
+        const result = await _get(
+          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siret}"}&page=1&limit=1`
+        );
+        if (result.etablissements?.length > 0) {
+          callback(result.etablissements);
+        } else {
+          callback(null);
+        }
+      } catch (error) {
+        setError(
+          "La connexion au catalogue de formation a échouée. L'inscription n'est pas disponible pour le moment. Merci de réessayer plus tard."
+        );
         callback(null);
       }
     }, 500);

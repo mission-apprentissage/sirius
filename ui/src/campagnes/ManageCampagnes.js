@@ -95,8 +95,6 @@ const ViewCampagnes = () => {
     }
   }, [counter]);
 
-  if (!campagnes || !formations) return <Spinner size="xl" />;
-
   const isAllCampagneCreated = campagnes && formations && campagnes?.length === formations?.length;
 
   return (
@@ -108,7 +106,7 @@ const ViewCampagnes = () => {
         allCampagneCreated={isAllCampagneCreated}
         allowEtablissementChange={true}
       >
-        {(loadingCampagnes || errorCampagnes) && !campagnes.length ? (
+        {(loadingCampagnes || errorCampagnes) && !campagnes?.length ? (
           <Spinner size="xl" />
         ) : (
           <Statistics campagnes={campagnes} />
@@ -133,37 +131,49 @@ const ViewCampagnes = () => {
       <Box>
         {loadingCampagnes || loadingFormations ? (
           <Spinner size="xl" />
-        ) : errorCampagnes || errorFormations ? (
-          <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
         ) : (
-          <Accordion allowMultiple>
-            {campagnes.length ? (
-              uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
-                <ManageCampagneTable
-                  key={diplomeType}
-                  diplomeType={diplomeType}
-                  campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
-                  formations={orderFormationsByDiplomeType(formations)[diplomeType]}
-                  setShouldRefreshData={setShouldRefreshData}
-                  userContext={userContext}
-                />
-              ))
-            ) : (
-              <Box display="flex" w="100%" justifyContent="center" mt="25px">
-                <Button
-                  isLink
-                  onClick={() => navigate("/campagnes/ajout")}
-                  leftIcon={<Image src={IoAddSharp} alt="" />}
-                  mx={isMobile ? "0" : "8px"}
-                  mr={isMobile ? "0" : "8px"}
-                  mt={isMobile ? "8px" : "0"}
-                  w={isMobile ? "100%" : "min-content"}
-                >
-                  Créer une première campagne
-                </Button>
-              </Box>
+          <>
+            {errorFormations && (
+              <FormError
+                title="Une erreur est survenue"
+                hasError
+                errorMessages={[
+                  "La connexion au catalogue de formation a échouée. Certaines informations et actions peuvent être indisponibles.",
+                ]}
+              />
             )}
-          </Accordion>
+            {errorCampagnes && (
+              <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
+            )}
+            <Accordion allowMultiple>
+              {campagnes.length ? (
+                uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
+                  <ManageCampagneTable
+                    key={diplomeType}
+                    diplomeType={diplomeType}
+                    campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
+                    formations={orderFormationsByDiplomeType(formations)[diplomeType]}
+                    setShouldRefreshData={setShouldRefreshData}
+                    userContext={userContext}
+                  />
+                ))
+              ) : (
+                <Box display="flex" w="100%" justifyContent="center" mt="25px">
+                  <Button
+                    isLink
+                    onClick={() => navigate("/campagnes/ajout")}
+                    leftIcon={<Image src={IoAddSharp} alt="" />}
+                    mx={isMobile ? "0" : "8px"}
+                    mr={isMobile ? "0" : "8px"}
+                    mt={isMobile ? "8px" : "0"}
+                    w={isMobile ? "100%" : "min-content"}
+                  >
+                    Créer une première campagne
+                  </Button>
+                </Box>
+              )}
+            </Accordion>
+          </>
         )}
       </Box>
       <Box
