@@ -20,10 +20,23 @@ const update = async (id, updatedEtablissement) => {
   return Etablissement.updateOne({ _id: id, deletedAt: null }, updatedEtablissement);
 };
 
+const updateByFormationIds = async (idsToRemove) => {
+  return Etablissement.updateMany(
+    {
+      formationIds: { $in: idsToRemove },
+      deletedAt: null,
+    },
+    {
+      $pull: { formationIds: { $in: idsToRemove } },
+    }
+  );
+};
+
 module.exports = {
   create,
   getAll,
   getOne,
   deleteOne,
   update,
+  updateByFormationIds,
 };
