@@ -29,6 +29,16 @@ const deleteOne = async (id) => {
   return Formation.deleteOne({ _id: id });
 };
 
+const deleteManyByCampagneIdAndReturnsTheDeletedFormationId = async (ids) => {
+  const formations = await Formation.find({ campagneId: { $in: ids } }).select("_id");
+
+  const formationIds = formations.map((formation) => formation._id);
+
+  await Formation.updateMany({ _id: { $in: formationIds } }, { deletedAt: new Date() });
+
+  return formationIds;
+};
+
 const update = async (id, updatedFormation) => {
   return Formation.updateOne({ _id: id, deletedAt: null }, updatedFormation);
 };
@@ -40,4 +50,5 @@ module.exports = {
   getOneByDataId,
   deleteOne,
   update,
+  deleteManyByCampagneIdAndReturnsTheDeletedFormationId,
 };
