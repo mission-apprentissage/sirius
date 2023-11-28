@@ -12,6 +12,10 @@ const deleteOne = async (id) => {
   return Temoignage.updateOne({ _id: id }, { deletedAt: new Date() });
 };
 
+const deleteManyByCampagneId = async (ids) => {
+  return Temoignage.updateMany({ campagneId: { $in: ids } }, { deletedAt: new Date() });
+};
+
 const update = async (id, updatedTemoignage) => {
   return Temoignage.updateOne({ _id: id, deletedAt: null }, updatedTemoignage);
 };
@@ -31,4 +35,5 @@ module.exports = {
   update,
   countByCampagne,
   getOne,
+  deleteManyByCampagneId,
 };
