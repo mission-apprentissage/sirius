@@ -43,9 +43,9 @@ const createCampagne = async (campagne) => {
   }
 };
 
-const deleteCampagne = async (id) => {
+const deleteCampagnes = async (ids) => {
   try {
-    const campagne = await campagnesDao.deleteOne(id);
+    const campagne = await campagnesDao.deleteMany(ids);
     return { success: true, body: campagne };
   } catch (error) {
     return { success: false, body: error };
@@ -148,7 +148,7 @@ module.exports = {
   getCampagnes,
   getOneCampagne,
   createCampagne,
-  deleteCampagne,
+  deleteCampagnes,
   updateCampagne,
   createMultiCampagne,
   getExport,

@@ -5,7 +5,7 @@ const {
   getCampagnes,
   getCampagne,
   createCampagne,
-  deleteCampagne,
+  deleteCampagnes,
   updateCampagne,
   createMultiCampagne,
   getExport,
@@ -41,11 +41,11 @@ const campagnes = () => {
   );
 
   router.delete(
-    "/api/campagnes/:id",
+    "/api/campagnes",
     verifyUser,
     (req, res, next) => isAdminOrAllowed(req, next, TYPES.CAMPAGNE_ID),
     (req, res, next) => {
-      deleteCampagne(req, res, next);
+      deleteCampagnes(req, res, next);
     }
   );
 
