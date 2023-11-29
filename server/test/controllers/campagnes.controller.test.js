@@ -85,22 +85,28 @@ describe(__filename, () => {
   });
   describe("deleteCampagne", () => {
     it("should throw a BasicError if success is false", async () => {
-      stub(campagnesService, "deleteCampagne").returns({ success: false, body: null });
+      const req = { query: { ids: "1,2,3" } };
 
-      await campagnesController.deleteCampagne(req, res, next);
+      stub(campagnesService, "deleteCampagnes").returns({ success: false, body: null });
+
+      await campagnesController.deleteCampagnes(req, res, next);
 
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
     it("should throw a CampagneNotFoundError if deletedCount is not 1", async () => {
-      stub(campagnesService, "deleteCampagne").returns({ success: true, body: { modifiedCount: 0 } });
+      const req = { query: { ids: "1,2,3" } };
 
-      await campagnesController.deleteCampagne(req, res, next);
+      stub(campagnesService, "deleteCampagnes").returns({ success: true, body: { modifiedCount: 0 } });
+
+      await campagnesController.deleteCampagnes(req, res, next);
       expect(next.getCall(0).args[0]).to.be.an.instanceof(CampagneNotFoundError);
     });
     it("should returns the deletedCount and status 200 if success is true", async () => {
-      stub(campagnesService, "deleteCampagne").returns({ success: true, body: { modifiedCount: 1 } });
+      const req = { query: { ids: "1,2,3" } };
 
-      await campagnesController.deleteCampagne(req, res, next);
+      stub(campagnesService, "deleteCampagnes").returns({ success: true, body: { modifiedCount: 1 } });
+
+      await campagnesController.deleteCampagnes(req, res, next);
 
       expect(res.status).to.have.been.calledWith(200);
       expect(res.json).to.have.been.calledWith(match({ modifiedCount: 1 }));

@@ -13,6 +13,7 @@ const campagnesService = require("../../src/services/campagnes.service");
 const campagnesDao = require("../../src/dao/campagnes.dao");
 const formationsDao = require("../../src/dao/formations.dao");
 const etablissementsDao = require("../../src/dao/etablissements.dao");
+const temoignagesDao = require("../../src/dao/temoignages.dao");
 const pdfExport = require("../../src/modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER } = require("../../src/constants");
 
@@ -100,30 +101,46 @@ describe(__filename, () => {
       expect(body).to.be.an("error");
     });
   });
-  describe("deleteCampagne", () => {
-    it("should be successful and returns the number of deleted campagne", async () => {
-      const campagne = newCampagne({}, true);
-      stub(campagnesDao, "deleteOne").returns({
-        acknowledged: true,
-        deletedCount: 1,
-      });
-
-      const { success, body } = await campagnesService.deleteCampagne(campagne._id);
-
-      expect(success).to.be.true;
-      expect(body).to.be.an("object");
-      expect(body).to.deep.equal({
-        acknowledged: true,
-        deletedCount: 1,
-      });
+  describe("deleteCampagnes", () => {
+    afterEach(() => {
+      restore();
     });
-    it("should be unsuccessful and returns errors if it throws", async () => {
-      stub(campagnesDao, "deleteOne").throws(new Error());
 
-      const { success, body } = await campagnesService.deleteCampagne();
+    it("should delete campagnes, temoignages, and update etablissements", async () => {
+      const ids = ["campagneId1", "campagneId2"];
 
-      expect(success).to.be.false;
-      expect(body).to.be.an("error");
+      const deletedCampagnes = { acknowledged: true, deletedCount: 2 };
+      const deletedFormationsIds = ["formationId1", "formationId2"];
+
+      stub(campagnesDao, "deleteMany").resolves(deletedCampagnes);
+      stub(temoignagesDao, "deleteManyByCampagneId").resolves();
+      stub(formationsDao, "deleteManyByCampagneIdAndReturnsTheDeletedFormationId").resolves(deletedFormationsIds);
+      stub(etablissementsDao, "updateByFormationIds").resolves();
+
+      const result = await campagnesService.deleteCampagnes(ids);
+
+      expect(result.success).to.be.true;
+      expect(result.body).to.deep.equal(deletedCampagnes);
+
+      expect(campagnesDao.deleteMany).to.have.been.calledOnceWithExactly(ids);
+      expect(temoignagesDao.deleteManyByCampagneId).to.have.been.calledOnceWithExactly(ids);
+      expect(formationsDao.deleteManyByCampagneIdAndReturnsTheDeletedFormationId).to.have.been.calledOnceWithExactly(
+        ids
+      );
+      expect(etablissementsDao.updateByFormationIds).to.have.been.calledOnceWithExactly(deletedFormationsIds);
+    });
+
+    it("should handle errors", async () => {
+      const ids = ["campagneId1", "campagneId2"];
+      const error = new Error("Delete error");
+
+      stub(campagnesDao, "deleteMany").rejects(error);
+
+      const result = await campagnesService.deleteCampagnes(ids);
+
+      expect(result.success).to.be.false;
+      expect(result.body).to.equal(error);
+      expect(campagnesDao.deleteMany).to.have.been.calledOnceWithExactly(ids);
     });
   });
   describe("updateCampagne", () => {
