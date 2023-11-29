@@ -358,82 +358,106 @@ const ManageCampagneTable = ({
           margin: "15px 0",
         }}
       >
-        <AccordionButton
-          _hover={{
-            backgroundColor: "transparent",
-          }}
+        <Box
+          display="flex"
+          flexDirection="row"
+          w="100%"
+          justifyContent="space-between"
+          flexWrap="wrap"
         >
           <Box
             display="flex"
-            textAlign="left"
             flexDirection="row"
             alignItems="center"
-            w="60%"
-            my="15px"
+            justifyContent="flex-start"
+            width={{ sm: "100%", md: "45%" }}
           >
-            <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
-              {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
-            </Text>
-            <Text mx="10px">|</Text>
-            <Text color="brand.blue.700">
-              {campagnes?.length}
-              {formations?.length && `/${formations.length}`} campagne
-              {campagnes?.length > 1 ? "s" : ""} créée
-              {campagnes?.length > 1 ? "s" : ""}
-            </Text>
-          </Box>
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="flex-end"
-            my="15px"
-            mr="8px"
-          >
-            <Button
-              as="div"
-              leftIcon={<DeleteIcon />}
-              variant="filled"
-              ml="auto"
-              size="md"
-              isDisabled={!selectedCampagnes.length}
+            <AccordionButton
               _hover={{
-                backgroundColor: "brand.blue.700",
-              }}
-              onClick={onOpenDeleteConfirmation}
-            >
-              {selectedCampagnes.length === 1
-                ? "Supprimer la campagne sélectionnée"
-                : `Supprimer les ${
-                    selectedCampagnes.length > 0 ? selectedCampagnes.length : ""
-                  } campagnes sélectionnées`}
-            </Button>
-          </Box>
-
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="flex-end"
-            mr="16px"
-          >
-            <Button
-              as="div"
-              onClick={handleDownload}
-              leftIcon={<DownloadIcon />}
-              variant="filled"
-              ml="auto"
-              size="md"
-              isLoading={isLoadingDownload}
-              _hover={{
-                backgroundColor: "brand.blue.700",
+                backgroundColor: "transparent",
               }}
             >
-              Télécharger les supports de partage
-            </Button>
+              <Box
+                display="flex"
+                textAlign="left"
+                flexDirection="column"
+                alignItems="flex-start"
+                my="15px"
+              >
+                <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
+                  {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
+                </Text>
+                <Text color="brand.blue.700" fontSize="sm">
+                  {campagnes?.length}
+                  {formations?.length && `/${formations.length}`} campagne
+                  {campagnes?.length > 1 ? "s" : ""} créée
+                  {campagnes?.length > 1 ? "s" : ""}
+                </Text>
+              </Box>
+            </AccordionButton>
           </Box>
-          <AccordionIcon color="brand.blue.700" fontSize="34px" />
-        </AccordionButton>
+          <Box display="flex" justifyContent="flex-end" width={{ sm: "100%", md: "55%" }}>
+            <Box display="flex" flexWrap="wrap" justifyContent="flex-end">
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                my="7px"
+                mr="8px"
+                width={{ base: "100%", md: "auto" }}
+              >
+                <Button
+                  leftIcon={<DeleteIcon />}
+                  variant="filled"
+                  ml="15px"
+                  size="md"
+                  isDisabled={!selectedCampagnes.length}
+                  _hover={{
+                    backgroundColor: "brand.blue.700",
+                  }}
+                  onClick={onOpenDeleteConfirmation}
+                >
+                  {selectedCampagnes.length === 1
+                    ? "Supprimer la campagne"
+                    : `Supprimer les ${
+                        selectedCampagnes.length > 0 ? selectedCampagnes.length : ""
+                      } campagnes`}
+                </Button>
+              </Box>
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                my="7px"
+                mr="16px"
+                width={{ base: "100%", md: "auto" }}
+              >
+                <Button
+                  onClick={handleDownload}
+                  leftIcon={<DownloadIcon />}
+                  variant="filled"
+                  ml="15px"
+                  size="md"
+                  isLoading={isLoadingDownload}
+                  _hover={{
+                    backgroundColor: "brand.blue.700",
+                  }}
+                >
+                  Télécharger les supports de partage
+                </Button>
+              </Box>
+            </Box>
+            <Box display="flex" flexDirection="row" alignItems="center" justifyContent="flex-end">
+              <AccordionButton
+                _hover={{
+                  backgroundColor: "transparent",
+                }}
+              >
+                <AccordionIcon color="brand.blue.700" fontSize="34px" />
+              </AccordionButton>
+            </Box>
+          </Box>
+        </Box>
         <AccordionPanel pb={4} px="0" overflowX="auto">
           <Stack direction="column" mx="15px">
             <Stack direction="row" mt="32px" mb="20px">
