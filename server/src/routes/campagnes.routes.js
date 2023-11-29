@@ -43,7 +43,7 @@ const campagnes = () => {
   router.delete(
     "/api/campagnes",
     verifyUser,
-    (req, res, next) => isAdminOrAllowed(req, next, TYPES.CAMPAGNE_ID),
+    (req, res, next) => isAdminOrAllowed(req, next, TYPES.CAMPAGNE_IDS),
     (req, res, next) => {
       deleteCampagnes(req, res, next);
     }
