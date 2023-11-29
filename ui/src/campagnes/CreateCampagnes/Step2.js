@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { Accordion, Box, Text, Stack } from "@chakra-ui/react";
 import { UserContext } from "../../context/UserContext";
-import Header from "../Components/Header";
+import Header from "../Shared/Header";
 import Search from "../../assets/images/search.svg";
-import ConfigureCampagneTable from "../Components/ConfigureCampagneTable";
+import ConfigureCampagneTable from "./ConfigureCampagneTable";
 import { uniqueDiplomeTypesFromFormation, orderFormationsByDiplomeType } from "../utils";
 
 const Step2 = ({ selectedFormations, allDiplomesSelectedFormations, setStep, formik }) => {

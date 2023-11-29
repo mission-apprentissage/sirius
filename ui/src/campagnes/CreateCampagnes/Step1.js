@@ -2,12 +2,12 @@ import React, { useContext } from "react";
 import { Spinner, Accordion, Text, Stack, useDisclosure } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
-import Header from "../Components/Header";
+import Header from "../Shared/Header";
 import Blackboard from "../../assets/images/blackboard.svg";
-import CreateCampagneTable from "../Components/CreateCampagneTable";
+import CreateCampagneTable from "./CreateCampagneTable";
 import { uniqueDiplomeTypesFromFormation, orderFormationsByDiplomeType } from "../utils";
 import FormError from "../../Components/Form/FormError";
-import SupportModal from "../Components/SupportModal";
+import SupportModal from "../Shared/SupportModal";
 
 const Step1 = ({
   hasError,

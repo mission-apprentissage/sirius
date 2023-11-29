@@ -2,14 +2,14 @@ import React from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminProtectedRoute from "./AdminProtectedRoute";
-import ManageCampagnes from "./campagnes/ManageCampagnes";
+import ManageCampagnesPage from "./campagnes/ManageCampagnesPage";
 import TemoignagesManaging from "./temoignages/Managing";
 import QuestionnairesManaging from "./questionnaires/Managing";
 import QuestionnaireForm from "./questionnaires/QuestionnaireForm";
 import EditQuestionnaire from "./questionnaires/EditQuestionnaire";
-import PreviewQuestionnaire from "./questionnaires/PreviewQuestionnaire";
-import CreateCampagne from "./campagnes/CreateCampagne";
-import AnswerCampagne from "./campagnes/AnswerCampagne";
+import PreviewCampagnePage from "./campagnes/PreviewCampagnePage";
+import CreateCampagnesPage from "./campagnes/CreateCampagnesPage";
+import AnswerCampagnePage from "./campagnes/AnswerCampagnePage";
 import Login from "./users/Login";
 import Signup from "./users/Signup";
 import PendingAccount from "./users/PendingAccount";
@@ -22,7 +22,7 @@ import VerbatimsModeration from "./verbatims/Moderation";
 import Layout from "./Components/Layout";
 import AnonymousLayout from "./Components/AnonymousLayout";
 import QuestionnaireLayout from "./Components/QuestionnaireLayout";
-import ResultatsPage from "./campagnes/ResultatsPage";
+import ResultsCampagnesPage from "./campagnes/ResultsCampagnesPage";
 
 function App() {
   return (
@@ -35,9 +35,9 @@ function App() {
         }
       >
         <Route exact path="/" element={<Navigate to="/campagnes/gestion" />} />
-        <Route exact path="/campagnes/ajout" element={<CreateCampagne />} />
-        <Route exact path="/campagnes/gestion" element={<ManageCampagnes />} />
-        <Route exact path="/campagnes/resultats" element={<ResultatsPage />} />
+        <Route exact path="/campagnes/ajout" element={<CreateCampagnesPage />} />
+        <Route exact path="/campagnes/gestion" element={<ManageCampagnesPage />} />
+        <Route exact path="/campagnes/resultats" element={<ResultsCampagnesPage />} />
       </Route>
       <Route
         element={
@@ -84,8 +84,8 @@ function App() {
           </QuestionnaireLayout>
         }
       >
-        <Route exact path="/campagnes/:id" element={<AnswerCampagne />} />
-        <Route exact path="/questionnaires/:id/apercu" element={<PreviewQuestionnaire />} />
+        <Route exact path="/campagnes/:id" element={<AnswerCampagnePage />} />
+        <Route exact path="/questionnaires/:id/apercu" element={<PreviewCampagnePage />} />
       </Route>
     </Routes>
   );

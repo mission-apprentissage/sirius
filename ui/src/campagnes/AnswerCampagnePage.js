@@ -19,11 +19,11 @@ import {
   CustomMultiRangeSortable,
   CustomEmojisRadios,
   CustomMultiEmojisRadios,
-} from "../Components/Form/widgets";
-import { CustomNestedRadios } from "../Components/Form/fields";
+} from "./Shared/widgets";
+import { CustomNestedRadios } from "./Shared/fields";
 import { Stepper } from "../Components/Stepper";
-import Hero from "../Components/Form/Hero";
-import Success from "../Components/Form/Success";
+import Hero from "./Shared/Hero";
+import Success from "./Shared/Success";
 import {
   multiStepQuestionnaireFormatter,
   multiStepQuestionnaireUIFormatter,
@@ -31,7 +31,7 @@ import {
   transformErrors,
   getNextButtonLabel,
 } from "./utils";
-import ErrorTemplate from "../Components/Form/ErrorTemplate";
+import ErrorTemplate from "./Shared/ErrorTemplate";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -51,7 +51,7 @@ const fields = {
   nestedRadios: CustomNestedRadios,
 };
 
-const AnswerCampagne = () => {
+const AnswerCampagnePage = () => {
   const { id } = useParams();
   const [campagne, loading] = useGet(`/api/campagnes/${id}`);
   const toast = useToast();
@@ -238,4 +238,4 @@ const AnswerCampagne = () => {
   );
 };
 
-export default AnswerCampagne;
+export default AnswerCampagnePage;

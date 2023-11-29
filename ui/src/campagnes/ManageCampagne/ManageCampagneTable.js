@@ -39,7 +39,7 @@ import {
   CheckIcon,
   DeleteIcon,
 } from "@chakra-ui/icons";
-import { sortingOptions } from "../ManageCampagnes";
+import { sortingOptions } from "../ManageCampagnesPage";
 import CkDownload from "../../assets/icons/CkDownload.svg";
 import IoInformationCircleOutline from "../../assets/icons/IoInformationCircleOutline.svg";
 import Button from "../../Components/Form/Button";

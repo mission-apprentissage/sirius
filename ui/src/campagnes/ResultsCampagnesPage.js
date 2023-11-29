@@ -1,16 +1,15 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Stack, Spinner, Text } from "@chakra-ui/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Header from "./Components/Header";
+import Header from "./Shared/Header";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import { UserContext } from "../context/UserContext";
 import { EtablissementsContext } from "../context/EtablissementsContext";
-import Statistics from "./Components/Statistics";
-import CampagneStatistics from "./Components/CampagneStatistics";
-import ResultatsVisualisation from "./Components/ResultatsVisualisation";
+import CampagneStatistics from "./ResultsCampagnes/CampagneStatistics";
+import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
 import { _get } from "../utils/httpClient";
 
-const ResultatsPage = () => {
+const ResultsCampagnesPage = () => {
   const [etablissementsContext] = useContext(EtablissementsContext);
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
@@ -62,7 +61,7 @@ const ResultatsPage = () => {
       </Header>
       {campagne ? (
         temoignages.length ? (
-          <ResultatsVisualisation campagne={campagne} temoignages={temoignages} />
+          <ResultsCampagnesVisualisation campagne={campagne} temoignages={temoignages} />
         ) : (
           <Text fontSize="2xl" color="brand.blue.700" w="100%" textAlign="center">
             Il n'y a pas encore de réponses à cette campagne
@@ -84,4 +83,4 @@ const ResultatsPage = () => {
   );
 };
 
-export default ResultatsPage;
+export default ResultsCampagnesPage;
