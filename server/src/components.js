@@ -2,6 +2,8 @@ const connectToMongoDB = require("./modules/connectToMongoDB");
 const creatHttpClient = require("./modules/httpClient");
 const campagnesDAO = require("./dao/campagnes.dao");
 const temoignagesDAO = require("./dao/temoignages.dao.js");
+const formationsDAO = require("./dao/formations.dao");
+const etablissementsDAO = require("./dao/etablissements.dao");
 const createLogger = require("./modules/logger");
 const usersDAO = require("./dao/users.dao");
 const questionnairesDAO = require("./dao/questionnaires.dao");
@@ -21,6 +23,8 @@ module.exports = async (options = {}) => {
     temoignages: options.temoignages || temoignagesDAO,
     users: options.users || usersDAO,
     questionnaires: options.questionnaires || questionnairesDAO,
+    formations: options.formations || formationsDAO,
+    etablissements: options.etablissements || etablissementsDAO,
     close: () => client.connection.close(),
   };
 };
