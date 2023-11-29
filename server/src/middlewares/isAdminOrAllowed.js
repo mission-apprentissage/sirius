@@ -35,21 +35,23 @@ const isAdminOrAllowed = async (req, next, type) => {
     // check campagneIds
     if (type === TYPES.CAMPAGNE_IDS) {
       const ids = req.query.ids.split(",");
+      const queries = ids.map((id) => ({ id, siret: siret ? siret : { $in: multipleSiret } }));
 
-      const campagneId = ids.map((id) => {
-        return async () => {
-          const query = { id, siret: siret };
-          const { body } = await campagnesService.getOneCampagne(query);
+      const campagnePromises = queries.map(async (query) => {
+        const { body } = await campagnesService.getOneCampagne(query);
 
-          if (body.etablissement.data.siret === siret) {
-            return body._id.toString();
-          }
-        };
+        if (
+          body &&
+          (siret === body.etablissement.data.siret || multipleSiret.includes(body.etablissement.data.siret))
+        ) {
+          return body._id.toString();
+        }
+        return null;
       });
 
-      const results = await Promise.all(campagneId.map((getCampagneId) => getCampagneId()));
+      const results = await Promise.all(campagnePromises);
 
-      if (results.length === ids.length) return next();
+      if (results.filter(Boolean).length === ids.length) return next();
     }
 
     //check SIRET
