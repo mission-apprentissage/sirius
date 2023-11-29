@@ -370,7 +370,7 @@ const ManageCampagneTable = ({
             flexDirection="row"
             alignItems="center"
             justifyContent="flex-start"
-            width={{ sm: "100%", md: "45%" }}
+            width={{ sm: "100%", md: "max-content" }}
           >
             <AccordionButton
               _hover={{
@@ -396,8 +396,16 @@ const ManageCampagneTable = ({
               </Box>
             </AccordionButton>
           </Box>
-          <Box display="flex" justifyContent="flex-end" width={{ sm: "100%", md: "55%" }}>
-            <Box display="flex" flexWrap="wrap" justifyContent="flex-end">
+          <Box
+            display="flex"
+            justifyContent={{ sm: "flex-start", md: "flex-start", lg: "flex-end" }}
+            width={{ sm: "100%", md: "100%", lg: "max-content" }}
+          >
+            <Box
+              display="flex"
+              flexWrap="wrap"
+              justifyContent={{ sm: "flex-start", md: "flex-start", lg: "flex-end" }}
+            >
               <Box
                 display="flex"
                 flexDirection="row"
