@@ -147,7 +147,7 @@ const addUserInfo = (page, etablissementLabel, user, font) => {
   });
 };
 
-const addQRCodes = async (finalPdfDoc, pdfDoc, campagnes, font) => {
+const addQRCodesAndLinks = async (finalPdfDoc, pdfDoc, campagnes, font) => {
   const pageWidth = 595;
   const fontSize = 24;
   const lineHeight = fontSize * 1.15; // Reduced line height for closer lines
@@ -173,13 +173,23 @@ const addQRCodes = async (finalPdfDoc, pdfDoc, campagnes, font) => {
 
     const breakedTextLines = fillParagraph(campagneName, font, fontSize, 400).split("\n");
 
-    let textY = y - 30;
+    let textY = y - 60;
 
     breakedTextLines.forEach((line) => {
       const lineWidth = font.widthOfTextAtSize(line, fontSize);
       const textX = (pageWidth - lineWidth) / 2;
       page.drawText(line, { x: textX, y: textY, size: fontSize, font, color: rgb(0, 0, 145 / 255) });
       textY -= lineHeight;
+    });
+
+    const linkLineWidth = font.widthOfTextAtSize(qrCodeData, 10);
+
+    page.drawText(qrCodeData, {
+      x: (pageWidth - linkLineWidth) / 2,
+      y: y - 10,
+      size: 10,
+      font,
+      color: rgb(0, 0, 145 / 255),
     });
   }
 };
@@ -202,7 +212,7 @@ const generateMultiplePdf = async (campagnes, diplome, etablissementLabel, user)
   addDateTime(importedSummaryPage, fonts.regular, currentDateTime);
   addUserInfo(importedSummaryPage, etablissementLabel, user, fonts.regular);
   addSummaryEntries(importedSummaryPage, campagnes, fonts, diplome);
-  await addQRCodes(finalPdfDoc, pdfDoc, campagnes, fonts.regular);
+  await addQRCodesAndLinks(finalPdfDoc, pdfDoc, campagnes, fonts.regular);
 
   return await finalPdfDoc.saveAsBase64();
 };
