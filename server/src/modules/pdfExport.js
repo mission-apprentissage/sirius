@@ -253,7 +253,7 @@ const generatePdf = async (campagneId, campagneName) => {
   const maxWidth = 400;
   const breakedTextLines = fillParagraph(campagneName, font, fontSize, maxWidth).split("\n");
   const lineHeight = fontSize * 1.2;
-  let currentY = y - 30;
+  let currentY = y - 60;
 
   for (let line of breakedTextLines) {
     const lineWidth = helveticaFont.widthOfTextAtSize(line, fontSize);
@@ -268,6 +268,16 @@ const generatePdf = async (campagneId, campagneName) => {
     });
     currentY -= lineHeight;
   }
+
+  const linkLineWidth = font.widthOfTextAtSize(qrCodeData, 10);
+
+  page.drawText(qrCodeData, {
+    x: (pageWidth - linkLineWidth) / 2,
+    y: y - 10,
+    size: 10,
+    font,
+    color: rgb(0, 0, 145 / 255),
+  });
 
   const modifiedPdfBytes = await pdfDoc.saveAsBase64();
 
