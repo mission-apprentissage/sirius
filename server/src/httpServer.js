@@ -30,7 +30,6 @@ module.exports = async (components) => {
   app.use(questionnaires());
   app.use(etablissements());
   app.use(formations());
-  app.use(formations());
   app.use(verbatims());
   app.use(passport.initialize());
 

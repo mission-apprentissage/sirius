@@ -3,6 +3,7 @@ const ObjectId = require("mongoose").mongo.ObjectId;
 const campagnesDao = require("../dao/campagnes.dao");
 const formationsDao = require("../dao/formations.dao");
 const etablissementsDao = require("../dao/etablissements.dao");
+const temoignagesDao = require("../dao/temoignages.dao");
 
 const { getChampsLibreRate } = require("../utils/verbatims.utils");
 const { getMedianDuration } = require("../utils/campagnes.utils");
@@ -43,10 +44,17 @@ const createCampagne = async (campagne) => {
   }
 };
 
-const deleteCampagne = async (id) => {
+const deleteCampagnes = async (ids) => {
   try {
-    const campagne = await campagnesDao.deleteOne(id);
-    return { success: true, body: campagne };
+    const deletedCampagnes = await campagnesDao.deleteMany(ids);
+    await temoignagesDao.deleteManyByCampagneId(ids);
+    const deletedFormationsIds = await formationsDao.deleteManyByCampagneIdAndReturnsTheDeletedFormationId(ids);
+
+    const deletedFormationsStringifiedIds = deletedFormationsIds.map((id) => id.toString());
+
+    await etablissementsDao.updateByFormationIds(deletedFormationsStringifiedIds);
+
+    return { success: true, body: deletedCampagnes };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -148,7 +156,7 @@ module.exports = {
   getCampagnes,
   getOneCampagne,
   createCampagne,
-  deleteCampagne,
+  deleteCampagnes,
   updateCampagne,
   createMultiCampagne,
   getExport,

@@ -21,6 +21,8 @@ import {
   InputGroup,
   InputRightElement,
   Select,
+  Checkbox,
+  useDisclosure,
 } from "@chakra-ui/react";
 import {
   useReactTable,
@@ -29,7 +31,14 @@ import {
   getSortedRowModel,
   createColumnHelper,
 } from "@tanstack/react-table";
-import { TriangleDownIcon, TriangleUpIcon, SearchIcon, DownloadIcon } from "@chakra-ui/icons";
+import {
+  TriangleDownIcon,
+  TriangleUpIcon,
+  SearchIcon,
+  DownloadIcon,
+  CheckIcon,
+  DeleteIcon,
+} from "@chakra-ui/icons";
 import { sortingOptions } from "../ManageCampagnes";
 import CkDownload from "../../assets/icons/CkDownload.svg";
 import IoInformationCircleOutline from "../../assets/icons/IoInformationCircleOutline.svg";
@@ -39,10 +48,85 @@ import CellInput from "./CellInput";
 import CellInputSeats from "./CellInputSeats";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
 import { _get } from "../../utils/httpClient";
+import Line from "../../assets/icons/Line.svg";
+import DeleteCampagneConfirmationModal from "./DeleteCampagneConfirmationModal";
+
+// needed for this issue https://github.com/chakra-ui/chakra-ui/issues/1589
+// eslint-disable-next-line no-unused-vars
+const CheckboxIcon = ({ isChecked, isIndeterminate, as, ...rest }) => {
+  return as;
+};
 
 const columnHelper = createColumnHelper();
 
-const getColumns = (handleCellUpdate, userContext) => [
+const getColumns = (
+  handleCellUpdate,
+  userContext,
+  selectedCampagnes,
+  setSelectedCampagnes,
+  displayedCampagnes
+) => [
+  columnHelper.accessor("_id", {
+    cell: (info) => (
+      <Checkbox
+        size="lg"
+        pr="8px"
+        borderColor="brand.blue.400"
+        _checked={{
+          "& .chakra-checkbox__control": { backgroundColor: "brand.blue.700" },
+        }}
+        onChange={() =>
+          setSelectedCampagnes((prevValue) =>
+            prevValue.includes(info.getValue())
+              ? prevValue.filter((id) => id !== info.getValue())
+              : [...prevValue, info.getValue()]
+          )
+        }
+        isChecked={selectedCampagnes.includes(info.getValue())}
+        _hover={{
+          "& .chakra-checkbox__control": {
+            backgroundColor: selectedCampagnes.includes(info.getValue())
+              ? "brand.blue.700"
+              : "transparent",
+          },
+        }}
+      />
+    ),
+    header: () => {
+      const allCheckedIcon =
+        selectedCampagnes.length !== displayedCampagnes.length && selectedCampagnes.length ? (
+          <Image src={Line} alt="" />
+        ) : (
+          <CheckIcon boxSize="12px" />
+        );
+      return (
+        <Checkbox
+          id="selectAll"
+          size="lg"
+          borderColor="brand.blue.400"
+          isChecked={selectedCampagnes.length}
+          mr="20px"
+          icon={<CheckboxIcon as={allCheckedIcon} />}
+          _checked={{
+            "& .chakra-checkbox__control": { backgroundColor: "brand.blue.700" },
+          }}
+          _hover={{
+            "& .chakra-checkbox__control": {
+              backgroundColor: selectedCampagnes.length ? "brand.blue.700" : "transparent",
+            },
+          }}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setSelectedCampagnes(displayedCampagnes.map((campagne) => campagne._id));
+            } else {
+              setSelectedCampagnes([]);
+            }
+          }}
+        />
+      );
+    },
+    enableSorting: false,
+  }),
   columnHelper.accessor(
     (row) => [
       row.formation.data.intitule_long,
@@ -198,6 +282,13 @@ const ManageCampagneTable = ({
   const [search, setSearch] = useState([]);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
+  const [selectedCampagnes, setSelectedCampagnes] = useState([]);
+
+  const {
+    isOpen: isOpenDeleteConfirmation,
+    onOpen: onOpenDeleteConfirmation,
+    onClose: onCloseDeleteConfirmation,
+  } = useDisclosure();
 
   useEffect(() => {
     setDisplayedCampagnes(campagnes);
@@ -224,7 +315,13 @@ const ManageCampagneTable = ({
   };
 
   const table = useReactTable({
-    columns: getColumns(handleCellUpdate, userContext),
+    columns: getColumns(
+      handleCellUpdate,
+      userContext,
+      selectedCampagnes,
+      setSelectedCampagnes,
+      displayedCampagnes
+    ),
     data: displayedCampagnes,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
@@ -253,168 +350,235 @@ const ManageCampagneTable = ({
   };
 
   return (
-    <AccordionItem
-      sx={{
-        border: "1px solid #CACAFB",
-        borderRadius: "12px",
-        margin: "15px 0",
-      }}
-    >
-      <AccordionButton
-        _hover={{
-          backgroundColor: "transparent",
+    <>
+      <AccordionItem
+        sx={{
+          border: "1px solid #CACAFB",
+          borderRadius: "12px",
+          margin: "15px 0",
         }}
       >
         <Box
           display="flex"
-          textAlign="left"
           flexDirection="row"
-          alignItems="center"
-          w="60%"
-          my="15px"
+          w="100%"
+          justifyContent="space-between"
+          flexWrap="wrap"
         >
-          <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
-            {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
-          </Text>
-          <Text mx="10px">|</Text>
-          <Text color="brand.blue.700">
-            {campagnes?.length}
-            {formations?.length && `/${formations.length}`} campagne
-            {campagnes?.length > 1 ? "s" : ""} créée
-            {campagnes?.length > 1 ? "s" : ""}
-          </Text>
-        </Box>
-        <Box
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="flex-end"
-          my="15px"
-          mr="16px"
-          w="40%"
-        >
-          <Button
-            as="div"
-            onClick={handleDownload}
-            leftIcon={<DownloadIcon />}
-            variant="filled"
-            ml="auto"
-            size="md"
-            isLoading={isLoadingDownload}
-            _hover={{
-              backgroundColor: "brand.blue.700",
-            }}
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            width={{ sm: "100%", md: "max-content" }}
           >
-            Télécharger les supports de partage
-          </Button>
-        </Box>
-        <AccordionIcon color="brand.blue.700" fontSize="34px" />
-      </AccordionButton>
-      <AccordionPanel pb={4} px="0" overflowX="auto">
-        <Stack direction="column" mx="15px">
-          <Stack direction="row" mt="32px" mb="20px">
-            <InputGroup w="325px">
-              <Input
-                id="search"
-                name="search"
-                type="text"
-                placeholder="Rechercher une formation"
-                onChange={handleSearch}
-                value={search}
-                size="lg"
-                color="brand.black.500"
-                _placeholder={{ color: "brand.black.500", fontSize: "16px" }}
-                borderColor="brand.blue.400"
-                fontSize="16px"
-              />
-              <InputRightElement h="100%">
-                <SearchIcon color="brand.black.500" />
-              </InputRightElement>
-            </InputGroup>
-            <Select
-              id="sorting"
-              name="sorting"
-              variant="outline"
-              size="lg"
-              placeholder="Trier AZ"
-              borderColor="brand.blue.400"
-              onChange={(event) =>
-                setSorting(event.target.value ? [JSON.parse(event.target.value)] : [])
-              }
-              value={JSON.stringify(sorting[0])}
-              w="325px"
+            <AccordionButton
+              _hover={{
+                backgroundColor: "transparent",
+              }}
             >
-              {sortingOptions.map((option) => (
-                <option key={option.label} value={JSON.stringify(option.value)}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
+              <Box
+                display="flex"
+                textAlign="left"
+                flexDirection="column"
+                alignItems="flex-start"
+                my="15px"
+              >
+                <Text fontSize="xl" color="brand.blue.700" fontWeight="600">
+                  {DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}
+                </Text>
+                <Text color="brand.blue.700" fontSize="sm">
+                  {campagnes?.length}
+                  {formations?.length && `/${formations.length}`} campagne
+                  {campagnes?.length > 1 ? "s" : ""} créée
+                  {campagnes?.length > 1 ? "s" : ""}
+                </Text>
+              </Box>
+            </AccordionButton>
+          </Box>
+          <Box
+            display="flex"
+            justifyContent={{ sm: "flex-start", md: "flex-start", lg: "flex-end" }}
+            width={{ sm: "100%", md: "100%", lg: "max-content" }}
+          >
+            <Box
+              display="flex"
+              flexWrap="wrap"
+              justifyContent={{ sm: "flex-start", md: "flex-start", lg: "flex-end" }}
+            >
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                my="7px"
+                mr="8px"
+                width={{ base: "100%", md: "auto" }}
+              >
+                <Button
+                  leftIcon={<DeleteIcon />}
+                  variant="filled"
+                  ml="15px"
+                  size="md"
+                  isDisabled={!selectedCampagnes.length}
+                  _hover={{
+                    backgroundColor: "brand.blue.700",
+                  }}
+                  onClick={onOpenDeleteConfirmation}
+                >
+                  {selectedCampagnes.length === 1
+                    ? "Supprimer la campagne"
+                    : `Supprimer les ${
+                        selectedCampagnes.length > 0 ? selectedCampagnes.length : ""
+                      } campagnes`}
+                </Button>
+              </Box>
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                my="7px"
+                mr="16px"
+                width={{ base: "100%", md: "auto" }}
+              >
+                <Button
+                  onClick={handleDownload}
+                  leftIcon={<DownloadIcon />}
+                  variant="filled"
+                  ml="15px"
+                  size="md"
+                  isLoading={isLoadingDownload}
+                  _hover={{
+                    backgroundColor: "brand.blue.700",
+                  }}
+                >
+                  Télécharger les supports de partage
+                </Button>
+              </Box>
+            </Box>
+            <Box display="flex" flexDirection="row" alignItems="center" justifyContent="flex-end">
+              <AccordionButton
+                _hover={{
+                  backgroundColor: "transparent",
+                }}
+              >
+                <AccordionIcon color="brand.blue.700" fontSize="34px" />
+              </AccordionButton>
+            </Box>
+          </Box>
+        </Box>
+        <AccordionPanel pb={4} px="0" overflowX="auto">
+          <Stack direction="column" mx="15px">
+            <Stack direction="row" mt="32px" mb="20px">
+              <InputGroup w="325px">
+                <Input
+                  id="search"
+                  name="search"
+                  type="text"
+                  placeholder="Rechercher une formation"
+                  onChange={handleSearch}
+                  value={search}
+                  size="lg"
+                  color="brand.black.500"
+                  _placeholder={{ color: "brand.black.500", fontSize: "16px" }}
+                  borderColor="brand.blue.400"
+                  fontSize="16px"
+                />
+                <InputRightElement h="100%">
+                  <SearchIcon color="brand.black.500" />
+                </InputRightElement>
+              </InputGroup>
+              <Select
+                id="sorting"
+                name="sorting"
+                variant="outline"
+                size="lg"
+                placeholder="Trier AZ"
+                borderColor="brand.blue.400"
+                onChange={(event) =>
+                  setSorting(event.target.value ? [JSON.parse(event.target.value)] : [])
+                }
+                value={JSON.stringify(sorting[0])}
+                w="325px"
+              >
+                {sortingOptions.map((option) => (
+                  <option key={option.label} value={JSON.stringify(option.value)}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+            </Stack>
           </Stack>
-        </Stack>
-        <Table>
-          <Thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const meta = header.column.columnDef.meta;
-                  return (
-                    <Th
-                      key={header.id}
-                      onClick={header.column.getToggleSortingHandler()}
-                      isNumeric={meta?.isNumeric}
-                      color="brand.blue.700"
-                      textTransform="none"
-                      fontSize="14px"
-                      fontWeight="400"
-                      borderColor="brand.blue.400"
-                      px="15px"
-                    >
-                      <Box display="flex" w="calc(100% + 16px)">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        <chakra.span pl="4px">
-                          {header.column.getIsSorted() ? (
-                            header.column.getIsSorted() === "desc" ? (
-                              <TriangleDownIcon aria-label="sorted descending" />
-                            ) : (
-                              <TriangleUpIcon aria-label="sorted ascending" />
-                            )
-                          ) : null}
-                        </chakra.span>
-                      </Box>
-                    </Th>
-                  );
-                })}
-              </Tr>
-            ))}
-          </Thead>
-          <Tbody>
-            {table.getRowModel().rows.map((row, index) => (
-              <Tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <Td
-                      key={cell.id}
-                      px="15px"
-                      fontSize="14px"
-                      borderColor={
-                        index === table.getRowModel().rows.length - 1
-                          ? "transparent"
-                          : "brand.blue.400"
-                      }
-                    >
-                      <Box display="flex" maxW="300px">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Box>
-                    </Td>
-                  );
-                })}
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </AccordionPanel>
-    </AccordionItem>
+          <Table>
+            <Thead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <Tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    const meta = header.column.columnDef.meta;
+                    return (
+                      <Th
+                        key={header.id}
+                        onClick={header.column.getToggleSortingHandler()}
+                        isNumeric={meta?.isNumeric}
+                        color="brand.blue.700"
+                        textTransform="none"
+                        fontSize="14px"
+                        fontWeight="400"
+                        borderColor="brand.blue.400"
+                        px="15px"
+                      >
+                        <Box display="flex" w="calc(100% + 16px)">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <chakra.span pl="4px">
+                            {header.column.getIsSorted() ? (
+                              header.column.getIsSorted() === "desc" ? (
+                                <TriangleDownIcon aria-label="sorted descending" />
+                              ) : (
+                                <TriangleUpIcon aria-label="sorted ascending" />
+                              )
+                            ) : null}
+                          </chakra.span>
+                        </Box>
+                      </Th>
+                    );
+                  })}
+                </Tr>
+              ))}
+            </Thead>
+            <Tbody>
+              {table.getRowModel().rows.map((row, index) => (
+                <Tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <Td
+                        key={cell.id}
+                        px="15px"
+                        fontSize="14px"
+                        borderColor={
+                          index === table.getRowModel().rows.length - 1
+                            ? "transparent"
+                            : "brand.blue.400"
+                        }
+                      >
+                        <Box display="flex" maxW="300px">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Box>
+                      </Td>
+                    );
+                  })}
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </AccordionPanel>
+      </AccordionItem>
+      <DeleteCampagneConfirmationModal
+        isOpen={isOpenDeleteConfirmation}
+        onClose={onCloseDeleteConfirmation}
+        selectedCampagnes={selectedCampagnes}
+        setSelectedCampagnes={setSelectedCampagnes}
+        setShouldRefreshData={setShouldRefreshData}
+      />
+    </>
   );
 };
 

@@ -193,6 +193,10 @@ const deleteOne = async (id) => {
   return Campagne.updateOne({ _id: id }, { deletedAt: new Date() });
 };
 
+const deleteMany = async (ids) => {
+  return Campagne.updateMany({ _id: { $in: ids } }, { deletedAt: new Date() });
+};
+
 const update = async (id, updatedCampagne) => {
   return Campagne.updateOne({ _id: id, deletedAt: null }, updatedCampagne);
 };
@@ -215,6 +219,7 @@ module.exports = {
   getOneWithTemoignagneCountAndTemplateName,
   create,
   deleteOne,
+  deleteMany,
   update,
   getAll,
   getOne,

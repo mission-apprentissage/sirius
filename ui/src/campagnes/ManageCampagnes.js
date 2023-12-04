@@ -93,7 +93,7 @@ const ViewCampagnes = () => {
           }
         }, 1000);
     }
-  }, [counter]);
+  }, [counter, status]);
 
   const isAllCampagneCreated = campagnes && formations && campagnes?.length === formations?.length;
 
@@ -114,7 +114,7 @@ const ViewCampagnes = () => {
       </Header>
       {status === "error" && (
         <FormError
-          title="Une erreur est survenue lors de la création des campagnes"
+          title="Une erreur est survenue"
           hasError
           errorMessages={["Merci de réessayer ou de contacter le support"]}
         />
@@ -123,6 +123,13 @@ const ViewCampagnes = () => {
         <FormSuccess
           title={`${count || 0} ${count > 1 ? "campagnes ont été créées" : "campagne a été créée"}`}
           message={[`Vous pouvez ${count > 1 ? "les" : "la"} retrouver dans la liste ci-dessous`]}
+        />
+      )}
+      {status === "successDeletion" && (
+        <FormSuccess
+          title={`${count || 0} ${
+            count > 1 ? "campagnes ont été supprimées" : "campagne a été supprimée"
+          }`}
         />
       )}
       <Text fontSize="5xl" fontWeight="600" w="100%" color="brand.blue.700">

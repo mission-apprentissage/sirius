@@ -28,8 +28,9 @@ const createCampagne = tryCatch(async (req, res) => {
   return res.status(201).json(body);
 });
 
-const deleteCampagne = tryCatch(async (req, res) => {
-  const { success, body } = await campagnesService.deleteCampagne(req.params.id);
+const deleteCampagnes = tryCatch(async (req, res) => {
+  const ids = req.query.ids.split(",");
+  const { success, body } = await campagnesService.deleteCampagnes(ids);
 
   if (!success) throw new BasicError();
   if (body.modifiedCount === 0) throw new CampagneNotFoundError();
@@ -79,7 +80,7 @@ module.exports = {
   getCampagnes,
   getCampagne,
   createCampagne,
-  deleteCampagne,
+  deleteCampagnes,
   updateCampagne,
   createMultiCampagne,
   getExport,
