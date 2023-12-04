@@ -6,11 +6,18 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
+const etablissementSchema = Joi.object({
+  siret: Joi.string().required(),
+  onisep_nom: Joi.string().allow(null, ""),
+  enseigne: Joi.string().allow(null, ""),
+  entreprise_raison_sociale: Joi.string().allow(null, ""),
+});
+
 const subscribeSchema = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   comment: Joi.string().allow(null, ""),
-  etablissements: Joi.array().required().min(1),
+  etablissements: Joi.array().items(etablissementSchema).required().min(1),
   email: Joi.string().email({ tlds: false }).required(),
   password: passwordComplexity({
     min: 8,

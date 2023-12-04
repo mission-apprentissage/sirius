@@ -63,6 +63,7 @@ const EtablissementInput = ({ formik, setEtablissements, index, setError }) => {
         _placeholder={{ color: "brand.black.500" }}
         errorBorderColor="brand.red.500"
         isInvalid={hasError}
+        value={formik.values.etablissements[index]}
         onChange={(e, { action }) => {
           if (e) {
             const etablissements = [
@@ -79,12 +80,12 @@ const EtablissementInput = ({ formik, setEtablissements, index, setError }) => {
             setEtablissements(etablissements);
           } else {
             if (action === "clear") {
-              if (index === 0) {
-                formik.setFieldValue("etablissements", [{}]);
-                setEtablissements([{}]);
+              if (index === 0 && formik.values.etablissements.length === 1) {
+                formik.setFieldValue("etablissements", []);
+                setEtablissements([]);
               } else {
                 const etablissements = [...formik.values.etablissements];
-                etablissements[index] = {};
+                etablissements.splice(index, 1);
                 formik.setFieldValue("etablissements", etablissements);
                 setEtablissements(etablissements);
               }

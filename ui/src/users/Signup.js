@@ -28,6 +28,13 @@ import EtablissementInput from "./Components/EtablissementInput";
 
 const requiredFieldMessage = "Ces champs sont obligatoires";
 
+const etablissement = Yup.object({
+  siret: Yup.string().required(),
+  onisep_nom: Yup.string().nullable(),
+  enseigne: Yup.string().nullable(),
+  entreprise_raison_sociale: Yup.string().nullable(),
+});
+
 const validationSchema = Yup.object({
   email: Yup.string()
     .matches(emailWithTLDRegex, "L'email n'est pas au bon format")
@@ -39,6 +46,7 @@ const validationSchema = Yup.object({
     .required(requiredFieldMessage)
     .matches(passwordComplexityRegex, passwordComplexityMessage),
   etablissements: Yup.array()
+    .of(etablissement)
     .min(1, requiredFieldMessage)
     .test("unique-siret", "Le SIRET doit être différent dans chaque champ", (etablissements) => {
       const siretSet = new Set(etablissements.map((e) => e.siret));
@@ -52,7 +60,7 @@ const Signup = () => {
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [error, setError] = useState(null);
   const [userContext] = useContext(UserContext);
-  const [etablissements, setEtablissements] = useState([""]);
+  const [etablissements, setEtablissements] = useState([]);
 
   const isMobile = breakpoint === "base";
 
@@ -68,8 +76,9 @@ const Signup = () => {
     validationSchema: validationSchema,
     onSubmit: async ({ email, password, firstName, lastName, comment, etablissements }) => {
       setIsSubmitting(true);
-      const etablissementsWitoutEmpty = etablissements.filter((e) => e.siret !== "");
-
+      const etablissementsWitoutEmpty = etablissements.filter(
+        (obj) => Object.keys(obj).length !== 0
+      );
       const resultUser = await _post(`/api/users/`, {
         firstName: firstName,
         lastName: lastName,
@@ -101,12 +110,10 @@ const Signup = () => {
   };
 
   const handleDeleteEtablissement = (index) => {
-    formik.setFieldValue("etablissements", etablissements.splice(index, 1));
-    setEtablissements((prevValues) => {
-      const updatedEtablissements = [...prevValues];
-      updatedEtablissements.splice(index, 1);
-      return updatedEtablissements;
-    });
+    const updatedEtablissements = [...etablissements];
+    updatedEtablissements.splice(index, 1);
+    formik.setFieldValue("etablissements", updatedEtablissements);
+    setEtablissements(updatedEtablissements);
   };
 
   if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
@@ -162,8 +169,17 @@ const Signup = () => {
                 <InputPassword id="password" name="password" formik={formik} noErrorMessage />
                 <Text fontSize="14px">
                   Si votre position vous le permet, ajoutez plus d’un SIRET pour suivre les
-                  campagnes de plusieurs établissements
+                  campagnes de plusieurs établissements. Insérez le premier SIRET puis cliquez sur
+                  le bouton « Ajouter un SIRET ».
                 </Text>
+                {etablissements.length === 0 && (
+                  <EtablissementInput
+                    formik={formik}
+                    setEtablissements={setEtablissements}
+                    index={0}
+                    setError={setError}
+                  />
+                )}
                 {etablissements.map((etablissement, index) => (
                   <Stack
                     direction="row"
@@ -186,18 +202,20 @@ const Signup = () => {
                     )}
                   </Stack>
                 ))}
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  cursor="pointer"
-                  onClick={addEtablissementField}
-                  mb="10px"
-                >
-                  <AddIcon boxSize="10px" color="brand.blue.700" />
-                  <Text fontSize="sm" color="brand.blue.700">
-                    Ajouter un SIRET
-                  </Text>
-                </Stack>
+                {etablissements[etablissements.length - 1]?.siret && (
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    cursor="pointer"
+                    onClick={addEtablissementField}
+                    mb="10px"
+                  >
+                    <AddIcon boxSize="10px" color="brand.blue.700" />
+                    <Text fontSize="sm" color="brand.blue.700">
+                      Ajouter un SIRET
+                    </Text>
+                  </Stack>
+                )}
                 <FormControl isInvalid={!!formik.errors.comment && formik.touched.comment}>
                   <Textarea
                     id="comment"
@@ -219,9 +237,7 @@ const Signup = () => {
                   flexDirection="column"
                   mt="16px"
                 >
-                  <Button isLoading={isSubmitting} isDisabled={!!error}>
-                    Valider
-                  </Button>
+                  <Button isLoading={isSubmitting}>Valider</Button>
                   <Text color="brand.blue.700" fontSize="sm" mt={isMobile ? "32px" : "64px"}>
                     Déjà inscrit ?{" "}
                     <Link href="/connexion" textDecoration="underline">
