@@ -49,7 +49,7 @@ const CreateCampagnesPage = () => {
       accumulator[allDiplomesSelectedFormation] = {
         nomCampagne: "",
         startDate: formateDateToInputFormat(new Date()),
-        endDate: formateDateToInputFormat(new Date(), 1),
+        endDate: formateDateToInputFormat(new Date(), 2),
         seats: 0,
         formationId: allDiplomesSelectedFormation,
         questionnaireId: validatedQuestionnaire[0]?._id,

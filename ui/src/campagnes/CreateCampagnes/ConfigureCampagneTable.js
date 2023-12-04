@@ -189,7 +189,7 @@ const getColumns = (formik) => [
     },
     header: "Début campagne",
   }),
-  columnHelper.accessor(() => formateDateToInputFormat(new Date(), 1), {
+  columnHelper.accessor(() => formateDateToInputFormat(new Date(), 2), {
     id: "endDate",
     cell: (info) => {
       const formationId = info.row.original._id;
