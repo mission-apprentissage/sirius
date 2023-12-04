@@ -13,10 +13,10 @@ import {
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { EtablissementsContext } from "../context/EtablissementsContext";
-import Header from "./Components/Header";
+import Header from "./Shared/Header";
 import Team from "../assets/images/team.svg";
-import Statistics from "./Components/Statistics";
-import ManageCampagneTable from "./Components/ManageCampagneTable";
+import Statistics from "./Shared/Statistics";
+import ManageCampagneTable from "./ManageCampagne/ManageCampagneTable";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
 import {
   orderCampagnesByDiplomeType,
@@ -28,7 +28,7 @@ import Button from "../Components/Form/Button";
 import IoAddSharp from "../assets/icons/IoAddSharp.svg";
 import FormSuccess from "../Components/Form/FormSuccess";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
-import SupportModal from "./Components/SupportModal";
+import SupportModal from "./Shared/SupportModal";
 
 export const sortingOptions = [
   { label: "Formation (A-Z)", value: { id: "Formation", desc: false } },

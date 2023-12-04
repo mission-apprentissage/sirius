@@ -18,19 +18,19 @@ import {
   CustomMultiRangeSortable,
   CustomEmojisRadios,
   CustomMultiEmojisRadios,
-} from "../Components/Form/widgets";
-import { CustomNestedRadios } from "../Components/Form/fields";
+} from "./Shared/widgets";
+import { CustomNestedRadios } from "./Shared/fields";
 import { Stepper } from "../Components/Stepper";
-import Hero from "../Components/Form/Hero";
-import Success from "../Components/Form/Success";
+import Hero from "./Shared/Hero";
+import Success from "./Shared/Success";
 import {
   multiStepQuestionnaireFormatter,
   multiStepQuestionnaireUIFormatter,
   getCategoriesWithEmojis,
   transformErrors,
   getNextButtonLabel,
-} from "../campagnes/utils";
-import ErrorTemplate from "../Components/Form/ErrorTemplate";
+} from "./utils";
+import ErrorTemplate from "./Shared/ErrorTemplate";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -50,7 +50,7 @@ const fields = {
   nestedRadios: CustomNestedRadios,
 };
 
-const PreviewQuestionnaire = () => {
+const PreviewCampagnePage = () => {
   const { id } = useParams();
   const [previewedQuestionnaire, loading] = useGet(`/api/questionnaires/${id}`);
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
@@ -177,4 +177,4 @@ const PreviewQuestionnaire = () => {
   );
 };
 
-export default PreviewQuestionnaire;
+export default PreviewCampagnePage;

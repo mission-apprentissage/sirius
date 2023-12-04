@@ -16,7 +16,7 @@ import {
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import shareTemoignage from "../../assets/images/share_temoignage.svg";
 import mains from "../../assets/images/mains.svg";
-import Footer from "../Footer";
+import Footer from "../../Components/Footer";
 
 const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoignageCount }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();

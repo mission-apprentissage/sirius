@@ -14,7 +14,7 @@ import { multiCreationSubmitHandler } from "./submitHandlers";
 import { formateDateToInputFormat } from "./utils";
 import { useGet } from "../common/hooks/httpHooks";
 
-const CreateCampagne = () => {
+const CreateCampagnesPage = () => {
   const [allDiplomesSelectedFormations, setAllDiplomesSelectedFormations] = useState([]);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -163,4 +163,4 @@ const CreateCampagne = () => {
   );
 };
 
-export default CreateCampagne;
+export default CreateCampagnesPage;

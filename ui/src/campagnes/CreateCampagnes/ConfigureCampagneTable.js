@@ -30,11 +30,11 @@ import {
 } from "@tanstack/react-table";
 import { SearchIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
-import { sortingOptions } from "../ManageCampagnes";
+import { sortingOptions } from "../ManageCampagnesPage";
 import IoInformationCircleOutline from "../../assets/icons/IoInformationCircleOutline.svg";
 import { formateDateToInputFormat } from "../utils";
 import FiEdit from "../../assets/icons/FiEdit.svg";
-import InputConfigure from "../../Components/Form/InputConfigure";
+import InputConfigure from "./InputConfigure";
 
 const columnHelper = createColumnHelper();
 

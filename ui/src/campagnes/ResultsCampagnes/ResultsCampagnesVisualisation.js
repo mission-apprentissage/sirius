@@ -29,7 +29,7 @@ import {
 import { CanvasRenderer } from "echarts/renderers";
 import parse from "html-react-parser";
 import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../../utils/temoignage";
-import { getCategoriesWithEmojis } from "../../campagnes/utils";
+import { getCategoriesWithEmojis } from "../utils";
 import GoEyeClosed from "../../assets/icons/GoEyeClosed.svg";
 import GoEyeBlack from "../../assets/icons/GoEyeBlack.svg";
 import GoEye from "../../assets/icons/GoEye.svg";
@@ -337,7 +337,7 @@ const multiEmojiOption = (responses) => {
   };
 };
 
-const ResultatsVisualisation = ({ campagne, temoignages }) => {
+const ResultsCampagnesVisualisation = ({ campagne, temoignages }) => {
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
   const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
   const [isVerbatimsDisplayed, setIsVerbatimsDisplayed] = useState(true);
@@ -587,4 +587,4 @@ const ResultatsVisualisation = ({ campagne, temoignages }) => {
   );
 };
 
-export default ResultatsVisualisation;
+export default ResultsCampagnesVisualisation;

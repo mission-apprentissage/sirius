@@ -1,12 +1,4 @@
-import {
-  Box,
-  useCheckboxGroup,
-  useCheckbox,
-  Wrap,
-  FormLabel,
-  Text,
-  useBreakpoint,
-} from "@chakra-ui/react";
+import { Box, useCheckboxGroup, useCheckbox, Wrap, FormLabel, Text } from "@chakra-ui/react";
 import parse from "html-react-parser";
 import DidYouKnow from "../DidYouKnow";
 
