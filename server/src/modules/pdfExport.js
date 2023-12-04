@@ -59,12 +59,11 @@ const addDateTime = (page, font, dateTime) => {
 };
 
 const addSummaryEntries = (page, campagnes, fonts, diplome) => {
-  let summaryCurrentY = 600; // Original Y position
+  let summaryCurrentY = 600;
   const pageWidth = 595;
   const pageNumberX = pageWidth - 40;
   let pageNumber = 2;
 
-  // Draw the diplome header and update the Y position
   summaryCurrentY = drawDiplomeHeader(page, diplome, fonts.bold, summaryCurrentY);
 
   campagnes.forEach((campagne) => {
@@ -75,10 +74,10 @@ const addSummaryEntries = (page, campagnes, fonts, diplome) => {
   });
 };
 
-const maxWidth = (3 / 4) * 595; // 3/4 of page width
+const maxWidth = (3 / 4) * 595;
 
 const drawDiplomeHeader = (page, diplome, font, y) => {
-  const headerFontSize = 14; // You can adjust this size based on your preference
+  const headerFontSize = 14;
   const headerLeftMargin = 20;
 
   page.drawText(diplome, {
@@ -89,7 +88,7 @@ const drawDiplomeHeader = (page, diplome, font, y) => {
     color: rgb(0, 0, 145 / 255),
   });
 
-  return y - headerFontSize - 20; // Return the new Y position after drawing the header
+  return y - headerFontSize - 20;
 };
 
 const drawCampagneTitle = (page, campagne, font, y) => {
@@ -102,7 +101,7 @@ const drawCampagneTitle = (page, campagne, font, y) => {
 
   const breakedTextLines = fillParagraph(title, font, summaryFontSize, maxWidth).split("\n");
 
-  let initialY = y; // Storing the initial Y
+  let initialY = y;
   for (let line of breakedTextLines) {
     page.drawText(line, {
       x: summaryLeftMargin,
@@ -111,10 +110,10 @@ const drawCampagneTitle = (page, campagne, font, y) => {
       font,
       color: rgb(22 / 255, 22 / 255, 22 / 255),
     });
-    y -= summaryFontSize + 5; // Spacing between lines of the same title
+    y -= summaryFontSize + 5;
   }
 
-  y -= 15; // Spacing between titles
+  y -= 15;
   return { y, initialY };
 };
 
@@ -150,7 +149,7 @@ const addUserInfo = (page, etablissementLabel, user, font) => {
 const addQRCodesAndLinks = async (finalPdfDoc, pdfDoc, campagnes, font) => {
   const pageWidth = 595;
   const fontSize = 24;
-  const lineHeight = fontSize * 1.15; // Reduced line height for closer lines
+  const lineHeight = fontSize * 1.15;
 
   for (let i = 0; i < campagnes.length; i++) {
     const { campagneId, campagneName } = campagnes[i];
