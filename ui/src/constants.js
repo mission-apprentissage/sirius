@@ -15,6 +15,7 @@ export const VERBATIM_STATUS = {
   TO_FIX: "TO_FIX",
   ALERT: "ALERT",
   REJECTED: "REJECTED",
+  GEM: "GEM",
 };
 
 export const DIPLOME_TYPE_MATCHER = {
