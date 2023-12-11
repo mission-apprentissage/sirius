@@ -334,7 +334,9 @@ const ManageCampagneTable = ({
   const handleDownload = async (e) => {
     e.stopPropagation();
     setIsLoadingDownload(true);
-    const campagneIds = campagnes.map((campagne) => campagne._id);
+    const campagneIds = selectedCampagnes.length
+      ? selectedCampagnes
+      : campagnes.map((campagne) => campagne._id);
 
     const response = await _get(`/api/campagnes/multiexport?ids=${campagneIds}`, userContext.token);
 
@@ -451,7 +453,9 @@ const ManageCampagneTable = ({
                     backgroundColor: "brand.blue.700",
                   }}
                 >
-                  Télécharger les supports de partage
+                  {selectedCampagnes.length > 1
+                    ? `Télécharger les ${selectedCampagnes.length} supports de partage`
+                    : "Télécharger le support de partage"}
                 </Button>
               </Box>
             </Box>
