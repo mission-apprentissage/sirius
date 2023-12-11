@@ -10,10 +10,11 @@ const EtablissementInput = ({ formik, setEtablissements, index, setError }) => {
 
   const debouncedSiret = (callback, siret) => {
     clearTimeout(timer.current);
+    const siretwithoutSpaces = siret.replace(/\s/g, "");
     timer.current = setTimeout(async () => {
       try {
         const result = await _get(
-          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siret}"}&page=1&limit=1`
+          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siretwithoutSpaces}"}&page=1&limit=1`
         );
         if (result.etablissements?.length > 0) {
           callback(result.etablissements);
