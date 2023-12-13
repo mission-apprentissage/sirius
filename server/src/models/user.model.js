@@ -58,6 +58,9 @@ const userSchema = new mongoose.Schema({
   etablissement: {
     type: Object,
   },
+  confirmationToken: {
+    type: String,
+  },
 });
 
 //Remove refreshToken from the response

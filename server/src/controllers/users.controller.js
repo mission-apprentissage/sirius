@@ -9,14 +9,14 @@ const { USER_STATUS } = require("../constants");
 const slack = require("../modules/slack");
 
 const createUser = tryCatch(async (req, res) => {
-  const { success, body } = await usersService.createUser(req.body);
+  const confirmationToken = jwt.sign({ email: req.body.email }, config.auth.jwtSecret, {
+    expiresIn: "1y",
+  });
+
+  const { success, body } = await usersService.createUser({ ...req.body, confirmationToken });
 
   if (!success && body?.name === "UserExistsError") throw new UserAlreadyExistsError();
   if (!success) throw new BasicError();
-
-  const confirmationToken = jwt.sign({ email: body.email }, config.auth.jwtSecret, {
-    expiresIn: "1y",
-  });
 
   await mailer.shootTemplate({
     template: "confirm_user",
