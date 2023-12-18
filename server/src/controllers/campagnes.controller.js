@@ -1,9 +1,12 @@
 const campagnesService = require("../services/campagnes.service");
 const { BasicError, CampagneNotFoundError } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
+const { USER_ROLES } = require("../constants");
 
 const getCampagnes = tryCatch(async (req, res) => {
-  const { success, body } = await campagnesService.getCampagnes(req.query);
+  const isAdmin = req.user.role === USER_ROLES.ADMIN;
+
+  const { success, body } = await campagnesService.getCampagnes(req.query, isAdmin);
 
   if (!success) throw new BasicError();
 

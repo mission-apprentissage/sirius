@@ -90,6 +90,7 @@ const formationQuery = [
             "data.diplome": 1,
             "data.localite": 1,
             "data.duree": 1,
+            "data.etablissement_formateur_siret": 1,
           },
         },
         {
@@ -106,8 +107,9 @@ const formationQuery = [
   },
 ];
 
-const etablissementQuery = (siret) => {
-  const etablissementMatch = siret ? { "etablissement.data.siret": siret } : {};
+const etablissementQuery = (sirets) => {
+  const siretToArray = typeof sirets === "string" ? sirets.split(",") : sirets;
+  const etablissementMatch = sirets && sirets.length > 0 ? { "etablissement.data.siret": { $in: siretToArray } } : {};
   return [
     {
       $lookup: {

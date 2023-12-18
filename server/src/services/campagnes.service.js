@@ -10,9 +10,42 @@ const { getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER } = require("../constants");
 
-const getCampagnes = async (query) => {
+const getCampagnes = async (query, isAdmin) => {
   try {
-    const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(query);
+    let etablissementsSiret = [query.siret];
+    let campagnes = [];
+    const etablissement = await etablissementsDao.getAll({ "data.siret": query.siret });
+
+    const isGestionnaire = etablissement[0].data.etablissement_siege_siret === query.siret;
+    const isFormateur = etablissement[0].data.siret === query.siret;
+
+    if (isGestionnaire) {
+      // eslint-disable-next-line node/no-unsupported-features/es-syntax
+      const fetch = (await import("node-fetch")).default;
+      const response = await fetch(`https://referentiel.apprentissage.onisep.fr/api/v1/organismes/${query.siret}`, {
+        method: "GET",
+      });
+      const data = await response.json();
+
+      const filteredRelationsSiret = data.relations
+        .filter((relation) => relation.type === "responsable->formateur")
+        .map((etablissementFormateur) => etablissementFormateur.siret);
+
+      etablissementsSiret.push(...filteredRelationsSiret);
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: etablissementsSiret });
+    } else if (isFormateur) {
+      const etablissementGestionnaireSiret = etablissement[0].data.etablissement_siege_siret;
+
+      etablissementsSiret.push(etablissementGestionnaireSiret);
+
+      const allCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: etablissementsSiret });
+      campagnes = allCampagnes.filter(
+        (campagne) => campagne.formation.data.etablissement_formateur_siret === query.siret
+      );
+    } else if (isAdmin) {
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(query);
+    }
+
     campagnes.forEach((campagne) => {
       campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
     });
@@ -20,6 +53,7 @@ const getCampagnes = async (query) => {
       campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
       delete campagne.temoignagesList;
     });
+
     return { success: true, body: campagnes };
   } catch (error) {
     return { success: false, body: error };
