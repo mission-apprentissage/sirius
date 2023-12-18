@@ -35,14 +35,33 @@ const isAdminOrAllowed = async (req, next, type) => {
     // check campagneIds
     if (type === TYPES.CAMPAGNE_IDS) {
       const ids = req.query.ids.split(",");
+      const usedSiret = req.query.siret;
+
+      if (!multipleSiret.includes(usedSiret)) return next(new UnauthorizedError());
+
       const queries = ids.map((id) => ({ id, siret: siret ? siret : { $in: multipleSiret } }));
+
+      // eslint-disable-next-line node/no-unsupported-features/es-syntax
+      const fetch = (await import("node-fetch")).default;
+
+      const response = await fetch(`https://referentiel.apprentissage.onisep.fr/api/v1/organismes/${usedSiret}`, {
+        method: "GET",
+      });
+      const data = await response.json();
+
+      const filteredRelationsSiret = data.relations
+        .filter((relation) => relation.type === "responsable->formateur")
+        .map((etablissementFormateur) => etablissementFormateur.siret);
 
       const campagnePromises = queries.map(async (query) => {
         const { body } = await campagnesService.getOneCampagne(query);
 
         if (
           body &&
-          (siret === body.etablissement.data.siret || multipleSiret.includes(body.etablissement.data.siret))
+          (siret === body.etablissement.data.siret ||
+            multipleSiret.includes(body.etablissement.data.siret) ||
+            filteredRelationsSiret.includes(body.etablissement.data.siret) ||
+            multipleSiret.includes(body.formation.data.etablissement_formateur_siret))
         ) {
           return body._id.toString();
         }
