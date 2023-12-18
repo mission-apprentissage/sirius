@@ -14,12 +14,15 @@ const getCampagnes = async (query, isAdmin) => {
   try {
     let etablissementsSiret = [query.siret];
     let campagnes = [];
+
     const etablissement = await etablissementsDao.getAll({ "data.siret": query.siret });
 
     const isGestionnaire = etablissement[0].data.etablissement_siege_siret === query.siret;
     const isFormateur = etablissement[0].data.siret === query.siret;
 
-    if (isGestionnaire) {
+    if (isAdmin) {
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(query);
+    } else if (isGestionnaire) {
       // eslint-disable-next-line node/no-unsupported-features/es-syntax
       const fetch = (await import("node-fetch")).default;
       const response = await fetch(`https://referentiel.apprentissage.onisep.fr/api/v1/organismes/${query.siret}`, {
@@ -42,10 +45,7 @@ const getCampagnes = async (query, isAdmin) => {
       campagnes = allCampagnes.filter(
         (campagne) => campagne.formation.data.etablissement_formateur_siret === query.siret
       );
-    } else if (isAdmin) {
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(query);
     }
-
     campagnes.forEach((campagne) => {
       campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
     });
