@@ -3,6 +3,7 @@ const { App } = require("@slack/bolt");
 const config = require("../config");
 
 const sendToSlack = async (main) => {
+  if (!config.slack.token) return;
   if (!config.slack.channel) return;
 
   const slack = new App({
