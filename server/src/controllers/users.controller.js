@@ -182,7 +182,7 @@ const forgotPassword = tryCatch(async (req, res) => {
   if (!success) throw new BasicError();
 
   const resetPasswordToken = jwt.sign({ email: body.email }, config.auth.jwtSecret, {
-    expiresIn: "1h",
+    expiresIn: "24h",
   });
 
   await mailer.shootTemplate({
