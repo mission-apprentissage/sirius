@@ -1,6 +1,6 @@
 import { Tooltip, Box, Select, Text } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { CheckIcon, CloseIcon, CopyIcon } from "@chakra-ui/icons";
 import { USER_ROLES, USER_STATUS } from "../../../constants";
 import { etablissementLabelGetter } from "../../../utils/etablissement";
 
@@ -12,7 +12,9 @@ const usersTableColumns = (
   setSelectedStatus,
   onOpenStatusConfirmation,
   setSelectedRole,
-  onOpenRoleConfirmation
+  onOpenRoleConfirmation,
+  setClipboardValue,
+  onCopyClipBoard
 ) => [
   columnHelper.accessor("firstName", {
     cell: (info) => {
@@ -52,9 +54,31 @@ const usersTableColumns = (
   }),
   columnHelper.accessor("emailConfirmed", {
     cell: (info) => {
+      const confirmationToken = info.row.original.confirmationToken;
+
       return (
         <Box display="flex" flexDirection="column">
-          {info.getValue() ? <CheckIcon /> : <CloseIcon />}
+          {info.getValue() ? (
+            <CheckIcon />
+          ) : (
+            <Box>
+              <CloseIcon />
+              {confirmationToken && (
+                <Tooltip label="Copier le lien de confirmation">
+                  <CopyIcon
+                    ml="1"
+                    cursor="pointer"
+                    onClick={() => {
+                      setClipboardValue(
+                        `${window.location.hostname}/confirmer-utilisateur?token=${confirmationToken}`
+                      );
+                      onCopyClipBoard();
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </Box>
+          )}
         </Box>
       );
     },

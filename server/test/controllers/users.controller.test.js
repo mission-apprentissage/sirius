@@ -142,8 +142,8 @@ describe(__filename, () => {
 
       expect(next.getCall(0).args[0]).to.be.an.instanceof(UserAlreadyExistsError);
 
-      expect(usersService.createUser).to.have.been.calledWith(req.body);
-      expect(jwtSignStub).not.to.have.been.called;
+      expect(usersService.createUser).to.have.been.calledWith({ ...req.body, confirmationToken: "token" });
+      expect(jwtSignStub).to.have.been.called;
       expect(mailer.shootTemplate).not.to.have.been.called;
       expect(res.status).not.to.have.been.called;
       expect(res.json).not.to.have.been.called;
@@ -156,8 +156,8 @@ describe(__filename, () => {
 
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
 
-      expect(usersService.createUser).to.have.been.calledWith(req.body);
-      expect(jwtSignStub).not.to.have.been.called;
+      expect(usersService.createUser).to.have.been.calledWith({ ...req.body, confirmationToken: "token" });
+      expect(jwtSignStub).to.have.been.called;
       expect(mailer.shootTemplate).not.to.have.been.called;
       expect(res.status).not.to.have.been.called;
       expect(res.json).not.to.have.been.called;

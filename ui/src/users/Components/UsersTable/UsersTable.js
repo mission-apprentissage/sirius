@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Table, Tbody, Tr, Td, useDisclosure, Box, Stack } from "@chakra-ui/react";
+import { Table, Tbody, Tr, Td, useDisclosure, Box, Stack, useClipboard } from "@chakra-ui/react";
 import {
   useReactTable,
   flexRender,
@@ -22,6 +22,7 @@ const UsersTable = ({ users, setRefetchData }) => {
   const [sorting, setSorting] = useState([]);
   const [displayedUsers, setDisplayedUsers] = useState([]);
   const [search, setSearch] = useState([]);
+  const { onCopy: onCopyClipBoard, setValue: setClipboardValue } = useClipboard("");
 
   useEffect(() => {
     setDisplayedUsers(users);
@@ -46,7 +47,9 @@ const UsersTable = ({ users, setRefetchData }) => {
       setSelectedStatus,
       onOpenStatusConfirmation,
       setSelectedRole,
-      onOpenRoleConfirmation
+      onOpenRoleConfirmation,
+      setClipboardValue,
+      onCopyClipBoard
     ),
     data: displayedUsers,
     getCoreRowModel: getCoreRowModel(),
