@@ -11,7 +11,7 @@ const getEtablissementNature = async (siret) => {
   return data.nature;
 };
 
-const getEtablissementFormateurSIRETFromGestionnaires = async (siret) => {
+const getEtablissementSIRETFromRelationType = async (siret, wantedRelation) => {
   // eslint-disable-next-line node/no-unsupported-features/es-syntax
   const fetch = (await import("node-fetch")).default;
   const response = await fetch(`${REFERENTIEL_API}/${siret}`, {
@@ -20,7 +20,7 @@ const getEtablissementFormateurSIRETFromGestionnaires = async (siret) => {
   const data = await response.json();
 
   const filteredRelationsSiret = data.relations
-    .filter((relation) => relation.type === "responsable->formateur")
+    .filter((relation) => relation.type === wantedRelation)
     .map((etablissementFormateur) => etablissementFormateur.siret);
 
   return filteredRelationsSiret;
@@ -28,5 +28,5 @@ const getEtablissementFormateurSIRETFromGestionnaires = async (siret) => {
 
 module.exports = {
   getEtablissementNature,
-  getEtablissementFormateurSIRETFromGestionnaires,
+  getEtablissementSIRETFromRelationType,
 };

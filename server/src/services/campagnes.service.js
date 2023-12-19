@@ -8,15 +8,13 @@ const temoignagesDao = require("../dao/temoignages.dao");
 const { getChampsLibreRate } = require("../utils/verbatims.utils");
 const { getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
-const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE } = require("../constants");
-const { getEtablissementNature, getEtablissementFormateurSIRETFromGestionnaires } = require("../modules/referentiel");
+const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
+const { getEtablissementNature, getEtablissementSIRETFromRelationType } = require("../modules/referentiel");
 
-const getCampagnes = async (query, isAdmin) => {
+const getCampagnes = async (query) => {
   try {
     let etablissementsSiret = [query.siret];
     let campagnes = [];
-
-    const etablissement = await etablissementsDao.getAll({ "data.siret": query.siret });
 
     const etablissementNature = await getEtablissementNature(query.siret);
 
@@ -27,23 +25,27 @@ const getCampagnes = async (query, isAdmin) => {
       etablissementNature === ETABLISSEMENT_NATURE.FORMATEUR ||
       etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
 
-    if (isAdmin) {
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(query);
-    } else if (isGestionnaire) {
-      const etablissementFormateurSIRET = await getEtablissementFormateurSIRETFromGestionnaires(query.siret);
+    if (isGestionnaire) {
+      const etablissementFormateurSIRET = await getEtablissementSIRETFromRelationType(
+        query.siret,
+        ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
+      );
 
       etablissementsSiret.push(...etablissementFormateurSIRET);
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: etablissementsSiret });
     } else if (isFormateur) {
-      const etablissementGestionnaireSiret = etablissement[0].data.etablissement_siege_siret;
-
-      etablissementsSiret.push(etablissementGestionnaireSiret);
+      const etablissementGestionnaireSiret = await getEtablissementSIRETFromRelationType(
+        query.siret,
+        ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE
+      );
+      etablissementsSiret.push(...etablissementGestionnaireSiret);
 
       const allCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: etablissementsSiret });
       campagnes = allCampagnes.filter(
         (campagne) => campagne.formation.data.etablissement_formateur_siret === query.siret
       );
     }
+
     campagnes.forEach((campagne) => {
       campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
     });
