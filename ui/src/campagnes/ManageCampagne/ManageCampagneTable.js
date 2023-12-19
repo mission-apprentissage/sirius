@@ -338,7 +338,12 @@ const ManageCampagneTable = ({
       ? selectedCampagnes
       : campagnes.map((campagne) => campagne._id);
 
-    const response = await _get(`/api/campagnes/multiexport?ids=${campagneIds}`, userContext.token);
+    const persistedEtablissement = JSON.parse(localStorage.getItem("etablissements"));
+
+    const response = await _get(
+      `/api/campagnes/multiexport?ids=${campagneIds}&siret=${persistedEtablissement.siret}`,
+      userContext.token
+    );
 
     const base64Data = `data:application/pdf;base64,${response.data}`;
 

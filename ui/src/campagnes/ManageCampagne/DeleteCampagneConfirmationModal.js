@@ -23,10 +23,14 @@ const DeleteCampagneConfirmationModal = ({
 }) => {
   const [userContext] = useContext(UserContext);
   const [_, setSearchParams] = useSearchParams();
+  const persistedEtablissement = JSON.parse(localStorage.getItem("etablissements"));
 
   const handleOnClick = async () => {
     try {
-      const response = await _delete(`/api/campagnes?ids=${selectedCampagnes}`, userContext.token);
+      const response = await _delete(
+        `/api/campagnes?ids=${selectedCampagnes}&siret=${persistedEtablissement.siret}`,
+        userContext.token
+      );
 
       if (response.acknowledged) {
         setSearchParams({ status: "successDeletion", count: selectedCampagnes.length });

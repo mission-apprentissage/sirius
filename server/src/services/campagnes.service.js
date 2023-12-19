@@ -8,11 +8,45 @@ const temoignagesDao = require("../dao/temoignages.dao");
 const { getChampsLibreRate } = require("../utils/verbatims.utils");
 const { getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
-const { DIPLOME_TYPE_MATCHER } = require("../constants");
+const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
+const referentiel = require("../modules/referentiel");
 
 const getCampagnes = async (query) => {
   try {
-    const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(query);
+    let etablissementsSiret = [query.siret];
+    let campagnes = [];
+
+    const etablissementNature = await referentiel.getEtablissementNature(query.siret);
+
+    const isGestionnaire =
+      etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE ||
+      etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
+    const isFormateur =
+      etablissementNature === ETABLISSEMENT_NATURE.FORMATEUR ||
+      etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
+
+    if (isGestionnaire) {
+      const etablissementFormateurSIRET = await referentiel.getEtablissementSIRETFromRelationType(
+        query.siret,
+        ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
+      );
+
+      etablissementsSiret.push(...etablissementFormateurSIRET);
+
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: etablissementsSiret });
+    } else if (isFormateur) {
+      const etablissementGestionnaireSiret = await referentiel.getEtablissementSIRETFromRelationType(
+        query.siret,
+        ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE
+      );
+      etablissementsSiret.push(...etablissementGestionnaireSiret);
+
+      const allCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: etablissementsSiret });
+      campagnes = allCampagnes.filter(
+        (campagne) => campagne.formation.data.etablissement_formateur_siret === query.siret
+      );
+    }
+
     campagnes.forEach((campagne) => {
       campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
     });
@@ -20,6 +54,7 @@ const getCampagnes = async (query) => {
       campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
       delete campagne.temoignagesList;
     });
+
     return { success: true, body: campagnes };
   } catch (error) {
     return { success: false, body: error };
@@ -56,6 +91,7 @@ const deleteCampagnes = async (ids) => {
 
     return { success: true, body: deletedCampagnes };
   } catch (error) {
+    console.log({ error });
     return { success: false, body: error };
   }
 };

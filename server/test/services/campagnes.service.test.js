@@ -15,7 +15,8 @@ const formationsDao = require("../../src/dao/formations.dao");
 const etablissementsDao = require("../../src/dao/etablissements.dao");
 const temoignagesDao = require("../../src/dao/temoignages.dao");
 const pdfExport = require("../../src/modules/pdfExport");
-const { DIPLOME_TYPE_MATCHER } = require("../../src/constants");
+const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE } = require("../../src/constants");
+const referentiel = require("../../src/modules/referentiel");
 
 describe(__filename, () => {
   afterEach(async () => {
@@ -23,35 +24,38 @@ describe(__filename, () => {
   });
 
   describe("getCampagnes", async () => {
-    it("should be successful and returns campagnes with champsLibreRate ans medianDurationInMs", async () => {
-      const expectedMedianDurationInMs = 100;
-      const expectedChampsLibreRate = 50;
+    "should be successful and returns campagnes with champsLibreRate ans medianDurationInMs",
+      async () => {
+        const expectedMedianDurationInMs = 100;
+        const expectedChampsLibreRate = 50;
 
-      const questionnaire = newQuestionnaire();
+        const questionnaire = newQuestionnaire();
 
-      const temoignage = newTemoignage({
-        createdAt: new Date("2023-10-25T08:00:00.000Z"),
-        lastQuestionAt: new Date("2023-10-25T08:00:00.100Z"),
-        reponses: {
-          peurChangementConseil: "test verbatim",
-        },
-      });
+        const temoignage = newTemoignage({
+          createdAt: new Date("2023-10-25T08:00:00.000Z"),
+          lastQuestionAt: new Date("2023-10-25T08:00:00.100Z"),
+          reponses: {
+            peurChangementConseil: "test verbatim",
+          },
+        });
 
-      const campagne = newCampagne({ temoignagesList: [temoignage] });
+        const campagne = newCampagne({ temoignagesList: [temoignage] });
 
-      const stubbedCampagneReturned = { ...campagne, questionnaireUI: questionnaire.questionnaireUI };
+        const stubbedCampagneReturned = { ...campagne, questionnaireUI: questionnaire.questionnaireUI };
 
-      stub(campagnesDao, "getAllWithTemoignageCountAndTemplateName").returns([stubbedCampagneReturned]);
+        stub(referentiel, "getEtablissementNature").returns(ETABLISSEMENT_NATURE.GESTIONNAIRE);
+        stub(referentiel, "getEtablissementSIRETFromRelationType").returns(["987654321"]);
+        stub(campagnesDao, "getAllWithTemoignageCountAndTemplateName").returns([stubbedCampagneReturned]);
 
-      const { success, body } = await campagnesService.getCampagnes();
+        const { success, body } = await campagnesService.getCampagnes({ siret: "123456789" });
 
-      expect(success).to.be.true;
-      expect(body).to.be.an("array");
-      expect(body[0]).to.deep.equal(stubbedCampagneReturned);
-      expect(body[0]).to.not.have.property("temoignagesList");
-      expect(body[0].medianDurationInMs).to.equal(expectedMedianDurationInMs);
-      expect(body[0].champsLibreRate).to.equal(expectedChampsLibreRate);
-    });
+        expect(success).to.be.true;
+        expect(body).to.be.an("array");
+        expect(body[0]).to.deep.equal(stubbedCampagneReturned);
+        expect(body[0]).to.not.have.property("temoignagesList");
+        expect(body[0].medianDurationInMs).to.equal(expectedMedianDurationInMs);
+        expect(body[0].champsLibreRate).to.equal(expectedChampsLibreRate);
+      };
     it("should be unsuccessful and returns errors if it throws", async () => {
       stub(campagnesDao, "getAllWithTemoignageCountAndTemplateName").throws(new Error());
 

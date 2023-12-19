@@ -6,8 +6,8 @@ import Button from "../Components/Form/Button";
 import { UserContext } from "../context/UserContext";
 import { EtablissementsContext } from "../context/EtablissementsContext";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
-import useFetchLocalEtablissements from "../hooks/useFetchLocalEtablissements";
 import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
+import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import Step1 from "./CreateCampagnes/Step1";
 import Step2 from "./CreateCampagnes/Step2";
 import { multiCreationSubmitHandler } from "./submitHandlers";
@@ -25,15 +25,15 @@ const CreateCampagnesPage = () => {
   const [remoteFormations, loadingRemoteFormations, errorRemoteFormations] =
     useFetchRemoteFormations(etablissementsContext.siret);
 
-  const [localEtablissement, loadingLocalEtablissement, errorLocalEtablissement] =
-    useFetchLocalEtablissements(etablissementsContext.siret);
+  const campagneQuery = etablissementsContext.siret
+    ? `?siret=${etablissementsContext.siret}`
+    : null;
 
-  const localFormationQuery =
-    localEtablissement?.length &&
-    localEtablissement[0].formationIds
-      ?.filter(Boolean)
-      ?.map((id) => `id=${id}`)
-      .join("&");
+  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes(campagneQuery);
+
+  const localFormationQuery = campagnes
+    ?.map((campagne) => `id=${campagne.formation._id}`)
+    .join("&");
 
   const [localFormations, loadingLocalFormations, errorLocalFormations] =
     useFetchLocalFormations(localFormationQuery);
@@ -105,9 +105,9 @@ const CreateCampagnesPage = () => {
           hasError={
             !!(
               errorRemoteFormations ||
-              errorLocalEtablissement ||
               errorLocalFormations ||
-              errorQuestionnaires
+              errorQuestionnaires ||
+              errorCampagnes
             )
           }
           errorMessages={
@@ -120,9 +120,9 @@ const CreateCampagnesPage = () => {
           isLoading={
             !!(
               loadingRemoteFormations ||
-              loadingLocalEtablissement ||
               loadingLocalFormations ||
-              loadingQuestionnaires
+              loadingQuestionnaires ||
+              loadingCampagnes
             )
           }
           remoteFormations={remoteFormations}

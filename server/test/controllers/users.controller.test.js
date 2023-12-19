@@ -398,7 +398,7 @@ describe(__filename, () => {
 
       expect(usersService.forgotPassword).to.have.been.calledWith(req.body.email);
       expect(jwtSignStub).to.have.been.calledWith({ email: user.email }, config.auth.jwtSecret, {
-        expiresIn: "1h",
+        expiresIn: "24h",
       });
       expect(mailer.shootTemplate).to.have.been.calledWith({
         template: "reset_password",

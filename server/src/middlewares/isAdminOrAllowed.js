@@ -1,8 +1,9 @@
 const { UnauthorizedError } = require("../errors");
-const { USER_ROLES, USER_STATUS } = require("../constants");
+const { USER_ROLES, USER_STATUS, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
 const campagnesService = require("../services/campagnes.service");
 const etablissementsService = require("../services/etablissements.service");
 const formationsService = require("../services/formations.service");
+const referentiel = require("../modules/referentiel");
 
 const TYPES = {
   CAMPAGNE_ID: "campagneId",
@@ -35,14 +36,26 @@ const isAdminOrAllowed = async (req, next, type) => {
     // check campagneIds
     if (type === TYPES.CAMPAGNE_IDS) {
       const ids = req.query.ids.split(",");
+      const usedSiret = req.query.siret;
+
+      if (!multipleSiret.includes(usedSiret)) return next(new UnauthorizedError());
+
       const queries = ids.map((id) => ({ id, siret: siret ? siret : { $in: multipleSiret } }));
+
+      const etablissementFormateurSIRET = await referentiel.getEtablissementSIRETFromRelationType(
+        usedSiret,
+        ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
+      );
 
       const campagnePromises = queries.map(async (query) => {
         const { body } = await campagnesService.getOneCampagne(query);
 
         if (
           body &&
-          (siret === body.etablissement.data.siret || multipleSiret.includes(body.etablissement.data.siret))
+          (siret === body.etablissement.data.siret ||
+            multipleSiret.includes(body.etablissement.data.siret) ||
+            etablissementFormateurSIRET.includes(body.etablissement.data.siret) ||
+            multipleSiret.includes(body.formation.data.etablissement_formateur_siret))
         ) {
           return body._id.toString();
         }

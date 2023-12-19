@@ -52,4 +52,15 @@ const DIPLOME_TYPE_MATCHER = {
   "TH DE NIV 5 ORGANISMES GESTIONNAIRES DIVERS": "Titre Homologué de Niveau 5 Organismes Gestionnaires Divers",
 };
 
-module.exports = { USER_ROLES, USER_STATUS, DIPLOME_TYPE_MATCHER };
+const ETABLISSEMENT_NATURE = {
+  GESTIONNAIRE_FORMATEUR: "responsable_formateur",
+  GESTIONNAIRE: "responsable",
+  FORMATEUR: "formateur",
+};
+
+const ETABLISSEMENT_RELATION_TYPE = {
+  RESPONSABLE_FORMATEUR: "responsable->formateur",
+  FORMATEUR_RESPONSABLE: "formateur->responsable",
+};
+
+module.exports = { USER_ROLES, USER_STATUS, DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE };
