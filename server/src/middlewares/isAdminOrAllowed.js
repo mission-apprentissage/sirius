@@ -1,9 +1,9 @@
 const { UnauthorizedError } = require("../errors");
-const { USER_ROLES, USER_STATUS } = require("../constants");
+const { USER_ROLES, USER_STATUS, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
 const campagnesService = require("../services/campagnes.service");
 const etablissementsService = require("../services/etablissements.service");
 const formationsService = require("../services/formations.service");
-const { getEtablissementFormateurSIRETFromGestionnaires } = require("../modules/referentiel");
+const referentiel = require("../modules/referentiel");
 
 const TYPES = {
   CAMPAGNE_ID: "campagneId",
@@ -42,7 +42,10 @@ const isAdminOrAllowed = async (req, next, type) => {
 
       const queries = ids.map((id) => ({ id, siret: siret ? siret : { $in: multipleSiret } }));
 
-      const etablissementFormateurSIRET = await getEtablissementFormateurSIRETFromGestionnaires(usedSiret);
+      const etablissementFormateurSIRET = await referentiel.getEtablissementSIRETFromRelationType(
+        usedSiret,
+        ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
+      );
 
       const campagnePromises = queries.map(async (query) => {
         const { body } = await campagnesService.getOneCampagne(query);

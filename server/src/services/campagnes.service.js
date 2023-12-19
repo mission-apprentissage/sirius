@@ -9,14 +9,14 @@ const { getChampsLibreRate } = require("../utils/verbatims.utils");
 const { getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
-const { getEtablissementNature, getEtablissementSIRETFromRelationType } = require("../modules/referentiel");
+const referentiel = require("../modules/referentiel");
 
 const getCampagnes = async (query) => {
   try {
     let etablissementsSiret = [query.siret];
     let campagnes = [];
 
-    const etablissementNature = await getEtablissementNature(query.siret);
+    const etablissementNature = await referentiel.getEtablissementNature(query.siret);
 
     const isGestionnaire =
       etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE ||
@@ -26,15 +26,16 @@ const getCampagnes = async (query) => {
       etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
 
     if (isGestionnaire) {
-      const etablissementFormateurSIRET = await getEtablissementSIRETFromRelationType(
+      const etablissementFormateurSIRET = await referentiel.getEtablissementSIRETFromRelationType(
         query.siret,
         ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
       );
 
       etablissementsSiret.push(...etablissementFormateurSIRET);
+
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: etablissementsSiret });
     } else if (isFormateur) {
-      const etablissementGestionnaireSiret = await getEtablissementSIRETFromRelationType(
+      const etablissementGestionnaireSiret = await referentiel.getEtablissementSIRETFromRelationType(
         query.siret,
         ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE
       );
@@ -90,6 +91,7 @@ const deleteCampagnes = async (ids) => {
 
     return { success: true, body: deletedCampagnes };
   } catch (error) {
+    console.log({ error });
     return { success: false, body: error };
   }
 };

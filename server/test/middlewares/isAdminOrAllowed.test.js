@@ -9,6 +9,7 @@ const { USER_ROLES, USER_STATUS } = require("../../src/constants");
 const campagnesService = require("../../src/services/campagnes.service");
 const etablissementsService = require("../../src/services/etablissements.service");
 const formationsService = require("../../src/services/formations.service");
+const referentiel = require("../../src/modules/referentiel");
 
 chai.use(sinonChai);
 
@@ -73,8 +74,12 @@ describe(__filename, () => {
     expect(next.args[0]).to.eql([]);
   });
   it("should call next if user is an etablissement and active and is of type campagneIds", async () => {
-    const reqWithCampagneId = { ...req, query: { ids: "some-id,other-id" } };
     const siret = "123456789";
+    const otherSiret = "987654321";
+    const reqWithCampagneId = { ...req, query: { ids: "some-id,other-id", siret } };
+
+    const getEtablissementSIRETFromRelationTypeStub = sinon.stub(referentiel, "getEtablissementSIRETFromRelationType");
+    getEtablissementSIRETFromRelationTypeStub.resolves([otherSiret]);
 
     const getOneCampagneStub = sinon.stub(campagnesService, "getOneCampagne");
 

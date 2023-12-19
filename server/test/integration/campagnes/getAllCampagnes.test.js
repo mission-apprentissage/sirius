@@ -1,7 +1,7 @@
 const sinon = require("sinon");
 const { expect } = require("chai");
 const httpTests = require("../utils/httpTests");
-const { newCampagne } = require("../../fixtures");
+const { newCampagne, newEtablissement, newFormation } = require("../../fixtures");
 const { createVerifyAndLoginUser } = require("../utils/user");
 
 httpTests(__filename, ({ startServer }) => {
@@ -13,16 +13,30 @@ httpTests(__filename, ({ startServer }) => {
   });
   it("should return 200 with multiple campagnes if it exists", async () => {
     const { httpClient, components } = await startServer();
+
     const campagne1 = newCampagne();
     const campagne2 = newCampagne({ nomCampagne: "Campagne 2" });
 
-    await components.campagnes.create(campagne1);
-    await components.campagnes.create(campagne2);
+    const createdCampagne1 = await components.campagnes.create(campagne1);
+    const createdCampagne2 = await components.campagnes.create(campagne2);
 
-    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
+    const formation1 = newFormation({ campagneId: createdCampagne1._id });
+    const formation2 = newFormation({ campagneId: createdCampagne2._id });
+
+    const createdFormation1 = await components.formations.create(formation1);
+    const createdFormation2 = await components.formations.create(formation2);
+
+    const etablissement = newEtablissement({
+      formationIds: [createdFormation1._id.toString(), createdFormation2._id.toString()],
+      "data.siret": "30540504500017",
+    });
+
+    await components.etablissements.create(etablissement);
+
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient, true);
 
     const response = await httpClient
-      .get("/api/campagnes/")
+      .get(`/api/campagnes?siret=30540504500017`)
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
 
     expect(response.status).to.eql(200);

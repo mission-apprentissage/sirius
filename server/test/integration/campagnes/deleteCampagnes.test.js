@@ -26,10 +26,10 @@ httpTests(__filename, ({ startServer }) => {
 
     await components.etablissements.create(etablissement);
 
-    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient);
+    const loggedInUserResponse = await createVerifyAndLoginUser(httpClient, true);
 
     const response = await httpClient
-      .delete("/api/campagnes?ids=" + [createdCampagne1._id, createdCampagne2._id].join(","))
+      .delete("/api/campagnes?siret=12345678901234&ids=" + [createdCampagne1._id, createdCampagne2._id].join(","))
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
 
     expect(response.status).to.eql(200);
