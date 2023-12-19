@@ -3,6 +3,7 @@ const { USER_ROLES, USER_STATUS } = require("../constants");
 const campagnesService = require("../services/campagnes.service");
 const etablissementsService = require("../services/etablissements.service");
 const formationsService = require("../services/formations.service");
+const { getEtablissementFormateurSIRETFromGestionnaires } = require("../modules/referentiel");
 
 const TYPES = {
   CAMPAGNE_ID: "campagneId",
@@ -41,17 +42,7 @@ const isAdminOrAllowed = async (req, next, type) => {
 
       const queries = ids.map((id) => ({ id, siret: siret ? siret : { $in: multipleSiret } }));
 
-      // eslint-disable-next-line node/no-unsupported-features/es-syntax
-      const fetch = (await import("node-fetch")).default;
-
-      const response = await fetch(`https://referentiel.apprentissage.onisep.fr/api/v1/organismes/${usedSiret}`, {
-        method: "GET",
-      });
-      const data = await response.json();
-
-      const filteredRelationsSiret = data.relations
-        .filter((relation) => relation.type === "responsable->formateur")
-        .map((etablissementFormateur) => etablissementFormateur.siret);
+      const etablissementFormateurSIRET = await getEtablissementFormateurSIRETFromGestionnaires(usedSiret);
 
       const campagnePromises = queries.map(async (query) => {
         const { body } = await campagnesService.getOneCampagne(query);
@@ -60,7 +51,7 @@ const isAdminOrAllowed = async (req, next, type) => {
           body &&
           (siret === body.etablissement.data.siret ||
             multipleSiret.includes(body.etablissement.data.siret) ||
-            filteredRelationsSiret.includes(body.etablissement.data.siret) ||
+            etablissementFormateurSIRET.includes(body.etablissement.data.siret) ||
             multipleSiret.includes(body.formation.data.etablissement_formateur_siret))
         ) {
           return body._id.toString();
