@@ -120,6 +120,7 @@ const SupportModal = ({ isOpen, onClose, token }) => {
                     color="brand.black.500"
                     _placeholder={{ color: "brand.black.500" }}
                     borderColor="brand.blue.400"
+                    spellCheck
                   />
                 </FormControl>
                 <Button isLoading={isSubmitting} mt="16px">

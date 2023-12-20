@@ -99,6 +99,7 @@ const CustomMessageReceived = (props) => {
           borderRadius="20px 20px 0px 20px"
           color="brand.black.500"
           _placeholder={{ color: "brand.black.500" }}
+          spellCheck
         />
         <Popover>
           <PopoverTrigger>
