@@ -11,7 +11,7 @@ let initialState = { etablissements: [], etablissementLabel: "", siret: "" };
 const EtablissementsProvider = (props) => {
   const [etablissements, setEtablissements] = useState(initialState);
   const [userContext] = useContext(UserContext);
-  console.log({ userContext });
+
   const getAdminEtablissements = async () => {
     const etablissementsResult = await _get("/api/etablissements", userContext.token);
     const cleanedEtablissements = etablissementsResult.map((etablissement) => ({

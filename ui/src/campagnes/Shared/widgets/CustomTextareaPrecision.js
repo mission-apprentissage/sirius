@@ -30,6 +30,7 @@ const CustomTextareaPrecision = (props) => {
           value={props.value}
           size="md"
           _placeholder={{ color: "brand.black.500" }}
+          spellCheck
         />
         <Popover>
           <PopoverTrigger>
