@@ -30,6 +30,18 @@ const getColumns = [
   columnHelper.accessor("campagneIds", {
     cell: (info) => <p>{info.getValue().length}</p>,
     header: "Campagnes",
+    sortingFn: (rowA, rowB, columnId, desc) => {
+      const lengthA = rowA.getValue(columnId)?.length ?? 0;
+      const lengthB = rowB.getValue(columnId)?.length ?? 0;
+
+      if (lengthA > lengthB) {
+        return desc ? -1 : 1;
+      }
+      if (lengthA < lengthB) {
+        return desc ? 1 : -1;
+      }
+      return 0;
+    },
   }),
   columnHelper.accessor("temoignagesCount", {
     cell: (info) => <p>{info.getValue()}</p>,
