@@ -101,6 +101,18 @@ const NAV_ITEMS = [
     ],
     roles: [USER_ROLES.ADMIN],
   },
+  {
+    label: "Suivi",
+    children: [
+      {
+        label: "Établissements",
+        subLabel: "Suivre les statistiques des établissements",
+        href: "/suivi/etablissements",
+        roles: [USER_ROLES.ADMIN],
+      },
+    ],
+    roles: [USER_ROLES.ADMIN],
+  },
 ];
 
 const filterNavItemsByRole = (items, currentUserRole) => {

@@ -36,6 +36,18 @@ const getChampsLibreRate = (questionnaireUI, temoignages) => {
   return rate || 0;
 };
 
+const getChampsLibreCount = (questionnaireUI, temoignages) => {
+  const champsLibreField = getChampsLibreField(questionnaireUI, true);
+
+  const champsLibresFieldsCountWithAnswer = temoignages.reduce((acc, cur) => {
+    const answers = Object.keys(cur.reponses);
+    const count = answers.filter((answer) => champsLibreField.includes(answer)).length;
+    return acc + count;
+  }, 0);
+
+  return champsLibresFieldsCountWithAnswer || 0;
+};
+
 const findTitlesInJSON = (jsonData, keysToFind) => {
   const titles = {};
 
@@ -131,6 +143,7 @@ const appendFormationAndEtablissementToVerbatims = (temoignages, campagnesByQues
 module.exports = {
   getChampsLibreField,
   getChampsLibreRate,
+  getChampsLibreCount,
   findTitlesInJSON,
   filterChampsLibresAndFlatten,
   appendVerbatimsWithCampagneNameAndRestructure,

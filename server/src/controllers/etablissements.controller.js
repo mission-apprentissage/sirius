@@ -53,4 +53,19 @@ const updateEtablissement = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-module.exports = { createEtablissement, getEtablissements, getEtablissement, deleteEtablissement, updateEtablissement };
+const getEtablissementsSuivi = tryCatch(async (req, res) => {
+  const { success, body } = await etablissementsService.getEtablissementsSuivi();
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
+module.exports = {
+  createEtablissement,
+  getEtablissements,
+  getEtablissement,
+  deleteEtablissement,
+  updateEtablissement,
+  getEtablissementsSuivi,
+};
