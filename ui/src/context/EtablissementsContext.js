@@ -11,7 +11,7 @@ let initialState = { etablissements: [], etablissementLabel: "", siret: "" };
 const EtablissementsProvider = (props) => {
   const [etablissements, setEtablissements] = useState(initialState);
   const [userContext] = useContext(UserContext);
-
+  console.log({ userContext });
   const getAdminEtablissements = async () => {
     const etablissementsResult = await _get("/api/etablissements", userContext.token);
     const cleanedEtablissements = etablissementsResult.map((etablissement) => ({
@@ -45,6 +45,18 @@ const EtablissementsProvider = (props) => {
       }
       if (userContext.currentUserRole === USER_ROLES.ETABLISSEMENT) {
         const persistedEtablissements = JSON.parse(localStorage.getItem("etablissements"));
+        const siretList = userContext.etablissements.map((etablissement) => etablissement.siret);
+
+        if (!siretList.includes(persistedEtablissements.siret)) {
+          localStorage.setItem(
+            "etablissements",
+            JSON.stringify({
+              siret: userContext.etablissements[0].siret,
+              etablissementLabel: etablissementLabelGetter(userContext.etablissements[0]),
+              etablissements: userContext.etablissements,
+            })
+          );
+        }
         setEtablissements((oldValues) => {
           return {
             ...oldValues,
