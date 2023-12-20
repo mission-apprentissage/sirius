@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import useFetchEtablissementsSuivi from "../hooks/useFetchEtablissementsSuivi";
-import { Box, Text, Spinner, VStack } from "@chakra-ui/react";
+import { Box, Text, Spinner, VStack, HStack } from "@chakra-ui/react";
 import SuiviEtablissementsTable from "./SuiviEtablissements/SuiviEtablissementsTable";
 import SuiviEtablissementsStatistics from "./SuiviEtablissements/SuiviEtablissementsStatistics";
 import SuiviEtablissementsSearch from "./SuiviEtablissements/SuiviEtablissementsSearch";
+import SuiviEtablissementsFilters from "./SuiviEtablissements/SuiviEtablissementsFilters";
 
 const SuiviEtablissementsPage = () => {
   const [displayedEtablissements, setDisplayedEtablissements] = useState([]);
@@ -20,19 +21,26 @@ const SuiviEtablissementsPage = () => {
     return <Spinner />;
 
   return (
-    <VStack mt="5" w="100%">
-      <Box w="100%">
+    <VStack my="5" w="100%">
+      <Box w="100%" my="5">
         <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">
           Statistiques des établissements
         </Text>
       </Box>
       <SuiviEtablissementsStatistics etablissements={displayedEtablissements} />
-      <SuiviEtablissementsSearch
-        etablissements={etablissementsSuivi}
-        setDisplayedEtablissements={setDisplayedEtablissements}
-        search={search}
-        setSearch={setSearch}
-      />
+      <HStack w="100%" my="5">
+        <SuiviEtablissementsSearch
+          etablissements={etablissementsSuivi}
+          setDisplayedEtablissements={setDisplayedEtablissements}
+          search={search}
+          setSearch={setSearch}
+        />
+        <SuiviEtablissementsFilters
+          etablissements={etablissementsSuivi}
+          setDisplayedEtablissements={setDisplayedEtablissements}
+          setSearch={setSearch}
+        />
+      </HStack>
       <SuiviEtablissementsTable etablissements={displayedEtablissements} />
     </VStack>
   );

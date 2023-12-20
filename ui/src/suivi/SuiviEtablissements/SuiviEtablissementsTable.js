@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Box, Table, Thead, Tbody, Tr, Th, Td, chakra, Stack } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Box, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react";
 import {
   useReactTable,
   flexRender,
@@ -43,7 +43,7 @@ const getColumns = [
 
 const SuiviEtablissementsTable = ({ etablissements = [] }) => {
   const [sorting, setSorting] = useState([]);
-  console.log({ etablissements });
+
   const table = useReactTable({
     columns: getColumns,
     data: etablissements,
