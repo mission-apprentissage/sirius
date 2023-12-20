@@ -91,7 +91,6 @@ const deleteCampagnes = async (ids) => {
 
     return { success: true, body: deletedCampagnes };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };

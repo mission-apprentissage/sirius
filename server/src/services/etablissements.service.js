@@ -1,4 +1,6 @@
 const etablissementsDao = require("../dao/etablissements.dao");
+const questionnairesDao = require("../dao/questionnaires.dao");
+const { getChampsLibreCount } = require("../utils/verbatims.utils");
 
 const createEtablissement = async (etablissement) => {
   try {
@@ -57,4 +59,56 @@ const updateEtablissement = async (id, updatedEtablissement) => {
   }
 };
 
-module.exports = { createEtablissement, getEtablissements, getEtablissement, deleteEtablissement, updateEtablissement };
+const getEtablissementsSuivi = async () => {
+  try {
+    const etablissements = await etablissementsDao.getAllSuivi();
+
+    let questionnaireIds = [];
+
+    etablissements.forEach((etablissement) => {
+      const campagnesQuestionnairesIds = etablissement.campagnes.map((campagne) => campagne.questionnaireId);
+      questionnaireIds.push(...campagnesQuestionnairesIds);
+    });
+
+    const uniqueQuestionnaireIds = [...new Set(questionnaireIds)];
+
+    let questionnairePromises = uniqueQuestionnaireIds.map((questionnaireId) => {
+      return questionnairesDao.getOne(questionnaireId);
+    });
+
+    let uniqueQuestionnaire = await Promise.all(questionnairePromises);
+
+    etablissements.forEach((etablissement) => {
+      etablissement.campagnes.forEach((campagne) => {
+        const questionnaire = uniqueQuestionnaire.find(
+          (questionnaire) => questionnaire._id.toString() === campagne.questionnaireId
+        );
+        const temoignagesList = etablissement.temoignages.filter(
+          (temoignage) => temoignage.campagneId.toString() === campagne._id.toString()
+        );
+
+        campagne.champsLibreCount = getChampsLibreCount(questionnaire.questionnaireUI, temoignagesList);
+      });
+      const allCampagneChampsLibreCount = etablissement.campagnes.map((campagne) => campagne.champsLibreCount);
+
+      etablissement.champsLibreCount = allCampagneChampsLibreCount.reduce((a, b) => a + b, 0);
+      etablissement.temoignagesCount = etablissement.temoignages.length;
+
+      delete etablissement.temoignages;
+      delete etablissement.campagnes;
+    });
+
+    return { success: true, body: etablissements };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = {
+  createEtablissement,
+  getEtablissements,
+  getEtablissement,
+  deleteEtablissement,
+  updateEtablissement,
+  getEtablissementsSuivi,
+};
