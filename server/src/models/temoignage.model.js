@@ -6,6 +6,7 @@ const temoignageSchema = new mongoose.Schema(
     reponses: { type: Object, required: true },
     deletedAt: { type: Date, default: null },
     lastQuestionAt: { type: Date, default: null },
+    isBot: { type: Boolean, default: false },
   },
   { minimize: false, timestamps: true }
 );
