@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody } from "@chakra-ui/react";
 
-const BotDetectionModal = ({ isOpen }) => {
+const BotDetectedModal = ({ isOpen }) => {
   return (
     <Modal isOpen={isOpen} size="xl" isCentered closeOnOverlayClick={false}>
       <ModalOverlay />
@@ -25,4 +25,4 @@ const BotDetectionModal = ({ isOpen }) => {
   );
 };
 
-export default BotDetectionModal;
+export default BotDetectedModal;
