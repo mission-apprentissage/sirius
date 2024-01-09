@@ -15,7 +15,7 @@ const ModerationStatistics = ({ verbatims }) => {
         verbatim.value.status === VERBATIM_STATUS.ALERT ||
         verbatim.value.status === VERBATIM_STATUS.REJECTED)
   );
-  console.log({ rejectedVerbatims });
+
   return (
     <SimpleGrid spacing={3} templateColumns="repeat(auto-fill, minmax(170px, 1fr))" w="100%">
       <Card variant="filled" bgColor="brand.blue.100" borderRadius="12px">
