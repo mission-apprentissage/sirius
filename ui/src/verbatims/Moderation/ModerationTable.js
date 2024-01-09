@@ -176,7 +176,7 @@ const ModerationTable = ({ verbatims = [] }) => {
       </Thead>
       <Tbody>
         {table.getRowModel().rows.map((row, index) => (
-          <Tr key={row.createdAt}>
+          <Tr key={row.original.createdAt + row.original.temoignageId + row.original.key}>
             {row.getVisibleCells().map((cell) => {
               return (
                 <Td
