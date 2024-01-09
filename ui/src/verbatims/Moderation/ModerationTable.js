@@ -63,7 +63,7 @@ const getColumns = (handleVerbatimStatusChange) => [
   }),
   columnHelper.accessor((row) => [row.etablissement, row.formation], {
     cell: (info) => (
-      <VStack>
+      <VStack alignItems="flex-start">
         <p>{info.getValue()[0]}</p>
         <p>{info.getValue()[1]}</p>
       </VStack>

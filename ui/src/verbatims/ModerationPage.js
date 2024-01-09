@@ -7,16 +7,19 @@ import ModerationStatistics from "./Moderation/ModerationStatistics";
 import useFetchVerbatims from "../hooks/useFetchVerbatims";
 import ModerationEtablissementPicker from "./Moderation/ModerationEtablissementPicker";
 import ModerationFormationPicker from "./Moderation/ModerationFormationPicker";
+import ModerationQuestionPicker from "./Moderation/ModerationQuestionPicker";
 
 const ModerationPage = () => {
   const [questionnaireIds, setQuestionnaireIds] = useState([]);
   const [displayedVerbatims, setDisplayedVerbatims] = useState([]);
   const [etablissements, setEtablissements] = useState([]);
   const [formations, setFormations] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [searchParams] = useSearchParams();
 
   const selectedEtablissement = searchParams.get("etablissement");
   const selectedFormation = searchParams.get("formation");
+  const selectedQuestion = searchParams.get("question");
 
   const [questionnaires, loadingQuestionnaires, errorQuestionnaires] =
     useGet(`/api/questionnaires/`);
@@ -69,6 +72,21 @@ const ModerationPage = () => {
   }, [selectedEtablissement, verbatims]);
 
   useEffect(() => {
+    if (verbatims?.length) {
+      const questionsByFilteredVerbatims = verbatims.map((verbatim) => ({
+        label: verbatim.title,
+        value: verbatim.key,
+      }));
+
+      const deduplicatedQuestions = questionsByFilteredVerbatims.filter(
+        (question, index, self) => index === self.findIndex((t) => t.value === question.value)
+      );
+
+      setQuestions(deduplicatedQuestions);
+    }
+  }, [verbatims]);
+
+  useEffect(() => {
     let filteredVerbatims = verbatims;
 
     if (verbatims) {
@@ -84,12 +102,20 @@ const ModerationPage = () => {
         );
       }
 
+      if (selectedQuestion && selectedQuestion !== "all") {
+        filteredVerbatims = filteredVerbatims.filter(
+          (verbatim) => verbatim.key === selectedQuestion
+        );
+      }
+
       setDisplayedVerbatims(filteredVerbatims);
     }
   }, [searchParams, verbatims]);
 
   if (loadingQuestionnaires || errorQuestionnaires || loadingVerbatims || errorVerbatims)
     return <Spinner />;
+
+  const hasSelectedEtablissement = selectedEtablissement && selectedEtablissement !== "all";
 
   return (
     <VStack my="5" w="100%">
@@ -100,10 +126,19 @@ const ModerationPage = () => {
       </Box>
       <ModerationStatistics verbatims={displayedVerbatims} />
       <HStack w="100%" my="5">
-        <ModerationEtablissementPicker etablissements={etablissements} />
-        {selectedEtablissement && selectedEtablissement !== "all" && (
-          <ModerationFormationPicker formations={formations} />
+        <Box w={hasSelectedEtablissement ? "33%" : "50%"}>
+          <ModerationEtablissementPicker etablissements={etablissements} />
+        </Box>
+
+        {hasSelectedEtablissement && (
+          <Box w="33%">
+            <ModerationFormationPicker formations={formations} />
+          </Box>
         )}
+
+        <Box w={hasSelectedEtablissement ? "33%" : "50%"}>
+          <ModerationQuestionPicker questions={questions} />
+        </Box>
       </HStack>
       <ModerationTable verbatims={displayedVerbatims} />
     </VStack>
