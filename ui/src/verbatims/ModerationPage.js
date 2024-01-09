@@ -6,50 +6,85 @@ import ModerationTable from "./Moderation/ModerationTable";
 import ModerationStatistics from "./Moderation/ModerationStatistics";
 import useFetchVerbatims from "../hooks/useFetchVerbatims";
 import ModerationEtablissementPicker from "./Moderation/ModerationEtablissementPicker";
+import ModerationFormationPicker from "./Moderation/ModerationFormationPicker";
 
 const ModerationPage = () => {
   const [questionnaireIds, setQuestionnaireIds] = useState([]);
   const [displayedVerbatims, setDisplayedVerbatims] = useState([]);
   const [etablissements, setEtablissements] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [formations, setFormations] = useState([]);
+  const [searchParams] = useSearchParams();
+
+  const selectedEtablissement = searchParams.get("etablissement");
+  const selectedFormation = searchParams.get("formation");
 
   const [questionnaires, loadingQuestionnaires, errorQuestionnaires] =
     useGet(`/api/questionnaires/`);
-
-  useEffect(() => {
-    if (!loadingQuestionnaires && !errorQuestionnaires && questionnaires?.length) {
-      const questionnaireIds = questionnaires.map((questionnaire) => questionnaire._id);
-      setQuestionnaireIds(questionnaireIds);
-    }
-  }, [questionnaires, loadingQuestionnaires, errorQuestionnaires]);
-
   const [verbatims, loadingVerbatims, errorVerbatims] = useFetchVerbatims(questionnaireIds);
 
   useEffect(() => {
-    if (!loadingVerbatims && !errorVerbatims && verbatims?.length) {
+    if (questionnaires?.length) {
+      const questionnaireIds = questionnaires.map((questionnaire) => questionnaire._id);
+      setQuestionnaireIds(questionnaireIds);
+    }
+  }, [questionnaires]);
+
+  useEffect(() => {
+    if (verbatims?.length) {
+      setDisplayedVerbatims(verbatims);
+    }
+  }, [verbatims]);
+
+  useEffect(() => {
+    if (verbatims?.length) {
       const etablissements = verbatims.map((verbatim) => ({
         label: verbatim.etablissement,
         value: verbatim.etablissementSiret,
       }));
+
       const deduplicatedEtablissements = etablissements.filter(
         (etablissement, index, self) =>
           index === self.findIndex((t) => t.value === etablissement.value)
       );
 
-      setDisplayedVerbatims(verbatims);
       setEtablissements(deduplicatedEtablissements);
     }
   }, [verbatims]);
 
   useEffect(() => {
-    const etablissementSiret = searchParams.get("etablissement");
-    if (verbatims && etablissementSiret && etablissementSiret !== "all") {
-      const filteredVerbatims = verbatims.filter(
-        (verbatim) => verbatim.etablissementSiret === etablissementSiret
+    if (verbatims?.length && selectedEtablissement && selectedEtablissement !== "all") {
+      const formationsByFilteredVerbatims = verbatims
+        .filter((verbatim) => verbatim.etablissementSiret === selectedEtablissement)
+        .map((verbatim) => ({
+          label: verbatim.formation,
+          value: verbatim.formationId,
+        }));
+
+      const deduplicatedFormations = formationsByFilteredVerbatims.filter(
+        (formation, index, self) => index === self.findIndex((t) => t.value === formation.value)
       );
+
+      setFormations(deduplicatedFormations);
+    }
+  }, [selectedEtablissement, verbatims]);
+
+  useEffect(() => {
+    let filteredVerbatims = verbatims;
+
+    if (verbatims) {
+      if (selectedEtablissement && selectedEtablissement !== "all") {
+        filteredVerbatims = filteredVerbatims.filter(
+          (verbatim) => verbatim.etablissementSiret === selectedEtablissement
+        );
+      }
+
+      if (selectedFormation && selectedFormation !== "all") {
+        filteredVerbatims = filteredVerbatims.filter(
+          (verbatim) => verbatim.formationId === selectedFormation
+        );
+      }
+
       setDisplayedVerbatims(filteredVerbatims);
-    } else if (verbatims && etablissementSiret === "all") {
-      setDisplayedVerbatims(verbatims);
     }
   }, [searchParams, verbatims]);
 
@@ -66,6 +101,9 @@ const ModerationPage = () => {
       <ModerationStatistics verbatims={displayedVerbatims} />
       <HStack w="100%" my="5">
         <ModerationEtablissementPicker etablissements={etablissements} />
+        {selectedEtablissement && selectedEtablissement !== "all" && (
+          <ModerationFormationPicker formations={formations} />
+        )}
       </HStack>
       <ModerationTable verbatims={displayedVerbatims} />
     </VStack>
