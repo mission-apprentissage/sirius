@@ -12,6 +12,7 @@ import {
   Td,
   chakra,
   VStack,
+  Checkbox,
 } from "@chakra-ui/react";
 import {
   useReactTable,
@@ -24,14 +25,43 @@ import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import parse from "html-react-parser";
 import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../../constants";
 import { _patch } from "../../utils/httpClient";
-import { UserContext } from "../../context/UserContext";
 
 const columnHelper = createColumnHelper();
 
-const getColumns = (handleVerbatimStatusChange) => [
+const getColumns = (handleVerbatimStatusChange, selectedVerbatims, setSelectedVerbatims) => [
+  columnHelper.accessor((row) => [row.key, row.temoignageId], {
+    id: "checkbox",
+    cell: (info) => {
+      const key = info.getValue()[0];
+      const temoignageId = info.getValue()[1];
+      const verbatimId = `${temoignageId}_${key}`;
+      return (
+        <Checkbox
+          id={verbatimId}
+          size="lg"
+          pr="8px"
+          borderColor="brand.blue.400"
+          isChecked={selectedVerbatims.includes(verbatimId)}
+          _checked={{
+            "& .chakra-checkbox__control": { backgroundColor: "brand.blue.700" },
+          }}
+          onChange={(e) =>
+            setSelectedVerbatims(
+              e.target.checked
+                ? [...selectedVerbatims, verbatimId]
+                : selectedVerbatims.filter((id) => id !== verbatimId)
+            )
+          }
+        />
+      );
+    },
+    header: "",
+  }),
   columnHelper.accessor("value", {
     cell: (info) => {
-      const content = info.getValue().content || info.getValue();
+      const content =
+        typeof info.getValue() === "string" ? info.getValue() : info.getValue().content;
+      console.log({ content });
       return <p>{content}</p>;
     },
     header: "Verbatim",
@@ -90,10 +120,14 @@ const getColumns = (handleVerbatimStatusChange) => [
   }),
 ];
 
-const ModerationTable = ({ verbatims = [] }) => {
+const ModerationTable = ({
+  verbatims = [],
+  selectedVerbatims,
+  setSelectedVerbatims,
+  userContext,
+}) => {
   const [sorting, setSorting] = useState([]);
   const toast = useToast();
-  const [userContext] = useContext(UserContext);
 
   const handleVerbatimStatusChange = async (e, verbatim, questionId, temoignageId) => {
     const status = e.target.value;
@@ -127,7 +161,7 @@ const ModerationTable = ({ verbatims = [] }) => {
   };
 
   const table = useReactTable({
-    columns: getColumns(handleVerbatimStatusChange),
+    columns: getColumns(handleVerbatimStatusChange, selectedVerbatims, setSelectedVerbatims),
     data: verbatims,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { VStack, Spinner, Box, Text, HStack } from "@chakra-ui/react";
 import { useSearchParams } from "react-router-dom";
 import { useGet } from "../common/hooks/httpHooks";
@@ -9,6 +9,8 @@ import ModerationEtablissementPicker from "./Moderation/ModerationEtablissementP
 import ModerationFormationPicker from "./Moderation/ModerationFormationPicker";
 import ModerationQuestionPicker from "./Moderation/ModerationQuestionPicker";
 import ModerationFilters from "./Moderation/ModerationFilters";
+import ModerationGroupedAction from "./Moderation/ModerationGroupedAction";
+import { UserContext } from "../context/UserContext";
 
 const ModerationPage = () => {
   const [questionnaireIds, setQuestionnaireIds] = useState([]);
@@ -16,7 +18,10 @@ const ModerationPage = () => {
   const [etablissements, setEtablissements] = useState([]);
   const [formations, setFormations] = useState([]);
   const [questions, setQuestions] = useState([]);
-  const [searchParams] = useSearchParams();
+  const [selectedVerbatims, setSelectedVerbatims] = useState([]);
+  const [userContext] = useContext(UserContext);
+  const [shouldRefresh, setShouldRefresh] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedEtablissement = searchParams.get("etablissement");
   const selectedFormation = searchParams.get("formation");
@@ -24,7 +29,10 @@ const ModerationPage = () => {
 
   const [questionnaires, loadingQuestionnaires, errorQuestionnaires] =
     useGet(`/api/questionnaires/`);
-  const [verbatims, loadingVerbatims, errorVerbatims] = useFetchVerbatims(questionnaireIds);
+  const [verbatims, loadingVerbatims, errorVerbatims] = useFetchVerbatims(
+    questionnaireIds,
+    shouldRefresh
+  );
 
   useEffect(() => {
     if (questionnaires?.length) {
@@ -113,6 +121,12 @@ const ModerationPage = () => {
     }
   }, [searchParams, verbatims]);
 
+  useEffect(() => {
+    if (shouldRefresh) {
+      setShouldRefresh(false);
+    }
+  }, [shouldRefresh]);
+
   if (loadingQuestionnaires || errorQuestionnaires || loadingVerbatims || errorVerbatims)
     return <Spinner />;
 
@@ -126,6 +140,28 @@ const ModerationPage = () => {
         </Text>
       </Box>
       <ModerationStatistics verbatims={displayedVerbatims} />
+      <Box w="100%" my="5">
+        <Text fontSize="2xl" fontWeight="600" color="brand.blue.700">
+          Filtres{" "}
+          <Text
+            as="span"
+            fontSize="xs"
+            color="black"
+            fontWeight="300"
+            cursor="pointer"
+            onClick={() => {
+              setSearchParams({
+                etablissement: "all",
+                formation: "all",
+                question: "all",
+              });
+              setDisplayedVerbatims(verbatims);
+            }}
+          >
+            Réinitialiser
+          </Text>
+        </Text>
+      </Box>
       <HStack w="100%" mt="5" mb="2">
         <Box w={hasSelectedEtablissement ? "33%" : "50%"}>
           <ModerationEtablissementPicker etablissements={etablissements} />
@@ -139,13 +175,34 @@ const ModerationPage = () => {
           <ModerationQuestionPicker questions={questions} />
         </Box>
       </HStack>
-      <Box mb="5">
-        <ModerationFilters
-          verbatims={displayedVerbatims}
-          setDisplayedVerbatims={setDisplayedVerbatims}
-        />
+      <HStack w="100%" mb="2">
+        <Box w="max-content">
+          <ModerationFilters
+            verbatims={displayedVerbatims}
+            setDisplayedVerbatims={setDisplayedVerbatims}
+          />
+        </Box>
+        <Box w="max-content" minW="200px">
+          <ModerationGroupedAction
+            verbatims={displayedVerbatims}
+            selectedVerbatims={selectedVerbatims}
+            setSelectedVerbatims={setSelectedVerbatims}
+            setShouldRefresh={setShouldRefresh}
+            userContext={userContext}
+          />
+        </Box>
+      </HStack>
+      <Box w="100%" my="5">
+        <Text fontSize="2xl" fontWeight="600" color="brand.blue.700">
+          Verbatims
+        </Text>
       </Box>
-      <ModerationTable verbatims={displayedVerbatims} />
+      <ModerationTable
+        verbatims={displayedVerbatims}
+        selectedVerbatims={selectedVerbatims}
+        setSelectedVerbatims={setSelectedVerbatims}
+        userContext={userContext}
+      />
     </VStack>
   );
 };
