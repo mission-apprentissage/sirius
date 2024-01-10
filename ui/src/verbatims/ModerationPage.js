@@ -8,6 +8,7 @@ import useFetchVerbatims from "../hooks/useFetchVerbatims";
 import ModerationEtablissementPicker from "./Moderation/ModerationEtablissementPicker";
 import ModerationFormationPicker from "./Moderation/ModerationFormationPicker";
 import ModerationQuestionPicker from "./Moderation/ModerationQuestionPicker";
+import ModerationFilters from "./Moderation/ModerationFilters";
 
 const ModerationPage = () => {
   const [questionnaireIds, setQuestionnaireIds] = useState([]);
@@ -118,28 +119,32 @@ const ModerationPage = () => {
   const hasSelectedEtablissement = selectedEtablissement && selectedEtablissement !== "all";
 
   return (
-    <VStack my="5" w="100%">
+    <VStack my="5" w="100%" alignItems="flex-start">
       <Box w="100%" my="5">
         <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">
           Modération des verbatims
         </Text>
       </Box>
       <ModerationStatistics verbatims={displayedVerbatims} />
-      <HStack w="100%" my="5">
+      <HStack w="100%" mt="5" mb="2">
         <Box w={hasSelectedEtablissement ? "33%" : "50%"}>
           <ModerationEtablissementPicker etablissements={etablissements} />
         </Box>
-
         {hasSelectedEtablissement && (
           <Box w="33%">
             <ModerationFormationPicker formations={formations} />
           </Box>
         )}
-
         <Box w={hasSelectedEtablissement ? "33%" : "50%"}>
           <ModerationQuestionPicker questions={questions} />
         </Box>
       </HStack>
+      <Box mb="5">
+        <ModerationFilters
+          verbatims={displayedVerbatims}
+          setDisplayedVerbatims={setDisplayedVerbatims}
+        />
+      </Box>
       <ModerationTable verbatims={displayedVerbatims} />
     </VStack>
   );
