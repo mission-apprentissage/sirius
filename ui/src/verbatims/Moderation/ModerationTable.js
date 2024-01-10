@@ -22,7 +22,7 @@ import {
 } from "@tanstack/react-table";
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import parse from "html-react-parser";
-import { VERBATIM_STATUS } from "../../constants";
+import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../../constants";
 import { _patch } from "../../utils/httpClient";
 import { UserContext } from "../../context/UserContext";
 
@@ -53,7 +53,7 @@ const getColumns = (handleVerbatimStatusChange) => [
         >
           {Object.keys(VERBATIM_STATUS).map((status) => (
             <option key={status} value={status}>
-              {status}
+              {VERBATIM_STATUS_LABELS[status]}
             </option>
           ))}
         </Select>

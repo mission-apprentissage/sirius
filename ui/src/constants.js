@@ -18,6 +18,15 @@ export const VERBATIM_STATUS = {
   GEM: "GEM",
 };
 
+export const VERBATIM_STATUS_LABELS = {
+  [VERBATIM_STATUS.PENDING]: "En attente",
+  [VERBATIM_STATUS.VALIDATED]: "Validé",
+  [VERBATIM_STATUS.TO_FIX]: "À corriger",
+  [VERBATIM_STATUS.ALERT]: "Alerte",
+  [VERBATIM_STATUS.REJECTED]: "Rejeté",
+  [VERBATIM_STATUS.GEM]: "Pépite",
+};
+
 export const DIPLOME_TYPE_MATCHER = {
   "CERTIFICAT D'APTITUDES PROFESSIONNELLES": "Certificat d’Aptitude Professionnelle",
   "MENTION COMPLEMENTAIRE": "Mention Complémentaire",

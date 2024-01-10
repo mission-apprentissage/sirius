@@ -1,30 +1,30 @@
 import React, { useState } from "react";
 import { Select } from "chakra-react-select";
-import { VERBATIM_STATUS } from "../../constants";
+import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../../constants";
 
 const filterOptions = [
   {
-    label: "En attente",
+    label: VERBATIM_STATUS_LABELS[VERBATIM_STATUS.PENDING],
     value: VERBATIM_STATUS.PENDING,
   },
   {
-    label: "Validé",
+    label: VERBATIM_STATUS_LABELS[VERBATIM_STATUS.VALIDATED],
     value: VERBATIM_STATUS.VALIDATED,
   },
   {
-    label: "À corriger",
+    label: VERBATIM_STATUS_LABELS[VERBATIM_STATUS.TO_FIX],
     value: VERBATIM_STATUS.TO_FIX,
   },
   {
-    label: "Alerte",
+    label: VERBATIM_STATUS_LABELS[VERBATIM_STATUS.ALERT],
     value: VERBATIM_STATUS.ALERT,
   },
   {
-    label: "Rejeté",
+    label: VERBATIM_STATUS_LABELS[VERBATIM_STATUS.REJECTED],
     value: VERBATIM_STATUS.REJECTED,
   },
   {
-    label: "Pépite",
+    label: VERBATIM_STATUS_LABELS[VERBATIM_STATUS.GEM],
     value: VERBATIM_STATUS.GEM,
   },
 ];
