@@ -33,47 +33,9 @@ const ModerationFilters = ({ setDisplayedVerbatims, verbatims }) => {
   const [selectedFilters, setSelectedFilters] = useState([...filterOptions]);
 
   const handleFilter = (selectedFilters) => {
-    let filteredVerbatims = [...verbatims];
-
-    const isFilterSelected = (filterValue) =>
-      selectedFilters.some((filter) => filter.value === filterValue);
-
-    if (!isFilterSelected(VERBATIM_STATUS.PENDING)) {
-      filteredVerbatims = filteredVerbatims.filter(
-        (verbatim) =>
-          typeof verbatim.value !== "string" && verbatim.value?.status !== VERBATIM_STATUS.PENDING
-      );
-    }
-
-    if (!isFilterSelected(VERBATIM_STATUS.VALIDATED)) {
-      filteredVerbatims = filteredVerbatims.filter(
-        (verbatim) => verbatim.value?.status !== VERBATIM_STATUS.VALIDATED
-      );
-    }
-
-    if (!isFilterSelected(VERBATIM_STATUS.TO_FIX)) {
-      filteredVerbatims = filteredVerbatims.filter(
-        (verbatim) => verbatim.value?.status !== VERBATIM_STATUS.TO_FIX
-      );
-    }
-
-    if (!isFilterSelected(VERBATIM_STATUS.ALERT)) {
-      filteredVerbatims = filteredVerbatims.filter(
-        (verbatim) => verbatim.value?.status !== VERBATIM_STATUS.ALERT
-      );
-    }
-
-    if (!isFilterSelected(VERBATIM_STATUS.REJECTED)) {
-      filteredVerbatims = filteredVerbatims.filter(
-        (verbatim) => verbatim.value?.status !== VERBATIM_STATUS.REJECTED
-      );
-    }
-
-    if (!isFilterSelected(VERBATIM_STATUS.GEM)) {
-      filteredVerbatims = filteredVerbatims.filter(
-        (verbatim) => verbatim.value?.status !== VERBATIM_STATUS.GEM
-      );
-    }
+    const filteredVerbatims = verbatims.filter((verbatim) =>
+      selectedFilters.some((filter) => verbatim.value?.status === filter.value)
+    );
 
     setSelectedFilters(selectedFilters);
     setDisplayedVerbatims(filteredVerbatims);
