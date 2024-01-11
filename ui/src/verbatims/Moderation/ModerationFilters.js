@@ -29,15 +29,53 @@ const filterOptions = [
   },
 ];
 
-const ModerationFilters = ({ setDisplayedVerbatims, verbatims }) => {
+const ModerationFilters = ({
+  setDisplayedVerbatims,
+  verbatims,
+  displayedVerbatims,
+  currentFilters,
+}) => {
   const [selectedFilters, setSelectedFilters] = useState([...filterOptions]);
 
-  const handleFilter = (selectedFilters) => {
-    const filteredVerbatims = verbatims.filter((verbatim) =>
-      selectedFilters.some((filter) => verbatim.value?.status === filter.value)
-    );
+  const handleFilter = (selectedFilters, { action }) => {
+    let filteredVerbatims = [...verbatims];
+
+    if (action === "remove-value") {
+      filteredVerbatims = displayedVerbatims.filter((verbatim) => {
+        const verbatimStatus =
+          typeof verbatim.value === "string" ? VERBATIM_STATUS.PENDING : verbatim.value?.status;
+
+        return selectedFilters.some((filter) => verbatimStatus === filter.value);
+      });
+    } else if (action === "select-option") {
+      if (currentFilters.selectedEtablissement && currentFilters.selectedEtablissement !== "all") {
+        filteredVerbatims = filteredVerbatims.filter(
+          (verbatim) => verbatim.etablissementSiret === currentFilters.selectedEtablissement
+        );
+      }
+
+      if (currentFilters.selectedFormation && currentFilters.selectedFormation !== "all") {
+        filteredVerbatims = filteredVerbatims.filter(
+          (verbatim) => verbatim.formationId === currentFilters.selectedFormation
+        );
+      }
+
+      if (currentFilters.selectedQuestion && currentFilters.selectedQuestion !== "all") {
+        filteredVerbatims = filteredVerbatims.filter(
+          (verbatim) => verbatim.key === currentFilters.selectedQuestion
+        );
+      }
+
+      filteredVerbatims = filteredVerbatims.filter((verbatim) => {
+        const verbatimStatus =
+          typeof verbatim.value === "string" ? VERBATIM_STATUS.PENDING : verbatim.value?.status;
+
+        return selectedFilters.some((filter) => verbatimStatus === filter.value);
+      });
+    }
 
     setSelectedFilters(selectedFilters);
+
     setDisplayedVerbatims(filteredVerbatims);
   };
 
@@ -65,7 +103,7 @@ const ModerationFilters = ({ setDisplayedVerbatims, verbatims }) => {
         }),
       }}
       isClearable={false}
-      onChange={handleFilter}
+      onChange={(filters, action) => handleFilter(filters, action)}
     />
   );
 };

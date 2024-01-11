@@ -184,8 +184,10 @@ const ModerationPage = () => {
       <HStack w="100%" mb="2">
         <Box w="max-content">
           <ModerationFilters
-            verbatims={displayedVerbatims}
+            verbatims={verbatims}
+            displayedVerbatims={displayedVerbatims}
             setDisplayedVerbatims={setDisplayedVerbatims}
+            currentFilters={{ selectedEtablissement, selectedFormation, selectedQuestion }}
           />
         </Box>
         <Box w="max-content" minW="200px">

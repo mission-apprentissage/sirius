@@ -61,7 +61,6 @@ const getColumns = (handleVerbatimStatusChange, selectedVerbatims, setSelectedVe
     cell: (info) => {
       const content =
         typeof info.getValue() === "string" ? info.getValue() : info.getValue().content;
-      console.log({ content });
       return <p>{content}</p>;
     },
     header: "Verbatim",
