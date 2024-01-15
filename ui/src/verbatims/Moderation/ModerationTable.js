@@ -100,7 +100,7 @@ const getColumns = (handleVerbatimStatusChange, selectedVerbatims, setSelectedVe
     header: "Établissement et Formation",
   }),
   columnHelper.accessor("title", {
-    cell: (info) => <p>{parse(info.getValue())}</p>,
+    cell: (info) => <p>{info.getValue() ? parse(info.getValue()) : ""}</p>,
     header: "Question",
   }),
   columnHelper.accessor("createdAt", {
