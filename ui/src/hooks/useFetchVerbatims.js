@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { _get } from "../utils/httpClient";
 
-const useFetchVerbatims = (questionnaireIds, shouldRefresh) => {
+const useFetchVerbatims = (questionnaireId, etablissementSiret, formationId) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,33 +10,24 @@ const useFetchVerbatims = (questionnaireIds, shouldRefresh) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      setData(null);
       try {
-        for (const questionnaireId of questionnaireIds) {
-          const response = await _get(
-            `/api/verbatims?questionnaireId=${questionnaireId}`,
-            userContext.token
-          );
-          if (response.length) {
-            if (!data) {
-              setData(response);
-            } else {
-              setData((prevData) => (prevData ? prevData.concat(response) : response));
-            }
-          }
-        }
+        const response = await _get(
+          `/api/verbatims?questionnaireId=${questionnaireId}&etablissementSiret=${
+            etablissementSiret || ""
+          }&formationId=${formationId || ""}`,
+          userContext.token
+        );
+        setData(response);
+        setLoading(false);
       } catch (error) {
         setError(error);
-      } finally {
         setLoading(false);
       }
     };
-
-    if (questionnaireIds.length) {
+    if (questionnaireId) {
       fetchData();
     }
-  }, [questionnaireIds, shouldRefresh]);
+  }, [questionnaireId, etablissementSiret, formationId]);
 
   return [data, loading, error];
 };
