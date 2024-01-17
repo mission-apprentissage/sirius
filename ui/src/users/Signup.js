@@ -10,7 +10,7 @@ import {
   useBreakpoint,
   Link,
 } from "@chakra-ui/react";
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate } from "react-router-dom";
@@ -25,6 +25,7 @@ import Button from "../Components/Form/Button";
 import FormError from "../Components/Form/FormError";
 import { emailWithTLDRegex } from "../constants";
 import EtablissementInput from "./Components/EtablissementInput";
+import { etablissementLabelGetter } from "../utils/etablissement";
 
 const requiredFieldMessage = "Ces champs sont obligatoires";
 
@@ -45,13 +46,7 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .required(requiredFieldMessage)
     .matches(passwordComplexityRegex, passwordComplexityMessage),
-  etablissements: Yup.array()
-    .of(etablissement)
-    .min(1, requiredFieldMessage)
-    .test("unique-siret", "Le SIRET doit être différent dans chaque champ", (etablissements) => {
-      const siretSet = new Set(etablissements.map((e) => e.siret));
-      return siretSet.size === etablissements.length;
-    }),
+  etablissements: Yup.array().of(etablissement).min(1, requiredFieldMessage),
 });
 
 const Signup = () => {
@@ -60,7 +55,7 @@ const Signup = () => {
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [error, setError] = useState(null);
   const [userContext] = useContext(UserContext);
-  const [etablissements, setEtablissements] = useState([]);
+  const [addNewSiret, setAddNewSiret] = useState(true);
 
   const isMobile = breakpoint === "base";
 
@@ -85,7 +80,12 @@ const Signup = () => {
         comment: comment,
         email: email.toLowerCase(),
         password,
-        etablissements: etablissementsWitoutEmpty,
+        etablissements: etablissementsWitoutEmpty.map((etablissement) => ({
+          siret: etablissement.siret,
+          onisep_nom: etablissement.onisep_nom,
+          enseigne: etablissement.enseigne,
+          entreprise_raison_sociale: etablissement.entreprise_raison_sociale,
+        })),
       });
 
       if (resultUser._id) {
@@ -105,21 +105,18 @@ const Signup = () => {
     },
   });
 
-  const addEtablissementField = () => {
-    setEtablissements([...etablissements, {}]);
-  };
+  const etablissements = formik.values.etablissements;
 
   const handleDeleteEtablissement = (index) => {
     const updatedEtablissements = [...etablissements];
     updatedEtablissements.splice(index, 1);
     formik.setFieldValue("etablissements", updatedEtablissements);
-    setEtablissements(updatedEtablissements);
   };
 
   if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
 
   return (
-    <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%">
+    <Flex flexDirection="column" justifyContent="center" alignItems="center" w="100%" mt="15px">
       <Stack
         spacing="64px"
         flexDir={isMobile ? "column" : "row"}
@@ -172,42 +169,78 @@ const Signup = () => {
                   campagnes de plusieurs établissements. Insérez le premier SIRET puis cliquez sur
                   le bouton « Ajouter un SIRET ».
                 </Text>
-                {etablissements.length === 0 && (
+                {etablissements.length &&
+                  etablissements.map((etablissement, index) => (
+                    <Stack direction="row" key={index}>
+                      <Box bgColor="brand.blue.100" p="15px" position="relative" w="100%">
+                        <Box
+                          bgColor="brand.pink.400"
+                          borderRadius="50px"
+                          w="20px"
+                          h="20px"
+                          position="absolute"
+                          top="6px"
+                          left="6px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <Text fontSize="12px" fontWeight="semibold">
+                            {index + 1}
+                          </Text>
+                        </Box>
+                        <Box
+                          w="20px"
+                          h="20px"
+                          position="absolute"
+                          top="6px"
+                          right="6px"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <DeleteIcon
+                            cursor="pointer"
+                            color="brand.red.500"
+                            onClick={() => handleDeleteEtablissement(index)}
+                          />
+                        </Box>
+                        <Text mt="25px" mb="5px" fontWeight="semibold">
+                          {etablissementLabelGetter(etablissement)}
+                        </Text>
+                        <Text mb="5px" fontSize="14px">
+                          {etablissement.siret}
+                        </Text>
+                        <Text mb="10px" fontSize="14px">
+                          {etablissement.adresse}
+                        </Text>
+                        <Link
+                          href={`https://catalogue-apprentissage.intercariforef.org/etablissement/${etablissement.id}`}
+                          target="_blank"
+                          display="flex"
+                          alignItems="center"
+                          color={"brand.blue.700"}
+                          fontSize="12px"
+                        >
+                          <ExternalLinkIcon mr="5px" color={"brand.blue.700"} />
+                          Voir le détail de l'établissement (CARIF-OREF)
+                        </Link>
+                      </Box>
+                    </Stack>
+                  ))}
+                {(addNewSiret || !etablissements.length) && (
                   <EtablissementInput
                     formik={formik}
-                    setEtablissements={setEtablissements}
-                    index={0}
                     setError={setError}
+                    setAddNewSiret={setAddNewSiret}
                   />
                 )}
-                {etablissements.map((etablissement, index) => (
-                  <Stack
-                    direction="row"
-                    key={index}
-                    width={index > 0 ? "calc(100% + 25px)" : "100%"}
-                    alignItems="center"
-                  >
-                    <EtablissementInput
-                      formik={formik}
-                      setEtablissements={setEtablissements}
-                      index={index}
-                      setError={setError}
-                    />
-                    {index > 0 && (
-                      <DeleteIcon
-                        cursor="pointer"
-                        color="brand.red.500"
-                        onClick={() => handleDeleteEtablissement(index)}
-                      />
-                    )}
-                  </Stack>
-                ))}
                 {etablissements[etablissements.length - 1]?.siret && (
                   <Stack
                     direction="row"
                     alignItems="center"
                     cursor="pointer"
-                    onClick={addEtablissementField}
+                    onClick={() => setAddNewSiret(true)}
                     mb="10px"
                   >
                     <AddIcon boxSize="10px" color="brand.blue.700" />
@@ -216,6 +249,7 @@ const Signup = () => {
                     </Text>
                   </Stack>
                 )}
+
                 <FormControl isInvalid={!!formik.errors.comment && formik.touched.comment}>
                   <Textarea
                     id="comment"
@@ -235,7 +269,7 @@ const Signup = () => {
                   alignItems="center"
                   justifyContent="center"
                   flexDirection="column"
-                  mt="16px"
+                  my="16px"
                 >
                   <Button isLoading={isSubmitting}>Valider</Button>
                   <Text color="brand.blue.700" fontSize="sm" mt={isMobile ? "32px" : "64px"}>
