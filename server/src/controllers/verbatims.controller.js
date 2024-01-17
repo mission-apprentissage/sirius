@@ -19,4 +19,12 @@ const patchVerbatim = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-module.exports = { getVerbatims, patchVerbatim };
+const patchMultiVerbatim = tryCatch(async (req, res) => {
+  const { success, body } = await verbatimsService.patchMultiVerbatim(req.body);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
+module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim };

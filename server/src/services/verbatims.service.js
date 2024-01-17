@@ -84,4 +84,25 @@ const patchVerbatim = async (id, updatedVerbatim) => {
   }
 };
 
-module.exports = { getVerbatims, patchVerbatim };
+const patchMultiVerbatim = async (verbatims) => {
+  try {
+    let updatedTemoignages = [];
+
+    for (const verbatim of verbatims) {
+      const temoignageToUpdate = await temoignagesDao.getOne(verbatim.temoignageId);
+      if (!temoignageToUpdate) {
+        return { success: false, body: ErrorMessage.TemoignageNotFoundError };
+      }
+
+      temoignageToUpdate.reponses[verbatim.questionId] = verbatim.payload;
+      const updatedTemoignage = await temoignagesDao.update(verbatim.temoignageId, temoignageToUpdate);
+      updatedTemoignages.push(updatedTemoignage);
+    }
+
+    return { success: true, body: updatedTemoignages };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim };
