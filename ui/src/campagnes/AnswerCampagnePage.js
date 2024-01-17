@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/chakra-ui";
 import { Box, Flex, Button, useBreakpoint } from "@chakra-ui/react";
+import { load } from "@fingerprintjs/botd";
+
 import { useGet } from "../common/hooks/httpHooks";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
@@ -32,6 +34,7 @@ import {
   getNextButtonLabel,
 } from "./utils";
 import ErrorTemplate from "./Shared/ErrorTemplate";
+import BotDetectedModal from "./AnswerCampagne/BotDetectedModal";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -64,9 +67,26 @@ const AnswerCampagnePage = () => {
   const [isTemoignageSent, setIsTemoignageSent] = useState(false);
   const [temoignageId, setTemoignageId] = useState(null);
   const [startedAnswering, setStartedAnswering] = useState(false);
+  const [isBot, setIsBot] = useState(false);
   const breakpoint = useBreakpoint({ ssr: false });
   const [nestedData, setNestedData] = useState({});
   const isMobile = breakpoint === "base";
+
+  useEffect(() => {
+    async function getBotdResult() {
+      try {
+        const botd = await load();
+        const result = botd.detect();
+        if (result.bot) {
+          setIsBot(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    getBotdResult();
+  }, [currentQuestionIndex]);
 
   const isLastCategory = formattedQuestionnnaire.length
     ? currentCategoryIndex === formattedQuestionnnaire.length - 1
@@ -92,6 +112,7 @@ const AnswerCampagnePage = () => {
         reponses: { ...answers, ...formData, ...nestedData },
         campagneId: id,
         lastQuestionAt: new Date(),
+        isBot,
       });
 
       if (result._id) {
@@ -129,6 +150,7 @@ const AnswerCampagnePage = () => {
       const result = await _put(`/api/temoignages/${temoignageId}`, {
         reponses: { ...answers, ...formData, ...nestedData },
         lastQuestionAt: new Date(),
+        isBot,
       });
       if (!result.acknowledged) {
         if (result.statusCode === 403) {
@@ -168,62 +190,66 @@ const AnswerCampagnePage = () => {
   };
 
   if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
+
   return startedAnswering ? (
     <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto" pt={["0", "5"]}>
       {isTemoignageSent && <Success />}
       {!isTemoignageSent && (
-        <Box
-          bg="white"
-          p={6}
-          rounded="md"
-          w={isMobile ? "100%" : "80%"}
-          m="auto"
-          minHeight={isMobile ? "100vh" : "inherit"}
-        >
-          <Stepper
-            categories={categories}
-            currentCategoryIndex={currentCategoryIndex}
-            setCurrentCategoryIndex={setCurrentCategoryIndex}
-            setCurrentQuestionIndex={setCurrentQuestionIndex}
-            isTemoignageSent={isTemoignageSent}
-            currentQuestionIndex={currentQuestionIndex}
-          />
-          <>
-            <Form
-              schema={
-                formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]
-              }
-              uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
-              validator={validator}
-              widgets={widgets}
-              fields={fields}
-              onSubmit={(values) =>
-                onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)
-              }
-              noHtml5Validate
-              templates={{ FieldErrorTemplate: ErrorTemplate }}
-              transformErrors={transformErrors}
-              formData={answers}
-              showErrorList={false}
-              formContext={{ handleNested }}
-            >
-              <Box display="flex" justifyContent="flex-end">
-                <Button
-                  borderRadius="md"
-                  type="submit"
-                  variant="solid"
-                  bgColor="brand.blue.700"
-                  color="white"
-                  colorScheme="brand.blue"
-                  rightIcon={<ChevronRightIcon />}
-                  mt="25px"
-                >
-                  {getNextButtonLabel(isLastCategory, isLastQuestionInCategory)}
-                </Button>
-              </Box>
-            </Form>
-          </>
-        </Box>
+        <>
+          <Box
+            bg="white"
+            p={6}
+            rounded="md"
+            w={isMobile ? "100%" : "80%"}
+            m="auto"
+            minHeight={isMobile ? "100vh" : "inherit"}
+          >
+            <Stepper
+              categories={categories}
+              currentCategoryIndex={currentCategoryIndex}
+              setCurrentCategoryIndex={setCurrentCategoryIndex}
+              setCurrentQuestionIndex={setCurrentQuestionIndex}
+              isTemoignageSent={isTemoignageSent}
+              currentQuestionIndex={currentQuestionIndex}
+            />
+            <>
+              <Form
+                schema={
+                  formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]
+                }
+                uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
+                validator={validator}
+                widgets={widgets}
+                fields={fields}
+                onSubmit={(values) =>
+                  onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)
+                }
+                noHtml5Validate
+                templates={{ FieldErrorTemplate: ErrorTemplate }}
+                transformErrors={transformErrors}
+                formData={answers}
+                showErrorList={false}
+                formContext={{ handleNested }}
+              >
+                <Box display="flex" justifyContent="flex-end">
+                  <Button
+                    borderRadius="md"
+                    type="submit"
+                    variant="solid"
+                    bgColor="brand.blue.700"
+                    color="white"
+                    colorScheme="brand.blue"
+                    rightIcon={<ChevronRightIcon />}
+                    mt="25px"
+                  >
+                    {getNextButtonLabel(isLastCategory, isLastQuestionInCategory)}
+                  </Button>
+                </Box>
+              </Form>
+            </>
+          </Box>
+          <BotDetectedModal isOpen={isBot} />
+        </>
       )}
     </Flex>
   ) : (
