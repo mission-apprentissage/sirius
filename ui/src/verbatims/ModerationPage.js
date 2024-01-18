@@ -13,33 +13,19 @@ import ModerationGroupedAction from "./Moderation/ModerationGroupedAction";
 import { UserContext } from "../context/UserContext";
 
 const ModerationPage = () => {
-  const [questionnaireIds, setQuestionnaireIds] = useState([]);
   const [displayedVerbatims, setDisplayedVerbatims] = useState([]);
-  const [etablissements, setEtablissements] = useState([]);
-  const [formations, setFormations] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [selectedVerbatims, setSelectedVerbatims] = useState([]);
   const [userContext] = useContext(UserContext);
   const [shouldRefresh, setShouldRefresh] = useState(false);
+  const [pickedEtablissementFormationIds, setPickedEtablissementFormationIds] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedEtablissement = searchParams.get("etablissement");
   const selectedFormation = searchParams.get("formation");
   const selectedQuestion = searchParams.get("question");
 
-  const [questionnaires, loadingQuestionnaires, errorQuestionnaires] =
-    useGet(`/api/questionnaires/`);
-  const [verbatims, loadingVerbatims, errorVerbatims] = useFetchVerbatims(
-    questionnaireIds,
-    shouldRefresh
-  );
-
-  useEffect(() => {
-    if (questionnaires?.length) {
-      const questionnaireIds = questionnaires.map((questionnaire) => questionnaire._id);
-      setQuestionnaireIds(questionnaireIds);
-    }
-  }, [questionnaires]);
+  const [verbatims, count, loadingVerbatims, errorVerbatims] = useFetchVerbatims(shouldRefresh);
 
   useEffect(() => {
     if (verbatims?.length) {
@@ -52,39 +38,6 @@ const ModerationPage = () => {
       setDisplayedVerbatims(orderedVerbatims);
     }
   }, [verbatims]);
-
-  useEffect(() => {
-    if (verbatims?.length) {
-      const etablissements = verbatims.map((verbatim) => ({
-        label: verbatim.etablissement,
-        value: verbatim.etablissementSiret,
-      }));
-
-      const deduplicatedEtablissements = etablissements.filter(
-        (etablissement, index, self) =>
-          index === self.findIndex((t) => t.value === etablissement.value)
-      );
-
-      setEtablissements(deduplicatedEtablissements);
-    }
-  }, [verbatims]);
-
-  useEffect(() => {
-    if (verbatims?.length && selectedEtablissement && selectedEtablissement !== "all") {
-      const formationsByFilteredVerbatims = verbatims
-        .filter((verbatim) => verbatim.etablissementSiret === selectedEtablissement)
-        .map((verbatim) => ({
-          label: verbatim.formation,
-          value: verbatim.formationId,
-        }));
-
-      const deduplicatedFormations = formationsByFilteredVerbatims.filter(
-        (formation, index, self) => index === self.findIndex((t) => t.value === formation.value)
-      );
-
-      setFormations(deduplicatedFormations);
-    }
-  }, [selectedEtablissement, verbatims]);
 
   useEffect(() => {
     if (verbatims?.length) {
@@ -133,8 +86,7 @@ const ModerationPage = () => {
     }
   }, [shouldRefresh]);
 
-  if (loadingQuestionnaires || errorQuestionnaires || loadingVerbatims || errorVerbatims)
-    return <Spinner />;
+  if (loadingVerbatims || errorVerbatims) return <Spinner />;
 
   const hasSelectedEtablissement = selectedEtablissement && selectedEtablissement !== "all";
 
@@ -145,7 +97,7 @@ const ModerationPage = () => {
           Modération des verbatims
         </Text>
       </Box>
-      <ModerationStatistics verbatims={displayedVerbatims} />
+      <ModerationStatistics count={count} />
       <Box w="100%" my="5">
         <Text fontSize="2xl" fontWeight="600" color="brand.blue.700">
           Filtres{" "}
@@ -170,11 +122,15 @@ const ModerationPage = () => {
       </Box>
       <HStack w="100%" mt="5" mb="2">
         <Box w={hasSelectedEtablissement ? "33%" : "50%"}>
-          <ModerationEtablissementPicker etablissements={etablissements} />
+          <ModerationEtablissementPicker
+            setPickedEtablissementFormationIds={setPickedEtablissementFormationIds}
+          />
         </Box>
         {hasSelectedEtablissement && (
           <Box w="33%">
-            <ModerationFormationPicker formations={formations} />
+            <ModerationFormationPicker
+              pickedEtablissementFormationIds={pickedEtablissementFormationIds}
+            />
           </Box>
         )}
         <Box w={hasSelectedEtablissement ? "33%" : "50%"}>
