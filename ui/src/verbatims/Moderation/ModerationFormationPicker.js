@@ -1,18 +1,19 @@
 import React from "react";
 import { Select } from "chakra-react-select";
 import { useSearchParams } from "react-router-dom";
+import useFetchLocalFormations from "../../hooks/useFetchLocalFormations";
 
-const ModerationFormationPicker = ({ formations }) => {
+const ModerationFormationPicker = ({ pickedEtablissementFormationIds }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const localFormationQuery = pickedEtablissementFormationIds?.map((id) => `id=${id}`).join("&");
+  const [formations, loading, error] = useFetchLocalFormations(localFormationQuery);
 
-  const allFormations = [{ label: "Toutes les formations", value: "all" }];
   const matchedFormation =
-    formations.find((formation) => formation.value === searchParams.get("formation")) ??
-    allFormations;
+    formations?.find((formation) => formation._id === searchParams.get("formation")) ?? null;
 
   const onChangeHandler = (e) => {
     const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set("formation", e?.value ?? "all");
+    newSearchParams.set("formation", e?._id ?? "all");
     setSearchParams(newSearchParams);
   };
 
@@ -24,8 +25,13 @@ const ModerationFormationPicker = ({ formations }) => {
       size="lg"
       placeholder="Choix de la formation"
       isSearchable
+      isClearable
+      isLoading={loading}
+      isDisabled={loading || !!error}
       value={matchedFormation}
-      options={allFormations.concat(formations)}
+      options={formations?.length ? formations : []}
+      getOptionLabel={(option) => option.data.intitule_long}
+      getOptionValue={(option) => option._id}
       onChange={onChangeHandler}
     />
   );
