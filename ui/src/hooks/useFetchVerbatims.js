@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { _get } from "../utils/httpClient";
 
-const useFetchVerbatims = (questionnaireIds, shouldRefresh) => {
+const useFetchVerbatims = (shouldRefresh) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,18 +13,9 @@ const useFetchVerbatims = (questionnaireIds, shouldRefresh) => {
       setLoading(true);
       setData(null);
       try {
-        for (const questionnaireId of questionnaireIds) {
-          const response = await _get(
-            `/api/verbatims?questionnaireId=${questionnaireId}`,
-            userContext.token
-          );
-          if (response.length) {
-            if (!data) {
-              setData(response);
-            } else {
-              setData((prevData) => (prevData ? prevData.concat(response) : response));
-            }
-          }
+        const response = await _get(`/api/verbatims`, userContext.token);
+        if (response.body.verbatims.length) {
+          setData(response);
         }
       } catch (error) {
         setError(error);
@@ -33,12 +24,21 @@ const useFetchVerbatims = (questionnaireIds, shouldRefresh) => {
       }
     };
 
-    if (questionnaireIds.length) {
-      fetchData();
-    }
-  }, [questionnaireIds, shouldRefresh]);
+    fetchData();
+  }, [shouldRefresh]);
 
-  return [data, loading, error];
+  return [
+    data?.body?.verbatims,
+    {
+      totalCount: data?.body?.totalCount,
+      pendingCount: data?.body?.pendingCount,
+      validatedCount: data?.body?.validatedCount,
+      rejectedCount: data?.body?.rejectedCount,
+    },
+    loading,
+    error,
+    data?.pagination,
+  ];
 };
 
 export default useFetchVerbatims;
