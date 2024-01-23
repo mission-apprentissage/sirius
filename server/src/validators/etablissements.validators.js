@@ -1,10 +1,12 @@
 const Joi = require("joi");
 
-const createEtablissementSchema = Joi.object({
+const etablissementSchema = Joi.object({
   data: Joi.object().required(),
-  formationIds: Joi.array(), //.required(),
+  formationIds: Joi.array(),
   createdBy: Joi.string().required(),
 });
+
+const createEtablissementSchema = Joi.array().items(etablissementSchema).required().min(1);
 
 const updateEtablissementSchema = Joi.object({
   formationIds: Joi.array().required(),
