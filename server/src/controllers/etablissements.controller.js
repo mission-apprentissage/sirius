@@ -8,7 +8,7 @@ const {
 const tryCatch = require("../utils/tryCatch.utils");
 
 const createEtablissement = tryCatch(async (req, res) => {
-  const { success, body } = await etablissementsService.createEtablissement(req.body);
+  const { success, body } = await etablissementsService.createEtablissements(req.body);
 
   if (!success && body?.message === ErrorMessage.EtablissementAlreadyExistingError)
     throw new EtablissementAlreadyExistingError();
