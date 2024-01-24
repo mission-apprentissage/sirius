@@ -10,6 +10,7 @@ const { getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
 const referentiel = require("../modules/referentiel");
+const xlsxExport = require("../modules/xlsxExport");
 
 const getCampagnes = async (query) => {
   try {
@@ -133,7 +134,7 @@ const createMultiCampagne = async ({ campagnes, etablissementSiret }) => {
   }
 };
 
-const getExport = async (id) => {
+const getPdfExport = async (id) => {
   try {
     const campagne = await campagnesDao.getOne(id);
 
@@ -149,7 +150,7 @@ const getExport = async (id) => {
   }
 };
 
-const getMultipleExport = async (ids, user) => {
+const getPdfMultipleExport = async (ids, user) => {
   try {
     const query = { _id: { $in: ids.map((id) => ObjectId(id)) } };
 
@@ -187,6 +188,35 @@ const getMultipleExport = async (ids, user) => {
   }
 };
 
+const getXlsxMultipleExport = async (ids) => {
+  try {
+    const query = ids?.length ? { _id: { $in: ids.map((id) => ObjectId(id)) } } : {};
+
+    const campagnes = await campagnesDao.getAll(query);
+
+    const formattedCampagnes = campagnes.map((campagne) => ({
+      campagneName: campagne.nomCampagne,
+      formation: campagne.formation?.data.intitule_long,
+      etablissementFormateurSiret: campagne.formation?.data.etablissement_formateur_siret,
+      etablissementResponsableSiret: campagne.formation?.data.etablissement_gestionnaire_siret,
+      etablissementFormateurLabel: campagne.formation?.data.etablissement_formateur_entreprise_raison_sociale,
+      etablissementResponsableLabel: campagne.formation?.data.etablissement_gestionnaire_enseigne,
+      seats: campagne.seats,
+    }));
+
+    const generatedXlsx = await xlsxExport.generateMultipleCampagnes(formattedCampagnes);
+
+    const fileName = `campagnes Sirius.xlsx`;
+
+    return {
+      success: true,
+      body: { data: generatedXlsx, fileName },
+    };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   getCampagnes,
   getOneCampagne,
@@ -194,6 +224,7 @@ module.exports = {
   deleteCampagnes,
   updateCampagne,
   createMultiCampagne,
-  getExport,
-  getMultipleExport,
+  getPdfExport,
+  getPdfMultipleExport,
+  getXlsxMultipleExport,
 };
