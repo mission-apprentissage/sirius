@@ -54,22 +54,22 @@ const createMultiCampagne = tryCatch(async (req, res) => {
   return res.status(201).json(body);
 });
 
-const getExport = tryCatch(async (req, res) => {
-  const { success, body } = await campagnesService.getExport(req.params.id);
+const getPdfExport = tryCatch(async (req, res) => {
+  const { success, body } = await campagnesService.getPdfExport(req.params.id);
 
   if (!success) throw new BasicError();
 
   return res.status(200).json(body);
 });
 
-const getMultipleExport = tryCatch(async (req, res) => {
+const getPdfMultipleExport = tryCatch(async (req, res) => {
   const ids = req.query.ids.split(",");
   const user = {
     label: req.user.firstName + " " + req.user.lastName,
     email: req.user.email,
   };
 
-  const { success, body } = await campagnesService.getMultipleExport(ids, user);
+  const { success, body } = await campagnesService.getPdfMultipleExport(ids, user);
 
   if (!success) throw new BasicError();
 
@@ -83,6 +83,6 @@ module.exports = {
   deleteCampagnes,
   updateCampagne,
   createMultiCampagne,
-  getExport,
-  getMultipleExport,
+  getPdfExport,
+  getPdfMultipleExport,
 };

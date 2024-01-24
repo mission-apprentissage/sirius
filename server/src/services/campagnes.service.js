@@ -133,7 +133,7 @@ const createMultiCampagne = async ({ campagnes, etablissementSiret }) => {
   }
 };
 
-const getExport = async (id) => {
+const getPdfExport = async (id) => {
   try {
     const campagne = await campagnesDao.getOne(id);
 
@@ -149,7 +149,7 @@ const getExport = async (id) => {
   }
 };
 
-const getMultipleExport = async (ids, user) => {
+const getPdfMultipleExport = async (ids, user) => {
   try {
     const query = { _id: { $in: ids.map((id) => ObjectId(id)) } };
 
@@ -194,6 +194,6 @@ module.exports = {
   deleteCampagnes,
   updateCampagne,
   createMultiCampagne,
-  getExport,
-  getMultipleExport,
+  getPdfExport,
+  getPdfMultipleExport,
 };
