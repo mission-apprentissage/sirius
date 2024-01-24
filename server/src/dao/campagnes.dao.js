@@ -91,6 +91,10 @@ const formationQuery = [
             "data.localite": 1,
             "data.duree": 1,
             "data.etablissement_formateur_siret": 1,
+            "data.etablissement_gestionnaire_siret": 1,
+            "data.etablissement_gestionnaire_enseigne": 1,
+            "data.etablissement_formateur_enseigne": 1,
+            "data.etablissement_formateur_entreprise_raison_sociale": 1,
           },
         },
         {

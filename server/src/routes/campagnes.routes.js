@@ -10,9 +10,11 @@ const {
   createMultiCampagne,
   getPdfExport,
   getPdfMultipleExport,
+  getXlsxMultipleExport,
 } = require("../controllers/campagnes.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdminOrAllowed, TYPES } = require("../middlewares/isAdminOrAllowed");
+const { isAdmin } = require("../middlewares/isAdmin");
 
 const campagnes = () => {
   const router = express.Router();
@@ -76,6 +78,10 @@ const campagnes = () => {
       getPdfExport(req, res, next);
     }
   );
+
+  router.get("/api/campagnes/export/xlsx/multi", verifyUser, isAdmin, (req, res, next) => {
+    getXlsxMultipleExport(req, res, next);
+  });
 
   router.get("/api/campagnes/:id", (req, res, next) => {
     getCampagne(req, res, next);

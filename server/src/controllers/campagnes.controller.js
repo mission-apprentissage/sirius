@@ -76,6 +76,16 @@ const getPdfMultipleExport = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getXlsxMultipleExport = tryCatch(async (req, res) => {
+  const ids = req.query.ids?.split(",");
+
+  const { success, body } = await campagnesService.getXlsxMultipleExport(ids);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 module.exports = {
   getCampagnes,
   getCampagne,
@@ -85,4 +95,5 @@ module.exports = {
   createMultiCampagne,
   getPdfExport,
   getPdfMultipleExport,
+  getXlsxMultipleExport,
 };
