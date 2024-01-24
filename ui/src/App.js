@@ -24,6 +24,7 @@ import AnonymousLayout from "./Components/AnonymousLayout";
 import QuestionnaireLayout from "./Components/QuestionnaireLayout";
 import ResultsCampagnesPage from "./campagnes/ResultsCampagnesPage";
 import SuiviEtablissementsPage from "./suivi/SuiviEtablissementsPage";
+import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
         <Route exact path="/utilisateurs/gestion" element={<UsersManaging />} />
         <Route exact path="/verbatims/moderation" element={<VerbatimsModeration />} />
         <Route exact path="/suivi/etablissements" element={<SuiviEtablissementsPage />} />
+        <Route exact path="/suivi/campagnes" element={<SuiviCampagnesPage />} />
       </Route>
       <Route
         element={

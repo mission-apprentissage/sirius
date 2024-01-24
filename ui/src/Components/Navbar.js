@@ -110,6 +110,12 @@ const NAV_ITEMS = [
         href: "/suivi/etablissements",
         roles: [USER_ROLES.ADMIN],
       },
+      {
+        label: "Campagnes",
+        subLabel: "Suivre et exporter les statistiques des campagnes",
+        href: "/suivi/campagnes",
+        roles: [USER_ROLES.ADMIN],
+      },
     ],
     roles: [USER_ROLES.ADMIN],
   },
