@@ -10,6 +10,9 @@ import ModerationQuestionPicker from "./Moderation/ModerationQuestionPicker";
 import ModerationFilters from "./Moderation/ModerationFilters";
 import ModerationGroupedAction from "./Moderation/ModerationGroupedAction";
 import { UserContext } from "../context/UserContext";
+import ModerationPagination from "./ModerationPagination";
+
+const PAGE_SIZE = 100;
 
 const ModerationPage = () => {
   const [displayedVerbatims, setDisplayedVerbatims] = useState([]);
@@ -23,25 +26,28 @@ const ModerationPage = () => {
   const selectedEtablissement = searchParams.get("etablissement");
   const selectedFormation = searchParams.get("formation");
   const selectedQuestion = searchParams.get("question");
+  const page = searchParams.get("page") ? parseInt(searchParams.get("page")) : 1;
 
-  const etablissementVerbatimsQuery =
-    selectedEtablissement &&
-    selectedEtablissement !== "all" &&
-    `?etablissementSiret=${selectedEtablissement}`;
+  const hasSelectedEtablissement = selectedEtablissement && selectedEtablissement !== "all";
+  const hasSelectedFormation = selectedFormation && selectedFormation !== "all";
+  const hasSelectedQuestion = selectedQuestion && selectedQuestion !== "all";
 
-  const formationVerbatimsQuery =
-    selectedFormation && selectedFormation !== "all" && `&formationId=${selectedFormation}`;
+  const etablissementVerbatimsQuery = hasSelectedEtablissement
+    ? `?etablissementSiret=${selectedEtablissement}`
+    : "";
 
-  const questionVerbatimsQuery =
-    selectedQuestion &&
-    selectedQuestion !== "all" &&
-    `${
-      selectedEtablissement && selectedEtablissement !== "all" ? "&" : "?"
-    }question=${selectedQuestion}`;
+  const formationVerbatimsQuery = hasSelectedFormation ? `&formationId=${selectedFormation}` : "";
+
+  const questionVerbatimsQuery = hasSelectedQuestion
+    ? `${hasSelectedEtablissement ? "&" : "?"}question=${selectedQuestion}`
+    : "";
+
+  const paginationQuery =
+    hasSelectedEtablissement || hasSelectedQuestion ? `&page=${page}` : `?page=${page}`;
 
   const finalQuery = `${etablissementVerbatimsQuery || ""}${formationVerbatimsQuery || ""}${
     questionVerbatimsQuery || ""
-  }`;
+  }${paginationQuery}`;
 
   const [verbatims, count, loadingVerbatims, errorVerbatims] = useFetchVerbatims(
     finalQuery,
@@ -82,8 +88,6 @@ const ModerationPage = () => {
   }, [shouldRefresh]);
 
   if (loadingVerbatims || errorVerbatims) return <Spinner />;
-
-  const hasSelectedEtablissement = selectedEtablissement && selectedEtablissement !== "all";
 
   return (
     <VStack my="5" w="100%" alignItems="flex-start">
@@ -156,12 +160,14 @@ const ModerationPage = () => {
           Verbatims
         </Text>
       </Box>
+      <ModerationPagination page={page} PAGE_SIZE={PAGE_SIZE} totalCount={count.totalCount} />
       <ModerationTable
         verbatims={displayedVerbatims}
         selectedVerbatims={selectedVerbatims}
         setSelectedVerbatims={setSelectedVerbatims}
         userContext={userContext}
       />
+      <ModerationPagination page={page} PAGE_SIZE={PAGE_SIZE} totalCount={count.totalCount} />
     </VStack>
   );
 };

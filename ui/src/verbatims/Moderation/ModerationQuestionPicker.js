@@ -25,6 +25,7 @@ const ModerationQuestionPicker = ({ questions }) => {
   const onChangeHandler = (e) => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("question", e?.value ?? "all");
+    newSearchParams.set("page", 1);
     setSearchParams(newSearchParams);
   };
 

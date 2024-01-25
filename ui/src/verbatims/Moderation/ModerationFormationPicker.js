@@ -14,6 +14,7 @@ const ModerationFormationPicker = ({ pickedEtablissementFormationIds }) => {
   const onChangeHandler = (e) => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set("formation", e?._id ?? "all");
+    newSearchParams.set("page", 1);
     setSearchParams(newSearchParams);
   };
 
