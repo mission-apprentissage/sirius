@@ -1,5 +1,6 @@
 const etablissementsDao = require("../dao/etablissements.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
+const retainFields = require("../utils/retainFields.utils");
 const { getChampsLibreCount } = require("../utils/verbatims.utils");
 
 const createEtablissement = async (etablissement) => {
@@ -21,9 +22,21 @@ const createEtablissement = async (etablissement) => {
 };
 
 const getEtablissements = async (query) => {
+  const fieldsToRetain = [
+    "_id",
+    "formationIds",
+    "data._id",
+    "data.onisep_nom",
+    "data.enseigne",
+    "data.entreprise_raison_sociale",
+    "data.siret",
+  ];
   try {
     const etablissements = await etablissementsDao.getAll(query);
-    return { success: true, body: etablissements };
+
+    const cleanedEtablissements = retainFields(etablissements, fieldsToRetain);
+
+    return { success: true, body: cleanedEtablissements };
   } catch (error) {
     return { success: false, body: error };
   }
