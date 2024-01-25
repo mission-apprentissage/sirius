@@ -14,6 +14,7 @@ const { VERBATIM_STATUS } = require("../constants");
 const getVerbatims = async (query) => {
   const etablissementSiret = query.etablissementSiret || null;
   const formationId = query.formationId || null;
+  const questionKey = query.question || null;
   const page = parseInt(query.page) || 1;
   const pageSize = parseInt(query.pageSize) || 100;
 
@@ -46,7 +47,7 @@ const getVerbatims = async (query) => {
         campagneId: { $in: campagnesByQuestionnaireId.map((campagne) => campagne._id) },
       };
 
-      const temoignages = await temoignagesDao.getAll(temoignagesQuery);
+      const temoignages = await temoignagesDao.getAll(temoignagesQuery, questionKey);
 
       if (!temoignages) {
         continue;

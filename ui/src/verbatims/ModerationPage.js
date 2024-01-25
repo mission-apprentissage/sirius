@@ -32,7 +32,16 @@ const ModerationPage = () => {
   const formationVerbatimsQuery =
     selectedFormation && selectedFormation !== "all" && `&formationId=${selectedFormation}`;
 
-  const finalQuery = `${etablissementVerbatimsQuery || ""}${formationVerbatimsQuery || ""}`;
+  const questionVerbatimsQuery =
+    selectedQuestion &&
+    selectedQuestion !== "all" &&
+    `${
+      selectedEtablissement && selectedEtablissement !== "all" ? "&" : "?"
+    }question=${selectedQuestion}`;
+
+  const finalQuery = `${etablissementVerbatimsQuery || ""}${formationVerbatimsQuery || ""}${
+    questionVerbatimsQuery || ""
+  }`;
 
   const [verbatims, count, loadingVerbatims, errorVerbatims] = useFetchVerbatims(
     finalQuery,
@@ -65,32 +74,6 @@ const ModerationPage = () => {
       setQuestions(deduplicatedQuestions);
     }
   }, [verbatims]);
-
-  useEffect(() => {
-    let filteredVerbatims = verbatims;
-
-    if (verbatims) {
-      if (selectedEtablissement && selectedEtablissement !== "all") {
-        filteredVerbatims = filteredVerbatims.filter(
-          (verbatim) => verbatim.etablissementSiret === selectedEtablissement
-        );
-      }
-
-      if (selectedFormation && selectedFormation !== "all") {
-        filteredVerbatims = filteredVerbatims.filter(
-          (verbatim) => verbatim.formationId === selectedFormation
-        );
-      }
-
-      if (selectedQuestion && selectedQuestion !== "all") {
-        filteredVerbatims = filteredVerbatims.filter(
-          (verbatim) => verbatim.key === selectedQuestion
-        );
-      }
-
-      setDisplayedVerbatims(filteredVerbatims);
-    }
-  }, [searchParams, verbatims]);
 
   useEffect(() => {
     if (shouldRefresh) {

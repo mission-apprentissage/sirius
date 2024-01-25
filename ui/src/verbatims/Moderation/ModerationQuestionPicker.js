@@ -45,6 +45,7 @@ const ModerationQuestionPicker = ({ questions }) => {
       size="lg"
       placeholder="Choix de la question"
       isSearchable
+      isClearable
       value={matchedQuestion}
       options={allQuestions.concat(
         questions.map((question) => ({

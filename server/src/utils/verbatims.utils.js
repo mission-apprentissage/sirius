@@ -72,7 +72,7 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
     const champsLibre = {};
 
     for (const field of fieldsWithChampsLibre) {
-      if (field in verbatim.reponses) {
+      if (verbatim.reponses && field in verbatim.reponses) {
         champsLibre[field] = verbatim.reponses[field];
       }
     }
