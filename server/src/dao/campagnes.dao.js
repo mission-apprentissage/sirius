@@ -215,6 +215,7 @@ const getAll = async (query) => {
         ...query,
       },
     },
+    ...temoignageCountQuery,
     ...formationQuery,
     ...etablissementQuery(),
   ]);

@@ -12,6 +12,7 @@ const generateMultipleCampagnes = async (campagnes) => {
     { header: "Nom responsable", key: "etablissementResponsableLabel", width: 50 },
     { header: "SIRET responsable", key: "etablissementResponsableSiret", width: 15 },
     { header: "Nombre de place", key: "seats", width: 15 },
+    { header: "Nombre de réponse", key: "temoignagesCount", width: 15 },
     { header: "Nom de la campagne", key: "campagneName", width: 50 },
   ];
 
@@ -24,6 +25,7 @@ const generateMultipleCampagnes = async (campagnes) => {
       etablissementResponsableSiret: campagne.etablissementResponsableSiret,
       seats: campagne.seats,
       campagneName: campagne.campagneName,
+      temoignagesCount: campagne.temoignagesCount,
     });
   }
 
