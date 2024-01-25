@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { VStack, Spinner, Box, Text, HStack } from "@chakra-ui/react";
 import { useSearchParams } from "react-router-dom";
-import { useGet } from "../common/hooks/httpHooks";
 import ModerationTable from "./Moderation/ModerationTable";
 import ModerationStatistics from "./Moderation/ModerationStatistics";
 import useFetchVerbatims from "../hooks/useFetchVerbatims";
@@ -25,7 +24,20 @@ const ModerationPage = () => {
   const selectedFormation = searchParams.get("formation");
   const selectedQuestion = searchParams.get("question");
 
-  const [verbatims, count, loadingVerbatims, errorVerbatims] = useFetchVerbatims(shouldRefresh);
+  const etablissementVerbatimsQuery =
+    selectedEtablissement &&
+    selectedEtablissement !== "all" &&
+    `?etablissementSiret=${selectedEtablissement}`;
+
+  const formationVerbatimsQuery =
+    selectedFormation && selectedFormation !== "all" && `&formationId=${selectedFormation}`;
+
+  const finalQuery = `${etablissementVerbatimsQuery || ""}${formationVerbatimsQuery || ""}`;
+
+  const [verbatims, count, loadingVerbatims, errorVerbatims] = useFetchVerbatims(
+    finalQuery,
+    shouldRefresh
+  );
 
   useEffect(() => {
     if (verbatims?.length) {

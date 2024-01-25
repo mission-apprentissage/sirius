@@ -35,6 +35,7 @@ const getVerbatims = async (query) => {
         ...(etablissementSiret && { etablissementSiret }),
         ...(formationId && { formationId }),
       };
+
       const campagnesByQuestionnaireId = await campagnesDao.getAll(campagneQuery);
 
       if (!campagnesByQuestionnaireId) {
@@ -55,6 +56,7 @@ const getVerbatims = async (query) => {
         temoignages,
         campagnesByQuestionnaireId
       );
+
       const verbatimsWithChampsLibre = filterChampsLibresAndFlatten(verbatimsWithFormation, fieldsWithChampsLibre);
       const verbatimsWithCampagneName = appendVerbatimsWithCampagneNameAndRestructure(
         verbatimsWithChampsLibre,
@@ -70,6 +72,9 @@ const getVerbatims = async (query) => {
       pendingCount += verbatimsWithCampagneName.filter((verbatim) => typeof verbatim?.value === "string").length;
       validatedCount += verbatimsWithCampagneName.filter(
         (verbatim) => verbatim?.value?.status === VERBATIM_STATUS.VALIDATED
+      ).length;
+      rejectedCount += verbatimsWithCampagneName.filter(
+        (verbatim) => verbatim?.value?.status === VERBATIM_STATUS.REJECTED
       ).length;
     }
 

@@ -63,49 +63,54 @@ const questionnaireTemplateQuery = [
   },
 ];
 
-const formationQuery = [
-  {
-    $lookup: {
-      from: "formations",
-      let: { campagneId: { $toString: "$_id" } },
-      pipeline: [
-        {
-          $match: {
-            $expr: {
-              $and: [
-                { $eq: ["$$campagneId", "$campagneId"] },
-                {
-                  $or: [{ $eq: ["$deletedAt", null] }, { $not: { $gt: ["$deletedAt", null] } }],
-                },
-              ],
+const formationQuery = (formationId) => {
+  const objectIdFormationId = formationId ? new ObjectId(formationId) : null;
+
+  return [
+    {
+      $lookup: {
+        from: "formations",
+        let: { campagneId: { $toString: "$_id" } },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$$campagneId", "$campagneId"] },
+                  formationId ? { $eq: ["$_id", objectIdFormationId] } : {},
+                  {
+                    $or: [{ $eq: ["$deletedAt", null] }, { $not: { $gt: ["$deletedAt", null] } }],
+                  },
+                ],
+              },
             },
           },
-        },
-        {
-          $project: {
-            _id: { $toString: "$_id" },
-            "data.intitule_long": 1,
-            "data.tags": 1,
-            "data.lieu_formation_adresse_computed": 1,
-            "data.diplome": 1,
-            "data.localite": 1,
-            "data.duree": 1,
-            "data.etablissement_formateur_siret": 1,
+          {
+            $project: {
+              _id: { $toString: "$_id" },
+              "data.intitule_long": 1,
+              "data.tags": 1,
+              "data.lieu_formation_adresse_computed": 1,
+              "data.diplome": 1,
+              "data.localite": 1,
+              "data.duree": 1,
+              "data.etablissement_formateur_siret": 1,
+            },
           },
-        },
-        {
-          $limit: 1,
-        },
-      ],
-      as: "formation",
+          {
+            $limit: 1,
+          },
+        ],
+        as: "formation",
+      },
     },
-  },
-  {
-    $addFields: {
-      formation: { $arrayElemAt: ["$formation", 0] },
+    {
+      $addFields: {
+        formation: { $arrayElemAt: ["$formation", 0] },
+      },
     },
-  },
-];
+  ];
+};
 
 const etablissementQuery = (sirets) => {
   const siretToArray = typeof sirets === "string" ? sirets.split(",") : sirets;
@@ -162,7 +167,7 @@ const getAllWithTemoignageCountAndTemplateName = async (query) => {
     },
     ...temoignageCountQuery,
     ...questionnaireTemplateQuery,
-    ...formationQuery,
+    ...formationQuery(),
     ...etablissementQuery(query.siret),
   ]);
 };
@@ -182,7 +187,7 @@ const getOneWithTemoignagneCountAndTemplateName = async (query) => {
     },
     ...temoignageCountQuery,
     ...questionnaireTemplateQuery,
-    ...formationQuery,
+    ...formationQuery(),
     ...etablissementQuery(query.siret),
   ]);
 };
@@ -208,11 +213,11 @@ const getAll = async (query = {}) => {
     {
       $match: {
         deletedAt: null,
-        ...query,
+        questionnaireId: query.questionnaireId,
       },
     },
-    ...formationQuery,
-    ...etablissementQuery(),
+    ...formationQuery(query.formationId),
+    ...etablissementQuery(query.etablissementSiret),
   ]);
 };
 
