@@ -51,7 +51,10 @@ const ModerationQuestionPicker = ({ questions }) => {
       options={allQuestions.concat(
         questions.map((question) => ({
           ...question,
-          label: parse(question.label),
+          label:
+            question?.label && typeof question.label === "string"
+              ? parse(question.label)
+              : "Question non disponible",
         }))
       )}
       onChange={onChangeHandler}
