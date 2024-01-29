@@ -30,6 +30,7 @@ const newTemoignage = (custom = {}, hasId = false) => {
         test: faker.lorem.paragraph(),
       },
       lastQuestionAt: new Date(),
+      isBot: false,
     },
     custom
   );

@@ -248,7 +248,7 @@ const getColumns = (
         aria-label="share"
         onClick={async () => {
           const response = await _get(
-            `/api/campagnes/export/${info.getValue()[0]}`,
+            `/api/campagnes/export/pdf/${info.getValue()[0]}`,
             userContext.token
           );
 
@@ -341,7 +341,7 @@ const ManageCampagneTable = ({
     const persistedEtablissement = JSON.parse(localStorage.getItem("etablissements"));
 
     const response = await _get(
-      `/api/campagnes/multiexport?ids=${campagneIds}&siret=${persistedEtablissement.siret}`,
+      `/api/campagnes/export/pdf/multi?ids=${campagneIds}&siret=${persistedEtablissement.siret}`,
       userContext.token
     );
 

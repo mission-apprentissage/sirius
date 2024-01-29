@@ -1,14 +1,17 @@
 const Joi = require("joi");
 
-const patchMultiVerbatims = Joi.array()
-  .items({
-    temoignageId: Joi.string().required(),
-    questionId: Joi.string().required(),
-    payload: Joi.object({
-      status: Joi.string().required(),
-      content: Joi.string().allow(""),
-    }),
-  })
-  .required();
+const patchVerbatim = Joi.object({
+  payload: Joi.object({
+    content: Joi.string(),
+    status: Joi.string(),
+  }).required(),
+  questionId: Joi.string().required(),
+  temoignageId: Joi.string().required(),
+});
 
-module.exports = { patchMultiVerbatims };
+const patchMultiVerbatims = Joi.array().items(patchVerbatim).required().min(1);
+
+module.exports = {
+  patchVerbatim,
+  patchMultiVerbatims,
+};

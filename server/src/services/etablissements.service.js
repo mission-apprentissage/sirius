@@ -3,19 +3,23 @@ const questionnairesDao = require("../dao/questionnaires.dao");
 const retainFields = require("../utils/retainFields.utils");
 const { getChampsLibreCount } = require("../utils/verbatims.utils");
 
-const createEtablissement = async (etablissement) => {
+const createEtablissements = async (etablissementsArray) => {
   try {
-    const existingEtablissementQuery = {
-      "data._id": etablissement.data._id,
-    };
-    const existingEtablissement = await etablissementsDao.getAll(existingEtablissementQuery);
+    let createdEtablissements = [];
 
-    if (existingEtablissement.length) {
-      throw new Error("Etablissement déjà existant");
+    for (const etablissement of etablissementsArray) {
+      const existingEtablissementQuery = {
+        "data._id": etablissement.data._id,
+      };
+      const existingEtablissement = await etablissementsDao.getAll(existingEtablissementQuery);
+
+      if (!existingEtablissement.length) {
+        const createdEtablissement = await etablissementsDao.create(etablissement);
+        createdEtablissements.push(createdEtablissement);
+      }
     }
-    const createdEtablissement = await etablissementsDao.create(etablissement);
 
-    return { success: true, body: createdEtablissement };
+    return { success: true, body: createdEtablissements };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -118,7 +122,7 @@ const getEtablissementsSuivi = async () => {
 };
 
 module.exports = {
-  createEtablissement,
+  createEtablissements,
   getEtablissements,
   getEtablissement,
   deleteEtablissement,

@@ -3,6 +3,7 @@ const campagnesDao = require("../dao/campagnes.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
 const { ErrorMessage } = require("../errors");
 const { getChampsLibreField } = require("../utils/verbatims.utils");
+const { VERBATIM_STATUS } = require("../constants");
 
 const createTemoignage = async (temoignage) => {
   try {
@@ -51,7 +52,12 @@ const getTemoignages = async (query) => {
     temoignages.forEach((item) => {
       const reponses = item.reponses;
       for (const key of verbatimsFields) {
-        if (reponses[key] && reponses[key].status !== "VALIDATED") {
+        if (
+          reponses[key] &&
+          reponses[key].status !== VERBATIM_STATUS.VALIDATED &&
+          reponses[key].status !== VERBATIM_STATUS.TO_FIX &&
+          reponses[key].status !== VERBATIM_STATUS.GEM
+        ) {
           delete reponses[key];
         }
       }

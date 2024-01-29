@@ -1,118 +1,108 @@
-import React, { useState, useRef } from "react";
-import { FormControl, FormErrorMessage, Text } from "@chakra-ui/react";
-import { AsyncSelect } from "chakra-react-select";
-import { etablissementLabelGetter } from "../../utils/etablissement";
+import React, { useState } from "react";
+import { FormControl, FormErrorMessage, Spinner, Text, Box } from "@chakra-ui/react";
+import InputText from "../../Components/Form/InputText";
 import { _get } from "../../utils/httpClient";
+import { isValidSIRET } from "../../utils/etablissement";
 
-const EtablissementInput = ({ formik, setEtablissements, index, setError }) => {
-  const timer = useRef();
+const CatalogueUnavailableMessage = () => (
+  <>
+    <Text>
+      La connexion au catalogue de formation a échouée. L'inscription n'est pas disponible pour le
+      moment. Merci de réessayer plus tard.
+    </Text>
+    <Text>
+      Pour toute question, nous restons disponibles :{" "}
+      <a href="mailto:contact-sirius@inserjeunes.beta.gouv.fr">
+        <u>contact-sirius@inserjeunes.beta.gouv.fr</u>
+      </a>
+    </Text>
+  </>
+);
+
+const EtablissementInput = ({ formik, setError, setAddNewSiret }) => {
+  const [siretError, setSiretError] = useState(null);
   const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
 
-  const debouncedSiret = (callback, siret) => {
-    clearTimeout(timer.current);
-    const siretwithoutSpaces = siret.replace(/\s/g, "");
-    timer.current = setTimeout(async () => {
-      try {
-        const result = await _get(
-          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siretwithoutSpaces}"}&page=1&limit=1`
+  const loadEtablissementHandler = async (e) => {
+    const inputValue = e.target.value;
+
+    if (!inputValue) {
+      setSiretError(null);
+      return;
+    }
+
+    const siretwithoutSpaces = inputValue.replace(/\s/g, "");
+    const isSiretAlreadyAdded = formik.values.etablissements.some(
+      (etablissement) => etablissement.siret === siretwithoutSpaces
+    );
+
+    if (!isValidSIRET(siretwithoutSpaces)) {
+      setSiretError("Le SIRET est invalide");
+      return;
+    }
+
+    if (isSiretAlreadyAdded) {
+      setSiretError("Le SIRET est déjà présent dans la liste");
+      return;
+    }
+
+    setIsLoadingRemoteEtablissement(true);
+
+    try {
+      const result = await _get(
+        `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siretwithoutSpaces}"}&page=1&limit=1`
+      );
+      if (result.etablissements?.length > 0) {
+        const firstEtablissement = result.etablissements[0];
+        const addressParts = ["numero_voie", "type_voie", "nom_voie", "code_postal", "localite"]
+          .map((key) => (firstEtablissement[key] ? firstEtablissement[key] + " " : ""))
+          .join("");
+
+        const newEtablissement = {
+          id: firstEtablissement._id,
+          siret: firstEtablissement.siret,
+          onisep_nom: firstEtablissement.onisep_nom,
+          enseigne: firstEtablissement.enseigne,
+          entreprise_raison_sociale: firstEtablissement.entreprise_raison_sociale,
+          adresse: addressParts,
+        };
+
+        const updatedEtablissements = [...formik.values.etablissements, newEtablissement];
+
+        formik.setFieldValue("etablissements", updatedEtablissements);
+        setAddNewSiret(false);
+      } else {
+        setSiretError(
+          "Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4."
         );
-        if (result.etablissements?.length > 0) {
-          callback(result.etablissements);
-        } else {
-          callback(null);
-        }
-      } catch (error) {
-        setError(
-          <>
-            <Text>
-              La connexion au catalogue de formation a échouée. L'inscription n'est pas disponible
-              pour le moment. Merci de réessayer plus tard.
-            </Text>
-            <Text>
-              Pour toute question, nous restons disponibles :{" "}
-              <a href="mailto:contact-sirius@inserjeunes.beta.gouv.fr">
-                <u>contact-sirius@inserjeunes.beta.gouv.fr</u>
-              </a>
-            </Text>
-          </>
-        );
-        callback(null);
       }
-    }, 500);
+    } catch (error) {
+      setError(CatalogueUnavailableMessage);
+    }
   };
 
-  const loadEtablissementOptionsHandler = (inputValue, callback) => {
-    debouncedSiret(callback, inputValue);
-    setIsLoadingRemoteEtablissement(false);
-  };
-
-  const hasError = !!formik.errors.etablissements && !!formik.touched.etablissements;
+  const hasError =
+    (!!formik.errors.etablissements && !!formik.touched.etablissements) || siretError;
 
   return (
-    <FormControl isInvalid={!!formik.errors.etablissement && formik.touched.etablissement}>
-      <AsyncSelect
+    <FormControl isInvalid={hasError}>
+      <InputText
+        id="siret"
+        name="siret"
+        type="text"
         placeholder="SIRET de votre établissement"
-        getOptionLabel={(option) => etablissementLabelGetter(option)}
-        getOptionValue={(option) => option?.siret}
-        backspaceRemovesValue
-        escapeClearsValue
-        isClearable={index === 0}
-        loadOptions={loadEtablissementOptionsHandler}
-        isLoading={isLoadingRemoteEtablissement}
-        size="lg"
-        color="brand.black.500"
-        _placeholder={{ color: "brand.black.500" }}
-        errorBorderColor="brand.red.500"
+        formik={formik}
+        onChange={loadEtablissementHandler}
         isInvalid={hasError}
-        value={formik.values.etablissements[index]}
-        onChange={(e, { action }) => {
-          if (e) {
-            const etablissements = [
-              ...formik.values.etablissements,
-              {
-                siret: e.siret,
-                onisep_nom: e.onisep_nom,
-                enseigne: e.enseigne,
-                entreprise_raison_sociale: e.entreprise_raison_sociale,
-              },
-            ];
-
-            formik.setFieldValue("etablissements", etablissements);
-            setEtablissements(etablissements);
-          } else {
-            if (action === "clear") {
-              if (index === 0 && formik.values.etablissements.length === 1) {
-                formik.setFieldValue("etablissements", []);
-                setEtablissements([]);
-              } else {
-                const etablissements = [...formik.values.etablissements];
-                etablissements.splice(index, 1);
-                formik.setFieldValue("etablissements", etablissements);
-                setEtablissements(etablissements);
-              }
-            }
-          }
-        }}
-        chakraStyles={{
-          placeholder: (baseStyles) => ({
-            ...baseStyles,
-            color: "brand.black.500",
-          }),
-          dropdownIndicator: () => ({
-            display: "none",
-          }),
-          container: (baseStyles) => ({
-            ...baseStyles,
-            borderColor: "brand.blue.400",
-          }),
-          clearIndicator: (baseStyles) => ({
-            ...baseStyles,
-            color: "brand.blue.400",
-            backgroundColor: "transparent",
-          }),
-        }}
+        rightElement={
+          isLoadingRemoteEtablissement && (
+            <Box display="flex" mt="5px">
+              <Spinner size="sm" color="brand.blue.400" />
+            </Box>
+          )
+        }
       />
-      <FormErrorMessage>{formik.errors.etablissement}</FormErrorMessage>
+      <FormErrorMessage>{siretError}</FormErrorMessage>
     </FormControl>
   );
 };
