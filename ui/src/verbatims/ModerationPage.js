@@ -27,10 +27,12 @@ const ModerationPage = () => {
   const selectedFormation = searchParams.get("formation");
   const selectedQuestion = searchParams.get("question");
   const page = searchParams.get("page") ? parseInt(searchParams.get("page")) : 1;
+  const selectedStatus = searchParams.get("selectedStatus");
 
   const hasSelectedEtablissement = selectedEtablissement && selectedEtablissement !== "all";
   const hasSelectedFormation = selectedFormation && selectedFormation !== "all";
   const hasSelectedQuestion = selectedQuestion && selectedQuestion !== "all";
+  const hasSelectedStatus = selectedStatus && selectedStatus !== "all";
 
   const etablissementVerbatimsQuery = hasSelectedEtablissement
     ? `?etablissementSiret=${selectedEtablissement}`
@@ -42,12 +44,20 @@ const ModerationPage = () => {
     ? `${hasSelectedEtablissement ? "&" : "?"}question=${selectedQuestion}`
     : "";
 
+  const statusVerbatimsQuery = hasSelectedStatus
+    ? `${
+        etablissementVerbatimsQuery || formationVerbatimsQuery || questionVerbatimsQuery ? "&" : "?"
+      }selectedStatus=${selectedStatus}`
+    : "";
+
   const paginationQuery =
-    hasSelectedEtablissement || hasSelectedQuestion ? `&page=${page}` : `?page=${page}`;
+    hasSelectedEtablissement || hasSelectedQuestion || hasSelectedStatus
+      ? `&page=${page}`
+      : `?page=${page}`;
 
   const finalQuery = `${etablissementVerbatimsQuery || ""}${formationVerbatimsQuery || ""}${
     questionVerbatimsQuery || ""
-  }${paginationQuery}`;
+  }${statusVerbatimsQuery || ""}${paginationQuery}`;
 
   const [verbatims, count, loadingVerbatims, errorVerbatims] = useFetchVerbatims(
     finalQuery,

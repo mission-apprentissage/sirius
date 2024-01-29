@@ -73,7 +73,14 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
 
     for (const field of fieldsWithChampsLibre) {
       if (verbatim.reponses && field in verbatim.reponses) {
-        champsLibre[field] = verbatim.reponses[field];
+        if (typeof verbatim.reponses[field] === "string") {
+          champsLibre[field] = {
+            status: "PENDING",
+            value: verbatim.reponses[field],
+          };
+        } else {
+          champsLibre[field] = verbatim.reponses[field];
+        }
       }
     }
 

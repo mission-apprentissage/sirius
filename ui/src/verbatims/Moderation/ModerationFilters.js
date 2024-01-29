@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Select } from "chakra-react-select";
 import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../../constants";
 
@@ -29,54 +30,31 @@ const filterOptions = [
   },
 ];
 
-const ModerationFilters = ({
-  setDisplayedVerbatims,
-  verbatims,
-  displayedVerbatims,
-  currentFilters,
-}) => {
+const ModerationFilters = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedFilters, setSelectedFilters] = useState([...filterOptions]);
 
-  const handleFilter = (selectedFilters, { action }) => {
-    let filteredVerbatims = [...verbatims];
-
-    if (action === "remove-value") {
-      filteredVerbatims = displayedVerbatims.filter((verbatim) => {
-        const verbatimStatus =
-          typeof verbatim.value === "string" ? VERBATIM_STATUS.PENDING : verbatim.value?.status;
-
-        return selectedFilters.some((filter) => verbatimStatus === filter.value);
-      });
-    } else if (action === "select-option") {
-      if (currentFilters.selectedEtablissement && currentFilters.selectedEtablissement !== "all") {
-        filteredVerbatims = filteredVerbatims.filter(
-          (verbatim) => verbatim.etablissementSiret === currentFilters.selectedEtablissement
-        );
-      }
-
-      if (currentFilters.selectedFormation && currentFilters.selectedFormation !== "all") {
-        filteredVerbatims = filteredVerbatims.filter(
-          (verbatim) => verbatim.formationId === currentFilters.selectedFormation
-        );
-      }
-
-      if (currentFilters.selectedQuestion && currentFilters.selectedQuestion !== "all") {
-        filteredVerbatims = filteredVerbatims.filter(
-          (verbatim) => verbatim.key === currentFilters.selectedQuestion
-        );
-      }
-
-      filteredVerbatims = filteredVerbatims.filter((verbatim) => {
-        const verbatimStatus =
-          typeof verbatim.value === "string" ? VERBATIM_STATUS.PENDING : verbatim.value?.status;
-
-        return selectedFilters.some((filter) => verbatimStatus === filter.value);
-      });
+  useEffect(() => {
+    if (searchParams.get("selectedStatus")) {
+      const selectedStatus = searchParams.get("selectedStatus")?.split(",");
+      const selectedFilters = filterOptions.filter((filter) =>
+        selectedStatus.includes(filter.value)
+      );
+      setSelectedFilters(selectedFilters);
     }
+  }, []);
+
+  const handleFilter = (selectedFilters) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+
+    const selectedStatus = selectedFilters.map((filter) => filter);
+    const selectedStatusValues = selectedStatus.map((status) => status.value).join(",");
+
+    newSearchParams.set("selectedStatus", selectedStatusValues);
+    newSearchParams.set("page", 1);
 
     setSelectedFilters(selectedFilters);
-
-    setDisplayedVerbatims(filteredVerbatims);
+    setSearchParams(newSearchParams);
   };
 
   return (

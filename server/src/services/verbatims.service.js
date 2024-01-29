@@ -15,6 +15,7 @@ const getVerbatims = async (query) => {
   const etablissementSiret = query.etablissementSiret || null;
   const formationId = query.formationId || null;
   const questionKey = query.question || null;
+  const selectedStatus = query.selectedStatus ? query.selectedStatus.split(",") : Object.keys(VERBATIM_STATUS);
   const page = parseInt(query.page) || 1;
   const pageSize = parseInt(query.pageSize) || 100;
 
@@ -65,16 +66,18 @@ const getVerbatims = async (query) => {
         titles
       );
 
-      allVerbatims = allVerbatims.concat(verbatimsWithCampagneName);
-      totalCount += verbatimsWithCampagneName.length;
-      pendingCount += verbatimsWithCampagneName.filter(
-        (verbatim) => verbatim?.value?.status === VERBATIM_STATUS.PENDING
-      ).length;
-      pendingCount += verbatimsWithCampagneName.filter((verbatim) => typeof verbatim?.value === "string").length;
-      validatedCount += verbatimsWithCampagneName.filter(
+      const filteredByStatus = verbatimsWithCampagneName.filter((verbatim) =>
+        selectedStatus.includes(verbatim?.value?.status)
+      );
+
+      allVerbatims = allVerbatims.concat(filteredByStatus);
+      totalCount += filteredByStatus.length;
+      pendingCount += filteredByStatus.filter((verbatim) => verbatim?.value?.status === VERBATIM_STATUS.PENDING).length;
+      pendingCount += filteredByStatus.filter((verbatim) => typeof verbatim?.value === "string").length;
+      validatedCount += filteredByStatus.filter(
         (verbatim) => verbatim?.value?.status === VERBATIM_STATUS.VALIDATED
       ).length;
-      rejectedCount += verbatimsWithCampagneName.filter(
+      rejectedCount += filteredByStatus.filter(
         (verbatim) => verbatim?.value?.status === VERBATIM_STATUS.REJECTED
       ).length;
     }
