@@ -1,3 +1,5 @@
+const { VERBATIM_STATUS } = require("../constants");
+
 const getChampsLibreField = (questionnaireUI, onlyOpenQuestions = false) => {
   const fieldsWithCustomMessageReceived = [];
 
@@ -75,7 +77,7 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
       if (verbatim.reponses && field in verbatim.reponses) {
         if (typeof verbatim.reponses[field] === "string") {
           champsLibre[field] = {
-            status: "PENDING",
+            status: VERBATIM_STATUS.PENDING,
             value: verbatim.reponses[field],
           };
         } else {

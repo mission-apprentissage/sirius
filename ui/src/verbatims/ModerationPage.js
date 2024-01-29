@@ -10,7 +10,7 @@ import ModerationQuestionPicker from "./Moderation/ModerationQuestionPicker";
 import ModerationFilters from "./Moderation/ModerationFilters";
 import ModerationGroupedAction from "./Moderation/ModerationGroupedAction";
 import { UserContext } from "../context/UserContext";
-import ModerationPagination from "./ModerationPagination";
+import ModerationPagination from "./Moderation/ModerationPagination";
 
 const PAGE_SIZE = 100;
 

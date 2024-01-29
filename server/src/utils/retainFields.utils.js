@@ -1,5 +1,5 @@
-function retainFields(obj, fields) {
-  function filterObject(obj, fields) {
+const retainFields = (obj, fields) => {
+  const filterObject = (obj, fields) => {
     let result = {};
     Object.keys(obj).forEach((key) => {
       if (fields.includes(key) || fields.some((field) => field.startsWith(key + "."))) {
@@ -14,13 +14,13 @@ function retainFields(obj, fields) {
       }
     });
     return result;
-  }
+  };
 
   if (Array.isArray(obj)) {
     return obj.map((item) => filterObject(item, fields));
   } else {
     return filterObject(obj, fields);
   }
-}
+};
 
 module.exports = retainFields;
