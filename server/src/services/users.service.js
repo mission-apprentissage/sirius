@@ -35,6 +35,7 @@ const loginUser = async (id) => {
             user.etablissement.entreprise_raison_sociale,
         }),
       etablissements: user.etablissements,
+      acceptedCgu: user.acceptedCgu,
     });
     const refreshToken = getRefreshToken({
       _id: id,
@@ -51,6 +52,7 @@ const loginUser = async (id) => {
             user.etablissement.enseigne ||
             user.etablissement.entreprise_raison_sociale,
         }),
+      acceptedCgu: user.acceptedCgu,
     });
 
     user.refreshToken.push({ refreshToken });
@@ -88,6 +90,7 @@ const refreshTokenUser = async (refreshToken) => {
             user.etablissement.entreprise_raison_sociale,
         }),
       etablissements: user.etablissements,
+      acceptedCgu: user.acceptedCgu,
     });
     const newRefreshToken = getRefreshToken({
       _id: userId,
@@ -104,6 +107,7 @@ const refreshTokenUser = async (refreshToken) => {
             user.etablissement.enseigne ||
             user.etablissement.entreprise_raison_sociale,
         }),
+      acceptedCgu: user.acceptedCgu,
     });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 

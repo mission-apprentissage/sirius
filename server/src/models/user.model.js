@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema({
   confirmationToken: {
     type: String,
   },
+  acceptedCgu: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 //Remove refreshToken from the response

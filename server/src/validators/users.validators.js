@@ -33,6 +33,7 @@ const updateSchema = Joi.object({
   etablissements: Joi.array().items(etablissementSchema),
   status: Joi.string(),
   role: Joi.string(),
+  acceptedCgu: Joi.boolean(),
 });
 
 const forgotPasswordSchema = Joi.object({
