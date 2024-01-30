@@ -27,6 +27,7 @@ const UserProvider = (props) => {
           email: decodedToken.email,
           etablissementLabel: decodedToken.etablissementLabel,
           etablissements: decodedToken.etablissements,
+          acceptedCgu: decodedToken.acceptedCgu || false,
         };
       });
     } else {
