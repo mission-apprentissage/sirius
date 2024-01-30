@@ -67,7 +67,7 @@ const ForgottenPasswordModal = ({ onClose, isOpen }) => {
             d’informations pour réinitialiser votre mot de passe.
           </Text>
           <FormError
-            title="La réinitilisation du mot de passe a échouée"
+            title="La réinitialisation du mot de passe a échouée"
             hasError={(Object.keys(formik.errors).length || error) && formik.submitCount}
             errorMessages={errorMessages}
           />
