@@ -201,7 +201,7 @@ const getXlsxMultipleExport = async (ids) => {
       etablissementResponsableSiret: campagne.formation?.data.etablissement_gestionnaire_siret,
       etablissementFormateurLabel: campagne.formation?.data.etablissement_formateur_entreprise_raison_sociale,
       etablissementResponsableLabel: campagne.formation?.data.etablissement_gestionnaire_enseigne,
-      seats: campagne.seats,
+      seats: campagne.seats || "Illimité",
       temoignagesCount: campagne.temoignagesCount,
     }));
 
