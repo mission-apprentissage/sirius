@@ -17,7 +17,6 @@ import Confirmation from "./users/Confirmation";
 import MentionsInformationBackOffice from "./legal/MentionsInformationBackOffice";
 import MentionsInformationQuestionnaire from "./legal/MentionsInformationQuestionnaire";
 import CGU from "./legal/CGU";
-import PolitiqueConfidentialite from "./legal/PolitiqueConfidentialite";
 import UsersManaging from "./users/Managing";
 import ModerationPage from "./verbatims/ModerationPage";
 import Layout from "./Components/Layout";
@@ -88,7 +87,6 @@ function App() {
           element={<MentionsInformationBackOffice />}
         />
         <Route exact path="/cgu" element={<CGU />} />
-        <Route exact path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
         <Route exact path="/compte-desactive" element={<PendingAccount />} />
       </Route>
       <Route
