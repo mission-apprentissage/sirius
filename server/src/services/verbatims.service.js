@@ -9,58 +9,91 @@ const {
   filterChampsLibresAndFlatten,
   appendVerbatimsWithCampagneNameAndRestructure,
 } = require("../utils/verbatims.utils");
+const { VERBATIM_STATUS } = require("../constants");
 
 const getVerbatims = async (query) => {
-  const questionnaireId = query.questionnaireId;
   const etablissementSiret = query.etablissementSiret || null;
   const formationId = query.formationId || null;
+  const questionKey = query.question || null;
+  const selectedStatus = query.selectedStatus ? query.selectedStatus.split(",") : Object.keys(VERBATIM_STATUS);
+  const page = parseInt(query.page) || 1;
+  const pageSize = parseInt(query.pageSize) || 100;
 
   try {
-    const questionnaire = await questionnairesDao.getOne(questionnaireId);
+    const allQuestionnaires = await questionnairesDao.getAll();
 
-    if (!questionnaire) {
-      return { success: false, body: ErrorMessage.QuestionnaireNotFoundError };
-    }
+    let allVerbatims = [];
+    let totalCount = 0;
+    let pendingCount = 0;
+    let validatedCount = 0;
+    let rejectedCount = 0;
 
-    const fieldsWithChampsLibre = getChampsLibreField(questionnaire.questionnaireUI);
-    const titles = findTitlesInJSON(questionnaire.questionnaire, fieldsWithChampsLibre);
+    for (const questionnaire of allQuestionnaires) {
+      const fieldsWithChampsLibre = getChampsLibreField(questionnaire.questionnaireUI);
+      const titles = findTitlesInJSON(questionnaire.questionnaire, fieldsWithChampsLibre);
 
-    const campagnesByQuestionnaireId = await campagnesDao.getAll({ questionnaireId });
+      const campagneQuery = {
+        questionnaireId: questionnaire._id.toString(),
+        ...(etablissementSiret && { etablissementSiret }),
+        ...(formationId && { formationId }),
+      };
 
-    if (!campagnesByQuestionnaireId) {
-      return { success: false, body: ErrorMessage.CampagneNotFoundError };
-    }
+      const campagnesByQuestionnaireId = await campagnesDao.getAll(campagneQuery);
 
-    const query = { campagneId: { $in: campagnesByQuestionnaireId.map((campagne) => campagne._id) } };
-    const temoignages = await temoignagesDao.getAll(query);
+      if (!campagnesByQuestionnaireId) {
+        continue;
+      }
 
-    if (!temoignages) {
-      return { success: false, body: ErrorMessage.TemoignageNotFoundError };
-    }
+      const temoignagesQuery = {
+        campagneId: { $in: campagnesByQuestionnaireId.map((campagne) => campagne._id) },
+      };
 
-    const verbatimsWithFormation = appendFormationAndEtablissementToVerbatims(temoignages, campagnesByQuestionnaireId);
+      const temoignages = await temoignagesDao.getAll(temoignagesQuery, questionKey);
 
-    const verbatimsWithChampsLibre = filterChampsLibresAndFlatten(verbatimsWithFormation, fieldsWithChampsLibre);
+      if (!temoignages) {
+        continue;
+      }
 
-    const verbatimsWithCampagneName = appendVerbatimsWithCampagneNameAndRestructure(
-      verbatimsWithChampsLibre,
-      campagnesByQuestionnaireId,
-      titles
-    );
-
-    let filteredVerbatims = [];
-
-    if (etablissementSiret) {
-      filteredVerbatims = verbatimsWithCampagneName.filter(
-        (verbatim) => verbatim.etablissementSiret === etablissementSiret
+      const verbatimsWithFormation = appendFormationAndEtablissementToVerbatims(
+        temoignages,
+        campagnesByQuestionnaireId
       );
+
+      const verbatimsWithChampsLibre = filterChampsLibresAndFlatten(verbatimsWithFormation, fieldsWithChampsLibre);
+      const verbatimsWithCampagneName = appendVerbatimsWithCampagneNameAndRestructure(
+        verbatimsWithChampsLibre,
+        campagnesByQuestionnaireId,
+        titles
+      );
+
+      const filteredByStatus = verbatimsWithCampagneName.filter((verbatim) =>
+        selectedStatus.includes(verbatim?.value?.status)
+      );
+
+      allVerbatims = allVerbatims.concat(filteredByStatus);
+      totalCount += filteredByStatus.length;
+      pendingCount += filteredByStatus.filter((verbatim) => verbatim?.value?.status === VERBATIM_STATUS.PENDING).length;
+      pendingCount += filteredByStatus.filter((verbatim) => typeof verbatim?.value === "string").length;
+      validatedCount += filteredByStatus.filter(
+        (verbatim) => verbatim?.value?.status === VERBATIM_STATUS.VALIDATED
+      ).length;
+      rejectedCount += filteredByStatus.filter(
+        (verbatim) => verbatim?.value?.status === VERBATIM_STATUS.REJECTED
+      ).length;
     }
 
-    if (formationId) {
-      filteredVerbatims = verbatimsWithCampagneName.filter((verbatim) => verbatim.formationId === formationId);
-    }
+    const paginatedVerbatims = allVerbatims.slice((page - 1) * pageSize, page * pageSize);
 
-    return { success: true, body: filteredVerbatims.length ? filteredVerbatims : verbatimsWithCampagneName };
+    return {
+      success: true,
+      body: { verbatims: paginatedVerbatims, totalCount, pendingCount, validatedCount, rejectedCount },
+      pagination: {
+        totalItems: totalCount,
+        currentPage: page,
+        pageSize: pageSize,
+        totalPages: Math.ceil(totalCount / pageSize),
+      },
+    };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -84,4 +117,25 @@ const patchVerbatim = async (id, updatedVerbatim) => {
   }
 };
 
-module.exports = { getVerbatims, patchVerbatim };
+const patchMultiVerbatim = async (verbatims) => {
+  try {
+    let updatedTemoignages = [];
+
+    for (const verbatim of verbatims) {
+      const temoignageToUpdate = await temoignagesDao.getOne(verbatim.temoignageId);
+      if (!temoignageToUpdate) {
+        return { success: false, body: ErrorMessage.TemoignageNotFoundError };
+      }
+
+      temoignageToUpdate.reponses[verbatim.questionId] = verbatim.payload;
+      const updatedTemoignage = await temoignagesDao.update(verbatim.temoignageId, temoignageToUpdate);
+      updatedTemoignages.push(updatedTemoignage);
+    }
+
+    return { success: true, body: updatedTemoignages };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim };

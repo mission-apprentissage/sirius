@@ -18,7 +18,7 @@ import MentionsInformation from "./legal/MentionsInformation";
 import CGU from "./legal/CGU";
 import PolitiqueConfidentialite from "./legal/PolitiqueConfidentialite";
 import UsersManaging from "./users/Managing";
-import VerbatimsModeration from "./verbatims/Moderation";
+import ModerationPage from "./verbatims/ModerationPage";
 import Layout from "./Components/Layout";
 import AnonymousLayout from "./Components/AnonymousLayout";
 import QuestionnaireLayout from "./Components/QuestionnaireLayout";
@@ -53,7 +53,7 @@ function App() {
         <Route exact path="/questionnaires/ajout" element={<QuestionnaireForm />} />
         <Route exact path="/questionnaires/:id/edition" element={<EditQuestionnaire />} />
         <Route exact path="/utilisateurs/gestion" element={<UsersManaging />} />
-        <Route exact path="/verbatims/moderation" element={<VerbatimsModeration />} />
+        <Route exact path="/verbatims/moderation" element={<ModerationPage />} />
         <Route exact path="/suivi/etablissements" element={<SuiviEtablissementsPage />} />
         <Route exact path="/suivi/campagnes" element={<SuiviCampagnesPage />} />
       </Route>

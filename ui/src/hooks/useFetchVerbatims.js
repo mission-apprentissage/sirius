@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { _get } from "../utils/httpClient";
 
-const useFetchVerbatims = (questionnaireId, etablissementSiret, formationId) => {
+const useFetchVerbatims = (query, shouldRefresh) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,26 +10,35 @@ const useFetchVerbatims = (questionnaireId, etablissementSiret, formationId) => 
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setData(null);
       try {
-        const response = await _get(
-          `/api/verbatims?questionnaireId=${questionnaireId}&etablissementSiret=${
-            etablissementSiret || ""
-          }&formationId=${formationId || ""}`,
-          userContext.token
-        );
-        setData(response);
-        setLoading(false);
+        const response = await _get(`/api/verbatims${query ? query : ""}`, userContext.token);
+        if (response.body.verbatims.length) {
+          setData(response);
+        }
       } catch (error) {
         setError(error);
+      } finally {
         setLoading(false);
       }
     };
-    if (questionnaireId) {
-      fetchData();
-    }
-  }, [questionnaireId, etablissementSiret, formationId]);
 
-  return [data, loading, error];
+    fetchData();
+  }, [query, shouldRefresh]);
+
+  return [
+    data?.body?.verbatims,
+    {
+      totalCount: data?.body?.totalCount || 0,
+      pendingCount: data?.body?.pendingCount || 0,
+      validatedCount: data?.body?.validatedCount || 0,
+      rejectedCount: data?.body?.rejectedCount || 0,
+    },
+    loading,
+    error,
+    data?.pagination,
+  ];
 };
 
 export default useFetchVerbatims;

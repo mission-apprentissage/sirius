@@ -1,3 +1,5 @@
+const { VERBATIM_STATUS } = require("../constants");
+
 const getChampsLibreField = (questionnaireUI, onlyOpenQuestions = false) => {
   const fieldsWithCustomMessageReceived = [];
 
@@ -72,8 +74,15 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
     const champsLibre = {};
 
     for (const field of fieldsWithChampsLibre) {
-      if (field in verbatim.reponses) {
-        champsLibre[field] = verbatim.reponses[field];
+      if (verbatim.reponses && field in verbatim.reponses) {
+        if (typeof verbatim.reponses[field] === "string") {
+          champsLibre[field] = {
+            status: VERBATIM_STATUS.PENDING,
+            content: verbatim.reponses[field],
+          };
+        } else {
+          champsLibre[field] = verbatim.reponses[field];
+        }
       }
     }
 

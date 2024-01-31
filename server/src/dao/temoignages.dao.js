@@ -4,8 +4,17 @@ const create = async (temoignage) => {
   return Temoignage.create(temoignage);
 };
 
-const getAll = async (query) => {
-  return Temoignage.find({ ...query, deletedAt: null }).lean();
+const getAll = async (query, questionKey) => {
+  let projection = { reponses: 1 };
+
+  if (questionKey && typeof questionKey === "string") {
+    projection = { [`reponses.${questionKey}`]: 1 };
+    query = { ...query, [`reponses.${questionKey}`]: { $exists: true, $ne: null } };
+  }
+
+  projection = { ...projection, _id: 1, createdAt: 1, updatedAt: 1, campagneId: 1 };
+
+  return Temoignage.find({ ...query, deletedAt: null }, projection).lean();
 };
 
 const deleteOne = async (id) => {

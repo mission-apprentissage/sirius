@@ -58,10 +58,15 @@ const getOne = (id) => {
   return Questionnaire.findById(id).lean();
 };
 
+const getAll = (query = {}) => {
+  return Questionnaire.find({ ...query, deletedAt: null }).lean();
+};
+
 module.exports = {
   create,
   getAllWithCreatorName,
   deleteOne,
   update,
   getOne,
+  getAll,
 };
