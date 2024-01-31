@@ -25,7 +25,7 @@ const validationSchema = Yup.object({
     .oneOf([true], "Vous devez accepter les CGU"),
 });
 
-const CguModal = ({ userContext, setUserContext }) => {
+const CguModal = ({ userContext, setUserContext, isOpen = true, setHasAcceptedCgu }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -37,17 +37,21 @@ const CguModal = ({ userContext, setUserContext }) => {
     onSubmit: async () => {
       try {
         setIsSubmitting(true);
-        const result = await _put(
-          `/api/users/${userContext.currentUserId}`,
-          { acceptedCgu: true },
-          userContext.token
-        );
-        if (result.acknowledged) {
-          setUserContext((oldValues) => {
-            return { ...oldValues, acceptedCgu: true };
-          });
+        if (userContext?.token) {
+          const result = await _put(
+            `/api/users/${userContext.currentUserId}`,
+            { acceptedCgu: true },
+            userContext.token
+          );
+          if (result.acknowledged) {
+            setUserContext((oldValues) => {
+              return { ...oldValues, acceptedCgu: true };
+            });
+          } else {
+            setError("Merci de réessayer");
+          }
         } else {
-          setError("Merci de réessayer");
+          setHasAcceptedCgu(true);
         }
       } catch (error) {
         setError("Merci de réessayer");
@@ -60,7 +64,7 @@ const CguModal = ({ userContext, setUserContext }) => {
   const errorMessages = [...new Set(Object.values(formik.errors)), error];
 
   return (
-    <Modal isOpen={true} size="sm" isCentered autoFocus={false}>
+    <Modal isOpen={isOpen} size="sm" isCentered autoFocus={false}>
       <ModalOverlay />
       <ModalContent py="8" px="4" bgColor="brand.blue.100" width="90%" borderRadius="20px">
         <ModalHeader textAlign="center" color="brand.blue.700">
