@@ -28,7 +28,7 @@ const ModerationGroupedAction = ({
       }));
 
     const response = await _patch(`/api/verbatims/multi`, updatedVerbatims, userContext.token);
-    const acknowledgedCount = response.filter((res) => res.acknowledged).length;
+    const acknowledgedCount = response?.filter((res) => res.acknowledged).length;
 
     if (
       response.length === selectedVerbatims.length &&

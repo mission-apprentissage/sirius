@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 const patchVerbatim = Joi.object({
   payload: Joi.object({
-    content: Joi.string(),
+    content: Joi.string().allow(""),
     status: Joi.string(),
   }).required(),
   questionId: Joi.string().required(),
