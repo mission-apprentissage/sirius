@@ -218,6 +218,7 @@ const getAll = async (query = {}) => {
       $match: {
         deletedAt: null,
         ...(query.questionnaireId && { questionnaireId: query.questionnaireId }),
+        ...(query._id && { _id: query._id }),
       },
     },
     ...temoignageCountQuery,
