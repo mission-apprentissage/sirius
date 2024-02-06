@@ -4,7 +4,7 @@ import { AddIcon } from "@chakra-ui/icons";
 import EtablissementInput from "./EtablissementInput";
 import EtablissementInputList from "./EtablissementInputList";
 
-const AddSiret = ({ formik, setError }) => {
+const AddSiret = ({ formik, setError, userSiret = null }) => {
   const [addNewSiret, setAddNewSiret] = useState(true);
 
   const etablissements = formik.values.etablissements;
@@ -21,7 +21,12 @@ const AddSiret = ({ formik, setError }) => {
           />
         ))}
       {(addNewSiret || !etablissements.length) && (
-        <EtablissementInput formik={formik} setError={setError} setAddNewSiret={setAddNewSiret} />
+        <EtablissementInput
+          formik={formik}
+          setError={setError}
+          setAddNewSiret={setAddNewSiret}
+          userSiret={userSiret}
+        />
       )}
       {etablissements[etablissements.length - 1]?.siret && (
         <Stack
