@@ -66,10 +66,14 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
         entreprise_raison_sociale: etablissement.entreprise_raison_sociale,
       }));
 
+      const previousEtablissementsWithoutEmpty = user.etablissements.filter(
+        (obj) => Object.keys(obj).length !== 0
+      );
+
       const resultUser = await _put(
         `/api/users/${user._id}`,
         {
-          etablissements: [...user.etablissements, ...newEtablissementsPayload],
+          etablissements: [...previousEtablissementsWithoutEmpty, ...newEtablissementsPayload],
         },
         userContext.token
       );
