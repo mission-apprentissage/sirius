@@ -35,7 +35,7 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret, userSiret }) => 
     const isSiretAlreadyAdded = formik.values.etablissements.some(
       (etablissement) => etablissement.siret === siretwithoutSpaces
     );
-    const isSiretAlreadyAddedToUser = userSiret.some((siret) => siret === siretwithoutSpaces);
+    const isSiretAlreadyAddedToUser = userSiret?.some((siret) => siret === siretwithoutSpaces);
 
     if (!isValidSIRET(siretwithoutSpaces)) {
       setSiretError("Le SIRET est invalide");
