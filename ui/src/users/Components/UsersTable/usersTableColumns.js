@@ -197,7 +197,7 @@ const usersTableColumns = (
   columnHelper.accessor("_id", {
     cell: (info) => {
       const user = info.row.original;
-
+      if (user.role === USER_ROLES.ADMIN) return null;
       return (
         <Box>
           <Tooltip label="Ajouter un SIRET" hasArrow>
