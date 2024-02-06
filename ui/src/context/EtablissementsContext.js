@@ -43,7 +43,10 @@ const EtablissementsProvider = (props) => {
       if (userContext.currentUserRole === USER_ROLES.ADMIN) {
         getAdminEtablissements();
       }
-      if (userContext.currentUserRole === USER_ROLES.ETABLISSEMENT) {
+      if (
+        userContext.currentUserRole === USER_ROLES.ETABLISSEMENT &&
+        userContext.etablissements?.length > 0
+      ) {
         const persistedEtablissements = JSON.parse(localStorage.getItem("etablissements"));
         const siretList = userContext.etablissements.map((etablissement) => etablissement.siret);
 
