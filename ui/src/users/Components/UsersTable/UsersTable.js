@@ -13,6 +13,7 @@ import UsersTableFilters from "./UsersTableFilters";
 import UsersTableSearch from "./UsersTableSearch";
 import UsersTableHead from "./UsersTableHead";
 import usersTableColumns from "./usersTableColumns";
+import AddSiretModal from "../AddSiretModal";
 
 const UsersTable = ({ users, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
@@ -40,6 +41,12 @@ const UsersTable = ({ users, setRefetchData }) => {
     onClose: onCloseRoleConfirmation,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenAddSiret,
+    onOpen: onOpenAddSiret,
+    onClose: onCloseAddSiret,
+  } = useDisclosure();
+
   const table = useReactTable({
     columns: usersTableColumns(
       userContext,
@@ -49,7 +56,8 @@ const UsersTable = ({ users, setRefetchData }) => {
       setSelectedRole,
       onOpenRoleConfirmation,
       setClipboardValue,
-      onCopyClipBoard
+      onCopyClipBoard,
+      onOpenAddSiret
     ),
     data: displayedUsers,
     getCoreRowModel: getCoreRowModel(),
@@ -116,6 +124,12 @@ const UsersTable = ({ users, setRefetchData }) => {
         onClose={onCloseRoleConfirmation}
         user={selectedUser}
         selectedRole={selectedRole}
+        setRefetchData={setRefetchData}
+      />
+      <AddSiretModal
+        isOpen={isOpenAddSiret}
+        onClose={onCloseAddSiret}
+        user={selectedUser}
         setRefetchData={setRefetchData}
       />
     </>

@@ -1,6 +1,6 @@
-import { Tooltip, Box, Select, Text } from "@chakra-ui/react";
+import { Tooltip, Box, Select, Text, IconButton } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { CheckIcon, CloseIcon, CopyIcon } from "@chakra-ui/icons";
+import { CheckIcon, AddIcon, CopyIcon, CloseIcon } from "@chakra-ui/icons";
 import { USER_ROLES, USER_STATUS } from "../../../constants";
 import { etablissementLabelGetter } from "../../../utils/etablissement";
 
@@ -14,7 +14,8 @@ const usersTableColumns = (
   setSelectedRole,
   onOpenRoleConfirmation,
   setClipboardValue,
-  onCopyClipBoard
+  onCopyClipBoard,
+  onOpenAddSiret
 ) => [
   columnHelper.accessor("firstName", {
     cell: (info) => {
@@ -192,6 +193,28 @@ const usersTableColumns = (
       );
     },
     header: "Role",
+  }),
+  columnHelper.accessor("_id", {
+    cell: (info) => {
+      const user = info.row.original;
+      if (user.role === USER_ROLES.ADMIN) return null;
+      return (
+        <Box>
+          <Tooltip label="Ajouter un SIRET" hasArrow>
+            <IconButton
+              size="sm"
+              aria-label="ajout SIRET"
+              icon={<AddIcon />}
+              onClick={() => {
+                setSelectedUser(user);
+                onOpenAddSiret();
+              }}
+            />
+          </Tooltip>
+        </Box>
+      );
+    },
+    header: "Action",
   }),
 ];
 

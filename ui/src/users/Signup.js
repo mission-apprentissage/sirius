@@ -10,7 +10,6 @@ import {
   useBreakpoint,
   Link,
 } from "@chakra-ui/react";
-import { AddIcon, DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate } from "react-router-dom";
@@ -24,8 +23,7 @@ import InputText from "../Components/Form/InputText";
 import Button from "../Components/Form/Button";
 import FormError from "../Components/Form/FormError";
 import { emailWithTLDRegex } from "../constants";
-import EtablissementInput from "./Components/EtablissementInput";
-import { etablissementLabelGetter } from "../utils/etablissement";
+import AddSiret from "./Components/AddSiret/AddSiret";
 
 const requiredFieldMessage = "Ces champs sont obligatoires";
 
@@ -55,7 +53,6 @@ const Signup = () => {
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [error, setError] = useState(null);
   const [userContext] = useContext(UserContext);
-  const [addNewSiret, setAddNewSiret] = useState(true);
 
   const isMobile = breakpoint === "base";
 
@@ -104,14 +101,6 @@ const Signup = () => {
       }
     },
   });
-
-  const etablissements = formik.values.etablissements;
-
-  const handleDeleteEtablissement = (index) => {
-    const updatedEtablissements = [...etablissements];
-    updatedEtablissements.splice(index, 1);
-    formik.setFieldValue("etablissements", updatedEtablissements);
-  };
 
   if (!userContext.loading && userContext.token) return <Navigate to="/campagnes/gestion" />;
 
@@ -169,87 +158,7 @@ const Signup = () => {
                   campagnes de plusieurs établissements. Insérez le premier SIRET puis cliquez sur
                   le bouton « Ajouter un SIRET ».
                 </Text>
-                {etablissements.length &&
-                  etablissements.map((etablissement, index) => (
-                    <Stack direction="row" key={index}>
-                      <Box bgColor="brand.blue.100" p="15px" position="relative" w="100%">
-                        <Box
-                          bgColor="brand.pink.400"
-                          borderRadius="50px"
-                          w="20px"
-                          h="20px"
-                          position="absolute"
-                          top="6px"
-                          left="6px"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          <Text fontSize="12px" fontWeight="semibold">
-                            {index + 1}
-                          </Text>
-                        </Box>
-                        <Box
-                          w="20px"
-                          h="20px"
-                          position="absolute"
-                          top="6px"
-                          right="6px"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          <DeleteIcon
-                            cursor="pointer"
-                            color="brand.red.500"
-                            onClick={() => handleDeleteEtablissement(index)}
-                          />
-                        </Box>
-                        <Text mt="25px" mb="5px" fontWeight="semibold">
-                          {etablissementLabelGetter(etablissement)}
-                        </Text>
-                        <Text mb="5px" fontSize="14px">
-                          {etablissement.siret}
-                        </Text>
-                        <Text mb="10px" fontSize="14px">
-                          {etablissement.adresse}
-                        </Text>
-                        <Link
-                          href={`https://catalogue-apprentissage.intercariforef.org/etablissement/${etablissement.id}`}
-                          target="_blank"
-                          display="flex"
-                          alignItems="center"
-                          color={"brand.blue.700"}
-                          fontSize="12px"
-                        >
-                          <ExternalLinkIcon mr="5px" color={"brand.blue.700"} />
-                          Voir le détail de l'établissement (CARIF-OREF)
-                        </Link>
-                      </Box>
-                    </Stack>
-                  ))}
-                {(addNewSiret || !etablissements.length) && (
-                  <EtablissementInput
-                    formik={formik}
-                    setError={setError}
-                    setAddNewSiret={setAddNewSiret}
-                  />
-                )}
-                {etablissements[etablissements.length - 1]?.siret && (
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    cursor="pointer"
-                    onClick={() => setAddNewSiret(true)}
-                    mb="10px"
-                  >
-                    <AddIcon boxSize="10px" color="brand.blue.700" />
-                    <Text fontSize="sm" color="brand.blue.700">
-                      Ajouter un SIRET
-                    </Text>
-                  </Stack>
-                )}
-
+                <AddSiret formik={formik} setError={setError} />
                 <FormControl isInvalid={!!formik.errors.comment && formik.touched.comment}>
                   <Textarea
                     id="comment"

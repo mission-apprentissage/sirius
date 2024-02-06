@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FormControl, FormErrorMessage, Spinner, Text, Box } from "@chakra-ui/react";
-import InputText from "../../Components/Form/InputText";
-import { _get } from "../../utils/httpClient";
-import { isValidSIRET } from "../../utils/etablissement";
+import InputText from "../../../Components/Form/InputText";
+import { _get } from "../../../utils/httpClient";
+import { isValidSIRET } from "../../../utils/etablissement";
 
 const CatalogueUnavailableMessage = () => (
   <>
@@ -19,7 +19,7 @@ const CatalogueUnavailableMessage = () => (
   </>
 );
 
-const EtablissementInput = ({ formik, setError, setAddNewSiret }) => {
+const EtablissementInput = ({ formik, setError, setAddNewSiret, userSiret }) => {
   const [siretError, setSiretError] = useState(null);
   const [isLoadingRemoteEtablissement, setIsLoadingRemoteEtablissement] = useState(false);
 
@@ -35,6 +35,7 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret }) => {
     const isSiretAlreadyAdded = formik.values.etablissements.some(
       (etablissement) => etablissement.siret === siretwithoutSpaces
     );
+    const isSiretAlreadyAddedToUser = userSiret?.some((siret) => siret === siretwithoutSpaces);
 
     if (!isValidSIRET(siretwithoutSpaces)) {
       setSiretError("Le SIRET est invalide");
@@ -43,6 +44,11 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret }) => {
 
     if (isSiretAlreadyAdded) {
       setSiretError("Le SIRET est déjà présent dans la liste");
+      return;
+    }
+
+    if (isSiretAlreadyAddedToUser) {
+      setSiretError("Le SIRET est déjà associé à ce compte");
       return;
     }
 
@@ -78,6 +84,8 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret }) => {
       }
     } catch (error) {
       setError(CatalogueUnavailableMessage);
+    } finally {
+      setIsLoadingRemoteEtablissement(false);
     }
   };
 
