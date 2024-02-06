@@ -171,7 +171,7 @@ const getPdfMultipleExport = async (ids, user) => {
       campagnes[0].etablissement.data.entreprise_raison_sociale ||
       "";
 
-    const diplome = DIPLOME_TYPE_MATCHER[campagnes[0].formation.data.diplome];
+    const diplome = DIPLOME_TYPE_MATCHER[campagnes[0].formation.data.diplome] || campagnes[0].formation.data.diplome;
 
     const generatedPdf = await pdfExport.generateMultiplePdf(formattedCampagnes, diplome, etablissementLabel, user);
 
@@ -184,6 +184,7 @@ const getPdfMultipleExport = async (ids, user) => {
       body: { data: generatedPdf, fileName },
     };
   } catch (error) {
+    console.log({ error });
     return { success: false, body: error };
   }
 };
