@@ -77,7 +77,8 @@ const Login = () => {
             lastName: decodedToken.lastName,
             email: decodedToken.email,
             siret: decodedToken.siret,
-            etablissements: decodedToken.etablissements,
+            acceptedCgu: decodedToken.acceptedCgu || false,
+            etablissements: decodedToken.etablissements || [],
           };
         });
         if (decodedToken.role === USER_ROLES.ETABLISSEMENT) {
