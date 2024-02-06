@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FormControl, FormErrorMessage, Spinner, Text, Box } from "@chakra-ui/react";
-import InputText from "../../Components/Form/InputText";
-import { _get } from "../../utils/httpClient";
-import { isValidSIRET } from "../../utils/etablissement";
+import InputText from "../../../Components/Form/InputText";
+import { _get } from "../../../utils/httpClient";
+import { isValidSIRET } from "../../../utils/etablissement";
 
 const CatalogueUnavailableMessage = () => (
   <>
@@ -78,6 +78,8 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret }) => {
       }
     } catch (error) {
       setError(CatalogueUnavailableMessage);
+    } finally {
+      setIsLoadingRemoteEtablissement(false);
     }
   };
 
