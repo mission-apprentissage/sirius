@@ -14,6 +14,7 @@ import GoEye from "../../assets/icons/GoEye.svg";
 import MdDone from "../../assets/icons/MdDone.svg";
 import MdQuestionAnswer from "../../assets/icons/MdQuestionAnswer.svg";
 import { etablissementLabelGetter } from "../../utils/etablissement";
+import parse from "html-react-parser";
 
 const MultiEtablissementsPicker = ({ etablissementsContext, setEtablissementsContext }) => {
   const [_, setSearchParams] = useSearchParams();
@@ -70,7 +71,11 @@ const MultiEtablissementsPicker = ({ etablissementsContext, setEtablissementsCon
         etablissementsContext.etablissements.length > 0 &&
         etablissementsContext.etablissements.map((etablissement) => ({
           value: etablissement.siret,
-          label: etablissementLabelGetter(etablissement),
+          label: parse(
+            `<div style="display: flex; flex-direction: column;"><p>${etablissementLabelGetter(
+              etablissement
+            )}</p>  <p style="font-size: 12px; margin-top: 5px;">${etablissement.siret}</p><div>`
+          ),
         }))
       }
       onChange={onChangeHandler}
