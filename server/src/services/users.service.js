@@ -51,7 +51,6 @@ const loginUser = async (id) => {
             user.etablissement.enseigne ||
             user.etablissement.entreprise_raison_sociale,
         }),
-      etablissements: user.etablissements,
     });
 
     user.refreshToken.push({ refreshToken });
@@ -105,7 +104,6 @@ const refreshTokenUser = async (refreshToken) => {
             user.etablissement.enseigne ||
             user.etablissement.entreprise_raison_sociale,
         }),
-      etablissements: user.etablissements,
     });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 

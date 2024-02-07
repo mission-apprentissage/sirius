@@ -77,6 +77,7 @@ const Login = () => {
             lastName: decodedToken.lastName,
             email: decodedToken.email,
             siret: decodedToken.siret,
+            etablissements: decodedToken.etablissements,
           };
         });
         if (decodedToken.role === USER_ROLES.ETABLISSEMENT) {
