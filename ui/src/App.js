@@ -1,5 +1,6 @@
 import React from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
+import { useIsDark } from "@codegouvfr/react-dsfr/useIsDark";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import ManageCampagnesPage from "./campagnes/ManageCampagnesPage";
@@ -25,8 +26,12 @@ import QuestionnaireLayout from "./Components/QuestionnaireLayout";
 import ResultsCampagnesPage from "./campagnes/ResultsCampagnesPage";
 import SuiviEtablissementsPage from "./suivi/SuiviEtablissementsPage";
 import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
+import HomePage from "./HomePage";
 
 function App() {
+  const { setIsDark } = useIsDark();
+  setIsDark(false);
+
   return (
     <Routes>
       <Route
@@ -36,7 +41,6 @@ function App() {
           </Layout>
         }
       >
-        <Route exact path="/" element={<Navigate to="/campagnes/gestion" />} />
         <Route exact path="/campagnes/ajout" element={<CreateCampagnesPage />} />
         <Route exact path="/campagnes/gestion" element={<ManageCampagnesPage />} />
         <Route exact path="/campagnes/resultats" element={<ResultsCampagnesPage />} />
@@ -64,6 +68,7 @@ function App() {
           </AnonymousLayout>
         }
       >
+        <Route exact path="/" element={<HomePage />} />
         <Route exact path="/connexion" element={<Login />} />
         <Route exact path="/modification-mot-de-passe" element={<Login />} />
         <Route exact path="/inscription" element={<Signup />} />
