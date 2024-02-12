@@ -1,23 +1,43 @@
 import React from "react";
-import { Box, Flex, Text, Link, useBreakpoint } from "@chakra-ui/react";
+import { Header } from "@codegouvfr/react-dsfr/Header";
 import Logo from "../assets/images/logo.svg";
 
 const UnauthNavbar = () => {
-  const breakpoint = useBreakpoint({ ssr: false });
-  const isMobile = breakpoint === "base";
-
   return (
-    <>
-      <Box bg="white" px={4}>
-        <Flex h={16} alignItems="center" justifyContent={isMobile ? "center" : "flex-start"}>
-          <img src={Logo} alt="Logo Sirius" />
-          <Text display={isMobile ? "none" : "inherit"} color="brand.blue.700" ml="5">
-            recueillir les témoignages d’apprenti·es pour aider les plus jeunes à choisir une
-            formation en apprentissage
-          </Text>
-        </Flex>
-      </Box>
-    </>
+    <Header
+      brandTop={
+        <>
+          RÉPUBLIQUE
+          <br />
+          FRANÇAISE
+        </>
+      }
+      homeLinkProps={{
+        href: "/",
+        title: "Accueil - Sirius",
+      }}
+      operatorLogo={{
+        alt: "Logo Sirius",
+        imgUrl: Logo,
+        orientation: "horizontal",
+      }}
+      quickAccessItems={[
+        {
+          iconId: "fr-icon-account-circle-fill",
+          linkProps: {
+            href: "/inscription",
+          },
+          text: "S'inscrire",
+        },
+        {
+          iconId: "fr-icon-account-circle-fill",
+          linkProps: {
+            href: "/connexion",
+          },
+          text: "Se connecter à la plateforme",
+        },
+      ]}
+    />
   );
 };
 
