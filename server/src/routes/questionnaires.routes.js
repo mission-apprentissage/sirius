@@ -18,7 +18,7 @@ const questionnaires = () => {
     createQuestionnaire(req, res, next);
   });
 
-  router.get("/api/questionnaires/", verifyUser, (req, res, next) => {
+  router.get("/api/questionnaires/", (req, res, next) => {
     getQuestionnaires(req, res, next);
   });
 
