@@ -1,9 +1,15 @@
+import React, { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 import { Box, Image, Text, Link, useBreakpoint } from "@chakra-ui/react";
 import gouv from "../assets/images/gouv.svg";
 
 const Footer = () => {
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
+  const userContext = useContext(UserContext);
+
+  const isConnected = !!userContext?.token;
+
   return (
     <Box
       display="flex"
@@ -72,7 +78,12 @@ const Footer = () => {
           CGU
         </Link>
         <Text mx={isMobile ? "1" : "4"}>|</Text>
-        <Link href="/mentions-information" fontSize={isMobile ? "xs" : "inherit"}>
+        <Link
+          href={
+            isConnected ? "/mentions-information-backoffice" : "/mentions-information-questionnaire"
+          }
+          fontSize={isMobile ? "xs" : "inherit"}
+        >
           Mentions d’information
         </Link>
       </Box>

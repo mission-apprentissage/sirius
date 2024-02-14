@@ -14,9 +14,9 @@ import Login from "./users/Login";
 import Signup from "./users/Signup";
 import PendingAccount from "./users/PendingAccount";
 import Confirmation from "./users/Confirmation";
-import MentionsInformation from "./legal/MentionsInformation";
+import MentionsInformationBackOffice from "./legal/MentionsInformationBackOffice";
+import MentionsInformationQuestionnaire from "./legal/MentionsInformationQuestionnaire";
 import CGU from "./legal/CGU";
-import PolitiqueConfidentialite from "./legal/PolitiqueConfidentialite";
 import UsersManaging from "./users/Managing";
 import ModerationPage from "./verbatims/ModerationPage";
 import Layout from "./Components/Layout";
@@ -76,9 +76,17 @@ function App() {
           </Layout>
         }
       >
-        <Route exact path="/mentions-information" element={<MentionsInformation />} />
+        <Route
+          exact
+          path="/mentions-information-questionnaire"
+          element={<MentionsInformationQuestionnaire />}
+        />
+        <Route
+          exact
+          path="/mentions-information-backoffice"
+          element={<MentionsInformationBackOffice />}
+        />
         <Route exact path="/cgu" element={<CGU />} />
-        <Route exact path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
         <Route exact path="/compte-desactive" element={<PendingAccount />} />
       </Route>
       <Route

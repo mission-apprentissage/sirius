@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Box,
   Stack,
@@ -12,14 +13,16 @@ import {
   ModalBody,
   useDisclosure,
 } from "@chakra-ui/react";
-
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import shareTemoignage from "../../assets/images/share_temoignage.svg";
 import mains from "../../assets/images/mains.svg";
 import Footer from "../../Components/Footer";
+import CguModal from "../../users/CguModal";
 
 const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoignageCount }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [hasAcceptedCgu, setHasAcceptedCgu] = useState(false);
+  const { onClose: onCloseMention } = useDisclosure();
+  const { isOpen: isOpenCgu, onOpen: onOpenCgu } = useDisclosure();
 
   const isCampagneActive = new Date(startDate) > new Date() || new Date(endDate) < new Date();
   const hasOpenSeats = !seats || seats > temoignageCount;
@@ -88,7 +91,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                   bgColor="brand.blue.700"
                   color="white"
                   rightIcon={<ArrowForwardIcon />}
-                  onClick={onOpen}
+                  onClick={onOpenCgu}
                   colorScheme="brand.blue"
                 >
                   Répondre
@@ -215,7 +218,8 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
+      <CguModal isOpen={isOpenCgu} setHasAcceptedCgu={setHasAcceptedCgu} />
+      <Modal isOpen={hasAcceptedCgu} onClose={onCloseMention} size="sm" isCentered>
         <ModalOverlay />
         <ModalContent py="8" px="4" bgColor="brand.blue.100" width="90%" borderRadius="20px">
           <ModalHeader textAlign="center" color="brand.blue.700">
