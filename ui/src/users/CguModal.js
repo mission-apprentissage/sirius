@@ -103,6 +103,7 @@ const CguModal = ({ userContext, setUserContext, isOpen = true, setHasAcceptedCg
                   _checked={{
                     "& .chakra-checkbox__control": { backgroundColor: "brand.blue.700" },
                   }}
+                  borderColor="brand.blue.400"
                 >
                   <Text color="brand.black.500" fontSize="md">
                     Je déclare avoir pris connaissance des CGU de Sirius et je les accepte
