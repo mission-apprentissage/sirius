@@ -35,7 +35,7 @@ const UserProvider = (props) => {
         return { ...oldValues, token: null, loading: false };
       });
     }
-    setTimeout(verifyUser, 60 * 5 * 1000);
+    setTimeout(verifyUser, 1000 * 60 * 3600);
   };
 
   useEffect(() => {
