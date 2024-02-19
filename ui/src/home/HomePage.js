@@ -21,16 +21,16 @@ import {
 } from "./home.style";
 import { loadDynamicStyle, unloadStyle } from "../utils/style";
 import { useGet } from "../common/hooks/httpHooks";
-import LogoWithoutText from "./assets/images/logo_without_text.svg";
-import IlluQuestionnaire from "./assets/images/illu_questionnaire.svg";
-import IlluPlateforme from "./assets/images/illu_plateforme.svg";
-import IlluDonnees from "./assets/images/illu_donnees.svg";
-import IlluExpo from "./assets/images/illu_expo.svg";
-import IlluCFA from "./assets/images/illu_cfa.svg";
-import School from "./assets/images/school.svg";
-import DocumentAdd from "./assets/images/document_add.svg";
-import Avatar from "./assets/images/avatar.svg";
-import Community from "./assets/images/community.svg";
+import LogoWithoutText from "../assets/images/logo_without_text.svg";
+import IlluQuestionnaire from "../assets/images/illu_questionnaire.svg";
+import IlluPlateforme from "../assets/images/illu_plateforme.svg";
+import IlluDonnees from "../assets/images/illu_donnees.svg";
+import IlluExpo from "../assets/images/illu_expo.svg";
+import IlluCFA from "../assets/images/illu_cfa.svg";
+import School from "../assets/images/school.svg";
+import DocumentAdd from "../assets/images/document_add.svg";
+import Avatar from "../assets/images/avatar.svg";
+import Community from "../assets/images/community.svg";
 import useFetchEtablissementsPublicSuivi from "../hooks/useFetchEtablissementsPublicSuivi";
 import SupportModal from "./SupportModal";
 
@@ -50,7 +50,7 @@ const HomePage = () => {
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
 
   useEffect(() => {
-    const styleLink = loadDynamicStyle("/dsfr/dsfr.min.css");
+    const styleLink = loadDynamicStyle("./dsfr/dsfr.min.css");
 
     return () => {
       unloadStyle(styleLink);

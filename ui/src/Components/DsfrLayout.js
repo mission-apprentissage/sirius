@@ -1,5 +1,5 @@
 import React from "react";
-import OfficialFooter from "./OfficialFooter";
+import DsfrFooter from "./DsfrFooter";
 import DsfrNavbar from "./DsfrNavbar";
 
 const DsfrLayout = ({ children }) => {
@@ -7,7 +7,7 @@ const DsfrLayout = ({ children }) => {
     <>
       <DsfrNavbar />
       {children}
-      <OfficialFooter />
+      <DsfrFooter />
     </>
   );
 };

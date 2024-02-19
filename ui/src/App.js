@@ -26,7 +26,7 @@ import QuestionnaireLayout from "./Components/QuestionnaireLayout";
 import ResultsCampagnesPage from "./campagnes/ResultsCampagnesPage";
 import SuiviEtablissementsPage from "./suivi/SuiviEtablissementsPage";
 import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
-import HomePage from "./HomePage";
+import HomePage from "./home/HomePage";
 import DsfrLayout from "./Components/DsfrLayout";
 
 function App() {
