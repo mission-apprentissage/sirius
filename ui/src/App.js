@@ -27,6 +27,7 @@ import ResultsCampagnesPage from "./campagnes/ResultsCampagnesPage";
 import SuiviEtablissementsPage from "./suivi/SuiviEtablissementsPage";
 import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
 import HomePage from "./HomePage";
+import DsfrLayout from "./Components/DsfrLayout";
 
 function App() {
   const { setIsDark } = useIsDark();
@@ -68,11 +69,19 @@ function App() {
           </AnonymousLayout>
         }
       >
-        <Route exact path="/" element={<HomePage />} />
         <Route exact path="/connexion" element={<Login />} />
         <Route exact path="/modification-mot-de-passe" element={<Login />} />
         <Route exact path="/inscription" element={<Signup />} />
         <Route exact path="/confirmer-utilisateur" element={<Confirmation />} />
+      </Route>
+      <Route
+        element={
+          <DsfrLayout>
+            <Outlet />
+          </DsfrLayout>
+        }
+      >
+        <Route exact path="/" element={<HomePage />} />
       </Route>
       <Route
         element={
