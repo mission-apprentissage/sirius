@@ -61,6 +61,28 @@ const getEtablissementsSuivi = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getEtablissementsPublicSuivi = tryCatch(async (req, res) => {
+  const { success, body } = await etablissementsService.getEtablissementsSuivi();
+
+  if (!success) throw new BasicError();
+
+  const createdCampagnesCount = body.reduce(
+    (accumulator, etablissement) => accumulator + etablissement.campagneIds.length,
+    0
+  );
+
+  const temoignagesCount = body.reduce((accumulator, etablissement) => accumulator + etablissement.temoignagesCount, 0);
+
+  const champsLibreCount = body.reduce((accumulator, etablissement) => accumulator + etablissement.champsLibreCount, 0);
+
+  return res.status(200).json({
+    etablissementsCount: body.length,
+    createdCampagnesCount,
+    temoignagesCount,
+    champsLibreCount,
+  });
+});
+
 module.exports = {
   createEtablissement,
   getEtablissements,
@@ -68,4 +90,5 @@ module.exports = {
   deleteEtablissement,
   updateEtablissement,
   getEtablissementsSuivi,
+  getEtablissementsPublicSuivi,
 };
