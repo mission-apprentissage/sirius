@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
-import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import {
   Container,
   GoalContainer,
@@ -16,7 +14,6 @@ import {
   StatisticsContainer,
   QuotesContainer,
   ExpressedTestimonies,
-  NeedHelpContainer,
   ScrollToTop,
 } from "./home.style";
 import { useGet } from "../common/hooks/httpHooks";
@@ -31,16 +28,9 @@ import DocumentAdd from "../assets/images/document_add.svg";
 import Avatar from "../assets/images/avatar.svg";
 import Community from "../assets/images/community.svg";
 import useFetchEtablissementsPublicSuivi from "../hooks/useFetchEtablissementsPublicSuivi";
-import SupportModal from "./SupportModal";
-
-const modal = createModal({
-  id: "support-modal",
-  isOpenedByDefault: false,
-});
+import NeedHelp from "../Components/NeedHelp";
 
 const HomePage = () => {
-  const [isSupportSubmitted, setIsSupportSubmitted] = useState(false);
-  const [supportError, setSupportError] = useState(false);
   const navigate = useNavigate();
   const [questionnaires] = useGet(`/api/questionnaires/`);
   const [etablissementsSuiviPublic] = useFetchEtablissementsPublicSuivi();
@@ -211,54 +201,14 @@ const HomePage = () => {
             </div>
           </QuotesContainer>
         </ExperimentationAndTestimonyContainer>
-        <NeedHelpContainer>
-          {isSupportSubmitted && (
-            <Alert
-              closable
-              onClose={function noRefCheck() {}}
-              severity={supportError ? "error" : "success"}
-              title={
-                supportError ? "Une erreur s'est produite." : "Le message a été envoyé avec succès."
-              }
-            />
-          )}
-          <h5>Besoin d'aide lors de la prise en main de le plateforme ?</h5>
-          <div>
-            <div>
-              <span className={fr.cx("fr-icon-calendar-fill")} aria-hidden={true} />
-              <p>
-                <Link target="_blank" to="https://calendly.com/pierre-estagnasie-sirius">
-                  Inscrivez-vous à un <b>webinaire</b> de démonstration
-                </Link>
-              </p>
-            </div>
-            <div>
-              <span className={fr.cx("fr-icon-mail-open-fill")} aria-hidden={true} />
-              <p>
-                <Link
-                  to="#"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    modal.open();
-                  }}
-                >
-                  Échangez par email avec un membre de notre équipe
-                </Link>
-              </p>
-            </div>
-          </div>
-        </NeedHelpContainer>
+        <NeedHelp />
         <ScrollToTop onClick={() => window.scrollTo(0, 0)}>
           <span className={fr.cx("fr-icon-arrow-up-fill")} aria-hidden={true} />
           <p>Haut de page</p>
         </ScrollToTop>
       </Container>
-      <SupportModal
-        modal={modal}
-        setIsSupportSubmitted={setIsSupportSubmitted}
-        setSupportError={setSupportError}
-      />
     </>
   );
 };
+
 export default HomePage;
