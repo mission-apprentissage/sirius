@@ -27,6 +27,7 @@ import ResultsCampagnesPage from "./campagnes/ResultsCampagnesPage";
 import SuiviEtablissementsPage from "./suivi/SuiviEtablissementsPage";
 import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
 import HomePage from "./home/HomePage";
+import StatisticsPage from "./statistics/StatisticsPage";
 import DsfrLayout from "./Components/DsfrLayout";
 
 function App() {
@@ -82,6 +83,7 @@ function App() {
         }
       >
         <Route exact path="/" element={<HomePage />} />
+        <Route exact path="/statistiques" element={<StatisticsPage />} />
       </Route>
       <Route
         element={
