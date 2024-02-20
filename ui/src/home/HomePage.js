@@ -152,7 +152,7 @@ const HomePage = () => {
               Les premiers chiffres de l’expérimentation
             </h2>
           </>
-          <p>Données issues de la plateforme Sirius et mis à jour en temps réel</p>
+          <p>Données issues de la plateforme Sirius et mises à jour en temps réel</p>
           <StatisticsContainer>
             <div>
               <img src={School} alt="" />
