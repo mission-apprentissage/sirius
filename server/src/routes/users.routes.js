@@ -10,6 +10,7 @@ const {
   resetPasswordSchema,
   confirmSchema,
   supportSchema,
+  supportPublicSchema,
 } = require("../validators/users.validators");
 const {
   loginUser,
@@ -23,6 +24,7 @@ const {
   resetPassword,
   confirmUser,
   supportUser,
+  supportUserPublic,
 } = require("../controllers/users.controller");
 const { isAdmin } = require("../middlewares/isAdmin");
 const { rateLimiter } = require("../middlewares/rateLimiter");
@@ -58,6 +60,10 @@ const users = () => {
 
   router.post("/api/users/confirm/", rateLimiter, validator(confirmSchema), (req, res, next) =>
     confirmUser(req, res, next)
+  );
+
+  router.post("/api/users/support/public", rateLimiter, validator(supportPublicSchema), (req, res, next) =>
+    supportUserPublic(req, res, next)
   );
 
   router.post("/api/users/support/", verifyUser, rateLimiter, validator(supportSchema), (req, res, next) =>

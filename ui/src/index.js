@@ -4,12 +4,14 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { BrowserRouter as Router } from "react-router-dom";
-
 import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
 import { UserProvider } from "./context/UserContext";
 import { EtablissementsProvider } from "./context/EtablissementsContext";
+import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
+
+startReactDsfr({ defaultColorScheme: "light" });
 
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",

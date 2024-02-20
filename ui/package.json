@@ -7,11 +7,14 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "serve": "ws --port 3000 -d build --log.format dev --spa index.html",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prestart": "copy-dsfr-to-public && only-include-used-icons",
+    "prebuild": " copy-dsfr-to-public && only-include-used-icons"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.17",
     "@chakra-ui/react": "2.7.1",
+    "@codegouvfr/react-dsfr": "1.2.2",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
     "@fingerprintjs/botd": "1.7.2",

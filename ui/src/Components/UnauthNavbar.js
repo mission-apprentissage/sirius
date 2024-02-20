@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex, Text, Link, useBreakpoint } from "@chakra-ui/react";
+import { Box, Flex, Text, useBreakpoint } from "@chakra-ui/react";
 import Logo from "../assets/images/logo.svg";
 
 const UnauthNavbar = () => {

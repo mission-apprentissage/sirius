@@ -57,6 +57,11 @@ const supportSchema = Joi.object({
   message: Joi.string().required(),
 });
 
+const supportPublicSchema = Joi.object({
+  email: Joi.string().required(),
+  message: Joi.string().required(),
+});
+
 module.exports = {
   loginSchema,
   subscribeSchema,
@@ -65,4 +70,5 @@ module.exports = {
   resetPasswordSchema,
   confirmSchema,
   supportSchema,
+  supportPublicSchema,
 };

@@ -275,6 +275,53 @@ const supportUser = tryCatch(async (req, res) => {
   return res.status(200).json({ success: slackResponse });
 });
 
+const supportUserPublic = tryCatch(async (req, res) => {
+  const { email, message } = req.body;
+
+  const slackResponse = await slack.sendToSlack([
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: `Demande d'aide depuis la landing en ${config.env.toUpperCase()}!`,
+        emoji: true,
+      },
+    },
+    {
+      type: "divider",
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `:raising_hand: *${email}* a besoin d'aide!`,
+      },
+    },
+    {
+      type: "divider",
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `:envelope: *Email:*\n${email}`,
+      },
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `:pencil: *Message:*\n${message}`,
+      },
+    },
+    {
+      type: "divider",
+    },
+  ]);
+
+  return res.status(200).json({ success: slackResponse });
+});
+
 module.exports = {
   loginUser,
   refreshTokenUser,
@@ -287,4 +334,5 @@ module.exports = {
   resetPassword,
   confirmUser,
   supportUser,
+  supportUserPublic,
 };

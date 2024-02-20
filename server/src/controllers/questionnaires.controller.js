@@ -13,8 +13,8 @@ const createQuestionnaire = tryCatch(async (req, res) => {
 
 const getQuestionnaires = tryCatch(async (req, res) => {
   let query = req.query;
-  const userRole = req.user.role;
-  if (userRole !== USER_ROLES.ADMIN) {
+  const userRole = req.user?.role;
+  if (!userRole || userRole !== USER_ROLES.ADMIN) {
     query = { ...query, isValidated: true };
   }
   const { success, body } = await questionnairesService.getQuestionnaires(query);

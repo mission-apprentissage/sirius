@@ -17,7 +17,7 @@ const ProtectedRoute = () => {
   if (isAuthenticated && !isActive) return <Navigate to="/compte-desactive" />;
   if (isAuthenticated && !hasAcceptedCgu)
     return <CguModal userContext={userContext} setUserContext={setUserContext} />;
-  return isAuthenticated ? <Outlet /> : <Navigate to="/connexion" />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
 };
 
 export default ProtectedRoute;

@@ -8,6 +8,7 @@ const {
   deleteEtablissement,
   updateEtablissement,
   getEtablissementsSuivi,
+  getEtablissementsPublicSuivi,
 } = require("../controllers/etablissements.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdmin } = require("../middlewares/isAdmin");
@@ -31,6 +32,10 @@ const etablissements = () => {
 
   router.get("/api/etablissements/suivi", verifyUser, isAdmin, (req, res, next) => {
     getEtablissementsSuivi(req, res, next);
+  });
+
+  router.get("/api/etablissements/public/suivi", (req, res, next) => {
+    getEtablissementsPublicSuivi(req, res, next);
   });
 
   router.get(
