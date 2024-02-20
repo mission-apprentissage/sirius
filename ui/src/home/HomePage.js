@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
@@ -19,7 +19,6 @@ import {
   NeedHelpContainer,
   ScrollToTop,
 } from "./home.style";
-import { loadDynamicStyle, unloadStyle } from "../utils/style";
 import { useGet } from "../common/hooks/httpHooks";
 import LogoWithoutText from "../assets/images/logo_without_text.svg";
 import IlluQuestionnaire from "../assets/images/illu_questionnaire.svg";
@@ -48,14 +47,6 @@ const HomePage = () => {
 
   const validatedQuestionnaire =
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
-
-  useEffect(() => {
-    const styleLink = loadDynamicStyle("./dsfr/dsfr.min.css");
-
-    return () => {
-      unloadStyle(styleLink);
-    };
-  }, []);
 
   return (
     <>
