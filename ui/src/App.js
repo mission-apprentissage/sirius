@@ -11,7 +11,7 @@ import EditQuestionnaire from "./questionnaires/EditQuestionnaire";
 import PreviewCampagnePage from "./campagnes/PreviewCampagnePage";
 import CreateCampagnesPage from "./campagnes/CreateCampagnesPage";
 import AnswerCampagnePage from "./campagnes/AnswerCampagnePage";
-import Login from "./users/Login";
+import LoginPage from "./users/LoginPage";
 import Signup from "./users/Signup";
 import PendingAccount from "./users/PendingAccount";
 import Confirmation from "./users/Confirmation";
@@ -70,8 +70,6 @@ function App() {
           </AnonymousLayout>
         }
       >
-        <Route exact path="/connexion" element={<Login />} />
-        <Route exact path="/modification-mot-de-passe" element={<Login />} />
         <Route exact path="/inscription" element={<Signup />} />
         <Route exact path="/confirmer-utilisateur" element={<Confirmation />} />
       </Route>
@@ -84,6 +82,8 @@ function App() {
       >
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/statistiques" element={<StatisticsPage />} />
+        <Route exact path="/connexion" element={<LoginPage />} />
+        <Route exact path="/modification-mot-de-passe" element={<LoginPage />} />
       </Route>
       <Route
         element={
