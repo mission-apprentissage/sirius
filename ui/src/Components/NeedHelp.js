@@ -68,7 +68,6 @@ const NeedHelp = () => {
         {isSupportSubmitted && (
           <Alert
             closable
-            onClose={function noRefCheck() {}}
             severity={supportError ? "error" : "success"}
             title={
               supportError ? "Une erreur s'est produite." : "Le message a été envoyé avec succès."

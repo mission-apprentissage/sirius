@@ -4,11 +4,12 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { fr } from "@codegouvfr/react-dsfr";
 import { _post } from "../utils/httpClient";
+import { emailWithTLDRegex } from "../constants";
 
 const validationSchema = Yup.object({
   email: Yup.string()
-    .email("Votre email n'est pas valide")
-    .required("Tous les champs doivent être complétés"),
+    .matches(emailWithTLDRegex, "L'email n'est pas au bon format.")
+    .required("Tous les champs doivent être complétés."),
   message: Yup.string().required("Tous les champs doivent être complétés"),
 });
 
