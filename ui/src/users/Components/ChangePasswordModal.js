@@ -14,20 +14,19 @@ import {
   oneLowercase,
   oneDigit,
   oneSpecialCharacter,
+  allFieldMessage,
+  notCorrespondingPasswordMessage,
 } from "../../utils/validators";
-
-const allFieldMessages = "Tous les champs doivent être complétés.";
-const notCorrespondingPassword = "Les mots de passe ne sont pas les mêmes.";
 
 const StyledPasswordInput = styled(PasswordInput)`
   margin-bottom: ${fr.spacing("4w")};
 `;
 
 const validationSchema = Yup.object({
-  password: Yup.string().required(allFieldMessages).matches(passwordComplexityRegex, null),
+  password: Yup.string().required(allFieldMessage).matches(passwordComplexityRegex, null),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], notCorrespondingPassword)
-    .required(allFieldMessages)
+    .oneOf([Yup.ref("password"), null], notCorrespondingPasswordMessage)
+    .required(allFieldMessage)
     .matches(passwordComplexityRegex),
 });
 
@@ -68,28 +67,28 @@ const ChangePasswordModal = ({ token, setIsChangePasswordSubmitted, setChangePas
 
   const passwordMessages = [
     {
-      message: "8 caractères minimum",
+      message: "8 caractères",
       severity: hasEightCharacters ? "valid" : formik.submitCount >= 1 ? "error" : "info",
     },
     {
-      message: "1 majuscule minimum",
+      message: "1 majuscule",
       severity: hasOneUppercase ? "valid" : formik.submitCount >= 1 ? "error" : "info",
     },
     {
-      message: "1 minuscule minimum",
+      message: "1 minuscule",
       severity: hasOneLowercase ? "valid" : formik.submitCount >= 1 ? "error" : "info",
     },
     {
-      message: "1 caractère spécial minimum",
+      message: "1 caractère spécial",
       severity: hasOneSpecialCharacter ? "valid" : formik.submitCount >= 1 ? "error" : "info",
     },
     {
-      message: "1 chiffre minimum",
+      message: "1 chiffre",
       severity: hasOneDigit ? "valid" : formik.submitCount >= 1 ? "error" : "info",
     },
   ];
 
-  if (formik.errors.password === allFieldMessages && formik.submitCount >= 1) {
+  if (formik.errors.password === allFieldMessage && formik.submitCount >= 1) {
     passwordMessages.unshift({
       message: formik.errors.password,
       severity: "error",
@@ -127,6 +126,7 @@ const ChangePasswordModal = ({ token, setIsChangePasswordSubmitted, setChangePas
             id: "password",
             name: "password",
           }}
+          messagesHint="Votre mot de passe doit contenir au moins:"
           messages={passwordMessages}
         />
         <PasswordInput
@@ -138,8 +138,8 @@ const ChangePasswordModal = ({ token, setIsChangePasswordSubmitted, setChangePas
           }}
           messagesHint=""
           messages={
-            (formik.errors.confirmPassword === allFieldMessages ||
-              formik.errors.confirmPassword === notCorrespondingPassword) &&
+            (formik.errors.confirmPassword === allFieldMessage ||
+              formik.errors.confirmPassword === notCorrespondingPasswordMessage) &&
             formik.submitCount >= 1
               ? [
                   {
