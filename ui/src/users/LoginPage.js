@@ -9,7 +9,8 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
-import { Container, Header, Form, StyledPasswordInput } from "./Components/login.style";
+import { Form, StyledPasswordInput } from "./styles/login.style";
+import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
 import Support from "../assets/images/support.svg";
 import ForgottenPasswordModal from "./Components/ForgottenPasswordModal";
 import ChangePasswordModal from "./Components/ChangePasswordModal";
@@ -108,14 +109,14 @@ const LoginPage = () => {
 
   return (
     <>
-      <Container>
-        <Header>
+      <LoginAndSignupContainer>
+        <LoginAndSignupHeader>
           <div>
             <h5>Établissement</h5>
             <h2>Se connecter</h2>
           </div>
           <img src={Support} alt="" />
-        </Header>
+        </LoginAndSignupHeader>
         <Form onSubmit={formik.handleSubmit}>
           <div>
             <Input
@@ -189,7 +190,7 @@ const LoginPage = () => {
         <p>
           Pas d'identifiant ? <Link to="/inscription">M'inscrire en tant qu'établissement</Link>
         </p>
-      </Container>
+      </LoginAndSignupContainer>
       <NeedHelp />
       <ForgottenPasswordModal
         modal={forgottenPasswordModal}
