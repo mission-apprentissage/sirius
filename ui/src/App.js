@@ -13,7 +13,7 @@ import CreateCampagnesPage from "./campagnes/CreateCampagnesPage";
 import AnswerCampagnePage from "./campagnes/AnswerCampagnePage";
 import LoginPage from "./users/LoginPage";
 import SignupPage from "./users/SignupPage";
-import PendingAccount from "./users/PendingAccount";
+import PendingAccountPage from "./users/PendingAccountPage";
 import Confirmation from "./users/Confirmation";
 import MentionsInformationBackOffice from "./legal/MentionsInformationBackOffice";
 import MentionsInformationQuestionnaire from "./legal/MentionsInformationQuestionnaire";
@@ -84,6 +84,7 @@ function App() {
         <Route exact path="/connexion" element={<LoginPage />} />
         <Route exact path="/inscription" element={<SignupPage />} />
         <Route exact path="/modification-mot-de-passe" element={<LoginPage />} />
+        <Route exact path="/compte-desactive" element={<PendingAccountPage />} />
       </Route>
       <Route
         element={
@@ -103,7 +104,6 @@ function App() {
           element={<MentionsInformationBackOffice />}
         />
         <Route exact path="/cgu" element={<CGU />} />
-        <Route exact path="/compte-desactive" element={<PendingAccount />} />
       </Route>
       <Route
         element={
