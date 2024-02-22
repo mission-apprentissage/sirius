@@ -1,23 +1,8 @@
-import {
-  Box,
-  Stack,
-  Text,
-  useBreakpoint,
-  TableContainer,
-  Th,
-  Td,
-  Tr,
-  Thead,
-  Tbody,
-} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Container } from "./shared.style";
 
 const MentionsInformationQuestionnairePage = () => {
-  const breakpoint = useBreakpoint({ ssr: false });
-  const isMobile = breakpoint === "base";
-
   return (
     <Container>
       <h1>Mention d’information sur le questionnaire “Sirius”</h1>

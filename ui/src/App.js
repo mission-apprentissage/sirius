@@ -15,7 +15,7 @@ import LoginPage from "./users/LoginPage";
 import SignupPage from "./users/SignupPage";
 import PendingAccountPage from "./users/PendingAccountPage";
 import Confirmation from "./users/Confirmation";
-import MentionsInformationBackOffice from "./legal/MentionsInformationBackOffice";
+import MentionsInformationBackOfficePage from "./legal/MentionsInformationBackOfficePage";
 import MentionsInformationQuestionnairePage from "./legal/MentionsInformationQuestionnairePage";
 import CguPage from "./legal/CguPage";
 import UsersManaging from "./users/Managing";
@@ -91,6 +91,11 @@ function App() {
           path="/mentions-information-questionnaire"
           element={<MentionsInformationQuestionnairePage />}
         />
+        <Route
+          exact
+          path="/mentions-information-backoffice"
+          element={<MentionsInformationBackOfficePage />}
+        />
       </Route>
       <Route
         element={
@@ -98,13 +103,7 @@ function App() {
             <Outlet />
           </Layout>
         }
-      >
-        <Route
-          exact
-          path="/mentions-information-backoffice"
-          element={<MentionsInformationBackOffice />}
-        />
-      </Route>
+      ></Route>
       <Route
         element={
           <QuestionnaireLayout>

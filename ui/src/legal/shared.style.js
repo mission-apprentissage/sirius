@@ -12,4 +12,9 @@ export const Container = styled.main`
   & > p {
     color: var(--text-active-blue-france);
   }
+
+  & ul {
+    margin: ${fr.spacing("4w")};
+    color: var(--text-active-blue-france);
+  }
 `;
