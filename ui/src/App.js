@@ -12,7 +12,7 @@ import PreviewCampagnePage from "./campagnes/PreviewCampagnePage";
 import CreateCampagnesPage from "./campagnes/CreateCampagnesPage";
 import AnswerCampagnePage from "./campagnes/AnswerCampagnePage";
 import LoginPage from "./users/LoginPage";
-import Signup from "./users/Signup";
+import SignupPage from "./users/SignupPage";
 import PendingAccount from "./users/PendingAccount";
 import Confirmation from "./users/Confirmation";
 import MentionsInformationBackOffice from "./legal/MentionsInformationBackOffice";
@@ -70,7 +70,6 @@ function App() {
           </AnonymousLayout>
         }
       >
-        <Route exact path="/inscription" element={<Signup />} />
         <Route exact path="/confirmer-utilisateur" element={<Confirmation />} />
       </Route>
       <Route
@@ -83,6 +82,7 @@ function App() {
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/statistiques" element={<StatisticsPage />} />
         <Route exact path="/connexion" element={<LoginPage />} />
+        <Route exact path="/inscription" element={<SignupPage />} />
         <Route exact path="/modification-mot-de-passe" element={<LoginPage />} />
       </Route>
       <Route
