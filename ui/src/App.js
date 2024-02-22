@@ -16,7 +16,7 @@ import SignupPage from "./users/SignupPage";
 import PendingAccountPage from "./users/PendingAccountPage";
 import Confirmation from "./users/Confirmation";
 import MentionsInformationBackOffice from "./legal/MentionsInformationBackOffice";
-import MentionsInformationQuestionnaire from "./legal/MentionsInformationQuestionnaire";
+import MentionsInformationQuestionnairePage from "./legal/MentionsInformationQuestionnairePage";
 import CguPage from "./legal/CguPage";
 import UsersManaging from "./users/Managing";
 import ModerationPage from "./verbatims/ModerationPage";
@@ -86,6 +86,11 @@ function App() {
         <Route exact path="/modification-mot-de-passe" element={<LoginPage />} />
         <Route exact path="/compte-desactive" element={<PendingAccountPage />} />
         <Route exact path="/cgu" element={<CguPage />} />
+        <Route
+          exact
+          path="/mentions-information-questionnaire"
+          element={<MentionsInformationQuestionnairePage />}
+        />
       </Route>
       <Route
         element={
@@ -94,11 +99,6 @@ function App() {
           </Layout>
         }
       >
-        <Route
-          exact
-          path="/mentions-information-questionnaire"
-          element={<MentionsInformationQuestionnaire />}
-        />
         <Route
           exact
           path="/mentions-information-backoffice"
