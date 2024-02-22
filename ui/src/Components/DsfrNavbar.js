@@ -22,7 +22,7 @@ const DsfrNavbar = () => {
     },
   ];
 
-  const quickAccessItemsLoggedOutAndLandingRoute = [
+  const quickAccessItemsLoggedOutAndOthersRoute = [
     {
       iconId: "fr-icon-account-circle-fill",
       linkProps: {
@@ -69,7 +69,7 @@ const DsfrNavbar = () => {
       return quickAccessItemsLoggedIn;
     }
     if (isLandingRoute) {
-      return quickAccessItemsLoggedOutAndLandingRoute;
+      return quickAccessItemsLoggedOutAndOthersRoute;
     }
     if (isLoginRoute) {
       return quickAccessItemsLoggedOutAndLoginRoute;
@@ -77,6 +77,8 @@ const DsfrNavbar = () => {
     if (isSignupRoute) {
       return quickAccessItemsLoggedOutAndSignupRoute;
     }
+
+    return quickAccessItemsLoggedOutAndOthersRoute;
   };
 
   return (
