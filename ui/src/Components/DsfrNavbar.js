@@ -3,24 +3,20 @@ import { useLocation } from "react-router-dom";
 import { Header } from "@codegouvfr/react-dsfr/Header";
 import Logo from "../assets/images/logo.svg";
 import { UserContext } from "../context/UserContext";
+import { useGet } from "../common/hooks/httpHooks";
 
 const DsfrNavbar = () => {
   const location = useLocation();
   const [userContext] = useContext(UserContext);
+  const [questionnaires] = useGet(`/api/questionnaires/`);
+
+  const validatedQuestionnaire =
+    questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
 
   const isLandingRoute = location.pathname === "/";
   const isLoginRoute = location.pathname === "/connexion";
   const isSignupRoute = location.pathname === "/inscription";
-
-  const quickAccessItemsLoggedIn = [
-    {
-      iconId: "fr-icon-account-circle-fill",
-      linkProps: {
-        href: "/campagnes/gestion",
-      },
-      text: "Accéder à la plateforme",
-    },
-  ];
+  const isLoggedIn = userContext.token;
 
   const quickAccessItemsLoggedOutAndOthersRoute = [
     {
@@ -64,10 +60,33 @@ const DsfrNavbar = () => {
     },
   ];
 
+  const quickAccessItemsLoggedIn = [
+    {
+      iconId: "fr-icon-eye-fill",
+      linkProps: {
+        href: `/questionnaires/${
+          validatedQuestionnaire?.length && validatedQuestionnaire[0]._id
+        }/apercu`,
+      },
+      text: "Aperçu du questionnaire",
+    },
+    {
+      iconId: "fr-icon-information-fill",
+      linkProps: {
+        href: `#`,
+      },
+      text: "Guide de diffusion",
+    },
+    {
+      iconId: "fr-icon-add-line",
+      linkProps: {
+        href: `/campagnes/ajout`,
+      },
+      text: "Créer des campagnes",
+    },
+  ];
+
   const quickAccessItems = () => {
-    if (userContext.token) {
-      return quickAccessItemsLoggedIn;
-    }
     if (isLandingRoute) {
       return quickAccessItemsLoggedOutAndOthersRoute;
     }
@@ -76,6 +95,9 @@ const DsfrNavbar = () => {
     }
     if (isSignupRoute) {
       return quickAccessItemsLoggedOutAndSignupRoute;
+    }
+    if (isLoggedIn) {
+      return quickAccessItemsLoggedIn;
     }
 
     return quickAccessItemsLoggedOutAndOthersRoute;
