@@ -5,7 +5,7 @@ const formationsDao = require("../dao/formations.dao");
 const etablissementsDao = require("../dao/etablissements.dao");
 const temoignagesDao = require("../dao/temoignages.dao");
 
-const { getChampsLibreRate } = require("../utils/verbatims.utils");
+const { getChampsLibreRate, getChampsLibreCount } = require("../utils/verbatims.utils");
 const { getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
@@ -48,6 +48,9 @@ const getCampagnes = async (query) => {
       );
     }
 
+    campagnes.forEach((campagne) => {
+      campagne.champsLibreCount = getChampsLibreCount(campagne.questionnaireUI, campagne.temoignagesList);
+    });
     campagnes.forEach((campagne) => {
       campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
     });
