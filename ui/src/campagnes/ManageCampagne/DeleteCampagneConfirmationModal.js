@@ -1,78 +1,79 @@
-import React, { useContext } from "react";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  ModalFooter,
-  Button,
-  Text,
-} from "@chakra-ui/react";
-import { useSearchParams } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { _delete } from "../../utils/httpClient";
 import { UserContext } from "../../context/UserContext";
+import { isPlural } from "../utils";
 
 const DeleteCampagneConfirmationModal = ({
-  onClose,
-  isOpen,
+  modal,
   selectedCampagnes,
   setSelectedCampagnes,
-  setShouldRefreshData,
+  setDisplayedCampagnes,
 }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
   const [userContext] = useContext(UserContext);
-  const [_, setSearchParams] = useSearchParams();
   const persistedEtablissement = JSON.parse(localStorage.getItem("etablissements"));
 
   const handleOnClick = async () => {
     try {
+      setIsSubmitting(true);
       const response = await _delete(
         `/api/campagnes?ids=${selectedCampagnes}&siret=${persistedEtablissement.siret}`,
         userContext.token
       );
 
       if (response.acknowledged) {
-        setSearchParams({ status: "successDeletion", count: selectedCampagnes.length });
         setSelectedCampagnes([]);
+        setDisplayedCampagnes((prevValues) =>
+          prevValues.filter((campagne) => !selectedCampagnes.includes(campagne._id))
+        );
+        modal.close();
+      } else {
+        setError("Une erreur est survenue.");
       }
     } catch (error) {
-      setSearchParams({ status: "error" });
+      setError("Une erreur est survenue.");
     }
-    setShouldRefreshData(true);
-    onClose();
   };
 
   return (
-    <Modal onClose={onClose} isOpen={isOpen} isCentered size="xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader textAlign="center">Confirmation de suppression de campagnes</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody textAlign="center" mt="15">
-          Êtes-vous sûr de vouloir supprimer{" "}
-          <Text as="span" fontWeight="semibold">
-            {selectedCampagnes?.length} campagne{selectedCampagnes?.length > 1 ? "s" : ""}
-          </Text>{" "}
-          et {selectedCampagnes?.length > 1 ? "leurs" : "ses"} témoignages associés ?
-        </ModalBody>
-        <ModalFooter alignItems="center" justifyContent="center" mt="15">
-          <Button
-            size="lg"
-            variant="solid"
-            bgColor="brand.blue.700"
-            color="white"
-            _hover={{
-              bgColor: "brand.blue.700",
-              color: "white",
-            }}
-            onClick={handleOnClick}
-          >
-            Confirmer
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <modal.Component
+      title={
+        <>
+          <span className={fr.cx("fr-icon-arrow-right-line")} />
+          Supprimer des campagnes
+        </>
+      }
+      size="small"
+      buttons={[
+        {
+          doClosesModal: true,
+          children: "Annuler",
+        },
+        {
+          doClosesModal: false,
+          children: "Supprimer",
+          type: "button",
+          onClick: handleOnClick,
+          disabled: isSubmitting,
+        },
+      ]}
+    >
+      <p>
+        Vous vous apprêtez à supprimer{" "}
+        <b>
+          {selectedCampagnes.length} campagne
+          {isPlural(selectedCampagnes.length)}
+        </b>
+        . Certaines d’entre elles regroupent peut-être déjà des témoignages
+      </p>
+      <p>
+        Êtes-vous certain·e de vouloir {selectedCampagnes.length > 1 ? "les" : "la"} supprimer ?
+      </p>
+      {error && <Alert closable description={error} severity="error" />}
+    </modal.Component>
   );
 };
 
