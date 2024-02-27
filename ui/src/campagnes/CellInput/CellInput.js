@@ -3,7 +3,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { formatDate } from "../utils";
 import { NotEditingContainer, StyledInput } from "./cellInput.style";
 
-const CellTextInput = ({ id, name, campagne, handleCellUpdate = null, type }) => {
+const CellInput = ({ id, name, campagne, handleCellUpdate = null, type }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(campagne[name]);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -63,12 +63,12 @@ const CellTextInput = ({ id, name, campagne, handleCellUpdate = null, type }) =>
     <>
       {isEditing ? (
         <StyledInput
-          id={id}
-          name={name}
           iconId={iconId}
           state={state}
           stateRelatedMessage=""
           nativeInputProps={{
+            id: id,
+            name: name,
             type: type,
             value: value,
             onChange: (e) => setValue(e.target?.value),
@@ -81,16 +81,13 @@ const CellTextInput = ({ id, name, campagne, handleCellUpdate = null, type }) =>
           ref={ref}
         />
       ) : (
-        <NotEditingContainer>
+        <NotEditingContainer onClick={() => setIsEditing(true)}>
           {displayedValue && <p>{displayedValue}</p>}
-          <span
-            onClick={() => setIsEditing(true)}
-            className={fr.cx("fr-icon--sm fr-icon-pencil-line")}
-          />
+          <span className={fr.cx("fr-icon--sm fr-icon-pencil-line")} />
         </NotEditingContainer>
       )}
     </>
   );
 };
 
-export default CellTextInput;
+export default CellInput;
