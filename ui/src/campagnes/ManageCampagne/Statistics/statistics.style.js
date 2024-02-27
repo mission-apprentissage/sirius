@@ -19,6 +19,10 @@ export const Content = styled.div`
     margin: 0;
   }
 
+  & span {
+    margin-right: 0.5rem;
+  }
+
   & div {
     display: flex;
     flex-wrap: wrap;
