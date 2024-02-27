@@ -30,7 +30,7 @@ import {
 } from "@tanstack/react-table";
 import { SearchIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
-import { sortingOptions } from "../ManageCampagnesPage";
+import { campagnesSortingOptions } from "../../constants";
 import IoInformationCircleOutline from "../../assets/icons/IoInformationCircleOutline.svg";
 import { formateDateToInputFormat } from "../utils";
 import FiEdit from "../../assets/icons/FiEdit.svg";
@@ -354,7 +354,7 @@ const ConfigureCampagneTable = ({
               value={JSON.stringify(sorting[0])}
               w="325px"
             >
-              {sortingOptions.map((option) => (
+              {campagnesSortingOptions.map((option) => (
                 <option key={option.label} value={JSON.stringify(option.value)}>
                   {option.label}
                 </option>
