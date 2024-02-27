@@ -28,7 +28,8 @@ export const VERBATIM_STATUS_LABELS = {
 };
 
 export const DIPLOME_TYPE_MATCHER = {
-  "CERTIFICAT D'APTITUDES PROFESSIONNELLES": "Certificat d’Aptitude Professionnelle",
+  "CERTIFICAT D'APTITUDES PROFESSIONNELLES": "Certificat d’Aptitudes Professionnelles",
+  "CERTIFICAT D'APTITUDE PROFESSIONNELLE": "Certificat d’Aptitude Professionnelle",
   "MENTION COMPLEMENTAIRE": "Mention Complémentaire",
   "BREVET PROFESSIONNEL": "Brevet Professionnel",
   "BAC PROFESSIONNEL": "Bac Professionnel",
