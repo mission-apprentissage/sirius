@@ -140,6 +140,11 @@ const etablissementQuery = (sirets) => {
               "data.enseigne": 1,
               "data.entreprise_raison_sociale": 1,
               "data.siret": 1,
+              "data.numero_voie": 1,
+              "data.type_voie": 1,
+              "data.nom_voie": 1,
+              "data.code_postal": 1,
+              "data.localite": 1,
             },
           },
           {
