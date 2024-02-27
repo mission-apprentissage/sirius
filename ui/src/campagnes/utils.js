@@ -146,7 +146,7 @@ export const orderCampagnesByDiplomeType = (campagnes) => {
   return orderedCampagnes;
 };
 
-export const orderFormationsByDiplomeType = (formations) => {
+export const orderFormationsByDiplomeType = (formations = []) => {
   const orderedFormations = {};
   uniqueDiplomeTypesFromFormation(formations)?.forEach((diplomeType) => {
     const formationsByDiplomeType = formations.filter(
