@@ -1,6 +1,7 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { StatisticsContainer, Content, StatisticsCard } from "./statistics.style";
 import { msToTime } from "../../../utils/temoignage";
+import { isPlural } from "../../utils";
 import DocumentAdd from "../../../assets/images/document_add.svg";
 import Avatar from "../../../assets/images/avatar.svg";
 import Community from "../../../assets/images/community.svg";
@@ -28,8 +29,6 @@ const getMedianDuration = (campagnes) => {
 const getVerbatimsCount = (campagnes) => {
   return campagnes.reduce((acc, campagne) => acc + campagne.champsLibreCount, 0);
 };
-
-const isPlural = (count) => (count > 1 ? "s" : "");
 
 const Statistics = ({ campagnes }) => {
   const campagnesCount = campagnes.length || 0;

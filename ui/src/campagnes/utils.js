@@ -126,9 +126,10 @@ export const formateDateToInputFormat = (date, monthsAdded = 0) => {
   return `${year}-${formattedMonth}-${day}`;
 };
 
-export const uniqueDiplomeTypesFromCampagne = (campagnes) => [
-  ...new Set(campagnes.map((campagne) => campagne.formation?.data?.diplome)),
-];
+export const getUniqueDiplomeTypesFromCampagne = (campagnes) =>
+  campagnes?.length
+    ? [...new Set(campagnes.map((campagne) => campagne.formation?.data?.diplome))]
+    : [];
 
 export const uniqueDiplomeTypesFromFormation = (formations) => [
   ...new Set(formations?.map((formation) => formation?.diplome)),
@@ -136,7 +137,7 @@ export const uniqueDiplomeTypesFromFormation = (formations) => [
 
 export const orderCampagnesByDiplomeType = (campagnes) => {
   const orderedCampagnes = {};
-  uniqueDiplomeTypesFromCampagne(campagnes)?.forEach((diplomeType) => {
+  getUniqueDiplomeTypesFromCampagne(campagnes)?.forEach((diplomeType) => {
     const campagnesByDiplomeType = campagnes.filter(
       (campagne) => campagne.formation?.data?.diplome === diplomeType
     );
@@ -155,3 +156,5 @@ export const orderFormationsByDiplomeType = (formations) => {
   });
   return orderedFormations;
 };
+
+export const isPlural = (count) => (count > 1 ? "s" : "");
