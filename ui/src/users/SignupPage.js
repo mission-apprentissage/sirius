@@ -159,18 +159,18 @@ const SignupPage = () => {
             <Form onSubmit={formik.handleSubmit}>
               <UserInfoContainer>
                 <Input
-                  id="lastName"
-                  label="Nom"
-                  state={formik.errors.lastName && formik.submitCount >= 1 ? "error" : "default"}
-                  stateRelatedMessage={formik.errors.lastName}
-                  onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
-                />
-                <Input
                   id="firstName"
                   label="Prénom"
                   state={formik.errors.firstName && formik.submitCount >= 1 ? "error" : "default"}
                   stateRelatedMessage={formik.errors.firstName}
                   onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
+                />
+                <Input
+                  id="lastName"
+                  label="Nom"
+                  state={formik.errors.lastName && formik.submitCount >= 1 ? "error" : "default"}
+                  stateRelatedMessage={formik.errors.lastName}
+                  onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
                 />
                 <Input
                   id="email"
