@@ -49,6 +49,7 @@ const ActionButtons = ({
     <>
       <ActionButtonsContainer>
         <Checkbox
+          disabled={!displayedCampagnes.length}
           options={[
             {
               label: selectedCampagnes.length

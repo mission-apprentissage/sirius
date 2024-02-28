@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { SortButtonsContainer } from "./sortButtons.style";

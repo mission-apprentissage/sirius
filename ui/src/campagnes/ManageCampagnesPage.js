@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import Button from "@codegouvfr/react-dsfr/Button";
@@ -14,7 +15,11 @@ import SortButtons from "./ManageCampagne/SortButtons/SortButtons";
 import ActionButtons from "./ManageCampagne/ActionButtons/ActionButtons";
 import NeedHelp from "../Components/NeedHelp";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../constants";
-import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
+import {
+  Container,
+  ManageCampagneContainer,
+  LoaderContainer,
+} from "./styles/manageCampagnes.style";
 
 const ManageCampagnesPage = () => {
   const [selectedCampagnes, setSelectedCampagnes] = useState([]);
@@ -107,30 +112,38 @@ const ManageCampagnesPage = () => {
           </Link>{" "}
           du réseau des CARIF OREF.
         </p>
-        {displayedCampagnes?.length || search ? (
-          <>
-            <SortButtons
-              displayedCampagnes={displayedCampagnes}
-              setDisplayedCampagnes={setDisplayedCampagnes}
-              displayMode={displayMode}
-              setDisplayMode={setDisplayMode}
-              sortingMode={sortingMode}
-              setSortingMode={setSortingMode}
-              search={search}
-              setSearch={setSearch}
-            />
-            <ActionButtons
-              displayedCampagnes={displayedCampagnes}
-              setDisplayedCampagnes={setDisplayedCampagnes}
-              selectedCampagnes={selectedCampagnes}
-              setSelectedCampagnes={setSelectedCampagnes}
-              userContext={userContext}
-            />
-          </>
-        ) : null}
+        <>
+          <SortButtons
+            displayedCampagnes={displayedCampagnes}
+            setDisplayedCampagnes={setDisplayedCampagnes}
+            displayMode={displayMode}
+            setDisplayMode={setDisplayMode}
+            sortingMode={sortingMode}
+            setSortingMode={setSortingMode}
+            search={search}
+            setSearch={setSearch}
+          />
+          <ActionButtons
+            displayedCampagnes={displayedCampagnes}
+            setDisplayedCampagnes={setDisplayedCampagnes}
+            selectedCampagnes={selectedCampagnes}
+            setSelectedCampagnes={setSelectedCampagnes}
+            userContext={userContext}
+          />
+        </>
         {displayedCampagnes?.length ? (
           <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
         ) : null}
+        {loadingCampagnes && (
+          <LoaderContainer>
+            <BeatLoader
+              color="var(--background-action-high-blue-france)"
+              size={20}
+              aria-label="Loading Spinner"
+              data-testid="loader"
+            />
+          </LoaderContainer>
+        )}
         {errorCampagnes ? (
           <Alert
             title="Une erreur s'est produite dans le chargement des campagnes."
