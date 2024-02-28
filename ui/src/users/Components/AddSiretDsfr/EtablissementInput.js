@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Input } from "@codegouvfr/react-dsfr/Input";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import { _get } from "../../../utils/httpClient";
 import { isValidSIRET } from "../../../utils/etablissement";
 
@@ -59,12 +58,15 @@ const EtablissementInput = ({ formik, setError, userSiret }) => {
   const loadEtablissementHandler = async (e) => {
     e.preventDefault();
 
-    if (!siretValue) {
+    const siret = e.target.value;
+    setSiretValue(siret);
+
+    if (!siret) {
       setSiretError(null);
       return;
     }
 
-    const siretwithoutSpaces = siretValue.replace(/\s/g, "");
+    const siretwithoutSpaces = siret.replace(/\s/g, "");
     const isSiretAlreadyAdded = formik.values.etablissements.some(
       (etablissement) => etablissement.siret === siretwithoutSpaces
     );
@@ -147,19 +149,10 @@ const EtablissementInput = ({ formik, setError, userSiret }) => {
           nativeInputProps={{
             value: siretValue,
             onChange: (e) => {
-              setSiretValue(e.target.value);
-              setSiretError(null);
+              loadEtablissementHandler(e);
             },
           }}
         />
-        <Button
-          iconId="fr-icon-add-line"
-          priority="tertiary no outline"
-          disabled={isLoadingRemoteEtablissement}
-          onClick={(e) => loadEtablissementHandler(e)}
-        >
-          Ajouter un SIRET
-        </Button>
       </div>
     </EtablissementInputContainer>
   );
