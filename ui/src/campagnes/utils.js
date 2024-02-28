@@ -131,6 +131,11 @@ export const getUniqueDiplomeTypesFromCampagne = (campagnes) =>
     ? [...new Set(campagnes.map((campagne) => campagne.formation?.data?.diplome))]
     : [];
 
+export const getUniqueEtablissementFromCampagne = (campagnes) =>
+  campagnes?.length
+    ? [...new Set(campagnes.map((campagne) => campagne.etablissement.data.siret))]
+    : [];
+
 export const uniqueDiplomeTypesFromFormation = (formations) => [
   ...new Set(formations?.map((formation) => formation?.diplome)),
 ];
@@ -146,6 +151,18 @@ export const orderCampagnesByDiplomeType = (campagnes) => {
   return orderedCampagnes;
 };
 
+export const orderCampagnesByEtablissement = (campagnes) => {
+  const orderedCampagnes = {};
+  campagnes.forEach((campagne) => {
+    const { etablissement } = campagne;
+    if (!orderedCampagnes[etablissement.data.siret]) {
+      orderedCampagnes[etablissement.data.siret] = [];
+    }
+    orderedCampagnes[etablissement.data.siret].push(campagne);
+  });
+  return orderedCampagnes;
+};
+
 export const orderFormationsByDiplomeType = (formations = []) => {
   const orderedFormations = {};
   uniqueDiplomeTypesFromFormation(formations)?.forEach((diplomeType) => {
@@ -153,6 +170,18 @@ export const orderFormationsByDiplomeType = (formations = []) => {
       (formation) => formation?.diplome === diplomeType
     );
     orderedFormations[diplomeType] = formationsByDiplomeType;
+  });
+  return orderedFormations;
+};
+
+export const orderFormationsByEtablissement = (formations = []) => {
+  const orderedFormations = {};
+  formations.forEach((formation) => {
+    const { etablissement_formateur_siret } = formation;
+    if (!orderedFormations[etablissement_formateur_siret]) {
+      orderedFormations[etablissement_formateur_siret] = [];
+    }
+    orderedFormations[etablissement_formateur_siret].push(formation);
   });
   return orderedFormations;
 };
