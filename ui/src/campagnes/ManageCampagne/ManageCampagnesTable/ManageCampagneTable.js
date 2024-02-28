@@ -1,19 +1,19 @@
 import React from "react";
+import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import Tooltip from "react-simple-tooltip";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { simpleEditionSubmitHandler } from "../../submitHandlers";
 import CellInput from "../../CellInput/CellInput";
 import CellInputSeats from "../../CellInput/CellInputSeats";
 import { isPlural } from "../../utils";
-import { etablissementLabelGetter } from "../../../utils/etablissement";
+import { etablissementLabelGetter, buildEtablissementAddress } from "../../../utils/etablissement";
 import {
   HeaderItem,
   FormationContainer,
   TemoignagesCount,
   ToolTipContainer,
 } from "./manageCampagneTable.style";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 
 const headers = [
   "",
@@ -36,14 +36,6 @@ const headers = [
     Interrogé·es
   </HeaderItem>,
 ];
-
-const buildAddress = (etablissement) => {
-  return `${etablissement.numero_voie ? etablissement.numero_voie : ""} ${
-    etablissement.type_voie ? etablissement.type_voie : ""
-  } ${etablissement.nom_voie ? etablissement.nom_voie : ""} ${
-    etablissement.code_postal ? etablissement.code_postal : ""
-  } ${etablissement.localite ? etablissement.localite : ""}`;
-};
 
 const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handleCellUpdate) => {
   return displayedCampagnes.map((campagne) => {
@@ -87,7 +79,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handl
           color="var(--text-default-grey)"
           content={
             <ToolTipContainer>
-              <p>{buildAddress(etablissement)}</p>
+              <p>{buildEtablissementAddress(etablissement)}</p>
               <p>N° Siret: {etablissement.siret}</p>
             </ToolTipContainer>
           }

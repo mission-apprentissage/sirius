@@ -29,3 +29,11 @@ export const isValidSIRET = (siret) => {
 
   return sum % 10 === 0;
 };
+
+export const buildEtablissementAddress = (etablissement) => {
+  return `${etablissement.numero_voie ? etablissement.numero_voie : ""} ${
+    etablissement.type_voie ? etablissement.type_voie : ""
+  } ${etablissement.nom_voie ? etablissement.nom_voie : ""} ${
+    etablissement.code_postal ? etablissement.code_postal : ""
+  } ${etablissement.localite ? etablissement.localite : ""}`;
+};
