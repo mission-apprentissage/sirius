@@ -5,8 +5,9 @@ const fs = require("fs");
 const config = require("../config");
 
 const publicPath = path.join(__dirname, "..", "..", "src", "public");
-const pdfFilePath = path.join(publicPath, "export.pdf");
 const pdfSummaryFilePath = path.join(publicPath, "summary.pdf");
+const pdfExplanationFilePath = path.join(publicPath, "explanation.pdf");
+const pdfFSharePath = path.join(publicPath, "share.pdf");
 
 const fillParagraph = (text, font, fontSize, maxWidth) => {
   const paragraphs = text.split("\n");
@@ -45,7 +46,7 @@ const embedFonts = async (pdfDoc) => {
 };
 
 const addDateTime = (page, font, dateTime) => {
-  const x = 312;
+  const x = 328;
   const y = 13;
   const dateTimeFontSize = 8;
 
@@ -131,7 +132,7 @@ const drawPageNumber = (page, pageNumber, font, x, y) => {
 const addUserInfo = (page, etablissementLabel, user, font) => {
   page.drawText(etablissementLabel, {
     x: 285,
-    y: 727,
+    y: 719,
     size: 12,
     font,
     color: rgb(0, 0, 145 / 255),
@@ -139,14 +140,14 @@ const addUserInfo = (page, etablissementLabel, user, font) => {
 
   page.drawText(`${user.label} - ${user.email}`, {
     x: 285,
-    y: 702,
+    y: 694,
     size: 12,
     font,
     color: rgb(0, 0, 145 / 255),
   });
 };
 
-const addQRCodesAndLinks = async (finalPdfDoc, pdfDoc, campagnes, font) => {
+const addQRCodesAndLinks = async (finalPdfDoc, shareDoc, campagnes, font) => {
   const pageWidth = 595;
   const fontSize = 24;
   const lineHeight = fontSize * 1.15;
@@ -156,23 +157,24 @@ const addQRCodesAndLinks = async (finalPdfDoc, pdfDoc, campagnes, font) => {
     const qrCodeData = `${config.publicUrl}/campagnes/${campagneId}`;
     const qrCodeDataURL = await QRCode.toDataURL(qrCodeData, {
       errorCorrectionLevel: "L",
-      width: 250,
+      width: 170,
       color: { dark: "#000091" },
+      margin: 0,
     });
 
-    const [page] = await finalPdfDoc.copyPages(pdfDoc, [0]);
+    const [page] = await finalPdfDoc.copyPages(shareDoc, [0]);
     finalPdfDoc.addPage(page);
 
     const qrCodeImage = await finalPdfDoc.embedPng(qrCodeDataURL);
 
-    const x = (pageWidth - 250) / 2;
-    const y = 842 - 250 - 400;
+    const x = (pageWidth - 170) / 2;
+    const y = 842 - 170 - 420;
 
-    page.drawImage(qrCodeImage, { x, y, width: 250, height: 250 });
+    page.drawImage(qrCodeImage, { x, y, width: 170, height: 170 });
 
     const breakedTextLines = fillParagraph(campagneName, font, fontSize, 400).split("\n");
 
-    let textY = y - 60;
+    let textY = y - 40;
 
     breakedTextLines.forEach((line) => {
       const lineWidth = font.widthOfTextAtSize(line, fontSize);
@@ -185,7 +187,7 @@ const addQRCodesAndLinks = async (finalPdfDoc, pdfDoc, campagnes, font) => {
 
     page.drawText(qrCodeData, {
       x: (pageWidth - linkLineWidth) / 2,
-      y: y - 10,
+      y: textY - 10,
       size: 10,
       font,
       color: rgb(0, 0, 145 / 255),
@@ -198,90 +200,46 @@ const generateMultiplePdf = async (campagnes, diplome, etablissementLabel, user)
     throw new Error("No campagnes provided");
   }
 
-  const pdfDoc = await getPdfDocument(pdfFilePath);
   const summaryPdfDoc = await getPdfDocument(pdfSummaryFilePath);
+  const explanationPdfDoc = await getPdfDocument(pdfExplanationFilePath);
+  const shareDoc = await getPdfDocument(pdfFSharePath);
+
   const finalPdfDoc = await PDFDocument.create();
   const fonts = await embedFonts(finalPdfDoc);
 
   const [importedSummaryPage] = await finalPdfDoc.copyPages(summaryPdfDoc, [0]);
+  const [importedExplanationPdfDoc] = await finalPdfDoc.copyPages(explanationPdfDoc, [0]);
+
   finalPdfDoc.addPage(importedSummaryPage);
+  finalPdfDoc.addPage(importedExplanationPdfDoc);
 
   const currentDateTime = new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" }).replace(/\u202F/g, " ");
 
   addDateTime(importedSummaryPage, fonts.regular, currentDateTime);
   addUserInfo(importedSummaryPage, etablissementLabel, user, fonts.regular);
   addSummaryEntries(importedSummaryPage, campagnes, fonts, diplome);
-  await addQRCodesAndLinks(finalPdfDoc, pdfDoc, campagnes, fonts.regular);
+  await addQRCodesAndLinks(finalPdfDoc, shareDoc, campagnes, fonts.regular);
 
   return await finalPdfDoc.saveAsBase64();
 };
 
 const generatePdf = async (campagneId, campagneName) => {
-  const qrCodeData = `${config.publicUrl}/campagnes/${campagneId}`;
-  const qrCodeDataURL = await QRCode.toDataURL(qrCodeData, {
-    errorCorrectionLevel: "L",
-    width: 250,
-    color: { dark: "#000091" },
-  });
+  const campagne = [{ campagneId, campagneName }];
 
-  const existingPdfBuffer = fs.readFileSync(pdfFilePath);
-  const pdfDoc = await PDFDocument.load(existingPdfBuffer);
-  const page = pdfDoc.getPages()[0];
+  const shareDoc = await getPdfDocument(pdfFSharePath);
 
-  const qrCodeImage = await pdfDoc.embedPng(qrCodeDataURL);
+  const explanationPdfDoc = await getPdfDocument(pdfExplanationFilePath);
 
-  const pageWidth = 595;
-  const pageHeight = 842;
+  const finalPdfDoc = await PDFDocument.create();
+  const fonts = await embedFonts(finalPdfDoc);
 
-  const qrCodeWidth = 250;
-  const qrCodeHeight = 250;
+  const [importedExplanationPdfDoc] = await finalPdfDoc.copyPages(explanationPdfDoc, [0]);
 
-  const x = (pageWidth - qrCodeWidth) / 2;
-  const y = pageHeight - qrCodeHeight - 400;
+  finalPdfDoc.addPage(importedExplanationPdfDoc);
 
-  page.drawImage(qrCodeImage, {
-    x,
-    y,
-    width: qrCodeWidth,
-    height: qrCodeHeight,
-  });
+  await addQRCodesAndLinks(finalPdfDoc, shareDoc, campagne, fonts.regular);
 
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const fontSize = 24;
-  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-  const maxWidth = 400;
-  const breakedTextLines = fillParagraph(campagneName, font, fontSize, maxWidth).split("\n");
-  const lineHeight = fontSize * 1.2;
-  let currentY = y - 60;
-
-  for (let line of breakedTextLines) {
-    const lineWidth = helveticaFont.widthOfTextAtSize(line, fontSize);
-    const centeredX = (pageWidth - lineWidth) / 2;
-    page.drawText(line, {
-      x: centeredX,
-      y: currentY,
-      size: fontSize,
-      font: font,
-      color: rgb(0, 0, 145 / 255),
-      maxWidth: maxWidth,
-    });
-    currentY -= lineHeight;
-  }
-
-  const linkLineWidth = font.widthOfTextAtSize(qrCodeData, 10);
-
-  page.drawText(qrCodeData, {
-    x: (pageWidth - linkLineWidth) / 2,
-    y: y - 10,
-    size: 10,
-    font,
-    color: rgb(0, 0, 145 / 255),
-  });
-
-  const modifiedPdfBytes = await pdfDoc.saveAsBase64();
-
-  return modifiedPdfBytes;
+  return await finalPdfDoc.saveAsBase64();
 };
 
 module.exports = {
