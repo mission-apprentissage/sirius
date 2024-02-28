@@ -1,41 +1,42 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalBody,
-  ModalCloseButton,
-  Text,
-  Box,
-} from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
+import styled from "@emotion/styled";
+import { fr } from "@codegouvfr/react-dsfr";
+import { PasswordInput } from "@codegouvfr/react-dsfr/blocks/PasswordInput";
 import * as Yup from "yup";
-import { _post } from "../../utils/httpClient";
-import Button from "../../Components/Form/Button";
-import FormError from "../../Components/Form/FormError";
-import FormSuccess from "../../Components/Form/FormSuccess";
+import { useFormik } from "formik";
+import { createModal } from "@codegouvfr/react-dsfr/Modal";
 
-import { passwordComplexityRegex, passwordComplexityMessage } from "../../utils/validators";
-import InputPassword from "../../Components/Form/InputPassword";
+import { _post } from "../../utils/httpClient";
+import {
+  passwordComplexityRegex,
+  eightCharactersRegex,
+  oneUppercase,
+  oneLowercase,
+  oneDigit,
+  oneSpecialCharacter,
+  allFieldMessage,
+  notCorrespondingPasswordMessage,
+} from "../../utils/validators";
+
+const StyledPasswordInput = styled(PasswordInput)`
+  margin-bottom: ${fr.spacing("4w")};
+`;
 
 const validationSchema = Yup.object({
-  password: Yup.string()
-    .required("Tous les champs doivent être complétés")
-    .matches(passwordComplexityRegex, passwordComplexityMessage),
+  password: Yup.string().required(allFieldMessage).matches(passwordComplexityRegex, null),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Les mots de passe ne correspondent pas")
-    .required("Tous les champs doivent être complétés")
-    .matches(passwordComplexityRegex, passwordComplexityMessage),
+    .oneOf([Yup.ref("password"), null], notCorrespondingPasswordMessage)
+    .required(allFieldMessage)
+    .matches(passwordComplexityRegex),
 });
 
-const ChangePasswordModal = ({ isOpen, token }) => {
+const modal = createModal({
+  id: "change-password-modal",
+  isOpenedByDefault: true,
+});
+
+const ChangePasswordModal = ({ token, setIsChangePasswordSubmitted, setChangePasswordError }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
-  const navigate = useNavigate();
-  const [error, setError] = useState(null);
 
   const formik = useFormik({
     initialValues: {
@@ -49,77 +50,108 @@ const ChangePasswordModal = ({ isOpen, token }) => {
         password: password,
         token: token,
       });
-
-      if (result.success) {
-        setIsSubmitted(true);
-        setIsSubmitting(false);
-      } else if (result.statusCode === 429) {
-        setError(result.message);
-        setIsSubmitting(false);
-      } else {
-        setError("Merci de réessayer");
-        setIsSubmitting(false);
+      if (!result.success) {
+        setChangePasswordError(true);
       }
+      setIsChangePasswordSubmitted(true);
+      setIsSubmitting(false);
+      modal.close();
     },
   });
-  const errorMessages = [...new Set(Object.values(formik.errors)), error];
+
+  const hasEightCharacters = eightCharactersRegex.test(formik.values.password);
+  const hasOneUppercase = oneUppercase.test(formik.values.password);
+  const hasOneLowercase = oneLowercase.test(formik.values.password);
+  const hasOneDigit = oneDigit.test(formik.values.password);
+  const hasOneSpecialCharacter = oneSpecialCharacter.test(formik.values.password);
+
+  const passwordMessages = [
+    {
+      message: "8 caractères",
+      severity: hasEightCharacters ? "valid" : formik.submitCount >= 1 ? "error" : "info",
+    },
+    {
+      message: "1 majuscule",
+      severity: hasOneUppercase ? "valid" : formik.submitCount >= 1 ? "error" : "info",
+    },
+    {
+      message: "1 minuscule",
+      severity: hasOneLowercase ? "valid" : formik.submitCount >= 1 ? "error" : "info",
+    },
+    {
+      message: "1 caractère spécial",
+      severity: hasOneSpecialCharacter ? "valid" : formik.submitCount >= 1 ? "error" : "info",
+    },
+    {
+      message: "1 chiffre",
+      severity: hasOneDigit ? "valid" : formik.submitCount >= 1 ? "error" : "info",
+    },
+  ];
+
+  if (formik.errors.password === allFieldMessage && formik.submitCount >= 1) {
+    passwordMessages.unshift({
+      message: formik.errors.password,
+      severity: "error",
+    });
+  }
 
   return (
-    <Modal isOpen={isOpen} onClose={() => navigate("/connexion")} isCentered size="xl">
-      <ModalOverlay />
-      <ModalContent bgColor="brand.blue.100">
-        <ModalCloseButton />
-        <ModalBody p="82px">
-          <Text fontSize="3xl" fontWeight="600" color="brand.blue.700" mb="16px">
+    <form onSubmit={formik.handleSubmit}>
+      <modal.Component
+        title={
+          <>
+            <span className={fr.cx("fr-icon-arrow-right-line")} />
             Nouveau mot de passe
-          </Text>
-          <FormError
-            title="Le changement de mot de passe a échoué"
-            hasError={(Object.keys(formik.errors).length || error) && formik.submitCount}
-            errorMessages={errorMessages}
-          />
-          {isSubmitted && (
-            <FormSuccess
-              title="Votre mot de passe a bien été changé"
-              message="Vous pouvez maintenant vous connecter avec votre nouveau mot de passe"
-            />
-          )}
-          {!isSubmitted && (
-            <form onSubmit={formik.handleSubmit}>
-              <Box mb="16px">
-                <InputPassword
-                  id="password"
-                  name="password"
-                  placeholder="Mot de passe"
-                  formik={formik}
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                  mb="16px"
-                  noErrorMessage
-                />
-              </Box>
-              <InputPassword
-                id="confirmPassword"
-                name="confirmPassword"
-                placeholder="Confirmer le mot de passe"
-                formik={formik}
-                showPassword={showPasswordConfirmation}
-                setShowPassword={setShowPasswordConfirmation}
-                noErrorMessage
-              />
-              <Box display="flex" alignItems="center" justifyContent="center" mt="16px">
-                <Button isLoading={isSubmitting}>Valider</Button>
-              </Box>
-            </form>
-          )}
-          {isSubmitted && (
-            <Box display="flex" alignItems="center" justifyContent="center" mt="16px">
-              <Button onClick={() => navigate("/connexion")}>Fermer</Button>
-            </Box>
-          )}
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          </>
+        }
+        size="small"
+        buttons={[
+          {
+            doClosesModal: true,
+            children: "Annuler",
+          },
+          {
+            doClosesModal: false,
+            children: "Envoyer",
+            type: "submit",
+            disabled: isSubmitting,
+          },
+        ]}
+      >
+        <StyledPasswordInput
+          label="Mot de passe"
+          state="error"
+          nativeInputProps={{
+            onChange: (e) => formik.setFieldValue("password", e.target.value),
+            id: "password",
+            name: "password",
+          }}
+          messagesHint="Votre mot de passe doit contenir au moins:"
+          messages={passwordMessages}
+        />
+        <PasswordInput
+          label="Confirmer mot de passe"
+          nativeInputProps={{
+            onChange: (e) => formik.setFieldValue("confirmPassword", e.target.value),
+            id: "confirmPassword",
+            name: "confirmPassword",
+          }}
+          messagesHint=""
+          messages={
+            (formik.errors.confirmPassword === allFieldMessage ||
+              formik.errors.confirmPassword === notCorrespondingPasswordMessage) &&
+            formik.submitCount >= 1
+              ? [
+                  {
+                    message: formik.errors.confirmPassword,
+                    severity: "error",
+                  },
+                ]
+              : []
+          }
+        />
+      </modal.Component>
+    </form>
   );
 };
 

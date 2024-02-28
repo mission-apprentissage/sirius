@@ -11,17 +11,16 @@ import EditQuestionnaire from "./questionnaires/EditQuestionnaire";
 import PreviewCampagnePage from "./campagnes/PreviewCampagnePage";
 import CreateCampagnesPage from "./campagnes/CreateCampagnesPage";
 import AnswerCampagnePage from "./campagnes/AnswerCampagnePage";
-import Login from "./users/Login";
-import Signup from "./users/Signup";
-import PendingAccount from "./users/PendingAccount";
-import Confirmation from "./users/Confirmation";
-import MentionsInformationBackOffice from "./legal/MentionsInformationBackOffice";
-import MentionsInformationQuestionnaire from "./legal/MentionsInformationQuestionnaire";
-import CGU from "./legal/CGU";
+import LoginPage from "./users/LoginPage";
+import SignupPage from "./users/SignupPage";
+import PendingAccountPage from "./users/PendingAccountPage";
+import EmailConfirmationPage from "./users/EmailConfirmationPage";
+import MentionsInformationBackOfficePage from "./legal/MentionsInformationBackOfficePage";
+import MentionsInformationQuestionnairePage from "./legal/MentionsInformationQuestionnairePage";
+import CguPage from "./legal/CguPage";
 import UsersManaging from "./users/Managing";
 import ModerationPage from "./verbatims/ModerationPage";
 import Layout from "./Components/Layout";
-import AnonymousLayout from "./Components/AnonymousLayout";
 import QuestionnaireLayout from "./Components/QuestionnaireLayout";
 import ResultsCampagnesPage from "./campagnes/ResultsCampagnesPage";
 import SuiviEtablissementsPage from "./suivi/SuiviEtablissementsPage";
@@ -65,18 +64,6 @@ function App() {
       </Route>
       <Route
         element={
-          <AnonymousLayout>
-            <Outlet />
-          </AnonymousLayout>
-        }
-      >
-        <Route exact path="/connexion" element={<Login />} />
-        <Route exact path="/modification-mot-de-passe" element={<Login />} />
-        <Route exact path="/inscription" element={<Signup />} />
-        <Route exact path="/confirmer-utilisateur" element={<Confirmation />} />
-      </Route>
-      <Route
-        element={
           <DsfrLayout>
             <Outlet />
           </DsfrLayout>
@@ -84,26 +71,22 @@ function App() {
       >
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/statistiques" element={<StatisticsPage />} />
-      </Route>
-      <Route
-        element={
-          <Layout>
-            <Outlet />
-          </Layout>
-        }
-      >
+        <Route exact path="/connexion" element={<LoginPage />} />
+        <Route exact path="/inscription" element={<SignupPage />} />
+        <Route exact path="/modification-mot-de-passe" element={<LoginPage />} />
+        <Route exact path="/compte-desactive" element={<PendingAccountPage />} />
+        <Route exact path="/cgu" element={<CguPage />} />
         <Route
           exact
           path="/mentions-information-questionnaire"
-          element={<MentionsInformationQuestionnaire />}
+          element={<MentionsInformationQuestionnairePage />}
         />
         <Route
           exact
           path="/mentions-information-backoffice"
-          element={<MentionsInformationBackOffice />}
+          element={<MentionsInformationBackOfficePage />}
         />
-        <Route exact path="/cgu" element={<CGU />} />
-        <Route exact path="/compte-desactive" element={<PendingAccount />} />
+        <Route exact path="/confirmer-utilisateur" element={<EmailConfirmationPage />} />
       </Route>
       <Route
         element={

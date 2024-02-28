@@ -263,53 +263,6 @@ export const ExpressedTestimonies = styled.div`
   }
 `;
 
-export const NeedHelpContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: ${fr.spacing("4w")} ${fr.spacing("12w")};
-  text-align: center;
-  background-color: var(--background-alt-blue-france);
-  width: 100%;
-
-  ${fr.breakpoints.down("md")} {
-    padding: ${fr.spacing("4w")} ${fr.spacing("4w")};
-    text-align: left;
-  }
-
-  & h5 {
-    margin: ${fr.spacing("4w")} 0;
-  }
-
-  & div {
-    display: flex;
-    flex-direction: row;
-    color: var(--text-active-blue-france);
-
-    ${fr.breakpoints.down("md")} {
-      flex-direction: column;
-      align-items: center;
-    }
-  }
-
-  & div > div {
-    margin: 0 ${fr.spacing("1w")};
-
-    ${fr.breakpoints.down("md")} {
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-
-  p {
-    margin: 0 ${fr.spacing("1w")};
-
-    ${fr.breakpoints.down("md")} {
-      margin: ${fr.spacing("1w")};
-    }
-  }
-`;
-
 export const ScrollToTop = styled.div`
   display: none;
 
