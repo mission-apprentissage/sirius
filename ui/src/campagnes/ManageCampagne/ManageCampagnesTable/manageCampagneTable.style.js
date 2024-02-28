@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { fr } from "@codegouvfr/react-dsfr";
 
 export const HeaderItem = styled.div`
   display: flex;

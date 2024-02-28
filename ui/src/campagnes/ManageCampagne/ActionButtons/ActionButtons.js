@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Tooltip from "react-simple-tooltip";
+import BeatLoader from "react-spinners/BeatLoader";
+
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
@@ -88,7 +90,16 @@ const ActionButtons = ({
             onClick={handleDownload}
             disabled={!selectedCampagnes.length || isLoadingDownload}
           >
-            Partager
+            {!isLoadingDownload ? (
+              "Partager"
+            ) : (
+              <BeatLoader
+                color="var(--background-action-high-blue-france)"
+                size={10}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            )}
           </Button>
         </Tooltip>
         <Tooltip

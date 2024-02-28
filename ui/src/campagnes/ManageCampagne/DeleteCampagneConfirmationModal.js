@@ -51,6 +51,7 @@ const DeleteCampagneConfirmationModal = ({
         {
           doClosesModal: true,
           children: "Annuler",
+          disabled: isSubmitting,
         },
         {
           doClosesModal: false,
