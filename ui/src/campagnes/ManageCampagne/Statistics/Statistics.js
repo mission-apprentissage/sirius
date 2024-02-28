@@ -30,17 +30,15 @@ const getVerbatimsCount = (campagnes) => {
   return campagnes.reduce((acc, campagne) => acc + campagne.champsLibreCount, 0);
 };
 
-const Statistics = ({ displayedCampagnes }) => {
-  const campagnesCount = displayedCampagnes.length || 0;
-  const finishedCampagnesCount = getFinishedCampagnes(displayedCampagnes).length;
-  const temoignagesCount = getTemoignagesCount(displayedCampagnes);
-  const champsLibreRate = displayedCampagnes.length ? getChampsLibreRate(displayedCampagnes) : "0";
-  const medianDuration = displayedCampagnes.length
-    ? getMedianDuration(displayedCampagnes)
-    : "0 min";
-  const verbatimsCount = displayedCampagnes.length ? getVerbatimsCount(displayedCampagnes) : "0";
+const Statistics = ({ campagnes }) => {
+  const campagnesCount = campagnes.length || 0;
+  const finishedCampagnesCount = getFinishedCampagnes(campagnes).length;
+  const temoignagesCount = getTemoignagesCount(campagnes);
+  const champsLibreRate = campagnes.length ? getChampsLibreRate(campagnes) : "0";
+  const medianDuration = campagnes.length ? getMedianDuration(campagnes) : "0 min";
+  const verbatimsCount = campagnes.length ? getVerbatimsCount(campagnes) : "0";
 
-  const isCampagnePlural = isPlural(displayedCampagnes.length);
+  const isCampagnePlural = isPlural(campagnes.length);
   const isFinishedCampagnesPlural = isPlural(finishedCampagnesCount);
   const isTemoignagesPlural = isPlural(temoignagesCount);
   const isVerbatimsPlural = isPlural(verbatimsCount);

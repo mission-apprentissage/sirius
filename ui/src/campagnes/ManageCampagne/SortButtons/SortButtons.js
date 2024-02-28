@@ -1,9 +1,17 @@
+import React, { useState } from "react";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
-import { SearchBar } from "@codegouvfr/react-dsfr/SearchBar";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import { SortButtonsContainer } from "./sortButtons.style";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../../../constants";
 
-const SortButtons = ({ displayMode, setDisplayMode, sortingMode, setSortingMode, setSearch }) => {
+const SortButtons = ({
+  displayMode,
+  setDisplayMode,
+  sortingMode,
+  setSortingMode,
+  search,
+  setSearch,
+}) => {
   return (
     <SortButtonsContainer>
       <Select
@@ -21,7 +29,13 @@ const SortButtons = ({ displayMode, setDisplayMode, sortingMode, setSortingMode,
         }}
         options={campagnesSortingOptions}
       />
-      <SearchBar onButtonClick={(value) => setSearch(value)} />
+      <Input
+        value={search}
+        nativeInputProps={{
+          placeholder: "Rechercher",
+          onChange: (e) => setSearch(e.target.value),
+        }}
+      />
     </SortButtonsContainer>
   );
 };

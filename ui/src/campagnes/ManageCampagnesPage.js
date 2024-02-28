@@ -21,7 +21,7 @@ const ManageCampagnesPage = () => {
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
-  const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState("");
   const [userContext] = useContext(UserContext);
   const [etablissementsContext] = useContext(EtablissementsContext);
   const [shouldRefreshData, setShouldRefreshData] = useState(false);
@@ -49,6 +49,22 @@ const ManageCampagnesPage = () => {
       setShouldRefreshData(false);
     }
   }, [shouldRefreshData]);
+
+  useEffect(() => {
+    if (campagnes?.length && search === "") {
+      setDisplayedCampagnes(campagnes);
+    } else {
+      const filteredCampagnes = displayedCampagnes.filter((campagne) => {
+        return (
+          campagne.formation.data.intitule_long.toLowerCase().includes(search) ||
+          campagne.formation.data.localite.toLowerCase().includes(search) ||
+          campagne.formation.data.tags.join("-").toLowerCase().includes(search) ||
+          campagne.nomCampagne.toLowerCase().includes(search)
+        );
+      });
+      setDisplayedCampagnes(filteredCampagnes);
+    }
+  }, [search]);
 
   const accordionComponentGetter = () => {
     if (displayMode === campagnesDisplayMode[0].value) {
@@ -78,7 +94,7 @@ const ManageCampagnesPage = () => {
 
   return (
     <Container>
-      <Statistics displayedCampagnes={displayedCampagnes || []} />
+      <Statistics campagnes={campagnes || []} />
       <ManageCampagneContainer>
         <h1>
           <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
@@ -91,7 +107,7 @@ const ManageCampagnesPage = () => {
           </Link>{" "}
           du réseau des CARIF OREF.
         </p>
-        {displayedCampagnes.length ? (
+        {displayedCampagnes?.length || search ? (
           <>
             <SortButtons
               displayedCampagnes={displayedCampagnes}
@@ -100,6 +116,7 @@ const ManageCampagnesPage = () => {
               setDisplayMode={setDisplayMode}
               sortingMode={sortingMode}
               setSortingMode={setSortingMode}
+              search={search}
               setSearch={setSearch}
             />
             <ActionButtons
@@ -109,24 +126,30 @@ const ManageCampagnesPage = () => {
               setSelectedCampagnes={setSelectedCampagnes}
               userContext={userContext}
             />
-            <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
           </>
-        ) : (
-          !loadingCampagnes && (
-            <>
-              <Button iconId="fr-icon-add-line" onClick={() => navigate("/campagnes/ajout")}>
-                Créer votre première campagne
-              </Button>
-              {errorCampagnes && (
-                <Alert
-                  title="Une erreur s'est produite dans le chargement des campagnes."
-                  description="Merci de réessayer ultérieurement."
-                  severity="error"
-                />
-              )}
-            </>
-          )
-        )}
+        ) : null}
+        {displayedCampagnes?.length ? (
+          <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
+        ) : null}
+        {errorCampagnes ? (
+          <Alert
+            title="Une erreur s'est produite dans le chargement des campagnes."
+            description="Merci de réessayer ultérieurement."
+            severity="error"
+          />
+        ) : null}
+        {!campagnes?.length && !loadingCampagnes && !errorCampagnes ? (
+          <>
+            <Button iconId="fr-icon-add-line" onClick={() => navigate("/campagnes/ajout")}>
+              Créer votre première campagne
+            </Button>
+          </>
+        ) : null}
+        {!displayedCampagnes?.length && search ? (
+          <>
+            <h3>Aucun résultats pour votre recherche</h3>
+          </>
+        ) : null}
       </ManageCampagneContainer>
       <NeedHelp />
     </Container>
