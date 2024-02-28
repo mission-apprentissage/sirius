@@ -1,66 +1,31 @@
 import React, { useContext, useState, useEffect } from "react";
-import {
-  Spinner,
-  Box,
-  Text,
-  Stack,
-  Accordion,
-  Image,
-  useBreakpoint,
-  useDisclosure,
-  Link,
-} from "@chakra-ui/react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import Button from "@codegouvfr/react-dsfr/Button";
+import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
+import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import { UserContext } from "../context/UserContext";
 import { EtablissementsContext } from "../context/EtablissementsContext";
-import Header from "./Shared/Header";
-import Team from "../assets/images/team.svg";
-import Statistics from "./Shared/Statistics";
-import ManageCampagneTable from "./ManageCampagne/ManageCampagneTable";
-import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
-import {
-  orderCampagnesByDiplomeType,
-  uniqueDiplomeTypesFromCampagne,
-  orderFormationsByDiplomeType,
-} from "./utils";
-import FormError from "../Components/Form/FormError";
-import Button from "../Components/Form/Button";
-import IoAddSharp from "../assets/icons/IoAddSharp.svg";
-import FormSuccess from "../Components/Form/FormSuccess";
-import useFetchCampagnes from "../hooks/useFetchCampagnes";
-import SupportModal from "./Shared/SupportModal";
+import Statistics from "./ManageCampagne/Statistics/Statistics";
+import DisplayByDiplomeType from "./ManageCampagne/Accordions/DisplayByDiplomeType";
+import DisplayByEtablissement from "./ManageCampagne/Accordions/DisplayByEtablissement";
+import SortButtons from "./ManageCampagne/SortButtons/SortButtons";
+import ActionButtons from "./ManageCampagne/ActionButtons/ActionButtons";
+import NeedHelp from "../Components/NeedHelp";
+import { campagnesDisplayMode, campagnesSortingOptions } from "../constants";
+import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
 
-export const sortingOptions = [
-  { label: "Formation (A-Z)", value: { id: "Formation", desc: false } },
-  { label: "Formation (Z-A)", value: { id: "Formation", desc: true } },
-  { label: "Nom d'usage formation (A-Z)", value: { id: "nomCampagne", desc: false } },
-  { label: "Nom d'usage formation (Z-A)", value: { id: "nomCampagne", desc: true } },
-  { label: "Début campagne (Ancienne-Récente)", value: { id: "startDate", desc: false } },
-  { label: "Début campagne (Récente-Ancienne)", value: { id: "startDate", desc: true } },
-  { label: "Fin campagne (Ancienne-Récente)", value: { id: "endDate", desc: false } },
-  { label: "Fin campagne (Récente-Ancienne)", value: { id: "endDate", desc: true } },
-  { label: "Apprenti·es (0-1)", value: { id: "seats", desc: false } },
-  { label: "Apprenti·es (1-0)", value: { id: "seats", desc: true } },
-  { label: "Complétion (0-1)", value: { id: "Complétion", desc: false } },
-  { label: "Complétion (1-0)", value: { id: "Complétion", desc: true } },
-];
-
-const ViewCampagnes = () => {
+const ManageCampagnesPage = () => {
+  const [selectedCampagnes, setSelectedCampagnes] = useState([]);
+  const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
+  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
+  const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
+  const [search, setSearch] = useState(null);
   const [userContext] = useContext(UserContext);
   const [etablissementsContext] = useContext(EtablissementsContext);
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const breakpoint = useBreakpoint({ ssr: false });
-  const [counter, setCounter] = useState(5);
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [shouldRefreshData, setShouldRefreshData] = useState(false);
-
-  const isMobile = breakpoint === "base";
-
-  const params = new URLSearchParams(searchParams);
-
-  const status = params.get("status");
-  const count = params.get("count");
+  const navigate = useNavigate();
 
   const campagneQuery = etablissementsContext.siret
     ? `?siret=${etablissementsContext.siret}`
@@ -71,9 +36,13 @@ const ViewCampagnes = () => {
     shouldRefreshData
   );
 
-  const [formations, loadingFormations, errorFormations] = useFetchRemoteFormations(
-    etablissementsContext.siret
-  );
+  const [formations] = useFetchRemoteFormations(etablissementsContext.siret);
+
+  useEffect(() => {
+    if (campagnes?.length) {
+      setDisplayedCampagnes(campagnes);
+    }
+  }, [campagnes]);
 
   useEffect(() => {
     if (shouldRefreshData) {
@@ -81,135 +50,87 @@ const ViewCampagnes = () => {
     }
   }, [shouldRefreshData]);
 
-  useEffect(() => {
-    if (status || count) {
-      counter > 0 &&
-        setTimeout(() => {
-          setCounter(counter - 1);
-          if (counter === 1) {
-            searchParams.delete("status");
-            searchParams.delete("count");
-            setSearchParams(searchParams);
-          }
-        }, 1000);
+  const accordionComponentGetter = () => {
+    if (displayMode === campagnesDisplayMode[0].value) {
+      return (
+        <DisplayByDiplomeType
+          displayedCampagnes={displayedCampagnes}
+          formations={formations}
+          selectedCampagnes={selectedCampagnes}
+          setSelectedCampagnes={setSelectedCampagnes}
+          setShouldRefreshData={setShouldRefreshData}
+          userContext={userContext}
+        />
+      );
+    } else if (displayMode === campagnesDisplayMode[1].value) {
+      return (
+        <DisplayByEtablissement
+          displayedCampagnes={displayedCampagnes}
+          formations={formations}
+          selectedCampagnes={selectedCampagnes}
+          setSelectedCampagnes={setSelectedCampagnes}
+          setShouldRefreshData={setShouldRefreshData}
+          userContext={userContext}
+        />
+      );
     }
-  }, [counter, status]);
-
-  const isAllCampagneCreated = campagnes && formations && campagnes?.length === formations?.length;
+  };
 
   return (
-    <Stack direction="column" w="100%">
-      <Header
-        hasActionButton
-        title="Statistiques"
-        img={Team}
-        allCampagneCreated={isAllCampagneCreated}
-        allowEtablissementChange={true}
-      >
-        {(loadingCampagnes || errorCampagnes) && !campagnes?.length ? (
-          <Spinner size="xl" />
-        ) : (
-          <Statistics campagnes={campagnes} />
-        )}
-      </Header>
-      {status === "error" && (
-        <FormError
-          title="Une erreur est survenue"
-          hasError
-          errorMessages={["Merci de réessayer ou de contacter le support"]}
-        />
-      )}
-      {status === "success" && (
-        <FormSuccess
-          title={`${count || 0} ${count > 1 ? "campagnes ont été créées" : "campagne a été créée"}`}
-          message={[`Vous pouvez ${count > 1 ? "les" : "la"} retrouver dans la liste ci-dessous`]}
-        />
-      )}
-      {status === "successDeletion" && (
-        <FormSuccess
-          title={`${count || 0} ${
-            count > 1 ? "campagnes ont été supprimées" : "campagne a été supprimée"
-          }`}
-        />
-      )}
-      <Text fontSize="5xl" fontWeight="600" w="100%" color="brand.blue.700">
-        Gérer mes campagnes
-      </Text>
-      <Box>
-        {loadingCampagnes || loadingFormations ? (
-          <Spinner size="xl" />
-        ) : (
-          <>
-            {errorFormations && (
-              <FormError
-                title="Une erreur est survenue"
-                hasError
-                errorMessages={[
-                  "La connexion au catalogue de formation a échouée. Certaines informations et actions peuvent être indisponibles.",
-                ]}
-              />
-            )}
-            {errorCampagnes && (
-              <FormError title="Une erreur est survenue" hasError errorMessages={[]} />
-            )}
-            <Accordion allowMultiple>
-              {campagnes.length ? (
-                uniqueDiplomeTypesFromCampagne(campagnes)?.map((diplomeType) => (
-                  <ManageCampagneTable
-                    key={diplomeType}
-                    diplomeType={diplomeType}
-                    campagnes={orderCampagnesByDiplomeType(campagnes)[diplomeType]}
-                    formations={orderFormationsByDiplomeType(formations)[diplomeType]}
-                    setShouldRefreshData={setShouldRefreshData}
-                    userContext={userContext}
-                  />
-                ))
-              ) : (
-                <Box display="flex" w="100%" justifyContent="center" mt="25px">
-                  <Button
-                    isLink
-                    onClick={() => navigate("/campagnes/ajout")}
-                    leftIcon={<Image src={IoAddSharp} alt="" />}
-                    mx={isMobile ? "0" : "8px"}
-                    mr={isMobile ? "0" : "8px"}
-                    mt={isMobile ? "8px" : "0"}
-                    w={isMobile ? "100%" : "min-content"}
-                  >
-                    Créer une première campagne
-                  </Button>
-                </Box>
-              )}
-            </Accordion>
-          </>
-        )}
-      </Box>
-      <Box
-        display="flex"
-        mb="16px"
-        mt="50px"
-        justifyContent="space-between"
-        alignItems="center"
-        w="100%"
-      >
-        <Text fontWeight="600" color="#718096">
-          Un problème avec les formations affichées ?{" "}
-          <strong>
-            <Text as="u" cursor="pointer" onClick={onOpen}>
-              Dites le nous
-            </Text>
-          </strong>
-        </Text>
-        <Text color="#718096">
+    <Container>
+      <Statistics displayedCampagnes={displayedCampagnes || []} />
+      <ManageCampagneContainer>
+        <h1>
+          <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
+          Gérez vos campagnes
+        </h1>
+        <p>
           Formations extraites du{" "}
-          <Link href="https://catalogue-apprentissage.intercariforef.org/" target="_blank">
-            <u>Catalogue des offres de formations en apprentissage</u>
+          <Link to="https://catalogue-apprentissage.intercariforef.org/" target="_blank">
+            Catalogue des offres de formations en apprentissage
           </Link>{" "}
-          du réseau des CARIF OREF
-        </Text>
-      </Box>
-      <SupportModal isOpen={isOpen} onClose={onClose} token={userContext.token} />
-    </Stack>
+          du réseau des CARIF OREF.
+        </p>
+        {displayedCampagnes.length ? (
+          <>
+            <SortButtons
+              displayedCampagnes={displayedCampagnes}
+              setDisplayedCampagnes={setDisplayedCampagnes}
+              displayMode={displayMode}
+              setDisplayMode={setDisplayMode}
+              sortingMode={sortingMode}
+              setSortingMode={setSortingMode}
+              setSearch={setSearch}
+            />
+            <ActionButtons
+              displayedCampagnes={displayedCampagnes}
+              setDisplayedCampagnes={setDisplayedCampagnes}
+              selectedCampagnes={selectedCampagnes}
+              setSelectedCampagnes={setSelectedCampagnes}
+              userContext={userContext}
+            />
+            <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
+          </>
+        ) : (
+          !loadingCampagnes && (
+            <>
+              <Button iconId="fr-icon-add-line" onClick={() => navigate("/campagnes/ajout")}>
+                Créer votre première campagne
+              </Button>
+              {errorCampagnes && (
+                <Alert
+                  title="Une erreur s'est produite dans le chargement des campagnes."
+                  description="Merci de réessayer ultérieurement."
+                  severity="error"
+                />
+              )}
+            </>
+          )
+        )}
+      </ManageCampagneContainer>
+      <NeedHelp />
+    </Container>
   );
 };
 
-export default ViewCampagnes;
+export default ManageCampagnesPage;
