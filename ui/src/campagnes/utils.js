@@ -128,12 +128,12 @@ export const formateDateToInputFormat = (date, monthsAdded = 0) => {
 
 export const getUniqueDiplomeTypesFromCampagne = (campagnes) =>
   campagnes?.length
-    ? [...new Set(campagnes.map((campagne) => campagne.formation?.data?.diplome))]
+    ? [...new Set(campagnes.map((campagne) => campagne.formation?.data?.diplome))].sort()
     : [];
 
 export const getUniqueEtablissementFromCampagne = (campagnes) =>
   campagnes?.length
-    ? [...new Set(campagnes.map((campagne) => campagne.etablissement.data.siret))]
+    ? [...new Set(campagnes.map((campagne) => campagne.etablissement.data.siret))].sort()
     : [];
 
 export const uniqueDiplomeTypesFromFormation = (formations) => [

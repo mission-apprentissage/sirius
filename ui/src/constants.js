@@ -95,16 +95,14 @@ export const campagnesDisplayMode = [
 ];
 
 export const campagnesSortingOptions = [
-  { label: "Formation (A-Z)", value: { id: "Formation", desc: false } },
-  { label: "Formation (Z-A)", value: { id: "Formation", desc: true } },
-  { label: "Nom d'usage formation (A-Z)", value: { id: "nomCampagne", desc: false } },
-  { label: "Nom d'usage formation (Z-A)", value: { id: "nomCampagne", desc: true } },
-  { label: "Début campagne (Ancienne-Récente)", value: { id: "startDate", desc: false } },
-  { label: "Début campagne (Récente-Ancienne)", value: { id: "startDate", desc: true } },
-  { label: "Fin campagne (Ancienne-Récente)", value: { id: "endDate", desc: false } },
-  { label: "Fin campagne (Récente-Ancienne)", value: { id: "endDate", desc: true } },
-  { label: "Apprenti·es (0-1)", value: { id: "seats", desc: false } },
-  { label: "Apprenti·es (1-0)", value: { id: "seats", desc: true } },
-  { label: "Complétion (0-1)", value: { id: "Complétion", desc: false } },
-  { label: "Complétion (1-0)", value: { id: "Complétion", desc: true } },
+  { label: "Formation (A-Z)", value: "formation-asc" },
+  { label: "Formation (Z-A)", value: "formation-desc" },
+  { label: "Nom d'usage formation (A-Z)", value: "nomCampagne-asc" },
+  { label: "Nom d'usage formation (Z-A)", value: "nomCampagne-desc" },
+  { label: "Début campagne (Ancienne-Récente)", value: "startDate-asc" },
+  { label: "Début campagne (Récente-Ancienne)", value: "startDate-desc" },
+  { label: "Fin campagne (Ancienne-Récente)", value: "endDate-asc" },
+  { label: "Fin campagne (Récente-Ancienne)", value: "endDate-desc" },
+  { label: "Apprenti·es (0-1)", value: "seats-asc" },
+  { label: "Apprenti·es (1-0)", value: "seats-desc" },
 ];

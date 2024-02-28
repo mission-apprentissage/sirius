@@ -44,7 +44,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handl
 
     return [
       <Checkbox
-        key="checkbox"
+        key={campagne._id}
         options={[
           {
             nativeInputProps: {
@@ -61,7 +61,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handl
           },
         ]}
       />,
-      <FormationContainer key="formation">
+      <FormationContainer key={campagne._id}>
         <p>
           <b>{formation.intitule_long}</b>
         </p>
@@ -88,7 +88,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handl
         </Tooltip>
       </FormationContainer>,
       <CellInput
-        key="nomCampagne"
+        key={campagne._id}
         id="nomCampagne"
         name="nomCampagne"
         campagne={campagne}
@@ -96,7 +96,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handl
         type="text"
       />,
       <CellInput
-        key="startDate"
+        key={campagne._id}
         id="startDate"
         name="startDate"
         campagne={campagne}
@@ -104,7 +104,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handl
         type="date"
       />,
       <CellInput
-        key="endDate"
+        key={campagne._id}
         id="startDate"
         name="startDate"
         campagne={campagne}
@@ -112,13 +112,13 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handl
         type="date"
       />,
       <CellInputSeats
-        key="seats"
+        key={campagne._id}
         id="seats"
         name="seats"
         campagne={campagne}
         handleCellUpdate={handleCellUpdate}
       />,
-      <TemoignagesCount key="temoignagesCount">
+      <TemoignagesCount key={campagne._id}>
         {campagne.seats > 0
           ? Math.round((campagne.temoignagesCount * 100) / campagne.seats) + "%"
           : campagne.temoignagesCount}

@@ -21,6 +21,30 @@ import {
   LoaderContainer,
 } from "./styles/manageCampagnes.style";
 
+const getValue = (obj, key) => {
+  const value = obj[key];
+  return typeof value === "string" ? value.toLowerCase() : value;
+};
+
+const sortingKeys = (a, b) => ({
+  "formation-asc": () =>
+    getValue(a.formation.data, "intitule_long").localeCompare(
+      getValue(b.formation.data, "intitule_long")
+    ),
+  "formation-desc": () =>
+    getValue(b.formation.data, "intitule_long").localeCompare(
+      getValue(a.formation.data, "intitule_long")
+    ),
+  "nomCampagne-asc": () => getValue(a, "nomCampagne").localeCompare(getValue(b, "nomCampagne")),
+  "nomCampagne-desc": () => getValue(b, "nomCampagne").localeCompare(getValue(a, "nomCampagne")),
+  "startDate-asc": () => getValue(a, "startDate").localeCompare(getValue(b, "startDate")),
+  "startDate-desc": () => getValue(b, "startDate").localeCompare(getValue(a, "startDate")),
+  "endDate-asc": () => getValue(a, "endDate").localeCompare(getValue(b, "endDate")),
+  "endDate-desc": () => getValue(b, "endDate").localeCompare(getValue(a, "endDate")),
+  "seats-asc": () => (a?.seats === 0 ? 999 : a?.seats) - (b?.seats === 0 ? 999 : b?.seats),
+  "seats-desc": () => (b?.seats === 0 ? 999 : b?.seats) - (a?.seats === 0 ? 999 : a?.seats),
+});
+
 const ManageCampagnesPage = () => {
   const [selectedCampagnes, setSelectedCampagnes] = useState([]);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
@@ -70,6 +94,18 @@ const ManageCampagnesPage = () => {
       setDisplayedCampagnes(filteredCampagnes);
     }
   }, [search]);
+
+  useEffect(() => {
+    let sortedCampagnes = [...displayedCampagnes];
+    if (sortedCampagnes.length > 0) {
+      sortedCampagnes.sort((a, b) => {
+        return sortingKeys(a, b)[sortingMode]();
+      });
+    }
+    if (JSON.stringify(sortedCampagnes) !== JSON.stringify(displayedCampagnes)) {
+      setDisplayedCampagnes(sortedCampagnes);
+    }
+  }, [sortingMode, displayedCampagnes]);
 
   const accordionComponentGetter = () => {
     if (displayMode === campagnesDisplayMode[0].value) {
