@@ -14,7 +14,6 @@ const DisplayByEtablissement = ({
   formations,
   selectedCampagnes,
   setSelectedCampagnes,
-  setShouldRefreshData,
   userContext,
 }) => {
   const uniqueEtablissementFromCampagne = getUniqueEtablissementFromCampagne(displayedCampagnes);
@@ -33,7 +32,7 @@ const DisplayByEtablissement = ({
     const isEveryCampagnesSelected = formationsByEtablissement.every((campagne) =>
       selectedCampagnes.includes(campagne._id)
     );
-    console.log({ campagnesByEtablissement });
+
     return (
       <StyledAccordion
         key={siret}
@@ -90,7 +89,6 @@ const DisplayByEtablissement = ({
           displayedCampagnes={campagnesByEtablissement}
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
-          setShouldRefreshData={setShouldRefreshData}
           userContext={userContext}
         />
       </StyledAccordion>

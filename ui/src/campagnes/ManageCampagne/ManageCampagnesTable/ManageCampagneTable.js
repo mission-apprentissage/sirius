@@ -131,12 +131,10 @@ const ManageCampagneTable = ({
   displayedCampagnes = [],
   selectedCampagnes,
   setSelectedCampagnes,
-  setShouldRefreshData,
   userContext,
 }) => {
   const handleCellUpdate = async (campagneId, payload) => {
     const updatedCampagne = await simpleEditionSubmitHandler(campagneId, payload, userContext);
-    setShouldRefreshData(true);
     return updatedCampagne;
   };
 

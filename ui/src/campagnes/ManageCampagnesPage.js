@@ -53,17 +53,13 @@ const ManageCampagnesPage = () => {
   const [search, setSearch] = useState("");
   const [userContext] = useContext(UserContext);
   const [etablissementsContext] = useContext(EtablissementsContext);
-  const [shouldRefreshData, setShouldRefreshData] = useState(false);
   const navigate = useNavigate();
 
   const campagneQuery = etablissementsContext.siret
     ? `?siret=${etablissementsContext.siret}`
     : null;
 
-  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes(
-    campagneQuery,
-    shouldRefreshData
-  );
+  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes(campagneQuery);
 
   const [formations] = useFetchRemoteFormations(etablissementsContext.siret);
 
@@ -72,12 +68,6 @@ const ManageCampagnesPage = () => {
       setDisplayedCampagnes(campagnes);
     }
   }, [campagnes]);
-
-  useEffect(() => {
-    if (shouldRefreshData) {
-      setShouldRefreshData(false);
-    }
-  }, [shouldRefreshData]);
 
   useEffect(() => {
     if (campagnes?.length && search === "") {
@@ -115,7 +105,6 @@ const ManageCampagnesPage = () => {
           formations={formations}
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
-          setShouldRefreshData={setShouldRefreshData}
           userContext={userContext}
         />
       );
@@ -126,7 +115,6 @@ const ManageCampagnesPage = () => {
           formations={formations}
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
-          setShouldRefreshData={setShouldRefreshData}
           userContext={userContext}
         />
       );

@@ -14,7 +14,6 @@ const DisplayByDiplomeType = ({
   formations,
   selectedCampagnes,
   setSelectedCampagnes,
-  setShouldRefreshData,
   userContext,
 }) => {
   const uniqueDiplomeTypesFromCampagne = getUniqueDiplomeTypesFromCampagne(displayedCampagnes);
@@ -86,7 +85,6 @@ const DisplayByDiplomeType = ({
           displayedCampagnes={campagnesByDiplomeType}
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
-          setShouldRefreshData={setShouldRefreshData}
           userContext={userContext}
         />
       </StyledAccordion>
