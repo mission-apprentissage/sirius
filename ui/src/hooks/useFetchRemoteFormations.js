@@ -1,16 +1,25 @@
 import { useEffect, useState } from "react";
 import { _get } from "../utils/httpClient";
 
-const useFetchRemoteFormations = (siret) => {
+const useFetchRemoteFormations = (userSiret) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const query = userSiret
+    .map((siret) => [
+      { etablissement_formateur_siret: siret },
+      { etablissement_gestionnaire_siret: siret },
+    ])
+    .flat();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await _get(
-          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?query={"$or":[{"etablissement_formateur_siret":${siret}},{"etablissement_gestionnaire_siret":${siret}}], "published": "true", "catalogue_published": "true", "niveau":["3 (CAP...)","4 (BAC...)"]}&page=1&limit=500`
+          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?query={"$or": ${JSON.stringify(
+            query
+          )}, "published": "true", "catalogue_published": "true", "niveau":["3 (CAP...)","4 (BAC...)"]}&page=1&limit=500`
         );
 
         // sort by alphabetical order
@@ -25,10 +34,8 @@ const useFetchRemoteFormations = (siret) => {
         setLoading(false);
       }
     };
-    if (siret) {
-      fetchData();
-    }
-  }, [siret]);
+    fetchData();
+  }, []);
 
   return [data, loading, error];
 };
