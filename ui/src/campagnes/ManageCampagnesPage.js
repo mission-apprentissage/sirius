@@ -4,17 +4,18 @@ import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import Button from "@codegouvfr/react-dsfr/Button";
+import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import { UserContext } from "../context/UserContext";
 import { EtablissementsContext } from "../context/EtablissementsContext";
-import Statistics from "./ManageCampagne/Statistics/Statistics";
 import DisplayByDiplomeType from "./ManageCampagne/Accordions/DisplayByDiplomeType";
 import DisplayByEtablissement from "./ManageCampagne/Accordions/DisplayByEtablissement";
 import SortButtons from "./ManageCampagne/SortButtons/SortButtons";
 import ActionButtons from "./ManageCampagne/ActionButtons/ActionButtons";
 import NeedHelp from "../Components/NeedHelp";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../constants";
+import SupportModal from "./ManageCampagne/SupportModal";
 import {
   Container,
   ManageCampagneContainer,
@@ -43,6 +44,11 @@ const sortingKeys = (a, b) => ({
   "endDate-desc": () => getValue(b, "endDate").localeCompare(getValue(a, "endDate")),
   "seats-asc": () => (a?.seats === 0 ? 999 : a?.seats) - (b?.seats === 0 ? 999 : b?.seats),
   "seats-desc": () => (b?.seats === 0 ? 999 : b?.seats) - (a?.seats === 0 ? 999 : a?.seats),
+});
+
+const modal = createModal({
+  id: "support-modal-loggedIn",
+  isOpenedByDefault: false,
 });
 
 const ManageCampagnesPage = () => {
@@ -122,74 +128,81 @@ const ManageCampagnesPage = () => {
   };
 
   return (
-    <Container>
-      <Statistics campagnes={campagnes || []} />
-      <ManageCampagneContainer>
-        <h1>
-          <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
-          Gérez vos campagnes
-        </h1>
-        <p>
-          Formations extraites du{" "}
-          <Link to="https://catalogue-apprentissage.intercariforef.org/" target="_blank">
-            Catalogue des offres de formations en apprentissage
-          </Link>{" "}
-          du réseau des CARIF OREF.
-        </p>
-        <>
-          <SortButtons
-            displayedCampagnes={displayedCampagnes}
-            setDisplayedCampagnes={setDisplayedCampagnes}
-            displayMode={displayMode}
-            setDisplayMode={setDisplayMode}
-            sortingMode={sortingMode}
-            setSortingMode={setSortingMode}
-            search={search}
-            setSearch={setSearch}
-          />
-          <ActionButtons
-            displayedCampagnes={displayedCampagnes}
-            setDisplayedCampagnes={setDisplayedCampagnes}
-            selectedCampagnes={selectedCampagnes}
-            setSelectedCampagnes={setSelectedCampagnes}
-            userContext={userContext}
-          />
-        </>
-        {displayedCampagnes?.length ? (
-          <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
-        ) : null}
-        {loadingCampagnes && (
-          <LoaderContainer>
-            <BeatLoader
-              color="var(--background-action-high-blue-france)"
-              size={20}
-              aria-label="Loading Spinner"
-              data-testid="loader"
+    <>
+      <Container>
+        <ManageCampagneContainer>
+          <h1>
+            <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
+            Diffuser mes campagnes
+          </h1>
+          <>
+            <SortButtons
+              displayedCampagnes={displayedCampagnes}
+              setDisplayedCampagnes={setDisplayedCampagnes}
+              displayMode={displayMode}
+              setDisplayMode={setDisplayMode}
+              sortingMode={sortingMode}
+              setSortingMode={setSortingMode}
+              search={search}
+              setSearch={setSearch}
             />
-          </LoaderContainer>
-        )}
-        {errorCampagnes ? (
-          <Alert
-            title="Une erreur s'est produite dans le chargement des campagnes."
-            description="Merci de réessayer ultérieurement."
-            severity="error"
-          />
-        ) : null}
-        {!campagnes?.length && !loadingCampagnes && !errorCampagnes ? (
-          <>
-            <Button iconId="fr-icon-add-line" onClick={() => navigate("/campagnes/ajout")}>
-              Créer votre première campagne
-            </Button>
+            <ActionButtons
+              displayedCampagnes={displayedCampagnes}
+              setDisplayedCampagnes={setDisplayedCampagnes}
+              selectedCampagnes={selectedCampagnes}
+              setSelectedCampagnes={setSelectedCampagnes}
+              userContext={userContext}
+            />
           </>
-        ) : null}
-        {!displayedCampagnes?.length && search ? (
-          <>
-            <h3>Aucun résultats pour votre recherche</h3>
-          </>
-        ) : null}
-      </ManageCampagneContainer>
-      <NeedHelp />
-    </Container>
+          {displayedCampagnes?.length ? (
+            <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
+          ) : null}
+          {loadingCampagnes && (
+            <LoaderContainer>
+              <BeatLoader
+                color="var(--background-action-high-blue-france)"
+                size={20}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            </LoaderContainer>
+          )}
+          {errorCampagnes ? (
+            <Alert
+              title="Une erreur s'est produite dans le chargement des campagnes."
+              description="Merci de réessayer ultérieurement."
+              severity="error"
+            />
+          ) : null}
+          {!campagnes?.length && !loadingCampagnes && !errorCampagnes ? (
+            <>
+              <Button iconId="fr-icon-add-line" onClick={() => navigate("/campagnes/ajout")}>
+                Créer votre première campagne
+              </Button>
+            </>
+          ) : null}
+          {!displayedCampagnes?.length && search ? (
+            <>
+              <h3>Aucun résultats pour votre recherche</h3>
+            </>
+          ) : null}
+          <p>
+            Formations extraites du{" "}
+            <Link to="https://catalogue-apprentissage.intercariforef.org/" target="_blank">
+              Catalogue des offres de formations en apprentissage
+            </Link>{" "}
+            du réseau des CARIF OREF. Un problème ?{" "}
+            <span onClick={() => modal.open()}>
+              <b>
+                <u>Dites le nous</u>
+              </b>
+            </span>
+          </p>
+        </ManageCampagneContainer>
+        <NeedHelp />
+      </Container>
+      <SupportModal modal={modal} token={userContext.token} />
+    </>
   );
 };
 

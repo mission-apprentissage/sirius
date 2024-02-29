@@ -24,7 +24,7 @@ export const ManageCampagneContainer = styled.section`
   padding: ${fr.spacing("6w")} 1.5rem;
 
   & h1 {
-    margin: 0;
+    margin: 0 0 ${fr.spacing("5w")} 0;
   }
 
   & span {
@@ -33,6 +33,10 @@ export const ManageCampagneContainer = styled.section`
 
   & .fr-collapse {
     padding: 0;
+  }
+
+  & > p:last-of-type {
+    margin-top: ${fr.spacing("6w")};
   }
 `;
 
