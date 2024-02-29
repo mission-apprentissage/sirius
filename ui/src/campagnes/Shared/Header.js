@@ -14,7 +14,6 @@ import GoEye from "../../assets/icons/GoEye.svg";
 import MdDone from "../../assets/icons/MdDone.svg";
 import MdQuestionAnswer from "../../assets/icons/MdQuestionAnswer.svg";
 import { etablissementLabelGetter } from "../../utils/etablissement";
-import parse from "html-react-parser";
 
 const MultiEtablissementsPicker = ({ etablissementsContext, setEtablissementsContext }) => {
   const [_, setSearchParams] = useSearchParams();
@@ -58,28 +57,40 @@ const MultiEtablissementsPicker = ({ etablissementsContext, setEtablissementsCon
     );
   };
 
+  const customFilterOption = (option, inputValue) => {
+    const inputLowerCase = inputValue.toLowerCase();
+    const labelMatch = option.data.label.toLowerCase().includes(inputLowerCase);
+    const valueMatch = option.value.toLowerCase().includes(inputLowerCase);
+    return labelMatch || valueMatch;
+  };
+
   return (
-    <Select
-      id="etablissement"
-      name="etablissement"
-      variant="outline"
-      size="lg"
-      placeholder="Choix de l'établissement"
-      isSearchable
-      defaultValue={defaultValue}
-      options={
-        etablissementsContext.etablissements.length > 0 &&
-        etablissementsContext.etablissements.map((etablissement) => ({
-          value: etablissement.siret,
-          label: parse(
-            `<div style="display: flex; flex-direction: column;"><p>${etablissementLabelGetter(
-              etablissement
-            )}</p>  <p style="font-size: 12px; margin-top: 5px;">${etablissement.siret}</p><div>`
-          ),
-        }))
-      }
-      onChange={onChangeHandler}
-    />
+    <Box minWidth="300px">
+      <Select
+        id="etablissement"
+        name="etablissement"
+        variant="outline"
+        size="lg"
+        placeholder="Choix de l'établissement"
+        isSearchable
+        defaultValue={defaultValue}
+        filterOption={customFilterOption}
+        getOptionLabel={(option) => (
+          <Box>
+            <p>{option.label}</p>
+            <Text fontSize="xs">{option.value}</Text>
+          </Box>
+        )}
+        options={
+          etablissementsContext.etablissements.length > 0 &&
+          etablissementsContext.etablissements.map((etablissement) => ({
+            value: etablissement.siret,
+            label: etablissementLabelGetter(etablissement),
+          }))
+        }
+        onChange={onChangeHandler}
+      />
+    </Box>
   );
 };
 
