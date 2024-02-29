@@ -11,7 +11,7 @@ const useFetchCampagnes = (query, shouldRefreshData) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await _get(`/api/campagnes${query}`, userContext.token);
+        const response = await _get(`/api/campagnes`, userContext.token);
         setData(response);
         setLoading(false);
       } catch (error) {

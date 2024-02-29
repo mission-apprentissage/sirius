@@ -67,7 +67,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handl
         </p>
         <div>
           <p>{formation.tags.join("-")} </p>
-          {formation.duree && parseInt(formation.duree) && (
+          {formation?.duree && parseInt(formation?.duree) && (
             <p>
               · En {formation.duree} an{isPlural(parseInt(formation.duree))}
             </p>

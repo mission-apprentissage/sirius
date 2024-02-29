@@ -29,7 +29,7 @@ const DisplayByEtablissement = ({
 
     const isCampagnesPlural = isPlural(campagnesByEtablissement.length);
 
-    const isEveryCampagnesSelected = formationsByEtablissement.every((campagne) =>
+    const isEveryCampagnesSelected = formationsByEtablissement?.every((campagne) =>
       selectedCampagnes.includes(campagne._id)
     );
 
