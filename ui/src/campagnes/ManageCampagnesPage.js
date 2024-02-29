@@ -126,14 +126,13 @@ const ManageCampagnesPage = () => {
           </h1>
           <>
             <SortButtons
-              displayedCampagnes={displayedCampagnes}
-              setDisplayedCampagnes={setDisplayedCampagnes}
               displayMode={displayMode}
               setDisplayMode={setDisplayMode}
               sortingMode={sortingMode}
               setSortingMode={setSortingMode}
               search={search}
               setSearch={setSearch}
+              organizeLabel="Organiser mes campagnes par"
             />
             <ActionButtons
               displayedCampagnes={displayedCampagnes}
@@ -152,7 +151,6 @@ const ManageCampagnesPage = () => {
                 color="var(--background-action-high-blue-france)"
                 size={20}
                 aria-label="Loading Spinner"
-                data-testid="loader"
               />
             </LoaderContainer>
           )}
