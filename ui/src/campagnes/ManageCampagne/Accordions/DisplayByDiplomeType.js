@@ -3,7 +3,6 @@ import ManageCampagneTable from "../ManageCampagnesTable/ManageCampagneTable";
 import {
   orderCampagnesByDiplomeType,
   getUniqueDiplomeTypesFromCampagne,
-  orderFormationsByDiplomeType,
   isPlural,
 } from "../../utils";
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
@@ -11,7 +10,6 @@ import { StyledAccordion, AccordionLabelByDiplomeTypeContainer } from "./accordi
 
 const DisplayByDiplomeType = ({
   displayedCampagnes,
-  formations,
   selectedCampagnes,
   setSelectedCampagnes,
   userContext,
@@ -19,13 +17,9 @@ const DisplayByDiplomeType = ({
   const uniqueDiplomeTypesFromCampagne = getUniqueDiplomeTypesFromCampagne(displayedCampagnes);
 
   const orderedCampagnesByDiplomeType = orderCampagnesByDiplomeType(displayedCampagnes);
-  const orderedFormationsByDiplomeType = formations?.length
-    ? orderFormationsByDiplomeType(formations)
-    : [];
 
   return uniqueDiplomeTypesFromCampagne?.map((diplomeType) => {
     const campagnesByDiplomeType = orderedCampagnesByDiplomeType[diplomeType];
-    const formationsByDiplomeType = orderedFormationsByDiplomeType[diplomeType];
 
     const isCampagnesPlural = isPlural(campagnesByDiplomeType.length);
 
@@ -71,9 +65,7 @@ const DisplayByDiplomeType = ({
             <AccordionLabelByDiplomeTypeContainer>
               <h5>{DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}</h5>
               <p>
-                {campagnesByDiplomeType.length}
-                {formationsByDiplomeType?.length ? `/${formationsByDiplomeType?.length}` : ""}{" "}
-                campagne
+                {campagnesByDiplomeType.length} campagne
                 {isCampagnesPlural} créée{isCampagnesPlural}
               </p>
             </AccordionLabelByDiplomeTypeContainer>

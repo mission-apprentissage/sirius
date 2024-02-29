@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { _get } from "../utils/httpClient";
 
-const useFetchCampagnes = (query, shouldRefreshData) => {
+const useFetchCampagnes = (shouldRefreshData) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,10 +19,9 @@ const useFetchCampagnes = (query, shouldRefreshData) => {
         setLoading(false);
       }
     };
-    if (query || query === "") {
-      fetchData();
-    }
-  }, [query, shouldRefreshData]);
+
+    fetchData();
+  }, [shouldRefreshData]);
 
   return [data, loading, error];
 };

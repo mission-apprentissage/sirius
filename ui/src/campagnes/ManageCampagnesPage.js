@@ -5,10 +5,8 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import { UserContext } from "../context/UserContext";
-import { EtablissementsContext } from "../context/EtablissementsContext";
 import DisplayByDiplomeType from "./ManageCampagne/Accordions/DisplayByDiplomeType";
 import DisplayByEtablissement from "./ManageCampagne/Accordions/DisplayByEtablissement";
 import SortButtons from "./ManageCampagne/SortButtons/SortButtons";
@@ -58,16 +56,9 @@ const ManageCampagnesPage = () => {
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
   const [userContext] = useContext(UserContext);
-  const [etablissementsContext] = useContext(EtablissementsContext);
   const navigate = useNavigate();
 
-  const campagneQuery = etablissementsContext.siret
-    ? `?siret=${etablissementsContext.siret}`
-    : null;
-
-  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes(campagneQuery);
-
-  const [formations] = useFetchRemoteFormations(etablissementsContext.siret);
+  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
 
   useEffect(() => {
     if (campagnes?.length) {
@@ -108,7 +99,6 @@ const ManageCampagnesPage = () => {
       return (
         <DisplayByDiplomeType
           displayedCampagnes={displayedCampagnes}
-          formations={formations}
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
           userContext={userContext}
@@ -118,7 +108,6 @@ const ManageCampagnesPage = () => {
       return (
         <DisplayByEtablissement
           displayedCampagnes={displayedCampagnes}
-          formations={formations}
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
           userContext={userContext}

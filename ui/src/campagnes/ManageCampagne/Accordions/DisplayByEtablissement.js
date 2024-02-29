@@ -3,7 +3,6 @@ import ManageCampagneTable from "../ManageCampagnesTable/ManageCampagneTable";
 import {
   getUniqueEtablissementFromCampagne,
   orderCampagnesByEtablissement,
-  orderFormationsByEtablissement,
   isPlural,
 } from "../../utils";
 import { etablissementLabelGetter, buildEtablissementAddress } from "../../../utils/etablissement";
@@ -11,7 +10,6 @@ import { StyledAccordion, AccordionLabelByEtablissementContainer } from "./accor
 
 const DisplayByEtablissement = ({
   displayedCampagnes,
-  formations,
   selectedCampagnes,
   setSelectedCampagnes,
   userContext,
@@ -19,17 +17,13 @@ const DisplayByEtablissement = ({
   const uniqueEtablissementFromCampagne = getUniqueEtablissementFromCampagne(displayedCampagnes);
 
   const orderedCampagnesByEtablissement = orderCampagnesByEtablissement(displayedCampagnes);
-  const orderedFormationsByEtablissement = formations?.length
-    ? orderFormationsByEtablissement(formations)
-    : [];
 
   return uniqueEtablissementFromCampagne.map((siret) => {
     const campagnesByEtablissement = orderedCampagnesByEtablissement[siret];
-    const formationsByEtablissement = orderedFormationsByEtablissement[siret];
 
     const isCampagnesPlural = isPlural(campagnesByEtablissement.length);
 
-    const isEveryCampagnesSelected = formationsByEtablissement?.every((campagne) =>
+    const isEveryCampagnesSelected = campagnesByEtablissement?.every((campagne) =>
       selectedCampagnes.includes(campagne._id)
     );
 
@@ -73,11 +67,7 @@ const DisplayByEtablissement = ({
               <p>{buildEtablissementAddress(campagnesByEtablissement[0].etablissement.data)}</p>
               <p>N° SIRET : {campagnesByEtablissement[0].etablissement.data.siret}</p>
               <p>
-                {campagnesByEtablissement.length}
-                {formationsByEtablissement?.length
-                  ? `/${formationsByEtablissement?.length}`
-                  : ""}{" "}
-                campagne
+                {campagnesByEtablissement.length} campagne
                 {isCampagnesPlural} créée{isCampagnesPlural}
               </p>
             </AccordionLabelByEtablissementContainer>
