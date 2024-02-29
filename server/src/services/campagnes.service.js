@@ -208,7 +208,6 @@ const getPdfMultipleExport = async (ids, user) => {
       body: { data: generatedPdf, fileName },
     };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };
