@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Tooltip from "react-simple-tooltip";
 import BeatLoader from "react-spinners/BeatLoader";
-
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
