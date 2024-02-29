@@ -177,7 +177,7 @@ const getAllWithTemoignageCountAndTemplateName = async (query) => {
     ...temoignageCountQuery,
     ...questionnaireTemplateQuery,
     ...formationQuery(),
-    ...etablissementQuery(query.siret),
+    ...etablissementQuery(query?.siret),
   ]);
 };
 

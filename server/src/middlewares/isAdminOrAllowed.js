@@ -71,6 +71,9 @@ const isAdminOrAllowed = async (req, next, type) => {
     if (type === TYPES.SIRET) {
       const siretToVerify =
         req.params.siret || req.query.siret || req.body.siret || req.query["data.siret"] || req.body.etablissementSiret;
+      if (!siretToVerify) {
+        return next(new UnauthorizedError());
+      }
       if (siret === siretToVerify || multipleSiret.includes(siretToVerify)) return next();
     }
 

@@ -6,60 +6,81 @@ const etablissementsDao = require("../dao/etablissements.dao");
 const temoignagesDao = require("../dao/temoignages.dao");
 
 const { getChampsLibreRate, getChampsLibreCount } = require("../utils/verbatims.utils");
-const { getMedianDuration } = require("../utils/campagnes.utils");
+const { getMedianDuration, appendDataWhenEmpty } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 
-const getCampagnes = async (query) => {
+const getCampagnes = async (isAdmin, userSiret) => {
   try {
-    let etablissementsSiret = [query.siret];
     let campagnes = [];
 
-    const etablissementNature = await referentiel.getEtablissementNature(query.siret);
-
-    const isGestionnaire =
-      etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE ||
-      etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
-    const isFormateur =
-      etablissementNature === ETABLISSEMENT_NATURE.FORMATEUR ||
-      etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
-
-    if (isGestionnaire) {
-      const etablissementFormateurSIRET = await referentiel.getEtablissementSIRETFromRelationType(
-        query.siret,
-        ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
-      );
-
-      etablissementsSiret.push(...etablissementFormateurSIRET);
-
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: etablissementsSiret });
-    } else if (isFormateur) {
-      const etablissementGestionnaireSiret = await referentiel.getEtablissementSIRETFromRelationType(
-        query.siret,
-        ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE
-      );
-      etablissementsSiret.push(...etablissementGestionnaireSiret);
-
-      const allCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: etablissementsSiret });
-      campagnes = allCampagnes.filter(
-        (campagne) => campagne.formation.data.etablissement_formateur_siret === query.siret
-      );
+    if (isAdmin) {
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName();
     }
 
-    campagnes.forEach((campagne) => {
+    for (const siret of userSiret) {
+      let etablissementsSiret = [siret];
+
+      const etablissementNature = await referentiel.getEtablissementNature(siret);
+
+      const isGestionnaire =
+        etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE ||
+        etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
+      const isFormateur =
+        etablissementNature === ETABLISSEMENT_NATURE.FORMATEUR ||
+        etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
+
+      if (isGestionnaire) {
+        const etablissementFormateurSIRET = await referentiel.getEtablissementSIRETFromRelationType(
+          siret,
+          ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
+        );
+
+        etablissementsSiret.push(...etablissementFormateurSIRET);
+
+        const fetchedCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({
+          siret: etablissementsSiret,
+        });
+
+        campagnes.push(fetchedCampagnes);
+      } else if (isFormateur) {
+        const etablissementGestionnaireSiret = await referentiel.getEtablissementSIRETFromRelationType(
+          siret,
+          ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE
+        );
+        etablissementsSiret.push(...etablissementGestionnaireSiret);
+
+        const allCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({
+          siret: etablissementsSiret,
+        });
+
+        const filteredCampagnes = allCampagnes.filter(
+          (campagne) => campagne.formation.data.etablissement_formateur_siret === siret
+        );
+        campagnes.push(filteredCampagnes);
+      }
+    }
+
+    const flattenCampagnesArray = campagnes.flat();
+
+    flattenCampagnesArray.forEach((campagne) => {
       campagne.champsLibreCount = getChampsLibreCount(campagne.questionnaireUI, campagne.temoignagesList);
     });
-    campagnes.forEach((campagne) => {
+    flattenCampagnesArray.forEach((campagne) => {
       campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
+      delete campagne.questionnaireUI;
+      delete campagne.questionnaire;
     });
-    campagnes.forEach((campagne) => {
+    flattenCampagnesArray.forEach((campagne) => {
       campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
       delete campagne.temoignagesList;
     });
 
-    return { success: true, body: campagnes };
+    flattenCampagnesArray.forEach((campagne) => appendDataWhenEmpty(campagne));
+
+    return { success: true, body: flattenCampagnesArray };
   } catch (error) {
     return { success: false, body: error };
   }
