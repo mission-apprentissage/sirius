@@ -6,6 +6,7 @@ export const SortButtonsContainer = styled.div`
   flex-direction: row;
   align-items: flex-end;
   gap: 1rem;
+  margin-bottom: ${fr.spacing("2w")};
 
   ${fr.breakpoints.down("md")} {
     flex-direction: column;

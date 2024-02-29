@@ -11,11 +11,12 @@ const SortButtons = ({
   setSortingMode,
   search,
   setSearch,
+  organizeLabel,
 }) => {
   return (
     <SortButtonsContainer>
       <Select
-        label="Organiser mes campagnes par"
+        label={organizeLabel}
         nativeSelectProps={{
           value: displayMode,
           onChange: (event) => setDisplayMode(event.target.value),
