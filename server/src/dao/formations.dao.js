@@ -11,7 +11,11 @@ const getAll = async (query) => {
   } else {
     queryBuilder = { ...query };
   }
-  return Formation.find({ ...queryBuilder, deletedAt: null }).lean();
+  return Formation.find({ ...queryBuilder, deletedAt: null })
+    .select(
+      "_id campagneId data._id data.intitule_long data.tags data.lieu_formation_adresse_computed data.diplome data.localite data.duree data.etablissement_formateur_siret data.etablissement_gestionnaire_siret data.etablissement_gestionnaire_enseigne data.etablissement_formateur_enseigne data.etablissement_formateur_entreprise_raison_sociale"
+    )
+    .lean();
 };
 
 const getOne = (id) => {
