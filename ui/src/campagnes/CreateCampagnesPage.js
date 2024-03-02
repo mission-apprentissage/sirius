@@ -46,9 +46,11 @@ const CreateCampagnesPage = () => {
     }
   }, [remoteFormations]);
 
-  const localFormationQuery = campagnes
-    ?.map((campagne) => `id=${campagne.formation._id}`)
-    .join("&");
+  const campagneIdWithoutNAFormations = campagnes
+    ?.filter((campagne) => campagne.formation?._id !== "N/A")
+    .map((campagne) => campagne.formation._id);
+
+  const localFormationQuery = campagneIdWithoutNAFormations?.map((id) => `id=${id}`).join("&");
 
   const [localFormations, loadingLocalFormations, errorLocalFormations] =
     useFetchLocalFormations(localFormationQuery);
@@ -117,59 +119,68 @@ const CreateCampagnesPage = () => {
     <>
       <Container>
         <CreateCampagneContainer>
-          <h1>
-            <span className={fr.cx("fr-icon-add-line")} aria-hidden={true} />
-            Créer des campagnes (1/2)
-          </h1>
-          <p>
-            <b>Une formation sélectionnée = Une campagne créée.</b> Dans cette première version de
-            Sirius, seules vos formations infra-bac sont disponibles.
-          </p>
-          <p>
-            Formations extraites du{" "}
-            <Link to="https://catalogue-apprentissage.intercariforef.org/" target="_blank">
-              Catalogue des offres de formations en apprentissage
-            </Link>{" "}
-            du réseau des CARIF OREF. Un problème ?{" "}
-            <span onClick={() => modal.open()}>
-              <b>
-                <u>Dites le nous</u>
-              </b>
-            </span>
-          </p>
           {step === 1 && (
-            <Step1
-              hasError={
-                !!(
-                  errorRemoteFormations ||
-                  errorLocalFormations ||
-                  errorQuestionnaires ||
-                  errorCampagnes
-                )
-              }
-              errorMessages={
-                errorRemoteFormations
-                  ? [
-                      "La connexion au catalogue de formation a échouée. Certaines informations et actions peuvent être indisponibles.",
-                    ]
-                  : []
-              }
-              isLoading={isLoadingStep1}
-              localFormations={localFormations}
-              displayedFormations={displayedFormations}
-              selectedFormations={selectedFormations}
-              setSelectedFormations={setSelectedFormations}
-            />
+            <>
+              <h1>
+                <span className={fr.cx("fr-icon-add-line")} aria-hidden={true} />
+                Créer des campagnes (1/2)
+              </h1>
+              <p>
+                <b>Une formation sélectionnée = Une campagne créée.</b> Dans cette première version
+                de Sirius, seules vos formations infra-bac sont disponibles.
+              </p>
+              <p>
+                Formations extraites du{" "}
+                <Link to="https://catalogue-apprentissage.intercariforef.org/" target="_blank">
+                  Catalogue des offres de formations en apprentissage
+                </Link>{" "}
+                du réseau des CARIF OREF. Un problème ?{" "}
+                <span onClick={() => modal.open()}>
+                  <b>
+                    <u>Dites le nous</u>
+                  </b>
+                </span>
+              </p>
+              <Step1
+                hasError={
+                  !!(
+                    errorRemoteFormations ||
+                    errorLocalFormations ||
+                    errorQuestionnaires ||
+                    errorCampagnes
+                  )
+                }
+                errorMessages={
+                  errorRemoteFormations
+                    ? [
+                        "La connexion au catalogue de formation a échouée. Certaines informations et actions peuvent être indisponibles.",
+                      ]
+                    : []
+                }
+                isLoading={isLoadingStep1}
+                localFormations={localFormations}
+                displayedFormations={displayedFormations}
+                selectedFormations={selectedFormations}
+                setSelectedFormations={setSelectedFormations}
+              />
+            </>
           )}
           {step === 2 && (
-            <Step2
-              allDiplomesSelectedFormations={selectedFormations}
-              selectedFormations={remoteFormations.filter((remoteFormation) =>
-                selectedFormations.includes(remoteFormation.id)
-              )}
-              setStep={setStep}
-              formik={formik}
-            />
+            <>
+              <h1>
+                <span className={fr.cx("fr-icon-add-line")} aria-hidden={true} />
+                Paramétrer mes campagnes (2/2)
+              </h1>
+              <Step2
+                allDiplomesSelectedFormations={selectedFormations}
+                selectedFormations={remoteFormations.filter((remoteFormation) =>
+                  selectedFormations.includes(remoteFormation.id)
+                )}
+                setSelectedFormations={setSelectedFormations}
+                setStep={setStep}
+                formik={formik}
+              />
+            </>
           )}
           <Box display="flex" justifyContent="center" w="100%" mb="25px">
             {step === 1 && (
@@ -196,8 +207,9 @@ const CreateCampagnesPage = () => {
                     aria-label="Loading Spinner"
                   />
                 ) : (
-                  `Créer ${selectedFormations.length} campagne
-                ${isPlural(selectedFormations.length)}`
+                  `Créer ${selectedFormations.length} campagne${isPlural(
+                    selectedFormations.length
+                  )}`
                 )}
               </Button>
             )}
