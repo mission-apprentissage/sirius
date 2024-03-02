@@ -1,3 +1,5 @@
+import React from "react";
+import { Link } from "react-router-dom";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import {
   orderFormationsByDiplomeType,
@@ -5,25 +7,29 @@ import {
   isPlural,
 } from "../../utils";
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
-import { StyledAccordion, AccordionLabelByDiplomeTypeContainer } from "./accordions.style";
+import {
+  StyledAccordion,
+  AccordionLabelByDiplomeTypeContainer,
+  FormationCardContainer,
+  FormationCardByDiplomeType,
+  StyledBadge,
+} from "./accordions.style";
+import CreateCampagneTable from "../CreateCampagneTable";
 
-const DisplayByDiplomeType = ({
-  displayedFormations,
-  selectedFormations,
-  setSelectedFormations,
-}) => {
-  const uniqueDiplomeTypesFromFormation = getUniqueDiplomeTypesFromFormation(displayedFormations);
+const DisplayByDiplomeTypeTable = ({ selectedFormations, setSelectedFormations }) => {
+  const uniqueDiplomeTypesFromFormation = getUniqueDiplomeTypesFromFormation(selectedFormations);
 
-  const orderedFormationByDiplomeType = orderFormationsByDiplomeType(displayedFormations);
+  const orderedFormationByDiplomeType = orderFormationsByDiplomeType(selectedFormations);
 
   return uniqueDiplomeTypesFromFormation?.map((diplomeType) => {
     const formationsByDiplomeType = orderedFormationByDiplomeType[diplomeType];
-
-    const isFormationsPlural = isPlural(formationsByDiplomeType.length);
-
     const isEveryFormationsSelected = formationsByDiplomeType.every((formation) =>
       selectedFormations.includes(formation._id)
     );
+
+    const formationSelectedCountByDiplomeType = selectedFormations.filter((id) =>
+      formationsByDiplomeType.map((formation) => formation._id).includes(id)
+    ).length;
 
     return (
       <StyledAccordion
@@ -63,23 +69,22 @@ const DisplayByDiplomeType = ({
             <AccordionLabelByDiplomeTypeContainer>
               <h5>{DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}</h5>
               <p>
-                {formationsByDiplomeType.length} formation
-                {isFormationsPlural} créée{isFormationsPlural}
+                {formationSelectedCountByDiplomeType} formation
+                {isPlural(formationSelectedCountByDiplomeType)} sélectionnée
+                {isPlural(formationSelectedCountByDiplomeType)}
               </p>
             </AccordionLabelByDiplomeTypeContainer>
           </>
         }
       >
-        {/*<ManageFormationTable
+        <CreateCampagneTable
           key={diplomeType}
-          displayedFormations={formationsByDiplomeType}
           selectedFormations={selectedFormations}
           setSelectedFormations={setSelectedFormations}
-          userContext={userContext}
-      />*/}
+        />
       </StyledAccordion>
     );
   });
 };
 
-export default DisplayByDiplomeType;
+export default DisplayByDiplomeTypeTable;

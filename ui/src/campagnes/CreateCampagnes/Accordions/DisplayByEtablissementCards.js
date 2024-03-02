@@ -10,11 +10,12 @@ import {
   StyledAccordion,
   AccordionLabelByEtablissementContainer,
   FormationCardContainer,
-  FormationCard,
+  FormationCardByEtablissement,
   StyledBadge,
 } from "./accordions.style";
+import { DIPLOME_TYPE_MATCHER } from "../../../constants";
 
-const DisplayByEtablissement = ({
+const DisplayByEtablissementCards = ({
   displayedFormations,
   selectedFormations,
   setSelectedFormations,
@@ -26,8 +27,6 @@ const DisplayByEtablissement = ({
 
   return uniqueEtablissementFromFormation.map((siret) => {
     const formationsByEtablissement = orderedFormationsByEtablissement[siret];
-
-    const isFormationsPlural = isPlural(formationsByEtablissement.length);
 
     const isEveryFormationsSelected = formationsByEtablissement?.every((formation) =>
       selectedFormations.includes(formation._id)
@@ -92,7 +91,7 @@ const DisplayByEtablissement = ({
           {formationsByEtablissement.map((formation) => {
             const isAlreadyCreated = existingFormationCatalogueIds?.includes(formation._id);
             return (
-              <FormationCard
+              <FormationCardByEtablissement
                 key={formation._id}
                 isAlreadyCreated={isAlreadyCreated}
                 isChecked={selectedFormations.includes(formation.id)}
@@ -125,7 +124,7 @@ const DisplayByEtablissement = ({
                 </div>
 
                 <h6>{formation.intitule_long}</h6>
-                <p>{formation.etablissement_gestionnaire_enseigne}</p>
+                <p>{DIPLOME_TYPE_MATCHER[formation.diplome]}</p>
                 <p>
                   <Link
                     to={`https://catalogue-apprentissage.intercariforef.org/formation/${formation.id}`}
@@ -134,7 +133,7 @@ const DisplayByEtablissement = ({
                     Voir détail formation (CARIF OREF)
                   </Link>
                 </p>
-              </FormationCard>
+              </FormationCardByEtablissement>
             );
           })}
         </FormationCardContainer>
@@ -143,4 +142,4 @@ const DisplayByEtablissement = ({
   });
 };
 
-export default DisplayByEtablissement;
+export default DisplayByEtablissementCards;
