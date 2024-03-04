@@ -71,6 +71,7 @@ export const FormationCardByEtablissement = styled.div`
       `;
     }
   }}
+
   ${fr.breakpoints.down("lg")} {
     width: calc(33% - 1rem);
   }
@@ -153,6 +154,7 @@ export const FormationCardByDiplomeType = styled.div`
     `;
     }
   }}
+
   ${fr.breakpoints.down("lg")} {
     width: calc(33% - 1rem);
   }
@@ -261,4 +263,24 @@ export const ButtonContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: ${fr.spacing("2w")};
+`;
+
+export const Duration = styled.p`
+  font-size: 12px;
+  color: var(--text-disabled-grey);
+`;
+
+export const HeaderCardContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  & input {
+    margin: 0 !important;
+  }
+
+  & label {
+    margin: 0 !important;
+  }
 `;

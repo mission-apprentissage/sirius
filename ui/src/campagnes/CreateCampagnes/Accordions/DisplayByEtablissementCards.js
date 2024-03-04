@@ -12,6 +12,8 @@ import {
   FormationCardContainer,
   FormationCardByEtablissement,
   StyledBadge,
+  Duration,
+  HeaderCardContainer,
 } from "./accordions.style";
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
 
@@ -105,10 +107,17 @@ const DisplayByEtablissementCards = ({
                 isAlreadyCreated={isAlreadyCreated}
                 isChecked={selectedFormations.includes(formation.id)}
               >
-                <div>
-                  <StyledBadge small isAlreadyCreated={isAlreadyCreated}>
-                    {formation.tags.join(" - ")}
-                  </StyledBadge>
+                <HeaderCardContainer>
+                  <div>
+                    <StyledBadge small isAlreadyCreated={isAlreadyCreated}>
+                      {formation.tags.join(" - ")}
+                    </StyledBadge>
+                    {formation.duree && (
+                      <Duration>
+                        En {formation.duree} an{isPlural(parseInt(formation.duree))}
+                      </Duration>
+                    )}
+                  </div>
                   <Checkbox
                     key={formation.id}
                     disabled={isAlreadyCreated}
@@ -130,7 +139,7 @@ const DisplayByEtablissementCards = ({
                       },
                     ]}
                   />
-                </div>
+                </HeaderCardContainer>
 
                 <h6>{formation.intitule_long}</h6>
                 <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
