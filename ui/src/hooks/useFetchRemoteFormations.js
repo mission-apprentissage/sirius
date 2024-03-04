@@ -6,16 +6,16 @@ const useFetchRemoteFormations = (userSiret) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const query = userSiret
-    .map((siret) => [
-      { etablissement_formateur_siret: siret },
-      { etablissement_gestionnaire_siret: siret },
-    ])
-    .flat();
-
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const query = userSiret
+          .map((siret) => [
+            { etablissement_formateur_siret: siret },
+            { etablissement_gestionnaire_siret: siret },
+          ])
+          .flat();
+
         const response = await _get(
           `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?query={"$or": ${JSON.stringify(
             query
@@ -34,7 +34,9 @@ const useFetchRemoteFormations = (userSiret) => {
         setLoading(false);
       }
     };
-    fetchData();
+    if (userSiret?.length > 0) {
+      fetchData();
+    }
   }, []);
 
   return [data, loading, error];
