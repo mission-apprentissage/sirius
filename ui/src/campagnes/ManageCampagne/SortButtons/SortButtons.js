@@ -7,11 +7,12 @@ import { campagnesDisplayMode, campagnesSortingOptions } from "../../../constant
 const SortButtons = ({
   displayMode,
   setDisplayMode,
-  sortingMode,
-  setSortingMode,
+  sortingMode = null,
+  setSortingMode = null,
   search,
   setSearch,
   organizeLabel,
+  mode,
 }) => {
   return (
     <SortButtonsContainer>
@@ -23,16 +24,18 @@ const SortButtons = ({
         }}
         options={campagnesDisplayMode}
       />
-      <Select
-        nativeSelectProps={{
-          value: sortingMode,
-          onChange: (event) => setSortingMode(event.target.value),
-        }}
-        options={campagnesSortingOptions}
-      />
+      {mode === "manage" && (
+        <Select
+          nativeSelectProps={{
+            value: sortingMode,
+            onChange: (event) => setSortingMode(event.target.value),
+          }}
+          options={campagnesSortingOptions}
+        />
+      )}
       <Input
-        value={search}
         nativeInputProps={{
+          value: search,
           placeholder: "Rechercher",
           onChange: (e) => setSearch(e.target.value),
         }}

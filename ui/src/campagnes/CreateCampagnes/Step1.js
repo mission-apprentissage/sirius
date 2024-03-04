@@ -1,22 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { LoaderContainer, StepContainer } from "../styles/createCampagnes.style";
 import SortButtons from "../ManageCampagne/SortButtons/SortButtons";
-import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
+import { campagnesDisplayMode } from "../../constants";
 import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
 import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
 
 const Step1 = ({
   isLoading,
   localFormations,
+  remoteFormations,
   displayedFormations,
+  setDisplayedFormations,
   selectedFormations,
   setSelectedFormations,
 }) => {
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
-  const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (displayedFormations?.length && search === "") {
+      setDisplayedFormations(remoteFormations);
+    } else {
+      const filteredFormations = displayedFormations.filter((formation) => {
+        return (
+          formation.intitule_long.toLowerCase().includes(search) ||
+          formation.localite.toLowerCase().includes(search) ||
+          formation.etablissement_gestionnaire_enseigne.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_adresse.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_siret.toLowerCase().includes(search) ||
+          formation.tags.join("-").toLowerCase().includes(search)
+        );
+      });
+      setDisplayedFormations(filteredFormations);
+    }
+  }, [search]);
 
   const existingFormationCatalogueIds = localFormations?.map((formation) => formation.data._id);
 
@@ -47,11 +66,10 @@ const Step1 = ({
       <SortButtons
         displayMode={displayMode}
         setDisplayMode={setDisplayMode}
-        sortingMode={sortingMode}
-        setSortingMode={setSortingMode}
         search={search}
         setSearch={setSearch}
         organizeLabel="Organiser mes formations par"
+        mode="creation"
       />
       {isLoading && (
         <LoaderContainer>

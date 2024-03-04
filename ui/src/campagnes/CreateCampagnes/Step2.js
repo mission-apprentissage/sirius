@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import SortButtons from "../ManageCampagne/SortButtons/SortButtons";
 import { StepContainer } from "../styles/createCampagnes.style";
@@ -9,9 +9,28 @@ import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTabl
 
 const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
   const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
+  const [searchedDiplayedFormations, setSearchedDiplayedFormations] = useState([]);
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (selectedFormations?.length && search === "") {
+      setSearchedDiplayedFormations(selectedFormations);
+    } else {
+      const filteredFormations = searchedDiplayedFormations.filter((formation) => {
+        return (
+          formation.intitule_long.toLowerCase().includes(search) ||
+          formation.localite.toLowerCase().includes(search) ||
+          formation.etablissement_gestionnaire_enseigne.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_adresse.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_siret.toLowerCase().includes(search) ||
+          formation.tags.join("-").toLowerCase().includes(search)
+        );
+      });
+      setSearchedDiplayedFormations(filteredFormations);
+    }
+  }, [search]);
 
   const orderedFormationByDiplomeType = orderFormationsByDiplomeType(selectedFormations);
   const formationCountByDiplomeType = {};
@@ -27,7 +46,7 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
     if (displayMode === campagnesDisplayMode[0].value) {
       return (
         <DisplayByDiplomeTypeTable
-          selectedFormations={selectedFormations}
+          selectedFormations={searchedDiplayedFormations}
           setSelectedFormations={setSelectedFormations}
           selectedFormationsAction={selectedFormationsAction}
           setSelectedFormationsAction={setSelectedFormationsAction}
@@ -37,7 +56,7 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
     } else if (displayMode === campagnesDisplayMode[1].value) {
       return (
         <DisplayByEtablissementTable
-          selectedFormations={selectedFormations}
+          selectedFormations={searchedDiplayedFormations}
           setSelectedFormations={setSelectedFormations}
           selectedFormationsAction={selectedFormationsAction}
           setSelectedFormationsAction={setSelectedFormationsAction}
@@ -57,6 +76,7 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
         search={search}
         setSearch={setSearch}
         organizeLabel="Organiser mes formations par"
+        mode="creation"
       />
       {selectedFormations?.length ? (
         <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
