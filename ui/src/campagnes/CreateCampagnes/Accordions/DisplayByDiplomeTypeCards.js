@@ -69,7 +69,11 @@ const DisplayByDiplomeTypeCards = ({
                       return [
                         ...new Set([
                           ...prevValues,
-                          ...formationsByDiplomeType.map((formation) => formation._id),
+                          ...formationsByDiplomeType
+                            .filter(
+                              (formation) => !existingFormationCatalogueIds.includes(formation._id)
+                            )
+                            .map((formation) => formation._id),
                         ]),
                       ];
                     } else {

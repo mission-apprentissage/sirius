@@ -75,7 +75,11 @@ const DisplayByEtablissementCards = ({
                       return [
                         ...new Set([
                           ...prevValues,
-                          ...formationsByEtablissement.map((formation) => formation._id),
+                          ...formationsByEtablissement
+                            .filter(
+                              (formation) => !existingFormationCatalogueIds.includes(formation._id)
+                            )
+                            .map((formation) => formation._id),
                         ]),
                       ];
                     } else {
