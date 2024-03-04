@@ -4,8 +4,8 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { LoaderContainer, StepContainer } from "../styles/createCampagnes.style";
 import SortButtons from "../ManageCampagne/SortButtons/SortButtons";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
-import DisplayByDiplomeType from "../CreateCampagnes/Accordions/DisplayByDiplomeType";
-import DisplayByEtablissement from "../CreateCampagnes/Accordions/DisplayByEtablissement";
+import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
+import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
 
 const Step1 = ({
   isLoading,
@@ -14,7 +14,7 @@ const Step1 = ({
   selectedFormations,
   setSelectedFormations,
 }) => {
-  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[1].value);
+  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
 
@@ -23,7 +23,7 @@ const Step1 = ({
   const accordionComponentGetter = () => {
     if (displayMode === campagnesDisplayMode[0].value) {
       return (
-        <DisplayByDiplomeType
+        <DisplayByDiplomeTypeCards
           displayedFormations={displayedFormations}
           selectedFormations={selectedFormations}
           setSelectedFormations={setSelectedFormations}
@@ -32,7 +32,7 @@ const Step1 = ({
       );
     } else if (displayMode === campagnesDisplayMode[1].value) {
       return (
-        <DisplayByEtablissement
+        <DisplayByEtablissementCards
           displayedFormations={displayedFormations}
           selectedFormations={selectedFormations}
           setSelectedFormations={setSelectedFormations}
