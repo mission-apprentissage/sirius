@@ -2,7 +2,7 @@ import React from "react";
 import { StyledInput } from "../CellInput/cellInput.style";
 import { numberRegex } from "../../constants";
 
-const CellInputSeatsConfigure = ({ id, name, formik }) => {
+const CellInputSeatsConfigure = ({ id, name, formik, ...rest }) => {
   const handleChange = (e) => {
     if (numberRegex.test(e.target?.value)) {
       formik.setFieldValue(`${id}.${name}`, parseInt(e.target.value));
@@ -15,6 +15,7 @@ const CellInputSeatsConfigure = ({ id, name, formik }) => {
     <StyledInput
       iconId="fr-icon-pencil-line"
       state="default"
+      {...rest}
       nativeInputProps={{
         id: id,
         name: name,

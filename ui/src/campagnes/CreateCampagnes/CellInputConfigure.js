@@ -1,12 +1,13 @@
 import React from "react";
 import { StyledInput } from "../CellInput/cellInput.style";
 
-const CellInputConfigure = ({ id, name, type, placeholder, formik }) => {
+const CellInputConfigure = ({ id, name, type, placeholder, formik, ...rest }) => {
   return (
     <StyledInput
       iconId="fr-icon-pencil-line"
       state="default"
       stateRelatedMessage=""
+      {...rest}
       nativeInputProps={{
         id: id,
         name: name,

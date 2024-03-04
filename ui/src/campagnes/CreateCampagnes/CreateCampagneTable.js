@@ -98,6 +98,7 @@ const data = (
         formik={formik}
         type="text"
         placeholder="Ex: BAC PRO MV"
+        minWidth="150px"
       />,
       <CellInputConfigure
         key={`${formation._id}-startDate`}
@@ -118,6 +119,7 @@ const data = (
         id={formation._id}
         name="seats"
         formik={formik}
+        maxWidth="150px"
       />,
     ];
   });

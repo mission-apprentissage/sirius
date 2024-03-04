@@ -18,7 +18,19 @@ export const NotEditingContainer = styled.div`
   }
 `;
 
-export const StyledInput = styled(Input)`
+export const StyledInput = styled((props) => <Input {...props} />)`
+  ${(props) => {
+    if (props.minWidth) {
+      return `
+      min-width: ${props.minWidth} !important;
+      `;
+    }
+    if (props.maxWidth) {
+      return `
+      max-width: ${props.maxWidth} !important;
+      `;
+    }
+  }}
   & .fr-error-text,
   & .fr-valid-text {
     display: none !important;
