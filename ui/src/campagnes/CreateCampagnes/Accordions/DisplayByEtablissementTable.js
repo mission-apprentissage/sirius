@@ -14,6 +14,7 @@ import {
 } from "./accordions.style";
 import CreateCampagneTable from "../CreateCampagneTable";
 import RemoveFormationModal from "../RemoveFormationModal";
+import { campagnesDisplayMode } from "../../../constants";
 
 const modal = createModal({
   id: "remove-formation-modal",
@@ -122,10 +123,11 @@ const DisplayByEtablissementTable = ({
             </Button>
           </ButtonContainer>
           <CreateCampagneTable
-            selectedFormations={selectedFormations}
+            selectedFormations={formationsByEtablissement}
             selectedFormationsAction={selectedFormationsAction}
             setSelectedFormationsAction={setSelectedFormationsAction}
             formik={formik}
+            displayMode={campagnesDisplayMode[1].value}
           />
         </StyledAccordion>
         <RemoveFormationModal
