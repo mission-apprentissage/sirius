@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Box } from "@chakra-ui/react";
 import { useNavigate, Link } from "react-router-dom";
 import { useFormik } from "formik";
 import BeatLoader from "react-spinners/BeatLoader";
@@ -16,7 +15,11 @@ import Step2 from "./CreateCampagnes/Step2";
 import { multiCreationSubmitHandler } from "./submitHandlers";
 import { formateDateToInputFormat, isPlural } from "./utils";
 import { useGet } from "../common/hooks/httpHooks";
-import { Container, CreateCampagneContainer } from "./styles/createCampagnes.style";
+import {
+  Container,
+  CreateCampagneContainer,
+  ButtonContainer,
+} from "./styles/createCampagnes.style";
 import SupportModal from "./ManageCampagne/SupportModal";
 
 const modal = createModal({
@@ -35,10 +38,9 @@ const CreateCampagnesPage = () => {
 
   const userSiret = userContext.etablissements.map((etablissement) => etablissement.siret);
 
-  const [remoteFormations, loadingRemoteFormations, errorRemoteFormations] =
-    useFetchRemoteFormations(userSiret);
+  const [remoteFormations, loadingRemoteFormations] = useFetchRemoteFormations(userSiret);
 
-  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
+  const [campagnes, loadingCampagnes] = useFetchCampagnes();
 
   useEffect(() => {
     if (remoteFormations?.length) {
@@ -47,16 +49,14 @@ const CreateCampagnesPage = () => {
   }, [remoteFormations]);
 
   const campagneIdWithoutNAFormations = campagnes
-    ?.filter((campagne) => campagne.formation?._id !== "N/A")
-    .map((campagne) => campagne.formation._id);
+    ?.filter((campagne) => campagne?.formation?._id !== "N/A")
+    ?.map((campagne) => campagne.formation._id);
 
   const localFormationQuery = campagneIdWithoutNAFormations?.map((id) => `id=${id}`).join("&");
 
-  const [localFormations, loadingLocalFormations, errorLocalFormations] =
-    useFetchLocalFormations(localFormationQuery);
+  const [localFormations, loadingLocalFormations] = useFetchLocalFormations(localFormationQuery);
 
-  const [questionnaires, loadingQuestionnaires, errorQuestionnaires] =
-    useGet(`/api/questionnaires/`);
+  const [questionnaires, loadingQuestionnaires] = useGet(`/api/questionnaires/`);
 
   const validatedQuestionnaire =
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
@@ -105,9 +105,7 @@ const CreateCampagnesPage = () => {
 
       setIsSubmitting(false);
       if (result.status === "success") {
-        navigate(`/campagnes/gestion?status=success&count=${result.createdCount}`);
-      } else {
-        navigate(`/campagnes/gestion?status=error`);
+        navigate(`/campagnes/gestion`);
       }
     },
   });
@@ -142,24 +140,11 @@ const CreateCampagnesPage = () => {
                 </span>
               </p>
               <Step1
-                hasError={
-                  !!(
-                    errorRemoteFormations ||
-                    errorLocalFormations ||
-                    errorQuestionnaires ||
-                    errorCampagnes
-                  )
-                }
-                errorMessages={
-                  errorRemoteFormations
-                    ? [
-                        "La connexion au catalogue de formation a échouée. Certaines informations et actions peuvent être indisponibles.",
-                      ]
-                    : []
-                }
                 isLoading={isLoadingStep1}
                 localFormations={localFormations}
+                remoteFormations={remoteFormations}
                 displayedFormations={displayedFormations}
+                setDisplayedFormations={setDisplayedFormations}
                 selectedFormations={selectedFormations}
                 setSelectedFormations={setSelectedFormations}
               />
@@ -172,17 +157,17 @@ const CreateCampagnesPage = () => {
                 Paramétrer mes campagnes (2/2)
               </h1>
               <Step2
-                allDiplomesSelectedFormations={selectedFormations}
                 selectedFormations={remoteFormations.filter((remoteFormation) =>
                   selectedFormations.includes(remoteFormation.id)
                 )}
                 setSelectedFormations={setSelectedFormations}
+                remoteFormations={remoteFormations}
                 setStep={setStep}
                 formik={formik}
               />
             </>
           )}
-          <Box display="flex" justifyContent="center" w="100%" mb="25px">
+          <ButtonContainer>
             {step === 1 && (
               <Button
                 iconId="fr-icon-add-line"
@@ -190,30 +175,38 @@ const CreateCampagnesPage = () => {
                 onClick={() => setStep(2)}
               >
                 Sélectionner {selectedFormations.length} formation
-                {selectedFormations.length > 1 ? "s" : ""}{" "}
+                {isPlural(selectedFormations.length)}
               </Button>
             )}
             {step === 2 && (
-              <Button
-                iconId="fr-icon-add-line"
-                disabled={!selectedFormations.length || isSubmitting}
-                onClick={formik.submitForm}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <BeatLoader
-                    color="var(--background-action-high-blue-france)"
-                    size={10}
-                    aria-label="Loading Spinner"
-                  />
-                ) : (
-                  `Créer ${selectedFormations.length} campagne${isPlural(
-                    selectedFormations.length
-                  )}`
-                )}
-              </Button>
+              <>
+                <Button
+                  priority="secondary"
+                  iconId="fr-icon-arrow-left-line"
+                  onClick={() => setStep(1)}
+                >
+                  Étape précédente
+                </Button>
+                <Button
+                  iconId="fr-icon-add-line"
+                  disabled={!selectedFormations.length || isSubmitting}
+                  onClick={formik.submitForm}
+                >
+                  {isSubmitting ? (
+                    <BeatLoader
+                      color="var(--background-action-high-blue-france)"
+                      size={10}
+                      aria-label="Loading Spinner"
+                    />
+                  ) : (
+                    `Créer ${selectedFormations.length} campagne${isPlural(
+                      selectedFormations.length
+                    )}`
+                  )}
+                </Button>
+              </>
             )}
-          </Box>
+          </ButtonContainer>
         </CreateCampagneContainer>
       </Container>
       <SupportModal modal={modal} token={userContext.token} />

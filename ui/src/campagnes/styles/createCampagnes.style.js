@@ -49,3 +49,9 @@ export const LoaderContainer = styled.div`
 export const StepContainer = styled.div`
   margin: ${fr.spacing("6w")} 0;
 `;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${fr.spacing("2w")};
+`;
