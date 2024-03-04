@@ -16,49 +16,26 @@ const DisplayByDiplomeTypeTable = ({ selectedFormations, setSelectedFormations, 
 
   return uniqueDiplomeTypesFromFormation?.map((diplomeType) => {
     const formationsByDiplomeType = orderedFormationByDiplomeType[diplomeType];
-    const isEveryFormationsSelected = formationsByDiplomeType.every((formation) =>
-      selectedFormations.includes(formation._id)
-    );
 
     const formationSelectedCountByDiplomeType = selectedFormations.filter((id) =>
       formationsByDiplomeType.map((formation) => formation._id).includes(id)
     ).length;
+
+    const checkboxLabel = (
+      <b>
+        {formationSelectedCountByDiplomeType
+          ? `${formationSelectedCountByDiplomeType} formation${isPlural(
+              formationSelectedCountByDiplomeType
+            )} sélectionnée${isPlural(formationSelectedCountByDiplomeType)}`
+          : "Tout sélectionner"}
+      </b>
+    );
 
     return (
       <StyledAccordion
         key={diplomeType}
         label={
           <>
-            <Checkbox
-              small
-              options={[
-                {
-                  nativeInputProps: {
-                    name: `selectAll${diplomeType}`,
-                    checked: isEveryFormationsSelected,
-                    onChange: (e) => {
-                      setSelectedFormations((prevValues) => {
-                        if (e.target.checked) {
-                          return [
-                            ...new Set([
-                              ...prevValues,
-                              ...formationsByDiplomeType.map((formation) => formation._id),
-                            ]),
-                          ];
-                        } else {
-                          return prevValues.filter(
-                            (selectedFormation) =>
-                              !formationsByDiplomeType
-                                .map((formation) => formation._id)
-                                .includes(selectedFormation)
-                          );
-                        }
-                      });
-                    },
-                  },
-                },
-              ]}
-            />
             <AccordionLabelByDiplomeTypeContainer>
               <h5>{DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}</h5>
               <p>
@@ -70,6 +47,36 @@ const DisplayByDiplomeTypeTable = ({ selectedFormations, setSelectedFormations, 
           </>
         }
       >
+        <Checkbox
+          options={[
+            {
+              label: checkboxLabel,
+              nativeInputProps: {
+                name: `selectAll${diplomeType}`,
+                checked: !!formationSelectedCountByDiplomeType,
+                onChange: (e) => {
+                  setSelectedFormations((prevValues) => {
+                    if (e.target.checked) {
+                      return [
+                        ...new Set([
+                          ...prevValues,
+                          ...formationsByDiplomeType.map((formation) => formation._id),
+                        ]),
+                      ];
+                    } else {
+                      return prevValues.filter(
+                        (selectedFormation) =>
+                          !formationsByDiplomeType
+                            .map((formation) => formation._id)
+                            .includes(selectedFormation)
+                      );
+                    }
+                  });
+                },
+              },
+            },
+          ]}
+        />
         <CreateCampagneTable
           key={diplomeType}
           selectedFormations={formationsByDiplomeType}

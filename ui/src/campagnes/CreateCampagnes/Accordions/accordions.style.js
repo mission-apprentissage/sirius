@@ -33,6 +33,10 @@ export const AccordionLabelByEtablissementContainer = styled.div`
 `;
 
 export const StyledAccordion = styled(Accordion)`
+  & label:first-of-type {
+    margin-top: 1.5rem;
+  }
+
   & .fr-collapse--expanded {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
