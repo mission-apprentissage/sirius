@@ -124,7 +124,7 @@ const DisplayByEtablissementCards = ({
                 </div>
 
                 <h6>{formation.intitule_long}</h6>
-                <p>{DIPLOME_TYPE_MATCHER[formation.diplome]}</p>
+                <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
                 <p>
                   <Link
                     to={`https://catalogue-apprentissage.intercariforef.org/formation/${formation.id}`}

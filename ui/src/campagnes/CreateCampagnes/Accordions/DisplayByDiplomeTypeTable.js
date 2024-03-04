@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import {
   orderFormationsByDiplomeType,
@@ -7,16 +6,10 @@ import {
   isPlural,
 } from "../../utils";
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
-import {
-  StyledAccordion,
-  AccordionLabelByDiplomeTypeContainer,
-  FormationCardContainer,
-  FormationCardByDiplomeType,
-  StyledBadge,
-} from "./accordions.style";
+import { StyledAccordion, AccordionLabelByDiplomeTypeContainer } from "./accordions.style";
 import CreateCampagneTable from "../CreateCampagneTable";
 
-const DisplayByDiplomeTypeTable = ({ selectedFormations, setSelectedFormations }) => {
+const DisplayByDiplomeTypeTable = ({ selectedFormations, setSelectedFormations, formik }) => {
   const uniqueDiplomeTypesFromFormation = getUniqueDiplomeTypesFromFormation(selectedFormations);
 
   const orderedFormationByDiplomeType = orderFormationsByDiplomeType(selectedFormations);
@@ -79,8 +72,9 @@ const DisplayByDiplomeTypeTable = ({ selectedFormations, setSelectedFormations }
       >
         <CreateCampagneTable
           key={diplomeType}
-          selectedFormations={selectedFormations}
+          selectedFormations={formationsByDiplomeType}
           setSelectedFormations={setSelectedFormations}
+          formik={formik}
         />
       </StyledAccordion>
     );

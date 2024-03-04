@@ -234,7 +234,11 @@ export const FormationCardByDiplomeType = styled.div`
   }
 `;
 
-export const StyledBadge = styled(Badge)`
+export const StyledBadge = styled((props) => {
+  // eslint-disable-next-line no-unused-vars
+  const { isAlreadyCreated, ...rest } = props;
+  return <Badge {...rest} />;
+})`
   background-color: var(--background-contrast-purple-glycine) !important;
   color: var(--background-flat-purple-glycine) !important;
 
