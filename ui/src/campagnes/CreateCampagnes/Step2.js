@@ -8,6 +8,7 @@ import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
 import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
 
 const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
+  const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
@@ -28,6 +29,8 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
         <DisplayByDiplomeTypeTable
           selectedFormations={selectedFormations}
           setSelectedFormations={setSelectedFormations}
+          selectedFormationsAction={selectedFormationsAction}
+          setSelectedFormationsAction={setSelectedFormationsAction}
           formik={formik}
         />
       );
@@ -36,6 +39,8 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
         <DisplayByEtablissementTable
           selectedFormations={selectedFormations}
           setSelectedFormations={setSelectedFormations}
+          selectedFormationsAction={selectedFormationsAction}
+          setSelectedFormationsAction={setSelectedFormationsAction}
           formik={formik}
         />
       );

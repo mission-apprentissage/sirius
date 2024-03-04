@@ -255,3 +255,10 @@ export const StyledBadge = styled((props) => {
     }
   }}
 `;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: ${fr.spacing("2w")};
+`;

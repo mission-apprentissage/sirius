@@ -1,15 +1,33 @@
 import React from "react";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import {
   orderFormationsByDiplomeType,
   getUniqueDiplomeTypesFromFormation,
   isPlural,
 } from "../../utils";
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
-import { StyledAccordion, AccordionLabelByDiplomeTypeContainer } from "./accordions.style";
+import {
+  StyledAccordion,
+  AccordionLabelByDiplomeTypeContainer,
+  ButtonContainer,
+} from "./accordions.style";
 import CreateCampagneTable from "../CreateCampagneTable";
+import RemoveFormationModal from "../RemoveFormationModal";
 
-const DisplayByDiplomeTypeTable = ({ selectedFormations, setSelectedFormations, formik }) => {
+const modal = createModal({
+  id: "remove-formation-modal",
+  isOpenedByDefault: false,
+});
+
+const DisplayByDiplomeTypeTable = ({
+  selectedFormations,
+  setSelectedFormations,
+  selectedFormationsAction,
+  setSelectedFormationsAction,
+  formik,
+}) => {
   const uniqueDiplomeTypesFromFormation = getUniqueDiplomeTypesFromFormation(selectedFormations);
 
   const orderedFormationByDiplomeType = orderFormationsByDiplomeType(selectedFormations);
@@ -17,7 +35,7 @@ const DisplayByDiplomeTypeTable = ({ selectedFormations, setSelectedFormations, 
   return uniqueDiplomeTypesFromFormation?.map((diplomeType) => {
     const formationsByDiplomeType = orderedFormationByDiplomeType[diplomeType];
 
-    const formationSelectedCountByDiplomeType = selectedFormations.filter((id) =>
+    const formationSelectedCountByDiplomeType = selectedFormationsAction.filter((id) =>
       formationsByDiplomeType.map((formation) => formation._id).includes(id)
     ).length;
 
@@ -32,58 +50,72 @@ const DisplayByDiplomeTypeTable = ({ selectedFormations, setSelectedFormations, 
     );
 
     return (
-      <StyledAccordion
-        key={diplomeType}
-        label={
-          <>
-            <AccordionLabelByDiplomeTypeContainer>
-              <h5>{DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}</h5>
-              <p>
-                {formationSelectedCountByDiplomeType} formation
-                {isPlural(formationSelectedCountByDiplomeType)} sélectionnée
-                {isPlural(formationSelectedCountByDiplomeType)}
-              </p>
-            </AccordionLabelByDiplomeTypeContainer>
-          </>
-        }
-      >
-        <Checkbox
-          options={[
-            {
-              label: checkboxLabel,
-              nativeInputProps: {
-                name: `selectAll${diplomeType}`,
-                checked: !!formationSelectedCountByDiplomeType,
-                onChange: (e) => {
-                  setSelectedFormations((prevValues) => {
-                    if (e.target.checked) {
-                      return [
-                        ...new Set([
-                          ...prevValues,
-                          ...formationsByDiplomeType.map((formation) => formation._id),
-                        ]),
-                      ];
-                    } else {
-                      return prevValues.filter(
-                        (selectedFormation) =>
-                          !formationsByDiplomeType
-                            .map((formation) => formation._id)
-                            .includes(selectedFormation)
-                      );
-                    }
-                  });
-                },
-              },
-            },
-          ]}
-        />
-        <CreateCampagneTable
+      <>
+        <StyledAccordion
           key={diplomeType}
-          selectedFormations={formationsByDiplomeType}
+          label={
+            <>
+              <AccordionLabelByDiplomeTypeContainer>
+                <h5>{DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}</h5>
+                <p>
+                  {formationSelectedCountByDiplomeType} formation
+                  {isPlural(formationSelectedCountByDiplomeType)} sélectionnée
+                  {isPlural(formationSelectedCountByDiplomeType)}
+                </p>
+              </AccordionLabelByDiplomeTypeContainer>
+            </>
+          }
+        >
+          <ButtonContainer>
+            <Checkbox
+              options={[
+                {
+                  label: checkboxLabel,
+                  nativeInputProps: {
+                    name: `selectAll${diplomeType}`,
+                    checked:
+                      selectedFormationsAction.length > 0 &&
+                      formationSelectedCountByDiplomeType === selectedFormationsAction.length,
+                    onChange: (e) =>
+                      setSelectedFormationsAction(
+                        e.target.checked
+                          ? [...formationsByDiplomeType.map((formation) => formation._id)]
+                          : []
+                      ),
+                  },
+                },
+              ]}
+            />
+            <Button
+              priority="secondary"
+              iconId="fr-icon-delete-line"
+              onClick={() => modal.open()}
+              disabled={!selectedFormationsAction.length}
+            >
+              Retirer
+            </Button>
+            <Button
+              priority="secondary"
+              iconId="fr-icon--sm fr-icon-calendar-2-fill"
+              disabled={!selectedFormationsAction.length}
+            >
+              Choisir date de fin commune
+            </Button>
+          </ButtonContainer>
+          <CreateCampagneTable
+            selectedFormations={selectedFormations}
+            selectedFormationsAction={selectedFormationsAction}
+            setSelectedFormationsAction={setSelectedFormationsAction}
+            formik={formik}
+          />
+        </StyledAccordion>
+        <RemoveFormationModal
+          modal={modal}
+          selectedFormationsAction={selectedFormationsAction}
+          setSelectedFormationsAction={setSelectedFormationsAction}
           setSelectedFormations={setSelectedFormations}
-          formik={formik}
         />
-      </StyledAccordion>
+      </>
     );
   });
 };
