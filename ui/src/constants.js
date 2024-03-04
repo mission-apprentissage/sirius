@@ -83,6 +83,8 @@ export const DIPLOME_TYPE_MATCHER = {
 
 export const emailWithTLDRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
+export const numberRegex = /^\d+$/;
+
 export const campagnesDisplayMode = [
   {
     label: "Niveau de diplôme",

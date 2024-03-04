@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { NotEditingContainer, StyledInput } from "./cellInput.style";
+import { numberRegex } from "../../constants";
 
 const CellInputSeats = ({ id, name, campagne, handleCellUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -64,19 +65,22 @@ const CellInputSeats = ({ id, name, campagne, handleCellUpdate }) => {
       iconId={iconId}
       state={state}
       stateRelatedMessage=""
-      ref={ref}
       nativeInputProps={{
         id: id,
         name: name,
         placeholder: "Illimité",
         value: value == "0" ? "Illimité" : value,
         inputMode: "numeric",
-        pattern: "[0-9]*",
+        pattern: numberRegex,
         type: "number",
         step: 1,
         min: 0,
         max: 150,
-        onChange: (e) => setValue(e.target?.value),
+        ref: ref,
+        onChange: (e) =>
+          e.target?.value === "" || numberRegex.test(e.target?.value)
+            ? setValue(e.target?.value)
+            : null,
         onKeyDown: (e) => {
           if (e.key === "Enter") {
             return submitHandler();
