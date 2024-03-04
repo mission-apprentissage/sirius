@@ -133,6 +133,7 @@ const ManageCampagnesPage = () => {
               search={search}
               setSearch={setSearch}
               organizeLabel="Organiser mes campagnes par"
+              mode="manage"
             />
             <ActionButtons
               displayedCampagnes={displayedCampagnes}
@@ -154,10 +155,10 @@ const ManageCampagnesPage = () => {
               />
             </LoaderContainer>
           )}
-          {errorCampagnes ? (
+          {errorCampagnes && !campagnes?.length ? (
             <Alert
-              title="Une erreur s'est produite dans le chargement des campagnes."
-              description="Merci de réessayer ultérieurement."
+              title="Une erreur s'est produite dans le chargement des campagnes"
+              description="Merci de réessayer ultérieurement"
               severity="error"
             />
           ) : null}
