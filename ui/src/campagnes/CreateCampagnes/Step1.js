@@ -6,9 +6,11 @@ import SortButtons from "../ManageCampagne/SortButtons/SortButtons";
 import { campagnesDisplayMode } from "../../constants";
 import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
 import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
+import Alert from "@codegouvfr/react-dsfr/Alert";
 
 const Step1 = ({
   isLoading,
+  hasError,
   localFormations,
   remoteFormations,
   displayedFormations,
@@ -80,7 +82,14 @@ const Step1 = ({
           />
         </LoaderContainer>
       )}
-      {displayedFormations?.length && !isLoading ? (
+      {hasError && (
+        <Alert
+          title="Une erreur s'est produite"
+          description="Merci de réessayer ultérieurement"
+          severity="error"
+        />
+      )}
+      {displayedFormations?.length && !isLoading && !hasError ? (
         <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
       ) : null}
     </StepContainer>

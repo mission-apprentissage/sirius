@@ -54,4 +54,5 @@ export const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: ${fr.spacing("2w")};
+  margin-top: 1rem;
 `;

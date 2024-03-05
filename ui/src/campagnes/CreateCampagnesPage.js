@@ -20,6 +20,7 @@ import {
   ButtonContainer,
 } from "./styles/createCampagnes.style";
 import SupportModal from "./ManageCampagne/SupportModal";
+import Alert from "@codegouvfr/react-dsfr/Alert";
 
 const supportModal = createModal({
   id: "support-modal-loggedIn",
@@ -31,14 +32,16 @@ const CreateCampagnesPage = () => {
   const [displayedFormations, setDisplayedFormations] = useState([]);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasErrorSubmitting, setHasErrorSubmitting] = useState(false);
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
 
   const userSiret = userContext.etablissements.map((etablissement) => etablissement.siret);
 
-  const [remoteFormations, loadingRemoteFormations] = useFetchRemoteFormations(userSiret);
+  const [remoteFormations, loadingRemoteFormations, errorRemoteFormation] =
+    useFetchRemoteFormations(userSiret);
 
-  const [campagnes, loadingCampagnes] = useFetchCampagnes();
+  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
 
   useEffect(() => {
     if (remoteFormations?.length) {
@@ -54,9 +57,11 @@ const CreateCampagnesPage = () => {
 
   const localFormationQuery = campagneIdWithoutNAFormations?.map((id) => `id=${id}`).join("&");
 
-  const [localFormations, loadingLocalFormations] = useFetchLocalFormations(localFormationQuery);
+  const [localFormations, loadingLocalFormations, errorLocalFormations] =
+    useFetchLocalFormations(localFormationQuery);
 
-  const [questionnaires, loadingQuestionnaires] = useGet(`/api/questionnaires/`);
+  const [questionnaires, loadingQuestionnaires, errorQuesitonnaires] =
+    useGet(`/api/questionnaires/`);
 
   const validatedQuestionnaire =
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
@@ -106,12 +111,17 @@ const CreateCampagnesPage = () => {
       setIsSubmitting(false);
       if (result.status === "success") {
         navigate("/campagnes/gestion", { state: { successCreation: true } });
+      } else {
+        setHasErrorSubmitting(true);
       }
     },
   });
 
   const isLoadingStep1 =
     loadingRemoteFormations || loadingLocalFormations || loadingQuestionnaires || loadingCampagnes;
+
+  const hasError =
+    errorRemoteFormation || errorLocalFormations || errorQuesitonnaires || errorCampagnes;
 
   return (
     <>
@@ -141,6 +151,7 @@ const CreateCampagnesPage = () => {
               </p>
               <Step1
                 isLoading={isLoadingStep1}
+                hasError={hasError}
                 localFormations={localFormations}
                 remoteFormations={remoteFormations}
                 displayedFormations={displayedFormations}
@@ -161,11 +172,16 @@ const CreateCampagnesPage = () => {
                   selectedFormations.includes(remoteFormation.id)
                 )}
                 setSelectedFormations={setSelectedFormations}
-                remoteFormations={remoteFormations}
-                setStep={setStep}
                 formik={formik}
               />
             </>
+          )}
+          {hasErrorSubmitting && (
+            <Alert
+              title="Une erreur s'est produite dans la création des campagnes"
+              description="Merci de réessayer ultérieurement"
+              severity="error"
+            />
           )}
           <ButtonContainer>
             {step === 1 && (
