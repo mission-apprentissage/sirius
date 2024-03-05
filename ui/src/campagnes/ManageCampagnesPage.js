@@ -9,18 +9,18 @@ import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import { UserContext } from "../context/UserContext";
 import DisplayByDiplomeType from "./ManageCampagne/Accordions/DisplayByDiplomeType";
 import DisplayByEtablissement from "./ManageCampagne/Accordions/DisplayByEtablissement";
-import SortButtons from "./ManageCampagne/SortButtons/SortButtons";
+import SortButtons from "./Shared/SortButtons/SortButtons";
 import ActionButtons from "./ManageCampagne/ActionButtons/ActionButtons";
 import NeedHelp from "../Components/NeedHelp";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../constants";
-import SupportModal from "./ManageCampagne/SupportModal";
+import SupportModal from "./Shared/SupportModal";
+import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
 import {
   Container,
   ManageCampagneContainer,
   LoaderContainer,
-  SearchNoResultsContainer,
 } from "./styles/manageCampagnes.style";
-import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
+import { SearchNoResultsContainer } from "./styles/shared.style";
 
 const getValue = (obj, key) => {
   const value = obj[key];

@@ -4,17 +4,12 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { simpleEditionSubmitHandler } from "../../submitHandlers";
-import CellInput from "../../CellInput/CellInput";
-import CellInputSeats from "../../CellInput/CellInputSeats";
+import CellInput from "../../Shared/CellInput/CellInput";
+import CellInputSeats from "../../Shared/CellInput/CellInputSeats";
 import { isPlural } from "../../utils";
 import { buildEtablissementAddress } from "../../../utils/etablissement";
-import {
-  HeaderItem,
-  FormationContainer,
-  TemoignagesCount,
-  ToolTipContainer,
-  EtablissementLabelContainer,
-} from "./manageCampagneTable.style";
+import { TemoignagesCount, EtablissementLabelContainer } from "./manageCampagneTable.style";
+import { HeaderItem, FormationContainer, ToolTipContainer } from "../../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../../constants";
 
 const headers = [

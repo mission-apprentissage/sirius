@@ -17,7 +17,7 @@ import {
 import CreateCampagneTable from "../CreateCampagneTable";
 import RemoveFormationModal from "../RemoveFormationModal";
 import { campagnesDisplayMode } from "../../../constants";
-import { ToolTipContainer } from "../../ManageCampagne/ManageCampagnesTable/manageCampagneTable.style";
+import { ToolTipContainer } from "../../styles/shared.style";
 
 const modal = createModal({
   id: "remove-formation-modal",

@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import BeatLoader from "react-spinners/BeatLoader";
+import Alert from "@codegouvfr/react-dsfr/Alert";
 import { fr } from "@codegouvfr/react-dsfr";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
@@ -19,8 +20,7 @@ import {
   CreateCampagneContainer,
   ButtonContainer,
 } from "./styles/createCampagnes.style";
-import SupportModal from "./ManageCampagne/SupportModal";
-import Alert from "@codegouvfr/react-dsfr/Alert";
+import SupportModal from "./Shared/SupportModal";
 
 const supportModal = createModal({
   id: "support-modal-loggedIn",

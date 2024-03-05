@@ -8,7 +8,7 @@ import {
   isPlural,
 } from "../../utils";
 import { StyledAccordion, AccordionLabelByEtablissementContainer } from "./accordions.style";
-import { ToolTipContainer } from "../ManageCampagnesTable/manageCampagneTable.style";
+import { ToolTipContainer } from "../../styles/shared.style";
 import { campagnesDisplayMode } from "../../../constants";
 
 const DisplayByEtablissement = ({

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
-import { formatDate } from "../utils";
+import { formatDate } from "../../utils";
 import { NotEditingContainer, StyledInput } from "./cellInput.style";
 
 const CellInput = ({ id, name, campagne, handleCellUpdate = null, type }) => {

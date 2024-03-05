@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
-import { LoaderContainer, StepContainer } from "../styles/createCampagnes.style";
-import SortButtons from "../ManageCampagne/SortButtons/SortButtons";
-import { campagnesDisplayMode } from "../../constants";
+import Alert from "@codegouvfr/react-dsfr/Alert";
+import SortButtons from "../Shared/SortButtons/SortButtons";
 import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
 import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
-import Alert from "@codegouvfr/react-dsfr/Alert";
-import { SearchNoResultsContainer } from "../styles/manageCampagnes.style";
+import { campagnesDisplayMode } from "../../constants";
+import { LoaderContainer, StepContainer } from "../styles/createCampagnes.style";
+import { SearchNoResultsContainer } from "../styles/shared.style";
 
 const Step1 = ({
   isLoading,

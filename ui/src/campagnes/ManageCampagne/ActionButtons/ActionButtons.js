@@ -5,10 +5,10 @@ import BeatLoader from "react-spinners/BeatLoader";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
+import DeleteCampagneConfirmationModal from "../DeleteCampagneConfirmationModal";
 import { _get } from "../../../utils/httpClient";
 import { isPlural } from "../../utils";
 import { ActionButtonsContainer, ToolTipContainer } from "./actionButtons.style";
-import DeleteCampagneConfirmationModal from "../DeleteCampagneConfirmationModal";
 
 const modal = createModal({
   id: "delete-campagne-modal",

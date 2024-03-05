@@ -3,15 +3,11 @@ import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import CellInputConfigure from "./CellInputConfigure";
+import CellInputConfigure from "../Shared/CellInput/CellInputConfigure";
+import CellInputSeatsConfigure from "../Shared/CellInput/CellInputSeatsConfigure";
 import { isPlural } from "../../campagnes/utils";
-import {
-  HeaderItem,
-  FormationContainer,
-  ToolTipContainer,
-} from "../ManageCampagne/ManageCampagnesTable/manageCampagneTable.style";
+import { ToolTipContainer, HeaderItem, FormationContainer } from "../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../constants";
-import CellInputSeatsConfigure from "./CellInputSeatsConfigure";
 
 const headers = [
   "",

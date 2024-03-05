@@ -17,7 +17,7 @@ import {
   Duration,
   HeaderCardContainer,
 } from "./accordions.style";
-import { ToolTipContainer } from "../../ManageCampagne/ManageCampagnesTable/manageCampagneTable.style";
+import { ToolTipContainer } from "../../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
 
 const DisplayByEtablissementCards = ({

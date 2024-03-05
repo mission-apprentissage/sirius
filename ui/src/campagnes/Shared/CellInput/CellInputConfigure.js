@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledInput } from "../CellInput/cellInput.style";
+import { StyledInput } from "./cellInput.style";
 
 const CellInputConfigure = ({ id, name, type, placeholder, formik, ...rest }) => {
   return (

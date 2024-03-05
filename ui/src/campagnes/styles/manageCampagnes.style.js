@@ -54,17 +54,3 @@ export const LoaderContainer = styled.div`
   align-items: center;
   height: 50px;
 `;
-
-export const SearchNoResultsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: ${fr.spacing("6w")};
-
-  p {
-    text-decoration: underline;
-    color: var(--text-action-high-blue-france);
-    cursor: pointer;
-  }
-`;

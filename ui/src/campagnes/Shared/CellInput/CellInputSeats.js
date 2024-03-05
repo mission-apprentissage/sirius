@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { NotEditingContainer, StyledInput } from "./cellInput.style";
-import { numberRegex } from "../../constants";
+import { numberRegex } from "../../../constants";
 
 const CellInputSeats = ({ id, name, campagne, handleCellUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);

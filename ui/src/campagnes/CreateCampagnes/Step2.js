@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
-import SortButtons from "../ManageCampagne/SortButtons/SortButtons";
+import SortButtons from "../Shared/SortButtons/SortButtons";
 import { StepContainer } from "../styles/createCampagnes.style";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
 import { orderFormationsByDiplomeType } from "../utils";
 import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
 import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
-import { SearchNoResultsContainer } from "../styles/manageCampagnes.style";
+import { SearchNoResultsContainer } from "../styles/shared.style";
 
 const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
   const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
