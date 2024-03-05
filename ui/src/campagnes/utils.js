@@ -136,7 +136,11 @@ export const getUniqueDiplomeTypesFromFormation = (formations) =>
 
 export const getUniqueEtablissementFromCampagne = (campagnes) =>
   campagnes?.length
-    ? [...new Set(campagnes.map((campagne) => campagne.etablissement.data.siret))].sort()
+    ? [
+        ...new Set(
+          campagnes.map((campagne) => campagne.formation.data.etablissement_formateur_siret)
+        ),
+      ].sort()
     : [];
 
 export const getUniqueEtablissementFromFormation = (formations) =>
@@ -169,11 +173,11 @@ export const orderFormationsByDiplomeType = (formations = []) => {
 export const orderCampagnesByEtablissement = (campagnes) => {
   const orderedCampagnes = {};
   campagnes.forEach((campagne) => {
-    const { etablissement } = campagne;
-    if (!orderedCampagnes[etablissement.data.siret]) {
-      orderedCampagnes[etablissement.data.siret] = [];
+    const { formation } = campagne;
+    if (!orderedCampagnes[formation.data.etablissement_formateur_siret]) {
+      orderedCampagnes[formation.data.etablissement_formateur_siret] = [];
     }
-    orderedCampagnes[etablissement.data.siret].push(campagne);
+    orderedCampagnes[formation.data.etablissement_formateur_siret].push(campagne);
   });
   return orderedCampagnes;
 };

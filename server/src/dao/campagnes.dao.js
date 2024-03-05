@@ -99,6 +99,7 @@ const formationQuery = (formationId) => {
               "data.etablissement_gestionnaire_enseigne": 1,
               "data.etablissement_formateur_enseigne": 1,
               "data.etablissement_formateur_entreprise_raison_sociale": 1,
+              "data.etablissement_formateur_adresse": 1,
             },
           },
           {

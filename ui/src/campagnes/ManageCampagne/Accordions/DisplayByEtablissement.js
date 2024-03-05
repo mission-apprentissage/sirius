@@ -7,7 +7,6 @@ import {
   orderCampagnesByEtablissement,
   isPlural,
 } from "../../utils";
-import { buildEtablissementAddress } from "../../../utils/etablissement";
 import { StyledAccordion, AccordionLabelByEtablissementContainer } from "./accordions.style";
 import { ToolTipContainer } from "../ManageCampagnesTable/manageCampagneTable.style";
 import { campagnesDisplayMode } from "../../../constants";
@@ -74,6 +73,7 @@ const DisplayByEtablissement = ({
                     background="var(--background-default-grey)"
                     border="var(--border-default-grey)"
                     color="var(--text-default-grey)"
+                    placement="right"
                     content={
                       <ToolTipContainer>
                         Cet établissement est gestionnaire et rattaché à votre compte Sirius
@@ -87,6 +87,7 @@ const DisplayByEtablissement = ({
                     background="var(--background-default-grey)"
                     border="var(--border-default-grey)"
                     color="var(--text-default-grey)"
+                    placement="right"
                     content={
                       <ToolTipContainer>
                         Cet établissement est formateur et dispense des formations pour un
@@ -103,8 +104,15 @@ const DisplayByEtablissement = ({
                     campagnesByEtablissement[0].formation.data.etablissement_formateur_enseigne}
                 </h5>
               </div>
-              <p>{buildEtablissementAddress(campagnesByEtablissement[0].etablissement.data)}</p>
-              <p>N° SIRET : {campagnesByEtablissement[0].etablissement.data.siret}</p>
+              <p>
+                {" "}
+                {campagnesByEtablissement[0].formation.data.etablissement_formateur_adresse}{" "}
+                {campagnesByEtablissement[0].formation.data.localite}
+              </p>
+              <p>
+                N° SIRET :{" "}
+                {campagnesByEtablissement[0].formation.data.etablissement_formateur_siret}
+              </p>
               <p>
                 {campagnesByEtablissement.length} campagne
                 {isCampagnesPlural} créée{isCampagnesPlural}
