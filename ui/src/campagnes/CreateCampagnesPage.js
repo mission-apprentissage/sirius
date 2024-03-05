@@ -1,12 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { UserContext } from "../context/UserContext";
-import { EtablissementsContext } from "../context/EtablissementsContext";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
 import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
@@ -22,7 +21,7 @@ import {
 } from "./styles/createCampagnes.style";
 import SupportModal from "./ManageCampagne/SupportModal";
 
-const modal = createModal({
+const supportModal = createModal({
   id: "support-modal-loggedIn",
   isOpenedByDefault: false,
 });
@@ -33,7 +32,6 @@ const CreateCampagnesPage = () => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userContext] = useContext(UserContext);
-  const [etablissementsContext] = useContext(EtablissementsContext);
   const navigate = useNavigate();
 
   const userSiret = userContext.etablissements.map((etablissement) => etablissement.siret);
@@ -48,11 +46,11 @@ const CreateCampagnesPage = () => {
     }
   }, [remoteFormations]);
 
-  const campagneIdWithoutNAFormations =
-    campagnes?.length &&
-    campagnes
-      ?.filter((campagne) => campagne?.formation?._id !== "N/A")
-      ?.map((campagne) => campagne.formation._id);
+  const campagneIdWithoutNAFormations = campagnes?.length
+    ? campagnes
+        .filter((campagne) => campagne?.formation?._id !== "N/A")
+        .map((campagne) => campagne.formation._id)
+    : [];
 
   const localFormationQuery = campagneIdWithoutNAFormations?.map((id) => `id=${id}`).join("&");
 
@@ -107,7 +105,7 @@ const CreateCampagnesPage = () => {
 
       setIsSubmitting(false);
       if (result.status === "success") {
-        navigate(`/campagnes/gestion`);
+        navigate("/campagnes/gestion", { state: { successCreation: true } });
       }
     },
   });
@@ -135,7 +133,7 @@ const CreateCampagnesPage = () => {
                   Catalogue des offres de formations en apprentissage
                 </Link>{" "}
                 du réseau des CARIF OREF. Un problème ?{" "}
-                <span onClick={() => modal.open()}>
+                <span onClick={() => supportModal.open()}>
                   <b>
                     <u>Dites le nous</u>
                   </b>
@@ -211,7 +209,7 @@ const CreateCampagnesPage = () => {
           </ButtonContainer>
         </CreateCampagneContainer>
       </Container>
-      <SupportModal modal={modal} token={userContext.token} />
+      <SupportModal modal={supportModal} token={userContext.token} />
     </>
   );
 };

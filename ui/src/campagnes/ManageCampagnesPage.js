@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
@@ -19,6 +19,7 @@ import {
   ManageCampagneContainer,
   LoaderContainer,
 } from "./styles/manageCampagnes.style";
+import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
 
 const getValue = (obj, key) => {
   const value = obj[key];
@@ -49,6 +50,11 @@ const modal = createModal({
   isOpenedByDefault: false,
 });
 
+const successCreationModal = createModal({
+  id: "success-creation-modal",
+  isOpenedByDefault: true,
+});
+
 const ManageCampagnesPage = () => {
   const [selectedCampagnes, setSelectedCampagnes] = useState([]);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
@@ -57,6 +63,14 @@ const ManageCampagnesPage = () => {
   const [search, setSearch] = useState("");
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  setTimeout(() => {
+    if (location.state?.successCreation) {
+      successCreationModal.open();
+      window.history.replaceState({}, "");
+    }
+  }, 300);
 
   const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
 
@@ -199,6 +213,7 @@ const ManageCampagnesPage = () => {
         <NeedHelp />
       </Container>
       <SupportModal modal={modal} token={userContext.token} />
+      <SuccessCreationModal modal={successCreationModal} />
     </>
   );
 };
