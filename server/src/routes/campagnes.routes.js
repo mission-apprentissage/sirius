@@ -30,7 +30,7 @@ const campagnes = () => {
   router.post(
     "/api/campagnes/multi",
     verifyUser,
-    (req, res, next) => isAdminOrAllowed(req, next, TYPES.SIRET),
+    (req, res, next) => isAdminOrAllowed(req, next, TYPES.ETABLISSEMENT_FORMATEUR_SIRET),
     validator(createMultiCampagneSchema),
     (req, res, next) => {
       createMultiCampagne(req, res, next);

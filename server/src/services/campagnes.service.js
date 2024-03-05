@@ -11,6 +11,7 @@ const pdfExport = require("../modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
+const { getEtablissement } = require("../modules/catalogue");
 
 const getCampagnes = async (isAdmin, userSiret) => {
   try {
@@ -129,13 +130,12 @@ const updateCampagne = async (id, updatedCampagne) => {
   }
 };
 
-const createMultiCampagne = async ({ campagnes, etablissementSiret }) => {
+const createMultiCampagne = async (campagnes) => {
   try {
     const formationsIds = [];
 
     for (const campagne of campagnes) {
-      // eslint-disable-next-line no-unused-vars
-      const { formation } = campagne;
+      const { formation, etablissementFormateurSiret } = campagne;
 
       const createdCampagne = await campagnesDao.create(campagne);
       const createdFormation = await formationsDao.create({
@@ -145,13 +145,22 @@ const createMultiCampagne = async ({ campagnes, etablissementSiret }) => {
       });
 
       formationsIds.push(createdFormation._id.toString());
+      const etablissement = await etablissementsDao.getAll({ "data.siret": etablissementFormateurSiret });
+
+      if (etablissement.length) {
+        await etablissementsDao.update(etablissement[0]._id, {
+          formationIds: [...etablissement[0].formationIds, createdFormation._id.toString()],
+        });
+      } else {
+        const etablissement = await getEtablissement(etablissementFormateurSiret);
+        await etablissementsDao.create({
+          data: etablissement,
+          formationIds: [createdFormation._id.toString()],
+          createdBy: formation.createdBy,
+        });
+      }
     }
 
-    const etablissement = await etablissementsDao.getAll({ "data.siret": etablissementSiret });
-
-    await etablissementsDao.update(etablissement[0]._id, {
-      formationIds: [...etablissement[0].formationIds, ...formationsIds],
-    });
     return { success: true, body: { createdCount: formationsIds.length } };
   } catch (error) {
     return { success: false, body: error };

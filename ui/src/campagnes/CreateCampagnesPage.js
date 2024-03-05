@@ -67,6 +67,9 @@ const CreateCampagnesPage = () => {
       startDate: formateDateToInputFormat(new Date()),
       endDate: formateDateToInputFormat(new Date(), 2),
       seats: 0,
+      etablissementFormateurSiret: displayedFormations.find(
+        (formation) => formation.id === allDiplomesSelectedFormation
+      )?.etablissement_formateur_siret,
       formationId: allDiplomesSelectedFormation,
       questionnaireId: validatedQuestionnaire[0]?._id,
     };
@@ -90,16 +93,13 @@ const CreateCampagnesPage = () => {
         createdBy: userContext.currentUserId,
       }));
 
-      const payload = {
-        etablissementSiret: etablissementsContext.siret,
-        campagnes: formattedValues.map((campagne) => {
-          const { formationId, ...rest } = campagne;
-          return {
-            ...rest,
-            formation: formationsWithCreator.find((formation) => formation.id === formationId),
-          };
-        }),
-      };
+      const payload = formattedValues.map((campagne) => {
+        const { formationId, ...rest } = campagne;
+        return {
+          ...rest,
+          formation: formationsWithCreator.find((formation) => formation.id === formationId),
+        };
+      });
 
       const result = await multiCreationSubmitHandler(payload, userContext);
 
