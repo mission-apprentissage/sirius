@@ -120,10 +120,19 @@ const ManageCampagnesPage = () => {
     <>
       <Container>
         <ManageCampagneContainer>
-          <h1>
-            <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
-            Diffuser mes campagnes
-          </h1>
+          <div>
+            <h1>
+              <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
+              Diffuser mes campagnes
+            </h1>
+            <Button
+              priority="secondary"
+              iconId="fr-icon-add-line"
+              onClick={() => navigate("/campagnes/ajout")}
+            >
+              Créer des campagnes
+            </Button>
+          </div>
           <>
             <SortButtons
               displayMode={displayMode}

@@ -23,8 +23,16 @@ export const ManageCampagneContainer = styled.section`
   margin: auto;
   padding: ${fr.spacing("6w")} 1.5rem;
 
-  & h1 {
+  & > div:first-of-type {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: ${fr.spacing("6w")};
     margin: 0 0 ${fr.spacing("5w")} 0;
+  }
+
+  & h1 {
+    margin: 0;
   }
 
   & span {
