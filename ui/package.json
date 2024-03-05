@@ -55,7 +55,7 @@
     "eslint": "8.36.0",
     "eslint-config-prettier": "8.7.0",
     "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-react": "7.33.2",
+    "eslint-plugin-react": "7.34.0",
     "local-web-server": "4.2.1",
     "prettier": "2.8.4"
   },
