@@ -51,7 +51,7 @@ const DisplayByEtablissementCards = ({
           <AccordionLabelByEtablissementContainer>
             <h5>{formationsByEtablissement[0].etablissement_formateur_enseigne}</h5>
             <p>
-              {formationsByEtablissement[1].etablissement_formateur_adresse}{" "}
+              {formationsByEtablissement[0].etablissement_formateur_adresse}{" "}
               {formationsByEtablissement[0].localite}
             </p>
             <p>N° SIRET : {formationsByEtablissement[0].etablissement_formateur_siret}</p>
