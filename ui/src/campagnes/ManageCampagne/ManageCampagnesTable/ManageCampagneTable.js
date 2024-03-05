@@ -7,7 +7,7 @@ import { simpleEditionSubmitHandler } from "../../submitHandlers";
 import CellInput from "../../CellInput/CellInput";
 import CellInputSeats from "../../CellInput/CellInputSeats";
 import { isPlural } from "../../utils";
-import { etablissementLabelGetter, buildEtablissementAddress } from "../../../utils/etablissement";
+import { buildEtablissementAddress } from "../../../utils/etablissement";
 import {
   HeaderItem,
   FormationContainer,
@@ -84,7 +84,10 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, handl
             </ToolTipContainer>
           }
         >
-          <p>{etablissementLabelGetter(etablissement)}</p>
+          <p>
+            {formation.etablissement_formateur_entreprise_raison_sociale ||
+              formation.etablissement_formateur_enseigne}
+          </p>
         </Tooltip>
       </FormationContainer>,
       <CellInput

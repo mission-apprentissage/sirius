@@ -5,7 +5,7 @@ import {
   orderCampagnesByEtablissement,
   isPlural,
 } from "../../utils";
-import { etablissementLabelGetter, buildEtablissementAddress } from "../../../utils/etablissement";
+import { buildEtablissementAddress } from "../../../utils/etablissement";
 import { StyledAccordion, AccordionLabelByEtablissementContainer } from "./accordions.style";
 
 const DisplayByEtablissement = ({
@@ -63,7 +63,11 @@ const DisplayByEtablissement = ({
               ]}
             />
             <AccordionLabelByEtablissementContainer>
-              <h5>{etablissementLabelGetter(campagnesByEtablissement[0].etablissement.data)}</h5>
+              <h5>
+                {campagnesByEtablissement[0].formation.data
+                  .etablissement_formateur_entreprise_raison_sociale ||
+                  campagnesByEtablissement[0].formation.data.etablissement_formateur_enseigne}
+              </h5>
               <p>{buildEtablissementAddress(campagnesByEtablissement[0].etablissement.data)}</p>
               <p>N° SIRET : {campagnesByEtablissement[0].etablissement.data.siret}</p>
               <p>

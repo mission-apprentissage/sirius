@@ -136,7 +136,10 @@ const DisplayByDiplomeTypeCards = ({
                 </HeaderCardContainer>
                 <h6>{formation.intitule_long}</h6>
                 <div>
-                  <p>{formation.etablissement_gestionnaire_enseigne}</p>
+                  <p>
+                    {formation.etablissement_formateur_entreprise_raison_sociale ||
+                      formation.etablissement_formateur_enseigne}
+                  </p>
                   <p>
                     {formation.etablissement_formateur_adresse} {formation.localite}
                   </p>

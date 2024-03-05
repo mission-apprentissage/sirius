@@ -84,7 +84,10 @@ const data = (
               </ToolTipContainer>
             }
           >
-            <p>{formation.etablissement_gestionnaire_enseigne}</p>
+            <p>
+              {formation.etablissement_formateur_entreprise_raison_sociale ||
+                formation.etablissement_formateur_enseigne}
+            </p>
           </Tooltip>
         )}
         {displayMode === campagnesDisplayMode[1].value && (
