@@ -65,12 +65,12 @@ const ManageCampagnesPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  setTimeout(() => {
+  useEffect(() => {
     if (location.state?.successCreation) {
       successCreationModal.open();
-      window.history.replaceState({}, "");
+      navigate(null, { state: {} });
     }
-  }, 300);
+  }, [location.state]);
 
   const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
 
