@@ -17,6 +17,12 @@ export const AccordionLabelByEtablissementContainer = styled.div`
   flex-direction: column;
   color: var(--text-title-grey);
 
+  & > div:first-of-type {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+  }
+
   & > p:first-of-type,
   & > p:nth-of-type(2) {
     font-size: 12px;

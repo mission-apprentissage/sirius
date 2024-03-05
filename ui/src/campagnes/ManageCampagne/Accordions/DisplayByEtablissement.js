@@ -1,4 +1,6 @@
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { fr } from "@codegouvfr/react-dsfr";
+import Tooltip from "react-simple-tooltip";
 import ManageCampagneTable from "../ManageCampagnesTable/ManageCampagneTable";
 import {
   getUniqueEtablissementFromCampagne,
@@ -7,6 +9,8 @@ import {
 } from "../../utils";
 import { buildEtablissementAddress } from "../../../utils/etablissement";
 import { StyledAccordion, AccordionLabelByEtablissementContainer } from "./accordions.style";
+import { ToolTipContainer } from "../ManageCampagnesTable/manageCampagneTable.style";
+import { campagnesDisplayMode } from "../../../constants";
 
 const DisplayByEtablissement = ({
   displayedCampagnes,
@@ -63,11 +67,42 @@ const DisplayByEtablissement = ({
               ]}
             />
             <AccordionLabelByEtablissementContainer>
-              <h5>
-                {campagnesByEtablissement[0].formation.data
-                  .etablissement_formateur_entreprise_raison_sociale ||
-                  campagnesByEtablissement[0].formation.data.etablissement_formateur_enseigne}
-              </h5>
+              <div>
+                {campagnesByEtablissement[0].formation.data.etablissement_formateur_siret ===
+                campagnesByEtablissement[0].formation.data.etablissement_gestionnaire_siret ? (
+                  <Tooltip
+                    background="var(--background-default-grey)"
+                    border="var(--border-default-grey)"
+                    color="var(--text-default-grey)"
+                    content={
+                      <ToolTipContainer>
+                        Cet établissement est gestionnaire et rattaché à votre compte Sirius
+                      </ToolTipContainer>
+                    }
+                  >
+                    <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} />
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    background="var(--background-default-grey)"
+                    border="var(--border-default-grey)"
+                    color="var(--text-default-grey)"
+                    content={
+                      <ToolTipContainer>
+                        Cet établissement est formateur et dispense des formations pour un
+                        établissement gestionnaire
+                      </ToolTipContainer>
+                    }
+                  >
+                    <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} />
+                  </Tooltip>
+                )}
+                <h5>
+                  {campagnesByEtablissement[0].formation.data
+                    .etablissement_formateur_entreprise_raison_sociale ||
+                    campagnesByEtablissement[0].formation.data.etablissement_formateur_enseigne}
+                </h5>
+              </div>
               <p>{buildEtablissementAddress(campagnesByEtablissement[0].etablissement.data)}</p>
               <p>N° SIRET : {campagnesByEtablissement[0].etablissement.data.siret}</p>
               <p>
@@ -84,6 +119,7 @@ const DisplayByEtablissement = ({
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
           userContext={userContext}
+          displayMode={campagnesDisplayMode[1].value}
         />
       </StyledAccordion>
     );

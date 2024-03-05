@@ -5,7 +5,7 @@ import {
   getUniqueDiplomeTypesFromCampagne,
   isPlural,
 } from "../../utils";
-import { DIPLOME_TYPE_MATCHER } from "../../../constants";
+import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../../constants";
 import { StyledAccordion, AccordionLabelByDiplomeTypeContainer } from "./accordions.style";
 
 const DisplayByDiplomeType = ({
@@ -78,6 +78,7 @@ const DisplayByDiplomeType = ({
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
           userContext={userContext}
+          displayMode={campagnesDisplayMode[0].value}
         />
       </StyledAccordion>
     );

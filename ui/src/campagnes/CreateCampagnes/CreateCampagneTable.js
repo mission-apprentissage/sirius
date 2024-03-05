@@ -75,12 +75,26 @@ const data = (
             background="var(--background-default-grey)"
             border="var(--border-default-grey)"
             color="var(--text-default-grey)"
+            placement="right"
             content={
               <ToolTipContainer>
                 <p>
                   {formation.etablissement_formateur_adresse} {formation.localite}
                 </p>
                 <p>N° SIRET : {formation.etablissement_formateur_siret}</p>
+                {formation.etablissement_formateur_siret ===
+                formation.etablissement_gestionnaire_siret ? (
+                  <p>
+                    <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
+                    établissement est gestionnaire et rattaché à votre compte Sirius
+                  </p>
+                ) : (
+                  <p>
+                    <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
+                    établissement est formateur et dispense des formations pour un établissement
+                    gestionnaire
+                  </p>
+                )}
               </ToolTipContainer>
             }
           >

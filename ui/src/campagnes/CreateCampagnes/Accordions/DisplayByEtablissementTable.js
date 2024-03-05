@@ -1,4 +1,6 @@
 import React, { useRef } from "react";
+import Tooltip from "react-simple-tooltip";
+import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
@@ -15,6 +17,7 @@ import {
 import CreateCampagneTable from "../CreateCampagneTable";
 import RemoveFormationModal from "../RemoveFormationModal";
 import { campagnesDisplayMode } from "../../../constants";
+import { ToolTipContainer } from "../../ManageCampagne/ManageCampagnesTable/manageCampagneTable.style";
 
 const modal = createModal({
   id: "remove-formation-modal",
@@ -60,10 +63,41 @@ const DisplayByEtablissementTable = ({
           key={siret}
           label={
             <AccordionLabelByEtablissementContainer>
-              <h5>
-                {formationsByEtablissement[0].etablissement_formateur_entreprise_raison_sociale ||
-                  formationsByEtablissement[0].etablissement_formateur_enseigne}
-              </h5>
+              <div>
+                {formationsByEtablissement[0].etablissement_formateur_siret ===
+                formationsByEtablissement[0].etablissement_gestionnaire_siret ? (
+                  <Tooltip
+                    background="var(--background-default-grey)"
+                    border="var(--border-default-grey)"
+                    color="var(--text-default-grey)"
+                    content={
+                      <ToolTipContainer>
+                        Cet établissement est gestionnaire et rattaché à votre compte Sirius
+                      </ToolTipContainer>
+                    }
+                  >
+                    <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} />
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    background="var(--background-default-grey)"
+                    border="var(--border-default-grey)"
+                    color="var(--text-default-grey)"
+                    content={
+                      <ToolTipContainer>
+                        Cet établissement est formateur et dispense des formations pour un
+                        établissement gestionnaire
+                      </ToolTipContainer>
+                    }
+                  >
+                    <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} />
+                  </Tooltip>
+                )}
+                <h5>
+                  {formationsByEtablissement[0].etablissement_formateur_entreprise_raison_sociale ||
+                    formationsByEtablissement[0].etablissement_formateur_enseigne}
+                </h5>
+              </div>
               <p>
                 {formationsByEtablissement[0].etablissement_formateur_adresse}{" "}
                 {formationsByEtablissement[0].localite}

@@ -48,9 +48,11 @@ const CreateCampagnesPage = () => {
     }
   }, [remoteFormations]);
 
-  const campagneIdWithoutNAFormations = campagnes
-    ?.filter((campagne) => campagne?.formation?._id !== "N/A")
-    ?.map((campagne) => campagne.formation._id);
+  const campagneIdWithoutNAFormations =
+    campagnes?.length &&
+    campagnes
+      ?.filter((campagne) => campagne?.formation?._id !== "N/A")
+      ?.map((campagne) => campagne.formation._id);
 
   const localFormationQuery = campagneIdWithoutNAFormations?.map((id) => `id=${id}`).join("&");
 
