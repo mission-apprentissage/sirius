@@ -212,7 +212,7 @@ const DsfrNavbar = () => {
         </>
       }
       homeLinkProps={{
-        to: "/",
+        to: isLoggedIn ? "/campagnes/gestion" : "/",
         title: "Accueil - Sirius",
       }}
       operatorLogo={{
