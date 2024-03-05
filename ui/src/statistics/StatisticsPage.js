@@ -32,7 +32,7 @@ const StatisticsPage = () => {
           <div>
             <img src={School} alt="" />
             <p>
-              <b>{etablissementsSuiviPublic?.etablissementsCount || 0} établissements</b> <br />
+              <b>458 établissements</b> <br />
               inscrits sur la plateforme
             </p>
           </div>
