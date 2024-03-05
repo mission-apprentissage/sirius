@@ -7,6 +7,7 @@ import { campagnesDisplayMode } from "../../constants";
 import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
 import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
 import Alert from "@codegouvfr/react-dsfr/Alert";
+import { SearchNoResultsContainer } from "../styles/manageCampagnes.style";
 
 const Step1 = ({
   isLoading,
@@ -22,7 +23,7 @@ const Step1 = ({
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    if (displayedFormations?.length && search === "") {
+    if (remoteFormations?.length && search === "") {
       setDisplayedFormations(remoteFormations);
     } else {
       const filteredFormations = displayedFormations.filter((formation) => {
@@ -89,6 +90,12 @@ const Step1 = ({
           severity="error"
         />
       )}
+      {!displayedFormations?.length && search ? (
+        <SearchNoResultsContainer>
+          <h3>Aucun résultats pour votre recherche</h3>
+          <p onClick={() => setSearch("")}>Réinitialiser ?</p>
+        </SearchNoResultsContainer>
+      ) : null}
       {displayedFormations?.length && !isLoading && !hasError ? (
         <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
       ) : null}

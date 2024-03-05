@@ -6,6 +6,7 @@ import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
 import { orderFormationsByDiplomeType } from "../utils";
 import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
 import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
+import { SearchNoResultsContainer } from "../styles/manageCampagnes.style";
 
 const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
   const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
@@ -13,6 +14,12 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (selectedFormations?.length) {
+      setSearchedDiplayedFormations(selectedFormations);
+    }
+  }, []);
 
   useEffect(() => {
     if (selectedFormations?.length && search === "") {
@@ -78,7 +85,13 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
         organizeLabel="Organiser mes formations par"
         mode="creation"
       />
-      {selectedFormations?.length ? (
+      {!searchedDiplayedFormations?.length && search ? (
+        <SearchNoResultsContainer>
+          <h3>Aucun résultats pour votre recherche</h3>
+          <p onClick={() => setSearch("")}>Réinitialiser ?</p>
+        </SearchNoResultsContainer>
+      ) : null}
+      {searchedDiplayedFormations?.length ? (
         <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
       ) : null}
     </StepContainer>

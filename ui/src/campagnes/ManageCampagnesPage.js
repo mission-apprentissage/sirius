@@ -18,6 +18,7 @@ import {
   Container,
   ManageCampagneContainer,
   LoaderContainer,
+  SearchNoResultsContainer,
 } from "./styles/manageCampagnes.style";
 import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
 
@@ -193,9 +194,10 @@ const ManageCampagnesPage = () => {
             </>
           ) : null}
           {!displayedCampagnes?.length && search ? (
-            <>
+            <SearchNoResultsContainer>
               <h3>Aucun résultats pour votre recherche</h3>
-            </>
+              <p onClick={() => setSearch("")}>Réinitialiser ?</p>
+            </SearchNoResultsContainer>
           ) : null}
           <p>
             Formations extraites du{" "}
