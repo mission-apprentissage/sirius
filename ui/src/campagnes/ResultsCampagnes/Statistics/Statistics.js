@@ -48,7 +48,7 @@ const Statistics = ({ campagnes }) => {
       <Content>
         <h1>
           <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} />
-          Sirius & vous en quelques chiffres
+          Statistiques des campagnes sélectionnées
         </h1>
         <p>Vos statistiques sont mises à jour en temps réel</p>
         <div>

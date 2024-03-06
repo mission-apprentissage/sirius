@@ -1,5 +1,5 @@
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import ManageCampagneTable from "../ManageCampagnesTable/ManageCampagneTable";
+import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
 import {
   orderCampagnesByDiplomeType,
   getUniqueDiplomeTypesFromCampagne,
@@ -72,7 +72,7 @@ const DisplayByDiplomeType = ({
           </>
         }
       >
-        <ManageCampagneTable
+        <CampagnesTable
           key={diplomeType}
           displayedCampagnes={campagnesByDiplomeType}
           selectedCampagnes={selectedCampagnes}

@@ -15,12 +15,8 @@ import NeedHelp from "../Components/NeedHelp";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../constants";
 import SupportModal from "./Shared/SupportModal";
 import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
-import {
-  Container,
-  ManageCampagneContainer,
-  LoaderContainer,
-} from "./styles/manageCampagnes.style";
-import { SearchNoResultsContainer } from "./styles/shared.style";
+import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
+import { SearchNoResultsContainer, LoaderContainer } from "./styles/shared.style";
 
 const getValue = (obj, key) => {
   const value = obj[key];

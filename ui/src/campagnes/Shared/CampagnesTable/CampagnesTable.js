@@ -4,11 +4,11 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { simpleEditionSubmitHandler } from "../../submitHandlers";
-import CellInput from "../../Shared/CellInput/CellInput";
-import CellInputSeats from "../../Shared/CellInput/CellInputSeats";
+import CellInput from "../CellInput/CellInput";
+import CellInputSeats from "../CellInput/CellInputSeats";
 import { isPlural } from "../../utils";
 import { buildEtablissementAddress } from "../../../utils/etablissement";
-import { TemoignagesCount, EtablissementLabelContainer } from "./manageCampagneTable.style";
+import { TemoignagesCount, EtablissementLabelContainer } from "./campagnesTable.style";
 import { HeaderItem, FormationContainer, ToolTipContainer } from "../../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../../constants";
 
@@ -156,11 +156,11 @@ const data = (
   });
 };
 
-const ManageCampagneTable = ({
+const CampagnesTable = ({
   displayedCampagnes = [],
   selectedCampagnes,
   setSelectedCampagnes,
-  userContext,
+  userContext = null,
   displayMode,
 }) => {
   const handleCellUpdate = async (campagneId, payload) => {
@@ -182,4 +182,4 @@ const ManageCampagneTable = ({
   );
 };
 
-export default ManageCampagneTable;
+export default CampagnesTable;

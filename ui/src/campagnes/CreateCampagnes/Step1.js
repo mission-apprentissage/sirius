@@ -6,8 +6,8 @@ import SortButtons from "../Shared/SortButtons/SortButtons";
 import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
 import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
 import { campagnesDisplayMode } from "../../constants";
-import { LoaderContainer, StepContainer } from "../styles/createCampagnes.style";
-import { SearchNoResultsContainer } from "../styles/shared.style";
+import { StepContainer } from "../styles/createCampagnes.style";
+import { SearchNoResultsContainer, LoaderContainer } from "../styles/shared.style";
 
 const Step1 = ({
   isLoading,
