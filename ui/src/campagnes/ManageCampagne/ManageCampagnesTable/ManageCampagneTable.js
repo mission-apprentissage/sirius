@@ -134,8 +134,8 @@ const data = (
       />,
       <CellInput
         key={campagne._id}
-        id="startDate"
-        name="startDate"
+        id="endDate"
+        name="endDate"
         campagne={campagne}
         handleCellUpdate={handleCellUpdate}
         type="date"
