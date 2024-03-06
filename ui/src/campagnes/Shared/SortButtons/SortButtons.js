@@ -24,15 +24,16 @@ const SortButtons = ({
         }}
         options={campagnesDisplayMode}
       />
-      {mode === "manage" && (
-        <Select
-          nativeSelectProps={{
-            value: sortingMode,
-            onChange: (event) => setSortingMode(event.target.value),
-          }}
-          options={campagnesSortingOptions}
-        />
-      )}
+      {mode === "manage" ||
+        (mode === "results" && (
+          <Select
+            nativeSelectProps={{
+              value: sortingMode,
+              onChange: (event) => setSortingMode(event.target.value),
+            }}
+            options={campagnesSortingOptions}
+          />
+        ))}
       <Input
         nativeInputProps={{
           value: search,

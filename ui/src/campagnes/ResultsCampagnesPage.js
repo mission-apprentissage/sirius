@@ -1,85 +1,122 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Stack, Spinner, Text } from "@chakra-ui/react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import Header from "./Shared/Header";
+import { useSearchParams } from "react-router-dom";
+import BeatLoader from "react-spinners/BeatLoader";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
+import Button from "@codegouvfr/react-dsfr/Button";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import { UserContext } from "../context/UserContext";
-import { EtablissementsContext } from "../context/EtablissementsContext";
-import CampagneStatistics from "./ResultsCampagnes/CampagneStatistics";
-import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
 import { _get } from "../utils/httpClient";
+import { useGet } from "../common/hooks/httpHooks";
+import {
+  Container,
+  ResultsCampagneContainer,
+  TestimonialHeader,
+} from "./styles/resultsCampagnes.style";
+import SortButtons from "./Shared/SortButtons/SortButtons";
+import CampagnesTable from "./Shared/CampagnesTable/CampagnesTable";
+import { LoaderContainer } from "./styles/shared.style";
+import { campagnesDisplayMode, campagnesSortingOptions } from "../constants";
+import Statistics from "./ResultsCampagnes/Statistics/Statistics";
+import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
 
 const ResultsCampagnesPage = () => {
-  const [etablissementsContext] = useContext(EtablissementsContext);
-  const [userContext] = useContext(UserContext);
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
+  const [selectedCampagnes, setSelectedCampagnes] = useState([]);
+  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
+  const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
+  const [search, setSearch] = useState("");
   const [temoignages, setTemoignages] = useState([]);
-  const campagneId = searchParams.get("campagneId");
+  const [userContext] = useContext(UserContext);
+  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
+  const [questionnaires, loadingQuestionnaires, errorQuesitonnaires] =
+    useGet(`/api/questionnaires/`);
 
-  const campagneQuery = etablissementsContext.siret
-    ? `?siret=${etablissementsContext.siret}`
-    : null;
+  const validatedQuestionnaire =
+    questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
 
-  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes(campagneQuery);
-
-  const campagne = campagnes?.find((campagne) => campagne._id === campagneId);
-
-  if (!userContext) return <Spinner size="xl" />;
+  useEffect(() => {
+    if (campagnes?.length) {
+      setDisplayedCampagnes(campagnes);
+      setSelectedCampagnes(campagnes.map((campagne) => campagne._id));
+    }
+  }, [campagnes]);
 
   useEffect(() => {
     const getTemoignages = async () => {
-      if (campagneId) {
-        const result = await _get(`/api/temoignages?campagneId=${campagneId}`, userContext.token);
+      if (displayedCampagnes[0]) {
+        const result = await _get(
+          `/api/temoignages?campagneId=${displayedCampagnes[0]._id}`,
+          userContext.token
+        );
         setTemoignages(result);
       } else {
         setTemoignages([]);
       }
     };
     getTemoignages();
-  }, [campagneId]);
+  }, [displayedCampagnes[0]]);
 
   return (
-    <Stack direction="column" w="100%">
-      <Header
-        hasCampagneSelector
-        allowEtablissementChange
-        campagnes={campagnes}
-        loadingCampagnes={loadingCampagnes}
-        hasGoBackButton
-        goBackLabel="Retour gestion des campagnes"
-        goBackOnClick={() => navigate("/campagnes/gestion")}
-      >
-        <Text color="brand.blue.700" fontSize="5xl" fontWeight="600">
-          Statistiques de la campagne
-        </Text>
-        {(loadingCampagnes || errorCampagnes) && !campagnes?.length ? (
-          <Spinner size="xl" />
-        ) : (
-          campagne && <CampagneStatistics campagne={campagne} />
+    <Container>
+      <ResultsCampagneContainer>
+        <SortButtons mode="results" organizeLabel="Sélectionner les résultats à afficher" />
+        {loadingCampagnes && (
+          <LoaderContainer>
+            <BeatLoader
+              color="var(--background-action-high-blue-france)"
+              size={20}
+              aria-label="Loading Spinner"
+            />
+          </LoaderContainer>
         )}
-      </Header>
-      {campagne ? (
-        temoignages.length ? (
-          <ResultsCampagnesVisualisation campagne={campagne} temoignages={temoignages} />
-        ) : (
-          <Text fontSize="2xl" color="brand.blue.700" w="100%" textAlign="center">
-            Il n'y a pas encore de réponses à cette campagne
-          </Text>
-        )
-      ) : (
-        <Text
-          color="brand.blue.700"
-          fontSize="xl"
-          fontWeight="600"
-          mb="15px"
-          w="100%"
-          textAlign="center"
-        >
-          Sélectionnez une campagne pour voir ses résultats
-        </Text>
-      )}
-    </Stack>
+        {errorCampagnes && !campagnes?.length ? (
+          <Alert
+            title="Une erreur s'est produite dans le chargement des campagnes"
+            description="Merci de réessayer ultérieurement"
+            severity="error"
+          />
+        ) : null}
+        {displayedCampagnes.length ? (
+          <div className={fr.cx("fr-accordions-group")}>
+            <Accordion label="Toutes mes campagnes">
+              <CampagnesTable
+                displayedCampagnes={displayedCampagnes}
+                selectedCampagnes={selectedCampagnes}
+                setSelectedCampagnes={setSelectedCampagnes}
+                displayMode={displayMode}
+              />
+            </Accordion>
+          </div>
+        ) : null}
+      </ResultsCampagneContainer>
+      <Statistics campagnes={displayedCampagnes} />
+      <ResultsCampagneContainer>
+        <TestimonialHeader>
+          <h1>
+            <span className={fr.cx("fr-icon-quote-fill")} aria-hidden={true} />
+            Témoignages des campagnes sélectionnées
+          </h1>
+          <div>
+            <Button priority="secondary" iconId="fr-icon-file-download-fill">
+              Exporter en XLS
+            </Button>
+            <Button priority="secondary" iconId="fr-icon-file-download-fill">
+              Exporter en PDF
+            </Button>
+          </div>
+        </TestimonialHeader>
+        <ResultsCampagnesVisualisation
+          campagne={displayedCampagnes[0]}
+          temoignages={temoignages}
+          questionnaire={validatedQuestionnaire?.length && validatedQuestionnaire[0].questionnaire}
+          questionnaireUI={
+            validatedQuestionnaire?.length && validatedQuestionnaire[0].questionnaireUI
+          }
+        />
+      </ResultsCampagneContainer>
+    </Container>
   );
 };
 

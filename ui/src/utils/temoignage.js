@@ -1,14 +1,14 @@
-export const matchIdAndQuestions = (campagne) => {
-  if (!campagne || !campagne.questionnaire || !campagne.questionnaire.properties) {
+export const matchIdAndQuestions = (campagne, questionnaire) => {
+  if (!campagne || !questionnaire || !questionnaire.properties) {
     return null;
   }
 
-  const questionnaire = campagne.questionnaire.properties;
+  const questionnaireProperties = questionnaire.properties;
   const results = [];
 
-  Object.keys(questionnaire).forEach((category) => {
+  Object.keys(questionnaireProperties).forEach((category) => {
     const obj = {};
-    const properties = questionnaire[category].properties;
+    const properties = questionnaireProperties[category].properties;
     Object.keys(properties).forEach((question) => {
       obj[question] = properties[question].title;
     });
@@ -22,19 +22,17 @@ export const matchIdAndQuestions = (campagne) => {
   return flattenResult;
 };
 
-export const matchCardTypeAndQuestions = (campagne) => {
-  if (!campagne || !campagne.questionnaire || !campagne.questionnaire.properties) {
+export const matchCardTypeAndQuestions = (campagne, questionnaire, questionnaireUI) => {
+  if (!campagne || !questionnaire || !questionnaire.properties) {
     return null;
   }
-
-  const questionnaire = campagne.questionnaire.properties;
-  const ui = campagne.questionnaireUI;
+  const questionnaireProperties = questionnaire.properties;
   const results = [];
 
-  Object.keys(questionnaire).forEach((category) => {
+  Object.keys(questionnaireProperties).forEach((category) => {
     const obj = {};
-    const properties = questionnaire[category].properties;
-    //TODO refacto using type from questionnaireUI
+    const properties = questionnaireProperties[category].properties;
+
     Object.keys(properties).forEach((question) => {
       if (
         properties[question].type === "array" &&
@@ -57,13 +55,13 @@ export const matchCardTypeAndQuestions = (campagne) => {
         properties[question].type === "string" &&
         properties[question].subType === "emoji"
       ) {
-        const uiData = ui[category][question];
+        const uiData = questionnaireUI[category][question];
         obj[question] = { type: "emoji", mapping: uiData.emojisMapping };
       } else if (
         properties[question].type === "array" &&
         properties[question].subType === "multiEmoji"
       ) {
-        const uiData = ui[category][question];
+        const uiData = questionnaireUI[category][question];
         obj[question] = { type: "multiEmoji", mapping: uiData.emojisMapping };
       }
     });

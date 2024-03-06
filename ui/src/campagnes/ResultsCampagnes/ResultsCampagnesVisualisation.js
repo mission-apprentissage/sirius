@@ -1,22 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Heading,
-  Text,
-  Flex,
-  Box,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Spinner,
-  Image,
-  useDisclosure,
-  HStack,
-} from "@chakra-ui/react";
+import { Masonry } from "masonic";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
+import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import * as echarts from "echarts/core";
 import { PieChart, BarChart } from "echarts/charts";
@@ -30,10 +16,9 @@ import { CanvasRenderer } from "echarts/renderers";
 import parse from "html-react-parser";
 import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../../utils/temoignage";
 import { getCategoriesWithEmojis } from "../utils";
-import GoEyeClosed from "../../assets/icons/GoEyeClosed.svg";
-import GoEyeBlack from "../../assets/icons/GoEyeBlack.svg";
-import GoEye from "../../assets/icons/GoEye.svg";
-import VerbatimsModal from "./VerbatimsModal";
+import { VerbatimsContainer, MasonryItemContainer } from "../styles/resultsCampagnes.style";
+import { VERBATIM_STATUS_LABELS } from "../../constants";
+import Quote from "../../assets/icons/quote.svg";
 
 echarts.use([
   TooltipComponent,
@@ -337,253 +322,127 @@ const multiEmojiOption = (responses) => {
   };
 };
 
-const ResultsCampagnesVisualisation = ({ campagne, temoignages }) => {
+const ResultsCampagnesVisualisation = ({
+  campagne,
+  temoignages,
+  questionnaire,
+  questionnaireUI,
+}) => {
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
   const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
-  const [isVerbatimsDisplayed, setIsVerbatimsDisplayed] = useState(true);
-  const [modalData, setModalData] = useState(null);
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     if (campagne) {
-      setMatchedIdAndQuestions(matchIdAndQuestions(campagne));
-      setMatchedCardTypeAndQuestions(matchCardTypeAndQuestions(campagne));
+      setMatchedIdAndQuestions(matchIdAndQuestions(campagne, questionnaire));
+      setMatchedCardTypeAndQuestions(
+        matchCardTypeAndQuestions(campagne, questionnaire, questionnaireUI)
+      );
     }
   }, [campagne]);
 
-  const categories = getCategoriesWithEmojis(campagne?.questionnaire);
-
-  if (!campagne) return <Spinner />;
+  const categories = getCategoriesWithEmojis(questionnaire);
 
   return (
-    <>
-      <Box>
-        <Text color="brand.blue.700" fontSize="5xl">
-          <Text as="span" fontWeight="600">
-            Résultats{" "}
-          </Text>
-          {campagne.nomCampagne || campagne.formation.data.intitule_long}
-        </Text>
-        <Box
-          display="flex"
-          flexDirection="row"
-          mt="24px"
-          mb="40px"
-          cursor="pointer"
-          onClick={() => setIsVerbatimsDisplayed(!isVerbatimsDisplayed)}
-          w="max-content"
-        >
-          <Image
-            w="20px"
-            sizes=""
-            src={isVerbatimsDisplayed ? GoEyeClosed : GoEyeBlack}
-            alt=""
-            mr="10px"
-          />
-          <Text color="brand.black.500">
-            {isVerbatimsDisplayed ? "Masquer" : "Afficher"} tous les verbatims
-          </Text>
-        </Box>
+    <div className={fr.cx("fr-accordions-group")}>
+      {categories.map((category, index) => {
+        const questionsList = Object.keys(questionnaire.properties[category.id].properties);
 
-        <Accordion allowToggle>
-          {categories.map((category, index) => {
-            const questionsList = Object.keys(
-              campagne.questionnaire.properties[category.id].properties
-            );
+        const filteredQuestionsList = questionsList.filter((question) =>
+          Object.keys(questionnaire.properties[category.id].properties).includes(question)
+        );
+        return (
+          <Accordion key={index} label={`${category.emoji} ${category.title}`}>
+            {filteredQuestionsList.map((question) => {
+              const responses = temoignages
+                .map((temoignage) => temoignage.reponses[question])
+                .flat()
+                .filter(Boolean);
 
-            const filteredQuestionsList = questionsList.filter((question) =>
-              Object.keys(campagne.questionnaire.properties[category.id].properties).includes(
-                question
-              )
-            );
-            return (
-              <AccordionItem
-                key={index}
-                bgColor="brand.blue.100"
-                borderRadius="12px"
-                border="none"
-                my="12px"
-                px="24px"
-              >
-                <AccordionButton
-                  _hover={{
-                    backgroundColor: "transparent",
-                  }}
-                >
-                  <Box
-                    display="flex"
-                    textAlign="left"
-                    flexDirection="row"
-                    alignItems="center"
-                    w="100%"
-                    my="15px"
-                  >
-                    <Text
-                      fontSize="xl"
-                      color="brand.blue.700"
-                      fontWeight="600"
-                      borderRight="2px solid #000091"
-                      pr="16px"
-                    >
-                      {category.emoji}
-                      <Text as="span" ml="5px">
-                        {category.title}
-                      </Text>
-                    </Text>
-                    <Text fontSize="md" color="brand.blue.700" ml="16px">
-                      {questionsList.length} questions
-                    </Text>
-                  </Box>
-                  <AccordionIcon color="brand.blue.700" fontSize="34px" />
-                </AccordionButton>
-                <AccordionPanel>
-                  <Box display="flex" flexWrap="wrap">
-                    {filteredQuestionsList.map((question) => {
-                      const responses = temoignages
-                        .map((temoignage) => temoignage.reponses[question])
-                        .flat()
-                        .filter(Boolean);
+              const MasonryItem = ({ data: { content } }) => (
+                <MasonryItemContainer>
+                  <img src={Quote} />« {content} »
+                </MasonryItemContainer>
+              );
 
-                      if (!isVerbatimsDisplayed && matchedCardTypeAndQuestions[question] === "text")
-                        return null;
-                      return (
-                        matchedIdAndQuestions[question] && (
-                          <Card
-                            key={question}
-                            width={
-                              matchedCardTypeAndQuestions[question] === "pie"
-                                ? "calc(50% - 72px)"
-                                : "calc(100% - 112px)"
-                            }
-                            m="4"
-                            variant="outline"
-                            borderRadius="20px"
-                            border="none"
-                          >
-                            <CardHeader>
-                              <Heading
-                                fontSize="xl"
-                                textAlign="center"
-                                color="brand.blue.700"
-                                fontWeight="normal"
-                                maxWidth={
-                                  matchedCardTypeAndQuestions[question] === "text" ? "60%" : "100%"
-                                }
-                                lineHeight="28px"
-                                margin="auto"
-                              >
-                                {parse(matchedIdAndQuestions[question])}
-                              </Heading>
-                            </CardHeader>
-                            <CardBody>
-                              {matchedCardTypeAndQuestions[question] === "text" && (
-                                <Flex
-                                  justifyContent="space-between"
-                                  position="relative"
-                                  alignItems="center"
-                                  flexDirection="column"
-                                  maxWidth="70%"
-                                  margin="auto"
-                                >
-                                  <Text
-                                    fontSize="sm"
-                                    fontWeight="semibold"
-                                    color="brand.black.500"
-                                    mb="8px"
-                                  >
-                                    ({responses.length} témoignage
-                                    {responses.length > 1 && "s"})
-                                  </Text>
-                                  {responses.map((response, index) => {
-                                    if (index > 4) return null;
+              const VerbatimCard = () => {
+                const tabsLabel = [...new Set(responses.map((response) => response?.status))];
 
-                                    return (
-                                      <Text
-                                        fontSize="md"
-                                        color="brand.black.500"
-                                        key={index}
-                                        mb="8px"
-                                        textAlign="center"
-                                      >
-                                        «
-                                        {typeof response === "object"
-                                          ? response?.content
-                                          : response?.content || response || ""}
-                                        »
-                                      </Text>
-                                    );
-                                  })}
-                                  {responses.length > 5 && (
-                                    <HStack
-                                      mt="32px"
-                                      cursor="pointer"
-                                      onClick={() => {
-                                        setModalData({
-                                          verbatims: responses,
-                                          question: matchedIdAndQuestions[question],
-                                        });
-                                        onOpen();
-                                      }}
-                                    >
-                                      <Image src={GoEye} />
-                                      <Text textDecoration="underline" color="brand.blue.700">
-                                        Voir tous les verbatim
-                                      </Text>
-                                    </HStack>
-                                  )}
-                                </Flex>
-                              )}
-                              {matchedCardTypeAndQuestions[question] === "pie" && (
-                                <ReactEChartsCore
-                                  echarts={echarts}
-                                  option={pieOption(pieResponsesFormatting(responses))}
-                                />
-                              )}
-                              {matchedCardTypeAndQuestions[question] === "bar" && (
-                                <ReactEChartsCore echarts={echarts} option={barOption(responses)} />
-                              )}
-                              {matchedCardTypeAndQuestions[question]?.type === "emoji" && (
-                                <ReactEChartsCore
-                                  echarts={echarts}
-                                  option={pieOption(
-                                    pieResponsesFormatting(
-                                      responses,
-                                      matchedCardTypeAndQuestions[question]?.mapping
-                                    )
-                                  )}
-                                />
-                              )}
-                              {matchedCardTypeAndQuestions[question]?.type === "multiEmoji" && (
-                                <ReactEChartsCore
-                                  echarts={echarts}
-                                  option={multiEmojiOption(
-                                    responses,
-                                    matchedCardTypeAndQuestions[question]?.mapping
-                                  )}
-                                />
-                              )}
-                            </CardBody>
-                          </Card>
-                        )
-                      );
-                    })}
-                  </Box>
-                </AccordionPanel>
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
-      </Box>
-      {modalData && (
-        <VerbatimsModal
-          isOpen={isOpen}
-          onClose={onClose}
-          verbatims={modalData.verbatims}
-          question={modalData.question}
-        />
-      )}
-    </>
+                const tabs = tabsLabel.map((tab) => {
+                  const content = responses.filter((response) => response.status === tab);
+
+                  return {
+                    label: (
+                      <>
+                        {VERBATIM_STATUS_LABELS[tab]} ({content.length})
+                      </>
+                    ),
+                    content: (
+                      <Masonry
+                        items={content}
+                        render={MasonryItem}
+                        columnGutter={24}
+                        columnCount={5}
+                      />
+                    ),
+                  };
+                });
+
+                return (
+                  <VerbatimsContainer>
+                    <p>{parse(matchedIdAndQuestions[question].replace(/<br \/>/gi, ""))}</p>
+                    <Tabs tabs={tabs} />
+                  </VerbatimsContainer>
+                );
+              };
+
+              const PieCard = () => {
+                return (
+                  <VerbatimsContainer>
+                    <p>{parse(matchedIdAndQuestions[question].replace(/<br \/>/gi, ""))}</p>
+                    <ReactEChartsCore
+                      echarts={echarts}
+                      option={pieOption(pieResponsesFormatting(responses))}
+                    />
+                  </VerbatimsContainer>
+                );
+              };
+
+              return (
+                matchedIdAndQuestions[question] && (
+                  <div key={question}>
+                    {matchedCardTypeAndQuestions[question] === "text" && <VerbatimCard />}
+                    {matchedCardTypeAndQuestions[question] === "pie" && <PieCard />}
+                    {matchedCardTypeAndQuestions[question] === "bar" && (
+                      <ReactEChartsCore echarts={echarts} option={barOption(responses)} />
+                    )}
+                    {matchedCardTypeAndQuestions[question]?.type === "emoji" && (
+                      <ReactEChartsCore
+                        echarts={echarts}
+                        option={pieOption(
+                          pieResponsesFormatting(
+                            responses,
+                            matchedCardTypeAndQuestions[question]?.mapping
+                          )
+                        )}
+                      />
+                    )}
+                    {matchedCardTypeAndQuestions[question]?.type === "multiEmoji" && (
+                      <ReactEChartsCore
+                        echarts={echarts}
+                        option={multiEmojiOption(
+                          responses,
+                          matchedCardTypeAndQuestions[question]?.mapping
+                        )}
+                      />
+                    )}
+                  </div>
+                )
+              );
+            })}
+          </Accordion>
+        );
+      })}
+    </div>
   );
 };
 
