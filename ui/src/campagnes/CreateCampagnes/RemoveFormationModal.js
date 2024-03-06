@@ -6,10 +6,14 @@ const RemoveFormationModal = ({
   selectedFormationsAction,
   setSelectedFormationsAction,
   setSelectedFormations,
+  setSearchedDiplayedFormations,
 }) => {
   const handleClickedRemoveFormation = () => {
     setSelectedFormations((prevValue) =>
       prevValue.filter((formationId) => !selectedFormationsAction.includes(formationId))
+    );
+    setSearchedDiplayedFormations((prevValue) =>
+      prevValue.filter((formation) => !selectedFormationsAction.includes(formation._id))
     );
     setSelectedFormationsAction([]);
 

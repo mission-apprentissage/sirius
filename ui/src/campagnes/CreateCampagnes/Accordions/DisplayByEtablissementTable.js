@@ -27,6 +27,7 @@ const modal = createModal({
 const DisplayByEtablissementTable = ({
   selectedFormations,
   setSelectedFormations,
+  setSearchedDiplayedFormations,
   selectedFormationsAction,
   setSelectedFormationsAction,
   formik,
@@ -172,6 +173,7 @@ const DisplayByEtablissementTable = ({
           selectedFormationsAction={selectedFormationsAction}
           setSelectedFormationsAction={setSelectedFormationsAction}
           setSelectedFormations={setSelectedFormations}
+          setSearchedDiplayedFormations={setSearchedDiplayedFormations}
         />
       </>
     );

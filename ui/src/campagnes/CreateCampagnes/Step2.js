@@ -54,6 +54,7 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
       return (
         <DisplayByDiplomeTypeTable
           selectedFormations={searchedDiplayedFormations}
+          setSearchedDiplayedFormations={setSearchedDiplayedFormations}
           setSelectedFormations={setSelectedFormations}
           selectedFormationsAction={selectedFormationsAction}
           setSelectedFormationsAction={setSelectedFormationsAction}
@@ -64,6 +65,7 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
       return (
         <DisplayByEtablissementTable
           selectedFormations={searchedDiplayedFormations}
+          setSearchedDiplayedFormations={setSearchedDiplayedFormations}
           setSelectedFormations={setSelectedFormations}
           selectedFormationsAction={selectedFormationsAction}
           setSelectedFormationsAction={setSelectedFormationsAction}
