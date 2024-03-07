@@ -87,6 +87,10 @@ export const numberRegex = /^\d+$/;
 
 export const campagnesDisplayMode = [
   {
+    label: "Toutes",
+    value: "all",
+  },
+  {
     label: "Niveau de diplôme",
     value: "diplome",
   },
