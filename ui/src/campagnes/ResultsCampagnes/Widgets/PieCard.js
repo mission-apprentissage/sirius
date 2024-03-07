@@ -16,9 +16,9 @@ const pieResponsesFormatting = (responses) =>
   }, []);
 
 const pieColorGetter = (length) => {
-  const colors = ["#6A6AEC", "#006A6F", "#C3FAD5", "#FCBFB7", "#E2E8F0"];
-  if (length === 3) return ["#6A6AEC", "#C3FAD5", "#E2E8F0"];
-  if (length === 2) return ["#6A6AEC", "#E2E8F0"];
+  const colors = ["#E2E8F0", "#FCBFB7", "#C3FAD5", "#006A6F", "#6A6AEC"];
+  if (length === 3) return ["#FCBFB7", "#C3FAD5", "#6A6AEC"];
+  if (length === 2) return ["#FCBFB7", "#6A6AEC"];
   return colors;
 };
 

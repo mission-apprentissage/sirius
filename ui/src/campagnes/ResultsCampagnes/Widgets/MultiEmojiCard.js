@@ -83,7 +83,7 @@ const multiEmojiOption = (responses) => {
           focus: "series",
         },
         data: zero,
-        color: "#6A6AEC",
+        color: "#FCBFB7",
       },
       {
         name: "🤔",
@@ -111,7 +111,7 @@ const multiEmojiOption = (responses) => {
           focus: "series",
         },
         data: two,
-        color: "#E2E8F0",
+        color: "#6A6AEC",
       },
     ],
   };
