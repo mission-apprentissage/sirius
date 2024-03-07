@@ -15,7 +15,7 @@ import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../../constants";
 const headers = [
   "",
   "Formation",
-  <HeaderItem key="debut">Nom d'usage</HeaderItem>,
+  <HeaderItem key="campagneName">Nom d'usage</HeaderItem>,
   <HeaderItem key="debut">
     <span className={fr.cx("fr-icon--sm fr-icon-calendar-event-fill")} aria-hidden={true} />
     Début

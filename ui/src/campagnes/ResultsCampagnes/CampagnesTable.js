@@ -15,7 +15,7 @@ import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../constants";
 const headers = [
   "",
   "Formation",
-  <HeaderItem key="debut">Nom d'usage</HeaderItem>,
+  <HeaderItem key="campagneName">Nom d'usage</HeaderItem>,
   <HeaderItem key="debut">
     <span className={fr.cx("fr-icon--sm fr-icon-calendar-event-fill")} aria-hidden={true} />
     Début
@@ -41,7 +41,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
 
     return [
       <Checkbox
-        key={campagne._id}
+        key={`${campagne._id}-id`}
         options={[
           {
             nativeInputProps: {
@@ -59,7 +59,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
         ]}
       />,
       <>
-        <FormationContainer key={campagne._id}>
+        <FormationContainer key={`${campagne._id}-formation`}>
           <p>
             <b>{formation.intitule_long}</b>
           </p>
@@ -114,7 +114,7 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
       formatDate(campagne.startDate),
       formatDate(campagne.endDate),
       campagne.seats === 0 ? "Illimité" : campagne.seats,
-      <TemoignagesCount key={campagne._id}>
+      <TemoignagesCount key={`${campagne._id}-temoignageCount`}>
         {campagne.seats > 0
           ? Math.round((campagne.temoignagesCount * 100) / campagne.seats) + "%"
           : campagne.temoignagesCount}
