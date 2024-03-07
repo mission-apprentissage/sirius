@@ -32,7 +32,7 @@ const getVerbatimsCount = (campagnes) => {
   return campagnes.reduce((acc, campagne) => acc + campagne.champsLibreCount, 0);
 };
 
-const Statistics = ({ campagnes }) => {
+const Statistics = ({ campagnes, title }) => {
   const campagnesCount = campagnes.length || 0;
   const finishedCampagnesCount = getFinishedCampagnes(campagnes).length;
   const temoignagesCount = getTemoignagesCount(campagnes);
@@ -50,7 +50,7 @@ const Statistics = ({ campagnes }) => {
       <Content>
         <h1>
           <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} />
-          Statistiques des campagnes sélectionnées
+          {title}
         </h1>
         <p>Vos statistiques sont mises à jour en temps réel</p>
         <div>

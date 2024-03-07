@@ -19,7 +19,7 @@ import SortButtons from "./Shared/SortButtons/SortButtons";
 import CampagnesTable from "./ResultsCampagnes/CampagnesTable";
 import { LoaderContainer, SearchNoResultsContainer } from "./styles/shared.style";
 import { USER_ROLES, campagnesDisplayMode, campagnesSortingOptions } from "../constants";
-import Statistics from "./ResultsCampagnes/Statistics/Statistics";
+import Statistics from "./Shared/Statistics/Statistics";
 import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
 import DisplayByEtablissementTable from "./ResultsCampagnes/Accordions/DisplayByEtablissementTable";
 import { isPlural, sortingKeys } from "./utils";
@@ -232,7 +232,10 @@ const ResultsCampagnesPage = () => {
           </SearchNoResultsContainer>
         ) : null}
       </ResultsCampagneContainer>
-      <Statistics campagnes={filteredDisplayedCampagnesBySelectedCampagnes} />
+      <Statistics
+        campagnes={filteredDisplayedCampagnesBySelectedCampagnes}
+        title="Statistiques des campagnes sélectionnées"
+      />
       <ResultsCampagneContainer>
         <TestimonialHeader>
           <h1>

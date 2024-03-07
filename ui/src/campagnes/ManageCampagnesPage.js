@@ -7,6 +7,7 @@ import Button from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import { UserContext } from "../context/UserContext";
+import Statistics from "./Shared/Statistics/Statistics";
 import DisplayByDiplomeType from "./ManageCampagne/Accordions/DisplayByDiplomeType";
 import DisplayByEtablissement from "./ManageCampagne/Accordions/DisplayByEtablissement";
 import SortButtons from "./Shared/SortButtons/SortButtons";
@@ -107,6 +108,7 @@ const ManageCampagnesPage = () => {
   return (
     <>
       <Container>
+        <Statistics campagnes={campagnes} title="Sirius & vous en quelques chiffres" />
         <ManageCampagneContainer>
           <div>
             <h1>
