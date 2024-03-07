@@ -115,7 +115,9 @@ const ActionButtons = ({
           <Button
             priority="secondary"
             iconId="fr-icon-quote-fill"
-            onClick={() => navigate("/campagnes/resultats")}
+            onClick={() =>
+              navigate(`/campagnes/resultats?campagneIds=${selectedCampagnes.join(",")}`)
+            }
             disabled={!selectedCampagnes.length}
           >
             Voir les résultats

@@ -65,9 +65,12 @@ const DisplayByDiplomeTypeTable = ({
                       selectedCampagnes.length > 0 &&
                       campagnesSelectedCountByDiplomeType === campagnesByDiplomeType.length,
                     onChange: (e) =>
-                      setSelectedCampagnes(
+                      setSelectedCampagnes((prevValues) =>
                         e.target.checked
-                          ? [...campagnesByDiplomeType.map((formation) => formation._id)]
+                          ? [
+                              ...prevValues,
+                              ...campagnesByDiplomeType.map((formation) => formation._id),
+                            ]
                           : []
                       ),
                   },

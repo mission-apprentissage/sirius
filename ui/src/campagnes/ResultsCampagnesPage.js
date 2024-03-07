@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
@@ -34,11 +35,15 @@ const ResultsCampagnesPage = () => {
   const [temoignages, setTemoignages] = useState([]);
   const [loadingTemoignages, setLoadingTemoignages] = useState(false);
   const [temoignagesError, setTemoignagesError] = useState(false);
-
+  const [searchParams] = useSearchParams();
   const [userContext] = useContext(UserContext);
   const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
   const [questionnaires, loadingQuestionnaires, errorQuestionnaires] =
     useGet(`/api/questionnaires/`);
+
+  const paramsCampagneIds = searchParams.has("campagneIds")
+    ? searchParams.get("campagneIds").split(",")
+    : [];
 
   const validatedQuestionnaire =
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
@@ -47,7 +52,11 @@ const ResultsCampagnesPage = () => {
     if (campagnes?.length) {
       setDisplayedCampagnes(campagnes);
       if (userContext.currentUserRole === USER_ROLES.ETABLISSEMENT) {
-        setSelectedCampagnes(campagnes.map((campagne) => campagne._id));
+        if (paramsCampagneIds.length) {
+          setSelectedCampagnes(paramsCampagneIds);
+        } else {
+          setSelectedCampagnes(campagnes.map((campagne) => campagne._id));
+        }
       }
     }
   }, [campagnes]);

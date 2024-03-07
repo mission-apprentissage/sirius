@@ -25,7 +25,7 @@ const DisplayByEtablissementTable = ({
 
   const orderedCampagnessByEtablissement = orderCampagnesByEtablissement(displayedCampagnes);
 
-  return uniqueEtablissementFromCampagnes.map((siret, index) => {
+  return uniqueEtablissementFromCampagnes.map((siret) => {
     const campagnesByEtablissement = orderedCampagnessByEtablissement[siret];
     const campagnesSelectedCountByEtablissement = selectedCampagnes.filter((id) =>
       campagnesByEtablissement.map((formation) => formation._id).includes(id)
@@ -112,9 +112,12 @@ const DisplayByEtablissementTable = ({
                       selectedCampagnes.length > 0 &&
                       campagnesSelectedCountByEtablissement === campagnesByEtablissement.length,
                     onChange: (e) =>
-                      setSelectedCampagnes(
+                      setSelectedCampagnes((prevValues) =>
                         e.target.checked
-                          ? [...campagnesByEtablissement.map((formation) => formation._id)]
+                          ? [
+                              ...prevValues,
+                              ...campagnesByEtablissement.map((formation) => formation._id),
+                            ]
                           : []
                       ),
                   },
