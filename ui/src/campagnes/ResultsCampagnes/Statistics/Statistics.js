@@ -17,13 +17,15 @@ const getTemoignagesCount = (campagnes) => {
 };
 
 const getChampsLibreRate = (campagnes) => {
-  const sum = campagnes.reduce((acc, campagne) => acc + campagne.champsLibreRate, 0);
-  return Math.round(sum / campagnes.length);
+  const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
+  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.champsLibreRate, 0);
+  return Math.round(sum / filteredCampagnes.length);
 };
 
 const getMedianDuration = (campagnes) => {
-  const sum = campagnes.reduce((acc, campagne) => acc + campagne.medianDurationInMs, 0);
-  return msToTime(Math.round(sum / campagnes.length));
+  const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
+  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.medianDurationInMs, 0);
+  return msToTime(Math.round(sum / filteredCampagnes.length));
 };
 
 const getVerbatimsCount = (campagnes) => {
