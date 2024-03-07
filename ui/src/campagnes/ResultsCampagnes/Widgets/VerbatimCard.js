@@ -17,9 +17,13 @@ const MasonryItem = ({ data: { content } }) => (
   </MasonryItemContainer>
 );
 
+const wantedTabOrder = ["GEM", "VALIDATED", "TO_FIX", "ALERT"];
+
 const VerbatimCard = ({ responses, title }) => {
   const [currentNumberSeen, setCurrentNumberSeen] = useState(10);
   const tabsLabel = [...new Set(responses.map((response) => response?.status))];
+
+  tabsLabel.sort((a, b) => wantedTabOrder.indexOf(a) - wantedTabOrder.indexOf(b));
 
   const tabs = tabsLabel.map((tab) => {
     const totalCount = responses.filter((response) => response.status === tab).length;
