@@ -6,12 +6,17 @@ const {
   getTemoignages,
   deleteTemoignage,
   updateTemoignage,
+  getBigTemoignages,
 } = require("../controllers/temoignages.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdmin } = require("../middlewares/isAdmin");
 
 const temoignages = () => {
   const router = express.Router();
+
+  router.post("/api/temoignages/getbig", verifyUser, (req, res, next) => {
+    getBigTemoignages(req, res, next);
+  });
 
   router.post("/api/temoignages/", validator(createTemoignageSchema), (req, res, next) => {
     createTemoignage(req, res, next);

@@ -32,36 +32,34 @@ const createTemoignage = async (temoignage) => {
   }
 };
 
-const getTemoignages = async (query) => {
+const getTemoignages = async (campagneIds) => {
   try {
+    const query = { campagneId: { $in: campagneIds } };
     const temoignages = await temoignagesDao.getAll(query);
-    const campagne = await campagnesDao.getOne(query.campagneId);
+    for (const temoignage of temoignages) {
+      const campagne = await campagnesDao.getOne(temoignage.campagneId);
 
-    if (!campagne) {
-      return { success: false, body: ErrorMessage.CampagneNotFoundError };
-    }
+      if (!campagne) {
+        return { success: false, body: ErrorMessage.CampagneNotFoundError };
+      }
+      const questionnaire = await questionnairesDao.getOne(campagne.questionnaireId);
 
-    const questionnaire = await questionnairesDao.getOne(campagne.questionnaireId);
+      if (!questionnaire) {
+        return { success: false, body: ErrorMessage.QuestionnaireNotFoundError };
+      }
+      const verbatimsFields = getChampsLibreField(questionnaire.questionnaireUI);
 
-    if (!questionnaire) {
-      return { success: false, body: ErrorMessage.QuestionnaireNotFoundError };
-    }
-
-    const verbatimsFields = getChampsLibreField(questionnaire.questionnaireUI);
-
-    temoignages.forEach((item) => {
-      const reponses = item.reponses;
       for (const key of verbatimsFields) {
         if (
-          reponses[key] &&
-          reponses[key].status !== VERBATIM_STATUS.VALIDATED &&
-          reponses[key].status !== VERBATIM_STATUS.TO_FIX &&
-          reponses[key].status !== VERBATIM_STATUS.GEM
+          temoignage.reponses[key] &&
+          temoignage.reponses[key].status !== VERBATIM_STATUS.VALIDATED &&
+          temoignage.reponses[key].status !== VERBATIM_STATUS.TO_FIX &&
+          temoignage.reponses[key].status !== VERBATIM_STATUS.GEM
         ) {
-          delete reponses[key];
+          delete temoignage.reponses[key];
         }
       }
-    });
+    }
 
     return { success: true, body: temoignages };
   } catch (error) {
