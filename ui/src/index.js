@@ -8,7 +8,6 @@ import App from "./App";
 import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
 import { UserProvider } from "./context/UserContext";
-import { EtablissementsProvider } from "./context/EtablissementsContext";
 import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
 
 startReactDsfr({ defaultColorScheme: "light", Link });
@@ -105,11 +104,9 @@ root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <UserProvider>
-        <EtablissementsProvider>
-          <Router>
-            <App />
-          </Router>
-        </EtablissementsProvider>
+        <Router>
+          <App />
+        </Router>
       </UserProvider>
     </ChakraProvider>
   </React.StrictMode>

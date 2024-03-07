@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
-import { fr } from "@codegouvfr/react-dsfr";
 
 export const AccordionLabelByDiplomeTypeContainer = styled.div`
   display: flex;
