@@ -17,7 +17,7 @@ import {
 } from "./styles/resultsCampagnes.style";
 import SortButtons from "./Shared/SortButtons/SortButtons";
 import CampagnesTable from "./ResultsCampagnes/CampagnesTable";
-import { LoaderContainer } from "./styles/shared.style";
+import { LoaderContainer, SearchNoResultsContainer } from "./styles/shared.style";
 import { USER_ROLES, campagnesDisplayMode, campagnesSortingOptions } from "../constants";
 import Statistics from "./ResultsCampagnes/Statistics/Statistics";
 import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
@@ -47,6 +47,22 @@ const ResultsCampagnesPage = () => {
 
   const validatedQuestionnaire =
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
+
+  useEffect(() => {
+    if (campagnes?.length && search === "") {
+      setDisplayedCampagnes(campagnes);
+    } else {
+      const filteredCampagnes = displayedCampagnes.filter((campagne) => {
+        return (
+          campagne.formation.data.intitule_long.toLowerCase().includes(search) ||
+          campagne.formation.data.localite.toLowerCase().includes(search) ||
+          campagne.formation.data.tags.join("-").toLowerCase().includes(search) ||
+          campagne.nomCampagne.toLowerCase().includes(search)
+        );
+      });
+      setDisplayedCampagnes(filteredCampagnes);
+    }
+  }, [search]);
 
   useEffect(() => {
     if (campagnes?.length) {
@@ -196,6 +212,12 @@ const ResultsCampagnesPage = () => {
               />
             </ButtonContainer>
           </>
+        ) : null}
+        {!displayedCampagnes?.length && search ? (
+          <SearchNoResultsContainer>
+            <h3>Aucun résultats pour votre recherche</h3>
+            <p onClick={() => setSearch("")}>Réinitialiser ?</p>
+          </SearchNoResultsContainer>
         ) : null}
       </ResultsCampagneContainer>
       <Statistics campagnes={filteredDisplayedCampagnesBySelectedCampagnes} />
