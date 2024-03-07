@@ -22,7 +22,7 @@ import { USER_ROLES, campagnesDisplayMode, campagnesSortingOptions } from "../co
 import Statistics from "./ResultsCampagnes/Statistics/Statistics";
 import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
 import DisplayByEtablissementTable from "./ResultsCampagnes/Accordions/DisplayByEtablissementTable";
-import { isPlural } from "./utils";
+import { isPlural, sortingKeys } from "./utils";
 import DisplayByDiplomeTypeTable from "./ResultsCampagnes/Accordions/DisplayByDiplomeTypeTable";
 
 const ResultsCampagnesPage = () => {
@@ -47,6 +47,18 @@ const ResultsCampagnesPage = () => {
 
   const validatedQuestionnaire =
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
+
+  useEffect(() => {
+    let sortedCampagnes = [...displayedCampagnes];
+    if (sortedCampagnes.length > 0) {
+      sortedCampagnes.sort((a, b) => {
+        return sortingKeys(a, b)[sortingMode]();
+      });
+    }
+    if (JSON.stringify(sortedCampagnes) !== JSON.stringify(displayedCampagnes)) {
+      setDisplayedCampagnes(sortedCampagnes);
+    }
+  }, [sortingMode, displayedCampagnes]);
 
   useEffect(() => {
     if (campagnes?.length && search === "") {
