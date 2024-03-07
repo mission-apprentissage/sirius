@@ -46,10 +46,11 @@ export const TestimonialHeader = styled.header`
   }
 `;
 
-export const VerbatimsContainer = styled.div`
-  padding: ${fr.spacing("6w")} 0;
+export const FullWidthContainer = styled.div`
+  padding: ${fr.spacing("4w")} 0;
+  margin-top: ${fr.spacing("6w")};
   border-top: 2px solid #e7e7e7;
-
+  width: 100%;
   & > p:first-of-type {
     font-size: 20px;
     line-height: 1.5;
@@ -64,4 +65,27 @@ export const MasonryItemContainer = styled.div`
   & > img {
     margin-bottom: ${fr.spacing("1w")};
   }
+`;
+
+export const HalfWidthContainer = styled.div`
+  width: 50%;
+  padding: ${fr.spacing("4w")};
+
+  & > div {
+    height: 300px;
+  }
+`;
+
+export const DataVizContainer = styled.section`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: ${fr.spacing("4w")};
 `;
