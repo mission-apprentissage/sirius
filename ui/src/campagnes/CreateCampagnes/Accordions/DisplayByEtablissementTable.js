@@ -71,6 +71,7 @@ const DisplayByEtablissementTable = ({
                     background="var(--background-default-grey)"
                     border="var(--border-default-grey)"
                     color="var(--text-default-grey)"
+                    placement="right"
                     content={
                       <ToolTipContainer>
                         Cet établissement est gestionnaire et rattaché à votre compte Sirius
@@ -84,6 +85,7 @@ const DisplayByEtablissementTable = ({
                     background="var(--background-default-grey)"
                     border="var(--border-default-grey)"
                     color="var(--text-default-grey)"
+                    placement="right"
                     content={
                       <ToolTipContainer>
                         Cet établissement est formateur et dispense des formations pour un

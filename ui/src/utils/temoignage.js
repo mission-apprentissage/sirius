@@ -1,5 +1,5 @@
-export const matchIdAndQuestions = (campagne, questionnaire) => {
-  if (!campagne || !questionnaire || !questionnaire.properties) {
+export const matchIdAndQuestions = (questionnaire) => {
+  if (!questionnaire || !questionnaire.properties) {
     return null;
   }
 
@@ -18,12 +18,11 @@ export const matchIdAndQuestions = (campagne, questionnaire) => {
   const flattenResult = results.reduce((acc, cur) => {
     return { ...acc, ...cur };
   }, {});
-
   return flattenResult;
 };
 
-export const matchCardTypeAndQuestions = (campagne, questionnaire, questionnaireUI) => {
-  if (!campagne || !questionnaire || !questionnaire.properties) {
+export const matchCardTypeAndQuestions = (questionnaire, questionnaireUI) => {
+  if (!questionnaire || !questionnaire.properties) {
     return null;
   }
   const questionnaireProperties = questionnaire.properties;

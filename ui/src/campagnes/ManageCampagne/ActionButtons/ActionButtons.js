@@ -76,6 +76,7 @@ const ActionButtons = ({
           background="var(--background-default-grey)"
           border="var(--border-default-grey)"
           color="var(--text-default-grey)"
+          placement="right"
           content={
             <ToolTipContainer>
               Générez un PDF à partir de votre sélection pour partager le questionnaire aux
@@ -104,6 +105,7 @@ const ActionButtons = ({
           background="var(--background-default-grey)"
           border="var(--border-default-grey)"
           color="var(--text-default-grey)"
+          placement="right"
           content={
             <ToolTipContainer>
               Consultez les témoignages recueillis pour la/les campagne(s) sélectionnée(s).
