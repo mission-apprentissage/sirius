@@ -23,7 +23,7 @@ const DisplayByDiplomeTypeTable = ({
 
   const orderedCampagnessByDiplomeType = orderCampagnesByDiplomeType(displayedCampagnes);
 
-  return uniqueDiplomeTypeFromCampagnes.map((diplomeType) => {
+  return uniqueDiplomeTypeFromCampagnes.map((diplomeType, index) => {
     const campagnesByDiplomeType = orderedCampagnessByDiplomeType[diplomeType];
     const campagnesSelectedCountByDiplomeType = selectedCampagnes.filter((id) =>
       campagnesByDiplomeType.map((formation) => formation._id).includes(id)
@@ -40,9 +40,8 @@ const DisplayByDiplomeTypeTable = ({
     );
 
     return (
-      <>
+      <div key={diplomeType}>
         <StyledAccordion
-          key={DIPLOME_TYPE_MATCHER[diplomeType]}
           label={
             <AccordionLabelByDiplomeTypeContainer>
               <h5>{DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}</h5>
@@ -85,7 +84,7 @@ const DisplayByDiplomeTypeTable = ({
             displayMode={displayMode}
           />
         </StyledAccordion>
-      </>
+      </div>
     );
   });
 };

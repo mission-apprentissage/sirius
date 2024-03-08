@@ -56,9 +56,8 @@ const DisplayByDiplomeTypeTable = ({
     );
 
     return (
-      <>
+      <div key={diplomeType}>
         <StyledAccordion
-          key={diplomeType}
           label={
             <>
               <AccordionLabelByDiplomeTypeContainer>
@@ -135,7 +134,7 @@ const DisplayByDiplomeTypeTable = ({
           setSelectedFormations={setSelectedFormations}
           setSearchedDiplayedFormations={setSearchedDiplayedFormations}
         />
-      </>
+      </div>
     );
   });
 };

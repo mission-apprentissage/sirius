@@ -59,9 +59,8 @@ const DisplayByEtablissementTable = ({
     );
 
     return (
-      <>
+      <div key={siret}>
         <StyledAccordion
-          key={siret}
           label={
             <AccordionLabelByEtablissementContainer>
               <div>
@@ -177,7 +176,7 @@ const DisplayByEtablissementTable = ({
           setSelectedFormations={setSelectedFormations}
           setSearchedDiplayedFormations={setSearchedDiplayedFormations}
         />
-      </>
+      </div>
     );
   });
 };

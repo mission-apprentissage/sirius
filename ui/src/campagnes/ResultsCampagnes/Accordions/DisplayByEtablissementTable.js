@@ -42,9 +42,8 @@ const DisplayByEtablissementTable = ({
     );
 
     return (
-      <>
+      <div key={siret}>
         <StyledAccordion
-          key={siret}
           label={
             <AccordionLabelByEtablissementContainer>
               <div>
@@ -132,7 +131,7 @@ const DisplayByEtablissementTable = ({
             displayMode={displayMode}
           />
         </StyledAccordion>
-      </>
+      </div>
     );
   });
 };
