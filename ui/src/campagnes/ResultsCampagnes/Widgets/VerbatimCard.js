@@ -4,9 +4,9 @@ import parse from "html-react-parser";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import Button from "@codegouvfr/react-dsfr/Button";
 import {
-  FullWidthContainer,
   MasonryItemContainer,
   ButtonContainer,
+  FullWidthVerbatimContainer,
 } from "../../styles/resultsCampagnes.style";
 import { VERBATIM_STATUS_LABELS } from "../../../constants";
 import Quote from "../../../assets/icons/quote.svg";
@@ -62,10 +62,10 @@ const VerbatimCard = ({ responses, title }) => {
   });
 
   return (
-    <FullWidthContainer>
+    <FullWidthVerbatimContainer>
       <p>{parse(title.replace(/<br \/>/gi, ""))}</p>
       <Tabs tabs={tabs} />
-    </FullWidthContainer>
+    </FullWidthVerbatimContainer>
   );
 };
 

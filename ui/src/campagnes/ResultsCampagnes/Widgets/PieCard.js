@@ -23,6 +23,9 @@ const pieColorGetter = (length) => {
 };
 
 const pieOption = (countedResponses) => ({
+  textStyle: {
+    fontFamily: "Marianne",
+  },
   tooltip: {
     trigger: "item",
     formatter: "{b} <br /> {c} ({d}%)",
@@ -63,11 +66,11 @@ const pieOption = (countedResponses) => ({
   ],
 });
 
-export const PieCard = ({ echarts, responses, title }) => {
+export const PieCard = ({ id, echarts, responses, title }) => {
   const option = pieResponsesFormatting(responses);
   if (!option.length) return null;
   return (
-    <HalfWidthContainer>
+    <HalfWidthContainer className={`exportCharts-${id}`}>
       <p>{parse(title.replace(/<br \/>/gi, ""))}</p>
       <div>
         <ReactEChartsCore

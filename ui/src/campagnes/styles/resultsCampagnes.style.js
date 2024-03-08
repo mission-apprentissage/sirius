@@ -47,10 +47,25 @@ export const TestimonialHeader = styled.header`
 `;
 
 export const FullWidthContainer = styled.div`
+  width: 100%;
+  padding: ${fr.spacing("4w")};
+
+  & > p:first-of-type {
+    font-size: 20px;
+    line-height: 1.5;
+  }
+
+  & > div {
+    height: 300px;
+  }
+`;
+
+export const FullWidthVerbatimContainer = styled.div`
   padding: ${fr.spacing("4w")} 0;
   margin-top: ${fr.spacing("6w")};
   border-top: 2px solid #e7e7e7;
   width: 100%;
+
   & > p:first-of-type {
     font-size: 20px;
     line-height: 1.5;
@@ -70,6 +85,11 @@ export const MasonryItemContainer = styled.div`
 export const HalfWidthContainer = styled.div`
   width: 50%;
   padding: ${fr.spacing("4w")};
+
+  & > p:first-of-type {
+    font-size: 20px;
+    line-height: 1.5;
+  }
 
   & > div {
     height: 300px;

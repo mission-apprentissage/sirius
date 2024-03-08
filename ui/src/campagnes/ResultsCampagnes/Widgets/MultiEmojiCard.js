@@ -117,15 +117,19 @@ const multiEmojiOption = (responses) => {
   };
 };
 
-const MultiEmojiCard = ({ echarts, responses, title, emojiMapping }) => {
+const MultiEmojiCard = ({ id, echarts, responses, title, emojiMapping }) => {
   const option = multiEmojiOption(responses, emojiMapping);
 
   if (!option.series.length) return null;
   return (
-    <FullWidthContainer>
+    <FullWidthContainer className={`exportCharts-${id}`}>
       <p>{parse(title.replace(/<br \/>/gi, ""))}</p>
       <div>
-        <ReactEChartsCore echarts={echarts} option={option} style={{ width: "100%" }} />
+        <ReactEChartsCore
+          echarts={echarts}
+          option={option}
+          style={{ height: "100%", width: "100%" }}
+        />
       </div>
     </FullWidthContainer>
   );

@@ -24,6 +24,7 @@ import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVi
 import DisplayByEtablissementTable from "./ResultsCampagnes/Accordions/DisplayByEtablissementTable";
 import { isPlural, sortingKeys } from "./utils";
 import DisplayByDiplomeTypeTable from "./ResultsCampagnes/Accordions/DisplayByDiplomeTypeTable";
+import { exportMultipleChartsToPdf } from "./pdfExport";
 
 const ResultsCampagnesPage = () => {
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
@@ -35,6 +36,8 @@ const ResultsCampagnesPage = () => {
   const [temoignages, setTemoignages] = useState([]);
   const [loadingTemoignages, setLoadingTemoignages] = useState(false);
   const [temoignagesError, setTemoignagesError] = useState(false);
+  const [pdfExportLoading, setPdfExportLoading] = useState(false);
+  const [expandedAccordion, setExpandedAccordion] = useState(null);
   const [searchParams] = useSearchParams();
   const [userContext] = useContext(UserContext);
   const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
@@ -246,8 +249,26 @@ const ResultsCampagnesPage = () => {
             <Button priority="secondary" iconId="fr-icon-file-download-fill">
               Exporter en XLS
             </Button>
-            <Button priority="secondary" iconId="fr-icon-file-download-fill">
-              Exporter en PDF
+            <Button
+              priority="secondary"
+              iconId="fr-icon-file-download-fill"
+              onClick={() =>
+                exportMultipleChartsToPdf(
+                  validatedQuestionnaire[0].questionnaire,
+                  setExpandedAccordion,
+                  setPdfExportLoading
+                )
+              }
+            >
+              {pdfExportLoading ? (
+                <BeatLoader
+                  color="var(--background-action-high-blue-france)"
+                  size={10}
+                  aria-label="Loading Spinner"
+                />
+              ) : (
+                "Exporter en PDF"
+              )}
             </Button>
           </div>
         </TestimonialHeader>
@@ -267,7 +288,7 @@ const ResultsCampagnesPage = () => {
             severity="error"
           />
         ) : null}
-        {filteredTemoignagesBySelectedCampagnes.length ? (
+        {filteredTemoignagesBySelectedCampagnes.length && !loadingTemoignages ? (
           <ResultsCampagnesVisualisation
             temoignages={filteredTemoignagesBySelectedCampagnes}
             questionnaire={
@@ -276,6 +297,7 @@ const ResultsCampagnesPage = () => {
             questionnaireUI={
               validatedQuestionnaire?.length && validatedQuestionnaire[0].questionnaireUI
             }
+            expandedAccordion={expandedAccordion}
           />
         ) : null}
       </ResultsCampagneContainer>

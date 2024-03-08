@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import { fr } from "@codegouvfr/react-dsfr";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import * as echarts from "echarts/core";
@@ -27,7 +28,12 @@ echarts.use([
   VisualMapComponent,
 ]);
 
-const ResultsCampagnesVisualisation = ({ temoignages, questionnaire, questionnaireUI }) => {
+const ResultsCampagnesVisualisation = ({
+  temoignages,
+  questionnaire,
+  questionnaireUI,
+  expandedAccordion,
+}) => {
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
   const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
 
@@ -51,6 +57,7 @@ const ResultsCampagnesVisualisation = ({ temoignages, questionnaire, questionnai
         return (
           <Accordion
             key={index}
+            expanded={expandedAccordion && expandedAccordion === category.id}
             label={
               <h6>
                 {category.emoji} {category.title}
@@ -71,6 +78,7 @@ const ResultsCampagnesVisualisation = ({ temoignages, questionnaire, questionnai
                     <React.Fragment key={question}>
                       {matchedCardTypeAndQuestions[question] === "text" && (
                         <VerbatimCard
+                          id={category.id}
                           responses={responses}
                           title={matchedIdAndQuestions[question]}
                         />
@@ -78,6 +86,7 @@ const ResultsCampagnesVisualisation = ({ temoignages, questionnaire, questionnai
                       {(matchedCardTypeAndQuestions[question] === "pie" ||
                         matchedCardTypeAndQuestions[question]?.type === "emoji") && (
                         <PieCard
+                          id={category.id}
                           echarts={echarts}
                           responses={responses}
                           title={matchedIdAndQuestions[question]}
@@ -85,6 +94,7 @@ const ResultsCampagnesVisualisation = ({ temoignages, questionnaire, questionnai
                       )}
                       {matchedCardTypeAndQuestions[question]?.type === "multiEmoji" && (
                         <MultiEmojiCard
+                          id={category.id}
                           echarts={echarts}
                           responses={responses}
                           title={matchedIdAndQuestions[question]}
