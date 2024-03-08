@@ -39,7 +39,13 @@ const VerbatimCard = ({ responses, title }) => {
       ),
       content: (
         <>
-          <Masonry items={content} render={MasonryItem} columnGutter={24} columnCount={5} />
+          <Masonry
+            key={`${VERBATIM_STATUS_LABELS[tab]}-${totalCount}`}
+            items={content}
+            render={MasonryItem}
+            columnGutter={24}
+            columnCount={5}
+          />
           <ButtonContainer>
             <Button
               iconId="fr-icon-add-line"
