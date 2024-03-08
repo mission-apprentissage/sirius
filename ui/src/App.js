@@ -28,6 +28,7 @@ import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
 import HomePage from "./home/HomePage";
 import StatisticsPage from "./statistics/StatisticsPage";
 import DsfrLayout from "./Components/DsfrLayout";
+import "./assets/fonts/fonts.css";
 
 function App() {
   const { setIsDark } = useIsDark();
