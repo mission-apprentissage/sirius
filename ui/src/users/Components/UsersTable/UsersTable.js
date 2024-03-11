@@ -14,15 +14,17 @@ import UsersTableSearch from "./UsersTableSearch";
 import UsersTableHead from "./UsersTableHead";
 import usersTableColumns from "./usersTableColumns";
 import AddSiretModal from "../AddSiretModal";
+import { useNavigate } from "react-router-dom";
 
 const UsersTable = ({ users, setRefetchData }) => {
-  const [userContext] = useContext(UserContext);
+  const [userContext, setUserContext] = useContext(UserContext);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
   const [sorting, setSorting] = useState([]);
   const [displayedUsers, setDisplayedUsers] = useState([]);
   const [search, setSearch] = useState([]);
+  const navigate = useNavigate();
   const { onCopy: onCopyClipBoard, setValue: setClipboardValue } = useClipboard("");
 
   useEffect(() => {
@@ -50,6 +52,7 @@ const UsersTable = ({ users, setRefetchData }) => {
   const table = useReactTable({
     columns: usersTableColumns(
       userContext,
+      setUserContext,
       setSelectedUser,
       setSelectedStatus,
       onOpenStatusConfirmation,
@@ -57,7 +60,8 @@ const UsersTable = ({ users, setRefetchData }) => {
       onOpenRoleConfirmation,
       setClipboardValue,
       onCopyClipBoard,
-      onOpenAddSiret
+      onOpenAddSiret,
+      navigate
     ),
     data: displayedUsers,
     getCoreRowModel: getCoreRowModel(),

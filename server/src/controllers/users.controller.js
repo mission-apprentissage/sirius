@@ -97,6 +97,16 @@ const loginUser = tryCatch(async (req, res) => {
   res.status(200).json({ success: true, token: body.token });
 });
 
+const sudo = tryCatch(async (req, res) => {
+  const { id } = req.params;
+  const { success, body } = await usersService.sudo(id);
+
+  if (!success) throw new BasicError();
+
+  res.cookie("refreshToken", body.refreshToken, COOKIE_OPTIONS);
+  res.status(200).json({ success: true, token: body.token });
+});
+
 const refreshTokenUser = tryCatch(async (req, res) => {
   const { signedCookies = {} } = req;
   const { refreshToken } = signedCookies;
@@ -335,4 +345,5 @@ module.exports = {
   confirmUser,
   supportUser,
   supportUserPublic,
+  sudo,
 };
