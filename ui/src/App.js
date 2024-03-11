@@ -28,6 +28,7 @@ import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
 import HomePage from "./home/HomePage";
 import StatisticsPage from "./statistics/StatisticsPage";
 import DsfrLayout from "./Components/DsfrLayout";
+import DiffusionGuidePage from "./guide/DiffusionGuidePage";
 import "./assets/fonts/fonts.css";
 
 function App() {
@@ -77,6 +78,7 @@ function App() {
         <Route exact path="/modification-mot-de-passe" element={<LoginPage />} />
         <Route exact path="/compte-desactive" element={<PendingAccountPage />} />
         <Route exact path="/cgu" element={<CguPage />} />
+        <Route exact path="/guide-diffusion" element={<DiffusionGuidePage />} />
         <Route
           exact
           path="/mentions-information-questionnaire"

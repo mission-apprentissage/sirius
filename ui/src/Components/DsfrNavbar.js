@@ -90,7 +90,7 @@ const DsfrNavbar = () => {
     {
       iconId: "fr-icon-information-fill",
       linkProps: {
-        to: `#`,
+        to: `/guide-diffusion`,
       },
       text: "Guide de diffusion",
     },

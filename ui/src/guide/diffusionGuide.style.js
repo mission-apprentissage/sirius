@@ -21,7 +21,7 @@ export const GoalContainer = styled.section`
   flex-direction: column;
   align-items: center;
   padding: 0 ${fr.spacing("12w")};
-  margin-bottom: ${fr.spacing("12w")};
+  margin-bottom: ${fr.spacing("6w")};
 
   ${fr.breakpoints.only("xs")} {
     padding: 0 ${fr.spacing("4w")};
@@ -80,20 +80,16 @@ export const CFAContainer = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 ${fr.spacing("12w")};
+  padding: 0 ${fr.spacing("12w")} ${fr.spacing("6w")} ${fr.spacing("12w")};
   background-color: var(--background-alt-blue-france);
 
   ${fr.breakpoints.only("xs")} {
     padding: 0 ${fr.spacing("4w")};
   }
 
-  & p {
-    margin-top: ${fr.spacing("8w")};
-  }
-
   & h2 {
     text-align: center;
-    margin-bottom: ${fr.spacing("8w")};
+    margin: ${fr.spacing("8w")} 0;
   }
 `;
 
@@ -144,35 +140,17 @@ export const StyledCard = styled(Card)`
   }
 `;
 
-export const CFAButtonContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin: ${fr.spacing("8w")} auto;
-
-  & button {
-    margin: 0 ${fr.spacing("2w")};
-  }
-
-  & button:first-of-type {
-    display: flex;
-
-    ${fr.breakpoints.down("md")} {
-      display: none;
-    }
-  }
-`;
-
-export const ExperimentationAndTestimonyContainer = styled.section`
+export const TestimonyContainer = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 ${fr.spacing("12w")};
+  padding: ${fr.spacing("4w")} ${fr.spacing("12w")};
   margin-top: ${fr.spacing("8w")};
   text-align: center;
+  background-color: var(--background-alt-blue-france);
 
   ${fr.breakpoints.only("xs")} {
-    padding: 0 ${fr.spacing("4w")};
+    padding: ${fr.spacing("4w")};
   }
 
   & h2 {
@@ -185,27 +163,6 @@ export const ExperimentationAndTestimonyContainer = styled.section`
 
   & > p {
     font-size: 14px;
-  }
-`;
-
-export const StatisticsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin: ${fr.spacing("4w")} auto;
-  flex-wrap: wrap;
-  width: 100%;
-
-  & div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    width: 50%;
-
-    ${fr.breakpoints.up("md")} {
-      width: 25%;
-    }
   }
 `;
 
@@ -262,22 +219,73 @@ export const ExpressedTestimonies = styled.div`
   }
 `;
 
-export const ScrollToTop = styled.div`
-  display: none;
+export const HowToContainer = styled.section`
+  display: flex;
+  flex-direction: column;
+  padding: 0 ${fr.spacing("12w")};
+  margin-top: ${fr.spacing("8w")};
 
   ${fr.breakpoints.down("md")} {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    text-decoration: underline;
-    margin: ${fr.spacing("6w")} auto;
-    color: var(--text-active-blue-france);
-    cursor: pointer;
+    padding: 0 ${fr.spacing("4w")};
+  }
 
-    & p {
-      margin: 0 ${fr.spacing("1w")};
+  & > h3 {
+    font-weight: 400;
+  }
+
+  & > button {
+    margin: ${fr.spacing("4w")} auto;
+  }
+`;
+
+export const StepContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: ${fr.spacing("2w")} 0;
+
+  ${fr.breakpoints.down("md")} {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  & span {
+    margin-right: ${fr.spacing("1w")};
+    font-size: 22px;
+
+    ${fr.breakpoints.down("md")} {
+      margin-right: 0;
+      margin-bottom: ${fr.spacing("1w")};
+    }
+  }
+
+  & p {
+    margin: 0;
+  }
+
+  & button {
+    cursor: default;
+  }
+`;
+
+export const SharePicturesContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: ${fr.spacing("4w")} auto;
+  padding: ${fr.spacing("4w")} ${fr.spacing("6w")};
+  text-align: center;
+  background-color: #f7fafc;
+  gap: ${fr.spacing("4w")};
+
+  ${fr.breakpoints.down("md")} {
+    flex-direction: column;
+  }
+
+  & div {
+    width: 33%;
+
+    ${fr.breakpoints.down("md")} {
+      width: 100%;
     }
   }
 `;
