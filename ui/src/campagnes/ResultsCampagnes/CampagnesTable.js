@@ -72,7 +72,8 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
             )}
           </div>
         </FormationContainer>
-        {displayMode === campagnesDisplayMode[0].value && (
+        {(displayMode === campagnesDisplayMode[0].value ||
+          displayMode === campagnesDisplayMode[2].value) && (
           <EtablissementLabelContainer>
             <Tooltip
               background="var(--background-default-grey)"
@@ -106,7 +107,8 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
             </Tooltip>
           </EtablissementLabelContainer>
         )}
-        {displayMode === campagnesDisplayMode[1].value && (
+        {(displayMode === campagnesDisplayMode[1].value ||
+          displayMode === campagnesDisplayMode[2].value) && (
           <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
         )}
       </>,
@@ -130,10 +132,12 @@ const CampagnesTable = ({
   displayMode,
 }) => {
   return (
-    <Table
-      headers={headers}
-      data={data(displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displayMode)}
-    />
+    <div id="campagnesTable" style={{ width: "100%", height: "100%" }}>
+      <Table
+        headers={headers}
+        data={data(displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displayMode)}
+      />
+    </div>
   );
 };
 
