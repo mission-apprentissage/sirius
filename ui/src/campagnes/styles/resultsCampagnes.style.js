@@ -49,6 +49,7 @@ export const TestimonialHeader = styled.header`
 export const FullWidthContainer = styled.div`
   width: 100%;
   padding: ${fr.spacing("4w")};
+  background-color: white;
 
   & > p:first-of-type {
     font-size: 20px;
@@ -85,6 +86,7 @@ export const MasonryItemContainer = styled.div`
 export const HalfWidthContainer = styled.div`
   width: 50%;
   padding: ${fr.spacing("4w")};
+  background-color: white;
 
   & > p:first-of-type {
     font-size: 20px;

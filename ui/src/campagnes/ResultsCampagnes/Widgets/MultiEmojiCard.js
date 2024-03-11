@@ -122,7 +122,7 @@ const MultiEmojiCard = ({ id, echarts, responses, title, emojiMapping }) => {
 
   if (!option.series.length) return null;
   return (
-    <FullWidthContainer className={`exportCharts-${id}`}>
+    <FullWidthContainer className={`exportCharts-${id} fullSize`}>
       <p>{parse(title.replace(/<br \/>/gi, ""))}</p>
       <div>
         <ReactEChartsCore

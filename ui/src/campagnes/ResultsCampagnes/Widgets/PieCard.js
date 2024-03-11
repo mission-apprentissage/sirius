@@ -70,7 +70,7 @@ export const PieCard = ({ id, echarts, responses, title }) => {
   const option = pieResponsesFormatting(responses);
   if (!option.length) return null;
   return (
-    <HalfWidthContainer className={`exportCharts-${id}`}>
+    <HalfWidthContainer className={`exportCharts-${id} halfSize`}>
       <p>{parse(title.replace(/<br \/>/gi, ""))}</p>
       <div>
         <ReactEChartsCore
