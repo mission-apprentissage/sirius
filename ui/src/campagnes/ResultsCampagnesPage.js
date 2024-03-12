@@ -288,6 +288,12 @@ const ResultsCampagnesPage = () => {
             severity="error"
           />
         ) : null}
+        {!temoignagesError && !temoignages.length && !loadingTemoignages ? (
+          <Alert
+            title="Vous n'avez pas encore recueilli de témoignages pour les campagnes sélectionnées"
+            severity="info"
+          />
+        ) : null}
         {filteredTemoignagesBySelectedCampagnes.length && !loadingTemoignages ? (
           <ResultsCampagnesVisualisation
             temoignages={filteredTemoignagesBySelectedCampagnes}
