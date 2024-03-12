@@ -17,6 +17,8 @@ const getCampagnes = async (isAdmin, userSiret) => {
   try {
     let campagnes = [];
 
+    const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
+
     if (isAdmin) {
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName();
     }
@@ -24,22 +26,23 @@ const getCampagnes = async (isAdmin, userSiret) => {
     for (const siret of userSiret) {
       let etablissementsSiret = [siret];
 
-      const etablissementNature = await referentiel.getEtablissementNature(siret);
+      const etablissementFromReferentiel = etablissementsFromReferentiel.find(
+        (etablissement) => etablissement.siret === siret
+      );
 
       const isGestionnaire =
-        etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE ||
-        etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
+        etablissementFromReferentiel.nature === ETABLISSEMENT_NATURE.GESTIONNAIRE ||
+        etablissementFromReferentiel.nature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
       const isFormateur =
-        etablissementNature === ETABLISSEMENT_NATURE.FORMATEUR ||
-        etablissementNature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
+        etablissementFromReferentiel.nature === ETABLISSEMENT_NATURE.FORMATEUR ||
+        etablissementFromReferentiel.nature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
 
       if (isGestionnaire) {
-        const etablissementFormateurSIRET = await referentiel.getEtablissementSIRETFromRelationType(
-          siret,
-          ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
-        );
+        const etablissementsFormateurSiret = etablissementFromReferentiel.relations
+          .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
+          .map((etablissementFormateur) => etablissementFormateur.siret);
 
-        etablissementsSiret.push(...etablissementFormateurSIRET);
+        etablissementsSiret.push(...etablissementsFormateurSiret);
 
         const fetchedCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({
           siret: etablissementsSiret,
@@ -47,11 +50,11 @@ const getCampagnes = async (isAdmin, userSiret) => {
 
         campagnes.push(fetchedCampagnes);
       } else if (isFormateur) {
-        const etablissementGestionnaireSiret = await referentiel.getEtablissementSIRETFromRelationType(
-          siret,
-          ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE
-        );
-        etablissementsSiret.push(...etablissementGestionnaireSiret);
+        const etablissementsGestionnaireSiret = etablissementFromReferentiel.relations
+          .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE)
+          .map((etablissementGestionnaire) => etablissementGestionnaire.siret);
+
+        etablissementsSiret.push(...etablissementsGestionnaireSiret);
 
         const allCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({
           siret: etablissementsSiret,

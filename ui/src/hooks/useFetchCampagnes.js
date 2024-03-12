@@ -12,7 +12,12 @@ const useFetchCampagnes = (shouldRefreshData) => {
     const fetchData = async () => {
       try {
         const response = await _get(`/api/campagnes`, userContext.token);
-        setData(response);
+
+        if (response.error) {
+          setError(response.error);
+        } else {
+          setData(response);
+        }
         setLoading(false);
       } catch (error) {
         setError(error);
