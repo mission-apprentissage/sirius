@@ -1,10 +1,8 @@
 const ObjectId = require("mongoose").mongo.ObjectId;
-
 const campagnesDao = require("../dao/campagnes.dao");
 const formationsDao = require("../dao/formations.dao");
 const etablissementsDao = require("../dao/etablissements.dao");
 const temoignagesDao = require("../dao/temoignages.dao");
-
 const { getChampsLibreRate, getChampsLibreCount } = require("../utils/verbatims.utils");
 const { getMedianDuration, appendDataWhenEmpty } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
@@ -16,75 +14,56 @@ const { getEtablissement } = require("../modules/catalogue");
 const getCampagnes = async (isAdmin, userSiret) => {
   try {
     let campagnes = [];
-
     const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
 
     if (isAdmin) {
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName();
-    }
+    } else {
+      let allSirets = [];
+      for (const siret of userSiret) {
+        const etablissement = etablissementsFromReferentiel.find((etablissement) => etablissement.siret === siret);
+        if (!etablissement) continue;
 
-    for (const siret of userSiret) {
-      let etablissementsSiret = [siret];
-
-      const etablissementFromReferentiel = etablissementsFromReferentiel.find(
-        (etablissement) => etablissement.siret === siret
-      );
-
-      const isGestionnaire =
-        etablissementFromReferentiel.nature === ETABLISSEMENT_NATURE.GESTIONNAIRE ||
-        etablissementFromReferentiel.nature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
-      const isFormateur =
-        etablissementFromReferentiel.nature === ETABLISSEMENT_NATURE.FORMATEUR ||
-        etablissementFromReferentiel.nature === ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR;
-
-      if (isGestionnaire) {
-        const etablissementsFormateurSiret = etablissementFromReferentiel.relations
-          .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
-          .map((etablissementFormateur) => etablissementFormateur.siret);
-
-        etablissementsSiret.push(...etablissementsFormateurSiret);
-
-        const fetchedCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({
-          siret: etablissementsSiret,
-        });
-
-        campagnes.push(fetchedCampagnes);
-      } else if (isFormateur) {
-        const etablissementsGestionnaireSiret = etablissementFromReferentiel.relations
-          .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE)
-          .map((etablissementGestionnaire) => etablissementGestionnaire.siret);
-
-        etablissementsSiret.push(...etablissementsGestionnaireSiret);
-
-        const allCampagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({
-          siret: etablissementsSiret,
-        });
-
-        const filteredCampagnes = allCampagnes.filter(
-          (campagne) => campagne.formation.data.etablissement_formateur_siret === siret
-        );
-        campagnes.push(filteredCampagnes);
+        let relatedSirets = [siret];
+        if (
+          [ETABLISSEMENT_NATURE.GESTIONNAIRE, ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR].includes(
+            etablissement.nature
+          )
+        ) {
+          relatedSirets.push(
+            ...etablissement.relations
+              .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
+              .map((etablissement) => etablissement.siret)
+          );
+        } else if (
+          [ETABLISSEMENT_NATURE.FORMATEUR, ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR].includes(etablissement.nature)
+        ) {
+          relatedSirets.push(
+            ...etablissement.relations
+              .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE)
+              .map((etablissement) => etablissement.siret)
+          );
+        }
+        allSirets.push(...relatedSirets);
       }
+
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: allSirets });
     }
 
-    const flattenCampagnesArray = campagnes.flat();
-
-    flattenCampagnesArray.forEach((campagne) => {
+    campagnes.map((campagne) => {
       campagne.champsLibreCount = getChampsLibreCount(campagne.questionnaireUI, campagne.temoignagesList);
-    });
-    flattenCampagnesArray.forEach((campagne) => {
       campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
+      campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
       delete campagne.questionnaireUI;
       delete campagne.questionnaire;
-    });
-    flattenCampagnesArray.forEach((campagne) => {
-      campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
       delete campagne.temoignagesList;
+      appendDataWhenEmpty(campagne);
     });
 
-    flattenCampagnesArray.forEach((campagne) => appendDataWhenEmpty(campagne));
-
-    return { success: true, body: flattenCampagnesArray };
+    return {
+      success: true,
+      body: campagnes,
+    };
   } catch (error) {
     return { success: false, body: error };
   }
