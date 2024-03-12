@@ -4,7 +4,6 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { formatDate, isPlural } from "../utils";
-import { buildEtablissementAddress } from "../../utils/etablissement";
 import {
   TemoignagesCount,
   EtablissementLabelContainer,
@@ -36,7 +35,6 @@ const headers = [
 
 const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displayMode) => {
   return displayedCampagnes.map((campagne) => {
-    const etablissement = campagne.etablissement.data;
     const formation = campagne.formation.data;
 
     return [
@@ -82,8 +80,10 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
               placement="right"
               content={
                 <ToolTipContainer>
-                  <p>{buildEtablissementAddress(etablissement)}</p>
-                  <p>N° Siret: {etablissement.siret}</p>
+                  <p>
+                    {formation.etablissement_formateur_adresse} {formation.localite}
+                  </p>
+                  <p>N° Siret: {formation.etablissement_formateur_adresse}</p>
                   {formation.etablissement_formateur_siret ===
                   formation.etablissement_gestionnaire_siret ? (
                     <p>

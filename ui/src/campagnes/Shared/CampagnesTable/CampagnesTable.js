@@ -7,7 +7,6 @@ import { simpleEditionSubmitHandler } from "../../submitHandlers";
 import CellInput from "../CellInput/CellInput";
 import CellInputSeats from "../CellInput/CellInputSeats";
 import { isPlural } from "../../utils";
-import { buildEtablissementAddress } from "../../../utils/etablissement";
 import { TemoignagesCount, EtablissementLabelContainer } from "./campagnesTable.style";
 import { HeaderItem, FormationContainer, ToolTipContainer } from "../../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../../constants";
@@ -42,7 +41,6 @@ const data = (
   displayMode
 ) => {
   return displayedCampagnes.map((campagne) => {
-    const etablissement = campagne.etablissement.data;
     const formation = campagne.formation.data;
 
     return [
@@ -87,8 +85,10 @@ const data = (
               placement="right"
               content={
                 <ToolTipContainer>
-                  <p>{buildEtablissementAddress(etablissement)}</p>
-                  <p>N° Siret: {etablissement.siret}</p>
+                  <p>
+                    {formation.etablissement_formateur_adresse} {formation.localite}
+                  </p>
+                  <p>N° Siret: {formation.etablissement_formateur_siret}</p>
                   {formation.etablissement_formateur_siret ===
                   formation.etablissement_gestionnaire_siret ? (
                     <p>
