@@ -35,14 +35,6 @@ const getCampagnes = async (isAdmin, userSiret) => {
               .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
               .map((etablissement) => etablissement.siret)
           );
-        } else if (
-          [ETABLISSEMENT_NATURE.FORMATEUR, ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR].includes(etablissement.nature)
-        ) {
-          relatedSirets.push(
-            ...etablissement.relations
-              .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE)
-              .map((etablissement) => etablissement.siret)
-          );
         }
         allSirets.push(...relatedSirets);
       }
