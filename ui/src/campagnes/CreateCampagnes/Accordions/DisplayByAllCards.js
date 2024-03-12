@@ -18,7 +18,7 @@ const DisplayByAllCards = ({
   displayedFormations,
   selectedFormations,
   setSelectedFormations,
-  existingFormationCatalogueIds,
+  existingFormationIdsFromCampagnes,
 }) => {
   const formationSelectedCount = selectedFormations.length;
 
@@ -49,7 +49,8 @@ const DisplayByAllCards = ({
                         ...prevValues,
                         ...displayedFormations
                           .filter(
-                            (formation) => !existingFormationCatalogueIds.includes(formation._id)
+                            (formation) =>
+                              !existingFormationIdsFromCampagnes.includes(formation._id)
                           )
                           .map((formation) => formation._id),
                       ]),
@@ -65,7 +66,7 @@ const DisplayByAllCards = ({
       />
       <FormationCardContainer>
         {displayedFormations.map((formation) => {
-          const isAlreadyCreated = existingFormationCatalogueIds?.includes(formation._id);
+          const isAlreadyCreated = existingFormationIdsFromCampagnes?.includes(formation._id);
           return (
             <FormationCardByDiplomeType
               key={formation._id}

@@ -31,7 +31,7 @@ const AccordionComponentGetter = ({ displayMode, ...props }) => {
 const Step1 = ({
   isLoading,
   hasError,
-  localFormations,
+  existingFormationIdsFromCampagnes,
   remoteFormations,
   displayedFormations,
   setDisplayedFormations,
@@ -58,8 +58,6 @@ const Step1 = ({
       setDisplayedFormations(filteredFormations);
     }
   }, [search]);
-
-  const existingFormationCatalogueIds = localFormations?.map((formation) => formation.data._id);
 
   return (
     <StepContainer>
@@ -99,7 +97,7 @@ const Step1 = ({
           displayedFormations={displayedFormations}
           selectedFormations={selectedFormations}
           setSelectedFormations={setSelectedFormations}
-          existingFormationCatalogueIds={existingFormationCatalogueIds}
+          existingFormationIdsFromCampagnes={existingFormationIdsFromCampagnes}
         />
       ) : null}
     </StepContainer>
