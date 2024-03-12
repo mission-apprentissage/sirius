@@ -1,3 +1,4 @@
+import { fr } from "@codegouvfr/react-dsfr";
 import styled from "@emotion/styled";
 
 export const EtablissementLabelContainer = styled.div`
@@ -15,4 +16,13 @@ export const EtablissementLabelContainer = styled.div`
 export const TemoignagesCount = styled.p`
   text-align: center;
   color: var(--text-disabled-grey);
+`;
+
+export const TableContainer = styled.div`
+  & > .fr-table {
+    margin-bottom: 0;
+  }
+  & > .fr-table > table {
+    padding-bottom: ${fr.spacing("3w")};
+  }
 `;

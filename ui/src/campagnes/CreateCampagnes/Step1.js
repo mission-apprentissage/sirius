@@ -8,6 +8,25 @@ import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCard
 import { campagnesDisplayMode } from "../../constants";
 import { StepContainer } from "../styles/createCampagnes.style";
 import { SearchNoResultsContainer, LoaderContainer } from "../styles/shared.style";
+import DisplayByAllCards from "./Accordions/DisplayByAllCards";
+
+const AccordionComponentGetter = ({ displayMode, ...props }) => {
+  if (displayMode === campagnesDisplayMode[0].value) {
+    return (
+      <div className={fr.cx("fr-accordions-group")}>
+        <DisplayByDiplomeTypeCards {...props} />
+      </div>
+    );
+  } else if (displayMode === campagnesDisplayMode[1].value) {
+    return (
+      <div className={fr.cx("fr-accordions-group")}>
+        <DisplayByEtablissementCards {...props} />
+      </div>
+    );
+  } else if (displayMode === campagnesDisplayMode[2].value) {
+    return <DisplayByAllCards {...props} />;
+  }
+};
 
 const Step1 = ({
   isLoading,
@@ -42,28 +61,6 @@ const Step1 = ({
 
   const existingFormationCatalogueIds = localFormations?.map((formation) => formation.data._id);
 
-  const accordionComponentGetter = () => {
-    if (displayMode === campagnesDisplayMode[0].value) {
-      return (
-        <DisplayByDiplomeTypeCards
-          displayedFormations={displayedFormations}
-          selectedFormations={selectedFormations}
-          setSelectedFormations={setSelectedFormations}
-          existingFormationCatalogueIds={existingFormationCatalogueIds}
-        />
-      );
-    } else if (displayMode === campagnesDisplayMode[1].value) {
-      return (
-        <DisplayByEtablissementCards
-          displayedFormations={displayedFormations}
-          selectedFormations={selectedFormations}
-          setSelectedFormations={setSelectedFormations}
-          existingFormationCatalogueIds={existingFormationCatalogueIds}
-        />
-      );
-    }
-  };
-
   return (
     <StepContainer>
       <SortButtons
@@ -97,7 +94,13 @@ const Step1 = ({
         </SearchNoResultsContainer>
       ) : null}
       {displayedFormations?.length && !isLoading && !hasError ? (
-        <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
+        <AccordionComponentGetter
+          displayMode={displayMode}
+          displayedFormations={displayedFormations}
+          selectedFormations={selectedFormations}
+          setSelectedFormations={setSelectedFormations}
+          existingFormationCatalogueIds={existingFormationCatalogueIds}
+        />
       ) : null}
     </StepContainer>
   );

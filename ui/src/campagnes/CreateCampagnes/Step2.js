@@ -7,6 +7,25 @@ import { orderFormationsByDiplomeType } from "../utils";
 import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
 import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
 import { SearchNoResultsContainer } from "../styles/shared.style";
+import DisplayByAllTable from "./Accordions/DisplayByAllTable";
+
+const AccordionComponentGetter = ({ displayMode, ...props }) => {
+  if (displayMode === campagnesDisplayMode[0].value) {
+    return (
+      <div className={fr.cx("fr-accordions-group")}>
+        <DisplayByDiplomeTypeTable {...props} />
+      </div>
+    );
+  } else if (displayMode === campagnesDisplayMode[1].value) {
+    return (
+      <div className={fr.cx("fr-accordions-group")}>
+        <DisplayByEtablissementTable {...props} />
+      </div>
+    );
+  } else if (displayMode === campagnesDisplayMode[2].value) {
+    return <DisplayByAllTable {...props} />;
+  }
+};
 
 const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
   const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
@@ -49,32 +68,6 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
     }
   }
 
-  const accordionComponentGetter = () => {
-    if (displayMode === campagnesDisplayMode[0].value) {
-      return (
-        <DisplayByDiplomeTypeTable
-          selectedFormations={searchedDiplayedFormations}
-          setSearchedDiplayedFormations={setSearchedDiplayedFormations}
-          setSelectedFormations={setSelectedFormations}
-          selectedFormationsAction={selectedFormationsAction}
-          setSelectedFormationsAction={setSelectedFormationsAction}
-          formik={formik}
-        />
-      );
-    } else if (displayMode === campagnesDisplayMode[1].value) {
-      return (
-        <DisplayByEtablissementTable
-          selectedFormations={searchedDiplayedFormations}
-          setSearchedDiplayedFormations={setSearchedDiplayedFormations}
-          setSelectedFormations={setSelectedFormations}
-          selectedFormationsAction={selectedFormationsAction}
-          setSelectedFormationsAction={setSelectedFormationsAction}
-          formik={formik}
-        />
-      );
-    }
-  };
-
   return (
     <StepContainer>
       <SortButtons
@@ -94,7 +87,15 @@ const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
         </SearchNoResultsContainer>
       ) : null}
       {searchedDiplayedFormations?.length ? (
-        <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
+        <AccordionComponentGetter
+          displayMode={displayMode}
+          selectedFormations={searchedDiplayedFormations}
+          setSearchedDiplayedFormations={setSearchedDiplayedFormations}
+          setSelectedFormations={setSelectedFormations}
+          selectedFormationsAction={selectedFormationsAction}
+          setSelectedFormationsAction={setSelectedFormationsAction}
+          formik={formik}
+        />
       ) : null}
     </StepContainer>
   );

@@ -7,7 +7,11 @@ import { simpleEditionSubmitHandler } from "../../submitHandlers";
 import CellInput from "../CellInput/CellInput";
 import CellInputSeats from "../CellInput/CellInputSeats";
 import { isPlural } from "../../utils";
-import { TemoignagesCount, EtablissementLabelContainer } from "./campagnesTable.style";
+import {
+  TemoignagesCount,
+  EtablissementLabelContainer,
+  TableContainer,
+} from "./campagnesTable.style";
 import { HeaderItem, FormationContainer, ToolTipContainer } from "../../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../../constants";
 
@@ -76,7 +80,8 @@ const data = (
             )}
           </div>
         </FormationContainer>
-        {displayMode === campagnesDisplayMode[0].value && (
+        {(displayMode === campagnesDisplayMode[0].value ||
+          displayMode === campagnesDisplayMode[2].value) && (
           <EtablissementLabelContainer>
             <Tooltip
               background="var(--background-default-grey)"
@@ -112,7 +117,8 @@ const data = (
             </Tooltip>
           </EtablissementLabelContainer>
         )}
-        {displayMode === campagnesDisplayMode[1].value && (
+        {(displayMode === campagnesDisplayMode[1].value ||
+          displayMode === campagnesDisplayMode[2].value) && (
           <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
         )}
       </>,
@@ -169,16 +175,18 @@ const CampagnesTable = ({
   };
 
   return (
-    <Table
-      headers={headers}
-      data={data(
-        displayedCampagnes,
-        selectedCampagnes,
-        setSelectedCampagnes,
-        handleCellUpdate,
-        displayMode
-      )}
-    />
+    <TableContainer>
+      <Table
+        headers={headers}
+        data={data(
+          displayedCampagnes,
+          selectedCampagnes,
+          setSelectedCampagnes,
+          handleCellUpdate,
+          displayMode
+        )}
+      />
+    </TableContainer>
   );
 };
 
