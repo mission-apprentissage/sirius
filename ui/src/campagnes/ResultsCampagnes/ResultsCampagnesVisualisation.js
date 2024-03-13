@@ -108,6 +108,7 @@ const ResultsCampagnesVisualisation = ({
                           id={category.id}
                           echarts={echarts}
                           responses={responses}
+                          emojiMapping={matchedCardTypeAndQuestions[question].mapping}
                           title={matchedIdAndQuestions[question]}
                         />
                       )}

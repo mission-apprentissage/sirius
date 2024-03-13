@@ -19,7 +19,7 @@ const barResponsesFormatting = (responses) => {
   }, []);
 };
 
-const multiEmojiOption = (responses) => {
+const multiEmojiOption = (responses, emojiMapping) => {
   const zero = barResponsesFormatting(responses).map((response) => {
     return response.value.filter((value) => value === "Pas vraiment" || value === "Pas ok").length;
   });
@@ -52,7 +52,7 @@ const multiEmojiOption = (responses) => {
     },
     legend: {
       textStyle: {
-        fontSize: "36px",
+        fontSize: "18px",
       },
     },
     grid: {
@@ -72,7 +72,7 @@ const multiEmojiOption = (responses) => {
     },
     series: [
       {
-        name: "😫",
+        name: `😫 ${emojiMapping[0].value}`,
         type: "bar",
         stack: "total",
         label: {
@@ -86,7 +86,7 @@ const multiEmojiOption = (responses) => {
         color: "#FCBFB7",
       },
       {
-        name: "🤔",
+        name: `🤔 ${emojiMapping[1].value}`,
         type: "bar",
         stack: "total",
         label: {
@@ -100,7 +100,7 @@ const multiEmojiOption = (responses) => {
         color: "#C3FAD5",
       },
       {
-        name: "😝",
+        name: `😝 ${emojiMapping[2].value}`,
         type: "bar",
         stack: "total",
         label: {
