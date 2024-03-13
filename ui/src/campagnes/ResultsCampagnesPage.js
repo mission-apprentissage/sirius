@@ -246,9 +246,9 @@ const ResultsCampagnesPage = () => {
             Témoignages des campagnes sélectionnées
           </h1>
           <div>
-            <Button priority="secondary" iconId="fr-icon-file-download-fill">
+            {/*<Button priority="secondary" iconId="fr-icon-file-download-fill">
               Exporter en XLS
-            </Button>
+        </Button>*/}
             <Button
               priority="secondary"
               iconId="fr-icon-file-download-fill"
