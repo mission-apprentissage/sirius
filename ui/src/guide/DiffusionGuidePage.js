@@ -1,7 +1,7 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { fr } from "@codegouvfr/react-dsfr";
+import ReactPlayer from "react-player/file";
 import {
   Container,
   GoalContainer,
@@ -12,8 +12,6 @@ import {
   QuotesContainer,
   ExpressedTestimonies,
   HowToContainer,
-  StepContainer,
-  SharePicturesContainer,
 } from "./diffusionGuide.style";
 import LogoWithoutText from "../assets/images/logo_without_text.svg";
 import IlluQuestionnaire from "../assets/images/illu_questionnaire.svg";
@@ -21,13 +19,12 @@ import IlluPlateforme from "../assets/images/illu_plateforme.svg";
 import IlluDonnees from "../assets/images/illu_donnees.svg";
 import IlluExpo from "../assets/images/illu_expo.svg";
 import IlluCFA from "../assets/images/illu_cfa.svg";
-import Share1 from "../assets/images/share_1.png";
-import Share2 from "../assets/images/share_2.png";
-import Share3 from "../assets/images/share_3.png";
-import Button from "@codegouvfr/react-dsfr/Button";
+import sampleVideo from "../assets/videos/sample.mp4";
+import sample2Video from "../assets/videos/sample2.mp4";
 
 const DiffusionGuidePage = () => {
-  const navigate = useNavigate();
+  const [video, setVideo] = useState("questionnaire");
+
   return (
     <Container>
       <h2>
@@ -65,6 +62,7 @@ const DiffusionGuidePage = () => {
             desc="💬 Recueillez des témoignages qui reflètent leurs expériences vécues"
             size="small"
             titleAs="h6"
+            onMouseEnter={() => setVideo("questionnaire")}
           />
           <StyledCard
             imageComponent={<img src={IlluPlateforme} alt="" />}
@@ -73,6 +71,7 @@ const DiffusionGuidePage = () => {
             desc="🤳🏼 Paramètrez et partagez vos campagnes de diffusion"
             size="small"
             titleAs="h6"
+            onMouseEnter={() => setVideo("plateforme")}
           />
           <StyledCard
             imageComponent={<img src={IlluDonnees} alt="" />}
@@ -81,6 +80,7 @@ const DiffusionGuidePage = () => {
             desc="⏳ Bientôt, une visualisation poussée et des modules de réutilisation des témoignages"
             size="small"
             titleAs="h6"
+            onMouseEnter={() => setVideo("plateforme2")}
           />
           <StyledCard
             imageComponent={<img src={IlluExpo} alt="" />}
@@ -89,63 +89,35 @@ const DiffusionGuidePage = () => {
             desc="↪ L’exposition des témoignages est en prototypage sur : La bonne alternance, ..."
             size="small"
             titleAs="h6"
+            onMouseEnter={() => setVideo("miseEnAvant")}
           />
         </CardContainer>
       </CFAContainer>
       <HowToContainer>
-        <h3>
-          <b>FOCUS :</b> Une plateforme pour organiser la diffusion du questionnaire
-        </h3>
-        <StepContainer>
-          <span>①</span>
-          <p>
-            Pour commencer, sélectionnez les formations auxquelles vous souhaitez faire passer le
-            questionnaire Sirius. Pour cela, rendez-vous sur la page <u>Créer des campagnes</u>
-          </p>
-        </StepContainer>
-        <StepContainer>
-          <span>②</span>
-          <p>
-            Retrouvez-les dans votre tableau sur la page <u>Diffuser mes campagnes</u>
-          </p>
-        </StepContainer>
-        <StepContainer>
-          <span>③</span>
-          <p>Sélectionnez celles que vous voulez diffuser à vos apprenti·es</p>
-        </StepContainer>
-        <StepContainer>
-          <span>④</span>
-          <Button iconId="fr-icon-file-download-line">Partager</Button>
-        </StepContainer>
-        <StepContainer>
-          <span>⑤</span>
-          <p>
-            Nous générons un PDF à partir de votre sélection pour vous aider à gérer la diffusion :
-          </p>
-        </StepContainer>
-        <SharePicturesContainer>
-          <div>
-            <p>
-              <b>Un sommaire</b> (pour vous)
-            </p>
-            <img src={Share1} alt="" />
-          </div>
-          <div>
-            <p>
-              <b>Sirius c'est quoi ?</b> (pour eux)
-            </p>
-            <img src={Share2} alt="" />
-          </div>
-          <div>
-            <p>
-              <b>Le pas à pas et son QR code</b> (pour eux)
-            </p>
-            <img src={Share3} alt="" />
-          </div>
-        </SharePicturesContainer>
-        <Button iconId="fr-icon-add-line" onClick={() => navigate("/campagnes/ajout")}>
-          Créer des campagnes
-        </Button>
+        {video === "questionnaire" && (
+          <>
+            <h5>FOCUS: Un questionnaire anonyme pour interroger vos apprenti·es</h5>
+            <ReactPlayer url={sampleVideo} controls={true} attributes />
+          </>
+        )}
+        {video === "plateforme" && (
+          <>
+            <h5>FOCUS: Une plateforme pour organiser la diffusion du questionnaire</h5>
+            <ReactPlayer url={sample2Video} controls={true} attributes />
+          </>
+        )}
+        {video === "plateforme2" && (
+          <>
+            <h5>FOCUS: Une consultation des témoignages recueillis pour chacune des formations</h5>
+            <ReactPlayer url={sampleVideo} controls={true} attributes />
+          </>
+        )}
+        {video === "miseEnAvant" && (
+          <>
+            <h5>FOCUS: Une mise en avant de vos formations auprès des collégien·nes</h5>
+            <ReactPlayer url={sample2Video} controls={true} attributes />
+          </>
+        )}
       </HowToContainer>
       <TestimonyContainer>
         <h2>

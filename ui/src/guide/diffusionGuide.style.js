@@ -145,7 +145,6 @@ export const TestimonyContainer = styled.section`
   flex-direction: column;
   align-items: center;
   padding: ${fr.spacing("4w")} ${fr.spacing("12w")};
-  margin-top: ${fr.spacing("8w")};
   text-align: center;
   background-color: var(--background-alt-blue-france);
 
@@ -222,19 +221,13 @@ export const ExpressedTestimonies = styled.div`
 export const HowToContainer = styled.section`
   display: flex;
   flex-direction: column;
-  padding: 0 ${fr.spacing("12w")};
-  margin-top: ${fr.spacing("8w")};
+  justify-content: center;
+  align-items: center;
+  padding: ${fr.spacing("6w")};
+  width: 100%;
 
-  ${fr.breakpoints.down("md")} {
-    padding: 0 ${fr.spacing("4w")};
-  }
-
-  & > h3 {
-    font-weight: 400;
-  }
-
-  & > button {
-    margin: ${fr.spacing("4w")} auto;
+  & video {
+    cursor: pointer !important;
   }
 `;
 
