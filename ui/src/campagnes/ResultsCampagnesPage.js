@@ -38,6 +38,7 @@ const ResultsCampagnesPage = () => {
   const [temoignagesError, setTemoignagesError] = useState(false);
   const [pdfExportLoading, setPdfExportLoading] = useState(false);
   const [expandedAccordion, setExpandedAccordion] = useState(null);
+  const [neededQuestionnaires, setNeededQuestionnaires] = useState([]);
   const [searchParams] = useSearchParams();
   const [userContext] = useContext(UserContext);
   const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
@@ -48,8 +49,23 @@ const ResultsCampagnesPage = () => {
     ? searchParams.get("campagneIds").split(",")
     : [];
 
-  const validatedQuestionnaire =
-    questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
+  useEffect(() => {
+    if (displayedCampagnes.length && selectedCampagnes.length) {
+      const neededQuestionnaireIds = [
+        ...new Set(
+          displayedCampagnes
+            .filter((campagne) => selectedCampagnes.includes(campagne._id))
+            .map((campagne) => campagne.questionnaireId)
+        ),
+      ];
+
+      const filteredQuestionnaires = questionnaires.filter((questionnaire) =>
+        neededQuestionnaireIds.includes(questionnaire._id)
+      );
+
+      setNeededQuestionnaires(filteredQuestionnaires);
+    }
+  }, [selectedCampagnes]);
 
   useEffect(() => {
     let sortedCampagnes = [...displayedCampagnes];
@@ -254,7 +270,7 @@ const ResultsCampagnesPage = () => {
               iconId="fr-icon-file-download-fill"
               onClick={() =>
                 exportMultipleChartsToPdf(
-                  validatedQuestionnaire[0].questionnaire,
+                  neededQuestionnaires.questionnaire,
                   setExpandedAccordion,
                   setPdfExportLoading
                 )
@@ -294,15 +310,13 @@ const ResultsCampagnesPage = () => {
             severity="info"
           />
         ) : null}
-        {filteredTemoignagesBySelectedCampagnes.length && !loadingTemoignages ? (
+        {filteredTemoignagesBySelectedCampagnes.length &&
+        neededQuestionnaires.length &&
+        !loadingTemoignages ? (
           <ResultsCampagnesVisualisation
             temoignages={filteredTemoignagesBySelectedCampagnes}
-            questionnaire={
-              validatedQuestionnaire?.length && validatedQuestionnaire[0].questionnaire
-            }
-            questionnaireUI={
-              validatedQuestionnaire?.length && validatedQuestionnaire[0].questionnaireUI
-            }
+            questionnaire={neededQuestionnaires[0].questionnaire}
+            questionnaireUI={neededQuestionnaires[0].questionnaireUI}
             expandedAccordion={expandedAccordion}
             setExpandedAccordion={setExpandedAccordion}
           />

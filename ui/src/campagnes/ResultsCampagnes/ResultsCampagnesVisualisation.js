@@ -17,6 +17,7 @@ import PieCard from "./Widgets/PieCard";
 import VerbatimCard from "./Widgets/VerbatimCard";
 import MultiEmojiCard from "./Widgets/MultiEmojiCard";
 import { DataVizContainer } from "../styles/resultsCampagnes.style";
+import BarCard from "./Widgets/BarCard";
 
 echarts.use([
   TooltipComponent,
@@ -88,6 +89,14 @@ const ResultsCampagnesVisualisation = ({
                       {(matchedCardTypeAndQuestions[question] === "pie" ||
                         matchedCardTypeAndQuestions[question]?.type === "emoji") && (
                         <PieCard
+                          id={category.id}
+                          echarts={echarts}
+                          responses={responses}
+                          title={matchedIdAndQuestions[question]}
+                        />
+                      )}
+                      {matchedCardTypeAndQuestions[question] === "bar" && (
+                        <BarCard
                           id={category.id}
                           echarts={echarts}
                           responses={responses}
