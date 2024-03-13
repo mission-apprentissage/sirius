@@ -85,7 +85,7 @@ const DisplayByAllTable = ({
               setSelectedFormationsAction([]);
             }}
           />
-          Choisir date de fin commune
+          Choisir une date de fin commune
         </Button>
       </ButtonContainer>
       <CreateCampagneTable
