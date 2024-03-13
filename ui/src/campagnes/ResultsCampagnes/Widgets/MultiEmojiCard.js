@@ -53,6 +53,7 @@ const multiEmojiOption = (responses, emojiMapping) => {
     legend: {
       textStyle: {
         fontSize: "18px",
+        fontFamily: "Marianne",
       },
     },
     grid: {

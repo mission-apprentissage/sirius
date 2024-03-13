@@ -50,6 +50,7 @@ const barOption = (responses) => {
     legend: {
       textStyle: {
         fontSize: "36px",
+        fontFamily: "Marianne",
       },
     },
     grid: {
