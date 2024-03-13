@@ -20,6 +20,8 @@ const MasonryItem = ({ data: { content } }) => (
 const wantedTabOrder = ["GEM", "VALIDATED", "TO_FIX", "ALERT"];
 
 const VerbatimCard = ({ responses, title }) => {
+  if (!responses?.length) return null;
+
   const [currentNumberSeen, setCurrentNumberSeen] = useState(10);
   const tabsLabel = [...new Set(responses.map((response) => response?.status))];
 

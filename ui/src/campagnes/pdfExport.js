@@ -23,11 +23,11 @@ export const exportMultipleChartsToPdf = async (
   setExpandedAccordion,
   setPdfExportLoading
 ) => {
+  setPdfExportLoading(true);
+
   await wait(500);
   setExpandedAccordion(null);
   await wait(500);
-
-  setPdfExportLoading(true);
 
   const categories = getCategoriesWithEmojis(questionnaire);
   const doc = new jsPDF("p", "px", "a4");
