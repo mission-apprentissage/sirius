@@ -50,6 +50,7 @@ export const exportMultipleChartsToPdf = async (
     }
   }
 
+  await setExpandedAccordion(null);
   doc.save(`charts.pdf`);
   setPdfExportLoading(false);
 };
