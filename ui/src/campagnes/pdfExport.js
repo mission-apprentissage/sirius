@@ -23,14 +23,19 @@ export const exportMultipleChartsToPdf = async (
   setExpandedAccordion,
   setPdfExportLoading
 ) => {
+  await wait(500);
+  setExpandedAccordion(null);
+  await wait(500);
+
   setPdfExportLoading(true);
+
   const categories = getCategoriesWithEmojis(questionnaire);
   const doc = new jsPDF("p", "px", "a4");
   let isFirstCategory = true;
 
   for (const category of categories) {
     let yPosition = await addCategoryTitlePage(doc, category, isFirstCategory); // Initial y position after the title, slightly reduced padding
-    await setExpandedAccordion(category.id);
+    setExpandedAccordion(category.id);
     await wait(500);
     isFirstCategory = false; // Reset flag after first category is processed
 
@@ -50,7 +55,7 @@ export const exportMultipleChartsToPdf = async (
     }
   }
 
-  await setExpandedAccordion(null);
+  setExpandedAccordion(null);
   doc.save(`charts.pdf`);
   setPdfExportLoading(false);
 };

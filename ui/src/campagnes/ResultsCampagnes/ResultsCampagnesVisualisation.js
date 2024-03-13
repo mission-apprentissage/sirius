@@ -33,6 +33,7 @@ const ResultsCampagnesVisualisation = ({
   questionnaire,
   questionnaireUI,
   expandedAccordion,
+  setExpandedAccordion,
 }) => {
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
   const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
@@ -57,7 +58,8 @@ const ResultsCampagnesVisualisation = ({
         return (
           <Accordion
             key={index}
-            expanded={expandedAccordion && expandedAccordion === category.id}
+            onExpandedChange={() => setExpandedAccordion(category.id)}
+            expanded={expandedAccordion === category.id ? true : false}
             label={
               <h6>
                 {category.emoji} {category.title}

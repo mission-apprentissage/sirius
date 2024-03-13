@@ -304,6 +304,7 @@ const ResultsCampagnesPage = () => {
               validatedQuestionnaire?.length && validatedQuestionnaire[0].questionnaireUI
             }
             expandedAccordion={expandedAccordion}
+            setExpandedAccordion={setExpandedAccordion}
           />
         ) : null}
       </ResultsCampagneContainer>
