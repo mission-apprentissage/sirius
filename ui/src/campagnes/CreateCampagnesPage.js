@@ -8,7 +8,6 @@ import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { UserContext } from "../context/UserContext";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
-import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import Step1 from "./CreateCampagnes/Step1";
 import Step2 from "./CreateCampagnes/Step2";

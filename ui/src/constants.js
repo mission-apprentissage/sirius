@@ -85,18 +85,30 @@ export const emailWithTLDRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export const numberRegex = /^\d+$/;
 
-export const campagnesDisplayMode = [
+export const CAMPAGNES_DISPLAY_MODE = {
+  DIPLOME: "DIPLOME",
+  ETABLISSEMENT: "ETABLISSEMENT",
+  ALL: "ALL",
+};
+
+export const CAMPAGNES_DISPLAY_MODE_LABELS = {
+  [CAMPAGNES_DISPLAY_MODE.DIPLOME]: "Niveau de diplôme",
+  [CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT]: "Établissement",
+  [CAMPAGNES_DISPLAY_MODE.ALL]: "Toutes",
+};
+
+export const campagnesDisplayModeOptions = [
   {
-    label: "Niveau de diplôme",
-    value: "diplome",
+    label: CAMPAGNES_DISPLAY_MODE_LABELS.DIPLOME,
+    value: CAMPAGNES_DISPLAY_MODE[CAMPAGNES_DISPLAY_MODE_LABELS.DIPLOME],
   },
   {
-    label: "Établissement",
-    value: "etablissement",
+    label: CAMPAGNES_DISPLAY_MODE_LABELS.ETABLISSEMENT,
+    value: CAMPAGNES_DISPLAY_MODE[CAMPAGNES_DISPLAY_MODE_LABELS.ETABLISSEMENT],
   },
   {
-    label: "Toutes",
-    value: "all",
+    label: CAMPAGNES_DISPLAY_MODE_LABELS.ALL,
+    value: CAMPAGNES_DISPLAY_MODE[CAMPAGNES_DISPLAY_MODE_LABELS.ALL],
   },
 ];
 

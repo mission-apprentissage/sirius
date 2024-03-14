@@ -9,7 +9,7 @@ import {
 } from "../../utils";
 import { StyledAccordion, AccordionLabelByEtablissementContainer } from "./accordions.style";
 import { ToolTipContainer } from "../../styles/shared.style";
-import { campagnesDisplayMode } from "../../../constants";
+import { CAMPAGNES_DISPLAY_MODE } from "../../../constants";
 
 const DisplayByEtablissement = ({
   displayedCampagnes,
@@ -127,7 +127,7 @@ const DisplayByEtablissement = ({
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
           userContext={userContext}
-          displayMode={campagnesDisplayMode[1].value}
+          displayMode={CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT}
         />
       </StyledAccordion>
     );

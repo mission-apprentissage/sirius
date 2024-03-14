@@ -19,7 +19,7 @@ import {
 import SortButtons from "./Shared/SortButtons/SortButtons";
 import CampagnesTable from "./ResultsCampagnes/CampagnesTable";
 import { LoaderContainer, SearchNoResultsContainer } from "./styles/shared.style";
-import { USER_ROLES, campagnesDisplayMode, campagnesSortingOptions } from "../constants";
+import { USER_ROLES, CAMPAGNES_DISPLAY_MODE, campagnesSortingOptions } from "../constants";
 import Statistics from "./Shared/Statistics/Statistics";
 import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
 import DisplayByEtablissementTable from "./ResultsCampagnes/Accordions/DisplayByEtablissementTable";
@@ -38,7 +38,7 @@ import { exportMultipleChartsToPdf } from "./pdfExport";
 const ResultsCampagnesPage = () => {
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [selectedCampagnes, setSelectedCampagnes] = useState([]);
-  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
+  const [displayMode, setDisplayMode] = useState(CAMPAGNES_DISPLAY_MODE.DIPLOME);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
   const [isOpened, setIsOpened] = useState(false);
@@ -148,7 +148,7 @@ const ResultsCampagnesPage = () => {
   );
 
   const AccordionComponentGetter = () => {
-    if (displayMode === campagnesDisplayMode[0].value) {
+    if (displayMode === CAMPAGNES_DISPLAY_MODE.DIPLOME) {
       return (
         <DisplayByDiplomeTypeTable
           displayedCampagnes={displayedCampagnes}
@@ -157,7 +157,7 @@ const ResultsCampagnesPage = () => {
           displayMode={displayMode}
         />
       );
-    } else if (displayMode === campagnesDisplayMode[1].value) {
+    } else if (displayMode === CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT) {
       return (
         <DisplayByEtablissementTable
           displayedCampagnes={displayedCampagnes}
@@ -166,7 +166,7 @@ const ResultsCampagnesPage = () => {
           displayMode={displayMode}
         />
       );
-    } else if (displayMode === campagnesDisplayMode[2].value) {
+    } else if (displayMode === CAMPAGNES_DISPLAY_MODE.ALL) {
       return (
         <CampagnesTable
           displayedCampagnes={displayedCampagnes}

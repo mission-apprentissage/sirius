@@ -7,7 +7,7 @@ import CellInputConfigure from "../Shared/CellInput/CellInputConfigure";
 import CellInputSeatsConfigure from "../Shared/CellInput/CellInputSeatsConfigure";
 import { isPlural } from "../../campagnes/utils";
 import { ToolTipContainer, HeaderItem, FormationContainer } from "../styles/shared.style";
-import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../constants";
+import { DIPLOME_TYPE_MATCHER, CAMPAGNES_DISPLAY_MODE } from "../../constants";
 
 const headers = [
   "",
@@ -66,7 +66,7 @@ const data = (
             </p>
           )}
         </div>
-        {displayMode === campagnesDisplayMode[0].value && (
+        {displayMode === CAMPAGNES_DISPLAY_MODE.DIPLOME && (
           <Tooltip
             background="var(--background-default-grey)"
             border="var(--border-default-grey)"
@@ -100,7 +100,7 @@ const data = (
             </p>
           </Tooltip>
         )}
-        {displayMode === campagnesDisplayMode[1].value && (
+        {displayMode === CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT && (
           <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
         )}
       </FormationContainer>,

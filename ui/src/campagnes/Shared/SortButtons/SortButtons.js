@@ -2,7 +2,7 @@ import React from "react";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { SortButtonsContainer } from "./sortButtons.style";
-import { campagnesDisplayMode, campagnesSortingOptions } from "../../../constants";
+import { campagnesDisplayModeOptions, campagnesSortingOptions } from "../../../constants";
 
 const SortButtons = ({
   displayMode,
@@ -22,7 +22,7 @@ const SortButtons = ({
           value: displayMode,
           onChange: (event) => setDisplayMode(event.target.value),
         }}
-        options={campagnesDisplayMode}
+        options={campagnesDisplayModeOptions}
       />
       {mode === "manage" ||
         (mode === "results" && (

@@ -9,7 +9,7 @@ import {
   EtablissementLabelContainer,
 } from "../Shared/CampagnesTable/campagnesTable.style";
 import { HeaderItem, FormationContainer, ToolTipContainer } from "../styles/shared.style";
-import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../constants";
+import { DIPLOME_TYPE_MATCHER, CAMPAGNES_DISPLAY_MODE } from "../../constants";
 
 const headers = [
   "",
@@ -70,8 +70,8 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
             )}
           </div>
         </FormationContainer>
-        {(displayMode === campagnesDisplayMode[0].value ||
-          displayMode === campagnesDisplayMode[2].value) && (
+        {(displayMode === CAMPAGNES_DISPLAY_MODE.DIPLOME ||
+          displayMode === CAMPAGNES_DISPLAY_MODE.ALL) && (
           <EtablissementLabelContainer>
             <Tooltip
               background="var(--background-default-grey)"
@@ -107,8 +107,8 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
             </Tooltip>
           </EtablissementLabelContainer>
         )}
-        {(displayMode === campagnesDisplayMode[1].value ||
-          displayMode === campagnesDisplayMode[2].value) && (
+        {(displayMode === CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT ||
+          displayMode === CAMPAGNES_DISPLAY_MODE.ALL) && (
           <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
         )}
       </>,
