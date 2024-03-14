@@ -288,4 +288,8 @@ export const HeaderCardContainer = styled.div`
   & label {
     margin: 0 !important;
   }
+
+  & span {
+    color: var(--text-disabled-grey);
+  }
 `;
