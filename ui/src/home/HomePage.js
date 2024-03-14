@@ -69,7 +69,7 @@ const HomePage = () => {
             S'inscrire
           </Button>
         </GoalContainer>
-        <CFAContainer display="flex" flexDirection="column">
+        <CFAContainer>
           <p>Vous êtes un CFA ?</p>
           <h2>Sirius entre vos mains, c’est :</h2>
           <CardContainer>
