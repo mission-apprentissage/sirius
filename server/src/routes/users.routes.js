@@ -25,6 +25,7 @@ const {
   confirmUser,
   supportUser,
   supportUserPublic,
+  sudo,
 } = require("../controllers/users.controller");
 const { isAdmin } = require("../middlewares/isAdmin");
 const { rateLimiter } = require("../middlewares/rateLimiter");
@@ -37,6 +38,8 @@ const users = () => {
   router.post("/api/users/login/", rateLimiter, validator(loginSchema), verifyUser, (req, res, next) =>
     loginUser(req, res, next)
   );
+
+  router.get("/api/users/sudo/:id", rateLimiter, verifyUser, isAdmin, (req, res, next) => sudo(req, res, next));
 
   router.post("/api/users/refreshToken/", (req, res, next) => refreshTokenUser(req, res, next));
 

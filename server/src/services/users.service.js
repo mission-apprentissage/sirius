@@ -65,6 +65,58 @@ const loginUser = async (id) => {
   }
 };
 
+const sudo = async (id) => {
+  try {
+    const user = await usersDao.getOne(id);
+
+    const token = getToken({
+      _id: id,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      etablissements: user.etablissements,
+      acceptedCgu: user.acceptedCgu,
+      isSudo: true,
+    });
+    const refreshToken = getRefreshToken({
+      _id: id,
+      role: user.role,
+      status: user.status,
+      siret: user.siret,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      ...(user.role !== USER_ROLES.ADMIN &&
+        user.etablissement && {
+          etablissementLabel:
+            user.etablissement.onisep_nom ||
+            user.etablissement.enseigne ||
+            user.etablissement.entreprise_raison_sociale,
+        }),
+      acceptedCgu: user.acceptedCgu,
+      isSudo: true,
+    });
+
+    user.refreshToken.push({ refreshToken });
+
+    await usersDao.update(id, user);
+
+    return { success: true, body: { token, refreshToken } };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 const refreshTokenUser = async (refreshToken) => {
   try {
     const payload = jwt.verify(refreshToken, config.auth.refreshTokenSecret);
@@ -223,4 +275,5 @@ module.exports = {
   resetPassword,
   confirmUser,
   getUserById,
+  sudo,
 };
