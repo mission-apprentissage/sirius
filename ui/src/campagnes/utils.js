@@ -1,3 +1,5 @@
+import { msToTime } from "../utils/temoignage";
+
 export const multiStepQuestionnaireFormatter = (questionnaire) => {
   if (
     !questionnaire ||
@@ -219,3 +221,37 @@ export const sortingKeys = (a, b) => ({
   "seats-asc": () => (a?.seats === 0 ? 999 : a?.seats) - (b?.seats === 0 ? 999 : b?.seats),
   "seats-desc": () => (b?.seats === 0 ? 999 : b?.seats) - (a?.seats === 0 ? 999 : a?.seats),
 });
+
+export const getFinishedCampagnes = (campagnes) => {
+  return campagnes.filter((campagne) => new Date(campagne.endDate) < new Date());
+};
+
+export const getTemoignagesCount = (campagnes) => {
+  return campagnes.reduce((acc, campagne) => acc + campagne.temoignagesCount, 0);
+};
+
+export const getChampsLibreRate = (campagnes) => {
+  const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
+
+  if (!filteredCampagnes.length) {
+    return "N/A";
+  }
+
+  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.champsLibreRate, 0);
+  return Math.round(sum / filteredCampagnes.length) + "%";
+};
+
+export const getMedianDuration = (campagnes) => {
+  const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
+
+  if (!filteredCampagnes.length) {
+    return "N/A";
+  }
+
+  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.medianDurationInMs, 0);
+  return msToTime(Math.round(sum / filteredCampagnes.length));
+};
+
+export const getVerbatimsCount = (campagnes) => {
+  return campagnes.reduce((acc, campagne) => acc + campagne.champsLibreCount, 0);
+};

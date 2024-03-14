@@ -23,7 +23,15 @@ import { USER_ROLES, campagnesDisplayMode, campagnesSortingOptions } from "../co
 import Statistics from "./Shared/Statistics/Statistics";
 import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
 import DisplayByEtablissementTable from "./ResultsCampagnes/Accordions/DisplayByEtablissementTable";
-import { isPlural, sortingKeys } from "./utils";
+import {
+  getChampsLibreRate,
+  getFinishedCampagnes,
+  getMedianDuration,
+  getTemoignagesCount,
+  getVerbatimsCount,
+  isPlural,
+  sortingKeys,
+} from "./utils";
 import DisplayByDiplomeTypeTable from "./ResultsCampagnes/Accordions/DisplayByDiplomeTypeTable";
 import { exportMultipleChartsToPdf } from "./pdfExport";
 
@@ -131,9 +139,9 @@ const ResultsCampagnesPage = () => {
     getTemoignages();
   }, [displayedCampagnes]);
 
-  const filteredTemoignagesBySelectedCampagnes = temoignages.filter((temoignage) =>
-    selectedCampagnes.includes(temoignage.campagneId)
-  );
+  const filteredTemoignagesBySelectedCampagnes = temoignages?.length
+    ? temoignages.filter((temoignage) => selectedCampagnes.includes(temoignage.campagneId))
+    : [];
 
   const filteredDisplayedCampagnesBySelectedCampagnes = displayedCampagnes.filter((campagne) =>
     selectedCampagnes.includes(campagne._id)
@@ -205,6 +213,25 @@ const ResultsCampagnesPage = () => {
         ),
       };
     });
+
+  const statistics = {
+    campagnesCount: filteredDisplayedCampagnesBySelectedCampagnes?.length || 0,
+    finishedCampagnesCount: filteredDisplayedCampagnesBySelectedCampagnes?.length
+      ? getFinishedCampagnes(filteredDisplayedCampagnesBySelectedCampagnes).length
+      : 0,
+    temoignagesCount: filteredDisplayedCampagnesBySelectedCampagnes?.length
+      ? getTemoignagesCount(filteredDisplayedCampagnesBySelectedCampagnes)
+      : 0,
+    champsLibreRate: filteredDisplayedCampagnesBySelectedCampagnes?.length
+      ? getChampsLibreRate(filteredDisplayedCampagnesBySelectedCampagnes)
+      : "N/A",
+    medianDuration: filteredDisplayedCampagnesBySelectedCampagnes?.length
+      ? getMedianDuration(filteredDisplayedCampagnesBySelectedCampagnes)
+      : "N/A",
+    verbatimsCount: filteredDisplayedCampagnesBySelectedCampagnes?.length
+      ? getVerbatimsCount(filteredDisplayedCampagnesBySelectedCampagnes)
+      : "0",
+  };
 
   return (
     <Container>
@@ -278,10 +305,7 @@ const ResultsCampagnesPage = () => {
           </SearchNoResultsContainer>
         ) : null}
       </ResultsCampagneContainer>
-      <Statistics
-        campagnes={filteredDisplayedCampagnesBySelectedCampagnes}
-        title="Statistiques des campagnes sélectionnées"
-      />
+      <Statistics statistics={statistics} title="Statistiques des campagnes sélectionnées" />
       <ResultsCampagneContainer>
         <TestimonialHeader>
           <h1>
@@ -298,6 +322,8 @@ const ResultsCampagnesPage = () => {
               onClick={() =>
                 exportMultipleChartsToPdf(
                   neededQuestionnaires[0].questionnaire,
+                  displayedCampagnes.filter((campagne) => selectedCampagnes.includes(campagne._id)),
+                  statistics,
                   setExpandedAccordion,
                   setPdfExportLoading
                 )
