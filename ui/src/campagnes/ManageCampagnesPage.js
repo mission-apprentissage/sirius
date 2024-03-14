@@ -18,7 +18,14 @@ import SupportModal from "./Shared/SupportModal";
 import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
 import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
 import { SearchNoResultsContainer, LoaderContainer } from "./styles/shared.style";
-import { sortingKeys } from "./utils";
+import {
+  sortingKeys,
+  getChampsLibreRate,
+  getFinishedCampagnes,
+  getMedianDuration,
+  getTemoignagesCount,
+  getVerbatimsCount,
+} from "./utils";
 import CampagnesTable from "./Shared/CampagnesTable/CampagnesTable";
 
 const modal = createModal({
@@ -116,10 +123,19 @@ const ManageCampagnesPage = () => {
     }
   };
 
+  const statistics = {
+    campagnesCount: campagnes?.length || 0,
+    finishedCampagnesCount: campagnes?.length ? getFinishedCampagnes(campagnes).length : 0,
+    temoignagesCount: campagnes?.length ? getTemoignagesCount(campagnes) : 0,
+    champsLibreRate: campagnes?.length ? getChampsLibreRate(campagnes) : "N/A",
+    medianDuration: campagnes?.length ? getMedianDuration(campagnes) : "N/A",
+    verbatimsCount: campagnes?.length ? getVerbatimsCount(campagnes) : "0",
+  };
+
   return (
     <>
       <Container>
-        <Statistics campagnes={campagnes} title="Sirius & vous en quelques chiffres" />
+        <Statistics statistics={statistics} title="Sirius & vous en quelques chiffres" />
         <ManageCampagneContainer>
           <div>
             <h1>
