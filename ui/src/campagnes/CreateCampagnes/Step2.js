@@ -1,13 +1,43 @@
-import React, { useContext } from "react";
-import { Accordion, Box, Text, Stack } from "@chakra-ui/react";
-import { UserContext } from "../../context/UserContext";
-import Header from "../Shared/Header";
-import Search from "../../assets/images/search.svg";
-import ConfigureCampagneTable from "./ConfigureCampagneTable";
-import { uniqueDiplomeTypesFromFormation, orderFormationsByDiplomeType } from "../utils";
+import React, { useState, useEffect } from "react";
+import { fr } from "@codegouvfr/react-dsfr";
+import SortButtons from "../Shared/SortButtons/SortButtons";
+import { StepContainer } from "../styles/createCampagnes.style";
+import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
+import { orderFormationsByDiplomeType } from "../utils";
+import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
+import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
+import { SearchNoResultsContainer } from "../styles/shared.style";
 
-const Step2 = ({ selectedFormations, allDiplomesSelectedFormations, setStep, formik }) => {
-  const [userContext] = useContext(UserContext);
+const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
+  const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
+  const [searchedDiplayedFormations, setSearchedDiplayedFormations] = useState([]);
+  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
+  const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (selectedFormations?.length) {
+      setSearchedDiplayedFormations(selectedFormations);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedFormations?.length && search === "") {
+      setSearchedDiplayedFormations(selectedFormations);
+    } else {
+      const filteredFormations = searchedDiplayedFormations.filter((formation) => {
+        return (
+          formation.intitule_long.toLowerCase().includes(search) ||
+          formation.localite.toLowerCase().includes(search) ||
+          formation.etablissement_gestionnaire_enseigne.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_adresse.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_siret.toLowerCase().includes(search) ||
+          formation.tags.join("-").toLowerCase().includes(search)
+        );
+      });
+      setSearchedDiplayedFormations(filteredFormations);
+    }
+  }, [search]);
 
   const orderedFormationByDiplomeType = orderFormationsByDiplomeType(selectedFormations);
   const formationCountByDiplomeType = {};
@@ -19,38 +49,54 @@ const Step2 = ({ selectedFormations, allDiplomesSelectedFormations, setStep, for
     }
   }
 
+  const accordionComponentGetter = () => {
+    if (displayMode === campagnesDisplayMode[0].value) {
+      return (
+        <DisplayByDiplomeTypeTable
+          selectedFormations={searchedDiplayedFormations}
+          setSearchedDiplayedFormations={setSearchedDiplayedFormations}
+          setSelectedFormations={setSelectedFormations}
+          selectedFormationsAction={selectedFormationsAction}
+          setSelectedFormationsAction={setSelectedFormationsAction}
+          formik={formik}
+        />
+      );
+    } else if (displayMode === campagnesDisplayMode[1].value) {
+      return (
+        <DisplayByEtablissementTable
+          selectedFormations={searchedDiplayedFormations}
+          setSearchedDiplayedFormations={setSearchedDiplayedFormations}
+          setSelectedFormations={setSelectedFormations}
+          selectedFormationsAction={selectedFormationsAction}
+          setSelectedFormationsAction={setSelectedFormationsAction}
+          formik={formik}
+        />
+      );
+    }
+  };
+
   return (
-    <Stack direction="column" w="100%" mb="25px">
-      <Header
-        title="Paramétrer mes campagnes"
-        img={Search}
-        hasGoBackButton
-        goBackLabel="Précédent"
-        goBackOnClick={() => setStep(1)}
-      >
-        <Text fontWeight="600" color="brand.black.500">
-          Lorsque vous sélectionnez une formation vous créez une campagne Sirius.
-        </Text>
-        <Text color="brand.black.500">
-          Dans cette première version de Sirius, seules les formations infra-bac sont disponibles
-        </Text>
-      </Header>
-      <Box>
-        <Accordion allowMultiple>
-          {uniqueDiplomeTypesFromFormation(selectedFormations)?.map((diplomeType, index) => (
-            <ConfigureCampagneTable
-              key={diplomeType}
-              index={index}
-              diplomeType={diplomeType}
-              formations={orderFormationsByDiplomeType(selectedFormations)[diplomeType]}
-              userContext={userContext}
-              allDiplomesSelectedFormations={allDiplomesSelectedFormations}
-              formik={formik}
-            />
-          ))}
-        </Accordion>
-      </Box>
-    </Stack>
+    <StepContainer>
+      <SortButtons
+        displayMode={displayMode}
+        setDisplayMode={setDisplayMode}
+        sortingMode={sortingMode}
+        setSortingMode={setSortingMode}
+        search={search}
+        setSearch={setSearch}
+        organizeLabel="Organiser mes formations par"
+        mode="creation"
+      />
+      {!searchedDiplayedFormations?.length && search ? (
+        <SearchNoResultsContainer>
+          <h3>Aucun résultats pour votre recherche</h3>
+          <p onClick={() => setSearch("")}>Réinitialiser ?</p>
+        </SearchNoResultsContainer>
+      ) : null}
+      {searchedDiplayedFormations?.length ? (
+        <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
+      ) : null}
+    </StepContainer>
   );
 };
 

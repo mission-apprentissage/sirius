@@ -9,17 +9,16 @@
     "serve": "ws --port 3000 -d build --log.format dev --spa index.html",
     "eject": "react-scripts eject",
     "prestart": "copy-dsfr-to-public && only-include-used-icons",
-    "prebuild": " copy-dsfr-to-public && only-include-used-icons"
+    "prebuild": "copy-dsfr-to-public && only-include-used-icons"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.17",
     "@chakra-ui/react": "2.7.1",
-    "@codegouvfr/react-dsfr": "1.2.2",
+    "@codegouvfr/react-dsfr": "1.7.2",
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
     "@fingerprintjs/botd": "1.7.2",
     "@monaco-editor/react": "4.4.6",
-    "@react-spring/web": "9.7.3",
     "@rjsf/chakra-ui": "5.2.1",
     "@rjsf/core": "5.2.1",
     "@rjsf/utils": "5.2.1",
@@ -41,7 +40,9 @@
     "react-qr-code": "2.0.11",
     "react-router-dom": "6.9.0",
     "react-scripts": "5.0.1",
+    "react-simple-tooltip": "2.6.3",
     "react-sortablejs": "6.1.4",
+    "react-spinners": "0.13.8",
     "sortablejs": "1.15.0",
     "webfontloader": "1.6.28",
     "xlsx": "0.18.5",
@@ -54,7 +55,7 @@
     "eslint": "8.36.0",
     "eslint-config-prettier": "8.7.0",
     "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-react": "7.32.2",
+    "eslint-plugin-react": "7.34.0",
     "local-web-server": "4.2.1",
     "prettier": "2.8.4"
   },

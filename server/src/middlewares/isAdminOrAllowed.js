@@ -13,6 +13,7 @@ const TYPES = {
   FORMATION_IDS: "formationIds",
   SIRET_IN_FORMATION: "siretInFormation",
   SIRET: "siret",
+  ETABLISSEMENT_FORMATEUR_SIRET: "etablissementFormateurSiret",
 };
 
 const isAdminOrAllowed = async (req, next, type) => {
@@ -71,7 +72,37 @@ const isAdminOrAllowed = async (req, next, type) => {
     if (type === TYPES.SIRET) {
       const siretToVerify =
         req.params.siret || req.query.siret || req.body.siret || req.query["data.siret"] || req.body.etablissementSiret;
+      if (!siretToVerify) {
+        return next(new UnauthorizedError());
+      }
       if (siret === siretToVerify || multipleSiret.includes(siretToVerify)) return next();
+    }
+
+    //check SIRET
+    if (type === TYPES.ETABLISSEMENT_FORMATEUR_SIRET) {
+      const siretToVerify = req.body.map((etablissement) => etablissement.etablissementFormateurSiret);
+
+      if (!siretToVerify) {
+        return next(new UnauthorizedError());
+      }
+      const hasEverySiret = siretToVerify.every((siret) => multipleSiret.includes(siret));
+
+      if (hasEverySiret) return next();
+
+      const unauthorizedSiret = siretToVerify.filter((siret) => !multipleSiret.includes(siret));
+
+      let responsableSiret = [];
+
+      for (const siret of unauthorizedSiret) {
+        const fetchedResponsableSiret = await referentiel.getEtablissementSIRETFromRelationType(
+          siret,
+          ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE
+        );
+        responsableSiret.push(fetchedResponsableSiret[0]);
+      }
+      const hasEveryResponsableSiret = responsableSiret.every((siret) => multipleSiret.includes(siret));
+
+      if (hasEveryResponsableSiret) return next();
     }
 
     //check etablissementId

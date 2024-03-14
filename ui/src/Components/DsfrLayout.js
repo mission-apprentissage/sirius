@@ -5,7 +5,7 @@ import DsfrNavbar from "./DsfrNavbar";
 
 const DsfrLayout = ({ children }) => {
   useEffect(() => {
-    const styleLink = loadDynamicStyle("./dsfr/dsfr.min.css");
+    const styleLink = loadDynamicStyle("/dsfr/dsfr.min.css");
 
     return () => {
       unloadStyle(styleLink);

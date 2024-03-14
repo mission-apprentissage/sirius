@@ -1,78 +1,105 @@
-import React, { useContext } from "react";
-import { Spinner, Accordion, Text, Stack, useDisclosure } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/UserContext";
-import Header from "../Shared/Header";
-import Blackboard from "../../assets/images/blackboard.svg";
-import CreateCampagneTable from "./CreateCampagneTable";
-import { uniqueDiplomeTypesFromFormation, orderFormationsByDiplomeType } from "../utils";
-import FormError from "../../Components/Form/FormError";
-import SupportModal from "../Shared/SupportModal";
+import React, { useState, useEffect } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+import { fr } from "@codegouvfr/react-dsfr";
+import Alert from "@codegouvfr/react-dsfr/Alert";
+import SortButtons from "../Shared/SortButtons/SortButtons";
+import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
+import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
+import { campagnesDisplayMode } from "../../constants";
+import { LoaderContainer, StepContainer } from "../styles/createCampagnes.style";
+import { SearchNoResultsContainer } from "../styles/shared.style";
 
 const Step1 = ({
-  hasError,
-  errorMessages,
   isLoading,
-  remoteFormations,
+  hasError,
   localFormations,
-  allDiplomesSelectedFormations,
-  setAllDiplomesSelectedFormations,
+  remoteFormations,
+  displayedFormations,
+  setDisplayedFormations,
+  selectedFormations,
+  setSelectedFormations,
 }) => {
-  const [userContext] = useContext(UserContext);
-  const navigate = useNavigate();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (remoteFormations?.length && search === "") {
+      setDisplayedFormations(remoteFormations);
+    } else {
+      const filteredFormations = displayedFormations.filter((formation) => {
+        return (
+          formation.intitule_long.toLowerCase().includes(search) ||
+          formation.localite.toLowerCase().includes(search) ||
+          formation.etablissement_gestionnaire_enseigne.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_adresse.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_siret.toLowerCase().includes(search) ||
+          formation.tags.join("-").toLowerCase().includes(search)
+        );
+      });
+      setDisplayedFormations(filteredFormations);
+    }
+  }, [search]);
 
   const existingFormationCatalogueIds = localFormations?.map((formation) => formation.data._id);
 
+  const accordionComponentGetter = () => {
+    if (displayMode === campagnesDisplayMode[0].value) {
+      return (
+        <DisplayByDiplomeTypeCards
+          displayedFormations={displayedFormations}
+          selectedFormations={selectedFormations}
+          setSelectedFormations={setSelectedFormations}
+          existingFormationCatalogueIds={existingFormationCatalogueIds}
+        />
+      );
+    } else if (displayMode === campagnesDisplayMode[1].value) {
+      return (
+        <DisplayByEtablissementCards
+          displayedFormations={displayedFormations}
+          selectedFormations={selectedFormations}
+          setSelectedFormations={setSelectedFormations}
+          existingFormationCatalogueIds={existingFormationCatalogueIds}
+        />
+      );
+    }
+  };
+
   return (
-    <>
-      <Stack direction="column" w="100%" mb="25px">
-        <Header
-          title="Créer des campagnes"
-          img={Blackboard}
-          hasGoBackButton
-          goBackLabel="Retour gestion des campagnes"
-          goBackOnClick={() => navigate("/campagnes/gestion")}
-        >
-          <Text fontWeight="600" color="brand.black.500">
-            Lorsque vous sélectionnez une formation vous créez une campagne Sirius.
-          </Text>
-          <Text color="brand.black.500">
-            Dans cette première version de Sirius, seules les formations infra-bac sont disponibles
-          </Text>
-        </Header>
-        <Text w="100%" color="brand.black.500">
-          Formations extraites du Catalogue des offres de formations en apprentissage du réseau des
-          CARIF OREF.{" "}
-          <strong>
-            Un problème ?{" "}
-            <Text as="u" cursor="pointer" onClick={onOpen}>
-              Dites le nous
-            </Text>
-          </strong>
-        </Text>
-        {isLoading ? (
-          <Spinner size="xl" />
-        ) : hasError ? (
-          <FormError title="Une erreur est survenue" hasError errorMessages={errorMessages} />
-        ) : (
-          <Accordion allowMultiple defaultIndex={null}>
-            {uniqueDiplomeTypesFromFormation(remoteFormations)?.map((diplomeType, index) => (
-              <CreateCampagneTable
-                key={remoteFormations[index].id}
-                diplomeType={diplomeType}
-                formations={orderFormationsByDiplomeType(remoteFormations)[diplomeType]}
-                userContext={userContext}
-                allDiplomesSelectedFormations={allDiplomesSelectedFormations}
-                setAllDiplomesSelectedFormations={setAllDiplomesSelectedFormations}
-                existingFormationCatalogueIds={existingFormationCatalogueIds}
-              />
-            ))}
-          </Accordion>
-        )}
-      </Stack>
-      <SupportModal isOpen={isOpen} onClose={onClose} token={userContext.token} />
-    </>
+    <StepContainer>
+      <SortButtons
+        displayMode={displayMode}
+        setDisplayMode={setDisplayMode}
+        search={search}
+        setSearch={setSearch}
+        organizeLabel="Organiser mes formations par"
+        mode="creation"
+      />
+      {isLoading && (
+        <LoaderContainer>
+          <BeatLoader
+            color="var(--background-action-high-blue-france)"
+            size={20}
+            aria-label="Loading Spinner"
+          />
+        </LoaderContainer>
+      )}
+      {hasError && (
+        <Alert
+          title="Une erreur s'est produite"
+          description="Merci de réessayer ultérieurement"
+          severity="error"
+        />
+      )}
+      {!displayedFormations?.length && search ? (
+        <SearchNoResultsContainer>
+          <h3>Aucun résultats pour votre recherche</h3>
+          <p onClick={() => setSearch("")}>Réinitialiser ?</p>
+        </SearchNoResultsContainer>
+      ) : null}
+      {displayedFormations?.length && !isLoading && !hasError ? (
+        <div className={fr.cx("fr-accordions-group")}>{accordionComponentGetter()}</div>
+      ) : null}
+    </StepContainer>
   );
 };
 

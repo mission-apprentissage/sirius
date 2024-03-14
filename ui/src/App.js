@@ -42,9 +42,17 @@ function App() {
           </Layout>
         }
       >
+        <Route exact path="/campagnes/resultats" element={<ResultsCampagnesPage />} />
+      </Route>
+      <Route
+        element={
+          <DsfrLayout>
+            <ProtectedRoute />
+          </DsfrLayout>
+        }
+      >
         <Route exact path="/campagnes/ajout" element={<CreateCampagnesPage />} />
         <Route exact path="/campagnes/gestion" element={<ManageCampagnesPage />} />
-        <Route exact path="/campagnes/resultats" element={<ResultsCampagnesPage />} />
       </Route>
       <Route
         element={

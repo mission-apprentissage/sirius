@@ -18,6 +18,45 @@ const getMedianDuration = (answers) => {
   return getMedian(durations);
 };
 
+const appendDataWhenEmpty = (campagne) => {
+  if (!campagne.formation) {
+    campagne.formation = {
+      _id: "N/A",
+      data: {
+        intitule_long: "N/A",
+        tags: [],
+        lieu_formation_adresse_computed: "N/A",
+        diplome: "N/A",
+        localite: "N/A",
+        duree: 0,
+        etablissement_formateur_siret: "N/A",
+        etablissement_gestionnaire_siret: "N/A",
+        etablissement_gestionnaire_enseigne: "N/A",
+        etablissement_formateur_enseigne: "N/A",
+        etablissement_formateur_entreprise_raison_sociale: "N/A",
+      },
+    };
+  }
+  if (!campagne.etablissement) {
+    campagne.etablissement = {
+      _id: "N/A",
+      formationIds: [],
+      data: {
+        onisep_nom: "N/A",
+        enseigne: "N/A",
+        entreprise_raison_sociale: "N/A",
+        siret: "N/A",
+        numero_voie: "N/A",
+        type_voie: "N/A",
+        nom_voie: "N/A",
+        code_postal: "N/A",
+        localite: "N/A",
+      },
+    };
+  }
+};
+
 module.exports = {
   getMedianDuration,
+  appendDataWhenEmpty,
 };
