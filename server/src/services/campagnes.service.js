@@ -208,9 +208,7 @@ const getPdfMultipleExport = async (ids, user) => {
 
     const generatedPdf = await pdfExport.generateMultiplePdf(formattedCampagnes, diplome, etablissementLabel, user);
 
-    const diplomeName = campagnes[0].formation.data.diplome;
-
-    const fileName = `campagnes Sirius - ${DIPLOME_TYPE_MATCHER[diplomeName] || diplomeName}.pdf`;
+    const fileName = `campagnes Sirius.pdf`;
 
     return {
       success: true,

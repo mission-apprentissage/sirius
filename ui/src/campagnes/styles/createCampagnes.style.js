@@ -12,6 +12,7 @@ export const Container = styled.main`
     ${fr.breakpoints.only("xs")} {
       padding: 0 ${fr.spacing("4w")};
     }
+  }
 `;
 
 export const CreateCampagneContainer = styled.section`
@@ -37,13 +38,6 @@ export const CreateCampagneContainer = styled.section`
   & .fr-collapse {
     padding: 0;
   }
-`;
-
-export const LoaderContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50px;
 `;
 
 export const StepContainer = styled.div`

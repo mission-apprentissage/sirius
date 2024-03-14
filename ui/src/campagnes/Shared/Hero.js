@@ -24,7 +24,10 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
   const { onClose: onCloseMention } = useDisclosure();
   const { isOpen: isOpenCgu, onOpen: onOpenCgu } = useDisclosure();
 
-  const isCampagneActive = new Date(startDate) > new Date() || new Date(endDate) < new Date();
+  const isCampagneActive =
+    new Date(startDate).setHours(0, 0, 0, 0) <= new Date().getTime() &&
+    new Date(endDate).setHours(23, 59, 59, 999) >= new Date().getTime();
+
   const hasOpenSeats = !seats || seats > temoignageCount;
 
   return (
@@ -199,7 +202,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
         </Box>
         <Footer />
       </Stack>
-      <Modal isOpen={isCampagneActive} size="sm" isCentered>
+      <Modal isOpen={!isCampagneActive} size="sm" isCentered>
         <ModalOverlay />
         <ModalContent y="8" px="4" bgColor="brand.blue.100" width="90%" borderRadius="20px">
           <ModalHeader textAlign="center">La campagne n'est pas ouverte</ModalHeader>

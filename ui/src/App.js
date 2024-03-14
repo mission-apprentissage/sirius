@@ -28,6 +28,7 @@ import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
 import HomePage from "./home/HomePage";
 import StatisticsPage from "./statistics/StatisticsPage";
 import DsfrLayout from "./Components/DsfrLayout";
+import "./assets/fonts/fonts.css";
 
 function App() {
   const { setIsDark } = useIsDark();
@@ -37,15 +38,6 @@ function App() {
     <Routes>
       <Route
         element={
-          <Layout>
-            <ProtectedRoute />
-          </Layout>
-        }
-      >
-        <Route exact path="/campagnes/resultats" element={<ResultsCampagnesPage />} />
-      </Route>
-      <Route
-        element={
           <DsfrLayout>
             <ProtectedRoute />
           </DsfrLayout>
@@ -53,6 +45,7 @@ function App() {
       >
         <Route exact path="/campagnes/ajout" element={<CreateCampagnesPage />} />
         <Route exact path="/campagnes/gestion" element={<ManageCampagnesPage />} />
+        <Route exact path="/campagnes/resultats" element={<ResultsCampagnesPage />} />
       </Route>
       <Route
         element={

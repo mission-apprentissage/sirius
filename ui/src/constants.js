@@ -94,6 +94,10 @@ export const campagnesDisplayMode = [
     label: "Établissement",
     value: "etablissement",
   },
+  {
+    label: "Toutes",
+    value: "all",
+  },
 ];
 
 export const campagnesSortingOptions = [

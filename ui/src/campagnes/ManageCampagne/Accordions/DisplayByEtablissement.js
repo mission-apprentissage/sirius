@@ -1,7 +1,7 @@
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { fr } from "@codegouvfr/react-dsfr";
 import Tooltip from "react-simple-tooltip";
-import ManageCampagneTable from "../ManageCampagnesTable/ManageCampagneTable";
+import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
 import {
   getUniqueEtablissementFromCampagne,
   orderCampagnesByEtablissement,
@@ -121,7 +121,7 @@ const DisplayByEtablissement = ({
           </>
         }
       >
-        <ManageCampagneTable
+        <CampagnesTable
           key={siret}
           displayedCampagnes={campagnesByEtablissement}
           selectedCampagnes={selectedCampagnes}

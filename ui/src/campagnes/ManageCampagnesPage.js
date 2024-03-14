@@ -7,6 +7,7 @@ import Button from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import { UserContext } from "../context/UserContext";
+import Statistics from "./Shared/Statistics/Statistics";
 import DisplayByDiplomeType from "./ManageCampagne/Accordions/DisplayByDiplomeType";
 import DisplayByEtablissement from "./ManageCampagne/Accordions/DisplayByEtablissement";
 import SortButtons from "./Shared/SortButtons/SortButtons";
@@ -15,36 +16,9 @@ import NeedHelp from "../Components/NeedHelp";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../constants";
 import SupportModal from "./Shared/SupportModal";
 import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
-import {
-  Container,
-  ManageCampagneContainer,
-  LoaderContainer,
-} from "./styles/manageCampagnes.style";
-import { SearchNoResultsContainer } from "./styles/shared.style";
-
-const getValue = (obj, key) => {
-  const value = obj[key];
-  return typeof value === "string" ? value.toLowerCase() : value;
-};
-
-const sortingKeys = (a, b) => ({
-  "formation-asc": () =>
-    getValue(a.formation.data, "intitule_long").localeCompare(
-      getValue(b.formation.data, "intitule_long")
-    ),
-  "formation-desc": () =>
-    getValue(b.formation.data, "intitule_long").localeCompare(
-      getValue(a.formation.data, "intitule_long")
-    ),
-  "nomCampagne-asc": () => getValue(a, "nomCampagne").localeCompare(getValue(b, "nomCampagne")),
-  "nomCampagne-desc": () => getValue(b, "nomCampagne").localeCompare(getValue(a, "nomCampagne")),
-  "startDate-asc": () => getValue(a, "startDate").localeCompare(getValue(b, "startDate")),
-  "startDate-desc": () => getValue(b, "startDate").localeCompare(getValue(a, "startDate")),
-  "endDate-asc": () => getValue(a, "endDate").localeCompare(getValue(b, "endDate")),
-  "endDate-desc": () => getValue(b, "endDate").localeCompare(getValue(a, "endDate")),
-  "seats-asc": () => (a?.seats === 0 ? 999 : a?.seats) - (b?.seats === 0 ? 999 : b?.seats),
-  "seats-desc": () => (b?.seats === 0 ? 999 : b?.seats) - (a?.seats === 0 ? 999 : a?.seats),
-});
+import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
+import { SearchNoResultsContainer, LoaderContainer } from "./styles/shared.style";
+import { sortingKeys } from "./utils";
 
 const modal = createModal({
   id: "support-modal-loggedIn",
@@ -134,6 +108,7 @@ const ManageCampagnesPage = () => {
   return (
     <>
       <Container>
+        <Statistics campagnes={campagnes} title="Sirius & vous en quelques chiffres" />
         <ManageCampagneContainer>
           <div>
             <h1>

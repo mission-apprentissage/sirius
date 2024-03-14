@@ -30,6 +30,15 @@ const getTemoignages = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getBigTemoignages = tryCatch(async (req, res) => {
+  const campagneIds = req.body;
+  const { success, body } = await temoignagesService.getTemoignages(campagneIds);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 const deleteTemoignage = tryCatch(async (req, res) => {
   const { success, body } = await temoignagesService.deleteTemoignage(req.params.id);
 
@@ -51,4 +60,4 @@ const updateTemoignage = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-module.exports = { createTemoignage, getTemoignages, deleteTemoignage, updateTemoignage };
+module.exports = { createTemoignage, getTemoignages, deleteTemoignage, updateTemoignage, getBigTemoignages };

@@ -5,10 +5,8 @@ import { createRoot } from "react-dom/client";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { BrowserRouter as Router, Link } from "react-router-dom";
 import App from "./App";
-import WebFont from "webfontloader";
 import * as serviceWorker from "./serviceWorker";
 import { UserProvider } from "./context/UserContext";
-import { EtablissementsProvider } from "./context/EtablissementsContext";
 import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
 
 startReactDsfr({ defaultColorScheme: "light", Link });
@@ -105,21 +103,13 @@ root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <UserProvider>
-        <EtablissementsProvider>
-          <Router>
-            <App />
-          </Router>
-        </EtablissementsProvider>
+        <Router>
+          <App />
+        </Router>
       </UserProvider>
     </ChakraProvider>
   </React.StrictMode>
 );
-
-WebFont.load({
-  google: {
-    families: ["Inter:ital,wght@0,400;0,600;0,900;1,400;1,300"],
-  },
-});
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

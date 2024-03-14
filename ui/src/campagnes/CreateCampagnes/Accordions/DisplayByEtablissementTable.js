@@ -59,9 +59,8 @@ const DisplayByEtablissementTable = ({
     );
 
     return (
-      <>
+      <div key={siret}>
         <StyledAccordion
-          key={siret}
           label={
             <AccordionLabelByEtablissementContainer>
               <div>
@@ -71,6 +70,7 @@ const DisplayByEtablissementTable = ({
                     background="var(--background-default-grey)"
                     border="var(--border-default-grey)"
                     color="var(--text-default-grey)"
+                    placement="right"
                     content={
                       <ToolTipContainer>
                         Cet établissement est gestionnaire et rattaché à votre compte Sirius
@@ -84,6 +84,7 @@ const DisplayByEtablissementTable = ({
                     background="var(--background-default-grey)"
                     border="var(--border-default-grey)"
                     color="var(--text-default-grey)"
+                    placement="right"
                     content={
                       <ToolTipContainer>
                         Cet établissement est formateur et dispense des formations pour un
@@ -175,7 +176,7 @@ const DisplayByEtablissementTable = ({
           setSelectedFormations={setSelectedFormations}
           setSearchedDiplayedFormations={setSearchedDiplayedFormations}
         />
-      </>
+      </div>
     );
   });
 };

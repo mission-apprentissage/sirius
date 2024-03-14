@@ -169,8 +169,8 @@ const PreviewCampagnePage = () => {
     <Hero
       setStartedAnswering={setStartedAnswering}
       isMobile={isMobile}
-      startDate={previewedQuestionnaire.startDate}
-      endDate={previewedQuestionnaire.endDate}
+      startDate={new Date(0)}
+      endDate={new Date("2030-09-13T00:00:00Z")}
       seats={previewedQuestionnaire.seats}
       temoignageCount={previewedQuestionnaire.temoignagesCount}
     />

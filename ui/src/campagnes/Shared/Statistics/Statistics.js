@@ -17,28 +17,30 @@ const getTemoignagesCount = (campagnes) => {
 };
 
 const getChampsLibreRate = (campagnes) => {
-  const sum = campagnes.reduce((acc, campagne) => acc + campagne.champsLibreRate, 0);
-  return Math.round(sum / campagnes.length);
+  const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
+  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.champsLibreRate, 0);
+  return Math.round(sum / filteredCampagnes.length);
 };
 
 const getMedianDuration = (campagnes) => {
-  const sum = campagnes.reduce((acc, campagne) => acc + campagne.medianDurationInMs, 0);
-  return msToTime(Math.round(sum / campagnes.length));
+  const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
+  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.medianDurationInMs, 0);
+  return msToTime(Math.round(sum / filteredCampagnes.length));
 };
 
 const getVerbatimsCount = (campagnes) => {
   return campagnes.reduce((acc, campagne) => acc + campagne.champsLibreCount, 0);
 };
 
-const Statistics = ({ campagnes }) => {
-  const campagnesCount = campagnes.length || 0;
-  const finishedCampagnesCount = getFinishedCampagnes(campagnes).length;
-  const temoignagesCount = getTemoignagesCount(campagnes);
-  const champsLibreRate = campagnes.length ? getChampsLibreRate(campagnes) : "0";
-  const medianDuration = campagnes.length ? getMedianDuration(campagnes) : "0 min";
-  const verbatimsCount = campagnes.length ? getVerbatimsCount(campagnes) : "0";
+const Statistics = ({ campagnes = [], title }) => {
+  const campagnesCount = campagnes?.length || 0;
+  const finishedCampagnesCount = campagnes?.length ? getFinishedCampagnes(campagnes).length : 0;
+  const temoignagesCount = campagnes?.length ? getTemoignagesCount(campagnes) : 0;
+  const champsLibreRate = campagnes?.length ? getChampsLibreRate(campagnes) : "0";
+  const medianDuration = campagnes?.length ? getMedianDuration(campagnes) : "0 min";
+  const verbatimsCount = campagnes?.length ? getVerbatimsCount(campagnes) : "0";
 
-  const isCampagnePlural = isPlural(campagnes.length);
+  const isCampagnePlural = isPlural(campagnesCount);
   const isFinishedCampagnesPlural = isPlural(finishedCampagnesCount);
   const isTemoignagesPlural = isPlural(temoignagesCount);
   const isVerbatimsPlural = isPlural(verbatimsCount);
@@ -48,7 +50,7 @@ const Statistics = ({ campagnes }) => {
       <Content>
         <h1>
           <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} />
-          Sirius & vous en quelques chiffres
+          {title}
         </h1>
         <p>Vos statistiques sont mises à jour en temps réel</p>
         <div>
