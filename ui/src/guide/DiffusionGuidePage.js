@@ -12,6 +12,8 @@ import {
   QuotesContainer,
   ExpressedTestimonies,
   HowToContainer,
+  VideoContainer,
+  MultipleVideoContainer,
 } from "./diffusionGuide.style";
 import LogoWithoutText from "../assets/images/logo_without_text.svg";
 import IlluQuestionnaire from "../assets/images/illu_questionnaire.svg";
@@ -19,8 +21,10 @@ import IlluPlateforme from "../assets/images/illu_plateforme.svg";
 import IlluDonnees from "../assets/images/illu_donnees.svg";
 import IlluExpo from "../assets/images/illu_expo.svg";
 import IlluCFA from "../assets/images/illu_cfa.svg";
-import sampleVideo from "../assets/videos/sample.mp4";
-import sample2Video from "../assets/videos/sample2.mp4";
+import video1Questionnaire from "../assets/videos/video1_questionnaire.mp4";
+import video2Creation from "../assets/videos/video2_creation.mp4";
+import video3Diffusion from "../assets/videos/video3_diffusion.mp4";
+import video4Resultats from "../assets/videos/video4_resultats.mp4";
 
 const DiffusionGuidePage = () => {
   const [video, setVideo] = useState("questionnaire");
@@ -62,7 +66,8 @@ const DiffusionGuidePage = () => {
             desc="💬 Recueillez des témoignages qui reflètent leurs expériences vécues"
             size="small"
             titleAs="h6"
-            onMouseEnter={() => setVideo("questionnaire")}
+            onClick={() => setVideo("questionnaire")}
+            isClicked={video === "questionnaire"}
           />
           <StyledCard
             imageComponent={<img src={IlluPlateforme} alt="" />}
@@ -71,7 +76,8 @@ const DiffusionGuidePage = () => {
             desc="🤳🏼 Paramètrez et partagez vos campagnes de diffusion"
             size="small"
             titleAs="h6"
-            onMouseEnter={() => setVideo("plateforme")}
+            onClick={() => setVideo("plateforme")}
+            isClicked={video === "plateforme"}
           />
           <StyledCard
             imageComponent={<img src={IlluDonnees} alt="" />}
@@ -80,7 +86,8 @@ const DiffusionGuidePage = () => {
             desc="⏳ Bientôt, une visualisation poussée et des modules de réutilisation des témoignages"
             size="small"
             titleAs="h6"
-            onMouseEnter={() => setVideo("plateforme2")}
+            onClick={() => setVideo("plateforme2")}
+            isClicked={video === "plateforme2"}
           />
           <StyledCard
             imageComponent={<img src={IlluExpo} alt="" />}
@@ -89,36 +96,34 @@ const DiffusionGuidePage = () => {
             desc="↪ L’exposition des témoignages est en prototypage sur : La bonne alternance, ..."
             size="small"
             titleAs="h6"
-            onMouseEnter={() => setVideo("miseEnAvant")}
+            notClickable={true}
           />
         </CardContainer>
+        <VideoContainer>
+          {video === "questionnaire" && (
+            <>
+              <h5>ZOOM: Un questionnaire anonyme pour interroger vos apprenti·es</h5>
+              <ReactPlayer url={video1Questionnaire} controls={true} />
+            </>
+          )}
+          {video === "plateforme" && (
+            <>
+              <h5>ZOOM: Une plateforme pour organiser la diffusion du questionnaire</h5>
+              <MultipleVideoContainer>
+                <ReactPlayer url={video2Creation} controls={true} />
+                <ReactPlayer url={video3Diffusion} controls={true} />
+              </MultipleVideoContainer>
+            </>
+          )}
+          {video === "plateforme2" && (
+            <>
+              <h5>ZOOM: Une consultation des témoignages recueillis pour chacune des formations</h5>
+              <ReactPlayer url={video4Resultats} controls={true} />
+            </>
+          )}
+        </VideoContainer>
       </CFAContainer>
-      <HowToContainer>
-        {video === "questionnaire" && (
-          <>
-            <h5>FOCUS: Un questionnaire anonyme pour interroger vos apprenti·es</h5>
-            <ReactPlayer url={sampleVideo} controls={true} attributes />
-          </>
-        )}
-        {video === "plateforme" && (
-          <>
-            <h5>FOCUS: Une plateforme pour organiser la diffusion du questionnaire</h5>
-            <ReactPlayer url={sample2Video} controls={true} attributes />
-          </>
-        )}
-        {video === "plateforme2" && (
-          <>
-            <h5>FOCUS: Une consultation des témoignages recueillis pour chacune des formations</h5>
-            <ReactPlayer url={sampleVideo} controls={true} attributes />
-          </>
-        )}
-        {video === "miseEnAvant" && (
-          <>
-            <h5>FOCUS: Une mise en avant de vos formations auprès des collégien·nes</h5>
-            <ReactPlayer url={sample2Video} controls={true} attributes />
-          </>
-        )}
-      </HowToContainer>
+      <HowToContainer></HowToContainer>
       <TestimonyContainer>
         <h2>
           <span className={fr.cx("fr-icon-quote-fill")} aria-hidden={true} />

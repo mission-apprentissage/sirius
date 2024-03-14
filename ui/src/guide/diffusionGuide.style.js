@@ -100,12 +100,23 @@ export const CardContainer = styled.div`
   width: 100%;
 `;
 
-export const StyledCard = styled(Card)`
+// eslint-disable-next-line no-unused-vars
+export const StyledCard = styled(({ notClickable, isClicked, ...props }) => <Card {...props} />)`
   display: flex;
   align-items: center;
   border-bottom: 3px solid black;
   margin: ${fr.spacing("2w")};
   text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    border-bottom: 3px solid var(--border-default-grey);
+  }
+
+  ${({ notClickable }) => notClickable && `cursor: default !important;`}
+
+  ${({ isClicked }) =>
+    isClicked && `border-bottom: 3px solid var(--border-active-blue-france)!important;`}
 
   ${fr.breakpoints.up("sm")} {
     width: 100%;
@@ -281,4 +292,30 @@ export const SharePicturesContainer = styled.div`
       width: 100%;
     }
   }
+`;
+
+export const VideoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: ${fr.spacing("6w")} auto;
+
+  width: 100%;
+
+  ${fr.breakpoints.down("md")} {
+    margin: ${fr.spacing("3w")};
+
+    & > div {
+      width: 90% !important;
+    }
+  }
+`;
+
+export const MultipleVideoContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: ${fr.spacing("4w")};
+  margin: ${fr.spacing("4w")} auto;
 `;
