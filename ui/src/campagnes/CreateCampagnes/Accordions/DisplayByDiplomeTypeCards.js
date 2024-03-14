@@ -24,7 +24,7 @@ const DisplayByDiplomeTypeCards = ({
   displayedFormations,
   selectedFormations,
   setSelectedFormations,
-  existingFormationCatalogueIds,
+  existingFormationIdsFromCampagnes,
 }) => {
   const uniqueDiplomeTypesFromFormation = getUniqueDiplomeTypesFromFormation(displayedFormations);
 
@@ -76,7 +76,8 @@ const DisplayByDiplomeTypeCards = ({
                           ...prevValues,
                           ...formationsByDiplomeType
                             .filter(
-                              (formation) => !existingFormationCatalogueIds.includes(formation._id)
+                              (formation) =>
+                                !existingFormationIdsFromCampagnes.includes(formation._id)
                             )
                             .map((formation) => formation._id),
                         ]),
@@ -97,7 +98,7 @@ const DisplayByDiplomeTypeCards = ({
         />
         <FormationCardContainer>
           {formationsByDiplomeType.map((formation) => {
-            const isAlreadyCreated = existingFormationCatalogueIds?.includes(formation._id);
+            const isAlreadyCreated = existingFormationIdsFromCampagnes?.includes(formation._id);
             return (
               <FormationCardByDiplomeType
                 key={formation._id}

@@ -19,6 +19,7 @@ import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
 import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
 import { SearchNoResultsContainer, LoaderContainer } from "./styles/shared.style";
 import { sortingKeys } from "./utils";
+import CampagnesTable from "./Shared/CampagnesTable/CampagnesTable";
 
 const modal = createModal({
   id: "support-modal-loggedIn",
@@ -99,6 +100,16 @@ const ManageCampagnesPage = () => {
           displayedCampagnes={displayedCampagnes}
           selectedCampagnes={selectedCampagnes}
           setSelectedCampagnes={setSelectedCampagnes}
+          userContext={userContext}
+        />
+      );
+    } else if (displayMode === campagnesDisplayMode[2].value) {
+      return (
+        <CampagnesTable
+          displayedCampagnes={displayedCampagnes}
+          selectedCampagnes={selectedCampagnes}
+          setSelectedCampagnes={setSelectedCampagnes}
+          displayMode={displayMode}
           userContext={userContext}
         />
       );

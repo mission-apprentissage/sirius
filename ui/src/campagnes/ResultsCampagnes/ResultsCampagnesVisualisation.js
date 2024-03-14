@@ -17,6 +17,7 @@ import PieCard from "./Widgets/PieCard";
 import VerbatimCard from "./Widgets/VerbatimCard";
 import MultiEmojiCard from "./Widgets/MultiEmojiCard";
 import { DataVizContainer } from "../styles/resultsCampagnes.style";
+import BarCard from "./Widgets/BarCard";
 
 echarts.use([
   TooltipComponent,
@@ -33,6 +34,7 @@ const ResultsCampagnesVisualisation = ({
   questionnaire,
   questionnaireUI,
   expandedAccordion,
+  setExpandedAccordion,
 }) => {
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
   const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
@@ -57,7 +59,8 @@ const ResultsCampagnesVisualisation = ({
         return (
           <Accordion
             key={index}
-            expanded={expandedAccordion && expandedAccordion === category.id}
+            onExpandedChange={() => setExpandedAccordion(category.id)}
+            expanded={expandedAccordion === category.id ? true : false}
             label={
               <h6>
                 {category.emoji} {category.title}
@@ -92,11 +95,20 @@ const ResultsCampagnesVisualisation = ({
                           title={matchedIdAndQuestions[question]}
                         />
                       )}
+                      {matchedCardTypeAndQuestions[question] === "bar" && (
+                        <BarCard
+                          id={category.id}
+                          echarts={echarts}
+                          responses={responses}
+                          title={matchedIdAndQuestions[question]}
+                        />
+                      )}
                       {matchedCardTypeAndQuestions[question]?.type === "multiEmoji" && (
                         <MultiEmojiCard
                           id={category.id}
                           echarts={echarts}
                           responses={responses}
+                          emojiMapping={matchedCardTypeAndQuestions[question].mapping}
                           title={matchedIdAndQuestions[question]}
                         />
                       )}

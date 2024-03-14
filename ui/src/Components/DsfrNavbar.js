@@ -139,7 +139,7 @@ const DsfrNavbar = () => {
       menuLinks: [
         {
           linkProps: {
-            to: "/témoignages/gestion",
+            to: "/temoignages/gestion",
           },
           text: "Gérer les témoignages",
         },

@@ -1,4 +1,3 @@
-import React from "react";
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import parse from "html-react-parser";
 import { FullWidthContainer } from "../../styles/resultsCampagnes.style";
@@ -19,29 +18,27 @@ const barResponsesFormatting = (responses) => {
   }, []);
 };
 
-const multiEmojiOption = (responses, emojiMapping) => {
+const barOption = (responses) => {
   const zero = barResponsesFormatting(responses).map((response) => {
-    return response.value.filter((value) => value === "Pas vraiment" || value === "Pas ok").length;
+    return response.value.filter((value) => value === 0).length;
   });
 
   const one = barResponsesFormatting(responses).map((response) => {
-    return response.value.filter((value) => value === "Moyen").length;
+    return response.value.filter((value) => value === 1).length;
   });
 
   const two = barResponsesFormatting(responses).map((response) => {
-    return response.value.filter((value) => value === "Oui" || value === "Bien").length;
+    return response.value.filter((value) => value === 2).length;
+  });
+
+  const three = barResponsesFormatting(responses).map((response) => {
+    return response.value.filter((value) => value === 3).length;
   });
 
   const labelFormatter = (param) => {
     if (param.data == 0) return "";
     return param.data;
   };
-
-  const removeHTMLTagRegex = /(<([^>]+)>)/gi;
-
-  const questions = [
-    ...new Set(responses.map((response) => response.label?.replace(removeHTMLTagRegex, ""))),
-  ];
 
   return {
     tooltip: {
@@ -52,7 +49,7 @@ const multiEmojiOption = (responses, emojiMapping) => {
     },
     legend: {
       textStyle: {
-        fontSize: "18px",
+        fontSize: "36px",
         fontFamily: "Marianne",
       },
     },
@@ -69,11 +66,11 @@ const multiEmojiOption = (responses, emojiMapping) => {
     },
     yAxis: {
       type: "category",
-      data: questions,
+      data: barResponsesFormatting(responses).map((response) => response.label),
     },
     series: [
       {
-        name: `😫 ${emojiMapping[0].value}`,
+        name: "😫",
         type: "bar",
         stack: "total",
         label: {
@@ -84,10 +81,10 @@ const multiEmojiOption = (responses, emojiMapping) => {
           focus: "series",
         },
         data: zero,
-        color: "#FCBFB7",
+        color: "#F95C5E",
       },
       {
-        name: `🤔 ${emojiMapping[1].value}`,
+        name: "🧐",
         type: "bar",
         stack: "total",
         label: {
@@ -98,10 +95,10 @@ const multiEmojiOption = (responses, emojiMapping) => {
           focus: "series",
         },
         data: one,
-        color: "#C3FAD5",
+        color: "#FCBFB7",
       },
       {
-        name: `😝 ${emojiMapping[2].value}`,
+        name: "😊",
         type: "bar",
         stack: "total",
         label: {
@@ -112,28 +109,37 @@ const multiEmojiOption = (responses, emojiMapping) => {
           focus: "series",
         },
         data: two,
+        color: "#C3FAD5",
+      },
+      {
+        name: "😝",
+        type: "bar",
+        stack: "total",
+        label: {
+          show: true,
+          formatter: labelFormatter,
+        },
+        emphasis: {
+          focus: "series",
+        },
+        data: three,
         color: "#6A6AEC",
       },
     ],
   };
 };
 
-const MultiEmojiCard = ({ id, echarts, responses, title, emojiMapping }) => {
-  const option = multiEmojiOption(responses, emojiMapping);
+export const BarCard = ({ id, echarts, responses, title }) => {
+  const option = barOption(responses);
 
-  if (!option.series.length) return null;
   return (
-    <FullWidthContainer className={`exportCharts-${id} fullSize`}>
+    <FullWidthContainer className={`exportCharts-${id} fullWidth`}>
       <p>{parse(title.replace(/<br \/>/gi, ""))}</p>
       <div>
-        <ReactEChartsCore
-          echarts={echarts}
-          option={option}
-          style={{ height: "100%", width: "100%" }}
-        />
+        <ReactEChartsCore echarts={echarts} option={option} />
       </div>
     </FullWidthContainer>
   );
 };
 
-export default MultiEmojiCard;
+export default BarCard;

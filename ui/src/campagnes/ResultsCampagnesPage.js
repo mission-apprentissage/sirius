@@ -5,6 +5,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import Button from "@codegouvfr/react-dsfr/Button";
+import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import useFetchCampagnes from "../hooks/useFetchCampagnes";
 import { UserContext } from "../context/UserContext";
 import { _post } from "../utils/httpClient";
@@ -38,6 +39,7 @@ const ResultsCampagnesPage = () => {
   const [temoignagesError, setTemoignagesError] = useState(false);
   const [pdfExportLoading, setPdfExportLoading] = useState(false);
   const [expandedAccordion, setExpandedAccordion] = useState(null);
+  const [neededQuestionnaires, setNeededQuestionnaires] = useState([]);
   const [searchParams] = useSearchParams();
   const [userContext] = useContext(UserContext);
   const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
@@ -48,8 +50,23 @@ const ResultsCampagnesPage = () => {
     ? searchParams.get("campagneIds").split(",")
     : [];
 
-  const validatedQuestionnaire =
-    questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
+  useEffect(() => {
+    if (displayedCampagnes.length && selectedCampagnes.length) {
+      const neededQuestionnaireIds = [
+        ...new Set(
+          displayedCampagnes
+            .filter((campagne) => selectedCampagnes.includes(campagne._id))
+            .map((campagne) => campagne.questionnaireId)
+        ),
+      ];
+
+      const filteredQuestionnaires = questionnaires.filter((questionnaire) =>
+        neededQuestionnaireIds.includes(questionnaire._id)
+      );
+
+      setNeededQuestionnaires(filteredQuestionnaires);
+    }
+  }, [selectedCampagnes]);
 
   useEffect(() => {
     let sortedCampagnes = [...displayedCampagnes];
@@ -163,6 +180,32 @@ const ResultsCampagnesPage = () => {
     </b>
   );
 
+  const multipleQuestionnairesTabs =
+    neededQuestionnaires.length > 1 &&
+    neededQuestionnaires.map((questionnaire, index) => {
+      const filteredCampagnesByQuestionnaireId = displayedCampagnes
+        .filter((campagne) => campagne.questionnaireId === questionnaire._id)
+        .filter((campagne) => selectedCampagnes.includes(campagne._id))
+        .map((campagne) => campagne._id);
+
+      const filteredTemoignagesBySelectedCampagnesAndQuestionnaireId = temoignages.filter(
+        (temoignage) => filteredCampagnesByQuestionnaireId.includes(temoignage.campagneId)
+      );
+
+      return {
+        label: `Questionnaire version ${index + 1}`,
+        content: (
+          <ResultsCampagnesVisualisation
+            temoignages={filteredTemoignagesBySelectedCampagnesAndQuestionnaireId}
+            questionnaire={questionnaire.questionnaire}
+            questionnaireUI={questionnaire.questionnaireUI}
+            expandedAccordion={expandedAccordion}
+            setExpandedAccordion={setExpandedAccordion}
+          />
+        ),
+      };
+    });
+
   return (
     <Container>
       <ResultsCampagneContainer>
@@ -246,15 +289,15 @@ const ResultsCampagnesPage = () => {
             Témoignages des campagnes sélectionnées
           </h1>
           <div>
-            <Button priority="secondary" iconId="fr-icon-file-download-fill">
+            {/*<Button priority="secondary" iconId="fr-icon-file-download-fill">
               Exporter en XLS
-            </Button>
+        </Button>*/}
             <Button
               priority="secondary"
               iconId="fr-icon-file-download-fill"
               onClick={() =>
                 exportMultipleChartsToPdf(
-                  validatedQuestionnaire[0].questionnaire,
+                  neededQuestionnaires[0].questionnaire,
                   setExpandedAccordion,
                   setPdfExportLoading
                 )
@@ -288,16 +331,22 @@ const ResultsCampagnesPage = () => {
             severity="error"
           />
         ) : null}
-        {filteredTemoignagesBySelectedCampagnes.length && !loadingTemoignages ? (
+        {!temoignagesError && !temoignages.length && !loadingTemoignages ? (
+          <Alert
+            title="Vous n'avez pas encore recueilli de témoignages pour les campagnes sélectionnées"
+            severity="info"
+          />
+        ) : null}
+        {neededQuestionnaires.length > 1 && <Tabs tabs={multipleQuestionnairesTabs} />}
+        {filteredTemoignagesBySelectedCampagnes.length &&
+        neededQuestionnaires.length === 1 &&
+        !loadingTemoignages ? (
           <ResultsCampagnesVisualisation
             temoignages={filteredTemoignagesBySelectedCampagnes}
-            questionnaire={
-              validatedQuestionnaire?.length && validatedQuestionnaire[0].questionnaire
-            }
-            questionnaireUI={
-              validatedQuestionnaire?.length && validatedQuestionnaire[0].questionnaireUI
-            }
+            questionnaire={neededQuestionnaires[0].questionnaire}
+            questionnaireUI={neededQuestionnaires[0].questionnaireUI}
             expandedAccordion={expandedAccordion}
+            setExpandedAccordion={setExpandedAccordion}
           />
         ) : null}
       </ResultsCampagneContainer>

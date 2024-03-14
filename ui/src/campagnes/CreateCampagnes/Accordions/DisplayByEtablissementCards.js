@@ -24,7 +24,7 @@ const DisplayByEtablissementCards = ({
   displayedFormations,
   selectedFormations,
   setSelectedFormations,
-  existingFormationCatalogueIds,
+  existingFormationIdsFromCampagnes,
 }) => {
   const uniqueEtablissementFromFormation = getUniqueEtablissementFromFormation(displayedFormations);
 
@@ -116,7 +116,8 @@ const DisplayByEtablissementCards = ({
                           ...prevValues,
                           ...formationsByEtablissement
                             .filter(
-                              (formation) => !existingFormationCatalogueIds.includes(formation._id)
+                              (formation) =>
+                                !existingFormationIdsFromCampagnes.includes(formation._id)
                             )
                             .map((formation) => formation._id),
                         ]),
@@ -137,7 +138,7 @@ const DisplayByEtablissementCards = ({
         />
         <FormationCardContainer>
           {formationsByEtablissement.map((formation) => {
-            const isAlreadyCreated = existingFormationCatalogueIds?.includes(formation._id);
+            const isAlreadyCreated = existingFormationIdsFromCampagnes?.includes(formation._id);
             return (
               <FormationCardByEtablissement
                 key={formation._id}

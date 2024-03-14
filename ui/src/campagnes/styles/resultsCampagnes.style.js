@@ -88,6 +88,10 @@ export const HalfWidthContainer = styled.div`
   padding: ${fr.spacing("4w")};
   background-color: white;
 
+  ${fr.breakpoints.down("lg")} {
+    width: 100%;
+  }
+
   & > p:first-of-type {
     font-size: 20px;
     line-height: 1.5;

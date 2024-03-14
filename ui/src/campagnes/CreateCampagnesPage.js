@@ -50,15 +50,12 @@ const CreateCampagnesPage = () => {
   }, [remoteFormations]);
 
   const campagneIdWithoutNAFormations = campagnes?.length
-    ? campagnes
-        .filter((campagne) => campagne?.formation?._id !== "N/A")
-        .map((campagne) => campagne.formation._id)
+    ? campagnes.filter((campagne) => campagne?.formation?._id !== "N/A")
     : [];
 
-  const localFormationQuery = campagneIdWithoutNAFormations?.map((id) => `id=${id}`).join("&");
-
-  const [localFormations, loadingLocalFormations, errorLocalFormations] =
-    useFetchLocalFormations(localFormationQuery);
+  const existingFormationIdsFromCampagnes = campagneIdWithoutNAFormations?.map(
+    (campagne) => campagne.formation.data._id
+  );
 
   const [questionnaires, loadingQuestionnaires, errorQuesitonnaires] =
     useGet(`/api/questionnaires/`);
@@ -117,11 +114,9 @@ const CreateCampagnesPage = () => {
     },
   });
 
-  const isLoadingStep1 =
-    loadingRemoteFormations || loadingLocalFormations || loadingQuestionnaires || loadingCampagnes;
+  const isLoadingStep1 = loadingRemoteFormations || loadingQuestionnaires || loadingCampagnes;
 
-  const hasError =
-    errorRemoteFormation || errorLocalFormations || errorQuesitonnaires || errorCampagnes;
+  const hasError = errorRemoteFormation || errorQuesitonnaires || errorCampagnes;
 
   return (
     <>
@@ -152,7 +147,7 @@ const CreateCampagnesPage = () => {
               <Step1
                 isLoading={isLoadingStep1}
                 hasError={hasError}
-                localFormations={localFormations}
+                existingFormationIdsFromCampagnes={existingFormationIdsFromCampagnes}
                 remoteFormations={remoteFormations}
                 displayedFormations={displayedFormations}
                 setDisplayedFormations={setDisplayedFormations}

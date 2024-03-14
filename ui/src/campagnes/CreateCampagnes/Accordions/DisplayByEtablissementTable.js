@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
@@ -18,9 +18,15 @@ import CreateCampagneTable from "../CreateCampagneTable";
 import RemoveFormationModal from "../RemoveFormationModal";
 import { campagnesDisplayMode } from "../../../constants";
 import { ToolTipContainer } from "../../styles/shared.style";
+import CommonEndDateModal from "../CommonEndDateModal";
 
 const modal = createModal({
   id: "remove-formation-modal",
+  isOpenedByDefault: false,
+});
+
+const commonEndDateModal = createModal({
+  id: "common-endDate-modal",
   isOpenedByDefault: false,
 });
 
@@ -32,14 +38,9 @@ const DisplayByEtablissementTable = ({
   setSelectedFormationsAction,
   formik,
 }) => {
-  const dateInputRef = useRef(null);
   const uniqueEtablissementFromFormation = getUniqueEtablissementFromFormation(selectedFormations);
 
   const orderedFormationsByEtablissement = orderFormationByEtablissement(selectedFormations);
-
-  const openDatePicker = () => {
-    dateInputRef.current.showPicker();
-  };
 
   return uniqueEtablissementFromFormation.map((siret) => {
     const formationsByEtablissement = orderedFormationsByEtablissement[siret];
@@ -144,21 +145,10 @@ const DisplayByEtablissementTable = ({
             <Button
               priority="secondary"
               iconId="fr-icon--sm fr-icon-calendar-2-fill"
-              onClick={openDatePicker}
+              onClick={() => commonEndDateModal.open()}
               disabled={!selectedFormationsAction.length}
             >
-              <input
-                type="date"
-                ref={dateInputRef}
-                style={{ visibility: "hidden", width: "0" }}
-                onChange={(e) => {
-                  selectedFormationsAction.forEach((id) =>
-                    formik.setFieldValue(`${id}.endDate`, e.target.value)
-                  );
-                  setSelectedFormationsAction([]);
-                }}
-              />
-              Choisir date de fin commune
+              Choisir une date de fin commune
             </Button>
           </ButtonContainer>
           <CreateCampagneTable
@@ -175,6 +165,12 @@ const DisplayByEtablissementTable = ({
           setSelectedFormationsAction={setSelectedFormationsAction}
           setSelectedFormations={setSelectedFormations}
           setSearchedDiplayedFormations={setSearchedDiplayedFormations}
+        />
+        <CommonEndDateModal
+          modal={commonEndDateModal}
+          selectedFormationsAction={selectedFormationsAction}
+          setSelectedFormationsAction={setSelectedFormationsAction}
+          formik={formik}
         />
       </div>
     );

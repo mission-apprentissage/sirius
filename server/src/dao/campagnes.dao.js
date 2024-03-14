@@ -88,6 +88,7 @@ const formationQuery = (formationId) => {
           {
             $project: {
               _id: { $toString: "$_id" },
+              "data._id": 1,
               "data.intitule_long": 1,
               "data.tags": 1,
               "data.lieu_formation_adresse_computed": 1,
