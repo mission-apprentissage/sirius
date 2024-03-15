@@ -79,6 +79,10 @@ export const DIPLOME_TYPE_MATCHER = {
     "Titre Homologué de Niveau 5 Ministère de la Jeunesse et des Sports",
   "TH DE NIV 5 ORGANISMES GESTIONNAIRES DIVERS":
     "Titre Homologué de Niveau 5 Organismes Gestionnaires Divers",
+  "CERTIFICAT D'APTITUDE PROFESSIONNELLE AGRICOLE":
+    "Certificat d'Aptitude Professionnelle Agricole",
+  "CERTIFICAT DE SPECIALISATION DE NIVEAU 3": "Certificat de Spécialisation de Niveau 3",
+  "CERTIFICAT DE SPECIALISATION DE NIVEAU 4": "Certificat de Spécialisation de Niveau 4",
 };
 
 export const emailWithTLDRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
