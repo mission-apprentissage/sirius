@@ -116,27 +116,46 @@ const DisplayByDiplomeTypeCards = ({
                       </Duration>
                     )}
                   </div>
-                  <Checkbox
-                    key={formation.id}
-                    disabled={isAlreadyCreated}
-                    options={[
-                      {
-                        nativeInputProps: {
-                          name: `campagne-${formation.id}`,
-                          checked: isAlreadyCreated
-                            ? false
-                            : selectedFormations.includes(formation.id),
-                          onChange: () => {
-                            setSelectedFormations((prevValue) =>
-                              prevValue.includes(formation.id)
-                                ? prevValue.filter((id) => id !== formation.id)
-                                : [...prevValue, formation.id]
-                            );
+                  {isAlreadyCreated ? (
+                    <Tooltip
+                      background="var(--background-default-grey)"
+                      border="var(--border-default-grey)"
+                      color="var(--text-default-grey)"
+                      placement="right"
+                      content={
+                        <ToolTipContainer>
+                          <p>
+                            Une campagne a déjà été créée pour cette formation, vous ne pouvez donc
+                            pas la sélectionner.
+                          </p>
+                        </ToolTipContainer>
+                      }
+                    >
+                      <span className={fr.cx("fr-icon-info-fill")} />
+                    </Tooltip>
+                  ) : (
+                    <Checkbox
+                      key={formation.id}
+                      disabled={isAlreadyCreated}
+                      options={[
+                        {
+                          nativeInputProps: {
+                            name: `campagne-${formation.id}`,
+                            checked: isAlreadyCreated
+                              ? false
+                              : selectedFormations.includes(formation.id),
+                            onChange: () => {
+                              setSelectedFormations((prevValue) =>
+                                prevValue.includes(formation.id)
+                                  ? prevValue.filter((id) => id !== formation.id)
+                                  : [...prevValue, formation.id]
+                              );
+                            },
                           },
                         },
-                      },
-                    ]}
-                  />
+                      ]}
+                    />
+                  )}
                 </HeaderCardContainer>
                 <h6>{formation.intitule_long}</h6>
                 <div>
