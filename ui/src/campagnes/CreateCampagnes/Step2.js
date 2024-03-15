@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import SortButtons from "../Shared/SortButtons/SortButtons";
 import { StepContainer } from "../styles/createCampagnes.style";
-import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
+import { CAMPAGNES_DISPLAY_MODE, campagnesSortingOptions } from "../../constants";
 import { orderFormationsByDiplomeType } from "../utils";
 import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
 import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
@@ -10,19 +10,19 @@ import { SearchNoResultsContainer } from "../styles/shared.style";
 import DisplayByAllTable from "./Accordions/DisplayByAllTable";
 
 const AccordionComponentGetter = ({ displayMode, ...props }) => {
-  if (displayMode === campagnesDisplayMode[0].value) {
+  if (displayMode === CAMPAGNES_DISPLAY_MODE.DIPLOME) {
     return (
       <div className={fr.cx("fr-accordions-group")}>
         <DisplayByDiplomeTypeTable {...props} />
       </div>
     );
-  } else if (displayMode === campagnesDisplayMode[1].value) {
+  } else if (displayMode === CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT) {
     return (
       <div className={fr.cx("fr-accordions-group")}>
         <DisplayByEtablissementTable {...props} />
       </div>
     );
-  } else if (displayMode === campagnesDisplayMode[2].value) {
+  } else if (displayMode === CAMPAGNES_DISPLAY_MODE.ALL) {
     return <DisplayByAllTable {...props} />;
   }
 };
@@ -30,7 +30,7 @@ const AccordionComponentGetter = ({ displayMode, ...props }) => {
 const Step2 = ({ selectedFormations, setSelectedFormations, formik }) => {
   const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
   const [searchedDiplayedFormations, setSearchedDiplayedFormations] = useState([]);
-  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
+  const [displayMode, setDisplayMode] = useState(CAMPAGNES_DISPLAY_MODE.DIPLOME);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
 

@@ -2,7 +2,7 @@ import React from "react";
 import Checkbox from "@codegouvfr/react-dsfr/Checkbox";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import Button from "@codegouvfr/react-dsfr/Button";
-import { campagnesDisplayMode } from "../../../constants";
+import { CAMPAGNES_DISPLAY_MODE } from "../../../constants";
 import CreateCampagneTable from "../CreateCampagneTable";
 import { ButtonContainer } from "./accordions.style";
 import RemoveFormationModal from "../RemoveFormationModal";
@@ -83,7 +83,7 @@ const DisplayByAllTable = ({
         selectedFormationsAction={selectedFormationsAction}
         setSelectedFormationsAction={setSelectedFormationsAction}
         formik={formik}
-        displayMode={campagnesDisplayMode[2].value}
+        displayMode={CAMPAGNES_DISPLAY_MODE.ALL}
       />
       <RemoveFormationModal
         modal={modal}

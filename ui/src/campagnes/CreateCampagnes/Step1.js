@@ -1,32 +1,20 @@
 import React, { useState, useEffect } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
-import { fr } from "@codegouvfr/react-dsfr";
 import Alert from "@codegouvfr/react-dsfr/Alert";
 import SortButtons from "../Shared/SortButtons/SortButtons";
-import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
-import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
-import { campagnesDisplayMode } from "../../constants";
+import { CAMPAGNES_DISPLAY_MODE } from "../../constants";
 import { StepContainer } from "../styles/createCampagnes.style";
 import { SearchNoResultsContainer, LoaderContainer } from "../styles/shared.style";
-import DisplayByAllCards from "./Accordions/DisplayByAllCards";
-
-const AccordionComponentGetter = ({ displayMode, ...props }) => {
-  if (displayMode === campagnesDisplayMode[0].value) {
-    return (
-      <div className={fr.cx("fr-accordions-group")}>
-        <DisplayByDiplomeTypeCards {...props} />
-      </div>
-    );
-  } else if (displayMode === campagnesDisplayMode[1].value) {
-    return (
-      <div className={fr.cx("fr-accordions-group")}>
-        <DisplayByEtablissementCards {...props} />
-      </div>
-    );
-  } else if (displayMode === campagnesDisplayMode[2].value) {
-    return <DisplayByAllCards {...props} />;
-  }
-};
+import FormationsAccordions from "./Accordions/FormationsAccordions";
+import {
+  getUniqueDiplomeTypesFromFormation,
+  getUniqueEtablissementFromFormation,
+  orderFormationByEtablissement,
+  orderFormationsByDiplomeType,
+} from "../utils";
+import FormationCard from "./Card/FormationCard";
+import { FormationCardContainer } from "./Accordions/accordions.style";
+import SelectAllCheckbox from "./Accordions/SelectAllCheckbox";
 
 const Step1 = ({
   isLoading,
@@ -38,8 +26,14 @@ const Step1 = ({
   selectedFormations,
   setSelectedFormations,
 }) => {
-  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
+  const [displayMode, setDisplayMode] = useState(CAMPAGNES_DISPLAY_MODE.DIPLOME);
   const [search, setSearch] = useState("");
+
+  const isAccordionDisplayMode =
+    displayMode === CAMPAGNES_DISPLAY_MODE.DIPLOME ||
+    displayMode === CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT;
+
+  const shouldDisplayData = displayedFormations?.length && !isLoading && !hasError;
 
   useEffect(() => {
     if (remoteFormations?.length && search === "") {
@@ -58,6 +52,17 @@ const Step1 = ({
       setDisplayedFormations(filteredFormations);
     }
   }, [search]);
+
+  let uniqueAccordionElements = [];
+  let orderedFormationByElement = [];
+
+  if (displayMode === CAMPAGNES_DISPLAY_MODE.DIPLOME) {
+    uniqueAccordionElements = getUniqueDiplomeTypesFromFormation(displayedFormations);
+    orderedFormationByElement = orderFormationsByDiplomeType(displayedFormations);
+  } else if (displayMode === CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT) {
+    uniqueAccordionElements = getUniqueEtablissementFromFormation(displayedFormations);
+    orderedFormationByElement = orderFormationByEtablissement(displayedFormations);
+  }
 
   return (
     <StepContainer>
@@ -91,14 +96,41 @@ const Step1 = ({
           <p onClick={() => setSearch("")}>Réinitialiser ?</p>
         </SearchNoResultsContainer>
       ) : null}
-      {displayedFormations?.length && !isLoading && !hasError ? (
-        <AccordionComponentGetter
+      {isAccordionDisplayMode && shouldDisplayData ? (
+        <FormationsAccordions
           displayMode={displayMode}
-          displayedFormations={displayedFormations}
           selectedFormations={selectedFormations}
           setSelectedFormations={setSelectedFormations}
           existingFormationIdsFromCampagnes={existingFormationIdsFromCampagnes}
+          uniqueAccordionElements={uniqueAccordionElements}
+          orderedFormationByElement={orderedFormationByElement}
         />
+      ) : null}
+      {!isAccordionDisplayMode && shouldDisplayData ? (
+        <>
+          <SelectAllCheckbox
+            element="all"
+            isChecked={!!selectedFormations.length}
+            setSelectedFormations={setSelectedFormations}
+            formationsByElement={displayedFormations}
+            existingFormationIdsFromCampagnes={existingFormationIdsFromCampagnes}
+            count={selectedFormations.length}
+          />
+          <FormationCardContainer>
+            {displayedFormations.map((displayedFormation) => (
+              <FormationCard
+                key={displayedFormation._id}
+                formation={displayedFormation}
+                isAlreadyCreated={existingFormationIdsFromCampagnes?.includes(
+                  displayedFormation._id
+                )}
+                isSelected={selectedFormations.includes(displayedFormation._id)}
+                setSelectedFormations={setSelectedFormations}
+                displayMode={displayMode}
+              />
+            ))}
+          </FormationCardContainer>
+        </>
       ) : null}
     </StepContainer>
   );

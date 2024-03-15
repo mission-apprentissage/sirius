@@ -7,7 +7,7 @@ import {
   getUniqueDiplomeTypesFromFormation,
   isPlural,
 } from "../../utils";
-import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../../constants";
+import { DIPLOME_TYPE_MATCHER, CAMPAGNES_DISPLAY_MODE } from "../../../constants";
 import {
   StyledAccordion,
   AccordionLabelByDiplomeTypeContainer,
@@ -114,7 +114,7 @@ const DisplayByDiplomeTypeTable = ({
             selectedFormationsAction={selectedFormationsAction}
             setSelectedFormationsAction={setSelectedFormationsAction}
             formik={formik}
-            displayMode={campagnesDisplayMode[0].value}
+            displayMode={CAMPAGNES_DISPLAY_MODE.DIPLOME}
           />
         </StyledAccordion>
         <RemoveFormationModal

@@ -13,7 +13,7 @@ import DisplayByEtablissement from "./ManageCampagne/Accordions/DisplayByEtablis
 import SortButtons from "./Shared/SortButtons/SortButtons";
 import ActionButtons from "./ManageCampagne/ActionButtons/ActionButtons";
 import NeedHelp from "../Components/NeedHelp";
-import { campagnesDisplayMode, campagnesSortingOptions } from "../constants";
+import { CAMPAGNES_DISPLAY_MODE, campagnesSortingOptions } from "../constants";
 import SupportModal from "./Shared/SupportModal";
 import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
 import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
@@ -41,7 +41,7 @@ const successCreationModal = createModal({
 const ManageCampagnesPage = () => {
   const [selectedCampagnes, setSelectedCampagnes] = useState([]);
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
-  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
+  const [displayMode, setDisplayMode] = useState(CAMPAGNES_DISPLAY_MODE.DIPLOME);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
   const [userContext] = useContext(UserContext);
@@ -92,7 +92,7 @@ const ManageCampagnesPage = () => {
   }, [sortingMode, displayedCampagnes]);
 
   const accordionComponentGetter = () => {
-    if (displayMode === campagnesDisplayMode[0].value) {
+    if (displayMode === CAMPAGNES_DISPLAY_MODE.DIPLOME) {
       return (
         <DisplayByDiplomeType
           displayedCampagnes={displayedCampagnes}
@@ -101,7 +101,7 @@ const ManageCampagnesPage = () => {
           userContext={userContext}
         />
       );
-    } else if (displayMode === campagnesDisplayMode[1].value) {
+    } else if (displayMode === CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT) {
       return (
         <DisplayByEtablissement
           displayedCampagnes={displayedCampagnes}
@@ -110,7 +110,7 @@ const ManageCampagnesPage = () => {
           userContext={userContext}
         />
       );
-    } else if (displayMode === campagnesDisplayMode[2].value) {
+    } else if (displayMode === CAMPAGNES_DISPLAY_MODE.ALL) {
       return (
         <CampagnesTable
           displayedCampagnes={displayedCampagnes}

@@ -16,7 +16,7 @@ import {
 } from "./accordions.style";
 import CreateCampagneTable from "../CreateCampagneTable";
 import RemoveFormationModal from "../RemoveFormationModal";
-import { campagnesDisplayMode } from "../../../constants";
+import { CAMPAGNES_DISPLAY_MODE } from "../../../constants";
 import { ToolTipContainer } from "../../styles/shared.style";
 import CommonEndDateModal from "../CommonEndDateModal";
 
@@ -156,7 +156,7 @@ const DisplayByEtablissementTable = ({
             selectedFormationsAction={selectedFormationsAction}
             setSelectedFormationsAction={setSelectedFormationsAction}
             formik={formik}
-            displayMode={campagnesDisplayMode[1].value}
+            displayMode={CAMPAGNES_DISPLAY_MODE.ETABLISSEMENT}
           />
         </StyledAccordion>
         <RemoveFormationModal
