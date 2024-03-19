@@ -35,6 +35,16 @@ import {
 import DisplayByDiplomeTypeTable from "./ResultsCampagnes/Accordions/DisplayByDiplomeTypeTable";
 import { exportMultipleChartsToPdf } from "./pdfExport";
 
+const AccordionComponentGetter = (props) => {
+  if (props.displayMode === campagnesDisplayMode[0].value) {
+    return <DisplayByDiplomeTypeTable {...props} />;
+  } else if (props.displayMode === campagnesDisplayMode[1].value) {
+    return <DisplayByEtablissementTable {...props} />;
+  } else if (props.displayMode === campagnesDisplayMode[2].value) {
+    return <CampagnesTable {...props} />;
+  }
+};
+
 const ResultsCampagnesPage = () => {
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [selectedCampagnes, setSelectedCampagnes] = useState([]);
@@ -147,37 +157,6 @@ const ResultsCampagnesPage = () => {
     selectedCampagnes.includes(campagne._id)
   );
 
-  const AccordionComponentGetter = () => {
-    if (displayMode === campagnesDisplayMode[0].value) {
-      return (
-        <DisplayByDiplomeTypeTable
-          displayedCampagnes={displayedCampagnes}
-          selectedCampagnes={selectedCampagnes}
-          setSelectedCampagnes={setSelectedCampagnes}
-          displayMode={displayMode}
-        />
-      );
-    } else if (displayMode === campagnesDisplayMode[1].value) {
-      return (
-        <DisplayByEtablissementTable
-          displayedCampagnes={displayedCampagnes}
-          selectedCampagnes={selectedCampagnes}
-          setSelectedCampagnes={setSelectedCampagnes}
-          displayMode={displayMode}
-        />
-      );
-    } else if (displayMode === campagnesDisplayMode[2].value) {
-      return (
-        <CampagnesTable
-          displayedCampagnes={displayedCampagnes}
-          selectedCampagnes={selectedCampagnes}
-          setSelectedCampagnes={setSelectedCampagnes}
-          displayMode={displayMode}
-        />
-      );
-    }
-  };
-
   const checkboxLabel = (
     <b>
       {selectedCampagnes.length
@@ -286,7 +265,12 @@ const ResultsCampagnesPage = () => {
             />
             <div className={fr.cx("fr-accordions-group")}>
               <div style={{ display: isOpened ? "inherit" : "none" }}>
-                <AccordionComponentGetter />
+                <AccordionComponentGetter
+                  displayMode={displayMode}
+                  displayedCampagnes={displayedCampagnes}
+                  selectedCampagnes={selectedCampagnes}
+                  setSelectedCampagnes={setSelectedCampagnes}
+                />
               </div>
             </div>
             <ButtonContainer>
