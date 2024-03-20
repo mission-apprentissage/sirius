@@ -7,11 +7,17 @@ const campagnesController = require("../../src/controllers/campagnes.controller"
 const campagnesService = require("../../src/services/campagnes.service");
 const { BasicError, CampagneNotFoundError } = require("../../src/errors");
 const { newCampagne } = require("../fixtures");
+const { USER_ROLES } = require("../../src/constants");
 
 use(sinonChai);
 
 describe(__filename, () => {
-  const req = mockRequest();
+  const req = mockRequest({
+    user: {
+      role: USER_ROLES.ETABLISSEMENT,
+      etablissements: [{ siret: "12345678901234" }],
+    },
+  });
   const res = mockResponse();
   const next = stub();
 
@@ -155,28 +161,28 @@ describe(__filename, () => {
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
   });
-  describe("getExport", () => {
+  describe("getPdfExport", () => {
     const req = mockRequest({ params: { id: 1 } });
 
     it("should throw a BasicError if success is false", async () => {
-      stub(campagnesService, "getExport").returns({ success: false, body: null });
+      stub(campagnesService, "getPdfExport").returns({ success: false, body: null });
 
-      await campagnesController.getExport(req, res, next);
+      await campagnesController.getPdfExport(req, res, next);
 
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
 
     it("should return the export and status 200 if success is true", async () => {
       const exportData = { data: "some data" };
-      stub(campagnesService, "getExport").returns({ success: true, body: exportData });
+      stub(campagnesService, "getPdfExport").returns({ success: true, body: exportData });
 
-      await campagnesController.getExport(req, res, next);
+      await campagnesController.getPdfExport(req, res, next);
 
       expect(res.status).to.have.been.calledWith(200);
       expect(res.json).to.have.been.calledWith(exportData);
     });
   });
-  describe("getMultipleExport", () => {
+  describe("getPdfMultipleExport", () => {
     it("should return a 200 status code and the exported data if successful", async () => {
       const req = {
         query: {
@@ -193,9 +199,9 @@ describe(__filename, () => {
         json: stub(),
       };
       const expectedResponse = { data: "exported data" };
-      stub(campagnesService, "getMultipleExport").resolves({ success: true, body: expectedResponse });
+      stub(campagnesService, "getPdfMultipleExport").resolves({ success: true, body: expectedResponse });
 
-      await campagnesController.getMultipleExport(req, res, next);
+      await campagnesController.getPdfMultipleExport(req, res, next);
 
       expect(res.status).to.have.been.calledWith(200);
       expect(res.json).to.have.been.calledWith(expectedResponse);
@@ -215,8 +221,8 @@ describe(__filename, () => {
         status: stub().returnsThis(),
         json: stub(),
       };
-      stub(campagnesService, "getMultipleExport").resolves({ success: false });
-      await campagnesController.getMultipleExport(req, res, next);
+      stub(campagnesService, "getPdfMultipleExport").resolves({ success: false });
+      await campagnesController.getPdfMultipleExport(req, res, next);
       expect(next.getCall(0).args[0]).to.be.an.instanceof(BasicError);
     });
   });

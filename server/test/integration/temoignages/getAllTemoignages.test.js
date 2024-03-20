@@ -33,14 +33,15 @@ httpTests(__filename, ({ startServer }) => {
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
 
     expect(response.status).to.eql(200);
-
     expect(response.body[0]).to.deep.includes({
       ...temoignage1,
       lastQuestionAt: temoignage1.lastQuestionAt.toISOString(),
+      deletedAt: null,
     });
     expect(response.body[1]).to.deep.includes({
       ...temoignage2,
       lastQuestionAt: temoignage2.lastQuestionAt.toISOString(),
+      deletedAt: null,
     });
   });
   it("should return 200 and an empty array if no temoignage exist", async () => {

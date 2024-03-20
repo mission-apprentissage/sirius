@@ -80,6 +80,7 @@ httpTests(__filename, ({ startServer }) => {
       const formation2 = newFormation({ deletedAt: new Date() });
 
       const createdFormation1 = await formationsDao.create(formation1);
+
       await formationsDao.create(formation2);
 
       const formations = await formationsDao.getAll();

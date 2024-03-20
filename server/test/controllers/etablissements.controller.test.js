@@ -29,12 +29,12 @@ describe(__filename, () => {
     res.json.resetHistory();
   });
 
-  describe("createEtablissement", () => {
+  describe("createEtablissements", () => {
     const req = mockRequest({ body: { nom: "test" } });
 
     it("should create a new etablissement and return it with a 201 status code", async () => {
       const expectedResponse = { id: 1, name: "Test Etablissement" };
-      stub(etablissementsService, "createEtablissement").resolves({ success: true, body: expectedResponse });
+      stub(etablissementsService, "createEtablissements").resolves({ success: true, body: expectedResponse });
 
       await createEtablissement(req, res, next);
 
@@ -44,7 +44,7 @@ describe(__filename, () => {
     });
 
     it("should throw an EtablissementAlreadyExistingError if the etablissement already exists", async () => {
-      stub(etablissementsService, "createEtablissement").resolves({
+      stub(etablissementsService, "createEtablissements").resolves({
         success: false,
         body: { message: ErrorMessage.EtablissementAlreadyExistingError },
       });
@@ -55,7 +55,7 @@ describe(__filename, () => {
     });
 
     it("should throw a BasicError if there is an error creating the etablissement", async () => {
-      stub(etablissementsService, "createEtablissement").resolves({ success: false });
+      stub(etablissementsService, "createEtablissements").resolves({ success: false });
 
       await createEtablissement(req, res, next);
 

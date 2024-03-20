@@ -12,7 +12,16 @@ const getAll = async (query, questionKey) => {
     query = { ...query, [`reponses.${questionKey}`]: { $exists: true, $ne: null } };
   }
 
-  projection = { ...projection, _id: 1, createdAt: 1, updatedAt: 1, campagneId: 1 };
+  projection = {
+    ...projection,
+    _id: 1,
+    createdAt: 1,
+    updatedAt: 1,
+    campagneId: 1,
+    lastQuestionAt: 1,
+    isBot: 1,
+    deletedAt: 1,
+  };
 
   return Temoignage.find({ ...query, deletedAt: null }, projection).lean();
 };

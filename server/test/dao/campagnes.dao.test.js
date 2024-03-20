@@ -316,7 +316,7 @@ httpTests(__filename, ({ startServer }) => {
       const createdEtablissement2 = await etablissementsDao.create(etablissement1);
 
       const campagnes = await campagnesDao.getAll({
-        nomCampagne: createdCampagne2.nomCampagne,
+        _id: createdCampagne2._id,
       });
 
       expect(campagnes).to.have.lengthOf(1);
