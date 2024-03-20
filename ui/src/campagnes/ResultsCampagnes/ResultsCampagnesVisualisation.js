@@ -56,6 +56,7 @@ const ResultsCampagnesVisualisation = ({
         const filteredQuestionsList = questionsList.filter((question) =>
           Object.keys(questionnaire.properties[category.id].properties).includes(question)
         );
+
         return (
           <Accordion
             key={index}

@@ -56,8 +56,9 @@ const ResultsCampagnesPage = () => {
   const [loadingTemoignages, setLoadingTemoignages] = useState(false);
   const [temoignagesError, setTemoignagesError] = useState(false);
   const [pdfExportLoading, setPdfExportLoading] = useState(false);
-  const [expandedAccordion, setExpandedAccordion] = useState(null);
+  const [expandedAccordion, setExpandedAccordion] = useState("");
   const [neededQuestionnaires, setNeededQuestionnaires] = useState([]);
+  const [forceCleanState, setForceCleanState] = useState(false);
   const [searchParams] = useSearchParams();
   const [userContext] = useContext(UserContext);
   const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
@@ -309,7 +310,8 @@ const ResultsCampagnesPage = () => {
                   displayedCampagnes.filter((campagne) => selectedCampagnes.includes(campagne._id)),
                   statistics,
                   setExpandedAccordion,
-                  setPdfExportLoading
+                  setPdfExportLoading,
+                  setForceCleanState
                 )
               }
             >
@@ -341,16 +343,11 @@ const ResultsCampagnesPage = () => {
             severity="error"
           />
         ) : null}
-        {!temoignagesError && !temoignages.length && !loadingTemoignages ? (
-          <Alert
-            title="Vous n'avez pas encore recueilli de témoignages pour les campagnes sélectionnées"
-            severity="info"
-          />
-        ) : null}
         {neededQuestionnaires.length > 1 && <Tabs tabs={multipleQuestionnairesTabs} />}
         {filteredTemoignagesBySelectedCampagnes.length &&
         neededQuestionnaires.length === 1 &&
-        !loadingTemoignages ? (
+        !loadingTemoignages &&
+        !forceCleanState ? (
           <ResultsCampagnesVisualisation
             temoignages={filteredTemoignagesBySelectedCampagnes}
             questionnaire={neededQuestionnaires[0].questionnaire}
