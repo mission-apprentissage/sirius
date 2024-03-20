@@ -31,6 +31,10 @@ const DisplayByEtablissementTable = ({
       campagnesByEtablissement.map((formation) => formation._id).includes(id)
     ).length;
 
+    const isEveryCampagnesSelected = campagnesByEtablissement?.every((campagne) =>
+      selectedCampagnes.includes(campagne._id)
+    );
+
     const checkboxLabel = (
       <b>
         {campagnesSelectedCountByEtablissement
@@ -106,18 +110,25 @@ const DisplayByEtablissementTable = ({
                 label: checkboxLabel,
                 nativeInputProps: {
                   name: `selectAll${siret}`,
-                  checked:
-                    selectedCampagnes.length > 0 &&
-                    campagnesSelectedCountByEtablissement === campagnesByEtablissement.length,
+                  checked: isEveryCampagnesSelected,
                   onChange: (e) =>
-                    setSelectedCampagnes((prevValues) =>
-                      e.target.checked
-                        ? [
+                    setSelectedCampagnes((prevValues) => {
+                      if (e.target.checked) {
+                        return [
+                          ...new Set([
                             ...prevValues,
-                            ...campagnesByEtablissement.map((formation) => formation._id),
-                          ]
-                        : []
-                    ),
+                            ...campagnesByEtablissement.map((campagne) => campagne._id),
+                          ]),
+                        ];
+                      } else {
+                        return prevValues.filter(
+                          (selectedCampagne) =>
+                            !campagnesByEtablissement
+                              .map((campagne) => campagne._id)
+                              .includes(selectedCampagne)
+                        );
+                      }
+                    }),
                 },
               },
             ]}

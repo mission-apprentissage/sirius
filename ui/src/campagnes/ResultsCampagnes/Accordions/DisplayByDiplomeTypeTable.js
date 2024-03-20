@@ -29,6 +29,10 @@ const DisplayByDiplomeTypeTable = ({
       campagnesByDiplomeType.map((formation) => formation._id).includes(id)
     ).length;
 
+    const isEveryCampagnesSelected = campagnesByDiplomeType?.every((campagne) =>
+      selectedCampagnes.includes(campagne._id)
+    );
+
     const checkboxLabel = (
       <b>
         {campagnesSelectedCountByDiplomeType
@@ -60,18 +64,26 @@ const DisplayByDiplomeTypeTable = ({
                 label: checkboxLabel,
                 nativeInputProps: {
                   name: `selectAll${diplomeType}`,
-                  checked:
-                    selectedCampagnes.length > 0 &&
-                    campagnesSelectedCountByDiplomeType === campagnesByDiplomeType.length,
-                  onChange: (e) =>
-                    setSelectedCampagnes((prevValues) =>
-                      e.target.checked
-                        ? [
+                  checked: isEveryCampagnesSelected,
+                  onChange: (e) => {
+                    setSelectedCampagnes((prevValues) => {
+                      if (e.target.checked) {
+                        return [
+                          ...new Set([
                             ...prevValues,
-                            ...campagnesByDiplomeType.map((formation) => formation._id),
-                          ]
-                        : []
-                    ),
+                            ...campagnesByDiplomeType.map((campagne) => campagne._id),
+                          ]),
+                        ];
+                      } else {
+                        return prevValues.filter(
+                          (selectedCampagne) =>
+                            !campagnesByDiplomeType
+                              .map((campagne) => campagne._id)
+                              .includes(selectedCampagne)
+                        );
+                      }
+                    });
+                  },
                 },
               },
             ]}
