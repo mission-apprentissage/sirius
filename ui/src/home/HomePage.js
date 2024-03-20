@@ -155,14 +155,14 @@ const HomePage = () => {
               <img src={DocumentAdd} alt="" />
               <p>
                 <b>{etablissementsSuiviPublic?.createdCampagnesCount || 0} campagnes</b> <br />
-                de diffusion crées
+                de diffusion créées
               </p>
             </div>
             <div>
               <img src={Avatar} alt="" />
               <p>
                 <b>{etablissementsSuiviPublic?.temoignagesCount || 0} apprenti·es</b> <br />
-                ayant témoigné·es
+                ayant témoigné
               </p>
             </div>
             <div>
