@@ -35,6 +35,16 @@ import {
 import DisplayByDiplomeTypeTable from "./ResultsCampagnes/Accordions/DisplayByDiplomeTypeTable";
 import { exportMultipleChartsToPdf } from "./pdfExport";
 
+const AccordionComponentGetter = (props) => {
+  if (props.displayMode === campagnesDisplayMode[0].value) {
+    return <DisplayByDiplomeTypeTable {...props} />;
+  } else if (props.displayMode === campagnesDisplayMode[1].value) {
+    return <DisplayByEtablissementTable {...props} />;
+  } else if (props.displayMode === campagnesDisplayMode[2].value) {
+    return <CampagnesTable {...props} />;
+  }
+};
+
 const ResultsCampagnesPage = () => {
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [selectedCampagnes, setSelectedCampagnes] = useState([]);
@@ -46,8 +56,9 @@ const ResultsCampagnesPage = () => {
   const [loadingTemoignages, setLoadingTemoignages] = useState(false);
   const [temoignagesError, setTemoignagesError] = useState(false);
   const [pdfExportLoading, setPdfExportLoading] = useState(false);
-  const [expandedAccordion, setExpandedAccordion] = useState(null);
+  const [expandedAccordion, setExpandedAccordion] = useState("");
   const [neededQuestionnaires, setNeededQuestionnaires] = useState([]);
+  const [forceCleanState, setForceCleanState] = useState(false);
   const [searchParams] = useSearchParams();
   const [userContext] = useContext(UserContext);
   const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
@@ -146,37 +157,6 @@ const ResultsCampagnesPage = () => {
   const filteredDisplayedCampagnesBySelectedCampagnes = displayedCampagnes.filter((campagne) =>
     selectedCampagnes.includes(campagne._id)
   );
-
-  const AccordionComponentGetter = () => {
-    if (displayMode === campagnesDisplayMode[0].value) {
-      return (
-        <DisplayByDiplomeTypeTable
-          displayedCampagnes={displayedCampagnes}
-          selectedCampagnes={selectedCampagnes}
-          setSelectedCampagnes={setSelectedCampagnes}
-          displayMode={displayMode}
-        />
-      );
-    } else if (displayMode === campagnesDisplayMode[1].value) {
-      return (
-        <DisplayByEtablissementTable
-          displayedCampagnes={displayedCampagnes}
-          selectedCampagnes={selectedCampagnes}
-          setSelectedCampagnes={setSelectedCampagnes}
-          displayMode={displayMode}
-        />
-      );
-    } else if (displayMode === campagnesDisplayMode[2].value) {
-      return (
-        <CampagnesTable
-          displayedCampagnes={displayedCampagnes}
-          selectedCampagnes={selectedCampagnes}
-          setSelectedCampagnes={setSelectedCampagnes}
-          displayMode={displayMode}
-        />
-      );
-    }
-  };
 
   const checkboxLabel = (
     <b>
@@ -286,7 +266,12 @@ const ResultsCampagnesPage = () => {
             />
             <div className={fr.cx("fr-accordions-group")}>
               <div style={{ display: isOpened ? "inherit" : "none" }}>
-                <AccordionComponentGetter />
+                <AccordionComponentGetter
+                  displayMode={displayMode}
+                  displayedCampagnes={displayedCampagnes}
+                  selectedCampagnes={selectedCampagnes}
+                  setSelectedCampagnes={setSelectedCampagnes}
+                />
               </div>
             </div>
             <ButtonContainer>
@@ -325,7 +310,8 @@ const ResultsCampagnesPage = () => {
                   displayedCampagnes.filter((campagne) => selectedCampagnes.includes(campagne._id)),
                   statistics,
                   setExpandedAccordion,
-                  setPdfExportLoading
+                  setPdfExportLoading,
+                  setForceCleanState
                 )
               }
             >
@@ -357,16 +343,11 @@ const ResultsCampagnesPage = () => {
             severity="error"
           />
         ) : null}
-        {!temoignagesError && !temoignages.length && !loadingTemoignages ? (
-          <Alert
-            title="Vous n'avez pas encore recueilli de témoignages pour les campagnes sélectionnées"
-            severity="info"
-          />
-        ) : null}
         {neededQuestionnaires.length > 1 && <Tabs tabs={multipleQuestionnairesTabs} />}
         {filteredTemoignagesBySelectedCampagnes.length &&
         neededQuestionnaires.length === 1 &&
-        !loadingTemoignages ? (
+        !loadingTemoignages &&
+        !forceCleanState ? (
           <ResultsCampagnesVisualisation
             temoignages={filteredTemoignagesBySelectedCampagnes}
             questionnaire={neededQuestionnaires[0].questionnaire}

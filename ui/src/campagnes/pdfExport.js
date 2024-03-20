@@ -10,6 +10,27 @@ const wait = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
+const applyTemplate = (doc) => {
+  doc.addImage(
+    shareSummaryTemplate,
+    "JPEG",
+    0,
+    0,
+    doc.internal.pageSize.width,
+    doc.internal.pageSize.height
+  );
+  const exportDateAndTime = new Date().toLocaleString("fr-FR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+
+  doc.setFontSize(8); // Set the font size for the campagne text
+  doc.text(exportDateAndTime, 236, 622);
+};
+
 const addSelectedCampagnesContent = async (doc, selectedCampagnes) => {
   let yPos = 110; // Starting y position after the summary template. Adjust as needed.
   const textIndentCampagneName = 25; // Indentation for the text from the left
@@ -21,30 +42,8 @@ const addSelectedCampagnesContent = async (doc, selectedCampagnes) => {
   const pageHeight = doc.internal.pageSize.getHeight();
   const bottomMargin = 80; // Adjust based on your footer content or desired bottom padding
 
-  // Function to apply the template to a page
-  const applyTemplate = () => {
-    doc.addImage(
-      shareSummaryTemplate,
-      "JPEG",
-      0,
-      0,
-      doc.internal.pageSize.width,
-      doc.internal.pageSize.height
-    );
-    const exportDateAndTime = new Date().toLocaleString("fr-FR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-    });
-
-    doc.setFontSize(8); // Set the font size for the campagne text
-    doc.text(exportDateAndTime, 236, 622);
-  };
-
   // Initially apply the template to the first page
-  applyTemplate();
+  applyTemplate(doc);
 
   doc.setFont("MarianneRegular", "normal");
 
@@ -57,7 +56,7 @@ const addSelectedCampagnesContent = async (doc, selectedCampagnes) => {
     // Check if new content exceeds page height, if so, add a new page and reapply the template
     if (yPos > pageHeight - bottomMargin) {
       doc.addPage();
-      applyTemplate();
+      applyTemplate(doc);
       yPos = 110; // Reset yPos to start from the top of the new page
     }
 
@@ -117,12 +116,14 @@ export const exportMultipleChartsToPdf = async (
   selectedCampagnes,
   statistics,
   setExpandedAccordion,
-  setPdfExportLoading
+  setPdfExportLoading,
+  setForceCleanState
 ) => {
   setPdfExportLoading(true);
-
+  setForceCleanState(true);
   await wait(500);
-  setExpandedAccordion(null);
+  setExpandedAccordion("");
+  setForceCleanState(false);
   await wait(500);
 
   const categories = getCategoriesWithEmojis(questionnaire);
@@ -173,7 +174,7 @@ export const exportMultipleChartsToPdf = async (
     }
   }
 
-  setExpandedAccordion(null);
+  setExpandedAccordion("");
   doc.save(`export_sirius.pdf`);
   setPdfExportLoading(false);
 };
