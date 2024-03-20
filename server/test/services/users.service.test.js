@@ -53,6 +53,17 @@ describe(__filename, () => {
         lastName: user.lastName,
         email: user.email,
         etablissements: user.etablissements,
+        acceptedCgu: user.acceptedCgu,
+      };
+
+      const refreshTokenPayload = {
+        _id: user._id.toString(),
+        role: user.role,
+        status: user.status,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        acceptedCgu: user.acceptedCgu,
       };
 
       expect(userGetOneStub.getCall(0).args[0]).to.eql(user._id);
@@ -63,7 +74,7 @@ describe(__filename, () => {
       expect(body).to.be.an("object");
       expect(body).to.deep.equal({
         token: getToken(tokenPayload),
-        refreshToken: getRefreshToken(tokenPayload),
+        refreshToken: getRefreshToken(refreshTokenPayload),
       });
     });
     it("should be unsuccessful and returns error if getOne DAO throws", async () => {
@@ -101,6 +112,17 @@ describe(__filename, () => {
         lastName: user.lastName,
         email: user.email,
         etablissements: user.etablissements,
+        acceptedCgu: user.acceptedCgu,
+      };
+
+      const refreshTokenPayload = {
+        _id: user._id.toString(),
+        role: user.role,
+        status: user.status,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        acceptedCgu: user.acceptedCgu,
       };
 
       expect(userGetOneStub.getCall(0).args[0]).to.eql(user._id.toString());
@@ -108,7 +130,7 @@ describe(__filename, () => {
       expect(body).to.be.an("object");
       expect(body).to.deep.equal({
         token: getToken(tokenPayload),
-        newRefreshToken: getRefreshToken(tokenPayload),
+        newRefreshToken: getRefreshToken(refreshTokenPayload),
       });
     });
     it("should be unsuccessful and returns error if getOne DAO throws", async () => {

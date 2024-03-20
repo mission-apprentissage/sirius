@@ -3,37 +3,38 @@ const { stub, restore } = require("sinon");
 const { newEtablissement } = require("../fixtures");
 const etablissementsService = require("../../src/services/etablissements.service");
 const etablissementsDao = require("../../src/dao/etablissements.dao");
+const retainFields = require("../../src/utils/retainFields.utils");
 
 describe(__filename, () => {
   afterEach(async () => {
     restore();
   });
 
-  describe("createEtablissement", () => {
+  describe("createEtablissements", () => {
     it("should be successful and returns created etablissement", async () => {
       const etablissement = newEtablissement();
       const stubbedGetAll = stub(etablissementsDao, "getAll").returns([]);
       const stubbedCreate = stub(etablissementsDao, "create").returns(etablissement);
 
-      const { success, body } = await etablissementsService.createEtablissement(etablissement);
+      const { success, body } = await etablissementsService.createEtablissements([etablissement]);
 
       expect(success).to.be.true;
-      expect(body).to.be.an("object");
-      expect(body).to.deep.equal(etablissement);
+      expect(body).to.be.an("array");
+      expect(body[0]).to.deep.equal(etablissement);
 
       expect(stubbedGetAll).to.have.been.calledOnceWith({ "data._id": etablissement.data._id });
       expect(stubbedCreate).to.have.been.calledOnceWith(etablissement);
     });
 
-    it("should be unsuccessful and returns error if etablissement already exists", async () => {
+    it("should return an ampty array if etablissement already exists", async () => {
       const etablissement = newEtablissement();
       const stubbedGetAll = stub(etablissementsDao, "getAll").returns([etablissement]);
 
-      const { success, body } = await etablissementsService.createEtablissement(etablissement);
+      const { success, body } = await etablissementsService.createEtablissements([etablissement]);
 
-      expect(success).to.be.false;
-      expect(body).to.be.an("error");
-      expect(body.message).to.equal("Etablissement déjà existant");
+      expect(success).to.be.true;
+      expect(body).to.be.an("array");
+      expect(body).to.eql([]);
 
       expect(stubbedGetAll).to.have.been.calledOnceWith({ "data._id": etablissement.data._id });
     });
@@ -43,7 +44,7 @@ describe(__filename, () => {
       const stubbedGetAll = stub(etablissementsDao, "getAll").returns([]);
       const stubbedCreate = stub(etablissementsDao, "create").throws(new Error());
 
-      const { success, body } = await etablissementsService.createEtablissement(etablissement);
+      const { success, body } = await etablissementsService.createEtablissements([etablissement]);
 
       expect(success).to.be.false;
       expect(body).to.be.an("error");
@@ -61,7 +62,7 @@ describe(__filename, () => {
 
       expect(success).to.be.true;
       expect(body).to.be.an("array");
-      expect(body).to.deep.equal(etablissements);
+      expect(body).to.deep.equal(retainFields(etablissements, etablissementsService.etablissementFieldsToRetain));
 
       expect(stubbedGetAll).to.have.been.calledOnceWith({});
     });

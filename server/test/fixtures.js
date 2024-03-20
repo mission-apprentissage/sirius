@@ -51,6 +51,7 @@ const newUser = (custom = {}, hasId = false) => {
       authStrategy: STRATEGIES.local,
       refreshToken: [{ _id: ObjectId(faker.database.mongodbObjectId()), refreshToken: "refreshToken" }],
       confirmationToken: "token",
+      acceptedCgu: false,
     },
     custom
   );

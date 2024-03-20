@@ -40,8 +40,8 @@ httpTests(__filename, ({ startServer }) => {
       const temoignages = await temoignagesDao.getAll();
 
       expect(temoignages).to.have.lengthOf(2);
-      expect(temoignages[0]).to.deep.includes(createdTemoignage1.toObject());
-      expect(temoignages[1]).to.deep.includes(createdTemoignage2.toObject());
+      expect({ ...temoignages[0], __v: 0 }).to.deep.includes(createdTemoignage1.toObject());
+      expect({ ...temoignages[1], __v: 0 }).to.deep.includes(createdTemoignage2.toObject());
     });
     it("should returns the temoignages related to the query if it exists", async () => {
       const id = faker.database.mongodbObjectId();
@@ -54,7 +54,7 @@ httpTests(__filename, ({ startServer }) => {
       const temoignages = await temoignagesDao.getAll({ campagneId: id });
 
       expect(temoignages).to.have.lengthOf(1);
-      expect(temoignages[0]).to.deep.includes(createdTemoignage1.toObject());
+      expect({ ...temoignages[0], __v: 0 }).to.deep.includes(createdTemoignage1.toObject());
     });
     it("should returns the temoignages that are not deleted", async () => {
       const temoignage1 = newTemoignage();
@@ -66,7 +66,7 @@ httpTests(__filename, ({ startServer }) => {
       const temoignages = await temoignagesDao.getAll();
 
       expect(temoignages).to.have.lengthOf(1);
-      expect(temoignages[0]).to.deep.includes(createdTemoignage1.toObject());
+      expect({ ...temoignages[0], __v: 0 }).to.deep.includes(createdTemoignage1.toObject());
     });
   });
   describe("deleteOne", () => {

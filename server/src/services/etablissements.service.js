@@ -3,6 +3,16 @@ const questionnairesDao = require("../dao/questionnaires.dao");
 const retainFields = require("../utils/retainFields.utils");
 const { getChampsLibreCount } = require("../utils/verbatims.utils");
 
+const etablissementFieldsToRetain = [
+  "_id",
+  "formationIds",
+  "data._id",
+  "data.onisep_nom",
+  "data.enseigne",
+  "data.entreprise_raison_sociale",
+  "data.siret",
+];
+
 const createEtablissements = async (etablissementsArray) => {
   try {
     let createdEtablissements = [];
@@ -26,19 +36,10 @@ const createEtablissements = async (etablissementsArray) => {
 };
 
 const getEtablissements = async (query) => {
-  const fieldsToRetain = [
-    "_id",
-    "formationIds",
-    "data._id",
-    "data.onisep_nom",
-    "data.enseigne",
-    "data.entreprise_raison_sociale",
-    "data.siret",
-  ];
   try {
     const etablissements = await etablissementsDao.getAll(query);
 
-    const cleanedEtablissements = retainFields(etablissements, fieldsToRetain);
+    const cleanedEtablissements = retainFields(etablissements, etablissementFieldsToRetain);
 
     return { success: true, body: cleanedEtablissements };
   } catch (error) {
@@ -128,4 +129,5 @@ module.exports = {
   deleteEtablissement,
   updateEtablissement,
   getEtablissementsSuivi,
+  etablissementFieldsToRetain,
 };

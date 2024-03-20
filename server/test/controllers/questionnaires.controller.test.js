@@ -64,7 +64,7 @@ describe(__filename, () => {
       expect(next.notCalled).to.be.true;
     });
 
-    it("should return 200 status code and the list of validated questionnaires if user is not admin", async () => {
+    it("should return 200 status code and the list of questionnaires if user is not admin", async () => {
       const expectedResponse = [
         { id: 1, name: "Questionnaire 1" },
         { id: 2, name: "Questionnaire 2" },
@@ -77,7 +77,6 @@ describe(__filename, () => {
       expect(res.status.calledOnceWith(200)).to.be.true;
       expect(res.status().json.calledOnceWith(expectedResponse)).to.be.true;
       expect(next.notCalled).to.be.true;
-      expect(questionnairesService.getQuestionnaires.getCall(0).args[0]).to.deep.equal({ isValidated: true });
     });
 
     it("should throw a BasicError if there is an error getting the questionnaires", async () => {

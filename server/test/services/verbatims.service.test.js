@@ -28,7 +28,7 @@ describe(__filename, () => {
         },
       });
 
-      const stubbedGetOne = stub(questionnairesDao, "getOne").returns(questionnaire);
+      const stubbedGetAllQuestionnaire = stub(questionnairesDao, "getAll").returns([questionnaire]);
       const stubbedGetAll = stub(campagnesDao, "getAll").returns([campagne]);
       const stubbedGetAll2 = stub(temoignagesDao, "getAll").returns([temoignage]);
 
@@ -39,52 +39,31 @@ describe(__filename, () => {
       });
 
       expect(success).to.be.true;
-      expect(body).to.be.an("array");
-      expect(body[0]).to.have.property("formation");
-      expect(body[0].formation).to.deep.equal(formation.data.intitule_long);
-      expect(body[0]).to.have.property("etablissement");
-      expect(body[0].etablissement).to.deep.equal(etablissement.data.onisep_nom);
-      expect(stubbedGetOne).to.have.been.calledOnceWith(questionnaire._id);
-      expect(stubbedGetAll).to.have.been.calledOnceWith({ questionnaireId: questionnaire._id });
+      expect(body.verbatims).to.be.an("array");
+      expect(body.verbatims[0]).to.have.property("formation");
+      expect(body.verbatims[0].formation).to.deep.equal(formation.data.intitule_long);
+      expect(body.verbatims[0]).to.have.property("etablissement");
+      expect(body.verbatims[0].etablissement).to.deep.equal(etablissement.data.onisep_nom);
+      expect(stubbedGetAllQuestionnaire).to.have.been.calledOnce;
+      expect(stubbedGetAll).to.have.been.calledOnceWith({
+        questionnaireId: questionnaire._id.toString(),
+        etablissementSiret: etablissement.data.siret,
+        formationId: formation._id.toString(),
+      });
       expect(stubbedGetAll2).to.have.been.calledOnceWith({ campagneId: { $in: [campagne._id] } });
     });
 
-    it("should return an error if the questionnaire is not found", async () => {
-      const questionnaireId = "non-existing-id";
-      const stubbedGetOne = stub(questionnairesDao, "getOne").returns(null);
-
-      const { success, body } = await getVerbatims({ questionnaireId });
-
-      expect(success).to.be.false;
-      expect(body).to.equal(ErrorMessage.QuestionnaireNotFoundError);
-      expect(stubbedGetOne).to.have.been.calledOnceWith(questionnaireId);
-    });
-
-    it("should return an error if the campagnes are not found", async () => {
-      const questionnaire = newQuestionnaire();
-      const stubbedGetOne = stub(questionnairesDao, "getOne").returns(questionnaire);
-      const stubbedGetAll = stub(campagnesDao, "getAll").returns(null);
+    it("should return an empty array if the campagnes are not found", async () => {
+      const questionnaire = newQuestionnaire({}, true);
+      const stubbedGetAllQuestionnaire = stub(questionnairesDao, "getAll").returns([questionnaire]);
+      const stubbedGetAllCampagnes = stub(campagnesDao, "getAll").returns(null);
 
       const { success, body } = await getVerbatims({ questionnaireId: questionnaire._id });
 
-      expect(success).to.be.false;
-      expect(body).to.equal(ErrorMessage.CampagneNotFoundError);
-      expect(stubbedGetOne).to.have.been.calledOnceWith(questionnaire._id);
-      expect(stubbedGetAll).to.have.been.calledOnceWith({ questionnaireId: questionnaire._id });
-    });
-
-    it("should return an error if the temoignages are not found", async () => {
-      const questionnaire = newQuestionnaire();
-      const campagne = newCampagne({ questionnaireId: questionnaire._id });
-
-      stub(questionnairesDao, "getOne").returns(questionnaire);
-      stub(campagnesDao, "getAll").returns([campagne]);
-      stub(temoignagesDao, "getAll").returns(null);
-
-      const { success, body } = await getVerbatims({ questionnaireId: questionnaire._id });
-
-      expect(success).to.be.false;
-      expect(body).to.equal(ErrorMessage.TemoignageNotFoundError);
+      expect(success).to.be.true;
+      expect(body.verbatims).to.eql([]);
+      expect(stubbedGetAllQuestionnaire).to.have.been.calledOnce;
+      expect(stubbedGetAllCampagnes).to.have.been.calledOnceWith({ questionnaireId: questionnaire._id.toString() });
     });
   });
   describe("patchVerbatim", async () => {

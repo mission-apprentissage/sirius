@@ -146,14 +146,14 @@ describe(__filename, () => {
       const getOneStub = stub(campagnesDao, "getOne").returns(campagne);
       const getOneQuestionnaireStub = stub(questionnairesDao, "getOne").returns(questionnaire);
 
-      const { success, body } = await temoignagesService.getTemoignages({ campagneId: campagne._id });
+      const { success, body } = await temoignagesService.getTemoignages([campagne._id]);
 
       expect(success).to.be.true;
       expect(body).to.be.an("array");
       expect(body[0]).to.deep.equal(temoignage);
 
-      expect(getAllStub.calledOnceWithExactly({ campagneId: campagne._id })).to.be.true;
-      expect(getOneStub.calledOnceWithExactly(campagne._id)).to.be.true;
+      expect(getAllStub.calledOnceWithExactly({ campagneId: { $in: [campagne._id] } })).to.be.true;
+      expect(getOneStub.calledOnceWithExactly(temoignage.campagneId)).to.be.true;
       expect(getOneQuestionnaireStub.calledOnceWithExactly(campagne.questionnaireId)).to.be.true;
     });
     it("should be successful, returns temoignages but remove responses that are not VALIDATED", async () => {
@@ -169,56 +169,58 @@ describe(__filename, () => {
       const getOneStub = stub(campagnesDao, "getOne").returns(campagne);
       const getOneQuestionnaireStub = stub(questionnairesDao, "getOne").returns(questionnaire);
 
-      const { success, body } = await temoignagesService.getTemoignages({ campagneId: campagne._id });
+      const { success, body } = await temoignagesService.getTemoignages([campagne._id]);
 
       expect(success).to.be.true;
       expect(body).to.be.an("array");
       expect(body[0]).to.deep.equal(temoignage);
       expect(body[0].reponses).to.not.have.property("peurChangementConseil");
 
-      expect(getAllStub.calledOnceWithExactly({ campagneId: campagne._id })).to.be.true;
-      expect(getOneStub.calledOnceWithExactly(campagne._id)).to.be.true;
+      expect(getAllStub.calledOnceWithExactly({ campagneId: { $in: [campagne._id] } })).to.be.true;
+      expect(getOneStub.calledOnceWithExactly(temoignage.campagneId)).to.be.true;
       expect(getOneQuestionnaireStub.calledOnceWithExactly(campagne.questionnaireId)).to.be.true;
     });
     it("should return an error if the campagne is not found", async () => {
       const campagneId = "non-existing-campagne-id";
+      const temoignage = newTemoignage({ campagneId }, true);
 
-      const getAllStub = stub(temoignagesDao, "getAll").returns([]);
+      const getAllStub = stub(temoignagesDao, "getAll").returns([temoignage]);
       const getOneStub = stub(campagnesDao, "getOne").returns(null);
 
-      const { success, body } = await temoignagesService.getTemoignages({ campagneId });
+      const { success, body } = await temoignagesService.getTemoignages([campagneId]);
 
       expect(success).to.be.false;
       expect(body).to.equal(ErrorMessage.CampagneNotFoundError);
 
-      expect(getAllStub.calledOnceWithExactly({ campagneId })).to.be.true;
+      expect(getAllStub.calledOnceWithExactly({ campagneId: { $in: [campagneId] } })).to.be.true;
       expect(getOneStub.calledOnceWithExactly(campagneId)).to.be.true;
     });
     it("should return an error if the questionnaire is not found", async () => {
       const campagne = newCampagne({}, true);
+      const temoignage = newTemoignage({ campagneId: campagne._id.toString() }, true);
 
-      const getAllStub = stub(temoignagesDao, "getAll").returns([]);
+      const getAllStub = stub(temoignagesDao, "getAll").returns([temoignage]);
       const getOneStub = stub(campagnesDao, "getOne").returns(campagne);
       const getOneQuestionnaireStub = stub(questionnairesDao, "getOne").returns(null);
 
-      const { success, body } = await temoignagesService.getTemoignages({ campagneId: campagne._id });
+      const { success, body } = await temoignagesService.getTemoignages([campagne._id]);
 
       expect(success).to.be.false;
       expect(body).to.equal(ErrorMessage.QuestionnaireNotFoundError);
 
-      expect(getAllStub.calledOnceWithExactly({ campagneId: campagne._id })).to.be.true;
-      expect(getOneStub.calledOnceWithExactly(campagne._id)).to.be.true;
+      expect(getAllStub.calledOnceWithExactly({ campagneId: { $in: [campagne._id] } })).to.be.true;
+      expect(getOneStub.calledOnceWithExactly(temoignage.campagneId)).to.be.true;
       expect(getOneQuestionnaireStub.calledOnceWithExactly(campagne.questionnaireId)).to.be.true;
     });
     it("should return an error if an error is thrown", async () => {
       const getAllStub = stub(temoignagesDao, "getAll").throws(new Error());
 
-      const { success, body } = await temoignagesService.getTemoignages({});
+      const { success, body } = await temoignagesService.getTemoignages([]);
 
       expect(success).to.be.false;
       expect(body).to.be.an("error");
 
-      expect(getAllStub.calledOnceWithExactly({})).to.be.true;
+      expect(getAllStub.calledOnceWithExactly({ campagneId: { $in: [] } })).to.be.true;
     });
   });
   describe("deleteTemoignage", () => {

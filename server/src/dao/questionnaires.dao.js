@@ -41,6 +41,7 @@ const getAllWithCreatorName = async (query) => {
         "createdBy.comment": 0,
         "createdBy.etablissements": 0,
         "createdBy.confirmationToken": 0,
+        "createdBy.acceptedCgu": 0,
       },
     },
   ]);

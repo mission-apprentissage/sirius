@@ -17,6 +17,7 @@ const temoignagesDao = require("../../src/dao/temoignages.dao");
 const pdfExport = require("../../src/modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE } = require("../../src/constants");
 const referentiel = require("../../src/modules/referentiel");
+const catalogue = require("../../src/modules/catalogue");
 
 describe(__filename, () => {
   afterEach(async () => {
@@ -24,38 +25,38 @@ describe(__filename, () => {
   });
 
   describe("getCampagnes", async () => {
-    "should be successful and returns campagnes with champsLibreRate ans medianDurationInMs",
-      async () => {
-        const expectedMedianDurationInMs = 100;
-        const expectedChampsLibreRate = 50;
+    const isAdmin = false;
 
-        const questionnaire = newQuestionnaire();
+    it("should be successful and returns campagnes with champsLibreRate ans medianDurationInMs", async () => {
+      const expectedMedianDurationInMs = 100;
+      const expectedChampsLibreRate = 50;
+      const questionnaire = newQuestionnaire();
 
-        const temoignage = newTemoignage({
-          createdAt: new Date("2023-10-25T08:00:00.000Z"),
-          lastQuestionAt: new Date("2023-10-25T08:00:00.100Z"),
-          reponses: {
-            peurChangementConseil: "test verbatim",
-          },
-        });
+      const temoignage = newTemoignage({
+        createdAt: new Date("2023-10-25T08:00:00.000Z"),
+        lastQuestionAt: new Date("2023-10-25T08:00:00.100Z"),
+        reponses: {
+          peurChangementConseil: "test verbatim",
+        },
+      });
 
-        const campagne = newCampagne({ temoignagesList: [temoignage] });
+      const campagne = newCampagne({ temoignagesList: [temoignage] });
 
-        const stubbedCampagneReturned = { ...campagne, questionnaireUI: questionnaire.questionnaireUI };
+      const stubbedCampagneReturned = { ...campagne, questionnaireUI: questionnaire.questionnaireUI };
 
-        stub(referentiel, "getEtablissementNature").returns(ETABLISSEMENT_NATURE.GESTIONNAIRE);
-        stub(referentiel, "getEtablissementSIRETFromRelationType").returns(["987654321"]);
-        stub(campagnesDao, "getAllWithTemoignageCountAndTemplateName").returns([stubbedCampagneReturned]);
+      stub(referentiel, "getEtablissementNature").returns(ETABLISSEMENT_NATURE.GESTIONNAIRE);
+      stub(referentiel, "getEtablissementSIRETFromRelationType").returns(["987654321"]);
+      stub(campagnesDao, "getAllWithTemoignageCountAndTemplateName").returns([stubbedCampagneReturned]);
 
-        const { success, body } = await campagnesService.getCampagnes({ siret: "123456789" });
+      const { success, body } = await campagnesService.getCampagnes(isAdmin, ["123456789"]);
 
-        expect(success).to.be.true;
-        expect(body).to.be.an("array");
-        expect(body[0]).to.deep.equal(stubbedCampagneReturned);
-        expect(body[0]).to.not.have.property("temoignagesList");
-        expect(body[0].medianDurationInMs).to.equal(expectedMedianDurationInMs);
-        expect(body[0].champsLibreRate).to.equal(expectedChampsLibreRate);
-      };
+      expect(success).to.be.true;
+      expect(body).to.be.an("array");
+      expect(body[0]).to.deep.equal(stubbedCampagneReturned);
+      expect(body[0]).to.not.have.property("temoignagesList");
+      expect(body[0].medianDurationInMs).to.equal(expectedMedianDurationInMs);
+      expect(body[0].champsLibreRate).to.equal(expectedChampsLibreRate);
+    });
     it("should be unsuccessful and returns errors if it throws", async () => {
       stub(campagnesDao, "getAllWithTemoignageCountAndTemplateName").throws(new Error());
 
@@ -188,10 +189,11 @@ describe(__filename, () => {
       const formation1 = newFormation({ createdBy: user._id.toString() }, true);
       const formation2 = newFormation({ createdBy: user._id.toString() }, true);
 
-      const campagne1 = newCampagne({ formation: formation1 }, true);
-      const campagne2 = newCampagne({ formation: formation2 }, true);
-
       const etablissement = newEtablissement();
+      const etablissement2 = newEtablissement();
+
+      const campagne1 = newCampagne({ formation: formation1, etablissementFormateurSiret: etablissement.data.siret });
+      const campagne2 = newCampagne({ formation: formation2, etablissementFormateurSiret: etablissement.data.siret });
 
       const stubCreatedCampagne = stub(campagnesDao, "create");
       const stubbedCreatedCampagne1 = stubCreatedCampagne.onCall(0).returns(campagne1);
@@ -201,13 +203,15 @@ describe(__filename, () => {
       const stubbedCreatedFormation1 = stubCreatedFormation.onCall(0).returns(formation1);
       const stubbedCreatedFormation2 = stubCreatedFormation.onCall(1).returns(formation2);
 
-      const stubGetAllEtablissement = stub(etablissementsDao, "getAll").returns([etablissement]);
-      const stubUpdateEtablissement = stub(etablissementsDao, "update");
+      const stubGetAllEtablissement = stub(etablissementsDao, "getAll");
+      const stubGetAllEtablissement1 = stubGetAllEtablissement.onCall(0).returns(formation1);
+      const stubGetAllEtablissement2 = stubGetAllEtablissement.onCall(1).returns(formation2);
 
-      const { success, body } = await campagnesService.createMultiCampagne({
-        campagnes: [campagne1, campagne2],
-        etablissementSiret: etablissement.data.siret,
-      });
+      stub(etablissementsDao, "update");
+      stub(catalogue, "getEtablissement").returns(etablissement2);
+      stub(etablissementsDao, "create");
+
+      const { success, body } = await campagnesService.createMultiCampagne([campagne1, campagne2]);
 
       expect(stubCreatedCampagne.calledTwice).to.be.true;
       expect(stubbedCreatedCampagne1).to.have.been.calledWith(campagne1);
@@ -225,10 +229,9 @@ describe(__filename, () => {
         createdBy: formation2.createdBy,
       });
 
-      expect(stubGetAllEtablissement).to.have.been.calledOnceWith({ "data.siret": etablissement.data.siret });
-      expect(stubUpdateEtablissement).to.have.been.calledOnceWith(etablissement._id, {
-        formationIds: [formation1._id.toString(), formation2._id.toString()],
-      });
+      expect(stubGetAllEtablissement.calledTwice).to.be.true;
+      expect(stubGetAllEtablissement1).to.have.been.calledWith({ "data.siret": etablissement.data.siret });
+      expect(stubGetAllEtablissement2).to.have.been.calledWith({ "data.siret": etablissement.data.siret });
 
       expect(success).to.be.true;
       expect(body).to.be.an("object");
@@ -258,7 +261,7 @@ describe(__filename, () => {
       expect(body).to.be.an("error");
     });
   });
-  describe("getExport", async () => {
+  describe("getPdfExport", async () => {
     it("should be successful and returns generated pdf", async () => {
       const campagne = newCampagne();
       const formation = newFormation({ campagneId: campagne._id });
@@ -269,7 +272,7 @@ describe(__filename, () => {
       const stubbedGetAll = stub(formationsDao, "getAll").returns([formation]);
       const stubbedGeneratePdf = stub(pdfExport, "generatePdf").returns(expectedPdf);
 
-      const { success, body } = await campagnesService.getExport(campagne._id, stubbedGeneratePdf);
+      const { success, body } = await campagnesService.getPdfExport(campagne._id, stubbedGeneratePdf);
 
       expect(success).to.be.true;
       expect(body).to.be.an("object");
@@ -286,7 +289,7 @@ describe(__filename, () => {
       const stubbedGetOne = stub(campagnesDao, "getOne").returns(campagne);
       const stubbedGetAll = stub(formationsDao, "getAll").throws(new Error());
 
-      const { success, body } = await campagnesService.getExport(campagne._id);
+      const { success, body } = await campagnesService.getPdfExport(campagne._id);
 
       expect(success).to.be.false;
       expect(body).to.be.an("error");
@@ -312,12 +315,12 @@ describe(__filename, () => {
       const stubbedGetAll = stub(campagnesDao, "getAll").returns([campagne1, campagne2]);
       const stubbedGeneratePdf = stub(pdfExport, "generateMultiplePdf").returns("pdf content");
 
-      const { success, body } = await campagnesService.getMultipleExport([campagne1._id, campagne2._id], user);
+      const { success, body } = await campagnesService.getPdfMultipleExport([campagne1._id, campagne2._id], user);
 
       expect(success).to.be.true;
       expect(body).to.be.an("object");
       expect(body.data).to.equal("pdf content");
-      expect(body.fileName).to.equal(`campagnes Sirius - ${DIPLOME_TYPE_MATCHER[diplome]}.pdf`);
+      expect(body.fileName).to.equal(`campagnes Sirius.pdf`);
 
       expect(stubbedGetAll).to.have.been.calledOnceWith({
         _id: { $in: [campagne1._id, campagne2._id] },
@@ -362,7 +365,7 @@ describe(__filename, () => {
 
       const stubbedGetAll = stub(campagnesDao, "getAll").throws(new Error());
 
-      const { success, body } = await campagnesService.getMultipleExport([campagne1._id, campagne2._id], user);
+      const { success, body } = await campagnesService.getPdfMultipleExport([campagne1._id, campagne2._id], user);
 
       expect(success).to.be.false;
       expect(body).to.be.an("error");

@@ -29,12 +29,12 @@ describe(__filename, () => {
       const res = { status: stub().returnsThis(), json: stub() };
       const expectedVerbatims = [{ id: 1, text: "Some verbatim" }];
 
-      stub(verbatimsService, "getVerbatims").resolves({ success: true, body: expectedVerbatims });
+      stub(verbatimsService, "getVerbatims").resolves({ success: true, body: expectedVerbatims, pagination: null });
 
       await getVerbatims(req, res, next);
 
       expect(res.status.calledOnceWith(200)).to.be.true;
-      expect(res.json.calledOnceWith(expectedVerbatims)).to.be.true;
+      expect(res.json.calledOnceWith({ body: expectedVerbatims, pagination: null })).to.be.true;
     });
 
     it("should throw an error when unsuccessful", async () => {

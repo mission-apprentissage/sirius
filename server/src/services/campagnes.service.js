@@ -9,7 +9,7 @@ const pdfExport = require("../modules/pdfExport");
 const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
-const { getEtablissement } = require("../modules/catalogue");
+const catalogue = require("../modules/catalogue");
 
 const getCampagnes = async (isAdmin, userSiret) => {
   try {
@@ -126,7 +126,7 @@ const createMultiCampagne = async (campagnes) => {
           formationIds: [...etablissement[0].formationIds, createdFormation._id.toString()],
         });
       } else {
-        const etablissement = await getEtablissement(etablissementFormateurSiret);
+        const etablissement = await catalogue.getEtablissement(etablissementFormateurSiret);
         await etablissementsDao.create({
           data: etablissement,
           formationIds: [createdFormation._id.toString()],
