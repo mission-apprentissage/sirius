@@ -33,7 +33,7 @@ const DsfrFooter = () => {
           </TopLink>
           <TopLink
             target="_blank"
-            href="https://www.education.gouv.fr/inserjeunes-un-service-d-aide-l-orientation-des-jeunes-en-voie-professionnelle-309485"
+            href="https://beta.gouv.fr/startups/?incubateur=mission-inserjeunes"
           >
             InserJeunes
           </TopLink>
