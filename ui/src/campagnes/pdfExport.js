@@ -6,10 +6,6 @@ import statisticsTemplate from "../assets/images/statistics_template.jpg";
 import "../assets/fonts/Marianne-Bold-encoded";
 import "../assets/fonts/Marianne-Regular-encoded";
 
-const wait = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
 const applyTemplate = (doc) => {
   doc.addImage(
     shareSummaryTemplate,
@@ -111,21 +107,7 @@ const addCategoryTitlePage = async (doc, category, isFirstCategory) => {
   return 10 + titleHeight; // Adjust the return value based on the new title height + some padding
 };
 
-export const exportMultipleChartsToPdf = async (
-  questionnaire,
-  selectedCampagnes,
-  statistics,
-  setExpandedAccordion,
-  setPdfExportLoading,
-  setForceCleanState
-) => {
-  setPdfExportLoading(true);
-  setForceCleanState(true);
-  await wait(1000);
-  setExpandedAccordion("");
-  setForceCleanState(false);
-  await wait(1000);
-
+export const exportMultipleChartsToPdf = async (questionnaire, selectedCampagnes, statistics) => {
   const categories = getCategoriesWithEmojis(questionnaire);
   const doc = new jsPDF("p", "px", "a4");
   doc.addImage(
@@ -154,8 +136,6 @@ export const exportMultipleChartsToPdf = async (
 
   for (const category of categories) {
     let yPosition = await addCategoryTitlePage(doc, category, isFirstCategory); // Initial y position after the title, slightly reduced padding
-    setExpandedAccordion(category.id);
-    await wait(1000);
     isFirstCategory = false; // Reset flag after first category is processed
 
     const elements = document.getElementsByClassName(`exportCharts-${category.id}`);
@@ -174,9 +154,7 @@ export const exportMultipleChartsToPdf = async (
     }
   }
 
-  setExpandedAccordion("");
   doc.save(`export_sirius.pdf`);
-  setPdfExportLoading(false);
 };
 
 const createPdf = async ({ doc, el, yPosition }) => {
