@@ -34,6 +34,7 @@ import {
 } from "./utils";
 import DisplayByDiplomeTypeTable from "./ResultsCampagnes/Accordions/DisplayByDiplomeTypeTable";
 import { exportMultipleChartsToPdf } from "./pdfExport";
+import ExportResultsCampagnesVisualisation from "./ResultsCampagnes/ExportResultsCampagnesVisualisation";
 
 const AccordionComponentGetter = (props) => {
   if (props.displayMode === campagnesDisplayMode[0].value) {
@@ -56,6 +57,7 @@ const ResultsCampagnesPage = () => {
   const [loadingTemoignages, setLoadingTemoignages] = useState(false);
   const [temoignagesError, setTemoignagesError] = useState(false);
   const [pdfExportLoading, setPdfExportLoading] = useState(false);
+  const [isPdfExporting, setIsPdfExporting] = useState(false);
   const [expandedAccordion, setExpandedAccordion] = useState("");
   const [neededQuestionnaires, setNeededQuestionnaires] = useState([]);
   const [forceCleanState, setForceCleanState] = useState(false);
@@ -304,16 +306,22 @@ const ResultsCampagnesPage = () => {
             <Button
               priority="secondary"
               iconId="fr-icon-file-download-fill"
-              onClick={() =>
-                exportMultipleChartsToPdf(
-                  neededQuestionnaires[0].questionnaire,
-                  displayedCampagnes.filter((campagne) => selectedCampagnes.includes(campagne._id)),
-                  statistics,
-                  setExpandedAccordion,
-                  setPdfExportLoading,
-                  setForceCleanState
-                )
-              }
+              onClick={() => {
+                setIsPdfExporting(true);
+                setPdfExportLoading(true);
+                setTimeout(async () => {
+                  await exportMultipleChartsToPdf(
+                    neededQuestionnaires[0].questionnaire,
+                    displayedCampagnes.filter((campagne) =>
+                      selectedCampagnes.includes(campagne._id)
+                    ),
+                    statistics,
+                    setPdfExportLoading
+                  );
+                  setPdfExportLoading(false);
+                  setIsPdfExporting(false);
+                }, 3000);
+              }}
             >
               {pdfExportLoading ? (
                 <BeatLoader
@@ -347,13 +355,25 @@ const ResultsCampagnesPage = () => {
         {filteredTemoignagesBySelectedCampagnes.length &&
         neededQuestionnaires.length === 1 &&
         !loadingTemoignages &&
-        !forceCleanState ? (
+        !forceCleanState &&
+        !isPdfExporting ? (
           <ResultsCampagnesVisualisation
             temoignages={filteredTemoignagesBySelectedCampagnes}
             questionnaire={neededQuestionnaires[0].questionnaire}
             questionnaireUI={neededQuestionnaires[0].questionnaireUI}
             expandedAccordion={expandedAccordion}
             setExpandedAccordion={setExpandedAccordion}
+          />
+        ) : null}
+        {filteredTemoignagesBySelectedCampagnes.length &&
+        neededQuestionnaires.length === 1 &&
+        !loadingTemoignages &&
+        !forceCleanState &&
+        isPdfExporting ? (
+          <ExportResultsCampagnesVisualisation
+            temoignages={filteredTemoignagesBySelectedCampagnes}
+            questionnaire={neededQuestionnaires[0].questionnaire}
+            questionnaireUI={neededQuestionnaires[0].questionnaireUI}
           />
         ) : null}
       </ResultsCampagneContainer>
