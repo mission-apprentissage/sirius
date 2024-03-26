@@ -36,6 +36,17 @@ const headers = [
 const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displayMode) => {
   return displayedCampagnes.map((campagne) => {
     const formation = campagne.formation.data;
+    const isSelected = selectedCampagnes.some(
+      (selectedCampagne) => selectedCampagne._id === campagne._id
+    );
+
+    const handleOnChange = () => {
+      setSelectedCampagnes((prevValue) =>
+        isSelected
+          ? prevValue.filter((item) => item._id !== campagne._id)
+          : [...prevValue, campagne]
+      );
+    };
 
     return [
       <Checkbox
@@ -44,14 +55,8 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
           {
             nativeInputProps: {
               name: `campagne-${campagne._id}`,
-              checked: selectedCampagnes.includes(campagne._id),
-              onChange: () => {
-                setSelectedCampagnes((prevValue) =>
-                  prevValue.includes(campagne._id)
-                    ? prevValue.filter((id) => id !== campagne._id)
-                    : [...prevValue, campagne._id]
-                );
-              },
+              checked: isSelected,
+              onChange: handleOnChange,
             },
           },
         ]}

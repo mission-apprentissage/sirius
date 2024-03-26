@@ -29,15 +29,10 @@ echarts.use([
   VisualMapComponent,
 ]);
 
-const ResultsCampagnesVisualisation = ({
-  temoignages,
-  questionnaire,
-  questionnaireUI,
-  expandedAccordion,
-  setExpandedAccordion,
-}) => {
+const ResultsCampagnesVisualisation = ({ temoignages, questionnaire, questionnaireUI }) => {
   const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
   const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
+  const [expandedAccordion, setExpandedAccordion] = useState("");
 
   useEffect(() => {
     if (questionnaire && questionnaireUI) {

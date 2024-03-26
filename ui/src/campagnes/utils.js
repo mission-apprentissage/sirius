@@ -255,3 +255,12 @@ export const getMedianDuration = (campagnes) => {
 export const getVerbatimsCount = (campagnes) => {
   return campagnes.reduce((acc, campagne) => acc + campagne.champsLibreCount, 0);
 };
+
+export const getStatistics = (campagnes) => ({
+  campagnesCount: campagnes?.length || 0,
+  finishedCampagnesCount: campagnes?.length ? getFinishedCampagnes(campagnes).length : 0,
+  temoignagesCount: campagnes?.length ? getTemoignagesCount(campagnes) : 0,
+  champsLibreRate: campagnes?.length ? getChampsLibreRate(campagnes) : "N/A",
+  medianDuration: campagnes?.length ? getMedianDuration(campagnes) : "N/A",
+  verbatimsCount: campagnes?.length ? getVerbatimsCount(campagnes) : "0",
+});

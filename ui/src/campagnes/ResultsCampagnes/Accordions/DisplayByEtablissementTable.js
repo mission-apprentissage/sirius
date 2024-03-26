@@ -27,18 +27,17 @@ const DisplayByEtablissementTable = ({
 
   return uniqueEtablissementFromCampagnes.map((siret) => {
     const campagnesByEtablissement = orderedCampagnessByEtablissement[siret];
-    const campagnesSelectedCountByEtablissement = selectedCampagnes.filter((id) =>
-      campagnesByEtablissement.map((formation) => formation._id).includes(id)
+    const campagnesSelectedCountByEtablissement = selectedCampagnes.filter((selectedCampagne) =>
+      campagnesByEtablissement.map((formation) => formation._id).includes(selectedCampagne._id)
     ).length;
 
     const isEveryCampagnesSelected = campagnesByEtablissement?.every((campagne) =>
-      selectedCampagnes.includes(campagne._id)
+      selectedCampagnes.some((selectedCampagne) => selectedCampagne._id === campagne._id)
     );
-
     const checkboxLabel = (
       <b>
         {campagnesSelectedCountByEtablissement
-          ? `${campagnesSelectedCountByEtablissement} formation${isPlural(
+          ? `${campagnesSelectedCountByEtablissement} campagne${isPlural(
               campagnesSelectedCountByEtablissement
             )} sélectionnée${isPlural(campagnesSelectedCountByEtablissement)}`
           : "Tout sélectionner"}
@@ -111,24 +110,17 @@ const DisplayByEtablissementTable = ({
                 nativeInputProps: {
                   name: `selectAll${siret}`,
                   checked: isEveryCampagnesSelected,
-                  onChange: (e) =>
+                  onChange: (e) => {
                     setSelectedCampagnes((prevValues) => {
                       if (e.target.checked) {
-                        return [
-                          ...new Set([
-                            ...prevValues,
-                            ...campagnesByEtablissement.map((campagne) => campagne._id),
-                          ]),
-                        ];
+                        return [...new Set([...prevValues, ...campagnesByEtablissement])];
                       } else {
                         return prevValues.filter(
-                          (selectedCampagne) =>
-                            !campagnesByEtablissement
-                              .map((campagne) => campagne._id)
-                              .includes(selectedCampagne)
+                          (selectedCampagne) => !campagnesByEtablissement.includes(selectedCampagne)
                         );
                       }
-                    }),
+                    });
+                  },
                 },
               },
             ]}

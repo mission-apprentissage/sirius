@@ -25,18 +25,18 @@ const DisplayByDiplomeTypeTable = ({
 
   return uniqueDiplomeTypeFromCampagnes.map((diplomeType) => {
     const campagnesByDiplomeType = orderedCampagnessByDiplomeType[diplomeType];
-    const campagnesSelectedCountByDiplomeType = selectedCampagnes.filter((id) =>
-      campagnesByDiplomeType.map((formation) => formation._id).includes(id)
+    const campagnesSelectedCountByDiplomeType = selectedCampagnes.filter((selectedCampagne) =>
+      campagnesByDiplomeType.map((formation) => formation._id).includes(selectedCampagne._id)
     ).length;
 
     const isEveryCampagnesSelected = campagnesByDiplomeType?.every((campagne) =>
-      selectedCampagnes.includes(campagne._id)
+      selectedCampagnes.some((selectedCampagne) => selectedCampagne._id === campagne._id)
     );
 
     const checkboxLabel = (
       <b>
         {campagnesSelectedCountByDiplomeType
-          ? `${campagnesSelectedCountByDiplomeType} formation${isPlural(
+          ? `${campagnesSelectedCountByDiplomeType} campagne${isPlural(
               campagnesSelectedCountByDiplomeType
             )} sélectionnée${isPlural(campagnesSelectedCountByDiplomeType)}`
           : "Tout sélectionner"}
@@ -50,7 +50,7 @@ const DisplayByDiplomeTypeTable = ({
           <AccordionLabelByDiplomeTypeContainer>
             <h5>{DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}</h5>
             <p>
-              {campagnesSelectedCountByDiplomeType} formation
+              {campagnesSelectedCountByDiplomeType} campagne
               {isPlural(campagnesSelectedCountByDiplomeType)} sélectionnée
               {isPlural(campagnesSelectedCountByDiplomeType)}
             </p>
@@ -68,18 +68,10 @@ const DisplayByDiplomeTypeTable = ({
                   onChange: (e) => {
                     setSelectedCampagnes((prevValues) => {
                       if (e.target.checked) {
-                        return [
-                          ...new Set([
-                            ...prevValues,
-                            ...campagnesByDiplomeType.map((campagne) => campagne._id),
-                          ]),
-                        ];
+                        return [...new Set([...prevValues, ...campagnesByDiplomeType])];
                       } else {
                         return prevValues.filter(
-                          (selectedCampagne) =>
-                            !campagnesByDiplomeType
-                              .map((campagne) => campagne._id)
-                              .includes(selectedCampagne)
+                          (selectedCampagne) => !campagnesByDiplomeType.includes(selectedCampagne)
                         );
                       }
                     });
