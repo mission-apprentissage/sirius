@@ -60,4 +60,20 @@ const updateTemoignage = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-module.exports = { createTemoignage, getTemoignages, deleteTemoignage, updateTemoignage, getBigTemoignages };
+const getDatavisualisation = tryCatch(async (req, res) => {
+  const campagneIds = req.body;
+  const { success, body } = await temoignagesService.getDatavisualisation(campagneIds);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
+module.exports = {
+  createTemoignage,
+  getTemoignages,
+  deleteTemoignage,
+  updateTemoignage,
+  getBigTemoignages,
+  getDatavisualisation,
+};

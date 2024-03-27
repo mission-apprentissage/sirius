@@ -7,6 +7,7 @@ const {
   deleteTemoignage,
   updateTemoignage,
   getBigTemoignages,
+  getDatavisualisation,
 } = require("../controllers/temoignages.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdmin } = require("../middlewares/isAdmin");
@@ -32,6 +33,10 @@ const temoignages = () => {
 
   router.put("/api/temoignages/:id", validator(updateTemoignageSchema), (req, res, next) => {
     updateTemoignage(req, res, next);
+  });
+
+  router.post("/api/temoignages/datavisualisation", (req, res, next) => {
+    getDatavisualisation(req, res, next);
   });
 
   return router;
