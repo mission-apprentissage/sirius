@@ -22,25 +22,11 @@ import { exportMultipleChartsToPdf } from "./pdfExport";
 import ExportResultsCampagnesVisualisation from "./ResultsCampagnes/ExportResultsCampagnesVisualisation";
 import ResultsCampagnesSelector from "./ResultsCampagnes/ResultsCampagnesSelector";
 
-const MultipleQuestionnairesTabs = ({ neededQuestionnaires, selectedCampagnes, temoignages }) => {
-  const tabs = neededQuestionnaires.map((questionnaire, index) => {
-    const filteredCampagnesByQuestionnaireId = selectedCampagnes
-      .filter((campagne) => campagne.questionnaireId === questionnaire._id)
-      .map((campagne) => campagne._id);
-
-    const filteredTemoignagesBySelectedCampagnesAndQuestionnaireId = temoignages.filter(
-      (temoignage) => filteredCampagnesByQuestionnaireId.includes(temoignage.campagneId)
-    );
-
+const MultipleQuestionnairesTabs = ({ temoignages }) => {
+  const tabs = temoignages.map((questionnaire, index) => {
     return {
       label: `Questionnaire version ${index + 1}`,
-      content: (
-        <ResultsCampagnesVisualisation
-          temoignages={filteredTemoignagesBySelectedCampagnesAndQuestionnaireId}
-          questionnaire={questionnaire.questionnaire}
-          questionnaireUI={questionnaire.questionnaireUI}
-        />
-      ),
+      content: <ResultsCampagnesVisualisation temoignages={questionnaire} />,
     };
   });
 
@@ -85,8 +71,8 @@ const ResultsCampagnesPage = () => {
       try {
         if (selectedCampagnes.length) {
           const result = await _post(
-            `/api/temoignages/getbig`,
-            selectedCampagnes,
+            `/api/temoignages/datavisualisation`,
+            selectedCampagnes.map((campagne) => campagne._id),
             userContext.token
           );
           setTemoignages(result);
@@ -101,25 +87,13 @@ const ResultsCampagnesPage = () => {
     getTemoignages();
   }, [selectedCampagnes]);
 
-  const filteredTemoignagesBySelectedCampagnes = temoignages?.length
-    ? temoignages.filter((temoignage) =>
-        selectedCampagnes.filter(
-          (selectedCampagne) => selectedCampagne._id === temoignage.campagneId
-        )
-      )
-    : [];
-
   const statistics = getStatistics(selectedCampagnes);
 
   const shouldDisplayResults =
-    filteredTemoignagesBySelectedCampagnes.length &&
-    neededQuestionnaires.length === 1 &&
-    !loadingTemoignages;
+    temoignages.length && neededQuestionnaires.length === 1 && !loadingTemoignages;
 
   const shouldDisplayTabbedResults =
-    filteredTemoignagesBySelectedCampagnes.length &&
-    neededQuestionnaires.length >= 1 &&
-    !loadingTemoignages;
+    temoignages.length && neededQuestionnaires.length >= 1 && !loadingTemoignages;
 
   const handlePdfExport = async () => {
     setIsPdfExporting(true);
@@ -190,25 +164,13 @@ const ResultsCampagnesPage = () => {
           />
         ) : null}
         {shouldDisplayTabbedResults ? (
-          <MultipleQuestionnairesTabs
-            neededQuestionnaires={neededQuestionnaires}
-            selectedCampagnes={selectedCampagnes}
-            temoignages={temoignages}
-          />
+          <MultipleQuestionnairesTabs temoignages={temoignages} />
         ) : null}
         {shouldDisplayResults && !isPdfExporting ? (
-          <ResultsCampagnesVisualisation
-            temoignages={filteredTemoignagesBySelectedCampagnes}
-            questionnaire={neededQuestionnaires[0].questionnaire}
-            questionnaireUI={neededQuestionnaires[0].questionnaireUI}
-          />
+          <ResultsCampagnesVisualisation temoignages={temoignages} />
         ) : null}
         {shouldDisplayResults && isPdfExporting ? (
-          <ExportResultsCampagnesVisualisation
-            temoignages={filteredTemoignagesBySelectedCampagnes}
-            questionnaire={neededQuestionnaires[0].questionnaire}
-            questionnaireUI={neededQuestionnaires[0].questionnaireUI}
-          />
+          <ExportResultsCampagnesVisualisation temoignages={temoignages} />
         ) : null}
       </ResultsCampagneContainer>
     </Container>
