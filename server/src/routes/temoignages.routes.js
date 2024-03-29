@@ -35,7 +35,7 @@ const temoignages = () => {
     updateTemoignage(req, res, next);
   });
 
-  router.post("/api/temoignages/datavisualisation", (req, res, next) => {
+  router.post("/api/temoignages/datavisualisation", verifyUser, (req, res, next) => {
     getDatavisualisation(req, res, next);
   });
 

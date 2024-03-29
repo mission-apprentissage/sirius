@@ -99,6 +99,8 @@ const pieResponsesFormatting = (responses) =>
   }, []);
 
 const barResponsesFormatting = (responses) => {
+  const emojiMapping = ["😫", "🧐", "😊", "😝"];
+
   const cleanedUpResponses = responses
     .map((response) => Object.keys(response).includes("label") && response)
     .filter((elem) => elem);
@@ -115,26 +117,23 @@ const barResponsesFormatting = (responses) => {
 
   const counts = intermediate.reduce((acc, response) => {
     response.value.forEach((val) => {
-      acc[val] = (acc[val] || 0) + 1;
+      acc[val] = acc[val] || Array(intermediate.length).fill(0);
+      acc[val][intermediate.indexOf(response)] += 1;
     });
     return acc;
   }, {});
 
-  const emojiMap = {
-    0: "😫",
-    1: "🧐",
-    2: "😊",
-    3: "😝",
-  };
-
-  return Object.entries(counts).map(([key, value]) => ({
-    name: key,
-    emoji: emojiMap[key],
-    value: value,
+  const data = Object.entries(counts).map(([key, value]) => ({
+    [key]: value,
+    emoji: emojiMapping[key],
   }));
+
+  const questions = intermediate.map((response) => response.label);
+
+  return { data, questions };
 };
 
-const multiEmojiResponsesFormatting = (responses, mapping) => {
+const multiEmojiResponsesFormatting = (responses) => {
   const cleanedUpResponses = responses
     .map((response) => Object.keys(response).includes("label") && response)
     .filter((elem) => elem);
@@ -151,27 +150,32 @@ const multiEmojiResponsesFormatting = (responses, mapping) => {
 
   const counts = intermediate.reduce((acc, response) => {
     response.value.forEach((val) => {
-      acc[val] = (acc[val] || 0) + 1;
+      acc[val] = acc[val] || Array(intermediate.length).fill(0);
+      acc[val][intermediate.indexOf(response)] += 1;
     });
     return acc;
   }, {});
 
-  return Object.entries(counts).map(([key, value]) => ({
-    name: key,
-    emoji: mapping.filter((emoji) => emoji.value === key)[0].emoji,
-    value: value,
+  const data = Object.entries(counts).map(([key, value]) => ({
+    [key]: value,
   }));
+
+  const questions = intermediate.map((response) => response.label);
+
+  return { data, questions };
 };
 
 const verbatimsResponsesFormatting = (responses) => {
-  const cleanedUpResponses = responses.map((response) => {
-    if (
-      response &&
-      [VERBATIM_STATUS.VALIDATED, VERBATIM_STATUS.TO_FIX, VERBATIM_STATUS.GEM].includes(response.status)
-    ) {
-      return response;
-    }
-  });
+  const cleanedUpResponses = responses
+    .map((response) => {
+      if (
+        response &&
+        [VERBATIM_STATUS.VALIDATED, VERBATIM_STATUS.TO_FIX, VERBATIM_STATUS.GEM].includes(response.status)
+      ) {
+        return response;
+      }
+    })
+    .filter(Boolean);
 
   return cleanedUpResponses;
 };
@@ -186,7 +190,18 @@ const getFormattedResponses = (temoignages, widget) => {
   }
 
   if (widget.type === "multiEmoji") {
-    return multiEmojiResponsesFormatting(temoignages, widget.mapping);
+    const formattedTemoignages = temoignages.map((temoignage) => {
+      if (temoignage.value === "Pas ok" || temoignage.value === "Pas vraiment") {
+        return { ...temoignage, value: 0 };
+      }
+      if (temoignage.value === "Moyen") {
+        return { ...temoignage, value: 1 };
+      }
+      if (temoignage.value === "Oui" || temoignage.value === "Bien") {
+        return { ...temoignage, value: 2 };
+      }
+    });
+    return multiEmojiResponsesFormatting(formattedTemoignages, widget.mapping);
   }
 
   if (widget.type === "text") {

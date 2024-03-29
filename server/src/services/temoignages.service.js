@@ -103,12 +103,13 @@ const getDatavisualisation = async (campagneIds) => {
     const query = { campagneId: { $in: campagneIds } };
     const temoignages = await temoignagesDao.getAll(query);
     const allQuestionnaires = await questionnairesDao.getAll();
+    const campagnes = await campagnesDao.getAll({ _id: { $in: campagneIds } });
 
     let questionnaireTemoignagesMap = {};
 
+    // ajoute les témoignages à leur questionnaire respectif
     for (const temoignage of temoignages) {
-      const campagne = await campagnesDao.getOne(temoignage.campagneId);
-
+      const campagne = campagnes.filter((el) => el._id.toString() === temoignage.campagneId)[0];
       if (!campagne) {
         return { success: false, body: ErrorMessage.CampagneNotFoundError };
       }
@@ -121,6 +122,7 @@ const getDatavisualisation = async (campagneIds) => {
       questionnaireTemoignagesMap[questionnaireId].push(temoignage);
     }
 
+    // crée un objet avec les catégories et les questions pour chaque questionnaire
     const result = Object.keys(questionnaireTemoignagesMap).map((questionnaireId) => {
       const questionnaireById = allQuestionnaires.find(
         (questionnaire) => questionnaire._id.toString() === questionnaireId
