@@ -164,7 +164,7 @@ const getPdfMultipleExport = async (ids, user) => {
   try {
     const query = { _id: { $in: ids.map((id) => ObjectId(id)) } };
 
-    const campagnes = await campagnesDao.getAll(query);
+    const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(query);
 
     const formattedCampagnes = campagnes.map((campagne) => ({
       campagneId: campagne._id.toString(),
@@ -200,7 +200,7 @@ const getXlsxMultipleExport = async (ids) => {
   try {
     const query = ids?.length ? { _id: { $in: ids.map((id) => ObjectId(id)) } } : {};
 
-    const campagnes = await campagnesDao.getAll(query);
+    const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(query);
 
     const formattedCampagnes = campagnes.map((campagne) => ({
       campagneName: campagne.nomCampagne,

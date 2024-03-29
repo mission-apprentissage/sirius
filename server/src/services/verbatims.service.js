@@ -38,7 +38,9 @@ const getVerbatims = async (query) => {
         ...(formationId && { formationId }),
       };
 
-      const campagnesByQuestionnaireId = await campagnesDao.getAll(campagneQuery);
+      const campagnesByQuestionnaireId = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(
+        campagneQuery
+      );
 
       if (!campagnesByQuestionnaireId) {
         continue;

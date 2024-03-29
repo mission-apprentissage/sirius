@@ -224,7 +224,7 @@ const update = async (id, updatedCampagne) => {
   return Campagne.updateOne({ _id: id, deletedAt: null }, updatedCampagne);
 };
 
-const getAll = async (query = {}) => {
+const getAllWithTemoignageCountFormationEtablissement = async (query = {}) => {
   return Campagne.aggregate([
     {
       $match: {
@@ -239,6 +239,10 @@ const getAll = async (query = {}) => {
   ]);
 };
 
+const getAll = async (query = {}) => {
+  return Campagne.find({ deletedAt: null, ...query }).lean();
+};
+
 module.exports = {
   getAllWithTemoignageCountAndTemplateName,
   getOneWithTemoignagneCountAndTemplateName,
@@ -246,6 +250,7 @@ module.exports = {
   deleteOne,
   deleteMany,
   update,
-  getAll,
+  getAllWithTemoignageCountFormationEtablissement,
   getOne,
+  getAll,
 };

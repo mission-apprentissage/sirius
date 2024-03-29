@@ -29,7 +29,7 @@ describe(__filename, () => {
       });
 
       const stubbedGetAllQuestionnaire = stub(questionnairesDao, "getAll").returns([questionnaire]);
-      const stubbedGetAll = stub(campagnesDao, "getAll").returns([campagne]);
+      const stubbedGetAll = stub(campagnesDao, "getAllWithTemoignageCountFormationEtablissement").returns([campagne]);
       const stubbedGetAll2 = stub(temoignagesDao, "getAll").returns([temoignage]);
 
       const { success, body } = await getVerbatims({
@@ -56,7 +56,9 @@ describe(__filename, () => {
     it("should return an empty array if the campagnes are not found", async () => {
       const questionnaire = newQuestionnaire({}, true);
       const stubbedGetAllQuestionnaire = stub(questionnairesDao, "getAll").returns([questionnaire]);
-      const stubbedGetAllCampagnes = stub(campagnesDao, "getAll").returns(null);
+      const stubbedGetAllCampagnes = stub(campagnesDao, "getAllWithTemoignageCountFormationEtablissement").returns(
+        null
+      );
 
       const { success, body } = await getVerbatims({ questionnaireId: questionnaire._id });
 

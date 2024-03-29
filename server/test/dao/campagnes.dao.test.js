@@ -262,7 +262,7 @@ httpTests(__filename, ({ startServer }) => {
 
       const createdEtablissement = await etablissementsDao.create(etablissement);
 
-      const campagnes = await campagnesDao.getAll();
+      const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement();
 
       expect(campagnes).to.have.lengthOf(2);
       expect(campagnes[0]).to.deep.includes(createdCampagne1.toObject());
@@ -289,7 +289,7 @@ httpTests(__filename, ({ startServer }) => {
 
       const createdEtablissement = await etablissementsDao.create(etablissement);
 
-      const campagnes = await campagnesDao.getAll();
+      const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement();
 
       expect(campagnes).to.have.lengthOf(1);
       expect(campagnes[0]).to.deep.includes(createdCampagne2.toObject());
@@ -315,7 +315,7 @@ httpTests(__filename, ({ startServer }) => {
 
       const createdEtablissement2 = await etablissementsDao.create(etablissement1);
 
-      const campagnes = await campagnesDao.getAll({
+      const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement({
         _id: createdCampagne2._id,
       });
 

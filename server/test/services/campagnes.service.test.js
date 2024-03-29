@@ -312,7 +312,10 @@ describe(__filename, () => {
       const campagne1 = newCampagne({ formation: formation1, etablissement }, true);
       const campagne2 = newCampagne({ formation: formation2, etablissement }, true);
 
-      const stubbedGetAll = stub(campagnesDao, "getAll").returns([campagne1, campagne2]);
+      const stubbedGetAll = stub(campagnesDao, "getAllWithTemoignageCountFormationEtablissement").returns([
+        campagne1,
+        campagne2,
+      ]);
       const stubbedGeneratePdf = stub(pdfExport, "generateMultiplePdf").returns("pdf content");
 
       const { success, body } = await campagnesService.getPdfMultipleExport([campagne1._id, campagne2._id], user);
@@ -363,7 +366,7 @@ describe(__filename, () => {
       const campagne1 = newCampagne({}, true);
       const campagne2 = newCampagne({}, true);
 
-      const stubbedGetAll = stub(campagnesDao, "getAll").throws(new Error());
+      const stubbedGetAll = stub(campagnesDao, "getAllWithTemoignageCountFormationEtablissement").throws(new Error());
 
       const { success, body } = await campagnesService.getPdfMultipleExport([campagne1._id, campagne2._id], user);
 
