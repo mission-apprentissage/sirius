@@ -1,6 +1,7 @@
 export const USER_ROLES = {
   ADMIN: "ADMIN",
   ETABLISSEMENT: "ETABLISSEMENT",
+  OBSERVER: "OBSERVER",
 };
 
 export const USER_STATUS = {
@@ -112,3 +113,8 @@ export const campagnesSortingOptions = [
   { label: "Apprenti·es (0-1)", value: "seats-asc" },
   { label: "Apprenti·es (1-0)", value: "seats-desc" },
 ];
+
+export const ROLE_TYPE = {
+  ETABLISSEMENT: "ETABLISSEMENT",
+  OBSERVER: "OBSERVER",
+};

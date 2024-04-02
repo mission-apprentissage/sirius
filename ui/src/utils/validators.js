@@ -16,3 +16,5 @@ export const allFieldMessage = "Tous les champs doivent être complétés.";
 export const notCorrespondingPasswordMessage = "Les mots de passe ne sont pas les mêmes.";
 
 export const emailFormatMessage = "L'email n'est pas au bon format";
+
+export const notCorrespondingRole = "Le role n'est pas valide.";
