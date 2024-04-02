@@ -93,7 +93,7 @@ const ResultsCampagnesPage = () => {
     temoignages.length && neededQuestionnaires.length === 1 && !loadingTemoignages;
 
   const shouldDisplayTabbedResults =
-    temoignages.length && neededQuestionnaires.length >= 1 && !loadingTemoignages;
+    temoignages.length && neededQuestionnaires.length > 1 && !loadingTemoignages;
 
   const handlePdfExport = async () => {
     setIsPdfExporting(true);
@@ -167,7 +167,7 @@ const ResultsCampagnesPage = () => {
           <MultipleQuestionnairesTabs temoignages={temoignages} />
         ) : null}
         {shouldDisplayResults && !isPdfExporting ? (
-          <ResultsCampagnesVisualisation temoignages={temoignages} />
+          <ResultsCampagnesVisualisation temoignages={temoignages[0]} />
         ) : null}
         {shouldDisplayResults && isPdfExporting ? (
           <ExportResultsCampagnesVisualisation temoignages={temoignages} />

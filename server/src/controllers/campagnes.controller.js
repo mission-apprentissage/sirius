@@ -93,6 +93,17 @@ const getXlsxMultipleExport = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getDiplomeType = tryCatch(async (req, res) => {
+  const isAdmin = req.user.role === USER_ROLES.ADMIN;
+  const userSiret = req.user.etablissements.map((etablissement) => etablissement.siret);
+
+  const { success, body } = await campagnesService.getDiplomeType(isAdmin, userSiret);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 module.exports = {
   getCampagnes,
   getCampagne,
@@ -103,4 +114,5 @@ module.exports = {
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
+  getDiplomeType,
 };

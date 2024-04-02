@@ -64,6 +64,15 @@ const getCampagnes = async (isAdmin, isObserver, userSiret, scope) => {
   }
 };
 
+const getDiplomeType = async (isAdmin, userSiret) => {
+  try {
+    const diplomeType = await campagnesDao.getDiplomeType();
+    return { success: true, body: diplomeType };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 const getOneCampagne = async (query) => {
   try {
     const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(query);
@@ -236,4 +245,5 @@ module.exports = {
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
+  getDiplomeType,
 };
