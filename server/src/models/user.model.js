@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const passportLocalMongoose = require("passport-local-mongoose");
 const { STRATEGIES } = require("../middlewares/verifyUserMiddleware");
-const { USER_ROLES, USER_STATUS } = require("../constants");
+const { USER_STATUS } = require("../constants");
 
 const Session = new mongoose.Schema({
   refreshToken: {
@@ -30,7 +30,6 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: USER_ROLES.ETABLISSEMENT,
     required: true,
   },
   status: {
