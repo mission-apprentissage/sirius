@@ -188,6 +188,36 @@ const getAllWithTemoignageCountAndTemplateName = async (query, scope) => {
   ]);
 };
 
+const getAllOnlyDiplomeTypeAndEtablissements = async (query) => {
+  return Campagne.aggregate([
+    {
+      $match: {
+        deletedAt: null,
+      },
+    },
+    ...formationQuery(),
+    ...etablissementQuery(query?.siret),
+    {
+      $project: {
+        _id: { $toString: "$_id" },
+        "formation.data._id": 1,
+        "formation.data.intitule_long": 1,
+        "formation.data.tags": 1,
+        "formation.data.lieu_formation_adresse_computed": 1,
+        "formation.data.diplome": 1,
+        "formation.data.localite": 1,
+        "formation.data.duree": 1,
+        "formation.data.etablissement_formateur_siret": 1,
+        "formation.data.etablissement_gestionnaire_siret": 1,
+        "formation.data.etablissement_gestionnaire_enseigne": 1,
+        "formation.data.etablissement_formateur_enseigne": 1,
+        "formation.data.etablissement_formateur_entreprise_raison_sociale": 1,
+        "formation.data.etablissement_formateur_adresse": 1,
+      },
+    },
+  ]);
+};
+
 const getOne = async (id) => {
   return Campagne.findOne({ _id: id, deletedAt: null }).lean();
 };
@@ -253,4 +283,5 @@ module.exports = {
   getAllWithTemoignageCountFormationEtablissement,
   getOne,
   getAll,
+  getAllOnlyDiplomeTypeAndEtablissements,
 };

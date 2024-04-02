@@ -6,7 +6,12 @@ const temoignagesDao = require("../dao/temoignages.dao");
 const { getChampsLibreRate, getChampsLibreCount } = require("../utils/verbatims.utils");
 const { getMedianDuration, appendDataWhenEmpty } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
-const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
+const {
+  DIPLOME_TYPE_MATCHER,
+  ETABLISSEMENT_NATURE,
+  ETABLISSEMENT_RELATION_TYPE,
+  CAMPAGNE_SORTING_TYPE,
+} = require("../constants");
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
@@ -64,10 +69,82 @@ const getCampagnes = async (isAdmin, isObserver, userSiret, scope) => {
   }
 };
 
-const getDiplomeType = async (isAdmin, userSiret) => {
+const getSortedCampagnes = async (isAdmin, userSiret, sortingType) => {
   try {
-    const diplomeType = await campagnesDao.getDiplomeType();
-    return { success: true, body: diplomeType };
+    let campagnes = [];
+    const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
+
+    if (isAdmin) {
+      campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements();
+    } else {
+      let allSirets = [];
+      for (const siret of userSiret) {
+        const etablissement = etablissementsFromReferentiel.find((etablissement) => etablissement.siret === siret);
+        if (!etablissement) continue;
+
+        let relatedSirets = [siret];
+        if (
+          [ETABLISSEMENT_NATURE.GESTIONNAIRE, ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR].includes(
+            etablissement.nature
+          )
+        ) {
+          relatedSirets.push(
+            ...etablissement.relations
+              .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
+              .map((etablissement) => etablissement.siret)
+          );
+        }
+        allSirets.push(...relatedSirets);
+      }
+
+      campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements({ siret: allSirets });
+    }
+    let results = [];
+
+    if (sortingType === CAMPAGNE_SORTING_TYPE.DIPLOME_TYPE) {
+      const campagnesGroupedByDiplome = campagnes.reduce((acc, campagne) => {
+        const diplome = DIPLOME_TYPE_MATCHER[campagne.formation?.data.diplome] || campagne.formation?.data.diplome;
+        if (!acc[diplome]) {
+          acc[diplome] = [];
+        }
+        acc[diplome].push(campagne);
+        return acc;
+      }, {});
+
+      const formattedResults = Object.keys(campagnesGroupedByDiplome).map((key) => {
+        const campagneIds = campagnesGroupedByDiplome[key].map((campagne) => campagne._id);
+        return {
+          diplome: key,
+          campagneIds: campagneIds,
+        };
+      });
+
+      results = formattedResults;
+    } else if (sortingType === CAMPAGNE_SORTING_TYPE.ETABLISSEMENT) {
+      const campagnesGroupedByEtablissement = campagnes.reduce((acc, campagne) => {
+        const siret = campagne.formation.data.etablissement_formateur_siret;
+        if (!acc[siret]) {
+          acc[siret] = [];
+        }
+        acc[siret].push(campagne);
+        return acc;
+      }, {});
+
+      const formattedResults = Object.keys(campagnesGroupedByEtablissement).map((key) => {
+        const campagneIds = campagnesGroupedByEtablissement[key].map((campagne) => campagne._id);
+        return {
+          formation: campagnesGroupedByEtablissement[key][0].formation,
+          campagneIds: campagneIds,
+        };
+      });
+
+      results = formattedResults;
+    }
+
+    return {
+      success: true,
+      body: results,
+    };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -245,5 +322,5 @@ module.exports = {
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
-  getDiplomeType,
+  getSortedCampagnes,
 };

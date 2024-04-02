@@ -11,7 +11,7 @@ const {
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
-  getDiplomeType,
+  getSortedCampagnes,
 } = require("../controllers/campagnes.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdminOrAllowed, TYPES } = require("../middlewares/isAdminOrAllowed");
@@ -24,8 +24,8 @@ const campagnes = () => {
     getCampagnes(req, res, next);
   });
 
-  router.get("/api/campagnes/diplomeType", verifyUser, (req, res, next) => {
-    getDiplomeType(req, res, next);
+  router.get("/api/campagnes/sorted", verifyUser, (req, res, next) => {
+    getSortedCampagnes(req, res, next);
   });
 
   router.post("/api/campagnes/", verifyUser, validator(createCampagneSchema), (req, res, next) => {

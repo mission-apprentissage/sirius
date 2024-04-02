@@ -29,6 +29,7 @@ const ErrorMessage = {
   UserAlreadyExistsError: "Un utilisateur avec cet email existe déjà",
   UserNotFound: "Utilisateur inconnu",
   UnconfirmedEmail: "Email non confirmé",
+  SortingTypeNotFound: "Ce type de tri n'existe pas.",
 };
 
 const Errors = {
@@ -156,6 +157,15 @@ const Errors = {
 
     get status() {
       return 403;
+    }
+  },
+  SortingTypeNotFoundError: class NotFoundError extends BasicError {
+    constructor(message, extra) {
+      super(message || ErrorMessage.SortingTypeNotFound, extra);
+    }
+
+    get status() {
+      return 400;
     }
   },
 };
