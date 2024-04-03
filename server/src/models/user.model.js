@@ -74,7 +74,6 @@ const userSchema = new mongoose.Schema({
   },
   scope: {
     type: ScopeSchema,
-    default: () => ({}), // Provides an empty object by default, MongoDB will fill in default values as defined in ScopeSchema
   },
 });
 

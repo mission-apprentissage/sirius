@@ -36,6 +36,7 @@ const loginUser = async (id) => {
         }),
       etablissements: user.etablissements,
       acceptedCgu: user.acceptedCgu,
+      scope: user.scope,
     });
     const refreshToken = getRefreshToken({
       _id: id,
@@ -53,6 +54,7 @@ const loginUser = async (id) => {
             user.etablissement.entreprise_raison_sociale,
         }),
       acceptedCgu: user.acceptedCgu,
+      scope: user.scope,
     });
 
     user.refreshToken.push({ refreshToken });
@@ -87,6 +89,7 @@ const sudo = async (id) => {
       etablissements: user.etablissements,
       acceptedCgu: user.acceptedCgu,
       isSudo: true,
+      scope: user.scope,
     });
     const refreshToken = getRefreshToken({
       _id: id,
@@ -105,6 +108,7 @@ const sudo = async (id) => {
         }),
       acceptedCgu: user.acceptedCgu,
       isSudo: true,
+      scope: user.scope,
     });
 
     user.refreshToken.push({ refreshToken });
@@ -143,6 +147,7 @@ const refreshTokenUser = async (refreshToken) => {
         }),
       etablissements: user.etablissements,
       acceptedCgu: user.acceptedCgu,
+      scope: user.scope,
     });
     const newRefreshToken = getRefreshToken({
       _id: userId,
@@ -160,6 +165,7 @@ const refreshTokenUser = async (refreshToken) => {
             user.etablissement.entreprise_raison_sociale,
         }),
       acceptedCgu: user.acceptedCgu,
+      scope: user.scope,
     });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 
