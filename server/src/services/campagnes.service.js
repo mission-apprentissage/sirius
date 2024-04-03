@@ -16,7 +16,7 @@ const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
 
-const getCampagnes = async (isAdmin, isObserver, userSiret, scope) => {
+const getCampagnes = async (isAdmin, isObserver, userSiret, scope, page, pageSize) => {
   try {
     let campagnes = [];
 
@@ -50,7 +50,9 @@ const getCampagnes = async (isAdmin, isObserver, userSiret, scope) => {
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: allSirets });
     }
 
-    campagnes.map((campagne) => {
+    const paginatedCampagnes = campagnes.slice((page - 1) * pageSize, page * pageSize);
+
+    paginatedCampagnes.map((campagne) => {
       campagne.champsLibreCount = getChampsLibreCount(campagne.questionnaireUI, campagne.temoignagesList);
       campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
       campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
@@ -62,7 +64,13 @@ const getCampagnes = async (isAdmin, isObserver, userSiret, scope) => {
 
     return {
       success: true,
-      body: campagnes,
+      body: paginatedCampagnes,
+      pagination: {
+        totalItems: campagnes.length,
+        currentPage: parseInt(page),
+        pageSize: pageSize,
+        totalPages: Math.ceil(campagnes.length / pageSize),
+      },
     };
   } catch (error) {
     return { success: false, body: error };
