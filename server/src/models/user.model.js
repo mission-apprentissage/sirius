@@ -10,6 +10,14 @@ const Session = new mongoose.Schema({
   },
 });
 
+const ScopeSchema = new mongoose.Schema(
+  {
+    field: { type: String, default: null },
+    value: { type: String, default: null },
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -63,6 +71,10 @@ const userSchema = new mongoose.Schema({
   acceptedCgu: {
     type: Boolean,
     default: false,
+  },
+  scope: {
+    type: ScopeSchema,
+    default: () => ({}), // Provides an empty object by default, MongoDB will fill in default values as defined in ScopeSchema
   },
 });
 

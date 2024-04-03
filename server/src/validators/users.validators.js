@@ -44,6 +44,7 @@ const updateSchema = Joi.object({
   status: Joi.string(),
   role: Joi.string(),
   acceptedCgu: Joi.boolean(),
+  scope: Joi.object({ field: Joi.string(), value: Joi.string() }),
 });
 
 const forgotPasswordSchema = Joi.object({
