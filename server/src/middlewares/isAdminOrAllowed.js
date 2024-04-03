@@ -25,6 +25,10 @@ const isAdminOrAllowed = async (req, next, type) => {
     return next();
   }
 
+  if (role === USER_ROLES.OBSERVER) {
+    return next(new UnauthorizedError());
+  }
+
   if (role === USER_ROLES.ETABLISSEMENT && status === USER_STATUS.ACTIVE) {
     // check campagneId
     if (type === TYPES.CAMPAGNE_ID) {
