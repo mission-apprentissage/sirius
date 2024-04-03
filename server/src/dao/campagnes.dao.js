@@ -188,15 +188,19 @@ const getAllWithTemoignageCountAndTemplateName = async (query, scope) => {
   ]);
 };
 
-const getAllOnlyDiplomeTypeAndEtablissements = async (query) => {
+const getAllOnlyDiplomeTypeAndEtablissements = async (query, scope) => {
+  const matchConditions = {
+    deletedAt: null,
+  };
+
+  if (scope && scope.field && scope.value) {
+    matchConditions[`formation.data.${scope.field}`] = scope.value;
+  }
+
   return Campagne.aggregate([
-    {
-      $match: {
-        deletedAt: null,
-      },
-    },
     ...formationQuery(),
     ...etablissementQuery(query?.siret),
+    { $match: matchConditions },
     {
       $project: {
         _id: { $toString: "$_id" },
@@ -213,6 +217,8 @@ const getAllOnlyDiplomeTypeAndEtablissements = async (query) => {
         "formation.data.etablissement_formateur_enseigne": 1,
         "formation.data.etablissement_formateur_entreprise_raison_sociale": 1,
         "formation.data.etablissement_formateur_adresse": 1,
+        "formation.data.num_departement": 1,
+        "formation.data.region": 1,
       },
     },
   ]);

@@ -69,13 +69,15 @@ const getCampagnes = async (isAdmin, isObserver, userSiret, scope) => {
   }
 };
 
-const getSortedCampagnes = async (isAdmin, userSiret, sortingType) => {
+const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, scope) => {
   try {
     let campagnes = [];
     const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
 
     if (isAdmin) {
       campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements();
+    } else if (isObserver) {
+      campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements(null, scope);
     } else {
       let allSirets = [];
       for (const siret of userSiret) {

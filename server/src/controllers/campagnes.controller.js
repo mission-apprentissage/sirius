@@ -95,6 +95,9 @@ const getXlsxMultipleExport = tryCatch(async (req, res) => {
 
 const getSortedCampagnes = tryCatch(async (req, res) => {
   const isAdmin = req.user.role === USER_ROLES.ADMIN;
+  const isObserver = req.user.role === USER_ROLES.OBSERVER;
+  const scope = isObserver ? req.user.scope : null;
+
   const { type } = req.query;
 
   if (!Object.keys(CAMPAGNE_SORTING_TYPE).includes(type)) {
@@ -103,7 +106,7 @@ const getSortedCampagnes = tryCatch(async (req, res) => {
 
   const userSiret = req.user.etablissements.map((etablissement) => etablissement.siret);
 
-  const { success, body } = await campagnesService.getSortedCampagnes(isAdmin, userSiret, type);
+  const { success, body } = await campagnesService.getSortedCampagnes(isAdmin, isObserver, userSiret, type, scope);
 
   if (!success) throw new BasicError();
 
