@@ -65,7 +65,6 @@ const questionnaireTemplateQuery = [
 
 const formationQuery = (formationId) => {
   const objectIdFormationId = formationId ? new ObjectId(formationId) : null;
-
   return [
     {
       $lookup: {
@@ -101,6 +100,8 @@ const formationQuery = (formationId) => {
               "data.etablissement_formateur_enseigne": 1,
               "data.etablissement_formateur_entreprise_raison_sociale": 1,
               "data.etablissement_formateur_adresse": 1,
+              "data.num_departement": 1,
+              "data.region": 1,
             },
           },
           {
@@ -169,17 +170,21 @@ const etablissementQuery = (sirets) => {
   ];
 };
 
-const getAllWithTemoignageCountAndTemplateName = async (query) => {
+const getAllWithTemoignageCountAndTemplateName = async (query, scope) => {
+  const matchConditions = {
+    deletedAt: null,
+  };
+
+  if (scope && scope.field && scope.value) {
+    matchConditions[`formation.data.${scope.field}`] = scope.value;
+  }
+
   return Campagne.aggregate([
-    {
-      $match: {
-        deletedAt: null,
-      },
-    },
     ...temoignageCountQuery,
     ...questionnaireTemplateQuery,
     ...formationQuery(),
     ...etablissementQuery(query?.siret),
+    { $match: matchConditions },
   ]);
 };
 

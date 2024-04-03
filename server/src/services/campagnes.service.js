@@ -11,14 +11,17 @@ const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
 
-const getCampagnes = async (isAdmin, userSiret) => {
+const getCampagnes = async (isAdmin, isObserver, userSiret, scope) => {
   try {
     let campagnes = [];
-    const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
 
     if (isAdmin) {
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName();
+    } else if (isObserver) {
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(null, scope);
     } else {
+      const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
+
       let allSirets = [];
       for (const siret of userSiret) {
         const etablissement = etablissementsFromReferentiel.find((etablissement) => etablissement.siret === siret);
