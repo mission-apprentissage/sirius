@@ -11,7 +11,11 @@ import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTabl
 import CampagnesTable from "./CampagnesTable";
 import { LoaderContainer, SearchNoResultsContainer } from "../styles/shared.style";
 import useFetchCampagnes from "../../hooks/useFetchCampagnes";
-import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
+import {
+  OBSERVER_SCOPES_LABELS,
+  campagnesDisplayMode,
+  campagnesSortingOptions,
+} from "../../constants";
 import { isPlural, sortingKeys } from "../utils";
 
 const AccordionComponentGetter = (props) => {
@@ -28,6 +32,7 @@ const ResultsCampagnesSelector = ({
   selectedCampagnes,
   setSelectedCampagnes,
   paramsCampagneIds,
+  userContext,
 }) => {
   const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
@@ -87,6 +92,12 @@ const ResultsCampagnesSelector = ({
 
   return (
     <ResultsCampagneContainer>
+      {userContext?.scope && (
+        <p>
+          Vous avez accès aux campagne pour <b>{OBSERVER_SCOPES_LABELS[userContext.scope.field]}</b>{" "}
+          <b>{userContext.scope.value}</b>.
+        </p>
+      )}
       <SortButtons
         displayMode={displayMode}
         setDisplayMode={setDisplayMode}

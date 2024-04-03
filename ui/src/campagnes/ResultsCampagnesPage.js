@@ -14,7 +14,6 @@ import {
   TestimonialHeader,
 } from "./styles/resultsCampagnes.style";
 import { LoaderContainer } from "./styles/shared.style";
-import { OBSERVER_SCOPES_LABELS } from "../constants";
 import Statistics from "./Shared/Statistics/Statistics";
 import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
 import { getStatistics } from "./utils";
@@ -111,16 +110,11 @@ const ResultsCampagnesPage = () => {
 
   return (
     <Container>
-      {userContext?.scope && (
-        <p>
-          Vous avez accès aux campagne pour <b>{OBSERVER_SCOPES_LABELS[userContext.scope.field]}</b>{" "}
-          <b>{userContext.scope.value}</b>.
-        </p>
-      )}
       <ResultsCampagnesSelector
         selectedCampagnes={selectedCampagnes}
         setSelectedCampagnes={setSelectedCampagnes}
         paramsCampagneIds={paramsCampagneIds}
+        userContext={userContext}
       />
       <Statistics statistics={statistics} title="Statistiques des campagnes sélectionnées" />
       <ResultsCampagneContainer>
