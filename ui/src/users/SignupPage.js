@@ -91,7 +91,6 @@ const SignupPage = () => {
         (obj) => Object.keys(obj).length !== 0
       );
 
-      console.log({ role });
       const resultUser = await _post(`/api/users/`, {
         firstName: firstName,
         lastName: lastName,

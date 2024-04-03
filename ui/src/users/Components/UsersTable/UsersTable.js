@@ -15,6 +15,7 @@ import UsersTableHead from "./UsersTableHead";
 import usersTableColumns from "./usersTableColumns";
 import AddSiretModal from "../AddSiretModal";
 import { useNavigate } from "react-router-dom";
+import AddScopeModal from "../AddScopeModal";
 
 const UsersTable = ({ users, setRefetchData }) => {
   const [userContext, setUserContext] = useContext(UserContext);
@@ -49,6 +50,12 @@ const UsersTable = ({ users, setRefetchData }) => {
     onClose: onCloseAddSiret,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenAddScope,
+    onOpen: onOpenAddScope,
+    onClose: onCloseAddScope,
+  } = useDisclosure();
+
   const table = useReactTable({
     columns: usersTableColumns(
       userContext,
@@ -61,6 +68,7 @@ const UsersTable = ({ users, setRefetchData }) => {
       setClipboardValue,
       onCopyClipBoard,
       onOpenAddSiret,
+      onOpenAddScope,
       navigate
     ),
     data: displayedUsers,
@@ -133,6 +141,12 @@ const UsersTable = ({ users, setRefetchData }) => {
       <AddSiretModal
         isOpen={isOpenAddSiret}
         onClose={onCloseAddSiret}
+        user={selectedUser}
+        setRefetchData={setRefetchData}
+      />
+      <AddScopeModal
+        isOpen={isOpenAddScope}
+        onClose={onCloseAddScope}
         user={selectedUser}
         setRefetchData={setRefetchData}
       />

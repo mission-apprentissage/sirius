@@ -19,6 +19,7 @@ const usersTableColumns = (
   setClipboardValue,
   onCopyClipBoard,
   onOpenAddSiret,
+  onOpenAddScope,
   navigate
 ) => [
   columnHelper.accessor("firstName", {
@@ -204,18 +205,34 @@ const usersTableColumns = (
       if (user.role === USER_ROLES.ADMIN) return null;
       return (
         <Box display="flex">
-          <Tooltip label="Ajouter un SIRET" hasArrow>
-            <IconButton
-              size="sm"
-              aria-label="ajout SIRET"
-              icon={<AddIcon />}
-              mr="2"
-              onClick={() => {
-                setSelectedUser(user);
-                onOpenAddSiret();
-              }}
-            />
-          </Tooltip>
+          {user.role === USER_ROLES.ETABLISSEMENT && (
+            <Tooltip label="Ajouter un SIRET" hasArrow>
+              <IconButton
+                size="sm"
+                aria-label="ajout SIRET"
+                icon={<AddIcon />}
+                mr="2"
+                onClick={() => {
+                  setSelectedUser(user);
+                  onOpenAddSiret();
+                }}
+              />
+            </Tooltip>
+          )}
+          {user.role === USER_ROLES.OBSERVER && (
+            <Tooltip label="Ajouter un scope" hasArrow>
+              <IconButton
+                size="sm"
+                aria-label="ajout scope"
+                icon={<AddIcon />}
+                mr="2"
+                onClick={() => {
+                  setSelectedUser(user);
+                  onOpenAddScope();
+                }}
+              />
+            </Tooltip>
+          )}
           <Tooltip label="Se connecter en tant que l'utilisateur" hasArrow>
             <IconButton
               size="sm"

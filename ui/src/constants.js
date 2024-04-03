@@ -118,3 +118,13 @@ export const ROLE_TYPE = {
   ETABLISSEMENT: "ETABLISSEMENT",
   OBSERVER: "OBSERVER",
 };
+
+export const OBSERVER_SCOPES = {
+  NUM_DEPARTEMENT: "num_departement",
+  REGION: "region",
+};
+
+export const OBSERVER_SCOPES_LABELS = {
+  [OBSERVER_SCOPES.NUM_DEPARTEMENT]: "Numéro de département",
+  [OBSERVER_SCOPES.REGION]: "Nom de la région",
+};
