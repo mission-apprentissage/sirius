@@ -34,6 +34,7 @@ const DsfrNavbar = () => {
 
   const isLoggedIn = !!userContext.token;
   const isAdmin = userContext.currentUserRole === USER_ROLES.ADMIN;
+  const isObserver = userContext.currentUserRole === USER_ROLES.OBSERVER;
 
   const quickAccessItemsLoggedOutAndOthersRoute = [
     {
@@ -108,7 +109,17 @@ const DsfrNavbar = () => {
     },
   ];
 
-  const loggedInNavigation = [
+  const observerNavigation = [
+    {
+      linkProps: {
+        to: "/campagnes/resultats",
+      },
+      text: "Voir les témoignages",
+      isActive: campagnesResultsRoute,
+    },
+  ];
+
+  const etablissementNavigation = [
     {
       linkProps: {
         to: "/campagnes/gestion",
@@ -132,8 +143,8 @@ const DsfrNavbar = () => {
     },
   ];
 
-  const loggedInAdminNavigation = [
-    ...loggedInNavigation,
+  const adminNavigation = [
+    ...etablissementNavigation,
     {
       text: "Gestion",
       menuLinks: [
@@ -194,11 +205,14 @@ const DsfrNavbar = () => {
   };
 
   const navigation = () => {
+    if (isObserver) {
+      return observerNavigation;
+    }
     if (isAdmin) {
-      return loggedInAdminNavigation;
+      return adminNavigation;
     }
     if (isLoggedIn) {
-      return loggedInNavigation;
+      return etablissementNavigation;
     }
   };
 

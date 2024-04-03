@@ -28,6 +28,7 @@ const UserProvider = (props) => {
           etablissementLabel: decodedToken.etablissementLabel,
           etablissements: decodedToken.etablissements,
           acceptedCgu: decodedToken.acceptedCgu || false,
+          scope: decodedToken.scope,
         };
       });
     } else {

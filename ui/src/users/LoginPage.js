@@ -72,6 +72,7 @@ const LoginPage = () => {
             siret: decodedToken.siret,
             acceptedCgu: decodedToken.acceptedCgu || false,
             etablissements: decodedToken.etablissements || [],
+            scope: decodedToken.scope,
           };
         });
         if (decodedToken.role === USER_ROLES.ETABLISSEMENT) {
