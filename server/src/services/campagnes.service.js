@@ -16,14 +16,14 @@ const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
 
-const getCampagnes = async (isAdmin, isObserver, userSiret, scope, page, pageSize) => {
+const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageSize, query }) => {
   try {
     let campagnes = [];
 
     if (isAdmin) {
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName();
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
     } else if (isObserver) {
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName(null, scope);
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ scope, query });
     } else {
       const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
 
@@ -47,7 +47,7 @@ const getCampagnes = async (isAdmin, isObserver, userSiret, scope, page, pageSiz
         allSirets.push(...relatedSirets);
       }
 
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: allSirets });
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: allSirets, query });
     }
 
     const paginatedCampagnes = campagnes.slice((page - 1) * pageSize, page * pageSize);
@@ -70,6 +70,7 @@ const getCampagnes = async (isAdmin, isObserver, userSiret, scope, page, pageSiz
         currentPage: parseInt(page),
         pageSize: pageSize,
         totalPages: Math.ceil(campagnes.length / pageSize),
+        hasMore: campagnes.length > page * pageSize,
       },
     };
   } catch (error) {
@@ -113,7 +114,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
 
     if (sortingType === CAMPAGNE_SORTING_TYPE.DIPLOME_TYPE) {
       const campagnesGroupedByDiplome = campagnes.reduce((acc, campagne) => {
-        const diplome = DIPLOME_TYPE_MATCHER[campagne.formation?.data.diplome] || campagne.formation?.data.diplome;
+        const diplome = campagne.formation?.data.diplome;
         if (!acc[diplome]) {
           acc[diplome] = [];
         }

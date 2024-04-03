@@ -7,18 +7,28 @@ const getCampagnes = tryCatch(async (req, res) => {
   const isAdmin = req.user.role === USER_ROLES.ADMIN;
   const isObserver = req.user.role === USER_ROLES.OBSERVER;
   const scope = isObserver ? req.user.scope : null;
-  const page = req.query.page || 1;
-  const pageSize = req.query.pageSize || 25;
   const userSiret = req.user.etablissements.map((etablissement) => etablissement.siret);
 
-  const { success, body, pagination } = await campagnesService.getCampagnes(
+  const page = req.query.page || 1;
+  const pageSize = req.query.pageSize || 10;
+
+  const diplome = req.query.diplome;
+
+  let query = {};
+
+  if (diplome) {
+    query = { diplome };
+  }
+
+  const { success, body, pagination } = await campagnesService.getCampagnes({
     isAdmin,
     isObserver,
     userSiret,
     scope,
     page,
-    pageSize
-  );
+    pageSize,
+    query,
+  });
 
   if (!success) throw new BasicError();
 

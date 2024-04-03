@@ -170,7 +170,7 @@ const etablissementQuery = (sirets) => {
   ];
 };
 
-const getAllWithTemoignageCountAndTemplateName = async (query, scope) => {
+const getAllWithTemoignageCountAndTemplateName = async ({ siret, query, scope }) => {
   const matchConditions = {
     deletedAt: null,
   };
@@ -179,11 +179,15 @@ const getAllWithTemoignageCountAndTemplateName = async (query, scope) => {
     matchConditions[`formation.data.${scope.field}`] = scope.value;
   }
 
+  if (query && query.diplome) {
+    matchConditions["formation.data.diplome"] = query.diplome;
+  }
+
   return Campagne.aggregate([
     ...temoignageCountQuery,
     ...questionnaireTemplateQuery,
     ...formationQuery(),
-    ...etablissementQuery(query?.siret),
+    ...etablissementQuery(siret),
     { $match: matchConditions },
   ]);
 };
