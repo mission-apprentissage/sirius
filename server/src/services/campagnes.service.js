@@ -144,7 +144,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
       const formattedResults = Object.keys(campagnesGroupedByEtablissement).map((key) => {
         const campagneIds = campagnesGroupedByEtablissement[key].map((campagne) => campagne._id);
         return {
-          formation: campagnesGroupedByEtablissement[key][0].formation,
+          etablissementFormateur: campagnesGroupedByEtablissement[key][0].formation.data,
           campagneIds: campagneIds,
         };
       });

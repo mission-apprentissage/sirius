@@ -13,11 +13,15 @@ const getCampagnes = tryCatch(async (req, res) => {
   const pageSize = req.query.pageSize || 10;
 
   const diplome = req.query.diplome;
+  const etablissementFormateurSiret = req.query.etablissementFormateurSiret;
 
   let query = {};
 
   if (diplome) {
     query = { diplome };
+  }
+  if (etablissementFormateurSiret) {
+    query = { etablissementFormateurSiret };
   }
 
   const { success, body, pagination } = await campagnesService.getCampagnes({
