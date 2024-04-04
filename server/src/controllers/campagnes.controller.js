@@ -135,6 +135,15 @@ const getSortedCampagnes = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getCampagnesStatistics = tryCatch(async (req, res) => {
+  const campagneIds = req.body;
+  const { success, body } = await campagnesService.getCampagnesStatistics(campagneIds);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 module.exports = {
   getCampagnes,
   getCampagne,
@@ -146,4 +155,5 @@ module.exports = {
   getPdfMultipleExport,
   getXlsxMultipleExport,
   getSortedCampagnes,
+  getCampagnesStatistics,
 };

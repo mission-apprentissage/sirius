@@ -3,8 +3,7 @@ const campagnesDao = require("../dao/campagnes.dao");
 const formationsDao = require("../dao/formations.dao");
 const etablissementsDao = require("../dao/etablissements.dao");
 const temoignagesDao = require("../dao/temoignages.dao");
-const { getChampsLibreRate, getChampsLibreCount } = require("../utils/verbatims.utils");
-const { getMedianDuration, appendDataWhenEmpty } = require("../utils/campagnes.utils");
+const { appendDataWhenEmpty, getStatistics, getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
 const {
   DIPLOME_TYPE_MATCHER,
@@ -15,6 +14,7 @@ const {
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
+const { getChampsLibreCount, getChampsLibreRate } = require("../utils/verbatims.utils");
 
 const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageSize, query }) => {
   try {
@@ -53,9 +53,6 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageS
     const paginatedCampagnes = campagnes.slice((page - 1) * pageSize, page * pageSize);
 
     paginatedCampagnes.map((campagne) => {
-      campagne.champsLibreCount = getChampsLibreCount(campagne.questionnaireUI, campagne.temoignagesList);
-      campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
-      campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
       delete campagne.questionnaireUI;
       delete campagne.questionnaire;
       delete campagne.temoignagesList;
@@ -323,6 +320,26 @@ const getXlsxMultipleExport = async (ids) => {
   }
 };
 
+const getCampagnesStatistics = async (campagneIds) => {
+  try {
+    const query = { campagneIds: { $in: campagneIds.map((id) => ObjectId(id)) } };
+
+    const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
+
+    campagnes.forEach((campagne) => {
+      campagne.champsLibreCount = getChampsLibreCount(campagne.questionnaireUI, campagne.temoignagesList);
+      campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
+      campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
+    });
+
+    const statistics = getStatistics(campagnes);
+
+    return { success: true, body: statistics };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   getCampagnes,
   getOneCampagne,
@@ -334,4 +351,5 @@ module.exports = {
   getPdfMultipleExport,
   getXlsxMultipleExport,
   getSortedCampagnes,
+  getCampagnesStatistics,
 };

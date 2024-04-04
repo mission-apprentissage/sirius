@@ -12,6 +12,7 @@ const {
   getPdfMultipleExport,
   getXlsxMultipleExport,
   getSortedCampagnes,
+  getCampagnesStatistics,
 } = require("../controllers/campagnes.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdminOrAllowed, TYPES } = require("../middlewares/isAdminOrAllowed");
@@ -26,6 +27,10 @@ const campagnes = () => {
 
   router.get("/api/campagnes/sorted", verifyUser, (req, res, next) => {
     getSortedCampagnes(req, res, next);
+  });
+
+  router.post("/api/campagnes/statistics", verifyUser, (req, res, next) => {
+    getCampagnesStatistics(req, res, next);
   });
 
   router.post("/api/campagnes/", verifyUser, validator(createCampagneSchema), (req, res, next) => {
