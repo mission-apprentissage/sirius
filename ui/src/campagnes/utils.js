@@ -264,3 +264,12 @@ export const getStatistics = (campagnes) => ({
   medianDuration: campagnes?.length ? getMedianDuration(campagnes) : "N/A",
   verbatimsCount: campagnes?.length ? getVerbatimsCount(campagnes) : "0",
 });
+
+export const splitIntoBatches = (array, batchSize) => {
+  const batchedArray = [];
+  for (let i = 0; i < array.length; i += batchSize) {
+    const batch = array.slice(i, i + batchSize);
+    batchedArray.push(batch);
+  }
+  return batchedArray;
+};

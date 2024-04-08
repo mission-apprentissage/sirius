@@ -1,34 +1,29 @@
-import { useEffect, useState, useContext } from "react";
+import { useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
-import { _get } from "../utils/httpClient";
+import { fetchCampagnes } from "../queries/campagnes";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-const useFetchCampagnes = (shouldRefreshData) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+const useFetchCampagnes = ({ query, key, enabled, page, pageSize = 10 }) => {
+  const queryClient = useQueryClient();
   const [userContext] = useContext(UserContext);
 
+  const { data, isSuccess, isError, isLoading } = useQuery({
+    queryKey: [`campagnes-${key}`, page],
+    queryFn: () => fetchCampagnes({ query, page, pageSize, token: userContext.token }),
+    enabled: !!enabled,
+  });
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await _get(`/api/campagnes`, userContext.token);
+    if (data?.pagination.hasMore) {
+      queryClient.prefetchQuery({
+        queryKey: [`campagnes-${key}`, page + 1],
+        queryFn: () =>
+          fetchCampagnes({ query, page: page + 1, pageSize, token: userContext.token }),
+      });
+    }
+  }, [data, page, queryClient]);
 
-        if (response.error) {
-          setError(response.error);
-        } else {
-          setData(response);
-        }
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [shouldRefreshData]);
-
-  return [data, loading, error];
+  return { campagnes: data, isSuccess, isError, isLoading };
 };
 
 export default useFetchCampagnes;
