@@ -89,11 +89,11 @@ export const numberRegex = /^\d+$/;
 export const campagnesDisplayMode = [
   {
     label: "Niveau de diplôme",
-    value: "diplome",
+    value: "DIPLOME_TYPE",
   },
   {
     label: "Établissement",
-    value: "etablissement",
+    value: "ETABLISSEMENT",
   },
   {
     label: "Toutes",

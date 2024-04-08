@@ -27,7 +27,7 @@ echarts.use([
 const ExportResultsCampagnesVisualisation = ({ temoignages }) => {
   return (
     <>
-      {temoignages.map((category, index) => {
+      {temoignages.categories.map((category, index) => {
         return (
           <DataVizContainer key={index}>
             {category.questionsList.map((question) => {

@@ -51,3 +51,9 @@ export const LoaderContainer = styled.div`
   align-items: center;
   height: 50px;
 `;
+
+export const TableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;

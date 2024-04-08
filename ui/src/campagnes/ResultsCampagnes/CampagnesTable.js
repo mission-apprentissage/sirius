@@ -33,18 +33,16 @@ const headers = [
   </HeaderItem>,
 ];
 
-const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displayMode) => {
+const data = (displayedCampagnes, selectedCampagneIds, setSelectedCampagneIds, displayMode) => {
   return displayedCampagnes.map((campagne) => {
     const formation = campagne.formation.data;
-    const isSelected = selectedCampagnes.some(
-      (selectedCampagne) => selectedCampagne._id === campagne._id
-    );
+    const isSelected = selectedCampagneIds.includes(campagne._id);
 
     const handleOnChange = () => {
-      setSelectedCampagnes((prevValue) =>
+      setSelectedCampagneIds((prevValue) =>
         isSelected
-          ? prevValue.filter((item) => item._id !== campagne._id)
-          : [...prevValue, campagne]
+          ? prevValue.filter((item) => item !== campagne._id)
+          : [...prevValue, campagne._id]
       );
     };
 
@@ -132,15 +130,15 @@ const data = (displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displ
 
 const CampagnesTable = ({
   displayedCampagnes = [],
-  selectedCampagnes,
-  setSelectedCampagnes,
+  selectedCampagneIds,
+  setSelectedCampagneIds,
   displayMode,
 }) => {
   return (
     <div id="campagnesTable" style={{ width: "100%", height: "100%" }}>
       <Table
         headers={headers}
-        data={data(displayedCampagnes, selectedCampagnes, setSelectedCampagnes, displayMode)}
+        data={data(displayedCampagnes, selectedCampagneIds, setSelectedCampagneIds, displayMode)}
       />
     </div>
   );

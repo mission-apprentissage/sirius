@@ -11,6 +11,7 @@ const SortButtons = ({
   setSortingMode = null,
   search,
   setSearch,
+  setIsOpened,
   organizeLabel,
   mode,
 }) => {
@@ -20,7 +21,10 @@ const SortButtons = ({
         label={organizeLabel}
         nativeSelectProps={{
           value: displayMode,
-          onChange: (event) => setDisplayMode(event.target.value),
+          onChange: (event) => {
+            setDisplayMode(event.target.value);
+            setIsOpened(true);
+          },
         }}
         options={campagnesDisplayMode}
       />
@@ -29,7 +33,10 @@ const SortButtons = ({
           <Select
             nativeSelectProps={{
               value: sortingMode,
-              onChange: (event) => setSortingMode(event.target.value),
+              onChange: (event) => {
+                setSortingMode(event.target.value);
+                setIsOpened(true);
+              },
             }}
             options={campagnesSortingOptions}
           />
@@ -38,7 +45,10 @@ const SortButtons = ({
         nativeInputProps={{
           value: search,
           placeholder: "Rechercher",
-          onChange: (e) => setSearch(e.target.value),
+          onChange: (e) => {
+            setSearch(e.target.value);
+            setIsOpened(true);
+          },
         }}
       />
     </SortButtonsContainer>

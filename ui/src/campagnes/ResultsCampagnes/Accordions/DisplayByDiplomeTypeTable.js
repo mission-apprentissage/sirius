@@ -1,10 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import {
-  getUniqueDiplomeTypesFromCampagne,
-  orderCampagnesByDiplomeType,
-  isPlural,
-} from "../../utils";
+import { isPlural } from "../../utils";
 import {
   StyledAccordion,
   AccordionLabelByDiplomeTypeContainer,
@@ -12,81 +8,152 @@ import {
 } from "./accordions.style";
 import CampagnesTable from "../CampagnesTable";
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
+import { LoaderContainer, TableContainer } from "../../styles/shared.style";
+import BeatLoader from "react-spinners/BeatLoader";
+import Alert from "@codegouvfr/react-dsfr/Alert";
+import Pagination from "@codegouvfr/react-dsfr/Pagination";
+import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
 
 const DisplayByDiplomeTypeTable = ({
-  displayedCampagnes,
-  selectedCampagnes,
-  setSelectedCampagnes,
+  campagnesSorted,
+  selectedCampagneIds,
+  setSelectedCampagneIds,
   displayMode,
 }) => {
-  const uniqueDiplomeTypeFromCampagnes = getUniqueDiplomeTypesFromCampagne(displayedCampagnes);
+  const [page, setPage] = useState(null);
+  const [openedAccordion, setOpenedAccordion] = useState(null);
 
-  const orderedCampagnessByDiplomeType = orderCampagnesByDiplomeType(displayedCampagnes);
+  const query = `diplome=${openedAccordion}`;
 
-  return uniqueDiplomeTypeFromCampagnes.map((diplomeType) => {
-    const campagnesByDiplomeType = orderedCampagnessByDiplomeType[diplomeType];
-    const campagnesSelectedCountByDiplomeType = selectedCampagnes.filter((selectedCampagne) =>
-      campagnesByDiplomeType.map((formation) => formation._id).includes(selectedCampagne._id)
+  const { campagnes, isSuccess, isError, isLoading } = useFetchCampagnes({
+    query,
+    key: openedAccordion,
+    enabled: !!openedAccordion,
+    page: page && page[openedAccordion] ? page[openedAccordion] : 1,
+  });
+
+  if (!page) {
+    const elem = campagnesSorted.map((diplome) => ({ [diplome.diplome]: 1 }));
+    setPage(elem);
+  }
+
+  return campagnesSorted.map(({ diplome, campagneIds }) => {
+    const campagnesSelectedByDiplomeTypeCount = selectedCampagneIds.filter((campagneId) =>
+      campagneIds.includes(campagneId)
     ).length;
-
-    const isEveryCampagnesSelected = campagnesByDiplomeType?.every((campagne) =>
-      selectedCampagnes.some((selectedCampagne) => selectedCampagne._id === campagne._id)
-    );
 
     const checkboxLabel = (
       <b>
-        {campagnesSelectedCountByDiplomeType
-          ? `${campagnesSelectedCountByDiplomeType} campagne${isPlural(
-              campagnesSelectedCountByDiplomeType
-            )} sélectionnée${isPlural(campagnesSelectedCountByDiplomeType)}`
+        {campagnesSelectedByDiplomeTypeCount
+          ? `${campagnesSelectedByDiplomeTypeCount} campagne${isPlural(
+              campagnesSelectedByDiplomeTypeCount
+            )} sélectionnée${isPlural(campagnesSelectedByDiplomeTypeCount)}`
           : "Tout sélectionner"}
       </b>
     );
 
+    const handleSelectAll = (e) => {
+      setSelectedCampagneIds((prevValues) => {
+        if (e.target.checked) {
+          return [...new Set([...prevValues, ...campagneIds])];
+        } else {
+          return prevValues.filter((selectedCampagne) => !campagneIds.includes(selectedCampagne));
+        }
+      });
+    };
+
     return (
       <StyledAccordion
-        key={diplomeType}
+        key={diplome}
+        onExpandedChange={(isExpanded) =>
+          isExpanded ? setOpenedAccordion(diplome) : setOpenedAccordion(null)
+        }
         label={
           <AccordionLabelByDiplomeTypeContainer>
-            <h5>{DIPLOME_TYPE_MATCHER[diplomeType] || diplomeType}</h5>
+            <h5>{DIPLOME_TYPE_MATCHER[diplome] || diplome}</h5>
             <p>
-              {campagnesSelectedCountByDiplomeType} campagne
-              {isPlural(campagnesSelectedCountByDiplomeType)} sélectionnée
-              {isPlural(campagnesSelectedCountByDiplomeType)}
+              {campagneIds.length} campagne
+              {isPlural(campagneIds.length)} sélectionnée
+              {isPlural(campagneIds.length)}
             </p>
           </AccordionLabelByDiplomeTypeContainer>
         }
       >
-        <ButtonContainer>
-          <Checkbox
-            options={[
-              {
-                label: checkboxLabel,
-                nativeInputProps: {
-                  name: `selectAll${diplomeType}`,
-                  checked: isEveryCampagnesSelected,
-                  onChange: (e) => {
-                    setSelectedCampagnes((prevValues) => {
-                      if (e.target.checked) {
-                        return [...new Set([...prevValues, ...campagnesByDiplomeType])];
-                      } else {
-                        return prevValues.filter(
-                          (selectedCampagne) => !campagnesByDiplomeType.includes(selectedCampagne)
-                        );
-                      }
-                    });
-                  },
-                },
-              },
-            ]}
+        {isLoading && (
+          <LoaderContainer>
+            <BeatLoader
+              color="var(--background-action-high-blue-france)"
+              size={15}
+              aria-label="Loading Spinner"
+              loading={isLoading}
+            />
+          </LoaderContainer>
+        )}
+        {isError && (
+          <Alert
+            title="Une erreur s'est produite dans le chargement des campagnes"
+            description="Merci de réessayer ultérieurement"
+            severity="error"
           />
-        </ButtonContainer>
-        <CampagnesTable
-          displayedCampagnes={campagnesByDiplomeType}
-          selectedCampagnes={selectedCampagnes}
-          setSelectedCampagnes={setSelectedCampagnes}
-          displayMode={displayMode}
-        />
+        )}
+        {isSuccess && (
+          <>
+            <ButtonContainer>
+              <Checkbox
+                options={[
+                  {
+                    label: checkboxLabel,
+                    nativeInputProps: {
+                      name: `selectAll${diplome}`,
+                      checked: campagnesSelectedByDiplomeTypeCount === campagneIds.length,
+                      onChange: handleSelectAll,
+                    },
+                  },
+                ]}
+              />
+            </ButtonContainer>
+            <TableContainer>
+              {campagnes.pagination.totalPages > 1 && (
+                <Pagination
+                  count={campagnes.pagination.totalPages}
+                  defaultPage={page[diplome]}
+                  getPageLinkProps={(pageNumber) => ({
+                    onClick: (event) => {
+                      event.preventDefault();
+                      setPage((prevValue) => ({
+                        ...prevValue,
+                        [diplome]: pageNumber,
+                      }));
+                    },
+                    key: `pagination-link-${pageNumber}`,
+                  })}
+                />
+              )}
+              <CampagnesTable
+                displayedCampagnes={campagnes.body}
+                selectedCampagneIds={selectedCampagneIds}
+                setSelectedCampagneIds={setSelectedCampagneIds}
+                displayMode={displayMode}
+              />
+              {campagnes.pagination.totalPages > 1 && (
+                <Pagination
+                  count={campagnes.pagination.totalPages}
+                  defaultPage={page[diplome]}
+                  getPageLinkProps={(pageNumber) => ({
+                    onClick: (event) => {
+                      event.preventDefault();
+                      setPage((prevValue) => ({
+                        ...prevValue,
+                        [diplome]: pageNumber,
+                      }));
+                    },
+                    key: `pagination-link-${pageNumber}`,
+                  })}
+                />
+              )}
+            </TableContainer>
+          </>
+        )}
       </StyledAccordion>
     );
   });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
@@ -8,51 +8,81 @@ import { ButtonContainer, ResultsCampagneContainer } from "../styles/resultsCamp
 import SortButtons from "../Shared/SortButtons/SortButtons";
 import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
 import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
-import CampagnesTable from "./CampagnesTable";
 import { LoaderContainer, SearchNoResultsContainer } from "../styles/shared.style";
-import useFetchCampagnes from "../../hooks/useFetchCampagnes";
+import useFetchCampagnesSorted from "../../hooks/useFetchCampagnesSorted";
 import {
   OBSERVER_SCOPES_LABELS,
   campagnesDisplayMode,
   campagnesSortingOptions,
 } from "../../constants";
-import { isPlural, sortingKeys } from "../utils";
+import { isPlural } from "../utils";
+import DisplayByAllTable from "./Accordions/DisplayByAllTable";
+import { UserContext } from "../../context/UserContext";
 
-const AccordionComponentGetter = (props) => {
-  if (props.displayMode === campagnesDisplayMode[0].value) {
-    return <DisplayByDiplomeTypeTable {...props} />;
-  } else if (props.displayMode === campagnesDisplayMode[1].value) {
-    return <DisplayByEtablissementTable {...props} />;
-  } else if (props.displayMode === campagnesDisplayMode[2].value) {
-    return <CampagnesTable {...props} />;
+const AccordionComponentGetter = ({
+  campagnesSorted,
+  selectedCampagneIds,
+  setSelectedCampagneIds,
+  displayMode,
+}) => {
+  if (displayMode === campagnesDisplayMode[0].value) {
+    return (
+      <DisplayByDiplomeTypeTable
+        campagnesSorted={campagnesSorted}
+        selectedCampagneIds={selectedCampagneIds}
+        setSelectedCampagneIds={setSelectedCampagneIds}
+      />
+    );
+  } else if (displayMode === campagnesDisplayMode[1].value) {
+    return (
+      <DisplayByEtablissementTable
+        campagnesSorted={campagnesSorted}
+        selectedCampagneIds={selectedCampagneIds}
+        setSelectedCampagneIds={setSelectedCampagneIds}
+      />
+    );
+  } else if (displayMode === campagnesDisplayMode[2].value) {
+    return (
+      <DisplayByAllTable
+        campagnesSorted={campagnesSorted}
+        selectedCampagneIds={selectedCampagneIds}
+        setSelectedCampagneIds={setSelectedCampagneIds}
+      />
+    );
   }
 };
 
 const ResultsCampagnesSelector = ({
-  selectedCampagnes,
-  setSelectedCampagnes,
+  selectedCampagneIds,
+  setSelectedCampagneIds,
   paramsCampagneIds,
-  userContext,
 }) => {
-  const [displayedCampagnes, setDisplayedCampagnes] = useState([]);
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
   const [isOpened, setIsOpened] = useState(false);
+  const [userContext] = useContext(UserContext);
 
-  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
+  const { campagnesSorted, isSuccess, isError, isLoading } = useFetchCampagnesSorted(displayMode);
+
+  const totalCampagnesCount = [
+    ...new Set(campagnesSorted?.map((campagne) => campagne.campagneIds).flat()),
+  ].length;
 
   useEffect(() => {
-    if (campagnes?.length) {
-      setDisplayedCampagnes(campagnes);
-      const filteredCampagnes = campagnes.filter((campagne) =>
+    const allCampagneIds = [
+      ...new Set(campagnesSorted?.map((campagne) => campagne.campagneIds).flat()),
+    ];
+
+    if (campagnesSorted?.length) {
+      const filteredCampagnes = allCampagneIds.filter((campagne) =>
         paramsCampagneIds.includes(campagne._id)
       );
-      setSelectedCampagnes(paramsCampagneIds.length ? filteredCampagnes : campagnes);
+      setSelectedCampagneIds(paramsCampagneIds.length ? filteredCampagnes : allCampagneIds);
     }
-  }, [campagnes]);
+  }, [campagnesSorted]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     let sortedCampagnes = [...displayedCampagnes];
     if (sortedCampagnes.length > 0) {
       sortedCampagnes.sort((a, b) => {
@@ -65,8 +95,8 @@ const ResultsCampagnesSelector = ({
   }, [sortingMode, displayedCampagnes]);
 
   useEffect(() => {
-    if (campagnes?.length && search === "") {
-      setDisplayedCampagnes(campagnes);
+    if (campagnesSorted?.length && search === "") {
+      setDisplayedCampagnes(campagnesSorted);
     } else {
       const filteredCampagnes = displayedCampagnes.filter((campagne) => {
         return (
@@ -78,14 +108,14 @@ const ResultsCampagnesSelector = ({
       });
       setDisplayedCampagnes(filteredCampagnes);
     }
-  }, [search]);
+  }, [search]);*/
 
   const checkboxLabel = (
     <b>
-      {selectedCampagnes.length
-        ? `${selectedCampagnes.length} campagne${isPlural(
-            selectedCampagnes.length
-          )} sélectionnée${isPlural(selectedCampagnes.length)}`
+      {totalCampagnesCount
+        ? `${totalCampagnesCount} campagne${isPlural(totalCampagnesCount)} sélectionnée${isPlural(
+            totalCampagnesCount
+          )}`
         : "Tout sélectionner"}
     </b>
   );
@@ -105,10 +135,11 @@ const ResultsCampagnesSelector = ({
         setSortingMode={setSortingMode}
         search={search}
         setSearch={setSearch}
+        setIsOpened={setIsOpened}
         mode="results"
         organizeLabel="Sélectionner les résultats à afficher"
       />
-      {loadingCampagnes && (
+      {isLoading && (
         <LoaderContainer>
           <BeatLoader
             color="var(--background-action-high-blue-france)"
@@ -117,14 +148,14 @@ const ResultsCampagnesSelector = ({
           />
         </LoaderContainer>
       )}
-      {errorCampagnes && !campagnes?.length ? (
+      {isError ? (
         <Alert
-          title="Une erreur s'est produite dans le chargement des campagnes"
+          title="Une erreur s'est produite dans le chargement des tri de campagnes"
           description="Merci de réessayer ultérieurement"
           severity="error"
         />
       ) : null}
-      {displayedCampagnes?.length ? (
+      {isSuccess || displayMode === campagnesDisplayMode[2].value ? (
         <>
           <Checkbox
             options={[
@@ -132,11 +163,11 @@ const ResultsCampagnesSelector = ({
                 label: checkboxLabel,
                 nativeInputProps: {
                   name: `selectAllCampagnes`,
-                  checked: selectedCampagnes.length === displayedCampagnes.length,
+                  checked: selectedCampagneIds.length === totalCampagnesCount,
                   onChange: (e) => {
-                    setSelectedCampagnes(() => {
+                    setSelectedCampagneIds(() => {
                       if (e.target.checked) {
-                        return campagnes;
+                        return campagnesSorted;
                       } else {
                         return [];
                       }
@@ -149,10 +180,10 @@ const ResultsCampagnesSelector = ({
           <div className={fr.cx("fr-accordions-group")}>
             <div style={{ display: isOpened ? "inherit" : "none" }}>
               <AccordionComponentGetter
+                campagnesSorted={campagnesSorted}
+                selectedCampagneIds={selectedCampagneIds}
+                setSelectedCampagneIds={setSelectedCampagneIds}
                 displayMode={displayMode}
-                displayedCampagnes={displayedCampagnes}
-                selectedCampagnes={selectedCampagnes}
-                setSelectedCampagnes={setSelectedCampagnes}
               />
             </div>
           </div>
@@ -165,12 +196,12 @@ const ResultsCampagnesSelector = ({
           </ButtonContainer>
         </>
       ) : null}
-      {!displayedCampagnes?.length && search ? (
+      {/*!displayedCampagnes?.length && search ? (
         <SearchNoResultsContainer>
           <h3>Aucun résultats pour votre recherche</h3>
           <p onClick={() => setSearch("")}>Réinitialiser ?</p>
         </SearchNoResultsContainer>
-      ) : null}
+      ) : null*/}
     </ResultsCampagneContainer>
   );
 };

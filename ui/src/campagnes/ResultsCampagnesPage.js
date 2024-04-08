@@ -1,13 +1,10 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
-import { UserContext } from "../context/UserContext";
-import { _post } from "../utils/httpClient";
-import { useGet } from "../common/hooks/httpHooks";
 import {
   Container,
   ResultsCampagneContainer,
@@ -16,105 +13,99 @@ import {
 import { LoaderContainer } from "./styles/shared.style";
 import Statistics from "./Shared/Statistics/Statistics";
 import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
-import { getStatistics } from "./utils";
 import { exportMultipleChartsToPdf } from "./pdfExport";
 import ExportResultsCampagnesVisualisation from "./ResultsCampagnes/ExportResultsCampagnesVisualisation";
 import ResultsCampagnesSelector from "./ResultsCampagnes/ResultsCampagnesSelector";
+import useFetchCampagnesDatavisualisation from "../hooks/useFetchCampagnesDatavisualisation";
+import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
+import useFetchCampagnesByBatch from "../hooks/useFetchCampagnesByBatch";
 
-const MultipleQuestionnairesTabs = ({ temoignages }) => {
+const MultipleQuestionnairesTabs = ({
+  temoignages,
+  setCurrentDatavisualisationQuestionnaireId,
+}) => {
   const tabs = temoignages.map((questionnaire, index) => {
     return {
       label: `Questionnaire version ${index + 1}`,
       content: <ResultsCampagnesVisualisation temoignages={questionnaire} />,
+      id: questionnaire.questionnaireId,
     };
   });
 
-  return <Tabs tabs={tabs} />;
+  return (
+    <Tabs tabs={tabs} onTabChange={(e) => setCurrentDatavisualisationQuestionnaireId(e.tab.id)} />
+  );
 };
 
 const ResultsCampagnesPage = () => {
-  const [selectedCampagnes, setSelectedCampagnes] = useState([]);
-  const [temoignages, setTemoignages] = useState([]);
-  const [loadingTemoignages, setLoadingTemoignages] = useState(false);
-  const [temoignagesError, setTemoignagesError] = useState(false);
+  const [selectedCampagneIds, setSelectedCampagneIds] = useState([]);
   const [pdfExportLoading, setPdfExportLoading] = useState(false);
-  const [isPdfExporting, setIsPdfExporting] = useState(false);
-  const [neededQuestionnaires, setNeededQuestionnaires] = useState([]);
+  const [currentDatavisualisationQuestionnaireId, setCurrentDatavisualisationQuestionnaireId] =
+    useState(null);
   const [searchParams] = useSearchParams();
-  const [userContext] = useContext(UserContext);
 
-  const [questionnaires, loadingQuestionnaires, errorQuestionnaires] =
-    useGet(`/api/questionnaires/`);
+  const { campagnes, isLoading } = useFetchCampagnesByBatch({
+    campagneIds: selectedCampagneIds,
+  });
 
   const paramsCampagneIds = searchParams.has("campagneIds")
     ? searchParams.get("campagneIds").split(",")
     : [];
 
+  const {
+    mutate: mutateCampagnesDatavisualisation,
+    datavisualisation,
+    isSuccess: isSuccessCampagnesDatavisualisation,
+    isLoading: isLoadingCampagnesDatavisualisation,
+    isError: isErrorCampagnesDatavisualisation,
+  } = useFetchCampagnesDatavisualisation();
+
+  const { mutate: mutateCampagnesStatistics, statistics } = useFetchCampagnesStatistics();
+
   useEffect(() => {
-    if (selectedCampagnes.length) {
-      const neededQuestionnaireIds = [
-        ...new Set(selectedCampagnes.map((campagne) => campagne.questionnaireId)),
-      ];
-
-      const filteredQuestionnaires = questionnaires.filter((questionnaire) =>
-        neededQuestionnaireIds.includes(questionnaire._id)
-      );
-
-      setNeededQuestionnaires(filteredQuestionnaires);
+    if (selectedCampagneIds.length) {
+      mutateCampagnesDatavisualisation(selectedCampagneIds);
+      mutateCampagnesStatistics(selectedCampagneIds);
     }
-  }, [selectedCampagnes]);
+  }, [selectedCampagneIds]);
 
   useEffect(() => {
-    const getTemoignages = async () => {
-      setLoadingTemoignages(true);
-      try {
-        if (selectedCampagnes.length) {
-          const result = await _post(
-            `/api/temoignages/datavisualisation`,
-            selectedCampagnes.map((campagne) => campagne._id),
-            userContext.token
-          );
-          setTemoignages(result);
-        } else {
-          setTemoignages([]);
-        }
-      } catch (error) {
-        setTemoignagesError(true);
-      }
-      setLoadingTemoignages(false);
-    };
-    getTemoignages();
-  }, [selectedCampagnes]);
-
-  const statistics = getStatistics(selectedCampagnes);
+    if (!currentDatavisualisationQuestionnaireId && datavisualisation?.length > 0) {
+      setCurrentDatavisualisationQuestionnaireId(datavisualisation[0].questionnaireId);
+    }
+  }, [datavisualisation]);
 
   const shouldDisplayResults =
-    temoignages.length && neededQuestionnaires.length === 1 && !loadingTemoignages;
+    isSuccessCampagnesDatavisualisation && datavisualisation.length === 1;
 
   const shouldDisplayTabbedResults =
-    temoignages.length && neededQuestionnaires.length > 1 && !loadingTemoignages;
+    isSuccessCampagnesDatavisualisation && datavisualisation.length > 1;
 
   const handlePdfExport = async () => {
-    setIsPdfExporting(true);
     setPdfExportLoading(true);
-    setTimeout(async () => {
-      await exportMultipleChartsToPdf(
-        neededQuestionnaires[0].questionnaire,
-        selectedCampagnes,
-        statistics
-      );
-      setPdfExportLoading(false);
-      setIsPdfExporting(false);
-    }, 3000);
+
+    const currentQuestionnaireCategories = datavisualisation?.find(
+      (questionnaire) => questionnaire.questionnaireId === currentDatavisualisationQuestionnaireId
+    ).categories;
+
+    const filteredCampagnesByQuestionnaireId = campagnes.filter(
+      (campagne) => campagne.questionnaireId === currentDatavisualisationQuestionnaireId
+    );
+
+    await exportMultipleChartsToPdf(
+      currentQuestionnaireCategories,
+      filteredCampagnesByQuestionnaireId,
+      statistics
+    );
+    setPdfExportLoading(false);
   };
 
   return (
     <Container>
       <ResultsCampagnesSelector
-        selectedCampagnes={selectedCampagnes}
-        setSelectedCampagnes={setSelectedCampagnes}
+        selectedCampagneIds={selectedCampagneIds}
+        setSelectedCampagneIds={setSelectedCampagneIds}
         paramsCampagneIds={paramsCampagneIds}
-        userContext={userContext}
       />
       <Statistics statistics={statistics} title="Statistiques des campagnes sélectionnées" />
       <ResultsCampagneContainer>
@@ -129,7 +120,7 @@ const ResultsCampagnesPage = () => {
               iconId="fr-icon-file-download-fill"
               onClick={handlePdfExport}
             >
-              {pdfExportLoading ? (
+              {pdfExportLoading || isLoading ? (
                 <BeatLoader
                   color="var(--background-action-high-blue-france)"
                   size={10}
@@ -141,7 +132,7 @@ const ResultsCampagnesPage = () => {
             </Button>
           </div>
         </TestimonialHeader>
-        {(loadingTemoignages || loadingQuestionnaires) && (
+        {isLoadingCampagnesDatavisualisation && (
           <LoaderContainer>
             <BeatLoader
               color="var(--background-action-high-blue-france)"
@@ -150,21 +141,29 @@ const ResultsCampagnesPage = () => {
             />
           </LoaderContainer>
         )}
-        {(temoignagesError || errorQuestionnaires) && !temoignages.length && !loadingTemoignages ? (
+        {isErrorCampagnesDatavisualisation ? (
           <Alert
             title="Une erreur s'est produite dans le chargement des témoignages"
             description="Merci de réessayer ultérieurement"
             severity="error"
           />
         ) : null}
-        {shouldDisplayTabbedResults ? (
-          <MultipleQuestionnairesTabs temoignages={temoignages} />
+        {shouldDisplayTabbedResults && !pdfExportLoading ? (
+          <MultipleQuestionnairesTabs
+            temoignages={datavisualisation}
+            setCurrentDatavisualisationQuestionnaireId={setCurrentDatavisualisationQuestionnaireId}
+          />
         ) : null}
-        {shouldDisplayResults && !isPdfExporting ? (
-          <ResultsCampagnesVisualisation temoignages={temoignages[0]} />
+        {shouldDisplayResults && !pdfExportLoading ? (
+          <ResultsCampagnesVisualisation temoignages={datavisualisation[0]} />
         ) : null}
-        {shouldDisplayResults && isPdfExporting ? (
-          <ExportResultsCampagnesVisualisation temoignages={temoignages} />
+        {pdfExportLoading ? (
+          <ExportResultsCampagnesVisualisation
+            temoignages={datavisualisation.find(
+              (questionnaire) =>
+                questionnaire.questionnaireId === currentDatavisualisationQuestionnaireId
+            )}
+          />
         ) : null}
       </ResultsCampagneContainer>
     </Container>

@@ -1,6 +1,5 @@
 import jsPDF from "jspdf";
 import * as htmlToImage from "html-to-image";
-import { getCategoriesWithEmojis } from "./utils";
 import shareSummaryTemplate from "../assets/images/share_summary_template.jpg";
 import statisticsTemplate from "../assets/images/statistics_template.jpg";
 import "../assets/fonts/Marianne-Bold-encoded";
@@ -107,8 +106,7 @@ const addCategoryTitlePage = async (doc, category, isFirstCategory) => {
   return 10 + titleHeight; // Adjust the return value based on the new title height + some padding
 };
 
-export const exportMultipleChartsToPdf = async (questionnaire, selectedCampagnes, statistics) => {
-  const categories = getCategoriesWithEmojis(questionnaire);
+export const exportMultipleChartsToPdf = async (categories, selectedCampagnes, statistics) => {
   const doc = new jsPDF("p", "px", "a4");
   doc.addImage(
     shareSummaryTemplate,
