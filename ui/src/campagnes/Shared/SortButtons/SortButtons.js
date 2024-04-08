@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { SortButtonsContainer } from "./sortButtons.style";
@@ -15,6 +15,17 @@ const SortButtons = ({
   organizeLabel,
   mode,
 }) => {
+  const [inputValue, setInputValue] = useState(search);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearch(inputValue);
+      setIsOpened(true);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [inputValue, setSearch, setIsOpened]);
+
   return (
     <SortButtonsContainer>
       <Select
@@ -28,27 +39,23 @@ const SortButtons = ({
         }}
         options={campagnesDisplayMode}
       />
-      {mode === "manage" ||
-        (mode === "results" && (
-          <Select
-            nativeSelectProps={{
-              value: sortingMode,
-              onChange: (event) => {
-                setSortingMode(event.target.value);
-                setIsOpened(true);
-              },
-            }}
-            options={campagnesSortingOptions}
-          />
-        ))}
+      {(mode === "manage" || mode === "results") && (
+        <Select
+          nativeSelectProps={{
+            value: sortingMode,
+            onChange: (event) => {
+              setSortingMode(event.target.value);
+              setIsOpened(true);
+            },
+          }}
+          options={campagnesSortingOptions}
+        />
+      )}
       <Input
         nativeInputProps={{
-          value: search,
+          value: inputValue,
           placeholder: "Rechercher",
-          onChange: (e) => {
-            setSearch(e.target.value);
-            setIsOpened(true);
-          },
+          onChange: (e) => setInputValue(e.target.value),
         }}
       />
     </SortButtonsContainer>

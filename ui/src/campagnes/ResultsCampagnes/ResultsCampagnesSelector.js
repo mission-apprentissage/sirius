@@ -8,7 +8,7 @@ import { ButtonContainer, ResultsCampagneContainer } from "../styles/resultsCamp
 import SortButtons from "../Shared/SortButtons/SortButtons";
 import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
 import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
-import { LoaderContainer, SearchNoResultsContainer } from "../styles/shared.style";
+import { LoaderContainer } from "../styles/shared.style";
 import useFetchCampagnesSorted from "../../hooks/useFetchCampagnesSorted";
 import {
   OBSERVER_SCOPES_LABELS,
@@ -24,6 +24,8 @@ const AccordionComponentGetter = ({
   selectedCampagneIds,
   setSelectedCampagneIds,
   displayMode,
+  search,
+  setSearch,
 }) => {
   if (displayMode === campagnesDisplayMode[0].value) {
     return (
@@ -31,6 +33,8 @@ const AccordionComponentGetter = ({
         campagnesSorted={campagnesSorted}
         selectedCampagneIds={selectedCampagneIds}
         setSelectedCampagneIds={setSelectedCampagneIds}
+        search={search}
+        setSearch={setSearch}
       />
     );
   } else if (displayMode === campagnesDisplayMode[1].value) {
@@ -39,6 +43,8 @@ const AccordionComponentGetter = ({
         campagnesSorted={campagnesSorted}
         selectedCampagneIds={selectedCampagneIds}
         setSelectedCampagneIds={setSelectedCampagneIds}
+        search={search}
+        setSearch={setSearch}
       />
     );
   } else if (displayMode === campagnesDisplayMode[2].value) {
@@ -47,6 +53,8 @@ const AccordionComponentGetter = ({
         campagnesSorted={campagnesSorted}
         selectedCampagneIds={selectedCampagneIds}
         setSelectedCampagneIds={setSelectedCampagneIds}
+        search={search}
+        setSearch={setSearch}
       />
     );
   }
@@ -93,22 +101,7 @@ const ResultsCampagnesSelector = ({
       setDisplayedCampagnes(sortedCampagnes);
     }
   }, [sortingMode, displayedCampagnes]);
-
-  useEffect(() => {
-    if (campagnesSorted?.length && search === "") {
-      setDisplayedCampagnes(campagnesSorted);
-    } else {
-      const filteredCampagnes = displayedCampagnes.filter((campagne) => {
-        return (
-          campagne.formation.data.intitule_long.toLowerCase().includes(search) ||
-          campagne.formation.data.localite.toLowerCase().includes(search) ||
-          campagne.formation.data.tags.join("-").toLowerCase().includes(search) ||
-          campagne.nomCampagne.toLowerCase().includes(search)
-        );
-      });
-      setDisplayedCampagnes(filteredCampagnes);
-    }
-  }, [search]);*/
+*/
 
   const checkboxLabel = (
     <b>
@@ -184,6 +177,8 @@ const ResultsCampagnesSelector = ({
                 selectedCampagneIds={selectedCampagneIds}
                 setSelectedCampagneIds={setSelectedCampagneIds}
                 displayMode={displayMode}
+                search={search}
+                setSearch={setSearch}
               />
             </div>
           </div>
@@ -196,12 +191,6 @@ const ResultsCampagnesSelector = ({
           </ButtonContainer>
         </>
       ) : null}
-      {/*!displayedCampagnes?.length && search ? (
-        <SearchNoResultsContainer>
-          <h3>Aucun résultats pour votre recherche</h3>
-          <p onClick={() => setSearch("")}>Réinitialiser ?</p>
-        </SearchNoResultsContainer>
-      ) : null*/}
     </ResultsCampagneContainer>
   );
 };

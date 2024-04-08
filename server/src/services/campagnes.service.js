@@ -16,7 +16,7 @@ const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
 const { getChampsLibreCount, getChampsLibreRate } = require("../utils/verbatims.utils");
 
-const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageSize, query }) => {
+const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageSize, query, search }) => {
   try {
     let campagnes = [];
 
@@ -50,7 +50,18 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageS
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: allSirets, query });
     }
 
-    const paginatedCampagnes = campagnes.slice((page - 1) * pageSize, page * pageSize);
+    const searchedCampagnes = search
+      ? campagnes.filter((campagne) => {
+          return (
+            campagne.nomCampagne.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation.data.intitule_long.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation.data.localite.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation.data.tags.join("-").toLowerCase().includes(search.toLowerCase())
+          );
+        })
+      : campagnes;
+
+    const paginatedCampagnes = searchedCampagnes.slice((page - 1) * pageSize, page * pageSize);
 
     paginatedCampagnes.map((campagne) => {
       delete campagne.questionnaireUI;
@@ -63,11 +74,11 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageS
       success: true,
       body: paginatedCampagnes,
       pagination: {
-        totalItems: campagnes.length,
+        totalItems: searchedCampagnes.length,
         currentPage: parseInt(page),
         pageSize: pageSize,
-        totalPages: Math.ceil(campagnes.length / pageSize),
-        hasMore: campagnes.length > page * pageSize,
+        totalPages: Math.ceil(searchedCampagnes.length / pageSize),
+        hasMore: searchedCampagnes.length > page * pageSize,
       },
     };
   } catch (error) {

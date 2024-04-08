@@ -8,7 +8,11 @@ import {
 } from "./accordions.style";
 import CampagnesTable from "../CampagnesTable";
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
-import { LoaderContainer, TableContainer } from "../../styles/shared.style";
+import {
+  LoaderContainer,
+  SearchNoResultsContainer,
+  TableContainer,
+} from "../../styles/shared.style";
 import BeatLoader from "react-spinners/BeatLoader";
 import Alert from "@codegouvfr/react-dsfr/Alert";
 import Pagination from "@codegouvfr/react-dsfr/Pagination";
@@ -19,11 +23,17 @@ const DisplayByDiplomeTypeTable = ({
   selectedCampagneIds,
   setSelectedCampagneIds,
   displayMode,
+  search,
+  setSearch,
 }) => {
   const [page, setPage] = useState(null);
   const [openedAccordion, setOpenedAccordion] = useState(null);
 
-  const query = `diplome=${openedAccordion}`;
+  let query = `diplome=${openedAccordion}`;
+
+  if (search) {
+    query += `&search=${search}`;
+  }
 
   const { campagnes, isSuccess, isError, isLoading } = useFetchCampagnes({
     query,
@@ -129,12 +139,21 @@ const DisplayByDiplomeTypeTable = ({
                   })}
                 />
               )}
-              <CampagnesTable
-                displayedCampagnes={campagnes.body}
-                selectedCampagneIds={selectedCampagneIds}
-                setSelectedCampagneIds={setSelectedCampagneIds}
-                displayMode={displayMode}
-              />
+              {campagnes.pagination.totalItems === 0 && search ? (
+                <SearchNoResultsContainer>
+                  <h3>
+                    Aucun résultats dans ce niveau de diplome pour votre recherche « {search} »
+                  </h3>
+                  <p onClick={() => setSearch("")}>Réinitialiser ?</p>
+                </SearchNoResultsContainer>
+              ) : (
+                <CampagnesTable
+                  displayedCampagnes={campagnes.body}
+                  selectedCampagneIds={selectedCampagneIds}
+                  setSelectedCampagneIds={setSelectedCampagneIds}
+                  displayMode={displayMode}
+                />
+              )}
               {campagnes.pagination.totalPages > 1 && (
                 <Pagination
                   count={campagnes.pagination.totalPages}

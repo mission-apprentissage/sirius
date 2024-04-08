@@ -8,7 +8,7 @@ const useFetchCampagnes = ({ query, key, enabled, page, pageSize = 10 }) => {
   const [userContext] = useContext(UserContext);
 
   const { data, isSuccess, isError, isLoading } = useQuery({
-    queryKey: [`campagnes-${key}`, page],
+    queryKey: [`campagnes-${key}`, page, query],
     queryFn: () => fetchCampagnes({ query, page, pageSize, token: userContext.token }),
     enabled: !!enabled,
   });
@@ -16,7 +16,7 @@ const useFetchCampagnes = ({ query, key, enabled, page, pageSize = 10 }) => {
   useEffect(() => {
     if (data?.pagination.hasMore) {
       queryClient.prefetchQuery({
-        queryKey: [`campagnes-${key}`, page + 1],
+        queryKey: [`campagnes-${key}`, page + 1, query],
         queryFn: () =>
           fetchCampagnes({ query, page: page + 1, pageSize, token: userContext.token }),
       });

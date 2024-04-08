@@ -3,14 +3,30 @@ import BeatLoader from "react-spinners/BeatLoader";
 import Alert from "@codegouvfr/react-dsfr/Alert";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import CampagnesTable from "../CampagnesTable";
-import { LoaderContainer, TableContainer } from "../../styles/shared.style";
+import {
+  LoaderContainer,
+  SearchNoResultsContainer,
+  TableContainer,
+} from "../../styles/shared.style";
 import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
 
-const DisplayByAllTable = ({ selectedCampagneIds, setSelectedCampagneIds, displayMode }) => {
+const DisplayByAllTable = ({
+  selectedCampagneIds,
+  setSelectedCampagneIds,
+  displayMode,
+  search,
+  setSearch,
+}) => {
   const [page, setPage] = useState(1);
 
+  let query = "";
+
+  if (search) {
+    query += `&search=${search}`;
+  }
+
   const { campagnes, isSuccess, isError, isLoading } = useFetchCampagnes({
-    query: null,
+    query,
     key: "all",
     enabled: true,
     page,
@@ -50,12 +66,19 @@ const DisplayByAllTable = ({ selectedCampagneIds, setSelectedCampagneIds, displa
               })}
             />
           )}
-          <CampagnesTable
-            displayedCampagnes={campagnes.body}
-            selectedCampagneIds={selectedCampagneIds}
-            setSelectedCampagneIds={setSelectedCampagneIds}
-            displayMode={displayMode}
-          />
+          {campagnes.pagination.totalItems === 0 && search ? (
+            <SearchNoResultsContainer>
+              <h3>Aucun résultats pour votre recherche « {search} »</h3>
+              <p onClick={() => setSearch("")}>Réinitialiser ?</p>
+            </SearchNoResultsContainer>
+          ) : (
+            <CampagnesTable
+              displayedCampagnes={campagnes.body}
+              selectedCampagneIds={selectedCampagneIds}
+              setSelectedCampagneIds={setSelectedCampagneIds}
+              displayMode={displayMode}
+            />
+          )}
           {campagnes.pagination.totalPages > 1 && (
             <Pagination
               count={campagnes.pagination.totalPages}

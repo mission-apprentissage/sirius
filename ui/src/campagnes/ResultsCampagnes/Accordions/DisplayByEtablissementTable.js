@@ -9,7 +9,12 @@ import {
   AccordionLabelByEtablissementContainer,
   ButtonContainer,
 } from "./accordions.style";
-import { LoaderContainer, TableContainer, ToolTipContainer } from "../../styles/shared.style";
+import {
+  LoaderContainer,
+  SearchNoResultsContainer,
+  TableContainer,
+  ToolTipContainer,
+} from "../../styles/shared.style";
 import CampagnesTable from "../CampagnesTable";
 import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
 import BeatLoader from "react-spinners/BeatLoader";
@@ -20,11 +25,17 @@ const DisplayByEtablissementTable = ({
   selectedCampagneIds,
   setSelectedCampagneIds,
   displayMode,
+  search,
+  setSearch,
 }) => {
   const [page, setPage] = useState(null);
   const [openedAccordion, setOpenedAccordion] = useState(null);
 
-  const query = `etablissementFormateurSiret=${openedAccordion}`;
+  let query = `etablissementFormateurSiret=${openedAccordion}`;
+
+  if (search) {
+    query += `&search=${search}`;
+  }
 
   const { campagnes, isSuccess, isError, isLoading } = useFetchCampagnes({
     query,
@@ -176,12 +187,19 @@ const DisplayByEtablissementTable = ({
                   })}
                 />
               )}
-              <CampagnesTable
-                displayedCampagnes={campagnes.body}
-                selectedCampagneIds={selectedCampagneIds}
-                setSelectedCampagneIds={setSelectedCampagneIds}
-                displayMode={displayMode}
-              />
+              {campagnes.pagination.totalItems === 0 && search ? (
+                <SearchNoResultsContainer>
+                  <h3>Aucun résultats dans cet etablissement pour votre recherche « {search} »</h3>
+                  <p onClick={() => setSearch("")}>Réinitialiser ?</p>
+                </SearchNoResultsContainer>
+              ) : (
+                <CampagnesTable
+                  displayedCampagnes={campagnes.body}
+                  selectedCampagneIds={selectedCampagneIds}
+                  setSelectedCampagneIds={setSelectedCampagneIds}
+                  displayMode={displayMode}
+                />
+              )}
               {campagnes.pagination.totalPages > 1 && (
                 <Pagination
                   count={campagnes.pagination.totalPages}

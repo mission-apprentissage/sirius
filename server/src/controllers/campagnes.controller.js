@@ -14,6 +14,7 @@ const getCampagnes = tryCatch(async (req, res) => {
 
   const diplome = req.query.diplome;
   const etablissementFormateurSiret = req.query.etablissementFormateurSiret;
+  const search = req.query.search;
 
   let query = {};
 
@@ -32,6 +33,7 @@ const getCampagnes = tryCatch(async (req, res) => {
     page,
     pageSize,
     query,
+    search,
   });
 
   if (!success) throw new BasicError();
