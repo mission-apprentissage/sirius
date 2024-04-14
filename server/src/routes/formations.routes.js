@@ -1,11 +1,16 @@
 const express = require("express");
 const validator = require("../middlewares/validatorMiddleware");
-const { createFormationSchema, updateFormationSchema } = require("../validators/formations.validators");
+const {
+  createFormationSchema,
+  updateFormationSchema,
+  alreadyExistingFormationSchema,
+} = require("../validators/formations.validators");
 const {
   createFormation,
   deleteFormation,
   updateFormation,
   getFormations,
+  alreadyExistingFormations,
 } = require("../controllers/formations.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdminOrAllowed, TYPES } = require("../middlewares/isAdminOrAllowed");
@@ -53,6 +58,15 @@ const formations = () => {
     validator(updateFormationSchema),
     (req, res, next) => {
       updateFormation(req, res, next);
+    }
+  );
+
+  router.post(
+    "/api/formations/already-existing",
+    verifyUser,
+    validator(alreadyExistingFormationSchema),
+    (req, res, next) => {
+      alreadyExistingFormations(req, res, next);
     }
   );
 

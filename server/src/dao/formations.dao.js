@@ -47,6 +47,12 @@ const update = async (id, updatedFormation) => {
   return Formation.updateOne({ _id: id, deletedAt: null }, updatedFormation);
 };
 
+const getDataIdFormationByIds = async (ids) => {
+  return Formation.find({ "data._id": { $in: ids }, deletedAt: null })
+    .select("data._id")
+    .lean();
+};
+
 module.exports = {
   create,
   getAll,
@@ -55,4 +61,5 @@ module.exports = {
   deleteOne,
   update,
   deleteManyByCampagneIdAndReturnsTheDeletedFormationId,
+  getDataIdFormationByIds,
 };

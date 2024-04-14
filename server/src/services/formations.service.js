@@ -54,4 +54,17 @@ const updateFormation = async (id, updatedFormation) => {
   }
 };
 
-module.exports = { createFormation, getFormations, getFormation, deleteFormation, updateFormation };
+const alreadyExistingFormations = async (ids) => {
+  const existingFormations = await formationsDao.getDataIdFormationByIds(ids);
+
+  return { success: true, body: existingFormations.map((formation) => formation.data._id) };
+};
+
+module.exports = {
+  createFormation,
+  getFormations,
+  getFormation,
+  deleteFormation,
+  updateFormation,
+  alreadyExistingFormations,
+};
