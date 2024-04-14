@@ -42,3 +42,9 @@ export const StyledAccordion = styled(Accordion)`
     padding-bottom: 0 !important;
   }
 `;
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 1rem 0 0 0;
+`;

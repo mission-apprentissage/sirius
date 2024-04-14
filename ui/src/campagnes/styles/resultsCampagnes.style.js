@@ -19,9 +19,13 @@ export const ResultsCampagneContainer = styled.section`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  max-width: 78em;
+  padding: 0 ${fr.spacing("2w")} ${fr.spacing("6w")} ${fr.spacing("2w")};
   margin: auto;
-  padding: ${fr.spacing("6w")} 1.5rem;
+  max-width: 78em;
+
+  & span {
+    margin-right: 0.5rem;
+  }
 `;
 
 export const TestimonialHeader = styled.header`
@@ -29,7 +33,7 @@ export const TestimonialHeader = styled.header`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: ${fr.spacing("6w")};
+  margin: ${fr.spacing("6w")} 0;
 
   & h1 {
     margin: 0;

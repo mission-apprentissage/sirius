@@ -15,7 +15,7 @@ import Statistics from "./Shared/Statistics/Statistics";
 import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
 import { exportMultipleChartsToPdf } from "./pdfExport";
 import ExportResultsCampagnesVisualisation from "./ResultsCampagnes/ExportResultsCampagnesVisualisation";
-import ResultsCampagnesSelector from "./ResultsCampagnes/ResultsCampagnesSelector";
+import CampagnesSelector from "./Shared/CampagnesSelector/CampagnesSelector";
 import useFetchCampagnesDatavisualisation from "../hooks/useFetchCampagnesDatavisualisation";
 import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
 import useFetchCampagnesByBatch from "../hooks/useFetchCampagnesByBatch";
@@ -75,6 +75,12 @@ const ResultsCampagnesPage = () => {
     }
   }, [datavisualisation]);
 
+  useEffect(() => {
+    if (paramsCampagneIds?.length && !selectedCampagneIds.length) {
+      setSelectedCampagneIds(paramsCampagneIds);
+    }
+  }, [paramsCampagneIds]);
+
   const shouldDisplayResults =
     isSuccessCampagnesDatavisualisation && datavisualisation.length === 1;
 
@@ -102,11 +108,18 @@ const ResultsCampagnesPage = () => {
 
   return (
     <Container>
-      <ResultsCampagnesSelector
-        selectedCampagneIds={selectedCampagneIds}
-        setSelectedCampagneIds={setSelectedCampagneIds}
-        paramsCampagneIds={paramsCampagneIds}
-      />
+      <ResultsCampagneContainer>
+        <h1>
+          <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
+          Sélectionner les campagnes à visualiser
+        </h1>
+        <CampagnesSelector
+          selectedCampagneIds={selectedCampagneIds}
+          setSelectedCampagneIds={setSelectedCampagneIds}
+          paramsCampagneIds={paramsCampagneIds}
+          campagneTableType="RESULTS"
+        />
+      </ResultsCampagneContainer>
       <Statistics statistics={statistics} title="Statistiques des campagnes sélectionnées" />
       <ResultsCampagneContainer>
         <TestimonialHeader>

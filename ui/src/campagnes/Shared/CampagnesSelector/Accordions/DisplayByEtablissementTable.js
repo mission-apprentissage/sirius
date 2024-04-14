@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import Tooltip from "react-simple-tooltip";
+import BeatLoader from "react-spinners/BeatLoader";
+import Alert from "@codegouvfr/react-dsfr/Alert";
 import { fr } from "@codegouvfr/react-dsfr";
 import Pagination from "@codegouvfr/react-dsfr/Pagination";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { isPlural } from "../../utils";
+import { isPlural } from "../../../utils";
 import {
   StyledAccordion,
   AccordionLabelByEtablissementContainer,
@@ -14,11 +16,9 @@ import {
   SearchNoResultsContainer,
   TableContainer,
   ToolTipContainer,
-} from "../../styles/shared.style";
-import CampagnesTable from "../CampagnesTable";
-import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
-import BeatLoader from "react-spinners/BeatLoader";
-import Alert from "@codegouvfr/react-dsfr/Alert";
+} from "../../../styles/shared.style";
+import CampagnesTable from "../../CampagnesTable/CampagnesTable";
+import useFetchCampagnes from "../../../../hooks/useFetchCampagnes";
 
 const DisplayByEtablissementTable = ({
   campagnesSorted,
@@ -171,22 +171,6 @@ const DisplayByEtablissementTable = ({
               />
             </ButtonContainer>
             <TableContainer>
-              {campagnes.pagination.totalPages > 1 && (
-                <Pagination
-                  count={campagnes.pagination.totalPages}
-                  defaultPage={page[etablissementFormateur.etablissement_formateur_siret]}
-                  getPageLinkProps={(pageNumber) => ({
-                    onClick: (event) => {
-                      event.preventDefault();
-                      setPage((prevValue) => ({
-                        ...prevValue,
-                        [etablissementFormateur.etablissement_formateur_siret]: pageNumber,
-                      }));
-                    },
-                    key: `pagination-link-${pageNumber}`,
-                  })}
-                />
-              )}
               {campagnes.pagination.totalItems === 0 && search ? (
                 <SearchNoResultsContainer>
                   <h3>Aucun résultats dans cet etablissement pour votre recherche « {search} »</h3>

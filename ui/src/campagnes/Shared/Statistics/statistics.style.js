@@ -10,7 +10,7 @@ export const StatisticsContainer = styled.header`
 export const Content = styled.div`
   max-width: 78em;
   margin: auto;
-  padding: 0 1.5rem;
+  padding: 0 ${fr.spacing("2w")};
   display: flex;
   justify-content: center;
   flex-direction: column;

@@ -57,3 +57,15 @@ export const TableContainer = styled.div`
   flex-direction: column;
   align-items: center;
 `;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: ${fr.spacing("2w")};
+
+  & fieldset {
+    margin-bottom: 0;
+  }
+`;

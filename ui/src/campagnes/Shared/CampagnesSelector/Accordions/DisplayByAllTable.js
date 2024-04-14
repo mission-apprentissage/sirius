@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import Alert from "@codegouvfr/react-dsfr/Alert";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
-import CampagnesTable from "../CampagnesTable";
+import CampagnesTable from "../../CampagnesTable/CampagnesTable";
 import {
   LoaderContainer,
   SearchNoResultsContainer,
   TableContainer,
-} from "../../styles/shared.style";
-import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
+} from "../../../styles/shared.style";
+import useFetchCampagnes from "../../../../hooks/useFetchCampagnes";
 
 const DisplayByAllTable = ({
   selectedCampagneIds,
@@ -53,19 +53,6 @@ const DisplayByAllTable = ({
       )}
       {isSuccess && (
         <TableContainer>
-          {campagnes.pagination.totalPages > 1 && (
-            <Pagination
-              count={campagnes.pagination.totalPages}
-              defaultPage={page}
-              getPageLinkProps={(pageNumber) => ({
-                onClick: (event) => {
-                  event.preventDefault();
-                  setPage(pageNumber);
-                },
-                key: `pagination-link-${pageNumber}`,
-              })}
-            />
-          )}
           {campagnes.pagination.totalItems === 0 && search ? (
             <SearchNoResultsContainer>
               <h3>Aucun résultats pour votre recherche « {search} »</h3>

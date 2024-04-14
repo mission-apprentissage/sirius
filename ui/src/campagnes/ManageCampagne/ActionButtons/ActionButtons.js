@@ -1,29 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Tooltip from "react-simple-tooltip";
 import BeatLoader from "react-spinners/BeatLoader";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import DeleteCampagneConfirmationModal from "../DeleteCampagneConfirmationModal";
 import { _get } from "../../../utils/httpClient";
-import { isPlural } from "../../utils";
 import { ActionButtonsContainer, ToolTipContainer } from "./actionButtons.style";
+import { UserContext } from "../../../context/UserContext";
 
 const modal = createModal({
   id: "delete-campagne-modal",
   isOpenedByDefault: true,
 });
 
-const ActionButtons = ({
-  displayedCampagnes,
-  setDisplayedCampagnes,
-  selectedCampagnes,
-  setSelectedCampagnes,
-  userContext,
-}) => {
+const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
-
+  const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleDownload = async () => {
@@ -31,7 +24,7 @@ const ActionButtons = ({
     const persistedEtablissement = JSON.parse(localStorage.getItem("etablissements"));
 
     const response = await _get(
-      `/api/campagnes/export/pdf/multi?ids=${selectedCampagnes}&siret=${persistedEtablissement.siret}`,
+      `/api/campagnes/export/pdf/multi?ids=${selectedCampagneIds}&siret=${persistedEtablissement.siret}`,
       userContext.token
     );
 
@@ -49,29 +42,6 @@ const ActionButtons = ({
   return (
     <>
       <ActionButtonsContainer>
-        <Checkbox
-          disabled={!displayedCampagnes.length}
-          options={[
-            {
-              label: selectedCampagnes.length
-                ? `${selectedCampagnes.length} sélectionnée${isPlural(selectedCampagnes.length)}`
-                : "Tout sélectionner",
-              nativeInputProps: {
-                name: "selectAll",
-                checked:
-                  selectedCampagnes.length === displayedCampagnes.length &&
-                  displayedCampagnes.length > 0,
-                onChange: (e) => {
-                  if (e.target.checked) {
-                    setSelectedCampagnes(displayedCampagnes.map((campagne) => campagne._id));
-                  } else {
-                    setSelectedCampagnes([]);
-                  }
-                },
-              },
-            },
-          ]}
-        />
         <Tooltip
           background="var(--background-default-grey)"
           border="var(--border-default-grey)"
@@ -88,7 +58,7 @@ const ActionButtons = ({
           <Button
             iconId="fr-icon-file-download-line"
             onClick={handleDownload}
-            disabled={!selectedCampagnes.length || isLoadingDownload}
+            disabled={!selectedCampagneIds.length || isLoadingDownload}
           >
             {!isLoadingDownload ? (
               "Partager"
@@ -116,9 +86,9 @@ const ActionButtons = ({
             priority="secondary"
             iconId="fr-icon-quote-fill"
             onClick={() =>
-              navigate(`/campagnes/resultats?campagneIds=${selectedCampagnes.join(",")}`)
+              navigate(`/campagnes/resultats?campagneIds=${selectedCampagneIds.join(",")}`)
             }
-            disabled={!selectedCampagnes.length}
+            disabled={!selectedCampagneIds.length}
           >
             Voir les résultats
           </Button>
@@ -127,16 +97,15 @@ const ActionButtons = ({
           priority="secondary"
           iconId="fr-icon-delete-line"
           onClick={() => modal.open()}
-          disabled={!selectedCampagnes.length}
+          disabled={!selectedCampagneIds.length}
         >
           Supprimer
         </Button>
       </ActionButtonsContainer>
       <DeleteCampagneConfirmationModal
         modal={modal}
-        selectedCampagnes={selectedCampagnes}
-        setSelectedCampagnes={setSelectedCampagnes}
-        setDisplayedCampagnes={setDisplayedCampagnes}
+        selectedCampagnes={selectedCampagneIds}
+        setSelectedCampagnes={setSelectedCampagneIds}
       />
     </>
   );

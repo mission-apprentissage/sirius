@@ -1,22 +1,22 @@
 import React, { useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+import Alert from "@codegouvfr/react-dsfr/Alert";
+import Pagination from "@codegouvfr/react-dsfr/Pagination";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { isPlural } from "../../utils";
+import { isPlural } from "../../../utils";
 import {
   StyledAccordion,
   AccordionLabelByDiplomeTypeContainer,
   ButtonContainer,
 } from "./accordions.style";
-import CampagnesTable from "../CampagnesTable";
-import { DIPLOME_TYPE_MATCHER } from "../../../constants";
+import CampagnesTable from "../../CampagnesTable/CampagnesTable";
+import { DIPLOME_TYPE_MATCHER } from "../../../../constants";
 import {
   LoaderContainer,
   SearchNoResultsContainer,
   TableContainer,
-} from "../../styles/shared.style";
-import BeatLoader from "react-spinners/BeatLoader";
-import Alert from "@codegouvfr/react-dsfr/Alert";
-import Pagination from "@codegouvfr/react-dsfr/Pagination";
-import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
+} from "../../../styles/shared.style";
+import useFetchCampagnes from "../../../../hooks/useFetchCampagnes";
 
 const DisplayByDiplomeTypeTable = ({
   campagnesSorted,
@@ -25,6 +25,7 @@ const DisplayByDiplomeTypeTable = ({
   displayMode,
   search,
   setSearch,
+  campagneTableType,
 }) => {
   const [page, setPage] = useState(null);
   const [openedAccordion, setOpenedAccordion] = useState(null);
@@ -82,9 +83,9 @@ const DisplayByDiplomeTypeTable = ({
           <AccordionLabelByDiplomeTypeContainer>
             <h5>{DIPLOME_TYPE_MATCHER[diplome] || diplome}</h5>
             <p>
-              {campagneIds.length} campagne
-              {isPlural(campagneIds.length)} sélectionnée
-              {isPlural(campagneIds.length)}
+              {campagnesSelectedByDiplomeTypeCount} campagne
+              {isPlural(campagnesSelectedByDiplomeTypeCount)} sélectionnée
+              {isPlural(campagnesSelectedByDiplomeTypeCount)}
             </p>
           </AccordionLabelByDiplomeTypeContainer>
         }
@@ -123,22 +124,6 @@ const DisplayByDiplomeTypeTable = ({
               />
             </ButtonContainer>
             <TableContainer>
-              {campagnes.pagination.totalPages > 1 && (
-                <Pagination
-                  count={campagnes.pagination.totalPages}
-                  defaultPage={page[diplome]}
-                  getPageLinkProps={(pageNumber) => ({
-                    onClick: (event) => {
-                      event.preventDefault();
-                      setPage((prevValue) => ({
-                        ...prevValue,
-                        [diplome]: pageNumber,
-                      }));
-                    },
-                    key: `pagination-link-${pageNumber}`,
-                  })}
-                />
-              )}
               {campagnes.pagination.totalItems === 0 && search ? (
                 <SearchNoResultsContainer>
                   <h3>
@@ -152,6 +137,7 @@ const DisplayByDiplomeTypeTable = ({
                   selectedCampagneIds={selectedCampagneIds}
                   setSelectedCampagneIds={setSelectedCampagneIds}
                   displayMode={displayMode}
+                  campagneTableType={campagneTableType}
                 />
               )}
               {campagnes.pagination.totalPages > 1 && (

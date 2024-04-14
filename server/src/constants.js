@@ -76,6 +76,7 @@ const VERBATIM_STATUS = {
 const CAMPAGNE_SORTING_TYPE = {
   DIPLOME_TYPE: "DIPLOME_TYPE",
   ETABLISSEMENT: "ETABLISSEMENT",
+  ALL: "ALL",
 };
 
 module.exports = {

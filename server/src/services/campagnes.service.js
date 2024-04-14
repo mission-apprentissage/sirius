@@ -122,6 +122,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
 
     if (sortingType === CAMPAGNE_SORTING_TYPE.DIPLOME_TYPE) {
       const campagnesGroupedByDiplome = campagnes.reduce((acc, campagne) => {
+        appendDataWhenEmpty(campagne);
         const diplome = campagne.formation?.data.diplome;
         if (!acc[diplome]) {
           acc[diplome] = [];
@@ -141,6 +142,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
       results = formattedResults;
     } else if (sortingType === CAMPAGNE_SORTING_TYPE.ETABLISSEMENT) {
       const campagnesGroupedByEtablissement = campagnes.reduce((acc, campagne) => {
+        appendDataWhenEmpty(campagne);
         const siret = campagne.formation.data.etablissement_formateur_siret;
         if (!acc[siret]) {
           acc[siret] = [];
@@ -158,6 +160,12 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
       });
 
       results = formattedResults;
+    } else if (sortingType === CAMPAGNE_SORTING_TYPE.ALL) {
+      const formattedResults = {
+        campagneIds: campagnes.map((campagne) => campagne._id),
+      };
+
+      results = [formattedResults];
     }
 
     return {

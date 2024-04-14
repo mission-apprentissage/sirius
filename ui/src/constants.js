@@ -97,7 +97,7 @@ export const campagnesDisplayMode = [
   },
   {
     label: "Toutes",
-    value: "all",
+    value: "ALL",
   },
 ];
 
