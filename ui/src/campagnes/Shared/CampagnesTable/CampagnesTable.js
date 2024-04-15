@@ -1,21 +1,11 @@
 import React from "react";
-import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { simpleEditionSubmitHandler } from "../../submitHandlers";
-import CellInput from "../../ManageCampagne/CellInput/CellInput";
-import CellInputSeats from "../../ManageCampagne/CellInput/CellInputSeats";
-import { isPlural } from "../../utils";
-import {
-  TemoignagesCount,
-  EtablissementLabelContainer,
-  TableContainer,
-} from "./campagnesTable.style";
-import { HeaderItem, FormationContainer, ToolTipContainer } from "../../styles/shared.style";
-import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../../constants";
+import { TableContainer } from "./campagnesTable.style";
+import { HeaderItem } from "../../styles/shared.style";
 import manageCampagneTableRows from "../../ManageCampagne/manageCampagneTableRows";
 import resultsCampagneTableRows from "../../ResultsCampagnes/resultsCampagnesTableRows";
+import createCampagneTableRows from "../../CreateCampagnes/createCampagneTableRows";
 
 const headers = [
   "",
@@ -45,6 +35,7 @@ const CampagnesTable = ({
   setSelectedCampagneIds,
   displayMode,
   campagneTableType,
+  formik = {},
 }) => {
   if (campagneTableType === "MANAGE") {
     return (
@@ -71,6 +62,22 @@ const CampagnesTable = ({
             selectedCampagneIds,
             setSelectedCampagneIds,
             displayMode,
+          })}
+        />
+      </TableContainer>
+    );
+  }
+  if (campagneTableType === "CREATE") {
+    return (
+      <TableContainer>
+        <Table
+          headers={headers}
+          data={createCampagneTableRows({
+            displayedCampagnes,
+            selectedCampagneIds,
+            setSelectedCampagneIds,
+            displayMode,
+            formik,
           })}
         />
       </TableContainer>

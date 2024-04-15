@@ -1,39 +1,20 @@
 import React from "react";
 import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import CellInputConfigure from "../Shared/CellInput/CellInputConfigure";
-import CellInputSeatsConfigure from "../Shared/CellInput/CellInputSeatsConfigure";
-import { isPlural } from "../../campagnes/utils";
-import { ToolTipContainer, HeaderItem, FormationContainer } from "../styles/shared.style";
+import { isPlural } from "../utils";
+import { FormationContainer, ToolTipContainer } from "../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../constants";
+import CellInputConfigure from "../ManageCampagne/CellInput/CellInputConfigure";
+import CellInputSeatsConfigure from "../ManageCampagne/CellInput/CellInputSeatsConfigure";
 
-const headers = [
-  "",
-  "Formation",
-  <HeaderItem key="nomCampagne">Nom d'usage</HeaderItem>,
-  <HeaderItem key="debut">
-    <span className={fr.cx("fr-icon--sm fr-icon-calendar-event-fill")} aria-hidden={true} />
-    Début
-  </HeaderItem>,
-  <HeaderItem key="fin">
-    <span className={fr.cx("fr-icon--sm fr-icon-calendar-2-fill")} aria-hidden={true} />
-    Fin
-  </HeaderItem>,
-  <HeaderItem key="apprenties">
-    <span className={fr.cx("fr-icon--sm fr-icon-team-fill")} aria-hidden={true} />
-    Apprenti·es
-  </HeaderItem>,
-];
-
-const data = (
+const createCampagneTableRows = ({
   selectedFormations,
   selectedFormationsAction,
   setSelectedFormationsAction,
   formik,
-  displayMode
-) => {
+  displayMode,
+}) => {
   return selectedFormations?.map((formation) => {
     return [
       <Checkbox
@@ -136,26 +117,4 @@ const data = (
   });
 };
 
-const CreateCampagneTable = ({
-  selectedFormations,
-  selectedFormationsAction,
-  setSelectedFormationsAction,
-  formik,
-  displayMode,
-}) => {
-  if (!selectedFormations.length) return null;
-  return (
-    <Table
-      headers={headers}
-      data={data(
-        selectedFormations,
-        selectedFormationsAction,
-        setSelectedFormationsAction,
-        formik,
-        displayMode
-      )}
-    />
-  );
-};
-
-export default CreateCampagneTable;
+export default createCampagneTableRows;

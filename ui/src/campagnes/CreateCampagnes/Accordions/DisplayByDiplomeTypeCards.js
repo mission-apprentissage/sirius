@@ -24,7 +24,7 @@ const DisplayByDiplomeTypeCards = ({
   displayedFormations,
   selectedFormations,
   setSelectedFormations,
-  existingFormationIdsFromCampagnes,
+  existingFormationIds,
 }) => {
   const uniqueDiplomeTypesFromFormation = getUniqueDiplomeTypesFromFormation(displayedFormations);
 
@@ -33,8 +33,8 @@ const DisplayByDiplomeTypeCards = ({
   return uniqueDiplomeTypesFromFormation?.map((diplomeType) => {
     const formationsByDiplomeType = orderedFormationByDiplomeType[diplomeType];
 
-    const formationSelectedCountByDiplomeType = selectedFormations.filter((id) =>
-      formationsByDiplomeType.map((formation) => formation._id).includes(id)
+    const formationSelectedCountByDiplomeType = selectedFormations.filter((selectedFormation) =>
+      formationsByDiplomeType.map((formation) => formation._id).includes(selectedFormation._id)
     ).length;
 
     const checkboxLabel = (
@@ -67,27 +67,21 @@ const DisplayByDiplomeTypeCards = ({
               label: checkboxLabel,
               nativeInputProps: {
                 name: `selectAll${diplomeType}`,
-                checked: !!formationSelectedCountByDiplomeType,
+                checked: formationSelectedCountByDiplomeType === formationsByDiplomeType.length,
                 onChange: (e) => {
                   setSelectedFormations((prevValues) => {
                     if (e.target.checked) {
                       return [
                         ...new Set([
                           ...prevValues,
-                          ...formationsByDiplomeType
-                            .filter(
-                              (formation) =>
-                                !existingFormationIdsFromCampagnes.includes(formation._id)
-                            )
-                            .map((formation) => formation._id),
+                          ...formationsByDiplomeType.filter(
+                            (formation) => !existingFormationIds.includes(formation._id)
+                          ),
                         ]),
                       ];
                     } else {
                       return prevValues.filter(
-                        (selectedFormation) =>
-                          !formationsByDiplomeType
-                            .map((formation) => formation._id)
-                            .includes(selectedFormation)
+                        (selectedFormation) => !formationsByDiplomeType.includes(selectedFormation)
                       );
                     }
                   });
@@ -98,7 +92,11 @@ const DisplayByDiplomeTypeCards = ({
         />
         <FormationCardContainer>
           {formationsByDiplomeType.map((formation) => {
-            const isAlreadyCreated = existingFormationIdsFromCampagnes?.includes(formation._id);
+            const isAlreadyCreated = existingFormationIds?.includes(formation._id);
+            const isSelected = selectedFormations.some(
+              (selectedFormation) => selectedFormation._id === formation._id
+            );
+
             return (
               <FormationCardByDiplomeType
                 key={formation._id}
@@ -141,14 +139,14 @@ const DisplayByDiplomeTypeCards = ({
                         {
                           nativeInputProps: {
                             name: `campagne-${formation.id}`,
-                            checked: isAlreadyCreated
-                              ? false
-                              : selectedFormations.includes(formation.id),
+                            checked: isSelected,
                             onChange: () => {
                               setSelectedFormations((prevValue) =>
-                                prevValue.includes(formation.id)
-                                  ? prevValue.filter((id) => id !== formation.id)
-                                  : [...prevValue, formation.id]
+                                isSelected
+                                  ? prevValue.filter(
+                                      (selectedFormation) => selectedFormation._id !== formation._id
+                                    )
+                                  : [...prevValue, formation]
                               );
                             },
                           },

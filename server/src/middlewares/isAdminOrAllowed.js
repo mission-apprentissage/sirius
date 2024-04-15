@@ -84,7 +84,7 @@ const isAdminOrAllowed = async (req, next, type) => {
 
     //check SIRET
     if (type === TYPES.ETABLISSEMENT_FORMATEUR_SIRET) {
-      const siretToVerify = req.body.map((etablissement) => etablissement.etablissementFormateurSiret);
+      const siretToVerify = [...new Set(req.body.map((etablissement) => etablissement.etablissementFormateurSiret))];
 
       if (!siretToVerify) {
         return next(new UnauthorizedError());
@@ -100,11 +100,12 @@ const isAdminOrAllowed = async (req, next, type) => {
       for (const siret of unauthorizedSiret) {
         const fetchedResponsableSiret = await referentiel.getEtablissementSIRETFromRelationType(
           siret,
-          ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE
+          ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
         );
-        responsableSiret.push(fetchedResponsableSiret[0]);
+
+        responsableSiret.push(fetchedResponsableSiret);
       }
-      const hasEveryResponsableSiret = responsableSiret.every((siret) => multipleSiret.includes(siret));
+      const hasEveryResponsableSiret = responsableSiret.flat().every((siret) => multipleSiret.includes(siret));
 
       if (hasEveryResponsableSiret) return next();
     }
