@@ -1,22 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import Alert from "@codegouvfr/react-dsfr/Alert";
 import Pagination from "@codegouvfr/react-dsfr/Pagination";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { isPlural } from "../../../utils";
-import {
-  StyledAccordion,
-  AccordionLabelByDiplomeTypeContainer,
-  ButtonContainer,
-} from "./accordions.style";
+import { StyledAccordion } from "./accordions.style";
+import { SelectAllCampagnesCheckbox, AccordionLabel } from "./Components";
 import CampagnesTable from "../../CampagnesTable/CampagnesTable";
-import { DIPLOME_TYPE_MATCHER } from "../../../../constants";
 import {
   LoaderContainer,
   SearchNoResultsContainer,
   TableContainer,
 } from "../../../styles/shared.style";
-import useFetchCampagnes from "../../../../hooks/useFetchCampagnes";
+import useDisplayCampagnesOptions from "../../../../hooks/useDisplayCampagnesOptions";
 
 const DisplayByDiplomeTypeTable = ({
   campagnesSorted,
@@ -27,51 +21,25 @@ const DisplayByDiplomeTypeTable = ({
   setSearch,
   campagneTableType,
 }) => {
-  const [page, setPage] = useState(null);
-  const [openedAccordion, setOpenedAccordion] = useState(null);
-
-  let query = `diplome=${openedAccordion}`;
-
-  if (search) {
-    query += `&search=${search}`;
-  }
-
-  const { campagnes, isSuccess, isError, isLoading } = useFetchCampagnes({
-    query,
-    key: openedAccordion,
-    enabled: !!openedAccordion,
-    page: page && page[openedAccordion] ? page[openedAccordion] : 1,
+  const {
+    page,
+    setPage,
+    setOpenedAccordion,
+    campagnes,
+    isSuccessCampagnes,
+    isErrorCampagnes,
+    isLoadingCampagnes,
+    campagnesSelectedCountGetter,
+  } = useDisplayCampagnesOptions({
+    search,
+    campagnesSorted,
+    displayMode,
+    selectedCampagneIds,
+    setSelectedCampagneIds,
   });
 
-  if (!page) {
-    const elem = campagnesSorted.map((diplome) => ({ [diplome.diplome]: 1 }));
-    setPage(elem);
-  }
-
   return campagnesSorted.map(({ diplome, campagneIds }) => {
-    const campagnesSelectedByDiplomeTypeCount = selectedCampagneIds.filter((campagneId) =>
-      campagneIds.includes(campagneId)
-    ).length;
-
-    const checkboxLabel = (
-      <b>
-        {campagnesSelectedByDiplomeTypeCount
-          ? `${campagnesSelectedByDiplomeTypeCount} campagne${isPlural(
-              campagnesSelectedByDiplomeTypeCount
-            )} sélectionnée${isPlural(campagnesSelectedByDiplomeTypeCount)}`
-          : "Tout sélectionner"}
-      </b>
-    );
-
-    const handleSelectAll = (e) => {
-      setSelectedCampagneIds((prevValues) => {
-        if (e.target.checked) {
-          return [...new Set([...prevValues, ...campagneIds])];
-        } else {
-          return prevValues.filter((selectedCampagne) => !campagneIds.includes(selectedCampagne));
-        }
-      });
-    };
+    const campagnesSelectedCount = campagnesSelectedCountGetter(campagneIds);
 
     return (
       <StyledAccordion
@@ -79,50 +47,33 @@ const DisplayByDiplomeTypeTable = ({
         onExpandedChange={(isExpanded) =>
           isExpanded ? setOpenedAccordion(diplome) : setOpenedAccordion(null)
         }
-        label={
-          <AccordionLabelByDiplomeTypeContainer>
-            <h5>{DIPLOME_TYPE_MATCHER[diplome] || diplome}</h5>
-            <p>
-              {campagnesSelectedByDiplomeTypeCount} campagne
-              {isPlural(campagnesSelectedByDiplomeTypeCount)} sélectionnée
-              {isPlural(campagnesSelectedByDiplomeTypeCount)}
-            </p>
-          </AccordionLabelByDiplomeTypeContainer>
-        }
+        label={<AccordionLabel diplome={diplome} count={campagnesSelectedCount} />}
       >
-        {isLoading && (
+        {isLoadingCampagnes && (
           <LoaderContainer>
             <BeatLoader
               color="var(--background-action-high-blue-france)"
               size={15}
               aria-label="Loading Spinner"
-              loading={isLoading}
+              loading={isLoadingCampagnes}
             />
           </LoaderContainer>
         )}
-        {isError && (
+        {isErrorCampagnes && (
           <Alert
             title="Une erreur s'est produite dans le chargement des campagnes"
             description="Merci de réessayer ultérieurement"
             severity="error"
           />
         )}
-        {isSuccess && (
+        {isSuccessCampagnes && (
           <>
-            <ButtonContainer>
-              <Checkbox
-                options={[
-                  {
-                    label: checkboxLabel,
-                    nativeInputProps: {
-                      name: `selectAll${diplome}`,
-                      checked: campagnesSelectedByDiplomeTypeCount === campagneIds.length,
-                      onChange: handleSelectAll,
-                    },
-                  },
-                ]}
-              />
-            </ButtonContainer>
+            <SelectAllCampagnesCheckbox
+              count={campagnesSelectedCount}
+              campagneIds={campagneIds}
+              name={`selectAll${diplome}`}
+              setSelectedCampagneIds={setSelectedCampagneIds}
+            />
             <TableContainer>
               {campagnes.pagination.totalItems === 0 && search ? (
                 <SearchNoResultsContainer>

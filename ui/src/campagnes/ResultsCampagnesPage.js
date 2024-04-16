@@ -16,7 +16,7 @@ import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVi
 import { exportMultipleChartsToPdf } from "./pdfExport";
 import ExportResultsCampagnesVisualisation from "./ResultsCampagnes/ExportResultsCampagnesVisualisation";
 import CampagnesSelector from "./Shared/CampagnesSelector/CampagnesSelector";
-import useFetchCampagnesDatavisualisation from "../hooks/useFetchCampagnesDatavisualisation";
+import useFetchTemoignagesDatavisualisation from "../hooks/useFetchTemoignagesDatavisualisation";
 import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
 import useFetchCampagnesByBatch from "../hooks/useFetchCampagnesByBatch";
 import { CAMPAGNE_TABLE_TYPES } from "../constants";
@@ -59,7 +59,7 @@ const ResultsCampagnesPage = () => {
     isSuccess: isSuccessCampagnesDatavisualisation,
     isLoading: isLoadingCampagnesDatavisualisation,
     isError: isErrorCampagnesDatavisualisation,
-  } = useFetchCampagnesDatavisualisation();
+  } = useFetchTemoignagesDatavisualisation();
 
   const { mutate: mutateCampagnesStatistics, statistics } = useFetchCampagnesStatistics();
 
