@@ -128,3 +128,9 @@ export const OBSERVER_SCOPES_LABELS = {
   [OBSERVER_SCOPES.NUM_DEPARTEMENT]: "Numéro de département",
   [OBSERVER_SCOPES.REGION]: "Nom de la région",
 };
+
+export const CAMPAGNE_TABLE_TYPES = {
+  MANAGE: "MANAGE",
+  RESULTS: "RESULTS",
+  CREATE: "CREATE",
+};

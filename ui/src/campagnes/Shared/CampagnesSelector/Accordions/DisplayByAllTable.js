@@ -9,6 +9,7 @@ import {
   TableContainer,
 } from "../../../styles/shared.style";
 import useFetchCampagnes from "../../../../hooks/useFetchCampagnes";
+import { CAMPAGNE_TABLE_TYPES } from "../../../../constants";
 
 const DisplayByAllTable = ({
   selectedCampagneIds,
@@ -66,6 +67,13 @@ const DisplayByAllTable = ({
               displayMode={displayMode}
             />
           )}
+          <CampagnesTable
+            displayedCampagnes={campagnes.body}
+            selectedCampagneIds={selectedCampagneIds}
+            setSelectedCampagneIds={setSelectedCampagneIds}
+            displayMode={displayMode}
+            campagneTableType={CAMPAGNE_TABLE_TYPES.MANAGE}
+          />
           {campagnes.pagination.totalPages > 1 && (
             <Pagination
               count={campagnes.pagination.totalPages}

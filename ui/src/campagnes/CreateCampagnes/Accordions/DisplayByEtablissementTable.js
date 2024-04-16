@@ -14,11 +14,11 @@ import {
   AccordionLabelByEtablissementContainer,
   ButtonContainer,
 } from "./accordions.style";
-import CreateCampagneTable from "../CreateCampagneTable";
 import RemoveFormationModal from "../RemoveFormationModal";
-import { campagnesDisplayMode } from "../../../constants";
+import { CAMPAGNE_TABLE_TYPES, campagnesDisplayMode } from "../../../constants";
 import { ToolTipContainer } from "../../styles/shared.style";
 import CommonEndDateModal from "../CommonEndDateModal";
+import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
 
 const modal = createModal({
   id: "remove-formation-modal",
@@ -151,12 +151,13 @@ const DisplayByEtablissementTable = ({
               Choisir une date de fin commune
             </Button>
           </ButtonContainer>
-          <CreateCampagneTable
+          <CampagnesTable
             selectedFormations={formationsByEtablissement}
             selectedFormationsAction={selectedFormationsAction}
             setSelectedFormationsAction={setSelectedFormationsAction}
             formik={formik}
             displayMode={campagnesDisplayMode[1].value}
+            campagneTableType={CAMPAGNE_TABLE_TYPES.CREATE}
           />
         </StyledAccordion>
         <RemoveFormationModal

@@ -60,7 +60,8 @@ const isAdminOrAllowed = async (req, next, type) => {
           (siret === body.etablissement.data.siret ||
             multipleSiret.includes(body.etablissement.data.siret) ||
             etablissementFormateurSIRET.includes(body.etablissement.data.siret) ||
-            multipleSiret.includes(body.formation.data.etablissement_formateur_siret))
+            multipleSiret.includes(body.formation.data.etablissement_formateur_siret) ||
+            multipleSiret.includes(body.formation.data.etablissement_gestionnaire_siret))
         ) {
           return body._id.toString();
         }

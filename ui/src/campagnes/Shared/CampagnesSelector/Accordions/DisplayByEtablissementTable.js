@@ -27,6 +27,7 @@ const DisplayByEtablissementTable = ({
   displayMode,
   search,
   setSearch,
+  campagneTableType,
 }) => {
   const [page, setPage] = useState(null);
   const [openedAccordion, setOpenedAccordion] = useState(null);
@@ -182,6 +183,7 @@ const DisplayByEtablissementTable = ({
                   selectedCampagneIds={selectedCampagneIds}
                   setSelectedCampagneIds={setSelectedCampagneIds}
                   displayMode={displayMode}
+                  campagneTableType={campagneTableType}
                 />
               )}
               {campagnes.pagination.totalPages > 1 && (

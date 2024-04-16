@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
+import { fr } from "@codegouvfr/react-dsfr";
 
 export const AccordionLabelByDiplomeTypeContainer = styled.div`
   display: flex;
@@ -47,4 +48,5 @@ export const ButtonContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
   margin: 1rem 0 0 0;
+  padding: 0 ${fr.spacing("2w")};
 `;

@@ -6,6 +6,7 @@ import { HeaderItem } from "../../styles/shared.style";
 import manageCampagneTableRows from "../../ManageCampagne/manageCampagneTableRows";
 import resultsCampagneTableRows from "../../ResultsCampagnes/resultsCampagnesTableRows";
 import createCampagneTableRows from "../../CreateCampagnes/createCampagneTableRows";
+import { CAMPAGNE_TABLE_TYPES } from "../../../constants";
 
 const headers = [
   "",
@@ -36,8 +37,11 @@ const CampagnesTable = ({
   displayMode,
   campagneTableType,
   formik = {},
+  selectedFormations = [],
+  selectedFormationsAction = [],
+  setSelectedFormationsAction = () => {},
 }) => {
-  if (campagneTableType === "MANAGE") {
+  if (campagneTableType === CAMPAGNE_TABLE_TYPES.MANAGE) {
     return (
       <TableContainer>
         <Table
@@ -52,7 +56,7 @@ const CampagnesTable = ({
       </TableContainer>
     );
   }
-  if (campagneTableType === "RESULTS") {
+  if (campagneTableType === CAMPAGNE_TABLE_TYPES.RESULTS) {
     return (
       <TableContainer>
         <Table
@@ -67,17 +71,17 @@ const CampagnesTable = ({
       </TableContainer>
     );
   }
-  if (campagneTableType === "CREATE") {
+  if (campagneTableType === CAMPAGNE_TABLE_TYPES.CREATE) {
     return (
       <TableContainer>
         <Table
-          headers={headers}
+          headers={headers.pop()}
           data={createCampagneTableRows({
-            displayedCampagnes,
-            selectedCampagneIds,
-            setSelectedCampagneIds,
-            displayMode,
+            selectedFormations,
+            selectedFormationsAction,
+            setSelectedFormationsAction,
             formik,
+            displayMode,
           })}
         />
       </TableContainer>

@@ -1,18 +1,15 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { UserContext } from "../context/UserContext";
 import Statistics from "./Shared/Statistics/Statistics";
 import NeedHelp from "../Components/NeedHelp";
-import { campagnesDisplayMode, campagnesSortingOptions } from "../constants";
+import { CAMPAGNE_TABLE_TYPES } from "../constants";
 import SupportModal from "./Shared/SupportModal";
 import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
 import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
-import { SearchNoResultsContainer, LoaderContainer } from "./styles/shared.style";
 import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
 import CampagnesSelector from "./Shared/CampagnesSelector/CampagnesSelector";
 
@@ -70,7 +67,7 @@ const ManageCampagnesPage = () => {
             selectedCampagneIds={selectedCampagneIds}
             setSelectedCampagneIds={setSelectedCampagneIds}
             setAllCampagneIds={setAllCampagneIds}
-            campagneTableType="MANAGE"
+            campagneTableType={CAMPAGNE_TABLE_TYPES.MANAGE}
           />
           <p>
             Formations extraites du{" "}

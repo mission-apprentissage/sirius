@@ -19,6 +19,7 @@ import CampagnesSelector from "./Shared/CampagnesSelector/CampagnesSelector";
 import useFetchCampagnesDatavisualisation from "../hooks/useFetchCampagnesDatavisualisation";
 import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
 import useFetchCampagnesByBatch from "../hooks/useFetchCampagnesByBatch";
+import { CAMPAGNE_TABLE_TYPES } from "../constants";
 
 const MultipleQuestionnairesTabs = ({
   temoignages,
@@ -42,7 +43,7 @@ const ResultsCampagnesPage = () => {
   const [pdfExportLoading, setPdfExportLoading] = useState(false);
   const [currentDatavisualisationQuestionnaireId, setCurrentDatavisualisationQuestionnaireId] =
     useState(null);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { campagnes, isLoading } = useFetchCampagnesByBatch({
     campagneIds: selectedCampagneIds,
@@ -78,6 +79,7 @@ const ResultsCampagnesPage = () => {
   useEffect(() => {
     if (paramsCampagneIds?.length && !selectedCampagneIds.length) {
       setSelectedCampagneIds(paramsCampagneIds);
+      setSearchParams({});
     }
   }, [paramsCampagneIds]);
 
@@ -117,7 +119,7 @@ const ResultsCampagnesPage = () => {
           selectedCampagneIds={selectedCampagneIds}
           setSelectedCampagneIds={setSelectedCampagneIds}
           paramsCampagneIds={paramsCampagneIds}
-          campagneTableType="RESULTS"
+          campagneTableType={CAMPAGNE_TABLE_TYPES.RESULTS}
         />
       </ResultsCampagneContainer>
       <Statistics statistics={statistics} title="Statistiques des campagnes sélectionnées" />

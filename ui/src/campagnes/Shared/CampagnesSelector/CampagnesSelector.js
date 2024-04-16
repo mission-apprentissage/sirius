@@ -11,7 +11,11 @@ import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTabl
 import DisplayByAllTable from "./Accordions/DisplayByAllTable";
 import { LoaderContainer, HeaderContainer } from "../../styles/shared.style";
 import useFetchCampagnesSorted from "../../../hooks/useFetchCampagnesSorted";
-import { OBSERVER_SCOPES_LABELS, campagnesDisplayMode } from "../../../constants";
+import {
+  CAMPAGNE_TABLE_TYPES,
+  OBSERVER_SCOPES_LABELS,
+  campagnesDisplayMode,
+} from "../../../constants";
 import { isPlural } from "../../utils";
 import { UserContext } from "../../../context/UserContext";
 import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
@@ -72,9 +76,8 @@ const CampagnesSelector = ({
   const [isOpened, setIsOpened] = useState(false);
   const [userContext] = useContext(UserContext);
 
-  const isCreate = campagneTableType === "CREATE";
-  const isManage = campagneTableType === "MANAGE";
-  const isResults = campagneTableType === "RESULTS";
+  const isManage = campagneTableType === CAMPAGNE_TABLE_TYPES.MANAGE;
+  const isResults = campagneTableType === CAMPAGNE_TABLE_TYPES.RESULTS;
 
   const { campagnesSorted, isSuccess, isError, isLoading } = useFetchCampagnesSorted(displayMode);
 

@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { UserContext } from "../context/UserContext";
-import { fetchAlreadyExistingFormations } from "../queries/campagnes";
+import { fetchAlreadyExistingFormations } from "../queries/formations";
 
 const useFetchAlreadyExistingFormations = ({ campagneIds, enabled }) => {
   const [userContext] = useContext(UserContext);

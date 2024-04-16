@@ -1,4 +1,4 @@
-import { _get, _post } from "../utils/httpClient";
+import { _get, _post, _delete } from "../utils/httpClient";
 
 export const fetchCampagnes = async ({ query = null, page = 1, pageSize = 10, token }) => {
   let url = `/api/campagnes?page=${page}&pageSize=${pageSize}`;
@@ -24,26 +24,6 @@ export const fetchCampagnesSorted = async ({ type = null, token }) => {
   throw new Error("Erreur dans le chargement des campagnes triées");
 };
 
-export const fetchQuestionnaire = async ({ id }) => {
-  let url = `/api/questionnaires/${id}`;
-
-  const response = await _get(url);
-  if (response) {
-    return response;
-  }
-  throw new Error("Erreur dans le chargement du questionnaire");
-};
-
-export const fetchCampagnesDatavisualisation = async ({ campagneIds, token }) => {
-  let url = `/api/temoignages/datavisualisation`;
-
-  const response = await _post(url, campagneIds, token);
-  if (response) {
-    return response;
-  }
-  throw new Error("Erreur dans le chargement de la datavisualisation des campagnes");
-};
-
 export const fetchCampagnesStatistics = async ({ campagneIds, token }) => {
   let url = `/api/campagnes/statistics`;
 
@@ -54,26 +34,12 @@ export const fetchCampagnesStatistics = async ({ campagneIds, token }) => {
   throw new Error("Erreur dans le chargement des statistiques des campagnes");
 };
 
-export const fetchRemoteFormations = async ({ query = null, page = 1, pageSize = 30 }) => {
-  let url = `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?page=${page}&limit=${pageSize}`;
+export const deleteCampagnes = async ({ campagneIds, siret, token }) => {
+  let url = `/api/campagnes?ids=${campagneIds}&siret=${siret}`;
 
-  if (query) {
-    url += `&${query}`;
-  }
-
-  const response = await _get(url);
+  const response = await _delete(url, token);
   if (response) {
     return response;
   }
-  throw new Error("Erreur dans le chargement des formations du catalogue");
-};
-
-export const fetchAlreadyExistingFormations = async ({ campagneIds, token }) => {
-  let url = `/api/formations/already-existing`;
-
-  const response = await _post(url, campagneIds, token);
-  if (response) {
-    return response;
-  }
-  throw new Error("Erreur dans le chargement des formations déjà créées");
+  throw new Error("Erreur dans la suppression des campagnes");
 };

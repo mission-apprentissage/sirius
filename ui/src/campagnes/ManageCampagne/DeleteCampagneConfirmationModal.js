@@ -1,41 +1,24 @@
-import React, { useState, useContext } from "react";
+import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
-import { _delete } from "../../utils/httpClient";
-import { UserContext } from "../../context/UserContext";
 import { isPlural } from "../utils";
+import useDeleteCampagnes from "../../hooks/useDeleteCampagnes";
 
-const DeleteCampagneConfirmationModal = ({
-  modal,
-  selectedCampagnes,
-  setSelectedCampagnes,
-  setDisplayedCampagnes,
-}) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const [userContext] = useContext(UserContext);
+const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelectedCampagnes }) => {
   const persistedEtablissement = JSON.parse(localStorage.getItem("etablissements"));
 
-  const handleOnClick = async () => {
-    try {
-      setIsSubmitting(true);
-      const response = await _delete(
-        `/api/campagnes?ids=${selectedCampagnes}&siret=${persistedEtablissement.siret}`,
-        userContext.token
-      );
+  const { mutate: deleteCampagnes, isLoading, error } = useDeleteCampagnes();
 
-      if (response.acknowledged) {
-        setSelectedCampagnes([]);
-        setDisplayedCampagnes((prevValues) =>
-          prevValues.filter((campagne) => !selectedCampagnes.includes(campagne._id))
-        );
-        modal.close();
-      } else {
-        setError("Une erreur est survenue.");
+  const handleOnClick = () => {
+    deleteCampagnes(
+      { campagneIds: selectedCampagnes, siret: persistedEtablissement.siret },
+      {
+        onSuccess: () => {
+          setSelectedCampagnes([]);
+          modal.close();
+        },
       }
-    } catch (error) {
-      setError("Une erreur est survenue.");
-    }
+    );
   };
 
   return (
@@ -51,14 +34,14 @@ const DeleteCampagneConfirmationModal = ({
         {
           doClosesModal: true,
           children: "Annuler",
-          disabled: isSubmitting,
+          disabled: isLoading,
         },
         {
           doClosesModal: false,
           children: "Supprimer",
           type: "button",
           onClick: handleOnClick,
-          disabled: isSubmitting,
+          disabled: isLoading,
         },
       ]}
     >
@@ -73,7 +56,13 @@ const DeleteCampagneConfirmationModal = ({
       <p>
         Êtes-vous certain·e de vouloir {selectedCampagnes.length > 1 ? "les" : "la"} supprimer ?
       </p>
-      {error && <Alert closable description={error} severity="error" />}
+      {error && (
+        <Alert
+          closable
+          description={error.message || "Une erreur est survenue."}
+          severity="error"
+        />
+      )}
     </modal.Component>
   );
 };
