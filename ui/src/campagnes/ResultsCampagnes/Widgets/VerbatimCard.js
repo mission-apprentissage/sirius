@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Masonry } from "masonic";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import parse from "html-react-parser";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import Button from "@codegouvfr/react-dsfr/Button";
@@ -12,7 +12,7 @@ import { VERBATIM_STATUS_LABELS } from "../../../constants";
 import Quote from "../../../assets/icons/quote.svg";
 
 const MasonryItem = ({ data: { content } }) => (
-  <MasonryItemContainer>
+  <MasonryItemContainer key={content}>
     <img src={Quote} />« {content} »
   </MasonryItemContainer>
 );
@@ -41,13 +41,13 @@ const VerbatimCard = ({ responses, title }) => {
       ),
       content: (
         <>
-          <Masonry
-            key={`${VERBATIM_STATUS_LABELS[tab]}-${totalCount}`}
-            items={content}
-            render={MasonryItem}
-            columnGutter={24}
-            columnCount={5}
-          />
+          <ResponsiveMasonry columnsCountBreakPoints={{ 350: 2, 750: 4, 900: 5 }}>
+            <Masonry>
+              {content.map((response, index) => (
+                <MasonryItem key={index} data={response} />
+              ))}
+            </Masonry>
+          </ResponsiveMasonry>
           <ButtonContainer>
             <Button
               iconId="fr-icon-add-line"
