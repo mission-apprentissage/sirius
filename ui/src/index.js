@@ -12,7 +12,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 startReactDsfr({ defaultColorScheme: "light", Link });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 4 * (60 * 1000),
+      cacheTime: 4 * (60 * 1000),
+    },
+  },
+});
 
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
