@@ -30,6 +30,24 @@ const headers = [
   </HeaderItem>,
 ];
 
+const createHeaders = [
+  "",
+  "Formation",
+  <HeaderItem key="campagneName">Nom d'usage</HeaderItem>,
+  <HeaderItem key="debut">
+    <span className={fr.cx("fr-icon--sm fr-icon-calendar-event-fill")} aria-hidden={true} />
+    Début
+  </HeaderItem>,
+  <HeaderItem key="fin">
+    <span className={fr.cx("fr-icon--sm fr-icon-calendar-2-fill")} aria-hidden={true} />
+    Fin
+  </HeaderItem>,
+  <HeaderItem key="apprenties">
+    <span className={fr.cx("fr-icon--sm fr-icon-team-fill")} aria-hidden={true} />
+    Apprenti·es
+  </HeaderItem>,
+];
+
 const CampagnesTable = ({
   displayedCampagnes = [],
   selectedCampagneIds,
@@ -75,7 +93,7 @@ const CampagnesTable = ({
     return (
       <TableContainer>
         <Table
-          headers={headers.pop()}
+          headers={createHeaders}
           data={createCampagneTableRows({
             selectedFormations,
             selectedFormationsAction,

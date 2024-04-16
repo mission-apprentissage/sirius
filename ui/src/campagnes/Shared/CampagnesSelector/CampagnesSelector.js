@@ -38,6 +38,7 @@ const AccordionComponentGetter = ({
         search={search}
         setSearch={setSearch}
         campagneTableType={campagneTableType}
+        displayMode={displayMode}
       />
     );
   } else if (campagnesSorted?.length && displayMode === campagnesDisplayMode[1].value) {
@@ -49,6 +50,7 @@ const AccordionComponentGetter = ({
         search={search}
         setSearch={setSearch}
         campagneTableType={campagneTableType}
+        displayMode={displayMode}
       />
     );
   } else if (displayMode === campagnesDisplayMode[2].value) {
@@ -59,6 +61,7 @@ const AccordionComponentGetter = ({
         search={search}
         setSearch={setSearch}
         campagneTableType={campagneTableType}
+        displayMode={displayMode}
       />
     );
   }

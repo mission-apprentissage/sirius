@@ -10,6 +10,6 @@ const updateFormationSchema = Joi.object({
   campagneId: Joi.string().required(),
 });
 
-const alreadyExistingFormationSchema = Joi.array().items(Joi.string().required()).required();
+const alreadyExistingFormationSchema = Joi.array().items(Joi.string());
 
 module.exports = { createFormationSchema, updateFormationSchema, alreadyExistingFormationSchema };

@@ -45,7 +45,7 @@ const ResultsCampagnesPage = () => {
     useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { campagnes, isLoading } = useFetchCampagnesByBatch({
+  const { campagnes, isLoading, isError } = useFetchCampagnesByBatch({
     campagneIds: selectedCampagneIds,
   });
 
@@ -147,7 +147,7 @@ const ResultsCampagnesPage = () => {
             </Button>
           </div>
         </TestimonialHeader>
-        {isLoadingCampagnesDatavisualisation && (
+        {(isLoadingCampagnesDatavisualisation || isLoading) && (
           <LoaderContainer>
             <BeatLoader
               color="var(--background-action-high-blue-france)"
@@ -156,7 +156,7 @@ const ResultsCampagnesPage = () => {
             />
           </LoaderContainer>
         )}
-        {isErrorCampagnesDatavisualisation ? (
+        {isErrorCampagnesDatavisualisation || isError ? (
           <Alert
             title="Une erreur s'est produite dans le chargement des témoignages"
             description="Merci de réessayer ultérieurement"

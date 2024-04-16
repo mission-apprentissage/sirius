@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
@@ -35,6 +35,7 @@ const AccordionComponentGetter = ({ displayMode, ...props }) => {
 
 const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
+  const [displayedFormations, setDisplayedFormations] = useState([]);
   const [search, setSearch] = useState("");
   const [userContext] = useContext(UserContext);
   const [page, setPage] = useState(1);
@@ -79,6 +80,24 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     campagneIds: allRemoteFormationsIds,
     enabled: !!allRemoteFormationsIds.length || isAdmin,
   });
+
+  useEffect(() => {
+    if (remoteFormations?.length && search === "") {
+      setDisplayedFormations(remoteFormations);
+    } else {
+      const filteredFormations = remoteFormations?.filter((formation) => {
+        return (
+          formation.intitule_long.toLowerCase().includes(search) ||
+          formation.localite.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_enseigne.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_adresse.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_siret.toLowerCase().includes(search) ||
+          formation.tags.join("-").toLowerCase().includes(search)
+        );
+      });
+      setDisplayedFormations(filteredFormations);
+    }
+  }, [search, remoteFormations]);
 
   const checkboxLabel = (
     <b>
@@ -138,7 +157,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
                         return [
                           ...new Set([
                             ...prevValues,
-                            ...remoteFormations.filter(
+                            ...displayedFormations.filter(
                               (formation) => !existingFormationIds.includes(formation._id)
                             ),
                           ]),
@@ -154,7 +173,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
           />
           <TableContainer>
             <AccordionComponentGetter
-              displayedFormations={remoteFormations}
+              displayedFormations={displayedFormations}
               selectedFormations={selectedFormations}
               setSelectedFormations={setSelectedFormations}
               displayMode={displayMode}

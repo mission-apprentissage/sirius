@@ -13,7 +13,7 @@ const multiEmojiOption = (responses, emojiMapping) => {
 
   const series = responses.data.map((response, index) => {
     return {
-      name: `${response.emoji} ${emojiMapping[index].value}`,
+      name: `${emojiMapping[index].emoji} ${emojiMapping[index].value}`,
       type: "bar",
       stack: "total",
       label: {
