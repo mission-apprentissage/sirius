@@ -74,7 +74,7 @@ export const FullWidthVerbatimContainer = styled.div`
 `;
 
 export const MasonryItemContainer = styled.div`
-  margin: ${fr.spacing("1w")} 0;
+  margin: ${fr.spacing("1w")} ${fr.spacing("2w")};
   padding-bottom: ${fr.spacing("4w")};
   border-bottom: 2px solid #e7e7e7;
 
