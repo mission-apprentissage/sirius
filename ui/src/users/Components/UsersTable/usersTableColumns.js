@@ -271,7 +271,11 @@ const usersTableColumns = (
                     );
                   }
 
-                  navigate("/campagnes/gestion");
+                  if (decodedToken.role === USER_ROLES.OBSERVER) {
+                    navigate("/campagnes/resultats");
+                  } else {
+                    navigate("/campagnes/gestion");
+                  }
                 }
               }}
             />

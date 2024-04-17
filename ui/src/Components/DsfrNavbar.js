@@ -216,6 +216,16 @@ const DsfrNavbar = () => {
     }
   };
 
+  const homeLink = () => {
+    if (isObserver) {
+      return "/campagnes/resultats";
+    }
+    if (isLoggedIn) {
+      return "/campagnes/gestion";
+    }
+    return "/";
+  };
+
   return (
     <Header
       brandTop={
@@ -226,7 +236,7 @@ const DsfrNavbar = () => {
         </>
       }
       homeLinkProps={{
-        to: isLoggedIn ? "/campagnes/gestion" : "/",
+        to: homeLink(),
         title: "Accueil - Sirius",
       }}
       operatorLogo={{
