@@ -94,6 +94,12 @@ const DisplayByEtablissementTable = ({
               campagneIds={campagneIds}
               name={`selectAll${etablissementFormateur.etablissement_formateur_siret}`}
               setSelectedCampagneIds={setSelectedCampagneIds}
+              searchedCampagnes={searchedCampagnes?.body.filter(
+                (searchedCampagne) =>
+                  searchedCampagne.formation.data.etablissement_formateur_siret ===
+                  etablissementFormateur.etablissement_formateur_siret
+              )}
+              search={search}
             />
             <TableContainer>
               <CampagnesTable

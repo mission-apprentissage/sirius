@@ -24,14 +24,17 @@ export const SelectAllCampagnesCheckbox = ({
   campagneIds,
   name,
   setSelectedCampagneIds,
+  search,
+  searchedCampagnes,
 }) => {
   const handleSelectAll = (e, campagneIds) => {
     setSelectedCampagneIds((prevValues) => {
-      if (e.target.checked) {
+      if (e.target.checked && search) {
+        return searchedCampagnes.map((campagne) => campagne._id);
+      } else if (e.target.checked) {
         return [...new Set([...prevValues, ...campagneIds])];
-      } else {
-        return prevValues.filter((selectedCampagne) => !campagneIds.includes(selectedCampagne));
       }
+      return prevValues.filter((selectedCampagne) => !campagneIds.includes(selectedCampagne));
     });
   };
 
@@ -43,7 +46,7 @@ export const SelectAllCampagnesCheckbox = ({
             label: <CheckboxLabel count={count} />,
             nativeInputProps: {
               name: `selectAll${name}`,
-              checked: count === campagneIds.length,
+              checked: search ? searchedCampagnes.length === count : count === campagneIds.length,
               onChange: (e) => handleSelectAll(e, campagneIds),
             },
           },

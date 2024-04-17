@@ -51,8 +51,9 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     .flat();
 
   const userSiretQuery = isAdmin ? "" : `"$or": ${JSON.stringify(formattedUserSiret)}, `;
+  const searchQuery = search ? `&queryAsRegex={"onisep_intitule": "${search}"}` : "";
 
-  const query = `query={${userSiretQuery} "published": "true", "catalogue_published": "true", "niveau":["3 (CAP...)","4 (BAC...)"]}&select={"_id": 1, "diplome": 1, "tags": 1, "duree": 1, "intitule_long": 1, "etablissement_formateur_siret": 1, "etablissement_gestionnaire_siret": 1, "localite": 1, "etablissement_formateur_adresse": 1, "etablissement_formateur_entreprise_raison_sociale": 1, "etablissement_formateur_enseigne": 1}`;
+  const query = `query={${userSiretQuery} "published": "true", "catalogue_published": "true", "niveau":["3 (CAP...)","4 (BAC...)"]}&select={"_id": 1, "diplome": 1, "tags": 1, "duree": 1, "intitule_long": 1, "etablissement_formateur_siret": 1, "etablissement_gestionnaire_siret": 1, "localite": 1, "etablissement_formateur_adresse": 1, "etablissement_formateur_entreprise_raison_sociale": 1, "etablissement_formateur_enseigne": 1}${searchQuery}`;
 
   const {
     remoteFormations,
@@ -131,6 +132,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
         <Alert
           title="Une erreur s'est produite dans le chargement des formations"
           description="Merci de réessayer ultérieurement"
+          severity="error"
         />
       )}
       {isSuccessFormations && isSuccessExistingFormationIds && remoteFormations.length && (

@@ -197,14 +197,17 @@ const CampagnesSelector = ({
                       label: checkboxLabel,
                       nativeInputProps: {
                         name: `selectAllCampagnes`,
-                        checked: selectedCampagneIds.length === allCampagneIds.length,
+                        checked: search
+                          ? selectedCampagneIds.length === searchedCampagnes.body.length
+                          : selectedCampagneIds.length === allCampagneIds.length,
                         onChange: (e) => {
                           setSelectedCampagneIds(() => {
-                            if (e.target.checked) {
+                            if (e.target.checked && search) {
+                              return searchedCampagnes.body.map((campagne) => campagne._id);
+                            } else if (e.target.checked) {
                               return allCampagneIds;
-                            } else {
-                              return [];
                             }
+                            return [];
                           });
                         },
                       },
