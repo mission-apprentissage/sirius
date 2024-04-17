@@ -165,6 +165,7 @@ const getDatavisualisation = async (campagneIds) => {
         questionnaireId: questionnaireById._id,
         questionnaireName: questionnaireById.nom,
         categories: categories,
+        temoignageCount: questionnaireTemoignagesMap[questionnaireId].length,
       };
     });
 

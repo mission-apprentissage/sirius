@@ -20,6 +20,7 @@ import useFetchTemoignagesDatavisualisation from "../hooks/useFetchTemoignagesDa
 import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
 import useFetchCampagnesByBatch from "../hooks/useFetchCampagnesByBatch";
 import { CAMPAGNE_TABLE_TYPES } from "../constants";
+import { isPlural } from "./utils";
 
 const MultipleQuestionnairesTabs = ({
   temoignages,
@@ -27,7 +28,9 @@ const MultipleQuestionnairesTabs = ({
 }) => {
   const tabs = temoignages.map((questionnaire, index) => {
     return {
-      label: `Questionnaire version ${index + 1}`,
+      label: `Questionnaire version ${index + 1} (${
+        questionnaire.temoignageCount
+      } répondant·e${isPlural(questionnaire.temoignageCount)})`,
       content: <ResultsCampagnesVisualisation temoignages={questionnaire} />,
       id: questionnaire.questionnaireId,
     };
