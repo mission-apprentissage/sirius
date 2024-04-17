@@ -21,8 +21,17 @@ const getCampagnes = tryCatch(async (req, res) => {
   if (diplome) {
     query = { diplome };
   }
+
+  if (diplome && diplome === "N/A") {
+    query = { diplome: { $exists: false } };
+  }
+
   if (etablissementFormateurSiret) {
     query = { etablissementFormateurSiret };
+  }
+
+  if (etablissementFormateurSiret && etablissementFormateurSiret === "N/A") {
+    query = { etablissementFormateurSiret: { $exists: false } };
   }
 
   const { success, body, pagination } = await campagnesService.getCampagnes({
