@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import jwt from "jwt-decode";
 import { Table, Tbody, Tr, Td, useDisclosure, Box, Stack, useClipboard } from "@chakra-ui/react";
 import {
   useReactTable,
@@ -16,10 +17,13 @@ import usersTableColumns from "./usersTableColumns";
 import AddSiretModal from "../AddSiretModal";
 import { useNavigate } from "react-router-dom";
 import AddScopeModal from "../AddScopeModal";
+import useSudoUser from "../../../hooks/useSudoUser";
+import { USER_ROLES } from "../../../constants";
 
 const UsersTable = ({ users, setRefetchData }) => {
   const [userContext, setUserContext] = useContext(UserContext);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [sudoUserId, setSudoUserId] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
   const [sorting, setSorting] = useState([]);
@@ -27,6 +31,36 @@ const UsersTable = ({ users, setRefetchData }) => {
   const [search, setSearch] = useState([]);
   const navigate = useNavigate();
   const { onCopy: onCopyClipBoard, setValue: setClipboardValue } = useClipboard("");
+
+  const { sudoUser, isSuccess } = useSudoUser({ userId: sudoUserId });
+
+  useEffect(() => {
+    if (isSuccess && sudoUser) {
+      const decodedToken = jwt(sudoUser.token);
+      setUserContext((oldValues) => {
+        return {
+          ...oldValues,
+          token: sudoUser.token,
+          loading: false,
+          currentUserId: decodedToken._id,
+          currentUserRole: decodedToken.role,
+          currentUserStatus: decodedToken.status,
+          firstName: decodedToken.firstName,
+          lastName: decodedToken.lastName,
+          email: decodedToken.email,
+          siret: decodedToken.siret,
+          acceptedCgu: decodedToken.acceptedCgu || false,
+          etablissements: decodedToken.etablissements || [],
+        };
+      });
+
+      if (decodedToken.role === USER_ROLES.OBSERVER) {
+        navigate("/campagnes/resultats");
+      } else {
+        navigate("/campagnes/gestion");
+      }
+    }
+  }, [sudoUser, isSuccess, setUserContext]);
 
   useEffect(() => {
     setDisplayedUsers(users);
@@ -69,7 +103,7 @@ const UsersTable = ({ users, setRefetchData }) => {
       onCopyClipBoard,
       onOpenAddSiret,
       onOpenAddScope,
-      navigate
+      setSudoUserId
     ),
     data: displayedUsers,
     getCoreRowModel: getCoreRowModel(),
