@@ -5,11 +5,7 @@ import Pagination from "@codegouvfr/react-dsfr/Pagination";
 import { StyledAccordion } from "./accordions.style";
 import { SelectAllCampagnesCheckbox, AccordionLabel } from "./Components";
 import CampagnesTable from "../../CampagnesTable/CampagnesTable";
-import {
-  LoaderContainer,
-  SearchNoResultsContainer,
-  TableContainer,
-} from "../../../styles/shared.style";
+import { LoaderContainer, TableContainer } from "../../../styles/shared.style";
 import useDisplayCampagnesOptions from "../../../../hooks/useDisplayCampagnesOptions";
 
 const DisplayByDiplomeTypeTable = ({
@@ -18,8 +14,8 @@ const DisplayByDiplomeTypeTable = ({
   setSelectedCampagneIds,
   displayMode,
   search,
-  setSearch,
   campagneTableType,
+  searchedCampagnes,
 }) => {
   const {
     page,
@@ -38,7 +34,15 @@ const DisplayByDiplomeTypeTable = ({
     setSelectedCampagneIds,
   });
 
+  const uniqueDiplomeTypeFromSearch =
+    search && searchedCampagnes.body.length > 0
+      ? [...new Set(searchedCampagnes.body.map((campagne) => campagne.formation.data.diplome))]
+      : [];
   return campagnesSorted.map(({ diplome, campagneIds }) => {
+    if (uniqueDiplomeTypeFromSearch.length && !uniqueDiplomeTypeFromSearch.includes(diplome)) {
+      return null;
+    }
+
     const campagnesSelectedCount = campagnesSelectedCountGetter(campagneIds);
 
     return (
@@ -66,7 +70,7 @@ const DisplayByDiplomeTypeTable = ({
             severity="error"
           />
         )}
-        {isSuccessCampagnes && (
+        {isSuccessCampagnes && campagnes.pagination.totalItems > 0 && (
           <>
             <SelectAllCampagnesCheckbox
               count={campagnesSelectedCount}
@@ -75,22 +79,13 @@ const DisplayByDiplomeTypeTable = ({
               setSelectedCampagneIds={setSelectedCampagneIds}
             />
             <TableContainer>
-              {campagnes.pagination.totalItems === 0 && search ? (
-                <SearchNoResultsContainer>
-                  <h3>
-                    Aucun résultats dans ce niveau de diplome pour votre recherche « {search} »
-                  </h3>
-                  <p onClick={() => setSearch("")}>Réinitialiser ?</p>
-                </SearchNoResultsContainer>
-              ) : (
-                <CampagnesTable
-                  displayedCampagnes={campagnes.body}
-                  selectedCampagneIds={selectedCampagneIds}
-                  setSelectedCampagneIds={setSelectedCampagneIds}
-                  displayMode={displayMode}
-                  campagneTableType={campagneTableType}
-                />
-              )}
+              <CampagnesTable
+                displayedCampagnes={campagnes.body}
+                selectedCampagneIds={selectedCampagneIds}
+                setSelectedCampagneIds={setSelectedCampagneIds}
+                displayMode={displayMode}
+                campagneTableType={campagneTableType}
+              />
               {campagnes.pagination.totalPages > 1 && (
                 <Pagination
                   count={campagnes.pagination.totalPages}

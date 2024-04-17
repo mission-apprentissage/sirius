@@ -31,3 +31,19 @@ export const SortButtonsContainer = styled.div`
     }
   }
 `;
+
+export const SearchContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: flex-end;
+
+  & > div {
+    margin-bottom: 0 !important;
+  }
+
+  & > p {
+    color: var(--text-disabled-grey);
+    margin-bottom: 0;
+  }
+`;

@@ -20,6 +20,7 @@ import {
 import { isPlural } from "../../utils";
 import { UserContext } from "../../../context/UserContext";
 import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
+import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
 
 const AccordionComponentGetter = ({
   campagnesSorted,
@@ -29,6 +30,7 @@ const AccordionComponentGetter = ({
   search,
   setSearch,
   campagneTableType,
+  searchedCampagnes,
 }) => {
   if (campagnesSorted?.length && displayMode === campagnesDisplayMode[0].value) {
     return (
@@ -40,6 +42,7 @@ const AccordionComponentGetter = ({
         setSearch={setSearch}
         campagneTableType={campagneTableType}
         displayMode={displayMode}
+        searchedCampagnes={searchedCampagnes}
       />
     );
   } else if (campagnesSorted?.length && displayMode === campagnesDisplayMode[1].value) {
@@ -52,6 +55,7 @@ const AccordionComponentGetter = ({
         setSearch={setSearch}
         campagneTableType={campagneTableType}
         displayMode={displayMode}
+        searchedCampagnes={searchedCampagnes}
       />
     );
   } else if (displayMode === campagnesDisplayMode[2].value) {
@@ -77,13 +81,33 @@ const CampagnesSelector = ({
 }) => {
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [search, setSearch] = useState("");
+  const [searchPage, _] = useState(1);
   const [isOpened, setIsOpened] = useState(false);
+
   const [userContext] = useContext(UserContext);
 
   const isManage = campagneTableType === CAMPAGNE_TABLE_TYPES.MANAGE;
   const isResults = campagneTableType === CAMPAGNE_TABLE_TYPES.RESULTS;
 
   const { campagnesSorted, isSuccess, isError, isLoading } = useFetchCampagnesSorted(displayMode);
+
+  let searchQuery = "";
+  if (search) {
+    searchQuery += `&search=${search}`;
+  }
+
+  const {
+    campagnes: searchedCampagnes,
+    isSuccess: isSuccessSearchedCampagnes,
+    isError: isErrorSearchedCampagnes,
+    isLoading: isLoadingSearchedCampagnes,
+  } = useFetchCampagnes({
+    query: searchQuery,
+    key: search,
+    enabled: !!search,
+    page: searchPage,
+    pageSize: 1000,
+  });
 
   const allCampagneIds = campagnesSorted?.length
     ? [...new Set(campagnesSorted?.map((campagne) => campagne.campagneIds).flat())]
@@ -149,52 +173,88 @@ const CampagnesSelector = ({
             setDisplayMode={setDisplayMode}
             search={search}
             setSearch={setSearch}
+            searchResultCount={searchedCampagnes?.pagination?.totalItems}
             setIsOpened={setIsOpened}
             organizeLabel={
               isManage ? "Organiser mes campagnes par" : "Sélectionner les résultats à afficher"
             }
           />
-          <HeaderContainer>
-            <Checkbox
-              options={[
-                {
-                  label: checkboxLabel,
-                  nativeInputProps: {
-                    name: `selectAllCampagnes`,
-                    checked: selectedCampagneIds.length === allCampagneIds.length,
-                    onChange: (e) => {
-                      setSelectedCampagneIds(() => {
-                        if (e.target.checked) {
-                          return allCampagneIds;
-                        } else {
-                          return [];
-                        }
-                      });
+          {isLoadingSearchedCampagnes ? (
+            <LoaderContainer>
+              <BeatLoader
+                color="var(--background-action-high-blue-france)"
+                size={15}
+                aria-label="Loading Spinner"
+                loading={isLoadingSearchedCampagnes}
+              />
+            </LoaderContainer>
+          ) : (
+            <>
+              <HeaderContainer>
+                <Checkbox
+                  options={[
+                    {
+                      label: checkboxLabel,
+                      nativeInputProps: {
+                        name: `selectAllCampagnes`,
+                        checked: selectedCampagneIds.length === allCampagneIds.length,
+                        onChange: (e) => {
+                          setSelectedCampagneIds(() => {
+                            if (e.target.checked) {
+                              return allCampagneIds;
+                            } else {
+                              return [];
+                            }
+                          });
+                        },
+                      },
                     },
-                  },
-                },
-              ]}
-            />
-            {isManage && (
-              <ActionButtons
-                selectedCampagneIds={selectedCampagneIds}
-                setSelectedCampagneIds={setSelectedCampagneIds}
-              />
-            )}
-          </HeaderContainer>
-          <div className={fr.cx("fr-accordions-group")}>
-            <div style={{ display: isOpened || isManage ? "inherit" : "none" }}>
-              <AccordionComponentGetter
-                campagnesSorted={campagnesSorted}
-                selectedCampagneIds={selectedCampagneIds}
-                setSelectedCampagneIds={setSelectedCampagneIds}
-                displayMode={displayMode}
-                search={search}
-                setSearch={setSearch}
-                campagneTableType={campagneTableType}
-              />
-            </div>
-          </div>
+                  ]}
+                />
+                {isManage && (
+                  <ActionButtons
+                    selectedCampagneIds={selectedCampagneIds}
+                    setSelectedCampagneIds={setSelectedCampagneIds}
+                  />
+                )}
+              </HeaderContainer>
+              {isErrorSearchedCampagnes && (
+                <Alert
+                  title="Une erreur s'est produite dans le chargement de le recherche des campagnes"
+                  description="Merci de réessayer ultérieurement"
+                  severity="error"
+                />
+              )}
+              {search &&
+              isSuccessSearchedCampagnes &&
+              searchedCampagnes.pagination.totalItems === 0 ? (
+                <Alert
+                  title={`Aucun résultats pour votre recherche « ${search} »`}
+                  description={
+                    <Button priority="secondary" onClick={() => setSearch("")}>
+                      Réinitialiser la recherche
+                    </Button>
+                  }
+                  severity="info"
+                />
+              ) : (
+                <div className={fr.cx("fr-accordions-group")}>
+                  <div style={{ display: isOpened || isManage ? "inherit" : "none" }}>
+                    <AccordionComponentGetter
+                      campagnesSorted={campagnesSorted}
+                      selectedCampagneIds={selectedCampagneIds}
+                      setSelectedCampagneIds={setSelectedCampagneIds}
+                      displayMode={displayMode}
+                      search={search}
+                      setSearch={setSearch}
+                      campagneTableType={campagneTableType}
+                      searchedCampagnes={searchedCampagnes}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
           {isResults && (
             <ButtonContainer>
               <Button

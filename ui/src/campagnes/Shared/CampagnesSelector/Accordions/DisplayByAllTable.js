@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import Alert from "@codegouvfr/react-dsfr/Alert";
+import Button from "@codegouvfr/react-dsfr/Button";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import CampagnesTable from "../../CampagnesTable/CampagnesTable";
-import {
-  LoaderContainer,
-  SearchNoResultsContainer,
-  TableContainer,
-} from "../../../styles/shared.style";
+import { LoaderContainer, TableContainer } from "../../../styles/shared.style";
 import useFetchCampagnes from "../../../../hooks/useFetchCampagnes";
 import { CAMPAGNE_TABLE_TYPES } from "../../../../constants";
 
@@ -52,21 +49,19 @@ const DisplayByAllTable = ({
           severity="error"
         />
       )}
-      {isSuccess && (
+      {isSuccess && campagnes.pagination.totalItems === 0 && search && (
+        <Alert
+          title={`Aucun résultats pour votre recherche « ${search} »`}
+          description={
+            <Button priority="secondary" onClick={() => setSearch("")}>
+              Réinitialiser la recherche
+            </Button>
+          }
+          severity="info"
+        />
+      )}
+      {isSuccess && campagnes.pagination.totalItems > 0 && (
         <TableContainer>
-          {campagnes.pagination.totalItems === 0 && search ? (
-            <SearchNoResultsContainer>
-              <h3>Aucun résultats pour votre recherche « {search} »</h3>
-              <p onClick={() => setSearch("")}>Réinitialiser ?</p>
-            </SearchNoResultsContainer>
-          ) : (
-            <CampagnesTable
-              displayedCampagnes={campagnes.body}
-              selectedCampagneIds={selectedCampagneIds}
-              setSelectedCampagneIds={setSelectedCampagneIds}
-              displayMode={displayMode}
-            />
-          )}
           <CampagnesTable
             displayedCampagnes={campagnes.body}
             selectedCampagneIds={selectedCampagneIds}

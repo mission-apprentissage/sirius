@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
-import { SortButtonsContainer } from "./sortButtons.style";
+import { SortButtonsContainer, SearchContainer } from "./sortButtons.style";
 import { campagnesDisplayMode } from "../../../constants";
+import { isPlural } from "../../utils";
 
 const SortButtons = ({
   displayMode,
   setDisplayMode,
   search,
   setSearch,
+  searchResultCount,
   setIsOpened = () => {},
   organizeLabel,
 }) => {
   const [inputValue, setInputValue] = useState(search);
+
+  useEffect(() => {
+    if (search !== inputValue) {
+      setInputValue(search);
+    }
+  }, [search]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -38,13 +46,21 @@ const SortButtons = ({
         }}
         options={campagnesDisplayMode}
       />
-      <Input
-        nativeInputProps={{
-          value: inputValue,
-          placeholder: "Rechercher",
-          onChange: (e) => setInputValue(e.target.value),
-        }}
-      />
+      <SearchContainer>
+        <Input
+          nativeInputProps={{
+            value: inputValue,
+            placeholder: "Rechercher",
+            onChange: (e) => setInputValue(e.target.value),
+          }}
+        />
+        {searchResultCount ? (
+          <p>
+            {searchResultCount} campagne{isPlural(searchResultCount)} trouvée
+            {isPlural(searchResultCount)}
+          </p>
+        ) : null}
+      </SearchContainer>
     </SortButtonsContainer>
   );
 };

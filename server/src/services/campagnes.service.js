@@ -54,9 +54,9 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageS
       ? campagnes.filter((campagne) => {
           return (
             campagne.nomCampagne.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation.data.intitule_long.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation.data.localite.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation.data.tags.join("-").toLowerCase().includes(search.toLowerCase())
+            campagne.formation?.data.intitule_long.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.localite.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.tags.join("-").toLowerCase().includes(search.toLowerCase())
           );
         })
       : campagnes;
@@ -82,6 +82,7 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageS
       },
     };
   } catch (error) {
+    console.log({ error });
     return { success: false, body: error };
   }
 };

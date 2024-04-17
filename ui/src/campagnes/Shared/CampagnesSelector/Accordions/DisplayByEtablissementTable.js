@@ -4,11 +4,7 @@ import Alert from "@codegouvfr/react-dsfr/Alert";
 import Pagination from "@codegouvfr/react-dsfr/Pagination";
 import { StyledAccordion } from "./accordions.style";
 import { SelectAllCampagnesCheckbox, AccordionLabel } from "./Components";
-import {
-  LoaderContainer,
-  SearchNoResultsContainer,
-  TableContainer,
-} from "../../../styles/shared.style";
+import { LoaderContainer, TableContainer } from "../../../styles/shared.style";
 import CampagnesTable from "../../CampagnesTable/CampagnesTable";
 import useDisplayCampagnesOptions from "../../../../hooks/useDisplayCampagnesOptions";
 
@@ -18,8 +14,8 @@ const DisplayByEtablissementTable = ({
   setSelectedCampagneIds,
   displayMode,
   search,
-  setSearch,
   campagneTableType,
+  searchedCampagnes,
 }) => {
   const {
     page,
@@ -38,7 +34,25 @@ const DisplayByEtablissementTable = ({
     setSelectedCampagneIds,
   });
 
+  const uniqueEtablissementFromSearch =
+    search && searchedCampagnes.body.length > 0
+      ? [
+          ...new Set(
+            searchedCampagnes.body.map(
+              (campagne) => campagne.formation.data.etablissement_formateur_siret
+            )
+          ),
+        ]
+      : [];
+
   return campagnesSorted.map(({ etablissementFormateur, campagneIds }) => {
+    if (
+      uniqueEtablissementFromSearch.length &&
+      !uniqueEtablissementFromSearch.includes(etablissementFormateur.etablissement_formateur_siret)
+    ) {
+      return null;
+    }
+
     const campagnesSelectedCount = campagnesSelectedCountGetter(campagneIds);
 
     return (
@@ -82,20 +96,13 @@ const DisplayByEtablissementTable = ({
               setSelectedCampagneIds={setSelectedCampagneIds}
             />
             <TableContainer>
-              {campagnes.pagination.totalItems === 0 && search ? (
-                <SearchNoResultsContainer>
-                  <h3>Aucun résultats dans cet etablissement pour votre recherche « {search} »</h3>
-                  <p onClick={() => setSearch("")}>Réinitialiser ?</p>
-                </SearchNoResultsContainer>
-              ) : (
-                <CampagnesTable
-                  displayedCampagnes={campagnes.body}
-                  selectedCampagneIds={selectedCampagneIds}
-                  setSelectedCampagneIds={setSelectedCampagneIds}
-                  displayMode={displayMode}
-                  campagneTableType={campagneTableType}
-                />
-              )}
+              <CampagnesTable
+                displayedCampagnes={campagnes.body}
+                selectedCampagneIds={selectedCampagneIds}
+                setSelectedCampagneIds={setSelectedCampagneIds}
+                displayMode={displayMode}
+                campagneTableType={campagneTableType}
+              />
               {campagnes.pagination.totalPages > 1 && (
                 <Pagination
                   count={campagnes.pagination.totalPages}
