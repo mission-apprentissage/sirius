@@ -110,8 +110,8 @@ const CampagnesSelector = ({
     <>
       {userContext?.scope && (
         <p>
-          Vous avez accès aux campagne pour <b>{OBSERVER_SCOPES_LABELS[userContext.scope.field]}</b>{" "}
-          <b>{userContext.scope.value}</b>.
+          Vous avez accès aux campagnes pour{" "}
+          <b>{OBSERVER_SCOPES_LABELS[userContext.scope.field]}</b> <b>{userContext.scope.value}</b>.
         </p>
       )}
       <SortButtons
