@@ -25,7 +25,7 @@ const Statistics = ({ statistics = [], title }) => {
           <StatisticsCard>
             <img src={DocumentAdd} alt="" />
             <p>
-              <b>{statistics.campagnesCount}</b>
+              <b>{statistics.campagnesCount || "N/A"}</b>
             </p>
             <p>
               campagne{isCampagnePlural} créée
@@ -35,35 +35,35 @@ const Statistics = ({ statistics = [], title }) => {
           <StatisticsCard>
             <img src={Success} alt="" />
             <p>
-              <b>{statistics.finishedCampagnesCount}</b>
+              <b>{statistics.finishedCampagnesCount || "N/A"}</b>
             </p>
             <p> terminée{isFinishedCampagnesPlural}</p>
           </StatisticsCard>
           <StatisticsCard>
             <img src={Avatar} alt="" />
             <p>
-              <b>{statistics.temoignagesCount}</b>
+              <b>{statistics.temoignagesCount || "N/A"}</b>
             </p>
             <p>interrogé·e{isTemoignagesPlural} </p>
           </StatisticsCard>
           <StatisticsCard>
             <img src={Application} alt="" />
             <p>
-              <b>{statistics.medianDuration}</b>
+              <b>{statistics.medianDuration || "N/A"}</b>
             </p>
             <p>temps médian de passation</p>
           </StatisticsCard>
           <StatisticsCard>
             <img src={Avatar} alt="" />
             <p>
-              <b>{statistics.champsLibreRate}</b>
+              <b>{statistics.champsLibreRate || "N/A"}</b>
             </p>
             <p>réponse champs libres</p>
           </StatisticsCard>
           <StatisticsCard>
             <img src={Community} alt="" />
             <p>
-              <b>{statistics.verbatimsCount}</b>
+              <b>{statistics.verbatimsCount || "N/A"}</b>
             </p>
             <p>
               verbatim{isVerbatimsPlural} recueilli{isVerbatimsPlural}

@@ -14,6 +14,7 @@ import useFetchCampagnesSorted from "../../../hooks/useFetchCampagnesSorted";
 import {
   CAMPAGNE_TABLE_TYPES,
   OBSERVER_SCOPES_LABELS,
+  USER_ROLES,
   campagnesDisplayMode,
 } from "../../../constants";
 import { isPlural } from "../../utils";
@@ -114,16 +115,6 @@ const CampagnesSelector = ({
           <b>{OBSERVER_SCOPES_LABELS[userContext.scope.field]}</b> <b>{userContext.scope.value}</b>.
         </p>
       )}
-      <SortButtons
-        displayMode={displayMode}
-        setDisplayMode={setDisplayMode}
-        search={search}
-        setSearch={setSearch}
-        setIsOpened={setIsOpened}
-        organizeLabel={
-          isManage ? "Organiser mes campagnes par" : "Sélectionner les résultats à afficher"
-        }
-      />
       {isLoading && (
         <LoaderContainer>
           <BeatLoader
@@ -140,8 +131,29 @@ const CampagnesSelector = ({
           severity="error"
         />
       ) : null}
-      {isSuccess ? (
+      {isSuccess && !campagnesSorted?.length && (
+        <Alert
+          title="Aucune campagne trouvée"
+          description={
+            userContext?.currentUserRole === USER_ROLES.OBSERVER
+              ? "Votre scope n'est pas encore défini. Vous ne pouvez pas accéder aux campagnes. Merci de contacter un administrateur."
+              : "Aucune campagne n'a été trouvée."
+          }
+          severity="info"
+        />
+      )}
+      {isSuccess && campagnesSorted?.length ? (
         <>
+          <SortButtons
+            displayMode={displayMode}
+            setDisplayMode={setDisplayMode}
+            search={search}
+            setSearch={setSearch}
+            setIsOpened={setIsOpened}
+            organizeLabel={
+              isManage ? "Organiser mes campagnes par" : "Sélectionner les résultats à afficher"
+            }
+          />
           <HeaderContainer>
             <Checkbox
               options={[

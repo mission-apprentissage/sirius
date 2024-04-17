@@ -94,7 +94,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
     if (isAdmin) {
       campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements();
     } else if (isObserver) {
-      campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements(null, scope);
+      campagnes = scope ? await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements(null, scope) : [];
     } else {
       let allSirets = [];
       for (const siret of userSiret) {

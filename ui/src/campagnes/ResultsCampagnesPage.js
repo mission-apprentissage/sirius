@@ -62,6 +62,7 @@ const ResultsCampagnesPage = () => {
     isSuccess: isSuccessCampagnesDatavisualisation,
     isLoading: isLoadingCampagnesDatavisualisation,
     isError: isErrorCampagnesDatavisualisation,
+    isIdle: isIdleCampagnesDatavisualisation,
   } = useFetchTemoignagesDatavisualisation();
 
   const { mutate: mutateCampagnesStatistics, statistics } = useFetchCampagnesStatistics();
@@ -137,8 +138,9 @@ const ResultsCampagnesPage = () => {
               priority="secondary"
               iconId="fr-icon-file-download-fill"
               onClick={handlePdfExport}
+              disabled={pdfExportLoading || isLoading || !selectedCampagneIds.length}
             >
-              {pdfExportLoading || isLoading ? (
+              {pdfExportLoading ? (
                 <BeatLoader
                   color="var(--background-action-high-blue-france)"
                   size={10}
@@ -166,6 +168,16 @@ const ResultsCampagnesPage = () => {
             severity="error"
           />
         ) : null}
+        {!datavisualisation &&
+          !isErrorCampagnesDatavisualisation &&
+          !isLoadingCampagnesDatavisualisation &&
+          isIdleCampagnesDatavisualisation && (
+            <Alert
+              title="Aucun témoignage n'est disponible pour les campagnes sélectionnées"
+              description="Merci de sélectionner d'autres campagnes"
+              severity="info"
+            />
+          )}
         {shouldDisplayTabbedResults && !pdfExportLoading ? (
           <MultipleQuestionnairesTabs
             temoignages={datavisualisation}

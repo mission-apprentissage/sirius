@@ -205,7 +205,7 @@ const getAllOnlyDiplomeTypeAndEtablissements = async (query, scope) => {
     deletedAt: null,
   };
 
-  if (scope && scope.field && scope.value) {
+  if (scope) {
     matchConditions[`formation.data.${scope.field}`] = scope.value;
   }
 
