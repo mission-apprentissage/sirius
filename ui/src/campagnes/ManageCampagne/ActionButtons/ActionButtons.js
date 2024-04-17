@@ -11,7 +11,7 @@ import { UserContext } from "../../../context/UserContext";
 
 const modal = createModal({
   id: "delete-campagne-modal",
-  isOpenedByDefault: true,
+  isOpenedByDefault: false,
 });
 
 const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {

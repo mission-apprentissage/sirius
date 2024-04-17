@@ -20,7 +20,7 @@ const modal = createModal({
 
 const successCreationModal = createModal({
   id: "success-creation-modal",
-  isOpenedByDefault: true,
+  isOpenedByDefault: false,
 });
 
 const ManageCampagnesPage = () => {
