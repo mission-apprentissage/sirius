@@ -91,12 +91,34 @@ const usersTableColumns = (
     header: "Confirmé",
   }),
   columnHelper.accessor(
-    ({ siret, etablissement, etablissements }) => [siret, etablissement, etablissements],
+    ({ siret, etablissement, etablissements, scope }) => [
+      siret,
+      etablissement,
+      etablissements,
+      scope,
+    ],
     {
       cell: (info) => {
         const siret = info.getValue()[0];
         const singleEtablissement = info.getValue[1];
         const etablissements = info.getValue()[2];
+        const scope = info.getValue()[3];
+
+        if (typeof scope?.value === "string") {
+          return (
+            <Box display="flex" flexDirection="column">
+              <Text>{scope.value}</Text>
+            </Box>
+          );
+        } else if (typeof scope?.value === "object") {
+          return (
+            <Box display="flex" flexDirection="column">
+              {scope.value.map((value) => (
+                <Text key={value}>{value}</Text>
+              ))}
+            </Box>
+          );
+        }
 
         return (
           <Box display="flex" flexDirection="column">

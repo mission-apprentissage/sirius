@@ -13,6 +13,7 @@ import { LoaderContainer, HeaderContainer } from "../../styles/shared.style";
 import useFetchCampagnesSorted from "../../../hooks/useFetchCampagnesSorted";
 import {
   CAMPAGNE_TABLE_TYPES,
+  OBSERVER_SCOPES,
   OBSERVER_SCOPES_LABELS,
   USER_ROLES,
   campagnesDisplayMode,
@@ -136,7 +137,8 @@ const CampagnesSelector = ({
       {userContext?.scope && (
         <p>
           Vous avez accès aux campagnes pour{" "}
-          <b>{OBSERVER_SCOPES_LABELS[userContext.scope.field]}</b> <b>{userContext.scope.value}</b>.
+          <b>{OBSERVER_SCOPES_LABELS[userContext.scope.field]}</b>{" "}
+          {userContext.scope.field !== OBSERVER_SCOPES.SIRETS && <b>{userContext.scope.value}</b>}
         </p>
       )}
       {isLoading && (

@@ -175,8 +175,12 @@ const getAllWithTemoignageCountAndTemplateName = async ({ siret, query, scope })
     deletedAt: null,
   };
 
-  if (scope && scope.field && scope.value) {
+  if (scope && scope.field && scope.field !== "sirets" && scope.value) {
     matchConditions[`formation.data.${scope.field}`] = scope.value;
+  }
+
+  if (scope && scope.field && scope.field === "sirets" && scope.value.length) {
+    matchConditions[`formation.data.etablissement_formateur_siret`] = { $in: scope.value };
   }
 
   if (query && query.diplome) {
@@ -205,8 +209,12 @@ const getAllOnlyDiplomeTypeAndEtablissements = async (query, scope) => {
     deletedAt: null,
   };
 
-  if (scope) {
+  if (scope && scope.field !== "sirets") {
     matchConditions[`formation.data.${scope.field}`] = scope.value;
+  }
+
+  if (scope && scope.field && scope.field === "sirets" && scope.value.length) {
+    matchConditions[`formation.data.etablissement_gestionnaire_siret`] = { $in: scope.value };
   }
 
   return Campagne.aggregate([

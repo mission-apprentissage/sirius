@@ -12,12 +12,13 @@ import {
   useToast,
   Stack,
   Input,
+  Textarea,
 } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import { useFormik } from "formik";
 import { _put } from "../../utils/httpClient";
 import { UserContext } from "../../context/UserContext";
-import { OBSERVER_SCOPES_LABELS } from "../../constants";
+import { OBSERVER_SCOPES, OBSERVER_SCOPES_LABELS } from "../../constants";
 
 const scopesOptions = Object.entries(OBSERVER_SCOPES_LABELS).map(([value, label]) => ({
   label,
@@ -96,7 +97,7 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
                 {user.firstName} {user.lastName}
               </Text>
             </Text>
-            <Stack mt="16px" direction="horizontal">
+            <Stack mt="16px" direction={scopeField === OBSERVER_SCOPES.SIRETS ? "column" : "row"}>
               <Select
                 options={scopesOptions}
                 placeholder="Scopes"
@@ -122,13 +123,28 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
                 value={scopesOptions.find((option) => option.value === scopeField)}
                 onChange={(e) => setScopeField(e.value)}
               />
-              <Input
-                name="value"
-                placeholder="Valeur"
-                value={scopeValue}
-                w="50%"
-                onChange={(e) => setScopeValue(e.target.value ? e.target.value : null)}
-              />
+              {scopeField === OBSERVER_SCOPES.SIRETS ? (
+                <Textarea
+                  onChange={(e) =>
+                    setScopeValue(
+                      e.target.value ? e.target.value.split(",").map((siret) => siret.trim()) : null
+                    )
+                  }
+                  placeholder="Liste de SIRET, séparés par des virgules"
+                  mt="10px"
+                  color="brand.black.500"
+                  _placeholder={{ color: "brand.black.500" }}
+                  spellCheck
+                />
+              ) : (
+                <Input
+                  name="value"
+                  placeholder="Valeur"
+                  value={scopeValue}
+                  w="50%"
+                  onChange={(e) => setScopeValue(e.target.value ? e.target.value : null)}
+                />
+              )}
             </Stack>
           </ModalBody>
           <ModalFooter alignItems="center" justifyContent="center" mt="15">

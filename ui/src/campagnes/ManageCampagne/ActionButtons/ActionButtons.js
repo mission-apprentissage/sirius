@@ -8,6 +8,7 @@ import DeleteCampagneConfirmationModal from "../DeleteCampagneConfirmationModal"
 import { _get } from "../../../utils/httpClient";
 import { ActionButtonsContainer, ToolTipContainer } from "./actionButtons.style";
 import { UserContext } from "../../../context/UserContext";
+import { USER_ROLES } from "../../../constants";
 
 const modal = createModal({
   id: "delete-campagne-modal",
@@ -24,7 +25,9 @@ const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {
     const persistedEtablissement = JSON.parse(localStorage.getItem("etablissements"));
 
     const response = await _get(
-      `/api/campagnes/export/pdf/multi?ids=${selectedCampagneIds}&siret=${persistedEtablissement.siret}`,
+      `/api/campagnes/export/pdf/multi?ids=${selectedCampagneIds}&siret=${
+        userContext.currentUserRole === USER_ROLES.ADMIN ? "" : persistedEtablissement?.siret
+      }`,
       userContext.token
     );
 

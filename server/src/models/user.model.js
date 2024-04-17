@@ -13,7 +13,10 @@ const Session = new mongoose.Schema({
 const ScopeSchema = new mongoose.Schema(
   {
     field: { type: String, default: null },
-    value: { type: String, default: null },
+    value: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
+    },
   },
   { _id: false }
 );
