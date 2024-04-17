@@ -75,18 +75,6 @@ const LoginPage = () => {
             scope: decodedToken.scope,
           };
         });
-        if (decodedToken.role === USER_ROLES.ETABLISSEMENT) {
-          localStorage.setItem(
-            "etablissements",
-            JSON.stringify({
-              siret: decodedToken.siret || decodedToken.etablissements[0].siret,
-              etablissementLabel:
-                decodedToken.etablissementLabel ||
-                etablissementLabelGetter(decodedToken.etablissements[0]),
-              etablissements: decodedToken.etablissements || [],
-            })
-          );
-        }
 
         if (decodedToken.role === USER_ROLES.OBSERVER) {
           navigate("/campagnes/resultats");

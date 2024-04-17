@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { isPlural } from "../utils";
 import useDeleteCampagnes from "../../hooks/useDeleteCampagnes";
+import { UserContext } from "../../context/UserContext";
 
 const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelectedCampagnes }) => {
-  const persistedEtablissement = JSON.parse(localStorage.getItem("etablissements"));
+  const [userContext] = useContext(UserContext);
+  const persistedEtablissement = userContext.etablissements[0];
 
   const { mutate: deleteCampagnes, isLoading, error } = useDeleteCampagnes();
 

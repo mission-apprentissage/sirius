@@ -20,7 +20,6 @@ const DsfrNavbar = () => {
     e.preventDefault();
     const result = await _get(`/api/users/logout`, userContext.token);
     if (result.success) {
-      localStorage.removeItem("etablissements");
       navigate(0);
     }
   };
