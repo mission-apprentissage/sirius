@@ -9,6 +9,7 @@ import * as serviceWorker from "./serviceWorker";
 import { UserProvider } from "./context/UserContext";
 import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 startReactDsfr({ defaultColorScheme: "light", Link });
 
@@ -119,6 +120,7 @@ root.render(
           </Router>
         </UserProvider>
       </ChakraProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>
 );
