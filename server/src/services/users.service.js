@@ -20,41 +20,45 @@ const loginUser = async (id) => {
     const user = await usersDao.getOne(id);
 
     const token = getToken({
-      _id: id,
-      role: user.role,
-      status: user.status,
-      siret: user.siret,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN &&
-        user.etablissement && {
-          etablissementLabel:
-            user.etablissement.onisep_nom ||
-            user.etablissement.enseigne ||
-            user.etablissement.entreprise_raison_sociale,
-        }),
-      etablissements: user.etablissements,
-      acceptedCgu: user.acceptedCgu,
-      scope: user.scope,
+      user: {
+        _id: id,
+        role: user.role,
+        status: user.status,
+        siret: user.siret,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        ...(user.role !== USER_ROLES.ADMIN &&
+          user.etablissement && {
+            etablissementLabel:
+              user.etablissement.onisep_nom ||
+              user.etablissement.enseigne ||
+              user.etablissement.entreprise_raison_sociale,
+          }),
+        etablissements: user.etablissements,
+        acceptedCgu: user.acceptedCgu,
+        scope: user.scope,
+      },
     });
     const refreshToken = getRefreshToken({
-      _id: id,
-      role: user.role,
-      status: user.status,
-      siret: user.siret,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN &&
-        user.etablissement && {
-          etablissementLabel:
-            user.etablissement.onisep_nom ||
-            user.etablissement.enseigne ||
-            user.etablissement.entreprise_raison_sociale,
-        }),
-      acceptedCgu: user.acceptedCgu,
-      scope: user.scope,
+      user: {
+        _id: id,
+        role: user.role,
+        status: user.status,
+        siret: user.siret,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        ...(user.role !== USER_ROLES.ADMIN &&
+          user.etablissement && {
+            etablissementLabel:
+              user.etablissement.onisep_nom ||
+              user.etablissement.enseigne ||
+              user.etablissement.entreprise_raison_sociale,
+          }),
+        acceptedCgu: user.acceptedCgu,
+        scope: user.scope,
+      },
     });
 
     user.refreshToken.push({ refreshToken });
@@ -72,43 +76,33 @@ const sudo = async (id) => {
     const user = await usersDao.getOne(id);
 
     const token = getToken({
-      _id: id,
-      role: user.role,
-      status: user.status,
-      siret: user.siret,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN &&
-        user.etablissement && {
-          etablissementLabel:
-            user.etablissement.onisep_nom ||
-            user.etablissement.enseigne ||
-            user.etablissement.entreprise_raison_sociale,
-        }),
-      etablissements: user.etablissements,
-      acceptedCgu: user.acceptedCgu,
-      isSudo: true,
-      scope: user.scope,
+      user: {
+        _id: id,
+        role: user.role,
+        status: user.status,
+        siret: user.siret,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        etablissements: user.etablissements,
+        acceptedCgu: user.acceptedCgu,
+        isSudo: true,
+        scope: user.scope,
+      },
     });
     const refreshToken = getRefreshToken({
-      _id: id,
-      role: user.role,
-      status: user.status,
-      siret: user.siret,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN &&
-        user.etablissement && {
-          etablissementLabel:
-            user.etablissement.onisep_nom ||
-            user.etablissement.enseigne ||
-            user.etablissement.entreprise_raison_sociale,
-        }),
-      acceptedCgu: user.acceptedCgu,
-      isSudo: true,
-      scope: user.scope,
+      user: {
+        _id: id,
+        role: user.role,
+        status: user.status,
+        siret: user.siret,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        acceptedCgu: user.acceptedCgu,
+        isSudo: true,
+        scope: user.scope,
+      },
     });
 
     user.refreshToken.push({ refreshToken });
@@ -124,48 +118,38 @@ const sudo = async (id) => {
 const refreshTokenUser = async (refreshToken) => {
   try {
     const payload = jwt.verify(refreshToken, config.auth.refreshTokenSecret);
-    const userId = payload._id;
+    const userId = payload.user._id;
 
     const user = await usersDao.getOne(userId);
 
     const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
 
     const token = getToken({
-      _id: userId,
-      role: user.role,
-      status: user.status,
-      siret: user.siret,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN &&
-        user.etablissement && {
-          etablissementLabel:
-            user.etablissement.onisep_nom ||
-            user.etablissement.enseigne ||
-            user.etablissement.entreprise_raison_sociale,
-        }),
-      etablissements: user.etablissements,
-      acceptedCgu: user.acceptedCgu,
-      scope: user.scope,
+      user: {
+        _id: userId,
+        role: user.role,
+        status: user.status,
+        siret: user.siret,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        etablissements: user.etablissements,
+        acceptedCgu: user.acceptedCgu,
+        scope: user.scope,
+      },
     });
     const newRefreshToken = getRefreshToken({
-      _id: userId,
-      role: user.role,
-      status: user.status,
-      siret: user.siret,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      ...(user.role !== USER_ROLES.ADMIN &&
-        user.etablissement && {
-          etablissementLabel:
-            user.etablissement.onisep_nom ||
-            user.etablissement.enseigne ||
-            user.etablissement.entreprise_raison_sociale,
-        }),
-      acceptedCgu: user.acceptedCgu,
-      scope: user.scope,
+      user: {
+        _id: userId,
+        role: user.role,
+        status: user.status,
+        siret: user.siret,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        acceptedCgu: user.acceptedCgu,
+        scope: user.scope,
+      },
     });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
 

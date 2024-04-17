@@ -7,7 +7,7 @@ const useFetchAlreadyExistingFormations = ({ campagneIds, enabled }) => {
   const [userContext] = useContext(UserContext);
 
   const { data, isSuccess, isError, isLoading } = useQuery({
-    queryKey: ["formations-local-id", campagneIds],
+    queryKey: ["formations-local-id"],
     queryFn: () => fetchAlreadyExistingFormations({ campagneIds, token: userContext.token }),
     enabled: !!enabled,
   });

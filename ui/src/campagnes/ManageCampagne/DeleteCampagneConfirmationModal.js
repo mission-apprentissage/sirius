@@ -7,7 +7,7 @@ import { UserContext } from "../../context/UserContext";
 
 const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelectedCampagnes }) => {
   const [userContext] = useContext(UserContext);
-  const persistedEtablissement = userContext.etablissements[0];
+  const persistedEtablissement = userContext.user?.etablissements[0];
 
   const { mutate: deleteCampagnes, isLoading, error } = useDeleteCampagnes();
 

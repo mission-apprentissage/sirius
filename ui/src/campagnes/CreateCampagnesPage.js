@@ -73,7 +73,7 @@ const CreateCampagnesPage = () => {
 
       const formationsWithCreator = remoteFormations.map((formation) => ({
         ...formation,
-        createdBy: userContext.currentUserId,
+        createdBy: userContext.user?._id,
       }));
 
       const payload = formattedValues.map((campagne) => {

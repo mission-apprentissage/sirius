@@ -40,8 +40,8 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   const [userContext] = useContext(UserContext);
   const [page, setPage] = useState(1);
 
-  const isAdmin = userContext.currentUserRole === USER_ROLES.ADMIN;
-  const userSiret = userContext.etablissements.map((etablissement) => etablissement.siret);
+  const isAdmin = userContext.user?.role === USER_ROLES.ADMIN;
+  const userSiret = userContext.user?.etablissements.map((etablissement) => etablissement.siret);
 
   const formattedUserSiret = userSiret
     .map((siret) => [

@@ -2,12 +2,12 @@ import React, { useState, useContext } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate, useNavigate, useLocation, Link } from "react-router-dom";
+import BeatLoader from "react-spinners/BeatLoader";
 import jwt from "jwt-decode";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { Form, StyledPasswordInput } from "./styles/login.style";
 import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
@@ -15,8 +15,9 @@ import Support from "../assets/images/support.svg";
 import ForgottenPasswordModal from "./Components/ForgottenPasswordModal";
 import ChangePasswordModal from "./Components/ChangePasswordModal";
 import { USER_ROLES, emailWithTLDRegex } from "../constants";
-import { etablissementLabelGetter } from "../utils/etablissement";
 import NeedHelp from "../Components/NeedHelp";
+import useLoginUser from "../hooks/useLoginUser";
+import { LoaderContainer } from "../campagnes/styles/shared.style";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -40,6 +41,8 @@ const LoginPage = () => {
   const [error, setError] = useState(null);
   const [userContext, setUserContext] = useContext(UserContext);
 
+  const { loginUser, isLoading } = useLoginUser();
+
   const { search } = useLocation();
 
   const token = new URLSearchParams(search).get("token");
@@ -52,46 +55,40 @@ const LoginPage = () => {
     validationSchema: validationSchema,
     onSubmit: async ({ email, password }) => {
       setIsSubmitting(true);
-      const result = await _post(`/api/users/login`, {
-        email: email.toLowerCase(),
-        password,
-      });
-      if (result.success) {
-        const decodedToken = jwt(result.token);
-        setUserContext((oldValues) => {
-          return {
-            ...oldValues,
-            token: result.token,
-            loading: false,
-            currentUserId: decodedToken._id,
-            currentUserRole: decodedToken.role,
-            currentUserStatus: decodedToken.status,
-            firstName: decodedToken.firstName,
-            lastName: decodedToken.lastName,
-            email: decodedToken.email,
-            siret: decodedToken.siret,
-            acceptedCgu: decodedToken.acceptedCgu || false,
-            etablissements: decodedToken.etablissements || [],
-            scope: decodedToken.scope,
-          };
-        });
+      loginUser(
+        { email: email.toLocaleLowerCase(), password },
+        {
+          onSuccess: (result) => {
+            const decodedToken = jwt(result.token);
+            setUserContext(() => {
+              return {
+                loading: false,
+                token: result.token,
+                user: decodedToken.user,
+              };
+            });
 
-        if (decodedToken.role === USER_ROLES.OBSERVER) {
-          navigate("/campagnes/resultats");
-        } else {
-          navigate("/campagnes/gestion");
+            if (decodedToken.role === USER_ROLES.OBSERVER) {
+              navigate("/campagnes/resultats");
+            } else {
+              navigate("/campagnes/gestion");
+            }
+          },
+          onError: (error) => {
+            if (error.statusCode === 400) {
+              setError("Erreur de validation");
+            } else if (error.statusCode === 401) {
+              setError("L'adresse email ou le mot de passe est incorrect.");
+            } else if (error.statusCode === 500) {
+              setError("Merci de réessayer.");
+            } else if (error.statusCode === 403) {
+              setError("Votre adresse email n'est pas confirmée.");
+            } else if (error.statusCode === 429) {
+              setError(error.message);
+            }
+          },
         }
-      } else if (result.statusCode === 400) {
-        setError("Erreur de validation");
-      } else if (result.statusCode === 401) {
-        setError("L'adresse email ou le mot de passe est incorrect.");
-      } else if (result.statusCode === 500) {
-        setError("Merci de réessayer.");
-      } else if (result.statusCode === 403) {
-        setError("Votre adresse email n'est pas confirmée.");
-      } else if (result.statusCode === 429) {
-        setError(result.message);
-      }
+      );
       setIsSubmitting(false);
     },
   });
@@ -177,7 +174,17 @@ const LoginPage = () => {
             type="submit"
             disabled={isSubmitting}
           >
-            Connexion
+            {isLoading ? (
+              <LoaderContainer>
+                <BeatLoader
+                  color="var(--background-action-high-blue-france)"
+                  size={20}
+                  aria-label="Loading Spinner"
+                />
+              </LoaderContainer>
+            ) : (
+              "Connexion"
+            )}
           </Button>
         </Form>
         <p>

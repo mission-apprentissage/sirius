@@ -37,20 +37,11 @@ const UsersTable = ({ users, setRefetchData }) => {
   useEffect(() => {
     if (isSuccess && sudoUser) {
       const decodedToken = jwt(sudoUser.token);
-      setUserContext((oldValues) => {
+      setUserContext(() => {
         return {
-          ...oldValues,
-          token: sudoUser.token,
           loading: false,
-          currentUserId: decodedToken._id,
-          currentUserRole: decodedToken.role,
-          currentUserStatus: decodedToken.status,
-          firstName: decodedToken.firstName,
-          lastName: decodedToken.lastName,
-          email: decodedToken.email,
-          siret: decodedToken.siret,
-          acceptedCgu: decodedToken.acceptedCgu || false,
-          etablissements: decodedToken.etablissements || [],
+          token: sudoUser.token,
+          user: decodedToken.user,
         };
       });
 
@@ -93,7 +84,6 @@ const UsersTable = ({ users, setRefetchData }) => {
   const table = useReactTable({
     columns: usersTableColumns(
       userContext,
-      setUserContext,
       setSelectedUser,
       setSelectedStatus,
       onOpenStatusConfirmation,

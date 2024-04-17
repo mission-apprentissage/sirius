@@ -8,7 +8,6 @@ const columnHelper = createColumnHelper();
 
 const usersTableColumns = (
   userContext,
-  setUserContext,
   setSelectedUser,
   setSelectedStatus,
   onOpenStatusConfirmation,
@@ -18,7 +17,6 @@ const usersTableColumns = (
   onCopyClipBoard,
   onOpenAddSiret,
   onOpenAddScope,
-  navigate,
   setSudoUserId
 ) => [
   columnHelper.accessor("firstName", {
@@ -162,7 +160,7 @@ const usersTableColumns = (
 
       return (
         <Box minW="100px">
-          {user._id === userContext.currentUserId ? (
+          {user._id === userContext.user?._id ? (
             <Tooltip label="Vous ne pouvez pas modifier votre propre status" hasArrow>
               <span>{USER_STATUS[user.status]}</span>
             </Tooltip>
@@ -194,7 +192,7 @@ const usersTableColumns = (
 
       return (
         <Box minW="150px">
-          {user._id === userContext.currentUserId ? (
+          {user._id === userContext.user?._id ? (
             <Tooltip label="Vous ne pouvez pas modifier votre propre role" hasArrow>
               <span>{USER_ROLES[user.role]}</span>
             </Tooltip>

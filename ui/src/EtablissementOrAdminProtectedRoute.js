@@ -16,13 +16,12 @@ const LoaderContainer = styled.main`
 
 const EtablissementOrAdminProtectedRoute = () => {
   const [userContext, setUserContext] = useContext(UserContext);
-
-  const isAuthenticated = userContext?.token;
-  const isActive = userContext?.currentUserStatus === USER_STATUS.ACTIVE;
-  const hasAcceptedCgu = userContext?.acceptedCgu;
+  const isAuthenticated = userContext.token;
+  const isActive = userContext.user?.status === USER_STATUS.ACTIVE;
+  const hasAcceptedCgu = userContext.user?.acceptedCgu;
   const isAdminOrEtablissement =
-    userContext?.currentUserRole === USER_ROLES.ADMIN ||
-    userContext?.currentUserRole === USER_ROLES.ETABLISSEMENT;
+    userContext.user?.role === USER_ROLES.ADMIN ||
+    userContext.user?.role === USER_ROLES.ETABLISSEMENT;
 
   if (userContext.loading)
     return (

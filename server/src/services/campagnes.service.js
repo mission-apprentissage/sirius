@@ -82,7 +82,6 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageS
       },
     };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };

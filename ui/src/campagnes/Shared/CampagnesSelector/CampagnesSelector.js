@@ -137,8 +137,10 @@ const CampagnesSelector = ({
       {userContext?.scope && (
         <p>
           Vous avez accès aux campagnes pour{" "}
-          <b>{OBSERVER_SCOPES_LABELS[userContext.scope.field]}</b>{" "}
-          {userContext.scope.field !== OBSERVER_SCOPES.SIRETS && <b>{userContext.scope.value}</b>}
+          <b>{OBSERVER_SCOPES_LABELS[userContext.user?.scope.field]}</b>{" "}
+          {userContext.user?.scope.field !== OBSERVER_SCOPES.SIRETS && (
+            <b>{userContext.user?.scope.value}</b>
+          )}
         </p>
       )}
       {isLoading && (
@@ -161,7 +163,7 @@ const CampagnesSelector = ({
         <Alert
           title="Aucune campagne trouvée"
           description={
-            userContext?.currentUserRole === USER_ROLES.OBSERVER
+            userContext?.user.role === USER_ROLES.OBSERVER
               ? "Votre scope n'est pas encore défini. Vous ne pouvez pas accéder aux campagnes. Merci de contacter un administrateur."
               : "Aucune campagne n'a été trouvée."
           }

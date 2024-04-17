@@ -22,10 +22,10 @@ const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {
 
   const handleDownload = async () => {
     setIsLoadingDownload(true);
-    const persistedEtablissement = userContext.etablissements[0];
+    const persistedEtablissement = userContext.user?.etablissements[0];
     const response = await _get(
       `/api/campagnes/export/pdf/multi?ids=${selectedCampagneIds}&siret=${
-        userContext.currentUserRole === USER_ROLES.ADMIN ? "" : persistedEtablissement?.siret
+        userContext.user?.role === USER_ROLES.ADMIN ? "" : persistedEtablissement?.siret
       }`,
       userContext.token
     );

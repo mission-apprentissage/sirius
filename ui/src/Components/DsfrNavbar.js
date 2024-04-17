@@ -32,8 +32,8 @@ const DsfrNavbar = () => {
   const campagnesResultsRoute = location.pathname === "/campagnes/resultats";
 
   const isLoggedIn = !!userContext.token;
-  const isAdmin = userContext.currentUserRole === USER_ROLES.ADMIN;
-  const isObserver = userContext.currentUserRole === USER_ROLES.OBSERVER;
+  const isAdmin = userContext.user?.role === USER_ROLES.ADMIN;
+  const isObserver = userContext.user?.role === USER_ROLES.OBSERVER;
 
   const quickAccessItemsLoggedOutAndOthersRoute = [
     {
@@ -96,7 +96,7 @@ const DsfrNavbar = () => {
     },
     {
       linkProps: {},
-      text: `${userContext.firstName} ${userContext.lastName}`,
+      text: `${userContext.user?.firstName} ${userContext.user?.lastName}`,
     },
     {
       iconId: "fr-icon-logout-box-r-fill",
