@@ -107,7 +107,11 @@ const DisplayByEtablissementCards = ({
 
               nativeInputProps: {
                 name: `selectAll${siret}`,
-                checked: formationSelectedCountByEtablissement === formationsByEtablissement.length,
+                checked:
+                  formationSelectedCountByEtablissement ===
+                  formationsByEtablissement.filter(
+                    (formation) => !existingFormationIds.includes(formation._id)
+                  ).length,
                 onChange: (e) => {
                   setSelectedFormations((prevValues) => {
                     if (e.target.checked) {

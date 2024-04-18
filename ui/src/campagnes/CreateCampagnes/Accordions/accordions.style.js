@@ -38,6 +38,7 @@ export const AccordionLabelByEtablissementContainer = styled.div`
 `;
 
 export const StyledAccordion = styled(Accordion)`
+  min-width: 100%;
   & label:first-of-type {
     margin-top: 1.5rem;
   }

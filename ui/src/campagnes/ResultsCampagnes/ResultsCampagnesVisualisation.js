@@ -30,7 +30,7 @@ const ResultsCampagnesVisualisation = ({ temoignages }) => {
   const [expandedAccordion, setExpandedAccordion] = useState("");
 
   return (
-    <div className={fr.cx("fr-accordions-group")}>
+    <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
       {temoignages.categories.map((category, index) => {
         return (
           <Accordion

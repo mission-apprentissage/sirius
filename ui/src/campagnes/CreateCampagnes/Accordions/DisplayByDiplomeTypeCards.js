@@ -67,7 +67,11 @@ const DisplayByDiplomeTypeCards = ({
               label: checkboxLabel,
               nativeInputProps: {
                 name: `selectAll${diplomeType}`,
-                checked: formationSelectedCountByDiplomeType === formationsByDiplomeType.length,
+                checked:
+                  formationSelectedCountByDiplomeType ===
+                  formationsByDiplomeType.filter(
+                    (formation) => !existingFormationIds.includes(formation._id)
+                  ).length,
                 onChange: (e) => {
                   setSelectedFormations((prevValues) => {
                     if (e.target.checked) {

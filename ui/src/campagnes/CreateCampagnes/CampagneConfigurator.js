@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import SortButtons from "../Shared/SortButtons/SortButtons";
 import { StepContainer } from "../styles/createCampagnes.style";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
 import { orderFormationsByDiplomeType } from "../utils";
 import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
 import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
-import { SearchNoResultsContainer } from "../styles/shared.style";
 import DisplayByAllTable from "./Accordions/DisplayByAllTable";
 
 const AccordionComponentGetter = ({ displayMode, ...props }) => {
   if (displayMode === campagnesDisplayMode[0].value) {
     return (
-      <div className={fr.cx("fr-accordions-group")}>
+      <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
         <DisplayByDiplomeTypeTable {...props} />
       </div>
     );
   } else if (displayMode === campagnesDisplayMode[1].value) {
     return (
-      <div className={fr.cx("fr-accordions-group")}>
+      <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
         <DisplayByEtablissementTable {...props} />
       </div>
     );
@@ -46,12 +47,12 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
     } else {
       const filteredFormations = searchedDiplayedFormations.filter((formation) => {
         return (
-          formation.intitule_long.toLowerCase().includes(search) ||
-          formation.localite.toLowerCase().includes(search) ||
-          formation.etablissement_gestionnaire_enseigne.toLowerCase().includes(search) ||
-          formation.etablissement_formateur_adresse.toLowerCase().includes(search) ||
-          formation.etablissement_formateur_siret.toLowerCase().includes(search) ||
-          formation.tags.join("-").toLowerCase().includes(search)
+          formation.intitule_long?.toLowerCase().includes(search) ||
+          formation.localite?.toLowerCase().includes(search) ||
+          formation.etablissement_gestionnaire_enseigne?.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_adresse?.toLowerCase().includes(search) ||
+          formation.etablissement_formateur_siret?.toLowerCase().includes(search) ||
+          formation.tags?.join("-").toLowerCase().includes(search)
         );
       });
       setSearchedDiplayedFormations(filteredFormations);
@@ -81,10 +82,15 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
         mode="creation"
       />
       {!searchedDiplayedFormations?.length && search ? (
-        <SearchNoResultsContainer>
-          <h3>Aucun résultats pour votre recherche</h3>
-          <p onClick={() => setSearch("")}>Réinitialiser ?</p>
-        </SearchNoResultsContainer>
+        <Alert
+          title={`Aucun résultats pour votre recherche « ${search} »`}
+          description={
+            <Button priority="secondary" onClick={() => setSearch("")}>
+              Réinitialiser la recherche
+            </Button>
+          }
+          severity="info"
+        />
       ) : null}
       {searchedDiplayedFormations?.length ? (
         <AccordionComponentGetter

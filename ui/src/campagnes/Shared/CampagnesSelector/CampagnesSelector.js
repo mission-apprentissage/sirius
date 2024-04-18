@@ -245,7 +245,7 @@ const CampagnesSelector = ({
                   severity="info"
                 />
               ) : (
-                <div className={fr.cx("fr-accordions-group")}>
+                <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
                   <div style={{ display: isOpened || isManage ? "inherit" : "none" }}>
                     <AccordionComponentGetter
                       campagnesSorted={campagnesSorted}

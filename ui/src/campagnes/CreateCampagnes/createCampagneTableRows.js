@@ -92,6 +92,7 @@ const createCampagneTableRows = ({
         formik={formik}
         type="text"
         placeholder="Ex: BAC PRO MV"
+        width="170px"
       />,
       <CellInputConfigure
         key={`${formation._id}-startDate`}
@@ -99,6 +100,7 @@ const createCampagneTableRows = ({
         name="startDate"
         type="date"
         formik={formik}
+        width="170px"
       />,
       <CellInputConfigure
         key={`${formation._id}-endDate`}
@@ -106,12 +108,14 @@ const createCampagneTableRows = ({
         name="endDate"
         type="date"
         formik={formik}
+        width="170px"
       />,
       <CellInputSeatsConfigure
         key={`${formation._id}-seats`}
         id={formation._id}
         name="seats"
         formik={formik}
+        width="100px"
       />,
     ];
   });
