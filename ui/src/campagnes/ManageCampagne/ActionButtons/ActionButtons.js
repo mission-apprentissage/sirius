@@ -22,7 +22,7 @@ const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {
 
   const handleDownload = async () => {
     setIsLoadingDownload(true);
-    const persistedEtablissement = userContext.user?.etablissements.length
+    const persistedEtablissement = userContext.user?.etablissements?.length
       ? userContext.user?.etablissements[0]
       : "";
     const response = await _get(

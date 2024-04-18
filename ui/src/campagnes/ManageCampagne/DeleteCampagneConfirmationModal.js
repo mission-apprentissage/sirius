@@ -7,7 +7,7 @@ import { UserContext } from "../../context/UserContext";
 
 const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelectedCampagnes }) => {
   const [userContext] = useContext(UserContext);
-  const persistedEtablissement = userContext.user?.etablissements.length
+  const persistedEtablissement = userContext.user?.etablissements?.length
     ? userContext.user?.etablissements[0]
     : "";
 
