@@ -9,6 +9,7 @@ const useFetchTemoignagesDatavisualisation = () => {
   const { mutate, data, isSuccess, isError, isLoading, isIdle } = useMutation({
     mutationFn: (campagneIds) =>
       fetchTemoignagesDatavisualisation({ campagneIds, token: userContext.token }),
+    mutationKey: "fetchTemoignagesDatavisualisation",
   });
 
   return { mutate, datavisualisation: data, isSuccess, isError, isLoading, isIdle };

@@ -10,6 +10,7 @@ const useDeleteCampagnes = () => {
   const { mutate, data, isSuccess, isError, isLoading } = useMutation({
     mutationFn: ({ campagneIds, siret }) =>
       deleteCampagnes({ campagneIds, siret, token: userContext.token }),
+    mutationKey: "deleteCampagnes",
     onSuccess: () => {
       queryClient.invalidateQueries("campagnes");
     },

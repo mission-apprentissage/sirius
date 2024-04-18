@@ -9,6 +9,7 @@ const useFetchCampagnesStatistics = () => {
   const { mutate, data, isSuccess, isError, isLoading } = useMutation({
     mutationFn: (campagneIds) =>
       fetchCampagnesStatistics({ campagneIds, token: userContext.token }),
+    mutationKey: "fetchCampagnesStatistics",
   });
 
   return { mutate, statistics: data, isSuccess, isError, isLoading };
