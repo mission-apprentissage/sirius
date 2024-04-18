@@ -6,7 +6,7 @@ import gouv from "../assets/images/gouv.svg";
 const Footer = () => {
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
-  const userContext = useContext(UserContext);
+  const [userContext] = useContext(UserContext);
 
   const isConnected = !!userContext?.token;
 

@@ -20,7 +20,7 @@ const manageCampagneTableRows = ({
   setSelectedCampagneIds,
   displayMode,
 }) => {
-  const userContext = useContext(UserContext);
+  const [userContext] = useContext(UserContext);
 
   const handleCellUpdate = async (campagneId, payload) => {
     const updatedCampagne = await simpleEditionSubmitHandler(campagneId, payload, userContext);
