@@ -135,6 +135,7 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
                   color="brand.black.500"
                   _placeholder={{ color: "brand.black.500" }}
                   spellCheck
+                  value={scopeValue}
                 />
               ) : (
                 <Input
