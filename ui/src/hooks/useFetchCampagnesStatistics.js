@@ -6,13 +6,13 @@ import { useMutation } from "@tanstack/react-query";
 const useFetchCampagnesStatistics = () => {
   const [userContext] = useContext(UserContext);
 
-  const { mutate, data, isSuccess, isError, isLoading } = useMutation({
+  const { mutate, data, isSuccess, isError, isPending, isIdle } = useMutation({
     mutationFn: (campagneIds) =>
       fetchCampagnesStatistics({ campagneIds, token: userContext.token }),
     mutationKey: "fetchCampagnesStatistics",
   });
 
-  return { mutate, statistics: data, isSuccess, isError, isLoading };
+  return { mutate, statistics: data, isSuccess, isError, isLoading: isPending || isIdle };
 };
 
 export default useFetchCampagnesStatistics;

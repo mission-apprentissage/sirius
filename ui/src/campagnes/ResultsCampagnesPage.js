@@ -48,10 +48,6 @@ const ResultsCampagnesPage = () => {
     useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { campagnes, isLoading, isError } = useFetchCampagnesByBatch({
-    campagneIds: selectedCampagneIds,
-  });
-
   const paramsCampagneIds = searchParams.has("campagneIds")
     ? searchParams.get("campagneIds").split(",")
     : [];
@@ -66,7 +62,6 @@ const ResultsCampagnesPage = () => {
   } = useFetchTemoignagesDatavisualisation();
 
   const { mutate: mutateCampagnesStatistics, statistics } = useFetchCampagnesStatistics();
-
   useEffect(() => {
     if (selectedCampagneIds.length) {
       mutateCampagnesDatavisualisation(selectedCampagneIds);
@@ -79,6 +74,11 @@ const ResultsCampagnesPage = () => {
       setCurrentDatavisualisationQuestionnaireId(datavisualisation[0].questionnaireId);
     }
   }, [datavisualisation]);
+
+  const { campagnes, isLoading: isLoadingCampagnesBatch } = useFetchCampagnesByBatch({
+    campagneIds: selectedCampagneIds,
+    enabled: selectedCampagneIds.length > 0 && statistics && datavisualisation.length,
+  });
 
   useEffect(() => {
     if (paramsCampagneIds?.length && !selectedCampagneIds.length) {
@@ -138,7 +138,7 @@ const ResultsCampagnesPage = () => {
               priority="secondary"
               iconId="fr-icon-file-download-fill"
               onClick={handlePdfExport}
-              disabled={pdfExportLoading || isLoading || !selectedCampagneIds.length}
+              disabled={pdfExportLoading || isLoadingCampagnesBatch || !selectedCampagneIds.length}
             >
               {pdfExportLoading ? (
                 <BeatLoader
@@ -152,7 +152,7 @@ const ResultsCampagnesPage = () => {
             </Button>
           </div>
         </TestimonialHeader>
-        {(isLoadingCampagnesDatavisualisation || isLoading) && (
+        {isLoadingCampagnesDatavisualisation && (
           <LoaderContainer>
             <BeatLoader
               color="var(--background-action-high-blue-france)"
@@ -161,7 +161,7 @@ const ResultsCampagnesPage = () => {
             />
           </LoaderContainer>
         )}
-        {isErrorCampagnesDatavisualisation || isError ? (
+        {isErrorCampagnesDatavisualisation ? (
           <Alert
             title="Une erreur s'est produite dans le chargement des témoignages"
             description="Merci de réessayer ultérieurement"

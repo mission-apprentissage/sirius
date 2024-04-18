@@ -4,7 +4,7 @@ import { fetchCampagnes } from "../queries/campagnes";
 import { useQueries } from "@tanstack/react-query";
 import { splitIntoBatches } from "../campagnes/utils";
 
-const useFetchCampagnesByBatch = ({ campagneIds, isEnabled }) => {
+const useFetchCampagnesByBatch = ({ campagneIds, enabled }) => {
   const [userContext] = useContext(UserContext);
 
   const batches = splitIntoBatches(campagneIds, 50);
@@ -19,7 +19,7 @@ const useFetchCampagnesByBatch = ({ campagneIds, isEnabled }) => {
           page: index + 1,
           token: userContext.token,
         }),
-      enabled: isEnabled,
+      enabled: !!enabled,
     })),
   });
 
