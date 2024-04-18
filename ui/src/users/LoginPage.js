@@ -68,7 +68,7 @@ const LoginPage = () => {
               };
             });
 
-            if (decodedToken.role === USER_ROLES.OBSERVER) {
+            if (decodedToken.user.role === USER_ROLES.OBSERVER) {
               navigate("/campagnes/resultats");
             } else {
               navigate("/campagnes/gestion");

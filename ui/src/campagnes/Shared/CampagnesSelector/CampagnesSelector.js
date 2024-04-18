@@ -134,7 +134,7 @@ const CampagnesSelector = ({
 
   return (
     <>
-      {userContext?.scope && (
+      {userContext?.user.scope && (
         <p>
           Vous avez accès aux campagnes pour{" "}
           <b>{OBSERVER_SCOPES_LABELS[userContext.user?.scope.field]}</b>{" "}
