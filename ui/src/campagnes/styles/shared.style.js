@@ -43,6 +43,11 @@ export const TableContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  width: 100%;
+
+  & .fr-table > table {
+    width: 100%;
+  }
 `;
 
 export const HeaderContainer = styled.div`
