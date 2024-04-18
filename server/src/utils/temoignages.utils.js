@@ -209,9 +209,31 @@ const getFormattedResponses = (temoignages, widget) => {
   }
 };
 
+const appendFormationDataWhenEmpty = (campagne) => {
+  if (!campagne.formation) {
+    campagne.formation = {
+      _id: "N/A",
+      data: {
+        intitule_long: "N/A",
+        tags: [],
+        lieu_formation_adresse_computed: "N/A",
+        diplome: "N/A",
+        localite: "N/A",
+        duree: 0,
+        etablissement_formateur_siret: "N/A",
+        etablissement_gestionnaire_siret: "N/A",
+        etablissement_gestionnaire_enseigne: "N/A",
+        etablissement_formateur_enseigne: "N/A",
+        etablissement_formateur_entreprise_raison_sociale: "N/A",
+      },
+    };
+  }
+};
+
 module.exports = {
   matchIdAndQuestions,
   matchCardTypeAndQuestions,
   getCategoriesWithEmojis,
   getFormattedResponses,
+  appendFormationDataWhenEmpty,
 };

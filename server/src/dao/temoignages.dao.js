@@ -1,3 +1,4 @@
+const ObjectId = require("mongoose").mongo.ObjectId;
 const Temoignage = require("../models/temoignage.model");
 
 const create = async (temoignage) => {
@@ -46,6 +47,76 @@ const getOne = async (id) => {
   return Temoignage.findOne({ _id: id, deletedAt: null });
 };
 
+const getAllTemoignagesWithFormation = async (query = {}, page, pageSize) => {
+  return Temoignage.aggregate([
+    {
+      $match: {
+        $and: [
+          { ...query },
+          {
+            $or: [{ deletedAt: { $eq: null } }, { deletedAt: { $exists: false } }],
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "formations",
+        localField: "campagneId",
+        foreignField: "campagneId",
+        as: "formation",
+      },
+    },
+    {
+      $facet: {
+        totalCount: [{ $count: "total" }],
+        data: [
+          { $skip: (parseInt(page) - 1) * parseInt(pageSize) },
+          { $limit: parseInt(pageSize) },
+          {
+            $project: {
+              _id: 1,
+              reponses: 1,
+              campagneId: 1,
+              createdAt: 1,
+              updatedAt: 1,
+              lastQuestionAt: 1,
+              isBot: 1,
+              deletedAt: 1,
+              formation: 1,
+            },
+          },
+          { $unwind: { path: "$formation", preserveNullAndEmptyArrays: true } },
+          { $replaceRoot: { newRoot: "$$ROOT" } },
+        ],
+      },
+    },
+    {
+      $project: {
+        totalCount: { $arrayElemAt: ["$totalCount.total", 0] },
+        data: "$data",
+      },
+    },
+  ]);
+};
+
+const count = async (query) => {
+  return Temoignage.countDocuments({
+    $and: [
+      { ...query },
+      {
+        $or: [{ deletedAt: { $eq: null } }, { deletedAt: { $exists: false } }],
+      },
+    ],
+  });
+};
+
+const deleteMultiple = async (ids) => {
+  const objectIds = ids.map((id) => ObjectId(id));
+
+  return Temoignage.updateMany({ _id: { $in: objectIds } }, { deletedAt: new Date() });
+};
+
 module.exports = {
   create,
   getAll,
@@ -54,4 +125,7 @@ module.exports = {
   countByCampagne,
   getOne,
   deleteManyByCampagneId,
+  getAllTemoignagesWithFormation,
+  count,
+  deleteMultiple,
 };

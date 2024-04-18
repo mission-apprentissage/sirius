@@ -8,6 +8,7 @@ const {
   ErrorMessage,
 } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
+const { UNCOMPLIANT_TEMOIGNAGE_TYPE } = require("../constants");
 
 const createTemoignage = tryCatch(async (req, res) => {
   const { success, body } = await temoignagesService.createTemoignage(req.body);
@@ -60,10 +61,44 @@ const getDatavisualisation = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getUncompliantTemoignages = tryCatch(async (req, res) => {
+  const type = req.query.type || UNCOMPLIANT_TEMOIGNAGE_TYPE.ALL;
+
+  const duration = parseInt(req.query.duration) || 4;
+  const answeredQuestions = parseInt(req.query.answeredQuestions) || 12;
+  const includeUnavailableDuration = req.query.includeUnavailableDuration === "true";
+
+  const page = req.query.page || 1;
+  const pageSize = req.query.pageSize || 100;
+
+  const { success, body, count, pagination } = await temoignagesService.getUncompliantTemoignages({
+    type,
+    duration,
+    answeredQuestions,
+    includeUnavailableDuration,
+    page,
+    pageSize,
+  });
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json({ body, count, pagination });
+});
+
+const deleteMultipleTemoignages = tryCatch(async (req, res) => {
+  const { success, body } = await temoignagesService.deleteMultipleTemoignages(req.body);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 module.exports = {
   createTemoignage,
   getTemoignages,
   deleteTemoignage,
   updateTemoignage,
   getDatavisualisation,
+  getUncompliantTemoignages,
+  deleteMultipleTemoignages,
 };
