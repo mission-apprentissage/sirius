@@ -180,7 +180,7 @@ const getAllWithTemoignageCountAndTemplateName = async ({ siret, query, scope })
   }
 
   if (scope && scope.field && scope.field === "sirets" && scope.value.length) {
-    matchConditions[`formation.data.etablissement_formateur_siret`] = { $in: scope.value };
+    matchConditions[`formation.data.etablissement_gestionnaire_siret`] = { $in: scope.value };
   }
 
   if (query && query.diplome) {
