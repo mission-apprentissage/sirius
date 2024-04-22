@@ -4,7 +4,6 @@ const usersDao = require("../dao/users.dao");
 const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
 const { ErrorMessage } = require("../errors");
 const User = require("../models/user.model");
-const { USER_ROLES } = require("../constants");
 
 const createUser = async (user) => {
   try {
@@ -28,14 +27,6 @@ const loginUser = async (id) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        ...(user.role !== USER_ROLES.ADMIN &&
-          user.etablissement && {
-            etablissementLabel:
-              user.etablissement.onisep_nom ||
-              user.etablissement.enseigne ||
-              user.etablissement.entreprise_raison_sociale,
-          }),
-        etablissements: user.etablissements,
         acceptedCgu: user.acceptedCgu,
         scope: user.scope,
       },
@@ -49,13 +40,6 @@ const loginUser = async (id) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        ...(user.role !== USER_ROLES.ADMIN &&
-          user.etablissement && {
-            etablissementLabel:
-              user.etablissement.onisep_nom ||
-              user.etablissement.enseigne ||
-              user.etablissement.entreprise_raison_sociale,
-          }),
         acceptedCgu: user.acceptedCgu,
         scope: user.scope,
       },
@@ -84,7 +68,6 @@ const sudo = async (id) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        etablissements: user.etablissements,
         acceptedCgu: user.acceptedCgu,
         isSudo: true,
         scope: user.scope,
@@ -133,7 +116,6 @@ const refreshTokenUser = async (refreshToken) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        etablissements: user.etablissements,
         acceptedCgu: user.acceptedCgu,
         scope: user.scope,
       },

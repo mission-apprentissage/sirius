@@ -77,7 +77,7 @@ const ResultsCampagnesPage = () => {
 
   const { campagnes, isLoading: isLoadingCampagnesBatch } = useFetchCampagnesByBatch({
     campagneIds: selectedCampagneIds,
-    enabled: selectedCampagneIds.length > 0 && statistics && datavisualisation.length,
+    enabled: selectedCampagneIds?.length > 0 && statistics && datavisualisation?.length,
   });
 
   useEffect(() => {
