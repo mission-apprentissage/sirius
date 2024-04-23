@@ -3,14 +3,14 @@ set -euo pipefail
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ ! -f "/opt/pilotage/data/ssl/privkey.pem" ]; then
+if [ ! -f "/opt/sirius/data/ssl/privkey.pem" ]; then
   cd "${SCRIPT_DIR}"
-    docker build --tag pilotage_certbot certbot/
-    docker run --rm --name pilotage_certbot \
+    docker build --tag sirius_certbot certbot/
+    docker run --rm --name sirius_certbot \
       -p 80:5000 \
-      -v /opt/pilotage/data/certbot:/etc/letsencrypt \
-      -v /opt/pilotage/data/ssl:/ssl \
-      pilotage_certbot generate "$@"
+      -v /opt/sirius/data/certbot:/etc/letsencrypt \
+      -v /opt/sirius/data/ssl:/ssl \
+      sirius_certbot generate "$@"
   cd -
 else
   echo "Certificat SSL déja généré"

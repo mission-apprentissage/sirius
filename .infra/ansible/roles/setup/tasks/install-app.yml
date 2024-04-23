@@ -1,19 +1,19 @@
 - name: "Clone du repository (branche : {{ git_revision }})"
   git:
-    repo: "https://github.com/mission-apprentissage/tjp-pilotage.git"
+    repo: "https://github.com/mission-apprentissage/sirius.git"
     version: "{{ git_revision }}"
     force: yes
     accept_hostkey: yes
-    dest: /opt/pilotage/repository
+    dest: /opt/sirius/repository
 
 - name: Création du répertoire 'overrides'
   file:
-    path: /opt/pilotage/.overrides
+    path: /opt/sirius/.overrides
     state: directory
 
 - name: Création des répertoires 'overrides'
   file:
-    path: "/opt/pilotage/.overrides/{{ item.path }}/"
+    path: "/opt/sirius/.overrides/{{ item.path }}/"
     state: directory
   with_filetree:
     - app/.overrides/common/
@@ -23,7 +23,7 @@
 - name: Copie des fichiers 'overrides'
   ansible.builtin.template:
     src: "{{ item.src }}"
-    dest: "/opt/pilotage/.overrides/{{ item.path }}"
+    dest: "/opt/sirius/.overrides/{{ item.path }}"
   with_filetree:
     - app/.overrides/common/
     - app/.overrides/{{ env_type }}/
@@ -37,15 +37,15 @@
     group: root
     mode: 770
   with_items:
-    - "/opt/pilotage/tools"
-    - "/opt/pilotage/repository"
-    - "/opt/pilotage/data"
-    - "/opt/pilotage/backups"
-    - "/opt/pilotage/.overrides"
+    - "/opt/sirius/tools"
+    - "/opt/sirius/repository"
+    - "/opt/sirius/data"
+    - "/opt/sirius/backups"
+    - "/opt/sirius/.overrides"
 
 - name: Add cron to rotate nginx files
   ansible.builtin.cron:
     name: "rotate_nginx_log_files"
     minute: "0"
     hour: "1"
-    job: "bash /opt/pilotage/tools/rotate-nginx-log-files.sh >> /var/log/cron.log 2>&1"
+    job: "bash /opt/sirius/tools/rotate-nginx-log-files.sh >> /var/log/cron.log 2>&1"
