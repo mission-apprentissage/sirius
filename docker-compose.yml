@@ -38,21 +38,10 @@ services:
     restart: unless-stopped
     networks:
       - sirius_network
-    depends_on:
-      - mongodb
     environment:
       - SIRIUS_LOG_LEVEL=info
       - SIRIUS_LOG_TYPE=console
       - SIRIUS_MONGODB_URI=mongodb://mongodb:27017/sirius?retryWrites=true&w=majority
-
-  mongodb:
-    image: mongo:4.4.1-bionic
-    container_name: sirius_mongodb
-    tty: true
-    mem_limit: 1g
-    restart: unless-stopped
-    networks:
-      - sirius_network
 
 networks:
   sirius_network:
