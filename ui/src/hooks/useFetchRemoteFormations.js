@@ -1,45 +1,36 @@
-import { useEffect, useState } from "react";
-import { _get } from "../utils/httpClient";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchRemoteFormations } from "../queries/formations";
 
-const useFetchRemoteFormations = (userSiret) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+const useFetchRemoteFormations = ({ query, enabled, page = 1, pageSize = 1000 }) => {
+  const queryClient = useQueryClient();
+
+  const { data, isSuccess, isError, isLoading } = useQuery({
+    queryKey: ["formations-remote", page, query],
+    queryFn: () => fetchRemoteFormations({ query, page, pageSize }),
+    enabled: !!enabled,
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const query = userSiret
-          .map((siret) => [
-            { etablissement_formateur_siret: siret },
-            { etablissement_gestionnaire_siret: siret },
-          ])
-          .flat();
-
-        const response = await _get(
-          `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?query={"$or": ${JSON.stringify(
-            query
-          )}, "published": "true", "catalogue_published": "true", "niveau":["3 (CAP...)","4 (BAC...)"]}&page=1&limit=500`
-        );
-
-        // sort by alphabetical order
-        const orderedFormations = response.formations.sort((a, b) =>
-          a.intitule_long > b.intitule_long ? 1 : b.intitule_long > a.intitule_long ? -1 : 0
-        );
-
-        setData(orderedFormations);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-    if (userSiret?.length > 0) {
-      fetchData();
+    if (parseInt(data?.pagination.page) < data?.pagination.nombre_de_page) {
+      queryClient.prefetchQuery({
+        queryKey: ["formations-remote", page + 1, query],
+        queryFn: () => fetchRemoteFormations({ query, page: page + 1, pageSize }),
+      });
     }
-  }, []);
+  }, [data, page, queryClient]);
 
-  return [data, loading, error];
+  const orderedFormations = data?.formations.sort((a, b) =>
+    a.intitule_long > b.intitule_long ? 1 : b.intitule_long > a.intitule_long ? -1 : 0
+  );
+
+  return {
+    remoteFormations: orderedFormations,
+    remoteFormationsPagination: data?.pagination,
+    isSuccess,
+    isError,
+    isLoading,
+  };
 };
 
 export default useFetchRemoteFormations;

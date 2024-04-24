@@ -65,6 +65,8 @@ const newFormation = (custom = {}, hasId = false) => {
         intitule_long: faker.lorem.words(),
         tags: ["2020", "2021", "2022"],
         lieu_formation_adresse_computed: faker.address.streetAddress(),
+        lieu_formation_adresse: faker.address.streetAddress(),
+        code_postal: faker.address.zipCode(),
         diplome: faker.lorem.words(),
         localite: faker.address.city(),
         duree: 3,

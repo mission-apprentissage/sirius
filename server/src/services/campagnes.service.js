@@ -3,21 +3,100 @@ const campagnesDao = require("../dao/campagnes.dao");
 const formationsDao = require("../dao/formations.dao");
 const etablissementsDao = require("../dao/etablissements.dao");
 const temoignagesDao = require("../dao/temoignages.dao");
-const { getChampsLibreRate, getChampsLibreCount } = require("../utils/verbatims.utils");
-const { getMedianDuration, appendDataWhenEmpty } = require("../utils/campagnes.utils");
+const { appendDataWhenEmpty, getStatistics, getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
-const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
+const {
+  DIPLOME_TYPE_MATCHER,
+  ETABLISSEMENT_NATURE,
+  ETABLISSEMENT_RELATION_TYPE,
+  CAMPAGNE_SORTING_TYPE,
+} = require("../constants");
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
+const { getChampsLibreCount, getChampsLibreRate } = require("../utils/verbatims.utils");
 
-const getCampagnes = async (isAdmin, userSiret) => {
+const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageSize, query, search }) => {
+  try {
+    let campagnes = [];
+
+    if (isAdmin) {
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
+    } else if (isObserver) {
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ scope, query });
+    } else {
+      const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
+
+      let allSirets = [];
+      for (const siret of userSiret) {
+        const etablissement = etablissementsFromReferentiel.find((etablissement) => etablissement.siret === siret);
+        if (!etablissement) continue;
+
+        let relatedSirets = [siret];
+        if (
+          [ETABLISSEMENT_NATURE.GESTIONNAIRE, ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR].includes(
+            etablissement.nature
+          )
+        ) {
+          relatedSirets.push(
+            ...etablissement.relations
+              .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
+              .map((etablissement) => etablissement.siret)
+          );
+        }
+        allSirets.push(...relatedSirets);
+      }
+
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: allSirets, query });
+    }
+
+    const searchedCampagnes = search
+      ? campagnes.filter((campagne) => {
+          return (
+            campagne.nomCampagne.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.intitule_long.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.localite.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.lieu_formation_adresse_computed.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.lieu_formation_adresse.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.tags.join("-").toLowerCase().includes(search.toLowerCase())
+          );
+        })
+      : campagnes;
+
+    const paginatedCampagnes = searchedCampagnes.slice((page - 1) * pageSize, page * pageSize);
+
+    paginatedCampagnes.map((campagne) => {
+      delete campagne.questionnaireUI;
+      delete campagne.questionnaire;
+      delete campagne.temoignagesList;
+      appendDataWhenEmpty(campagne);
+    });
+
+    return {
+      success: true,
+      body: paginatedCampagnes,
+      pagination: {
+        totalItems: searchedCampagnes.length,
+        currentPage: parseInt(page),
+        pageSize: pageSize,
+        totalPages: Math.ceil(searchedCampagnes.length / pageSize),
+        hasMore: searchedCampagnes.length > page * pageSize,
+      },
+    };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, scope) => {
   try {
     let campagnes = [];
     const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
 
     if (isAdmin) {
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName();
+      campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements();
+    } else if (isObserver) {
+      campagnes = scope ? await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements(null, scope) : [];
     } else {
       let allSirets = [];
       for (const siret of userSiret) {
@@ -39,22 +118,61 @@ const getCampagnes = async (isAdmin, userSiret) => {
         allSirets.push(...relatedSirets);
       }
 
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: allSirets });
+      campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements({ siret: allSirets });
     }
+    let results = [];
 
-    campagnes.map((campagne) => {
-      campagne.champsLibreCount = getChampsLibreCount(campagne.questionnaireUI, campagne.temoignagesList);
-      campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
-      campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
-      delete campagne.questionnaireUI;
-      delete campagne.questionnaire;
-      delete campagne.temoignagesList;
-      appendDataWhenEmpty(campagne);
-    });
+    if (sortingType === CAMPAGNE_SORTING_TYPE.DIPLOME_TYPE) {
+      const campagnesGroupedByDiplome = campagnes.reduce((acc, campagne) => {
+        appendDataWhenEmpty(campagne);
+        const diplome = campagne.formation?.data.diplome;
+        if (!acc[diplome]) {
+          acc[diplome] = [];
+        }
+        acc[diplome].push(campagne);
+        return acc;
+      }, {});
+
+      const formattedResults = Object.keys(campagnesGroupedByDiplome).map((key) => {
+        const campagneIds = campagnesGroupedByDiplome[key].map((campagne) => campagne._id);
+        return {
+          diplome: key,
+          campagneIds: campagneIds,
+        };
+      });
+
+      results = formattedResults;
+    } else if (sortingType === CAMPAGNE_SORTING_TYPE.ETABLISSEMENT) {
+      const campagnesGroupedByEtablissement = campagnes.reduce((acc, campagne) => {
+        appendDataWhenEmpty(campagne);
+        const siret = campagne.formation.data.etablissement_formateur_siret;
+        if (!acc[siret]) {
+          acc[siret] = [];
+        }
+        acc[siret].push(campagne);
+        return acc;
+      }, {});
+
+      const formattedResults = Object.keys(campagnesGroupedByEtablissement).map((key) => {
+        const campagneIds = campagnesGroupedByEtablissement[key].map((campagne) => campagne._id);
+        return {
+          etablissementFormateur: campagnesGroupedByEtablissement[key][0].formation.data,
+          campagneIds: campagneIds,
+        };
+      });
+
+      results = formattedResults;
+    } else if (sortingType === CAMPAGNE_SORTING_TYPE.ALL) {
+      const formattedResults = {
+        campagneIds: campagnes.map((campagne) => campagne._id),
+      };
+
+      results = [formattedResults];
+    }
 
     return {
       success: true,
-      body: campagnes,
+      body: results,
     };
   } catch (error) {
     return { success: false, body: error };
@@ -161,13 +279,14 @@ const getPdfMultipleExport = async (ids, user) => {
   try {
     const query = { _id: { $in: ids.map((id) => ObjectId(id)) } };
 
-    const campagnes = await campagnesDao.getAll(query);
+    const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(query);
 
     const formattedCampagnes = campagnes.map((campagne) => ({
       campagneId: campagne._id.toString(),
       campagneName:
         campagne.nomCampagne || campagne.formation.data.intitule_long || campagne.formation.data.intitule_court,
       localite: campagne.formation.data.localite,
+      adresse: campagne.formation.data.lieu_formation_adresse_computed,
       tags: campagne.formation.data.tags,
       duree: campagne.formation.data.duree,
     }));
@@ -197,7 +316,7 @@ const getXlsxMultipleExport = async (ids) => {
   try {
     const query = ids?.length ? { _id: { $in: ids.map((id) => ObjectId(id)) } } : {};
 
-    const campagnes = await campagnesDao.getAll(query);
+    const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(query);
 
     const formattedCampagnes = campagnes.map((campagne) => ({
       campagneName: campagne.nomCampagne,
@@ -223,6 +342,26 @@ const getXlsxMultipleExport = async (ids) => {
   }
 };
 
+const getCampagnesStatistics = async (campagneIds) => {
+  try {
+    const query = { campagneIds: { $in: campagneIds.map((id) => ObjectId(id)) } };
+
+    const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
+
+    campagnes.forEach((campagne) => {
+      campagne.champsLibreCount = getChampsLibreCount(campagne.questionnaireUI, campagne.temoignagesList);
+      campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
+      campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
+    });
+
+    const statistics = getStatistics(campagnes);
+
+    return { success: true, body: statistics };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   getCampagnes,
   getOneCampagne,
@@ -233,4 +372,6 @@ module.exports = {
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
+  getSortedCampagnes,
+  getCampagnesStatistics,
 };

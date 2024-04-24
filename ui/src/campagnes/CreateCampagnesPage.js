@@ -7,11 +7,6 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { UserContext } from "../context/UserContext";
-import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
-import useFetchLocalFormations from "../hooks/useFetchLocalFormations";
-import useFetchCampagnes from "../hooks/useFetchCampagnes";
-import Step1 from "./CreateCampagnes/Step1";
-import Step2 from "./CreateCampagnes/Step2";
 import { multiCreationSubmitHandler } from "./submitHandlers";
 import { formateDateToInputFormat, isPlural } from "./utils";
 import { useGet } from "../common/hooks/httpHooks";
@@ -21,6 +16,9 @@ import {
   ButtonContainer,
 } from "./styles/createCampagnes.style";
 import SupportModal from "./Shared/SupportModal";
+import FormationsSelector from "./CreateCampagnes/FormationsSelector";
+import CampagneConfigurator from "./CreateCampagnes/CampagneConfigurator";
+import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
 
 const supportModal = createModal({
   id: "support-modal-loggedIn",
@@ -29,70 +27,53 @@ const supportModal = createModal({
 
 const CreateCampagnesPage = () => {
   const [selectedFormations, setSelectedFormations] = useState([]);
-  const [displayedFormations, setDisplayedFormations] = useState([]);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitRequested, setSubmitRequested] = useState(false);
   const [hasErrorSubmitting, setHasErrorSubmitting] = useState(false);
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
 
-  const userSiret = userContext.etablissements.map((etablissement) => etablissement.siret);
-
-  const [remoteFormations, loadingRemoteFormations, errorRemoteFormation] =
-    useFetchRemoteFormations(userSiret);
-
-  const [campagnes, loadingCampagnes, errorCampagnes] = useFetchCampagnes();
-
-  useEffect(() => {
-    if (remoteFormations?.length) {
-      setDisplayedFormations(remoteFormations);
-    }
-  }, [remoteFormations]);
-
-  const campagneIdWithoutNAFormations = campagnes?.length
-    ? campagnes.filter((campagne) => campagne?.formation?._id !== "N/A")
-    : [];
-
-  const existingFormationIdsFromCampagnes = campagneIdWithoutNAFormations?.map(
-    (campagne) => campagne.formation.data._id
-  );
-
-  const [questionnaires, loadingQuestionnaires, errorQuesitonnaires] =
-    useGet(`/api/questionnaires/`);
+  const [questionnaires] = useGet(`/api/questionnaires/`);
 
   const validatedQuestionnaire =
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
 
-  const initialValues = selectedFormations.reduce((accumulator, allDiplomesSelectedFormation) => {
-    accumulator[allDiplomesSelectedFormation] = {
+  const initialValues = selectedFormations.reduce((accumulator, formation) => {
+    accumulator[formation._id] = {
       nomCampagne: "",
       startDate: formateDateToInputFormat(new Date()),
       endDate: formateDateToInputFormat(new Date(), 2),
       seats: 0,
-      etablissementFormateurSiret: displayedFormations.find(
-        (formation) => formation.id === allDiplomesSelectedFormation
-      )?.etablissement_formateur_siret,
-      formationId: allDiplomesSelectedFormation,
+      etablissementFormateurSiret: formation.etablissement_formateur_siret,
+      formationId: formation._id,
       questionnaireId: validatedQuestionnaire[0]?._id,
     };
     return accumulator;
   }, {});
 
+  const selectedFormationIds = selectedFormations.map((formation) => formation._id);
+
+  const query = `query={"_id": {"$in": ${JSON.stringify(selectedFormationIds)}}}`;
+
+  const { remoteFormations, isSuccess: isSuccessFormations } = useFetchRemoteFormations({
+    query,
+    enabled: submitRequested,
+  });
+
   const formik = useFormik({
     initialValues: initialValues,
     enableReinitialize: true,
-    onSubmit: async (values) => {
-      setIsSubmitting(true);
+    onSubmit: () => setSubmitRequested(true),
+  });
 
-      const formattedValues = Object.values(values);
+  useEffect(() => {
+    const campagneCreator = async () => {
+      const formattedValues = Object.values(formik.values);
 
-      const formations = remoteFormations.filter((remoteFormation) =>
-        selectedFormations.includes(remoteFormation.id)
-      );
-
-      const formationsWithCreator = formations.map((formation) => ({
+      const formationsWithCreator = remoteFormations.map((formation) => ({
         ...formation,
-        createdBy: userContext.currentUserId,
+        createdBy: userContext.user?._id,
       }));
 
       const payload = formattedValues.map((campagne) => {
@@ -106,17 +87,18 @@ const CreateCampagnesPage = () => {
       const result = await multiCreationSubmitHandler(payload, userContext);
 
       setIsSubmitting(false);
+      setSubmitRequested(false);
       if (result.status === "success") {
         navigate("/campagnes/gestion", { state: { successCreation: true } });
       } else {
         setHasErrorSubmitting(true);
       }
-    },
-  });
+    };
 
-  const isLoadingStep1 = loadingRemoteFormations || loadingQuestionnaires || loadingCampagnes;
-
-  const hasError = errorRemoteFormation || errorQuesitonnaires || errorCampagnes;
+    if (submitRequested && isSuccessFormations && remoteFormations.length) {
+      campagneCreator();
+    }
+  }, [submitRequested, isSuccessFormations, remoteFormations]);
 
   return (
     <>
@@ -144,13 +126,8 @@ const CreateCampagnesPage = () => {
                   </b>
                 </span>
               </p>
-              <Step1
-                isLoading={isLoadingStep1}
-                hasError={hasError}
-                existingFormationIdsFromCampagnes={existingFormationIdsFromCampagnes}
-                remoteFormations={remoteFormations}
-                displayedFormations={displayedFormations}
-                setDisplayedFormations={setDisplayedFormations}
+              <FormationsSelector
+                step={step}
                 selectedFormations={selectedFormations}
                 setSelectedFormations={setSelectedFormations}
               />
@@ -162,10 +139,8 @@ const CreateCampagnesPage = () => {
                 <span className={fr.cx("fr-icon-add-line")} aria-hidden={true} />
                 Paramétrer mes campagnes (2/2)
               </h1>
-              <Step2
-                selectedFormations={remoteFormations.filter((remoteFormation) =>
-                  selectedFormations.includes(remoteFormation.id)
-                )}
+              <CampagneConfigurator
+                selectedFormations={selectedFormations}
                 setSelectedFormations={setSelectedFormations}
                 formik={formik}
               />

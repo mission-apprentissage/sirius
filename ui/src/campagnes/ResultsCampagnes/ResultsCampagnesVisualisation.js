@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import * as echarts from "echarts/core";
@@ -11,8 +10,6 @@ import {
   VisualMapComponent,
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
-import { matchIdAndQuestions, matchCardTypeAndQuestions } from "../../utils/temoignage";
-import { getCategoriesWithEmojis } from "../utils";
 import PieCard from "./Widgets/PieCard";
 import VerbatimCard from "./Widgets/VerbatimCard";
 import MultiEmojiCard from "./Widgets/MultiEmojiCard";
@@ -29,34 +26,12 @@ echarts.use([
   VisualMapComponent,
 ]);
 
-const ResultsCampagnesVisualisation = ({
-  temoignages,
-  questionnaire,
-  questionnaireUI,
-  expandedAccordion,
-  setExpandedAccordion,
-}) => {
-  const [matchedIdAndQuestions, setMatchedIdAndQuestions] = useState({});
-  const [matchedCardTypeAndQuestions, setMatchedCardTypeAndQuestions] = useState({});
-
-  useEffect(() => {
-    if (questionnaire && questionnaireUI) {
-      setMatchedIdAndQuestions(matchIdAndQuestions(questionnaire));
-      setMatchedCardTypeAndQuestions(matchCardTypeAndQuestions(questionnaire, questionnaireUI));
-    }
-  }, [questionnaire, questionnaireUI]);
-
-  const categories = getCategoriesWithEmojis(questionnaire);
+const ResultsCampagnesVisualisation = ({ temoignages }) => {
+  const [expandedAccordion, setExpandedAccordion] = useState("");
 
   return (
-    <div className={fr.cx("fr-accordions-group")}>
-      {categories.map((category, index) => {
-        const questionsList = Object.keys(questionnaire.properties[category.id].properties);
-
-        const filteredQuestionsList = questionsList.filter((question) =>
-          Object.keys(questionnaire.properties[category.id].properties).includes(question)
-        );
-
+    <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
+      {temoignages.categories.map((category, index) => {
         return (
           <Accordion
             key={index}
@@ -69,52 +44,42 @@ const ResultsCampagnesVisualisation = ({
             }
           >
             <DataVizContainer>
-              {filteredQuestionsList.map((question) => {
-                const responses = temoignages.length
-                  ? temoignages
-                      .map((temoignage) => temoignage.reponses[question])
-                      .flat()
-                      .filter(Boolean)
-                  : [];
-
+              {category.questionsList.map((question) => {
                 return (
-                  matchedIdAndQuestions[question] && (
-                    <React.Fragment key={question}>
-                      {matchedCardTypeAndQuestions[question] === "text" && (
-                        <VerbatimCard
-                          id={category.id}
-                          responses={responses}
-                          title={matchedIdAndQuestions[question]}
-                        />
-                      )}
-                      {(matchedCardTypeAndQuestions[question] === "pie" ||
-                        matchedCardTypeAndQuestions[question]?.type === "emoji") && (
-                        <PieCard
-                          id={category.id}
-                          echarts={echarts}
-                          responses={responses}
-                          title={matchedIdAndQuestions[question]}
-                        />
-                      )}
-                      {matchedCardTypeAndQuestions[question] === "bar" && (
-                        <BarCard
-                          id={category.id}
-                          echarts={echarts}
-                          responses={responses}
-                          title={matchedIdAndQuestions[question]}
-                        />
-                      )}
-                      {matchedCardTypeAndQuestions[question]?.type === "multiEmoji" && (
-                        <MultiEmojiCard
-                          id={category.id}
-                          echarts={echarts}
-                          responses={responses}
-                          emojiMapping={matchedCardTypeAndQuestions[question].mapping}
-                          title={matchedIdAndQuestions[question]}
-                        />
-                      )}
-                    </React.Fragment>
-                  )
+                  <React.Fragment key={question.id}>
+                    {question.widget.type === "text" && (
+                      <VerbatimCard
+                        id={category.id}
+                        responses={question.responses}
+                        title={question.label}
+                      />
+                    )}
+                    {(question.widget.type === "pie" || question.widget.type === "emoji") && (
+                      <PieCard
+                        id={category.id}
+                        echarts={echarts}
+                        responses={question.responses}
+                        title={question.label}
+                      />
+                    )}
+                    {question.widget.type === "bar" && (
+                      <BarCard
+                        id={category.id}
+                        echarts={echarts}
+                        responses={question.responses}
+                        title={question.label}
+                      />
+                    )}
+                    {question.widget.type === "multiEmoji" && (
+                      <MultiEmojiCard
+                        id={category.id}
+                        echarts={echarts}
+                        responses={question.responses}
+                        emojiMapping={question.widget.mapping}
+                        title={question.label}
+                      />
+                    )}
+                  </React.Fragment>
                 );
               })}
             </DataVizContainer>

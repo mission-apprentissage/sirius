@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const passportLocalMongoose = require("passport-local-mongoose");
 const { STRATEGIES } = require("../middlewares/verifyUserMiddleware");
-const { USER_ROLES, USER_STATUS } = require("../constants");
+const { USER_STATUS } = require("../constants");
 
 const Session = new mongoose.Schema({
   refreshToken: {
@@ -9,6 +9,17 @@ const Session = new mongoose.Schema({
     default: "",
   },
 });
+
+const ScopeSchema = new mongoose.Schema(
+  {
+    field: { type: String, default: null },
+    value: {
+      type: mongoose.Schema.Types.Mixed,
+      default: null,
+    },
+  },
+  { _id: false }
+);
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -30,7 +41,6 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: USER_ROLES.ETABLISSEMENT,
     required: true,
   },
   status: {
@@ -64,6 +74,9 @@ const userSchema = new mongoose.Schema({
   acceptedCgu: {
     type: Boolean,
     default: false,
+  },
+  scope: {
+    type: ScopeSchema,
   },
 });
 

@@ -1,16 +1,13 @@
-import jwt from "jwt-decode";
 import { Tooltip, Box, Select, Text, IconButton } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { CheckIcon, AddIcon, CopyIcon, CloseIcon, UnlockIcon } from "@chakra-ui/icons";
 import { USER_ROLES, USER_STATUS } from "../../../constants";
 import { etablissementLabelGetter } from "../../../utils/etablissement";
-import { _get } from "../../../utils/httpClient";
 
 const columnHelper = createColumnHelper();
 
 const usersTableColumns = (
   userContext,
-  setUserContext,
   setSelectedUser,
   setSelectedStatus,
   onOpenStatusConfirmation,
@@ -19,7 +16,8 @@ const usersTableColumns = (
   setClipboardValue,
   onCopyClipBoard,
   onOpenAddSiret,
-  navigate
+  onOpenAddScope,
+  setSudoUserId
 ) => [
   columnHelper.accessor("firstName", {
     cell: (info) => {
@@ -90,12 +88,34 @@ const usersTableColumns = (
     header: "Confirmé",
   }),
   columnHelper.accessor(
-    ({ siret, etablissement, etablissements }) => [siret, etablissement, etablissements],
+    ({ siret, etablissement, etablissements, scope }) => [
+      siret,
+      etablissement,
+      etablissements,
+      scope,
+    ],
     {
       cell: (info) => {
         const siret = info.getValue()[0];
         const singleEtablissement = info.getValue[1];
         const etablissements = info.getValue()[2];
+        const scope = info.getValue()[3];
+
+        if (typeof scope?.value === "string") {
+          return (
+            <Box display="flex" flexDirection="column">
+              <Text>{scope.value}</Text>
+            </Box>
+          );
+        } else if (typeof scope?.value === "object") {
+          return (
+            <Box display="flex" flexDirection="column">
+              {scope.value.map((value) => (
+                <Text key={value}>{value}</Text>
+              ))}
+            </Box>
+          );
+        }
 
         return (
           <Box display="flex" flexDirection="column">
@@ -140,7 +160,7 @@ const usersTableColumns = (
 
       return (
         <Box minW="100px">
-          {user._id === userContext.currentUserId ? (
+          {user._id === userContext.user?._id ? (
             <Tooltip label="Vous ne pouvez pas modifier votre propre status" hasArrow>
               <span>{USER_STATUS[user.status]}</span>
             </Tooltip>
@@ -172,7 +192,7 @@ const usersTableColumns = (
 
       return (
         <Box minW="150px">
-          {user._id === userContext.currentUserId ? (
+          {user._id === userContext.user?._id ? (
             <Tooltip label="Vous ne pouvez pas modifier votre propre role" hasArrow>
               <span>{USER_ROLES[user.role]}</span>
             </Tooltip>
@@ -204,59 +224,40 @@ const usersTableColumns = (
       if (user.role === USER_ROLES.ADMIN) return null;
       return (
         <Box display="flex">
-          <Tooltip label="Ajouter un SIRET" hasArrow>
-            <IconButton
-              size="sm"
-              aria-label="ajout SIRET"
-              icon={<AddIcon />}
-              mr="2"
-              onClick={() => {
-                setSelectedUser(user);
-                onOpenAddSiret();
-              }}
-            />
-          </Tooltip>
+          {user.role === USER_ROLES.ETABLISSEMENT && (
+            <Tooltip label="Ajouter un SIRET" hasArrow>
+              <IconButton
+                size="sm"
+                aria-label="ajout SIRET"
+                icon={<AddIcon />}
+                mr="2"
+                onClick={() => {
+                  setSelectedUser(user);
+                  onOpenAddSiret();
+                }}
+              />
+            </Tooltip>
+          )}
+          {user.role === USER_ROLES.OBSERVER && (
+            <Tooltip label="Ajouter un scope" hasArrow>
+              <IconButton
+                size="sm"
+                aria-label="ajout scope"
+                icon={<AddIcon />}
+                mr="2"
+                onClick={() => {
+                  setSelectedUser(user);
+                  onOpenAddScope();
+                }}
+              />
+            </Tooltip>
+          )}
           <Tooltip label="Se connecter en tant que l'utilisateur" hasArrow>
             <IconButton
               size="sm"
               aria-label="Se connecter en tant que l'utilisateur"
               icon={<UnlockIcon />}
-              onClick={async () => {
-                const result = await _get(`/api/users/sudo/${user._id}`, userContext.token);
-                if (result.success) {
-                  const decodedToken = jwt(result.token);
-                  setUserContext((oldValues) => {
-                    return {
-                      ...oldValues,
-                      token: result.token,
-                      loading: false,
-                      currentUserId: decodedToken._id,
-                      currentUserRole: decodedToken.role,
-                      currentUserStatus: decodedToken.status,
-                      firstName: decodedToken.firstName,
-                      lastName: decodedToken.lastName,
-                      email: decodedToken.email,
-                      siret: decodedToken.siret,
-                      acceptedCgu: decodedToken.acceptedCgu || false,
-                      etablissements: decodedToken.etablissements || [],
-                    };
-                  });
-                  if (decodedToken.role === USER_ROLES.ETABLISSEMENT) {
-                    localStorage.setItem(
-                      "etablissements",
-                      JSON.stringify({
-                        siret: decodedToken.siret || decodedToken.etablissements[0].siret,
-                        etablissementLabel:
-                          decodedToken.etablissementLabel ||
-                          etablissementLabelGetter(decodedToken.etablissements[0]),
-                        etablissements: decodedToken.etablissements || [],
-                      })
-                    );
-                  }
-
-                  navigate("/campagnes/gestion");
-                }
-              }}
+              onClick={() => setSudoUserId(user._id)}
             />
           </Tooltip>
         </Box>

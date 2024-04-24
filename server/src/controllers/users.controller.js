@@ -5,7 +5,7 @@ const tryCatch = require("../utils/tryCatch.utils");
 const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
 const mailer = require("../modules/mailer");
 const config = require("../config");
-const { USER_STATUS } = require("../constants");
+const { USER_STATUS, USER_ROLES } = require("../constants");
 const slack = require("../modules/slack");
 
 const createUser = tryCatch(async (req, res) => {
@@ -158,7 +158,23 @@ const updateUser = tryCatch(async (req, res) => {
 
   if (!successOldUser) throw new BasicError();
 
-  const { success: successUpdatedUser, body: updatedUser } = await usersService.updateUser(id, req.body);
+  let newUser = { ...oldUser, ...req.body };
+
+  if (oldUser.role === USER_ROLES.ETABLISSEMENT && req.body.role === USER_ROLES.OBSERVER) {
+    newUser = {
+      ...oldUser,
+      role: USER_ROLES.OBSERVER,
+      etablissements: [],
+    };
+  } else if (oldUser.role === USER_ROLES.OBSERVER && req.body.role === USER_ROLES.ETABLISSEMENT) {
+    newUser = {
+      ...oldUser,
+      role: USER_ROLES.ETABLISSEMENT,
+      scope: [],
+    };
+  }
+
+  const { success: successUpdatedUser, body: updatedUser } = await usersService.updateUser(id, newUser);
 
   if (
     successOldUser &&

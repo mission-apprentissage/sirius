@@ -3,6 +3,12 @@ const campagnesDao = require("../dao/campagnes.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
 const { ErrorMessage } = require("../errors");
 const { getChampsLibreField } = require("../utils/verbatims.utils");
+const {
+  matchIdAndQuestions,
+  matchCardTypeAndQuestions,
+  getCategoriesWithEmojis,
+  getFormattedResponses,
+} = require("../utils/temoignages.utils");
 const { VERBATIM_STATUS } = require("../constants");
 
 const createTemoignage = async (temoignage) => {
@@ -92,4 +98,81 @@ const updateTemoignage = async (id, updatedTemoignage) => {
   }
 };
 
-module.exports = { createTemoignage, getTemoignages, deleteTemoignage, updateTemoignage };
+const getDatavisualisation = async (campagneIds) => {
+  try {
+    const query = { campagneId: { $in: campagneIds } };
+    const temoignages = await temoignagesDao.getAll(query);
+    const allQuestionnaires = await questionnairesDao.getAll();
+    const campagnes = await campagnesDao.getAll({ _id: { $in: campagneIds } });
+
+    let questionnaireTemoignagesMap = {};
+
+    // ajoute les témoignages à leur questionnaire respectif
+    for (const temoignage of temoignages) {
+      const campagne = campagnes.filter((el) => el._id.toString() === temoignage.campagneId)[0];
+      if (!campagne) {
+        return { success: false, body: ErrorMessage.CampagneNotFoundError };
+      }
+
+      const questionnaireId = campagne.questionnaireId;
+      if (!questionnaireTemoignagesMap[questionnaireId]) {
+        questionnaireTemoignagesMap[questionnaireId] = [];
+      }
+
+      questionnaireTemoignagesMap[questionnaireId].push(temoignage);
+    }
+
+    // crée un objet avec les catégories et les questions pour chaque questionnaire
+    const result = Object.keys(questionnaireTemoignagesMap).map((questionnaireId) => {
+      const questionnaireById = allQuestionnaires.find(
+        (questionnaire) => questionnaire._id.toString() === questionnaireId
+      );
+
+      const matchedIdAndQuestions = matchIdAndQuestions(questionnaireById.questionnaire);
+      const matchedCardTypeAndQuestions = matchCardTypeAndQuestions(
+        questionnaireById.questionnaire,
+        questionnaireById.questionnaireUI
+      );
+      const categories = getCategoriesWithEmojis(questionnaireById.questionnaire);
+
+      categories.forEach((category) => {
+        category.questionsList = Object.keys(questionnaireById.questionnaire.properties[category.id].properties).map(
+          (questionId) => {
+            const label = matchedIdAndQuestions[questionId];
+            const widget =
+              typeof matchedCardTypeAndQuestions[questionId] === "string"
+                ? { type: matchedCardTypeAndQuestions[questionId] }
+                : matchedCardTypeAndQuestions[questionId];
+
+            const responses = questionnaireTemoignagesMap[questionnaireById._id.toString()]
+              .map((temoignage) => temoignage.reponses[questionId])
+              .flat()
+              .filter(Boolean);
+
+            const formattedResponses = getFormattedResponses(responses, widget);
+
+            return {
+              id: questionId,
+              label,
+              widget,
+              responses: formattedResponses,
+            };
+          }
+        );
+      });
+
+      return {
+        questionnaireId: questionnaireById._id,
+        questionnaireName: questionnaireById.nom,
+        categories: categories,
+        temoignageCount: questionnaireTemoignagesMap[questionnaireId].length,
+      };
+    });
+
+    return { success: true, body: result };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { createTemoignage, getTemoignages, deleteTemoignage, updateTemoignage, getDatavisualisation };

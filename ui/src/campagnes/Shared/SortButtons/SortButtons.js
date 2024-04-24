@@ -1,46 +1,66 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
-import { SortButtonsContainer } from "./sortButtons.style";
-import { campagnesDisplayMode, campagnesSortingOptions } from "../../../constants";
+import { SortButtonsContainer, SearchContainer } from "./sortButtons.style";
+import { campagnesDisplayMode } from "../../../constants";
+import { isPlural } from "../../utils";
 
 const SortButtons = ({
   displayMode,
   setDisplayMode,
-  sortingMode = null,
-  setSortingMode = null,
   search,
   setSearch,
+  searchResultCount,
+  setIsOpened = () => {},
   organizeLabel,
-  mode,
 }) => {
+  const [inputValue, setInputValue] = useState(search);
+
+  useEffect(() => {
+    if (search !== inputValue) {
+      setInputValue(search);
+    }
+  }, [search]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearch(inputValue);
+      if (inputValue) {
+        setIsOpened(true);
+      }
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [inputValue, setSearch, setIsOpened]);
+
   return (
     <SortButtonsContainer>
       <Select
         label={organizeLabel}
         nativeSelectProps={{
           value: displayMode,
-          onChange: (event) => setDisplayMode(event.target.value),
+          onChange: (event) => {
+            setDisplayMode(event.target.value);
+            setIsOpened(true);
+          },
         }}
         options={campagnesDisplayMode}
       />
-      {mode === "manage" ||
-        (mode === "results" && (
-          <Select
-            nativeSelectProps={{
-              value: sortingMode,
-              onChange: (event) => setSortingMode(event.target.value),
-            }}
-            options={campagnesSortingOptions}
-          />
-        ))}
-      <Input
-        nativeInputProps={{
-          value: search,
-          placeholder: "Rechercher",
-          onChange: (e) => setSearch(e.target.value),
-        }}
-      />
+      <SearchContainer>
+        <Input
+          nativeInputProps={{
+            value: inputValue,
+            placeholder: "Rechercher",
+            onChange: (e) => setInputValue(e.target.value),
+          }}
+        />
+        {searchResultCount ? (
+          <p>
+            {searchResultCount} campagne{isPlural(searchResultCount)} trouvée
+            {isPlural(searchResultCount)}
+          </p>
+        ) : null}
+      </SearchContainer>
     </SortButtonsContainer>
   );
 };

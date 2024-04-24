@@ -19,6 +19,12 @@ export const TemoignagesCount = styled.p`
 `;
 
 export const TableContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 ${fr.spacing("2w")};
+
   & > .fr-table {
     margin-bottom: 0;
   }

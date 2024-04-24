@@ -18,8 +18,8 @@ const ProtectedRoute = () => {
   const [userContext, setUserContext] = useContext(UserContext);
 
   const isAuthenticated = userContext?.token;
-  const isActive = userContext?.currentUserStatus === USER_STATUS.ACTIVE;
-  const hasAcceptedCgu = userContext?.acceptedCgu;
+  const isActive = userContext.user?.status === USER_STATUS.ACTIVE;
+  const hasAcceptedCgu = userContext.user?.acceptedCgu;
 
   if (userContext.loading)
     return (

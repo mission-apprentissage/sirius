@@ -25,6 +25,10 @@ const isAdminOrAllowed = async (req, next, type) => {
     return next();
   }
 
+  if (role === USER_ROLES.OBSERVER) {
+    return next(new UnauthorizedError());
+  }
+
   if (role === USER_ROLES.ETABLISSEMENT && status === USER_STATUS.ACTIVE) {
     // check campagneId
     if (type === TYPES.CAMPAGNE_ID) {
@@ -56,7 +60,8 @@ const isAdminOrAllowed = async (req, next, type) => {
           (siret === body.etablissement.data.siret ||
             multipleSiret.includes(body.etablissement.data.siret) ||
             etablissementFormateurSIRET.includes(body.etablissement.data.siret) ||
-            multipleSiret.includes(body.formation.data.etablissement_formateur_siret))
+            multipleSiret.includes(body.formation.data.etablissement_formateur_siret) ||
+            multipleSiret.includes(body.formation.data.etablissement_gestionnaire_siret))
         ) {
           return body._id.toString();
         }
@@ -80,7 +85,7 @@ const isAdminOrAllowed = async (req, next, type) => {
 
     //check SIRET
     if (type === TYPES.ETABLISSEMENT_FORMATEUR_SIRET) {
-      const siretToVerify = req.body.map((etablissement) => etablissement.etablissementFormateurSiret);
+      const siretToVerify = [...new Set(req.body.map((etablissement) => etablissement.etablissementFormateurSiret))];
 
       if (!siretToVerify) {
         return next(new UnauthorizedError());
@@ -96,11 +101,12 @@ const isAdminOrAllowed = async (req, next, type) => {
       for (const siret of unauthorizedSiret) {
         const fetchedResponsableSiret = await referentiel.getEtablissementSIRETFromRelationType(
           siret,
-          ETABLISSEMENT_RELATION_TYPE.FORMATEUR_RESPONSABLE
+          ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
         );
-        responsableSiret.push(fetchedResponsableSiret[0]);
+
+        responsableSiret.push(fetchedResponsableSiret);
       }
-      const hasEveryResponsableSiret = responsableSiret.every((siret) => multipleSiret.includes(siret));
+      const hasEveryResponsableSiret = responsableSiret.flat().every((siret) => multipleSiret.includes(siret));
 
       if (hasEveryResponsableSiret) return next();
     }

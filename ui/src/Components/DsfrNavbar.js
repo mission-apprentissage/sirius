@@ -20,7 +20,6 @@ const DsfrNavbar = () => {
     e.preventDefault();
     const result = await _get(`/api/users/logout`, userContext.token);
     if (result.success) {
-      localStorage.removeItem("etablissements");
       navigate(0);
     }
   };
@@ -33,7 +32,8 @@ const DsfrNavbar = () => {
   const campagnesResultsRoute = location.pathname === "/campagnes/resultats";
 
   const isLoggedIn = !!userContext.token;
-  const isAdmin = userContext.currentUserRole === USER_ROLES.ADMIN;
+  const isAdmin = userContext.user?.role === USER_ROLES.ADMIN;
+  const isObserver = userContext.user?.role === USER_ROLES.OBSERVER;
 
   const quickAccessItemsLoggedOutAndOthersRoute = [
     {
@@ -96,7 +96,7 @@ const DsfrNavbar = () => {
     },
     {
       linkProps: {},
-      text: `${userContext.firstName} ${userContext.lastName}`,
+      text: `${userContext.user?.firstName} ${userContext.user?.lastName}`,
     },
     {
       iconId: "fr-icon-logout-box-r-fill",
@@ -108,7 +108,17 @@ const DsfrNavbar = () => {
     },
   ];
 
-  const loggedInNavigation = [
+  const observerNavigation = [
+    {
+      linkProps: {
+        to: "/campagnes/resultats",
+      },
+      text: "Voir les témoignages",
+      isActive: campagnesResultsRoute,
+    },
+  ];
+
+  const etablissementNavigation = [
     {
       linkProps: {
         to: "/campagnes/gestion",
@@ -132,8 +142,8 @@ const DsfrNavbar = () => {
     },
   ];
 
-  const loggedInAdminNavigation = [
-    ...loggedInNavigation,
+  const adminNavigation = [
+    ...etablissementNavigation,
     {
       text: "Gestion",
       menuLinks: [
@@ -194,12 +204,25 @@ const DsfrNavbar = () => {
   };
 
   const navigation = () => {
+    if (isObserver) {
+      return observerNavigation;
+    }
     if (isAdmin) {
-      return loggedInAdminNavigation;
+      return adminNavigation;
     }
     if (isLoggedIn) {
-      return loggedInNavigation;
+      return etablissementNavigation;
     }
+  };
+
+  const homeLink = () => {
+    if (isObserver) {
+      return "/campagnes/resultats";
+    }
+    if (isLoggedIn) {
+      return "/campagnes/gestion";
+    }
+    return "/";
   };
 
   return (
@@ -212,7 +235,7 @@ const DsfrNavbar = () => {
         </>
       }
       homeLinkProps={{
-        to: isLoggedIn ? "/campagnes/gestion" : "/",
+        to: homeLink(),
         title: "Accueil - Sirius",
       }}
       operatorLogo={{

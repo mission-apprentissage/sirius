@@ -7,9 +7,15 @@ const createVerifyAndLoginUser = async (httpClient, isAdmin = false) => {
   const user = newUser({ password: "toto" });
   const etablissement = newEtablissement({ siret: "12345678901234" });
 
-  const createdUser = await createUser(user.email, user.password, user.firstName, user.lastName, user.comment, [
-    etablissement,
-  ]);
+  const createdUser = await createUser(
+    user.email,
+    user.password,
+    user.firstName,
+    user.lastName,
+    user.role,
+    user.comment,
+    [etablissement]
+  );
 
   await usersDao.update(createdUser._id, {
     ...createdUser.toObject(),

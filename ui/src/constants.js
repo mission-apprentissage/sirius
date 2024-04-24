@@ -1,6 +1,7 @@
 export const USER_ROLES = {
   ADMIN: "ADMIN",
   ETABLISSEMENT: "ETABLISSEMENT",
+  OBSERVER: "OBSERVER",
 };
 
 export const USER_STATUS = {
@@ -88,15 +89,15 @@ export const numberRegex = /^\d+$/;
 export const campagnesDisplayMode = [
   {
     label: "Niveau de diplôme",
-    value: "diplome",
+    value: "DIPLOME_TYPE",
   },
   {
     label: "Établissement",
-    value: "etablissement",
+    value: "ETABLISSEMENT",
   },
   {
     label: "Toutes",
-    value: "all",
+    value: "ALL",
   },
 ];
 
@@ -112,3 +113,26 @@ export const campagnesSortingOptions = [
   { label: "Apprenti·es (0-1)", value: "seats-asc" },
   { label: "Apprenti·es (1-0)", value: "seats-desc" },
 ];
+
+export const ROLE_TYPE = {
+  ETABLISSEMENT: "ETABLISSEMENT",
+  OBSERVER: "OBSERVER",
+};
+
+export const OBSERVER_SCOPES = {
+  NUM_DEPARTEMENT: "num_departement",
+  REGION: "region",
+  SIRETS: "sirets",
+};
+
+export const OBSERVER_SCOPES_LABELS = {
+  [OBSERVER_SCOPES.NUM_DEPARTEMENT]: "Numéro de département",
+  [OBSERVER_SCOPES.REGION]: "Nom de la région",
+  [OBSERVER_SCOPES.SIRETS]: "Liste de SIRET",
+};
+
+export const CAMPAGNE_TABLE_TYPES = {
+  MANAGE: "MANAGE",
+  RESULTS: "RESULTS",
+  CREATE: "CREATE",
+};

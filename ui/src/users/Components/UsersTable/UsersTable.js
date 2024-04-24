@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import jwt from "jwt-decode";
 import { Table, Tbody, Tr, Td, useDisclosure, Box, Stack, useClipboard } from "@chakra-ui/react";
 import {
   useReactTable,
@@ -15,10 +16,14 @@ import UsersTableHead from "./UsersTableHead";
 import usersTableColumns from "./usersTableColumns";
 import AddSiretModal from "../AddSiretModal";
 import { useNavigate } from "react-router-dom";
+import AddScopeModal from "../AddScopeModal";
+import useSudoUser from "../../../hooks/useSudoUser";
+import { USER_ROLES } from "../../../constants";
 
 const UsersTable = ({ users, setRefetchData }) => {
   const [userContext, setUserContext] = useContext(UserContext);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [sudoUserId, setSudoUserId] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
   const [sorting, setSorting] = useState([]);
@@ -26,6 +31,27 @@ const UsersTable = ({ users, setRefetchData }) => {
   const [search, setSearch] = useState([]);
   const navigate = useNavigate();
   const { onCopy: onCopyClipBoard, setValue: setClipboardValue } = useClipboard("");
+
+  const { sudoUser, isSuccess } = useSudoUser({ userId: sudoUserId });
+
+  useEffect(() => {
+    if (isSuccess && sudoUser) {
+      const decodedToken = jwt(sudoUser.token);
+      setUserContext(() => {
+        return {
+          loading: false,
+          token: sudoUser.token,
+          user: decodedToken.user,
+        };
+      });
+
+      if (decodedToken.user.role === USER_ROLES.OBSERVER) {
+        navigate("/campagnes/resultats");
+      } else {
+        navigate("/campagnes/gestion");
+      }
+    }
+  }, [sudoUser, isSuccess, setUserContext]);
 
   useEffect(() => {
     setDisplayedUsers(users);
@@ -49,10 +75,15 @@ const UsersTable = ({ users, setRefetchData }) => {
     onClose: onCloseAddSiret,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenAddScope,
+    onOpen: onOpenAddScope,
+    onClose: onCloseAddScope,
+  } = useDisclosure();
+
   const table = useReactTable({
     columns: usersTableColumns(
       userContext,
-      setUserContext,
       setSelectedUser,
       setSelectedStatus,
       onOpenStatusConfirmation,
@@ -61,7 +92,8 @@ const UsersTable = ({ users, setRefetchData }) => {
       setClipboardValue,
       onCopyClipBoard,
       onOpenAddSiret,
-      navigate
+      onOpenAddScope,
+      setSudoUserId
     ),
     data: displayedUsers,
     getCoreRowModel: getCoreRowModel(),
@@ -133,6 +165,12 @@ const UsersTable = ({ users, setRefetchData }) => {
       <AddSiretModal
         isOpen={isOpenAddSiret}
         onClose={onCloseAddSiret}
+        user={selectedUser}
+        setRefetchData={setRefetchData}
+      />
+      <AddScopeModal
+        isOpen={isOpenAddScope}
+        onClose={onCloseAddScope}
         user={selectedUser}
         setRefetchData={setRefetchData}
       />

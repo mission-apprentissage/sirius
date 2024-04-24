@@ -65,7 +65,6 @@ const questionnaireTemplateQuery = [
 
 const formationQuery = (formationId) => {
   const objectIdFormationId = formationId ? new ObjectId(formationId) : null;
-
   return [
     {
       $lookup: {
@@ -92,6 +91,8 @@ const formationQuery = (formationId) => {
               "data.intitule_long": 1,
               "data.tags": 1,
               "data.lieu_formation_adresse_computed": 1,
+              "data.lieu_formation_adresse": 1,
+              "data.code_postal": 1,
               "data.diplome": 1,
               "data.localite": 1,
               "data.duree": 1,
@@ -101,6 +102,9 @@ const formationQuery = (formationId) => {
               "data.etablissement_formateur_enseigne": 1,
               "data.etablissement_formateur_entreprise_raison_sociale": 1,
               "data.etablissement_formateur_adresse": 1,
+              "data.etablissement_formateur_localite": 1,
+              "data.num_departement": 1,
+              "data.region": 1,
             },
           },
           {
@@ -169,17 +173,80 @@ const etablissementQuery = (sirets) => {
   ];
 };
 
-const getAllWithTemoignageCountAndTemplateName = async (query) => {
+const getAllWithTemoignageCountAndTemplateName = async ({ siret, query, scope }) => {
+  const matchConditions = {
+    deletedAt: null,
+  };
+
+  if (scope && scope.field && scope.field !== "sirets" && scope.value) {
+    matchConditions[`formation.data.${scope.field}`] = scope.value;
+  }
+
+  if (scope && scope.field && scope.field === "sirets" && scope.value.length) {
+    matchConditions[`formation.data.etablissement_gestionnaire_siret`] = { $in: scope.value };
+  }
+
+  if (query && query.diplome) {
+    matchConditions["formation.data.diplome"] = query.diplome;
+  }
+
+  if (query && query.etablissementFormateurSiret) {
+    matchConditions["formation.data.etablissement_formateur_siret"] = query.etablissementFormateurSiret;
+  }
+
+  if (query && query.campagneIds) {
+    matchConditions["_id"] = query.campagneIds;
+  }
+
   return Campagne.aggregate([
-    {
-      $match: {
-        deletedAt: null,
-      },
-    },
     ...temoignageCountQuery,
     ...questionnaireTemplateQuery,
     ...formationQuery(),
+    ...etablissementQuery(siret),
+    { $match: matchConditions },
+  ]);
+};
+
+const getAllOnlyDiplomeTypeAndEtablissements = async (query, scope) => {
+  const matchConditions = {
+    deletedAt: null,
+  };
+
+  if (scope && scope.field !== "sirets") {
+    matchConditions[`formation.data.${scope.field}`] = scope.value;
+  }
+
+  if (scope && scope.field && scope.field === "sirets" && scope.value.length) {
+    matchConditions[`formation.data.etablissement_gestionnaire_siret`] = { $in: scope.value };
+  }
+
+  return Campagne.aggregate([
+    ...formationQuery(),
     ...etablissementQuery(query?.siret),
+    { $match: matchConditions },
+    {
+      $project: {
+        _id: { $toString: "$_id" },
+        "formation.data._id": 1,
+        "formation.data.intitule_long": 1,
+        "formation.data.tags": 1,
+        "formation.data.lieu_formation_adresse_computed": 1,
+        "formation.data.lieu_formation_adresse": 1,
+        "formation.data.code_postal": 1,
+        "formation.data.diplome": 1,
+        "formation.data.localite": 1,
+        "formation.data.duree": 1,
+        "formation.data.etablissement_formateur_siret": 1,
+        "formation.data.etablissement_gestionnaire_siret": 1,
+        "formation.data.etablissement_gestionnaire_enseigne": 1,
+        "formation.data.etablissement_formateur_enseigne": 1,
+        "formation.data.etablissement_formateur_entreprise_raison_sociale": 1,
+        "formation.data.etablissement_formateur_adresse": 1,
+        "formation.data.etablissement_formateur_localite": 1,
+        "formation.data.num_departement": 1,
+        "formation.data.region": 1,
+      },
+    },
   ]);
 };
 
@@ -219,7 +286,7 @@ const update = async (id, updatedCampagne) => {
   return Campagne.updateOne({ _id: id, deletedAt: null }, updatedCampagne);
 };
 
-const getAll = async (query = {}) => {
+const getAllWithTemoignageCountFormationEtablissement = async (query = {}) => {
   return Campagne.aggregate([
     {
       $match: {
@@ -234,6 +301,10 @@ const getAll = async (query = {}) => {
   ]);
 };
 
+const getAll = async (query = {}) => {
+  return Campagne.find({ deletedAt: null, ...query }).lean();
+};
+
 module.exports = {
   getAllWithTemoignageCountAndTemplateName,
   getOneWithTemoignagneCountAndTemplateName,
@@ -241,6 +312,8 @@ module.exports = {
   deleteOne,
   deleteMany,
   update,
-  getAll,
+  getAllWithTemoignageCountFormationEtablissement,
   getOne,
+  getAll,
+  getAllOnlyDiplomeTypeAndEtablissements,
 };

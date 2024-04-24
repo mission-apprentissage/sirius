@@ -147,7 +147,6 @@ const MenuWithSubnavigation = () => {
   const handleLogout = async () => {
     const result = await _get(`/api/users/logout`, userContext.token);
     if (result.success) {
-      localStorage.removeItem("etablissements");
       navigate(0);
     } else {
       toast({
@@ -211,10 +210,8 @@ const MenuWithSubnavigation = () => {
 
 const DesktopNav = () => {
   const [userContext] = useContext(UserContext);
-  const isActive = userContext.currentUserStatus === USER_STATUS.ACTIVE;
-  const filteredNavItems = isActive
-    ? filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole)
-    : [];
+  const isActive = userContext.user?.status === USER_STATUS.ACTIVE;
+  const filteredNavItems = isActive ? filterNavItemsByRole(NAV_ITEMS, userContext.user?.role) : [];
 
   return (
     <Stack direction="row" spacing={4}>
@@ -281,11 +278,9 @@ const DesktopSubNav = ({ label, href, subLabel }) => {
 
 const MobileNav = () => {
   const [userContext] = useContext(UserContext);
-  const isActive = userContext.currentUserStatus === USER_STATUS.ACTIVE;
+  const isActive = userContext.user?.status === USER_STATUS.ACTIVE;
 
-  const filteredNavItems = isActive
-    ? filterNavItemsByRole(NAV_ITEMS, userContext.currentUserRole)
-    : [];
+  const filteredNavItems = isActive ? filterNavItemsByRole(NAV_ITEMS, userContext.user?.role) : [];
 
   return (
     <Stack bg="white" p={4} display={{ md: "none" }}>

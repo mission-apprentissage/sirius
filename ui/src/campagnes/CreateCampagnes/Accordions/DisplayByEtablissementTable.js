@@ -14,11 +14,11 @@ import {
   AccordionLabelByEtablissementContainer,
   ButtonContainer,
 } from "./accordions.style";
-import CreateCampagneTable from "../CreateCampagneTable";
 import RemoveFormationModal from "../RemoveFormationModal";
-import { campagnesDisplayMode } from "../../../constants";
+import { CAMPAGNE_TABLE_TYPES, campagnesDisplayMode } from "../../../constants";
 import { ToolTipContainer } from "../../styles/shared.style";
 import CommonEndDateModal from "../CommonEndDateModal";
+import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
 
 const modal = createModal({
   id: "remove-formation-modal",
@@ -102,8 +102,8 @@ const DisplayByEtablissementTable = ({
                 </h5>
               </div>
               <p>
-                {formationsByEtablissement[0].etablissement_formateur_adresse}{" "}
-                {formationsByEtablissement[0].localite}
+                {formationsByEtablissement[0].lieu_formation_adresse_computed ||
+                  `${formationsByEtablissement[0].lieu_formation_adresse}, ${formationsByEtablissement[0].code_postal} ${formationsByEtablissement[0].localite}`}
               </p>
               <p>N° SIRET : {formationsByEtablissement[0].etablissement_formateur_siret}</p>
               <p>
@@ -151,12 +151,13 @@ const DisplayByEtablissementTable = ({
               Choisir une date de fin commune
             </Button>
           </ButtonContainer>
-          <CreateCampagneTable
+          <CampagnesTable
             selectedFormations={formationsByEtablissement}
             selectedFormationsAction={selectedFormationsAction}
             setSelectedFormationsAction={setSelectedFormationsAction}
             formik={formik}
             displayMode={campagnesDisplayMode[1].value}
+            campagneTableType={CAMPAGNE_TABLE_TYPES.CREATE}
           />
         </StyledAccordion>
         <RemoveFormationModal

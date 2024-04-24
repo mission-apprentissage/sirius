@@ -1,6 +1,5 @@
 import jsPDF from "jspdf";
 import * as htmlToImage from "html-to-image";
-import { getCategoriesWithEmojis } from "./utils";
 import shareSummaryTemplate from "../assets/images/share_summary_template.jpg";
 import statisticsTemplate from "../assets/images/statistics_template.jpg";
 import "../assets/fonts/Marianne-Bold-encoded";
@@ -47,7 +46,9 @@ const addSelectedCampagnesContent = async (doc, selectedCampagnes) => {
     const campagneName = campagne.campagneName || campagne.formation.data.intitule_long;
     const etablissementName =
       campagne.formation.data.etablissement_formateur_entreprise_raison_sociale || "";
-    const localite = campagne.formation.data.localite || "";
+    const localite =
+      campagne.formation.data.lieu_formation_adresse_computed ||
+      `${campagne.formation.data.lieu_formation_adresse}, ${campagne.formation.data.code_postal} ${campagne.formation.data.localite}`;
 
     // Check if new content exceeds page height, if so, add a new page and reapply the template
     if (yPos > pageHeight - bottomMargin) {
@@ -107,8 +108,7 @@ const addCategoryTitlePage = async (doc, category, isFirstCategory) => {
   return 10 + titleHeight; // Adjust the return value based on the new title height + some padding
 };
 
-export const exportMultipleChartsToPdf = async (questionnaire, selectedCampagnes, statistics) => {
-  const categories = getCategoriesWithEmojis(questionnaire);
+export const exportMultipleChartsToPdf = async (categories, selectedCampagnes, statistics) => {
   const doc = new jsPDF("p", "px", "a4");
   doc.addImage(
     shareSummaryTemplate,

@@ -9,7 +9,7 @@ const PendingAccountPage = () => {
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
 
-  if (userContext.currentUserStatus === USER_STATUS.ACTIVE) {
+  if (userContext.user?.status === USER_STATUS.ACTIVE) {
     navigate("/");
   }
 

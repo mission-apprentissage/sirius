@@ -12,7 +12,15 @@ httpTests(__filename, ({ startServer }) => {
     const { httpClient } = await startServer();
 
     const user = newUser({ password: "toto" });
-    const createdUser = await createUser(user.email, user.password, user.firstName, user.lastName, user.comment, []);
+    const createdUser = await createUser(
+      user.email,
+      user.password,
+      user.firstName,
+      user.lastName,
+      user.role,
+      user.comment,
+      []
+    );
 
     await usersDao.update(createdUser._id, {
       ...createdUser.toObject(),

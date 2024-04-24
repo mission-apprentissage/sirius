@@ -1,48 +1,82 @@
 import React, { useState, useEffect } from "react";
-import jwt from "jwt-decode";
-import { _post } from "../utils/httpClient";
+import jwt_decode from "jwt-decode";
+import useRefreshTokenUser from "../hooks/useRefreshTokenUser";
+import useFetchMe from "../hooks/useFetchMe";
+import { USER_ROLES } from "../constants";
+import { _get } from "../utils/httpClient";
 
-const UserContext = React.createContext([{}, () => {}]);
+const UserContext = React.createContext();
 
-let initialState = { loading: true, token: null };
+const initialState = {
+  loading: true,
+  token: null,
+  user: null,
+};
 
-const UserProvider = (props) => {
-  const [user, setUser] = useState(initialState);
+const UserProvider = ({ children }) => {
+  const [state, setState] = useState(initialState);
+  const { refreshTokenUser } = useRefreshTokenUser();
+
+  const shouldHaveEtablissements =
+    state.user?.role === USER_ROLES.ETABLISSEMENT && !state.user?.etablissements?.length;
+
+  const { me } = useFetchMe({
+    enabled: !!state?.token && shouldHaveEtablissements,
+    token: state?.token,
+  });
 
   const verifyUser = async () => {
-    const result = await _post(`/api/users/refreshToken`);
-    if (result.success) {
-      const decodedToken = jwt(result.token);
-      setUser((oldValues) => {
-        return {
-          ...oldValues,
-          token: result.token,
-          loading: false,
-          currentUserId: decodedToken._id,
-          currentUserRole: decodedToken.role,
-          currentUserStatus: decodedToken.status,
-          siret: decodedToken.siret,
-          firstName: decodedToken.firstName,
-          lastName: decodedToken.lastName,
-          email: decodedToken.email,
-          etablissementLabel: decodedToken.etablissementLabel,
-          etablissements: decodedToken.etablissements,
-          acceptedCgu: decodedToken.acceptedCgu || false,
-        };
-      });
-    } else {
-      setUser((oldValues) => {
-        return { ...oldValues, token: null, loading: false };
-      });
-    }
-    setTimeout(verifyUser, 1000 * 60 * 3600);
+    refreshTokenUser(
+      {},
+      {
+        onSuccess: (result) => {
+          const decodedToken = jwt_decode(result.token);
+          setState({
+            loading: false,
+            token: result.token,
+            user: decodedToken.user,
+          });
+        },
+        onError: () => {
+          setState({ ...initialState, loading: false });
+        },
+      }
+    );
   };
 
   useEffect(() => {
-    verifyUser();
-  }, []);
+    const forceLogout = async () => {
+      const result = await _get(`/api/users/logout`, state.token);
+      if (result.success) {
+        setState({ ...initialState, loading: false });
+      }
+    };
 
-  return <UserContext.Provider value={[user, setUser]}>{props.children}</UserContext.Provider>;
+    if (state.token && !state.user) {
+      forceLogout();
+    }
+  });
+
+  useEffect(() => {
+    if (!state.token) {
+      verifyUser();
+    } else {
+      const intervalId = setInterval(verifyUser, 1000 * 60 * 14);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [state.token]);
+
+  useEffect(() => {
+    if (me && shouldHaveEtablissements) {
+      setState({
+        ...state,
+        user: { ...state.user, etablissements: me?.etablissements },
+      });
+    }
+  }, [me]);
+
+  return <UserContext.Provider value={[state, setState]}>{children}</UserContext.Provider>;
 };
 
 export { UserContext, UserProvider };

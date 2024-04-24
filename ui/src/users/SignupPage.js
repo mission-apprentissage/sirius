@@ -1,11 +1,11 @@
 import React, { useState, useContext } from "react";
-
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Navigate, Link } from "react-router-dom";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { _post } from "../utils/httpClient";
 import { UserContext } from "../context/UserContext";
 import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
@@ -26,10 +26,11 @@ import {
   oneSpecialCharacter,
   allFieldMessage,
   notCorrespondingPasswordMessage,
+  notCorrespondingRole,
   emailFormatMessage,
 } from "../utils/validators";
 import Support from "../assets/images/support.svg";
-import { emailWithTLDRegex } from "../constants";
+import { ROLE_TYPE, USER_ROLES, emailWithTLDRegex } from "../constants";
 import AddSiret from "./Components/AddSiretDsfr/AddSiret";
 import NeedHelp from "../Components/NeedHelp";
 import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
@@ -45,13 +46,26 @@ const validationSchema = Yup.object({
   lastName: Yup.string().required(allFieldMessage),
   firstName: Yup.string().required(allFieldMessage),
   email: Yup.string().matches(emailWithTLDRegex, emailFormatMessage).required(allFieldMessage),
+  role: Yup.string()
+    .oneOf([USER_ROLES.ETABLISSEMENT, USER_ROLES.OBSERVER], notCorrespondingRole)
+    .required(allFieldMessage),
   password: Yup.string().required(allFieldMessage).matches(passwordComplexityRegex),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], notCorrespondingPasswordMessage)
     .required(allFieldMessage)
     .matches(passwordComplexityRegex),
-  etablissements: Yup.array().of(etablissement).min(1, allFieldMessage),
-  comment: Yup.string(),
+  etablissements: Yup.array()
+    .of(etablissement)
+    .when("role", {
+      is: ROLE_TYPE.ETABLISSEMENT,
+      then: (schema) => schema.min(1, allFieldMessage),
+      otherwise: (schema) => schema.min(0).max(0),
+    }),
+  comment: Yup.string().when("role", {
+    is: ROLE_TYPE.OBSERVER,
+    then: (schema) => schema.required(allFieldMessage),
+    otherwise: (schema) => schema,
+  }),
 });
 
 const SignupPage = () => {
@@ -64,20 +78,23 @@ const SignupPage = () => {
     initialValues: {
       firstName: "",
       lastName: "",
+      role: "",
       comment: "",
       email: "",
       password: "",
       etablissements: [],
     },
     validationSchema: validationSchema,
-    onSubmit: async ({ email, password, firstName, lastName, comment, etablissements }) => {
+    onSubmit: async ({ email, password, firstName, lastName, comment, etablissements, role }) => {
       setIsSubmitting(true);
       const etablissementsWitoutEmpty = etablissements.filter(
         (obj) => Object.keys(obj).length !== 0
       );
+
       const resultUser = await _post(`/api/users/`, {
         firstName: firstName,
         lastName: lastName,
+        role: role,
         comment: comment,
         email: email.toLowerCase(),
         password,
@@ -215,11 +232,39 @@ const SignupPage = () => {
                   }
                 />
               </PasswordsContainer>
-              <AddSiret formik={formik} setError={setError} />
+              <RadioButtons
+                orientation="horizontal"
+                legend="Vous êtes ?"
+                name="radio"
+                options={[
+                  {
+                    label: "Un établissement",
+                    hintText:
+                      "Votre établissement dispense des formations ou gère des établissements en dispensant",
+                    nativeInputProps: {
+                      value: ROLE_TYPE.ETABLISSEMENT,
+                    },
+                  },
+                  {
+                    label: "Autre",
+                    hintText:
+                      "Merci de préciser en commentaire le status de votre entité et les raisons de votre inscription",
+                    nativeInputProps: {
+                      value: ROLE_TYPE.OBSERVER,
+                    },
+                  },
+                ]}
+                onChange={(e) => formik.setFieldValue("role", e.target.value)}
+                state={formik.errors.role && formik.submitCount >= 1 ? "error" : "default"}
+                stateRelatedMessage={formik.errors.role}
+              />
+              {formik.values.role === ROLE_TYPE.ETABLISSEMENT && (
+                <AddSiret formik={formik} setError={setError} />
+              )}
               <Input
                 id="comment"
                 label="Commentaire"
-                hintText="Facultatif"
+                hintText={formik.values.role === ROLE_TYPE.OBSERVER ? "Obligatoire" : "Facultatif"}
                 textArea
                 state={formik.errors.comment && formik.submitCount >= 1 ? "error" : "default"}
                 stateRelatedMessage={formik.errors.comment}

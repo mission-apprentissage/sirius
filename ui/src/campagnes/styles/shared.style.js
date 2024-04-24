@@ -31,23 +31,28 @@ export const FormationContainer = styled.div`
   }
 `;
 
-export const SearchNoResultsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: ${fr.spacing("6w")};
-
-  p {
-    text-decoration: underline;
-    color: var(--text-action-high-blue-france);
-    cursor: pointer;
-  }
-`;
-
 export const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 50px;
+`;
+
+export const TableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+`;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: ${fr.spacing("2w")};
+
+  & fieldset {
+    margin-bottom: 0;
+  }
 `;

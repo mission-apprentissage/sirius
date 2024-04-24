@@ -31,6 +31,10 @@ const filterOptions = [
     label: "Etablissement",
     value: "etablissementRole",
   },
+  {
+    label: "Autres Role",
+    value: "observerRole",
+  },
 ];
 
 const UsersTableFilters = ({ setDisplayedUsers, users, setSearch }) => {
@@ -62,6 +66,9 @@ const UsersTableFilters = ({ setDisplayedUsers, users, setSearch }) => {
     }
     if (!isFilterSelected("etablissementRole")) {
       filteredUsers = filteredUsers.filter((user) => user.role !== USER_ROLES.ETABLISSEMENT);
+    }
+    if (!isFilterSelected("observerRole")) {
+      filteredUsers = filteredUsers.filter((user) => user.role !== USER_ROLES.OBSERVER);
     }
 
     setSelectedFilters(selectedFilters);

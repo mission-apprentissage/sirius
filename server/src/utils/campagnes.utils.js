@@ -1,21 +1,15 @@
-const getMedian = (values) => {
-  const sorted = Array.from(values).sort((a, b) => a - b);
-  const middle = Math.floor(sorted.length / 2);
+const msToTime = (duration) => {
+  let seconds = Math.floor((duration / 1000) % 60);
+  let minutes = Math.floor((duration / (1000 * 60)) % 60);
+  let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
 
-  if (sorted.length % 2 === 0) {
-    return Math.round((sorted[middle - 1] + sorted[middle]) / 2);
-  }
+  hours = hours < 10 ? "0" + hours : hours;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  seconds = seconds < 10 ? "0" + seconds : seconds;
 
-  return Math.round(sorted[middle]);
-};
-
-const getMedianDuration = (answers) => {
-  if (answers.length === 0) return 0;
-  const durations = answers.map(
-    (answer) => new Date(answer.lastQuestionAt).getTime() - new Date(answer.createdAt).getTime()
-  );
-
-  return getMedian(durations);
+  if (minutes === "00") return seconds + " sec";
+  if (hours === "00") return minutes + " min " + seconds;
+  return hours + " h " + minutes + " min " + seconds;
 };
 
 const appendDataWhenEmpty = (campagne) => {
@@ -26,6 +20,8 @@ const appendDataWhenEmpty = (campagne) => {
         intitule_long: "N/A",
         tags: [],
         lieu_formation_adresse_computed: "N/A",
+        lieu_formation_adresse: "N/A",
+        code_postal: "N/A",
         diplome: "N/A",
         localite: "N/A",
         duree: 0,
@@ -56,7 +52,63 @@ const appendDataWhenEmpty = (campagne) => {
   }
 };
 
+const getFinishedCampagnes = (campagnes) => {
+  return campagnes.filter((campagne) => new Date(campagne.endDate) < new Date());
+};
+
+const getTemoignagesCount = (campagnes) => {
+  return campagnes.reduce((acc, campagne) => acc + campagne.temoignagesCount, 0);
+};
+
+const getChampsLibreRate = (campagnes) => {
+  const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
+
+  if (!filteredCampagnes.length) {
+    return "N/A";
+  }
+
+  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.champsLibreRate, 0);
+  return Math.round(sum / filteredCampagnes.length) + "%";
+};
+
+const getMedianDuration = (campagnes) => {
+  const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
+
+  if (!filteredCampagnes.length) {
+    return "N/A";
+  }
+
+  filteredCampagnes.forEach((campagne) => {
+    campagne.medianDurationInMs =
+      campagne.temoignagesList.reduce(
+        (acc, answer) =>
+          answer?.lastQuestionAt
+            ? acc + new Date(answer?.lastQuestionAt).getTime() - new Date(answer?.createdAt).getTime()
+            : 0,
+        0
+      ) / campagne.temoignagesList.length;
+  });
+
+  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.medianDurationInMs, 0);
+
+  return msToTime(Math.round(sum / filteredCampagnes.length));
+};
+
+const getVerbatimsCount = (campagnes) => {
+  return campagnes.reduce((acc, campagne) => acc + campagne.champsLibreCount, 0);
+};
+
+const getStatistics = (campagnes) => ({
+  campagnesCount: campagnes?.length || 0,
+  finishedCampagnesCount: campagnes?.length ? getFinishedCampagnes(campagnes).length : 0,
+  temoignagesCount: campagnes?.length ? getTemoignagesCount(campagnes) : 0,
+  champsLibreRate: campagnes?.length ? getChampsLibreRate(campagnes) : "N/A",
+  medianDuration: campagnes?.length ? getMedianDuration(campagnes) : "N/A",
+  verbatimsCount: campagnes?.length ? getVerbatimsCount(campagnes) : "0",
+});
+
 module.exports = {
   getMedianDuration,
   appendDataWhenEmpty,
+  getStatistics,
 };

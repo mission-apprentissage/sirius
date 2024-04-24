@@ -8,8 +8,19 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { UserProvider } from "./context/UserContext";
 import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 startReactDsfr({ defaultColorScheme: "light", Link });
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 4 * (60 * 1000),
+      cacheTime: 4 * (60 * 1000),
+    },
+  },
+});
 
 const activeLabelStyles = {
   transform: "scale(0.85) translateY(-24px)",
@@ -101,13 +112,16 @@ const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <ChakraProvider theme={theme}>
-      <UserProvider>
-        <Router>
-          <App />
-        </Router>
-      </UserProvider>
-    </ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme}>
+        <UserProvider>
+          <Router>
+            <App />
+          </Router>
+        </UserProvider>
+      </ChakraProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   </React.StrictMode>
 );
 
