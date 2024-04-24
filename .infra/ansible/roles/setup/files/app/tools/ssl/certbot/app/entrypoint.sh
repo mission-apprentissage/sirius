@@ -18,7 +18,7 @@ function generate_certificate() {
 
   echo "Generating certificate for domain ${dns_name}..."
   certbot certonly \
-    --email misson.apprentissage.devops@gmail.com \
+    --email contact@inserjeunes.beta.gouv.fr \
     --agree-tos \
     --non-interactive \
     --webroot \
@@ -33,7 +33,7 @@ function generate_self_signed_certificate() {
   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout "${SSL_OUTPUT_DIR}/privkey.pem" \
     -out "${SSL_OUTPUT_DIR}/fullchain.pem" \
-    -subj "/C=FR/O=Mission Apprentissage/CN=Root"
+    -subj "/C=FR/O=Mission Inserjeunes/CN=Root"
 }
 
 function renew_certificate() {

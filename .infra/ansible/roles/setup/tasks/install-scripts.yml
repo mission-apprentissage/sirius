@@ -23,9 +23,9 @@
   with_fileglob:
     - "app/*.sh"
 
-- name: Nettoyage des permissions sudo pour le groupe 'mna'
+- name: Nettoyage des permissions sudo pour le groupe 'ij'
   lineinfile:
     path: /etc/sudoers
     state: absent
-    regexp: "mna"
+    regexp: "ij"
 

@@ -30,7 +30,7 @@ function encrypt() {
   import_recipients
   add_recipients_as_params recipients
   gpg \
-    --default-key "mna_devops" \
+    --default-key "ij_devops" \
     --encrypt \
     --cipher-algo AES256 \
     --always-trust \

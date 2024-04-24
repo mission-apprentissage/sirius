@@ -1,6 +1,6 @@
-- name: Ensure group "mna" exists
+- name: Ensure group "ij" exists
   group:
-    name: mna
+    name: ij
     state: present
 
 - name: _create-sudoers.yml

@@ -29,14 +29,14 @@ Key-Length: 4096
 Subkey-Type: 1
 Subkey-Usage: encrypt
 Subkey-Length: 4096
-Name-Real: mna_devops
-Name-Email: misson.apprentissage.devops@gmail.com
+Name-Real: ij_devops
+Name-Email: contact@inserjeunes.beta.gouv.fr
 Expire-Date: 0
 %no-protection
 %commit
 EOM
 
-  gpg --export "mna_devops" >"${GPG_PUBKEY}"
+  gpg --export "ij_devops" >"${GPG_PUBKEY}"
 }
 
 generate_key
