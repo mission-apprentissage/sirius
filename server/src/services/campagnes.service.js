@@ -16,7 +16,7 @@ const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
 const { getChampsLibreCount, getChampsLibreRate } = require("../utils/verbatims.utils");
 
-const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageSize, query, search }) => {
+const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, pageSize = 10, query, search }) => {
   try {
     let campagnes = [];
 

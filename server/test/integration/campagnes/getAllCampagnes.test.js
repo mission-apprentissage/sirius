@@ -40,8 +40,8 @@ httpTests(__filename, ({ startServer }) => {
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
 
     expect(response.status).to.eql(200);
-    expect(response.body[0]).to.deep.includes(campagne1);
-    expect(response.body[1]).to.deep.includes(campagne2);
+    expect(response.body.body[0]).to.deep.includes(campagne1);
+    expect(response.body.body[1]).to.deep.includes(campagne2);
   });
   it("should return 200 and an empty array if no campagne exist", async () => {
     const { httpClient } = await startServer();
@@ -51,8 +51,7 @@ httpTests(__filename, ({ startServer }) => {
     const response = await httpClient
       .get("/api/campagnes/")
       .set("Authorization", `Bearer ${loggedInUserResponse.token}`);
-
     expect(response.status).to.eql(200);
-    expect(response.body).to.eql([]);
+    expect(response.body.body).to.eql([]);
   });
 });
