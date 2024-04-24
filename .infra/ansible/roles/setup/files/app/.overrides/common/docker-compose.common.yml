@@ -1,28 +1,16 @@
-#Override containers for azure environments
+version: "2.4"
 services:
   reverse_proxy:
-    build:
-      args:
-        - DIR=app
-    environment:
-      - SERVER_NAME={{dns_name}}
-      - NGINX_ALWAYS_TLS_REDIRECT=true
-      - PROXY_SSL_CERT=/ssl/fullchain.pem
-      - PROXY_SSL_CERT_KEY=/ssl/privkey.pem
+    ports:
+      - 443:443
     volumes:
-      - /opt/pilotage/data/nginx:/data
-      - /opt/pilotage/data/ssl:/ssl:ro
+      - /opt/sirius/data/nginx:/data
+      - /opt/sirius/data/ssl:/ssl:ro
+      - /opt/sirius/.overrides/reverse_proxy/sirius.conf:/etc/nginx/conf.d/sirius.conf:ro  
 
-  metabase:
-    image: metabase/metabase:v0.42.0
-    container_name: pilotage_metabase
-    mem_limit: 2g
+  ui:
+    command: yarn serve
+
+  server:
     volumes:
-      - /opt/pilotage/data/metabase:/data/metabase
-      - /opt/pilotage/backups/metabase:/data/backups
-    environment:
-      MB_DB_FILE: /data/metabase/metabase.db
-      MB_SITE_LOCALE: fr
-    restart: always
-    networks:
-      - pilotage_network
+      - /opt/sirius/data/server:/data
