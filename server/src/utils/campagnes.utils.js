@@ -20,6 +20,8 @@ const appendDataWhenEmpty = (campagne) => {
         intitule_long: "N/A",
         tags: [],
         lieu_formation_adresse_computed: "N/A",
+        lieu_formation_adresse: "N/A",
+        code_postal: "N/A",
         diplome: "N/A",
         localite: "N/A",
         duree: 0,

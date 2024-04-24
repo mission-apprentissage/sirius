@@ -56,6 +56,8 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page, pageS
             campagne.nomCampagne.toLowerCase().includes(search.toLowerCase()) ||
             campagne.formation?.data.intitule_long.toLowerCase().includes(search.toLowerCase()) ||
             campagne.formation?.data.localite.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.lieu_formation_adresse_computed.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.lieu_formation_adresse.toLowerCase().includes(search.toLowerCase()) ||
             campagne.formation?.data.tags.join("-").toLowerCase().includes(search.toLowerCase())
           );
         })
@@ -284,6 +286,7 @@ const getPdfMultipleExport = async (ids, user) => {
       campagneName:
         campagne.nomCampagne || campagne.formation.data.intitule_long || campagne.formation.data.intitule_court,
       localite: campagne.formation.data.localite,
+      adresse: campagne.formation.data.lieu_formation_adresse_computed,
       tags: campagne.formation.data.tags,
       duree: campagne.formation.data.duree,
     }));

@@ -77,7 +77,8 @@ const manageCampagneTableRows = ({
               content={
                 <ToolTipContainer>
                   <p>
-                    {formation.etablissement_formateur_adresse} {formation.localite}
+                    {formation.lieu_formation_adresse_computed ||
+                      `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
                   </p>
                   <p>N° Siret: {formation.etablissement_formateur_siret}</p>
                   {formation.etablissement_formateur_siret ===

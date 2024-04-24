@@ -88,8 +88,8 @@ const DisplayByEtablissementCards = ({
               </h5>
             </div>
             <p>
-              {formationsByEtablissement[0].etablissement_formateur_adresse}{" "}
-              {formationsByEtablissement[0].localite}
+              {formationsByEtablissement[0].lieu_formation_adresse_computed ||
+                `${formationsByEtablissement[0].lieu_formation_adresse}, ${formationsByEtablissement[0].code_postal} ${formationsByEtablissement[0].localite}`}
             </p>
             <p>N° SIRET : {formationsByEtablissement[0].etablissement_formateur_siret}</p>
             <p>

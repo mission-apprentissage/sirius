@@ -109,7 +109,8 @@ export const AccordionLabel = ({ diplome = null, etablissementFormateur = null, 
           </h5>
         </div>
         <p>
-          {etablissementFormateur.etablissement_formateur_adresse} {etablissementFormateur.localite}
+          {etablissementFormateur.lieu_formation_adresse_computed ||
+            `${etablissementFormateur.lieu_formation_adresse}, ${etablissementFormateur.code_postal} ${etablissementFormateur.localite}`}
         </p>
         <p>N° SIRET : {etablissementFormateur.etablissement_formateur_siret}</p>
         <p>

@@ -65,10 +65,13 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     intitule_long: 1,
     etablissement_formateur_siret: 1,
     etablissement_gestionnaire_siret: 1,
-    localite: 1,
     etablissement_formateur_adresse: 1,
     etablissement_formateur_entreprise_raison_sociale: 1,
     etablissement_formateur_enseigne: 1,
+    lieu_formation_adresse_computed: 1,
+    lieu_formation_adresse: 1,
+    localite: 1,
+    code_postal: 1,
   };
 
   const userSiretQuery = isAdmin ? {} : { $or: formattedUserSiret }; // formattedUserSiret should be an array of objects

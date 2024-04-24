@@ -48,6 +48,8 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
       const filteredFormations = searchedDiplayedFormations.filter((formation) => {
         return (
           formation.intitule_long?.toLowerCase().includes(search) ||
+          formation.lieu_formation_adresse_computed?.toLowerCase().includes(search) ||
+          formation.lieu_formation_adresse?.toLowerCase().includes(search) ||
           formation.localite?.toLowerCase().includes(search) ||
           formation.etablissement_gestionnaire_enseigne?.toLowerCase().includes(search) ||
           formation.etablissement_formateur_adresse?.toLowerCase().includes(search) ||
