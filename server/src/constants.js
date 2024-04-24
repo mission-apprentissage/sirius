@@ -79,6 +79,13 @@ const CAMPAGNE_SORTING_TYPE = {
   ALL: "ALL",
 };
 
+const UNCOMPLIANT_TEMOIGNAGE_TYPE = {
+  ALL: "all",
+  BOT: "bot",
+  INCOMPLETE: "incomplete",
+  QUICK: "quick",
+};
+
 module.exports = {
   USER_ROLES,
   USER_STATUS,
@@ -87,4 +94,5 @@ module.exports = {
   ETABLISSEMENT_RELATION_TYPE,
   VERBATIM_STATUS,
   CAMPAGNE_SORTING_TYPE,
+  UNCOMPLIANT_TEMOIGNAGE_TYPE,
 };

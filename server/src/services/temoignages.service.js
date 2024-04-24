@@ -8,8 +8,9 @@ const {
   matchCardTypeAndQuestions,
   getCategoriesWithEmojis,
   getFormattedResponses,
+  appendFormationDataWhenEmpty,
 } = require("../utils/temoignages.utils");
-const { VERBATIM_STATUS } = require("../constants");
+const { VERBATIM_STATUS, UNCOMPLIANT_TEMOIGNAGE_TYPE } = require("../constants");
 
 const createTemoignage = async (temoignage) => {
   try {
@@ -175,4 +176,93 @@ const getDatavisualisation = async (campagneIds) => {
   }
 };
 
-module.exports = { createTemoignage, getTemoignages, deleteTemoignage, updateTemoignage, getDatavisualisation };
+const getUncompliantTemoignages = async ({
+  type,
+  duration,
+  answeredQuestions,
+  includeUnavailableDuration,
+  page,
+  pageSize,
+}) => {
+  const isBotQuery = { isBot: true };
+  console;
+  const isIncompleteQuery = {
+    $expr: {
+      $lt: [{ $size: { $objectToArray: "$reponses" } }, answeredQuestions],
+    },
+  };
+  const hasAnsweredQuicklyQuery = {
+    $and: [
+      !includeUnavailableDuration ? { lastQuestionAt: { $exists: true, $ne: null } } : {},
+      { $expr: { $lt: [{ $subtract: ["$lastQuestionAt", "$createdAt"] }, 1000 * 60 * duration] } },
+    ],
+  };
+
+  const allQuery = {
+    $or: [isBotQuery, isIncompleteQuery, hasAnsweredQuicklyQuery],
+  };
+
+  let temoignages = [];
+  try {
+    if (type === UNCOMPLIANT_TEMOIGNAGE_TYPE.BOT) {
+      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(isBotQuery, page, pageSize);
+    }
+    if (type === UNCOMPLIANT_TEMOIGNAGE_TYPE.INCOMPLETE) {
+      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(isIncompleteQuery, page, pageSize);
+    }
+    if (type === UNCOMPLIANT_TEMOIGNAGE_TYPE.QUICK) {
+      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(hasAnsweredQuicklyQuery, page, pageSize);
+    }
+    if (type === UNCOMPLIANT_TEMOIGNAGE_TYPE.ALL) {
+      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(allQuery, page, pageSize);
+    }
+
+    const allCount = await temoignagesDao.count(allQuery);
+    const botCount = await temoignagesDao.count(isBotQuery);
+    const incompleteCount = await temoignagesDao.count(isIncompleteQuery);
+    const quickCount = await temoignagesDao.count(hasAnsweredQuicklyQuery);
+
+    temoignages[0].data.forEach((temoignage) => {
+      appendFormationDataWhenEmpty(temoignage);
+    });
+
+    return {
+      success: true,
+      body: temoignages[0].data,
+      count: {
+        total: allCount,
+        bot: botCount,
+        incomplete: incompleteCount,
+        quick: quickCount,
+      },
+      pagination: {
+        totalItems: temoignages[0].totalCount,
+        currentPage: parseInt(page),
+        pageSize: pageSize,
+        totalPages: Math.ceil(temoignages[0].totalCount / pageSize),
+        hasMore: temoignages[0].totalCount > page * pageSize,
+      },
+    };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+const deleteMultipleTemoignages = async (temoignagesIds) => {
+  try {
+    const temoignages = await temoignagesDao.deleteMultiple(temoignagesIds);
+    return { success: true, body: temoignages };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = {
+  createTemoignage,
+  getTemoignages,
+  deleteTemoignage,
+  updateTemoignage,
+  getDatavisualisation,
+  getUncompliantTemoignages,
+  deleteMultipleTemoignages,
+};

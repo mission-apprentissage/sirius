@@ -4,7 +4,7 @@ import { useIsDark } from "@codegouvfr/react-dsfr/useIsDark";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import ManageCampagnesPage from "./campagnes/ManageCampagnesPage";
-import TemoignagesManaging from "./temoignages/Managing";
+import ManageTemoignagesPage from "./temoignages/ManageTemoignagesPage";
 import QuestionnairesManaging from "./questionnaires/Managing";
 import QuestionnaireForm from "./questionnaires/QuestionnaireForm";
 import EditQuestionnaire from "./questionnaires/EditQuestionnaire";
@@ -59,12 +59,20 @@ function App() {
       </Route>
       <Route
         element={
+          <DsfrLayout>
+            <AdminProtectedRoute />
+          </DsfrLayout>
+        }
+      >
+        <Route exact path="/temoignages/gestion" element={<ManageTemoignagesPage />} />
+      </Route>
+      <Route
+        element={
           <Layout>
             <AdminProtectedRoute />
           </Layout>
         }
       >
-        <Route exact path="/temoignages/gestion" element={<TemoignagesManaging />} />
         <Route exact path="/questionnaires/gestion" element={<QuestionnairesManaging />} />
         <Route exact path="/questionnaires/ajout" element={<QuestionnaireForm />} />
         <Route exact path="/questionnaires/:id/edition" element={<EditQuestionnaire />} />

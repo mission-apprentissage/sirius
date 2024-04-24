@@ -16,7 +16,7 @@ import {
 import { DeleteIcon, ViewIcon } from "@chakra-ui/icons";
 import { _delete } from "../../utils/httpClient";
 import { UserContext } from "../../context/UserContext";
-import ReponsesModal from "./ReponsesModal";
+import ReponsesModal from "./DisplayReponsesModal";
 import DeleteTemoignageConfirmationModal from "./DeleteTemoignageConfirmationModal";
 import { msToTime } from "../../utils/temoignage";
 
