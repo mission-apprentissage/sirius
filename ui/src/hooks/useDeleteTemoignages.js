@@ -7,7 +7,7 @@ const useDeleteTemoignages = () => {
   const queryClient = useQueryClient();
   const [userContext] = useContext(UserContext);
 
-  const { mutate, data, isSuccess, isError, isPending, isIdle } = useMutation({
+  const { mutate, data, isSuccess, isError, isPending } = useMutation({
     mutationFn: (temoignagesIds) => deleteTemoignages({ temoignagesIds, token: userContext.token }),
     mutationKey: "deleteTemoignages",
     onSuccess: () => {
@@ -15,7 +15,7 @@ const useDeleteTemoignages = () => {
     },
   });
 
-  return { mutate, deletedTemoignages: data, isSuccess, isError, isLoading: isPending || isIdle };
+  return { mutate, deletedTemoignages: data, isSuccess, isError, isPending };
 };
 
 export default useDeleteTemoignages;

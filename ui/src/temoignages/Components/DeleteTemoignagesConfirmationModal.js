@@ -9,7 +9,7 @@ const DeleteTemoignagesConfirmationModal = ({
   selectedTemoignagesIds,
   setSelectedTemoignagesIds,
 }) => {
-  const { mutate: deleteTemoignages, isLoading, isError } = useDeleteTemoignages();
+  const { mutate: deleteTemoignages, isPending, isError } = useDeleteTemoignages();
 
   const handleOnClick = () => {
     deleteTemoignages(selectedTemoignagesIds, {
@@ -33,14 +33,14 @@ const DeleteTemoignagesConfirmationModal = ({
         {
           doClosesModal: true,
           children: "Annuler",
-          disabled: isLoading,
+          disabled: isPending,
         },
         {
           doClosesModal: false,
           children: "Supprimer",
           type: "button",
           onClick: handleOnClick,
-          disabled: isLoading,
+          disabled: isPending,
         },
       ]}
     >
