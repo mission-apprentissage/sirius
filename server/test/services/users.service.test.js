@@ -46,24 +46,27 @@ describe(__filename, () => {
       const { success, body } = await usersService.loginUser(user._id);
 
       const tokenPayload = {
-        _id: user._id.toString(),
-        role: user.role,
-        status: user.status,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        etablissements: user.etablissements,
-        acceptedCgu: user.acceptedCgu,
+        user: {
+          _id: user._id.toString(),
+          role: user.role,
+          status: user.status,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          acceptedCgu: user.acceptedCgu,
+        },
       };
 
       const refreshTokenPayload = {
-        _id: user._id.toString(),
-        role: user.role,
-        status: user.status,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        acceptedCgu: user.acceptedCgu,
+        user: {
+          _id: user._id.toString(),
+          role: user.role,
+          status: user.status,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          acceptedCgu: user.acceptedCgu,
+        },
       };
 
       expect(userGetOneStub.getCall(0).args[0]).to.eql(user._id);
@@ -98,31 +101,34 @@ describe(__filename, () => {
   describe("refreshTokenUser", () => {
     it("should be successful and returns the token and the new refresh token", async () => {
       const user = newUser({}, true);
-      user.refreshToken[0].refreshToken = getRefreshToken({ _id: user._id });
+      user.refreshToken[0].refreshToken = getRefreshToken({ user: { _id: user._id } });
       const userGetOneStub = stub(usersDao, "getOne").returns(user);
       stub(usersDao, "update");
 
       const { success, body } = await usersService.refreshTokenUser(user.refreshToken[0].refreshToken);
 
       const tokenPayload = {
-        _id: user._id.toString(),
-        role: user.role,
-        status: user.status,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        etablissements: user.etablissements,
-        acceptedCgu: user.acceptedCgu,
+        user: {
+          _id: user._id.toString(),
+          role: user.role,
+          status: user.status,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          acceptedCgu: user.acceptedCgu,
+        },
       };
 
       const refreshTokenPayload = {
-        _id: user._id.toString(),
-        role: user.role,
-        status: user.status,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        acceptedCgu: user.acceptedCgu,
+        user: {
+          _id: user._id.toString(),
+          role: user.role,
+          status: user.status,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          acceptedCgu: user.acceptedCgu,
+        },
       };
 
       expect(userGetOneStub.getCall(0).args[0]).to.eql(user._id.toString());

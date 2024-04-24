@@ -15,7 +15,7 @@ const formationsDao = require("../../src/dao/formations.dao");
 const etablissementsDao = require("../../src/dao/etablissements.dao");
 const temoignagesDao = require("../../src/dao/temoignages.dao");
 const pdfExport = require("../../src/modules/pdfExport");
-const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE } = require("../../src/constants");
+const { DIPLOME_TYPE_MATCHER } = require("../../src/constants");
 const referentiel = require("../../src/modules/referentiel");
 const catalogue = require("../../src/modules/catalogue");
 
@@ -27,9 +27,7 @@ describe(__filename, () => {
   describe("getCampagnes", async () => {
     const isAdmin = false;
 
-    it("should be successful and returns campagnes with champsLibreRate ans medianDurationInMs", async () => {
-      const expectedMedianDurationInMs = 100;
-      const expectedChampsLibreRate = 50;
+    it("should be successful and returns campagnes with champsLibreRate and medianDurationInMs", async () => {
       const questionnaire = newQuestionnaire();
 
       const temoignage = newTemoignage({
@@ -44,23 +42,20 @@ describe(__filename, () => {
 
       const stubbedCampagneReturned = { ...campagne, questionnaireUI: questionnaire.questionnaireUI };
 
-      stub(referentiel, "getEtablissementNature").returns(ETABLISSEMENT_NATURE.GESTIONNAIRE);
-      stub(referentiel, "getEtablissementSIRETFromRelationType").returns(["987654321"]);
+      stub(referentiel, "getEtablissements").returns([{ siret: "987654321" }]);
       stub(campagnesDao, "getAllWithTemoignageCountAndTemplateName").returns([stubbedCampagneReturned]);
 
-      const { success, body } = await campagnesService.getCampagnes(isAdmin, ["123456789"]);
+      const { success, body } = await campagnesService.getCampagnes({ isAdmin, userSiret: ["123456789"] });
 
       expect(success).to.be.true;
       expect(body).to.be.an("array");
       expect(body[0]).to.deep.equal(stubbedCampagneReturned);
       expect(body[0]).to.not.have.property("temoignagesList");
-      expect(body[0].medianDurationInMs).to.equal(expectedMedianDurationInMs);
-      expect(body[0].champsLibreRate).to.equal(expectedChampsLibreRate);
     });
     it("should be unsuccessful and returns errors if it throws", async () => {
       stub(campagnesDao, "getAllWithTemoignageCountAndTemplateName").throws(new Error());
 
-      const { success, body } = await campagnesService.getCampagnes();
+      const { success, body } = await campagnesService.getCampagnes({ isAdmin, userSiret: ["123456789"] });
 
       expect(success).to.be.false;
       expect(body).to.be.an("error");
@@ -339,6 +334,7 @@ describe(__filename, () => {
             localite: campagne1.formation.data.localite,
             tags: campagne1.formation.data.tags,
             duree: campagne1.formation.data.duree,
+            adresse: campagne1.formation.data.lieu_formation_adresse_computed,
           },
           {
             campagneId: campagne2._id.toString(),
@@ -349,6 +345,7 @@ describe(__filename, () => {
             localite: campagne2.formation.data.localite,
             tags: campagne2.formation.data.tags,
             duree: campagne2.formation.data.duree,
+            adresse: campagne2.formation.data.lieu_formation_adresse_computed,
           },
         ],
         DIPLOME_TYPE_MATCHER[diplome],

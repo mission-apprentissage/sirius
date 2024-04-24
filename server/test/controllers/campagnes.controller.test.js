@@ -43,9 +43,8 @@ describe(__filename, () => {
       stub(campagnesService, "getCampagnes").returns({ success: true, body: [campagne1, campagne2] });
 
       await campagnesController.getCampagnes(req, res, next);
-
       expect(res.status).to.have.been.calledWith(200);
-      expect(res.json).to.have.been.calledWith(match([campagne1, campagne2]));
+      expect(res.json).to.have.been.calledWith({ body: [campagne1, campagne2], pagination: undefined });
     });
   });
   describe("getCampagne", () => {
