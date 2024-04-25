@@ -53,12 +53,12 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, p
     const searchedCampagnes = search
       ? campagnes.filter((campagne) => {
           return (
-            campagne.nomCampagne.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.data.intitule_long.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.data.localite.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.data.lieu_formation_adresse_computed.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.data.lieu_formation_adresse.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.data.tags.join("-").toLowerCase().includes(search.toLowerCase())
+            campagne.nomCampagne.toLowerCase()?.includes(search.toLowerCase()) ||
+            campagne.formation?.data.intitule_long.toLowerCase()?.includes(search.toLowerCase()) ||
+            campagne.formation?.data.localite.toLowerCase()?.includes(search.toLowerCase()) ||
+            campagne.formation?.data.lieu_formation_adresse_computed?.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.lieu_formation_adresse?.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.data.tags?.join("-").toLowerCase().includes(search.toLowerCase())
           );
         })
       : campagnes;
