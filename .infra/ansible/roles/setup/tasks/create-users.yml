@@ -1,0 +1,13 @@
+- name: Ensure group "ij" exists
+  group:
+    name: ij
+    state: present
+
+- name: _create-sudoers.yml
+  ansible.builtin.include_tasks: _create-sudoers.yml
+  loop: "{{habilitations}}"
+  loop_control:
+    loop_var: habilitation
+  args:
+    apply:
+      become: yes
