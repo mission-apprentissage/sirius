@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# Ansible Vault Secrets Git Hook
+#
+# Hook to check if an un-encrypted FILE_PATTERN file is being commited. Useful if secrets 
+# are retained in ansible vault encrypted file(s) that should never be committed to the repository
+# un-encrypted. Contact a repository owner for the ansible vault password.
+#
+# Put this file in .git/hooks/pre-commit
+
+# set -o xtrace
+set -o nounset
+
+FILE_PATTERN="vault.yml\|vars/"
+ENCRYPTED_PATTERN="\$ANSIBLE_VAULT"
+
+is_encrypted() {
+  local file=$1
+  if ! git show :"$file" | grep --quiet "^${ENCRYPTED_PATTERN}"; then
+    echo "Located a staged file that should be encrypted:\n> ${file}\n"
+    echo "Please un-stage this file. If you are adding or updating this file, please encrypt it before staging."
+    echo "Alternatively, you can git checkout the latest encrypted version of the file before committing.\n"
+    exit 1
+  fi
+}
+
+echo "Running pre-commit checks..."
+git diff --cached --name-only | grep "${FILE_PATTERN}" | while IFS= read -r line; do
+  is_encrypted "${line}"
+done
