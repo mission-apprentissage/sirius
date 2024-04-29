@@ -1,6 +1,7 @@
 version: "2.4"
 services:
   reverse_proxy:
+    restart: unless-stopped
     ports:
       - 443:443
     volumes:
