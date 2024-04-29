@@ -31,6 +31,7 @@ import DsfrLayout from "./Components/DsfrLayout";
 import DiffusionGuidePage from "./guide/DiffusionGuidePage";
 import EtablissementOrAdminProtectedRoute from "./EtablissementOrAdminProtectedRoute";
 import "./assets/fonts/fonts.css";
+import FormationsIframePage from "./iframes/FormationsIframePage";
 
 function App() {
   const { setIsDark } = useIsDark();
@@ -118,6 +119,11 @@ function App() {
         <Route exact path="/campagnes/:id" element={<AnswerCampagnePage />} />
         <Route exact path="/questionnaires/:id/apercu" element={<PreviewCampagnePage />} />
       </Route>
+      <Route
+        exact
+        path="/iframes/formation/:intituleFormation"
+        element={<FormationsIframePage />}
+      />
     </Routes>
   );
 }
