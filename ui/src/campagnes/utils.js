@@ -274,8 +274,6 @@ export const splitIntoBatches = (array, batchSize) => {
   return batchedArray;
 };
 
-export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export const getChampsLibreField = (questionnaireUI, onlyOpenQuestions = false) => {
   const fieldsWithCustomMessageReceived = [];
 
