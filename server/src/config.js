@@ -32,4 +32,7 @@ module.exports = {
     signingSecret: env.get("SIRIUS_SLACK_SIGNING_SECRET").default("").asString(),
     channel: env.get("SIRIUS_SLACK_CHANNEL").default("").asString(),
   },
+  sentry: {
+    dsn: env.get("SIRIUS_SENTRY_DSN").default("").asString(),
+  },
 };

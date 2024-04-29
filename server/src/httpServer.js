@@ -3,6 +3,8 @@ const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
+const Sentry = require("@sentry/node");
+const Tracing = require("@sentry/tracing");
 const logMiddleware = require("./middlewares/logMiddleware");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 const tryCatch = require("./utils/tryCatch.utils");
@@ -16,9 +18,22 @@ const verbatims = require("./routes/verbatims.routes");
 const { version } = require("../package.json");
 
 module.exports = async (components) => {
-  const { db, config, logger } = components;
+  const { campagnes: campagnesDao, config, logger } = components;
 
   const app = express();
+
+  Sentry.init({
+    dsn: config.sentry.dsn,
+    integrations: [new Sentry.Integrations.Http({ tracing: true }), new Tracing.Integrations.Express({ app })],
+    enabled: config.env !== "dev",
+    tracesSampleRate: config.env === "production" ? 0.3 : 1.0,
+    tracePropagationTargets: [/^https:\/\/[^/]*\.inserjeunes\.beta\.gouv\.fr/],
+    environment: config.env,
+  });
+
+  app.use(Sentry.Handlers.requestHandler());
+  app.use(Sentry.Handlers.tracingHandler());
+
   app.set("trust proxy", 1);
   app.use(helmet.contentSecurityPolicy());
   app.use(bodyParser.json({ limit: "50mb" }));
@@ -42,9 +57,8 @@ module.exports = async (components) => {
     "/api/healthcheck",
     tryCatch(async (req, res) => {
       let mongodbStatus;
-      await db
-        .collection("apprentis")
-        .stats()
+      await campagnesDao
+        .getAll()
         .then(() => {
           mongodbStatus = true;
         })
@@ -67,6 +81,8 @@ module.exports = async (components) => {
       throw new Error("Healthcheck error");
     })
   );
+
+  app.use(Sentry.Handlers.errorHandler());
 
   app.use(errorMiddleware());
 

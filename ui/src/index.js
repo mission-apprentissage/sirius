@@ -2,6 +2,8 @@ import "react-app-polyfill/ie11";
 import "react-app-polyfill/stable";
 import React from "react";
 import { createRoot } from "react-dom/client";
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { BrowserRouter as Router, Link } from "react-router-dom";
 import App from "./App";
@@ -10,6 +12,15 @@ import { UserProvider } from "./context/UserContext";
 import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+Sentry.init({
+  dsn: "https://f97984280f4e4a4e8075e8b353b9234a@sentry.incubateur.net/153",
+  enabled: process.env.REACT_APP_SIRIUS_ENV !== "dev",
+  tracePropagationTargets: [/^https:\/\/[^/]*\.inserjeunes\.beta\.gouv\.fr/],
+  integrations: [new BrowserTracing()],
+  tracesSampleRate: process.env.REACT_APP_SIRIUS_ENV === "production" ? 0.3 : 1.0,
+  environment: process.env.REACT_APP_SIRIUS_ENV,
+});
 
 startReactDsfr({ defaultColorScheme: "light", Link });
 
