@@ -4,19 +4,23 @@ const getEtablissements = async (siretArray) => {
   // eslint-disable-next-line node/no-unsupported-features/es-syntax
   const fetch = (await import("node-fetch")).default;
 
-  const response = await fetch(`${REFERENTIEL_API}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      sirets: siretArray.join(","),
-      items_par_page: 1000,
-    }),
-  });
-  const data = await response.json();
-
-  return data.organismes;
+  try {
+    const response = await fetch(`${REFERENTIEL_API}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sirets: siretArray.join(","),
+        items_par_page: 1000,
+      }),
+    });
+    const data = await response.json();
+    return data.organismes;
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
 };
 const getEtablissementNature = async (siret) => {
   // eslint-disable-next-line node/no-unsupported-features/es-syntax
@@ -30,18 +34,23 @@ const getEtablissementNature = async (siret) => {
 };
 
 const getEtablissementSIRETFromRelationType = async (siret, wantedRelation) => {
-  // eslint-disable-next-line node/no-unsupported-features/es-syntax
-  const fetch = (await import("node-fetch")).default;
-  const response = await fetch(`${REFERENTIEL_API}/${siret}`, {
-    method: "GET",
-  });
-  const data = await response.json();
+  try {
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax
+    const fetch = (await import("node-fetch")).default;
+    const response = await fetch(`${REFERENTIEL_API}/${siret}`, {
+      method: "GET",
+    });
+    const data = await response.json();
 
-  const filteredRelationsSiret = data.relations
-    .filter((relation) => relation.type === wantedRelation)
-    .map((etablissementFormateur) => etablissementFormateur.siret);
+    const filteredRelationsSiret = data.relations
+      .filter((relation) => relation.type === wantedRelation)
+      .map((etablissementFormateur) => etablissementFormateur.siret);
 
-  return filteredRelationsSiret;
+    return filteredRelationsSiret;
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
 };
 
 module.exports = {
