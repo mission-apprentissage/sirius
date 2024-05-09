@@ -1,6 +1,7 @@
 const { program: cli } = require("commander");
 const runScript = require("../modules/runScript");
 const createUser = require("./createUser");
+const migrateVerbatims = require("./migrateVerbatims");
 
 cli
   .command("create-user")
@@ -11,6 +12,14 @@ cli
   .description("Créer un nouvel utilisateur")
   .action((email, password, firstName, lastName) => {
     runScript(() => createUser(email, password, firstName, lastName));
+  });
+
+cli
+  .command("migrate-verbatims")
+  .argument("[isDryRun]", "Booléen pour simuler la migration des verbatims")
+  .description("Migrer les verbatims")
+  .action((isDryRun) => {
+    runScript(() => migrateVerbatims({ isDryRun: isDryRun === "true" }));
   });
 
 cli.parse(process.argv);
