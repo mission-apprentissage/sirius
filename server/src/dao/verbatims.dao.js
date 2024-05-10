@@ -1,6 +1,6 @@
 const Verbatim = require("../models/verbatim.model");
 
-const count = ({ query }) => {
+const count = (query) => {
   return Verbatim.countDocuments({ ...query, deletedAt: null });
 };
 

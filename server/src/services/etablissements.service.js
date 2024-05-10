@@ -1,7 +1,10 @@
 const etablissementsDao = require("../dao/etablissements.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
+const campagnesDao = require("../dao/campagnes.dao");
+const temoignagesDao = require("../dao/temoignages.dao");
+const verbatimsDao = require("../dao/verbatims.dao");
 const retainFields = require("../utils/retainFields.utils");
-const { getChampsLibreCount } = require("../utils/verbatims.utils");
+const { getChampsLibreCount, getChampsLibreField } = require("../utils/verbatims.utils");
 
 const etablissementFieldsToRetain = [
   "_id",
@@ -122,6 +125,27 @@ const getEtablissementsSuivi = async () => {
   }
 };
 
+const getEtablissementsPublicStatistics = async () => {
+  try {
+    const etablissementsCount = await etablissementsDao.count();
+    const createdCampagnesCount = await campagnesDao.count();
+    const temoignagesCount = await temoignagesDao.count();
+
+    const onlyQpenQuestionKeyList = [];
+    const questionnaires = await questionnairesDao.getAll();
+    questionnaires.forEach((questionnaire) => [
+      onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUI, true)),
+    ]);
+    const uniqueChampsLibreFields = [...new Set(onlyQpenQuestionKeyList.flat())];
+
+    const verbatimsCount = await verbatimsDao.count({ questionKey: { $in: uniqueChampsLibreFields } });
+
+    return { success: true, body: { etablissementsCount, createdCampagnesCount, temoignagesCount, verbatimsCount } };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   createEtablissements,
   getEtablissements,
@@ -129,5 +153,6 @@ module.exports = {
   deleteEtablissement,
   updateEtablissement,
   getEtablissementsSuivi,
+  getEtablissementsPublicStatistics,
   etablissementFieldsToRetain,
 };

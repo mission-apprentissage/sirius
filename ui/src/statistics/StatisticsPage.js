@@ -1,6 +1,6 @@
 import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
-import useFetchEtablissementsPublicSuivi from "../hooks/useFetchEtablissementsPublicSuivi";
+import useFetchEtablissementsPublicStatistics from "../hooks/useFetchEtablissementsPublicStatistics";
 import {
   Container,
   ExperimentationAndTestimonyContainer,
@@ -12,7 +12,7 @@ import Avatar from "../assets/images/avatar.svg";
 import Community from "../assets/images/community.svg";
 
 const StatisticsPage = () => {
-  const [etablissementsSuiviPublic] = useFetchEtablissementsPublicSuivi();
+  const [etablissementsSuiviPublic] = useFetchEtablissementsPublicStatistics();
 
   return (
     <Container>
@@ -53,7 +53,7 @@ const StatisticsPage = () => {
           <div>
             <img src={Community} alt="" />
             <p>
-              <b>{etablissementsSuiviPublic?.champsLibreCount || 0} verbatims</b> <br />
+              <b>{etablissementsSuiviPublic?.verbatimsCount || 0} verbatims</b> <br />
               formulés
             </p>
           </div>
