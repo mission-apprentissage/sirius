@@ -50,7 +50,7 @@ const getVerbatims = async (query) => {
         campagneId: { $in: campagnesByQuestionnaireId.map((campagne) => campagne._id) },
       };
 
-      const temoignages = await temoignagesDao.getAll(temoignagesQuery, questionKey);
+      const temoignages = await temoignagesDao.getAllWithVerbatims(temoignagesQuery, questionKey);
 
       if (!temoignages) {
         continue;
