@@ -42,7 +42,7 @@ const createTemoignage = async (temoignage) => {
 const getTemoignages = async (campagneIds) => {
   try {
     const query = { campagneId: { $in: campagneIds } };
-    const temoignages = await temoignagesDao.getAll(query);
+    const temoignages = await temoignagesDao.getAllWithVerbatims(query);
     for (const temoignage of temoignages) {
       const campagne = await campagnesDao.getOne(temoignage.campagneId);
 
@@ -102,7 +102,7 @@ const updateTemoignage = async (id, updatedTemoignage) => {
 const getDatavisualisation = async (campagneIds) => {
   try {
     const query = { campagneId: { $in: campagneIds } };
-    const temoignages = await temoignagesDao.getAll(query);
+    const temoignages = await temoignagesDao.getAllWithVerbatims(query);
     const allQuestionnaires = await questionnairesDao.getAll();
     const campagnes = await campagnesDao.getAll({ _id: { $in: campagneIds } });
 
@@ -110,6 +110,10 @@ const getDatavisualisation = async (campagneIds) => {
 
     // ajoute les témoignages à leur questionnaire respectif
     for (const temoignage of temoignages) {
+      temoignage.verbatims.forEach(
+        (verbatim) =>
+          (temoignage.reponses[verbatim.questionKey] = { content: verbatim.content, status: verbatim.status })
+      );
       const campagne = campagnes.filter((el) => el._id.toString() === temoignage.campagneId)[0];
       if (!campagne) {
         return { success: false, body: ErrorMessage.CampagneNotFoundError };
@@ -172,6 +176,7 @@ const getDatavisualisation = async (campagneIds) => {
 
     return { success: true, body: result };
   } catch (error) {
+    console.log({ error });
     return { success: false, body: error };
   }
 };
