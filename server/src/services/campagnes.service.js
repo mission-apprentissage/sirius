@@ -360,7 +360,7 @@ const getCampagnesStatistics = async (campagneIds) => {
     const temoignagesList = campagnes.map((campagne) => campagne.temoignagesList).flat();
     const temoignageIds = temoignagesList.map((temoignagne) => temoignagne._id?.toString());
     const verbatimsQuery = { temoignageId: { $in: temoignageIds }, questionKey: { $in: uniqueChampsLibreFields } };
-    const verbatimsCount = await verbatimsDao.count({ query: verbatimsQuery });
+    const verbatimsCount = await verbatimsDao.count(verbatimsQuery);
 
     campagnes.forEach((campagne) => {
       campagne.possibleChampsLibreCount = getChampsLibreField(campagne.questionnaireUI, true).length;

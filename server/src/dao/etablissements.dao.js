@@ -135,6 +135,10 @@ const getAllSuivi = async () => {
   ]);
 };
 
+const count = (query) => {
+  return Etablissement.countDocuments({ ...query, deletedAt: null });
+};
+
 module.exports = {
   create,
   getAll,
@@ -143,4 +147,5 @@ module.exports = {
   update,
   updateByFormationIds,
   getAllSuivi,
+  count,
 };
