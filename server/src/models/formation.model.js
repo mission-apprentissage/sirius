@@ -10,6 +10,10 @@ const formationSchema = new mongoose.Schema(
   { minimize: false, timestamps: true }
 );
 
+formationSchema.index({
+  "data.intitule_long": "text",
+});
+
 const Formation = mongoose.model("Formation", formationSchema);
 
 module.exports = Formation;

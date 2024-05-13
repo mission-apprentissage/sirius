@@ -10,6 +10,13 @@ const etablissementSchema = new mongoose.Schema(
   { minimize: false, timestamps: true }
 );
 
+etablissementSchema.index({
+  "data.siret": "text",
+  "data.onisep_nom": "text",
+  "data.enseigne": "text",
+  "data.entreprise_raison_sociale": "text",
+});
+
 const Etablissement = mongoose.model("Etablissement", etablissementSchema);
 
 module.exports = Etablissement;

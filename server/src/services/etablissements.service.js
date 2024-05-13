@@ -38,8 +38,9 @@ const createEtablissements = async (etablissementsArray) => {
   }
 };
 
-const getEtablissements = async (query) => {
+const getEtablissements = async ({ search }) => {
   try {
+    const query = search ? { $text: { $search: search } } : {};
     const etablissements = await etablissementsDao.getAll(query);
 
     const cleanedEtablissements = retainFields(etablissements, etablissementFieldsToRetain);

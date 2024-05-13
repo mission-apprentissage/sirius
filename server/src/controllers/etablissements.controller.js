@@ -18,8 +18,8 @@ const createEtablissement = tryCatch(async (req, res) => {
 });
 
 const getEtablissements = tryCatch(async (req, res) => {
-  const query = req.query;
-  const { success, body } = await etablissementsService.getEtablissements(query);
+  const search = req.query.search;
+  const { success, body } = await etablissementsService.getEtablissements({ search });
 
   if (!success) throw new BasicError();
 
