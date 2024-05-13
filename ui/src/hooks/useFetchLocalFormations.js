@@ -1,30 +1,18 @@
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import { _get } from "../utils/httpClient";
+import { fetchLocalFormations } from "../queries/formations";
+import { useQuery } from "@tanstack/react-query";
 
-const useFetchLocalFormations = (query = null) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+const useFetchLocalFormations = ({ formationIds, search }) => {
   const [userContext] = useContext(UserContext);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await _get(`/api/formations?${query}`, userContext.token);
-        setData(response);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-    if (query) {
-      fetchData();
-    }
-    setLoading(false);
-  }, [query]);
 
-  return [data, loading, error];
+  const { data, isSuccess, isError, isLoading } = useQuery({
+    queryKey: ["local-formations", formationIds, search],
+    queryFn: () => fetchLocalFormations({ token: userContext.token, formationIds, search }),
+    enabled: !!userContext.token && !!formationIds?.length,
+  });
+
+  return { localFormations: data, isSuccess, isError, isLoading };
 };
 
 export default useFetchLocalFormations;
