@@ -12,6 +12,9 @@ const formationSchema = new mongoose.Schema(
 
 formationSchema.index({
   "data.intitule_long": "text",
+  "data.etablissement_formateur_entreprise_raison_sociale": "text",
+  "data.etablissement_formateur_enseigne": "text",
+  "data.etablissement_formateur_siret": "text",
 });
 
 const Formation = mongoose.model("Formation", formationSchema);
