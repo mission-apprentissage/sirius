@@ -93,7 +93,7 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
 const appendVerbatimsWithCampagneNameAndRestructure = (
   verbatimsWithChampsLibre,
   campagnesByQuestionnaireId,
-  titles
+  champsLibreFieldsTitle
 ) => {
   const flattenVerbatims = [];
 
@@ -106,7 +106,7 @@ const appendVerbatimsWithCampagneNameAndRestructure = (
         createdAt,
         key,
         value: item.verbatims[key],
-        title: titles[key],
+        title: champsLibreFieldsTitle[key],
         formation,
         formationId,
         etablissement,
