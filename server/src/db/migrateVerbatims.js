@@ -35,6 +35,7 @@ module.exports = async ({ isDryRun = false }) => {
             questionKey: key,
             content: "",
             status: "",
+            createdAt: temoignage.createdAt,
           };
 
           if (temoignage.deletedAt) {
