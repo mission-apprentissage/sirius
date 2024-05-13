@@ -14,7 +14,7 @@ const createFormation = tryCatch(async (req, res) => {
 
 const getFormations = tryCatch(async (req, res) => {
   const search = req.query.search;
-  const formationIds = req.query.formationIds.split(",");
+  const formationIds = req.query.formationIds?.split(",") || [];
 
   const { success, body } = await formationsService.getFormations({ search, formationIds });
 
