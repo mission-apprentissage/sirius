@@ -20,7 +20,7 @@ const getFormations = async ({ formationIds, search }) => {
   try {
     const query = search ? { $text: { $search: search } } : {};
 
-    if (formationIds) {
+    if (formationIds.length) {
       query._id = { $in: formationIds.map((formationId) => ObjectId(formationId)) };
     }
 
