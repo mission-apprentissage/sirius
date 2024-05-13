@@ -24,8 +24,12 @@ export const fetchAlreadyExistingFormations = async ({ campagneIds, token }) => 
   throw new Error("Erreur dans le chargement des formations déjà créées");
 };
 
-export const fetchLocalFormations = async ({ token, formationIds, search }) => {
-  let url = `/api/formations?formationIds=${formationIds}`;
+export const fetchLocalFormations = async ({ token, formationIds = [], search }) => {
+  let url = `/api/formations?`;
+
+  if (formationIds.length) {
+    url += `&formationIds=${formationIds.join(",")}`;
+  }
 
   if (search) {
     url += `&search=${search}`;
