@@ -176,7 +176,6 @@ const getDatavisualisation = async (campagneIds) => {
 
     return { success: true, body: result };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };
