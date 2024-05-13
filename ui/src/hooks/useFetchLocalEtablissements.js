@@ -1,29 +1,18 @@
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
-import { _get } from "../utils/httpClient";
+import { fetchLocalEtablissements } from "../queries/etablissements";
+import { useQuery } from "@tanstack/react-query";
 
-const useFetchLocalEtablissements = (siret) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+const useFetchLocalEtablissements = ({ search }) => {
   const [userContext] = useContext(UserContext);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const query = siret ? `?data.siret=${siret}` : "";
-        const response = await _get(`/api/etablissements${query}`, userContext.token);
-        setData(response);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [siret]);
+  const { data, isSuccess, isError, isLoading } = useQuery({
+    queryKey: ["local-etablissements", search],
+    queryFn: () => fetchLocalEtablissements({ token: userContext.token, search }),
+    enabled: !!userContext.token,
+  });
 
-  return [data, loading, error];
+  return { localEtablissements: data, isSuccess, isError, isLoading };
 };
 
 export default useFetchLocalEtablissements;
