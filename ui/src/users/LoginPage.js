@@ -115,7 +115,9 @@ const LoginPage = () => {
               type="email"
               state={formik.errors.email && formik.submitCount >= 1 ? "error" : "default"}
               stateRelatedMessage={formik.errors.email}
-              onChange={(e) => formik.setFieldValue("email", e.target.value)}
+              nativeInputProps={{
+                onChange: (e) => formik.setFieldValue("email", e.target.value),
+              }}
               required
             />
             <StyledPasswordInput
@@ -123,8 +125,10 @@ const LoginPage = () => {
               name="password"
               label="Mot de passe"
               state={formik.errors.password && formik.submitCount >= 1 ? "error" : "default"}
-              onChange={(e) => formik.setFieldValue("password", e.target.value)}
               messagesHint=""
+              nativeInputProps={{
+                onChange: (e) => formik.setFieldValue("password", e.target.value),
+              }}
               messages={
                 formik.errors.password && formik.submitCount >= 1
                   ? [
