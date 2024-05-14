@@ -7,7 +7,6 @@ const getVerbatims = tryCatch(async (req, res) => {
 
   const etablissementSiret = query.etablissementSiret || null;
   const formationId = query.formationId || null;
-  const questionKey = query.question || null;
   const status = query.selectedStatus || null;
   const page = parseInt(query.page) || 1;
   const pageSize = parseInt(query.pageSize) || 100;
@@ -18,12 +17,27 @@ const getVerbatims = tryCatch(async (req, res) => {
     status,
     page,
     pageSize,
-    questionKey,
   });
 
   if (!success) throw new BasicError();
 
   return res.status(200).json({ body, pagination });
+});
+
+const getVerbatimsCount = tryCatch(async (req, res) => {
+  const query = req.query;
+
+  const etablissementSiret = query.etablissementSiret || null;
+  const formationId = query.formationId || null;
+
+  const { success, body } = await verbatimsService.getVerbatimsCount({
+    etablissementSiret,
+    formationId,
+  });
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
 });
 
 const patchVerbatim = tryCatch(async (req, res) => {
@@ -42,4 +56,4 @@ const patchMultiVerbatim = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim };
+module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim, getVerbatimsCount };

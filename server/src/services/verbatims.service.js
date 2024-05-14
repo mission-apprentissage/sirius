@@ -4,11 +4,19 @@ const { ErrorMessage } = require("../errors");
 
 const getVerbatims = async ({ etablissementSiret, formationId, status, page, pageSize }) => {
   try {
-    const query = {
-      etablissementSiret,
-      formationId,
-      status,
-    };
+    let query = {};
+
+    if (etablissementSiret) {
+      query.etablissementSiret = etablissementSiret;
+    }
+
+    if (formationId) {
+      query.formationId = formationId;
+    }
+
+    if (status) {
+      query.status = status;
+    }
 
     const result = await verbatimsDao.getAllWithFormation(query, page, pageSize);
 
@@ -21,6 +29,26 @@ const getVerbatims = async ({ etablissementSiret, formationId, status, page, pag
         hasMore: result[0].pagination[0]?.totalItems > page * pageSize,
       },
     };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+const getVerbatimsCount = async ({ etablissementSiret, formationId }) => {
+  try {
+    let query = {};
+
+    if (etablissementSiret) {
+      query.etablissementSiret = etablissementSiret;
+    }
+
+    if (formationId) {
+      query.formationId = formationId;
+    }
+
+    const count = await verbatimsDao.count(query);
+
+    return { success: true, body: count };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -65,4 +93,4 @@ const patchMultiVerbatim = async (verbatims) => {
   }
 };
 
-module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim };
+module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim, getVerbatimsCount };
