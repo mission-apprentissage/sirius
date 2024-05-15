@@ -1,10 +1,5 @@
 const express = require("express");
-const {
-  getVerbatims,
-  patchVerbatim,
-  patchMultiVerbatim,
-  getVerbatimsCount,
-} = require("../controllers/verbatims.controller");
+const { getVerbatims, patcVerbatims, getVerbatimsCount } = require("../controllers/verbatims.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdmin } = require("../middlewares/isAdmin");
 const validator = require("../middlewares/validatorMiddleware");
@@ -21,12 +16,8 @@ const verbatims = () => {
     getVerbatims(req, res, next);
   });
 
-  router.patch("/api/verbatims/multi", verifyUser, isAdmin, validator(patchMultiVerbatims), (req, res, next) => {
-    patchMultiVerbatim(req, res, next);
-  });
-
-  router.patch("/api/verbatims/:id", verifyUser, isAdmin, (req, res, next) => {
-    patchVerbatim(req, res, next);
+  router.patch("/api/verbatims/", verifyUser, isAdmin, validator(patchMultiVerbatims), (req, res, next) => {
+    patcVerbatims(req, res, next);
   });
 
   return router;

@@ -157,8 +157,19 @@ const getAllWithFormation = async (query = {}, onlyDiscrepancies, page = 1, page
   return Verbatim.aggregate(aggregationPipeline);
 };
 
+const updateMany = async (verbatims) => {
+  const results = await Promise.all(
+    verbatims.map(({ _id, ...update }) => {
+      return Verbatim.updateMany({ _id: ObjectId(_id) }, { $set: update });
+    })
+  );
+
+  return results;
+};
+
 module.exports = {
   count,
   getAll,
   getAllWithFormation,
+  updateMany,
 };
