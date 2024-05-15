@@ -1,4 +1,5 @@
 const ObjectId = require("mongoose").mongo.ObjectId;
+const { VERBATIM_STATUS } = require("../constants");
 const Verbatim = require("../models/verbatim.model");
 
 const count = (query = {}) => {
@@ -52,7 +53,7 @@ const getAll = ({ query }) => {
   return Verbatim.find({ ...query, deletedAt: null });
 };
 
-const getAllWithFormation = async (query = {}, page = 1, pageSize = 100) => {
+const getAllWithFormation = async (query = {}, onlyDiscrepancies, page = 1, pageSize = 100) => {
   const offset = (page - 1) * pageSize;
 
   if (query.etablissementSiret) {
@@ -65,7 +66,7 @@ const getAllWithFormation = async (query = {}, page = 1, pageSize = 100) => {
     delete query.formationId;
   }
 
-  return Verbatim.aggregate([
+  const aggregationPipeline = [
     {
       $lookup: {
         from: "temoignages",
@@ -74,6 +75,7 @@ const getAllWithFormation = async (query = {}, page = 1, pageSize = 100) => {
         as: "temoignage",
       },
     },
+    { $unwind: "$temoignage" },
     {
       $lookup: {
         from: "formations",
@@ -82,32 +84,77 @@ const getAllWithFormation = async (query = {}, page = 1, pageSize = 100) => {
         as: "formation",
       },
     },
-    { $unwind: "$temoignage" },
-    { $unwind: "$formation" },
+    { $unwind: { path: "$formation", preserveNullAndEmptyArrays: true } },
     { $match: { ...query, deletedAt: null } },
-    {
-      $facet: {
-        pagination: [{ $count: "totalItems" }, { $addFields: { currentPage: page, pageSize: pageSize } }],
-        body: [
-          { $skip: offset },
-          { $limit: pageSize },
-          {
-            $project: {
-              _id: 1,
-              questionKey: 1,
-              content: 1,
-              status: 1,
-              createdAt: 1,
-              "formation.data.intitule_long": 1,
-              "formation.data.etablissement_formateur_enseigne": 1,
-              "formation.data.etablissement_formateur_entreprise_raison_sociale": 1,
-              "formation.data.etablissement_formateur_siret": 1,
+  ];
+
+  if (onlyDiscrepancies) {
+    aggregationPipeline.push({
+      $addFields: {
+        maxScoreKey: {
+          $cond: {
+            if: { $eq: ["$scores.GEM.avis", "oui"] },
+            then: { k: VERBATIM_STATUS.GEM, v: "$scores.GEM.justification" },
+            else: {
+              $arrayElemAt: [
+                {
+                  $filter: {
+                    input: [
+                      { k: "VALIDATED", v: "$scores.VALIDATED" },
+                      { k: "REJECTED", v: "$scores.REJECTED" },
+                      { k: "TO_FIX", v: "$scores.TO_FIX" },
+                      { k: "ALERT", v: "$scores.ALERT" },
+                    ],
+                    as: "item",
+                    cond: {
+                      $eq: [
+                        "$$item.v",
+                        {
+                          $max: ["$scores.VALIDATED", "$scores.REJECTED", "$scores.TO_FIX", "$scores.ALERT"],
+                        },
+                      ],
+                    },
+                  },
+                },
+                0,
+              ],
             },
           },
-        ],
+        },
       },
+    });
+    aggregationPipeline.push({
+      $match: {
+        $and: [{ "maxScoreKey.k": { $ne: null } }, { $expr: { $ne: ["$maxScoreKey.k", "$status"] } }],
+      },
+    });
+  }
+  aggregationPipeline.push({
+    $facet: {
+      pagination: [{ $count: "totalItems" }, { $addFields: { currentPage: page, pageSize: pageSize } }],
+      body: [
+        { $skip: offset },
+        { $limit: pageSize },
+        {
+          $project: {
+            _id: 1,
+            questionKey: 1,
+            content: 1,
+            status: 1,
+            createdAt: 1,
+            scores: 1,
+            maxScoreKey: 1,
+            "formation.data.intitule_long": 1,
+            "formation.data.etablissement_formateur_enseigne": 1,
+            "formation.data.etablissement_formateur_entreprise_raison_sociale": 1,
+            "formation.data.etablissement_formateur_siret": 1,
+          },
+        },
+      ],
     },
-  ]);
+  });
+
+  return Verbatim.aggregate(aggregationPipeline);
 };
 
 module.exports = {
