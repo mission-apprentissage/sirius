@@ -2,7 +2,7 @@ const temoignagesDao = require("../dao/temoignages.dao");
 const verbatimsDao = require("../dao/verbatims.dao");
 const { ErrorMessage } = require("../errors");
 
-const getVerbatims = async ({ etablissementSiret, formationId, status, page, pageSize }) => {
+const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscrepancies, page, pageSize }) => {
   try {
     let query = {};
 
@@ -18,7 +18,7 @@ const getVerbatims = async ({ etablissementSiret, formationId, status, page, pag
       query.status = status;
     }
 
-    const result = await verbatimsDao.getAllWithFormation(query, page, pageSize);
+    const result = await verbatimsDao.getAllWithFormation(query, onlyDiscrepancies, page, pageSize);
 
     return {
       success: true,

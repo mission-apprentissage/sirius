@@ -8,6 +8,7 @@ const getVerbatims = tryCatch(async (req, res) => {
   const etablissementSiret = query.etablissementSiret || null;
   const formationId = query.formationId || null;
   const status = query.selectedStatus || null;
+  const onlyDiscrepancies = query.showOnlyDiscrepancies || false;
   const page = parseInt(query.page) || 1;
   const pageSize = parseInt(query.pageSize) || 100;
 
@@ -15,6 +16,7 @@ const getVerbatims = tryCatch(async (req, res) => {
     etablissementSiret,
     formationId,
     status,
+    onlyDiscrepancies,
     page,
     pageSize,
   });
