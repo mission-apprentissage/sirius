@@ -139,9 +139,13 @@ const getEtablissementsPublicStatistics = async () => {
     ]);
     const uniqueChampsLibreFields = [...new Set(onlyQpenQuestionKeyList.flat())];
 
-    const verbatimsCount = await verbatimsDao.count({ questionKey: { $in: uniqueChampsLibreFields } });
+    const verbatimsCountByStatus = await verbatimsDao.count({ questionKey: { $in: uniqueChampsLibreFields } });
+    const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
 
-    return { success: true, body: { etablissementsCount, createdCampagnesCount, temoignagesCount, verbatimsCount } };
+    return {
+      success: true,
+      body: { etablissementsCount, createdCampagnesCount, temoignagesCount, verbatimsCount: totalVerbatimCount },
+    };
   } catch (error) {
     return { success: false, body: error };
   }
