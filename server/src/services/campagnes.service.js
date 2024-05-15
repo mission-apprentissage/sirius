@@ -359,17 +359,22 @@ const getCampagnesStatistics = async (campagneIds) => {
 
     const temoignagesList = campagnes.map((campagne) => campagne.temoignagesList).flat();
     const temoignageIds = temoignagesList.map((temoignagne) => temoignagne._id?.toString());
-    const verbatimsQuery = { temoignageId: { $in: temoignageIds }, questionKey: { $in: uniqueChampsLibreFields } };
-    const verbatimsCount = await verbatimsDao.count(verbatimsQuery);
+    const verbatimsQuery = {
+      temoignageId: { $in: temoignageIds.map((temoignageId) => ObjectId(temoignageId)) },
+      questionKey: { $in: uniqueChampsLibreFields },
+    };
+    const verbatimsCountByStatus = await verbatimsDao.count(verbatimsQuery);
+
+    const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
 
     campagnes.forEach((campagne) => {
       campagne.possibleChampsLibreCount = getChampsLibreField(campagne.questionnaireUI, true).length;
       campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
     });
 
-    const statistics = getStatistics(campagnes, verbatimsCount);
+    const statistics = getStatistics(campagnes, totalVerbatimCount);
 
-    return { success: true, body: { ...statistics, verbatimsCount } };
+    return { success: true, body: { ...statistics, verbatimsCount: totalVerbatimCount } };
   } catch (error) {
     return { success: false, body: error };
   }
