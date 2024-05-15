@@ -1,3 +1,4 @@
+const ObjectId = require("mongoose").mongo.ObjectId;
 const verbatimsDao = require("../dao/verbatims.dao");
 
 const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscrepancies, page, pageSize }) => {
@@ -62,4 +63,25 @@ const patchVerbatims = async (verbatims) => {
   }
 };
 
-module.exports = { getVerbatims, patchVerbatims, getVerbatimsCount };
+const createVerbatim = async (verbatim) => {
+  try {
+    const existingVerbatim = await verbatimsDao.findOne({
+      temoignageId: ObjectId(verbatim.temoignageId),
+      questionKey: verbatim.questionKey,
+    });
+
+    let result;
+
+    if (existingVerbatim?._id) {
+      result = await verbatimsDao.updateOne({ _id: ObjectId(existingVerbatim._id) }, verbatim);
+    } else {
+      result = await verbatimsDao.create(verbatim);
+    }
+
+    return { success: true, body: result };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { getVerbatims, patchVerbatims, getVerbatimsCount, createVerbatim };
