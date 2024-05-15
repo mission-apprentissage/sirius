@@ -12,10 +12,39 @@ const verbatimsStatusOptions = Object.keys(VERBATIM_STATUS).map((status) => ({
 
 const ModerationActions = ({
   selectedVerbatims,
-  setSelectedVerbatims,
   showOnlyDiscrepancies,
   setShowOnlyDiscrepancies,
+  patchVerbatims,
 }) => {
+  const handleAcceptClassification = () => {
+    if (!selectedVerbatims.length) return;
+    const updatedVerbatims = selectedVerbatims.map((verbatim) => {
+      const highestScore = Object.entries(verbatim.scores)
+        .filter(([key]) => key !== "NOT_VALIDATED")
+        .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)[0];
+
+      const isGem = verbatim.scores.GEM.avis === "oui";
+      const status = isGem ? VERBATIM_STATUS.GEM : highestScore[0];
+
+      return {
+        _id: verbatim._id,
+        status: status,
+      };
+    });
+    patchVerbatims(updatedVerbatims);
+  };
+
+  const handleArbitraryClassification = (status) => {
+    if (!selectedVerbatims.length) return;
+    const updatedVerbatims = selectedVerbatims.map((verbatim) => {
+      return {
+        _id: verbatim._id,
+        status: status,
+      };
+    });
+    patchVerbatims(updatedVerbatims);
+  };
+
   return (
     <ModerationActionsContainer>
       <ToggleSwitch
@@ -39,7 +68,7 @@ const ModerationActions = ({
             </p>
           }
         >
-          <Button disabled={!selectedVerbatims?.length}>
+          <Button disabled={!selectedVerbatims?.length} onClick={handleAcceptClassification}>
             Accepter la classification{" "}
             {selectedVerbatims?.length ? `(${selectedVerbatims?.length})` : null}{" "}
           </Button>
@@ -48,9 +77,7 @@ const ModerationActions = ({
           label="Classifier la sélection en"
           disabled={!selectedVerbatims?.length}
           nativeSelectProps={{
-            onChange: (event) => {
-              console.log(event);
-            },
+            onChange: (event) => handleArbitraryClassification(event.target.value),
           }}
           options={verbatimsStatusOptions}
         />

@@ -1,4 +1,4 @@
-import { _get } from "../utils/httpClient";
+import { _get, _patch } from "../utils/httpClient";
 
 export const fetchVerbatims = async ({
   token,
@@ -72,6 +72,17 @@ export const fetchVerbatimsCount = async ({
 
   if (response.error) {
     throw new Error("Erreur dans le chargement du count des verbatims");
+  }
+  return response;
+};
+
+export const patchVerbatims = async ({ verbatims, token }) => {
+  const url = `/api/verbatims`;
+
+  const response = await _patch(url, verbatims, token);
+
+  if (response.error) {
+    throw new Error("Erreur dans la mise à jour des verbatims");
   }
   return response;
 };
