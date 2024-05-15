@@ -32,6 +32,7 @@ import {
   getCategoriesWithEmojis,
   transformErrors,
   getNextButtonLabel,
+  getChampsLibreField,
 } from "./utils";
 import ErrorTemplate from "./Shared/ErrorTemplate";
 import BotDetectedModal from "./AnswerCampagne/BotDetectedModal";
@@ -70,6 +71,7 @@ const AnswerCampagnePage = () => {
   const [isBot, setIsBot] = useState(false);
   const breakpoint = useBreakpoint({ ssr: false });
   const [nestedData, setNestedData] = useState({});
+  const [champsLibresField, setChampsLibresField] = useState([]);
   const isMobile = breakpoint === "base";
 
   useEffect(() => {
@@ -103,6 +105,7 @@ const AnswerCampagnePage = () => {
     }
     if (campagne.questionnaireUI) {
       setFormattedQuestionnnaireUI(multiStepQuestionnaireUIFormatter(campagne.questionnaireUI));
+      setChampsLibresField(getChampsLibreField(campagne.questionnaireUI));
     }
   }, [campagne]);
 
@@ -147,12 +150,31 @@ const AnswerCampagnePage = () => {
         }
       }
     } else {
-      const result = await _put(`/api/temoignages/${temoignageId}`, {
-        reponses: { ...answers, ...formData, ...nestedData },
-        lastQuestionAt: new Date(),
-        isBot,
-      });
-      if (!result.acknowledged) {
+      const questionKey = Object.keys(
+        formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex].properties
+      )[0];
+      const isChampsLibre = champsLibresField.includes(questionKey);
+      let result;
+
+      if (isChampsLibre) {
+        result = await _post(`/api/verbatims/`, {
+          temoignageId,
+          questionKey,
+          content: formData[questionKey],
+        });
+      } else {
+        result = await _put(`/api/temoignages/${temoignageId}`, {
+          reponses: { ...answers, ...formData, ...nestedData },
+          lastQuestionAt: new Date(),
+          isBot,
+        });
+      }
+
+      if (
+        !(isChampsLibre && result._id) &&
+        !(isChampsLibre && result.acknowledged) &&
+        !(!isChampsLibre && result.acknowledged)
+      ) {
         if (result.statusCode === 403) {
           toast({
             title: "Une erreur est survenue",
