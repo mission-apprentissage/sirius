@@ -46,13 +46,17 @@ const formatScores = (verbatim, index) => {
 
 const moderationTableRows = ({ verbatims, selectedVerbatims, setSelectedVerbatims }) => {
   return verbatims.map((verbatim, index) => {
-    const isSelected = selectedVerbatims.includes(verbatim._id);
+    const isSelected = selectedVerbatims
+      .map((selectedVerbatim) => selectedVerbatim._id)
+      .includes(verbatim._id);
 
     const handleOnChange = () => {
       setSelectedVerbatims((prevValue) =>
         isSelected
-          ? prevValue.filter((item) => item !== verbatim._id)
-          : [...prevValue, verbatim._id]
+          ? prevValue
+              .filter((item) => item._id !== verbatim._id)
+              .map((item) => ({ _id: item._id, status: item.status, scores: item.scores }))
+          : [...prevValue, verbatim]
       );
     };
     return [

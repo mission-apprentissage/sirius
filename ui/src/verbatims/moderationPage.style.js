@@ -22,6 +22,7 @@ export const ModerationContainer = styled.section`
   max-width: 78em;
   margin: auto;
   padding: ${fr.spacing("6w")} 1.5rem;
+  gap: ${fr.spacing("2w")};
 
   & > p {
     margin: 0;

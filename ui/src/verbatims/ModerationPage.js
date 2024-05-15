@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Table } from "@codegouvfr/react-dsfr/Table";
@@ -20,6 +20,7 @@ import moderationTableRows from "./Moderation/moderationTableRows";
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchVerbatimsCount from "../hooks/useFetchVerbatimsCount";
 import ModerationActions from "./Moderation/ModerationActions";
+import usePatchVerbatims from "../hooks/usePatchVerbatims";
 
 const headers = [
   "",
@@ -41,6 +42,7 @@ const tabs = ({
   showOnlyDiscrepancies,
   setShowOnlyDiscrepancies,
   isLoading,
+  patchVerbatims,
 }) =>
   Object.keys(VERBATIM_STATUS).map((status) => ({
     label: (
@@ -53,9 +55,9 @@ const tabs = ({
       <TableContainer>
         <ModerationActions
           selectedVerbatims={selectedVerbatims}
-          setSelectedVerbatims={setSelectedVerbatims}
           showOnlyDiscrepancies={showOnlyDiscrepancies}
           setShowOnlyDiscrepancies={setShowOnlyDiscrepancies}
+          patchVerbatims={patchVerbatims}
         />
         {isLoading ? (
           <LoaderContainer>
@@ -99,6 +101,7 @@ const tabs = ({
 
 const ModerationPage = () => {
   const [selectedVerbatims, setSelectedVerbatims] = useState([]);
+  const [isPatchSuccessful, setIsPatchSuccessful] = useState(null);
   const [page, setPage] = useState(1);
   const [pickedEtablissement, setPickedEtablissement] = useState(null);
   const [pickedFormationId, setPickedFormationId] = useState(null);
@@ -119,6 +122,27 @@ const ModerationPage = () => {
     page,
   });
 
+  const { mutate: patchVerbatims, patchedVerbatims } = usePatchVerbatims();
+
+  const patchedVerbatimCount = patchedVerbatims
+    ?.map((patchedVerbatim) => patchedVerbatim.modifiedCount)
+    .reduce((a, b) => a + b);
+
+  useEffect(() => {
+    if (patchedVerbatims?.length) {
+      if (patchedVerbatimCount === selectedVerbatims.length) {
+        setIsPatchSuccessful(true);
+      } else {
+        setIsPatchSuccessful(false);
+      }
+      setSelectedVerbatims([]);
+      setPage(1);
+      setTimeout(() => {
+        setIsPatchSuccessful(null);
+      }, 5000);
+    }
+  }, [patchedVerbatims]);
+
   return (
     <Container>
       <ModerationContainer>
@@ -133,6 +157,22 @@ const ModerationPage = () => {
             setPickedFormationId={setPickedFormationId}
           />
         </SelectorsContainer>
+        {isPatchSuccessful && patchedVerbatimCount && (
+          <Alert
+            severity="success"
+            title="Le status des verbatims a été mis à jour avec succès"
+            description={`${patchedVerbatimCount} verbatims impactés`}
+            closable
+          />
+        )}
+        {isPatchSuccessful === false && (
+          <Alert
+            severity="error"
+            title="Une erreur s'est produite lors de la mise à jour des status"
+            description="Merci de réessayer plus tard"
+            closable
+          />
+        )}
         <Tabs
           tabs={tabs({
             verbatims,
@@ -145,6 +185,7 @@ const ModerationPage = () => {
             showOnlyDiscrepancies,
             setShowOnlyDiscrepancies,
             isLoading,
+            patchVerbatims,
           })}
           onTabChange={(tabId) => setSelectedTab(tabId.tab.tabId)}
         />
