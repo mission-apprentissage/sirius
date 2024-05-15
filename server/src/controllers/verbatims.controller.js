@@ -42,20 +42,12 @@ const getVerbatimsCount = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-const patchVerbatim = tryCatch(async (req, res) => {
-  const { success, body } = await verbatimsService.patchVerbatim(req.params.id, req.body);
+const patcVerbatims = tryCatch(async (req, res) => {
+  const { success, body } = await verbatimsService.patchVerbatims(req.body);
 
   if (!success) throw new BasicError();
 
   return res.status(200).json(body);
 });
 
-const patchMultiVerbatim = tryCatch(async (req, res) => {
-  const { success, body } = await verbatimsService.patchMultiVerbatim(req.body);
-
-  if (!success) throw new BasicError();
-
-  return res.status(200).json(body);
-});
-
-module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim, getVerbatimsCount };
+module.exports = { getVerbatims, patcVerbatims, getVerbatimsCount };

@@ -1,6 +1,4 @@
-const temoignagesDao = require("../dao/temoignages.dao");
 const verbatimsDao = require("../dao/verbatims.dao");
-const { ErrorMessage } = require("../errors");
 
 const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscrepancies, page, pageSize }) => {
   try {
@@ -54,43 +52,14 @@ const getVerbatimsCount = async ({ etablissementSiret, formationId }) => {
   }
 };
 
-const patchVerbatim = async (id, updatedVerbatim) => {
+const patchVerbatims = async (verbatims) => {
   try {
-    const temoignageToUpdate = await temoignagesDao.getOne(id);
+    const result = await verbatimsDao.updateMany(verbatims);
 
-    if (!temoignageToUpdate) {
-      return { success: false, body: ErrorMessage.TemoignageNotFoundError };
-    }
-
-    temoignageToUpdate.reponses[updatedVerbatim.questionId] = updatedVerbatim.payload;
-
-    const updatedTemoignage = await temoignagesDao.update(id, temoignageToUpdate);
-
-    return { success: true, body: updatedTemoignage };
+    return { success: true, body: result };
   } catch (error) {
     return { success: false, body: error };
   }
 };
 
-const patchMultiVerbatim = async (verbatims) => {
-  try {
-    let updatedTemoignages = [];
-
-    for (const verbatim of verbatims) {
-      const temoignageToUpdate = await temoignagesDao.getOne(verbatim.temoignageId);
-      if (!temoignageToUpdate) {
-        return { success: false, body: ErrorMessage.TemoignageNotFoundError };
-      }
-
-      temoignageToUpdate.reponses[verbatim.questionId] = verbatim.payload;
-      const updatedTemoignage = await temoignagesDao.update(verbatim.temoignageId, temoignageToUpdate);
-      updatedTemoignages.push(updatedTemoignage);
-    }
-
-    return { success: true, body: updatedTemoignages };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim, getVerbatimsCount };
+module.exports = { getVerbatims, patchVerbatims, getVerbatimsCount };
