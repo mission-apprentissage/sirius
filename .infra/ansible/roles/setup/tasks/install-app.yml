@@ -43,9 +43,9 @@
     - "/opt/sirius/backups"
     - "/opt/sirius/.overrides"
 
-- name: Add cron to rotate nginx files
-  ansible.builtin.cron:
-    name: "rotate_nginx_log_files"
-    minute: "0"
-    hour: "1"
-    job: "bash /opt/sirius/tools/rotate-nginx-log-files.sh >> /var/log/cron.log 2>&1"
+#- name: Add cron to rotate nginx files
+#  ansible.builtin.cron:
+#    name: "rotate_nginx_log_files"
+#    minute: "0"
+#    hour: "1"
+#    job: "bash /opt/sirius/tools/rotate-nginx-log-files.sh >> /var/log/cron.log 2>&1"
