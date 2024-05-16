@@ -48,8 +48,6 @@ function generate_self_signed_certificate() {
 }
 
 function renew_certificate() {
-    echo "looooool"
-
   local domains=(${1//,/ })  # Split input domains separated by commas into an array
   local primary_domain="${domains[0]}"
 
@@ -67,9 +65,8 @@ function renew_certificate() {
 
 function main() {
 
-
   local task="${1}"
-  local dns_name="${2}"
+  local dns_name="${2:?"Please provide a dns name"}"
 
   case "${task}" in
   generate)
@@ -82,7 +79,7 @@ function main() {
     ;;
   renew)
     start_http_server_for_acme_challenge
-    renew_certificate
+    renew_certificate "${dns_name}"
     ;;
   *)
     echo "Unknown task '${task}'"
