@@ -147,7 +147,7 @@ const HomePage = () => {
             <div>
               <img src={School} alt="" />
               <p>
-                <b>711 établissements</b> <br />
+                <b>1077 établissements</b> <br />
                 inscrits sur la plateforme
               </p>
             </div>
