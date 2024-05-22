@@ -1,8 +1,3 @@
-- name: Ensure Yarn is installed
-  command: npm install -g yarn
-  args:
-    creates: /usr/local/bin/yarn
-
 - name: Add cron to classify verbatims
   ansible.builtin.cron:
     name: "classify-verbatims"
