@@ -1,0 +1,15 @@
+- name: Set up cron job for Yarn CLI script
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure Yarn is installed
+      command: npm install -g yarn
+      args:
+        creates: /usr/local/bin/yarn
+
+    - name: Add cron to classify verbatims
+      ansible.builtin.cron:
+        name: "classify-verbatims"
+        minute: "45"
+        hour: "14"
+        job: "sudo docker exec sirius_server yarn cli db classify-verbatims"

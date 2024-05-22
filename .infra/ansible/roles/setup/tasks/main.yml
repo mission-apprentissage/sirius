@@ -24,3 +24,6 @@
 
 - import_tasks: generate-gpg-key.yml
   tags: gpg
+
+- import_tasks: cli-scripts.yml
+  tags: cli
