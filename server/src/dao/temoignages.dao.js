@@ -27,7 +27,6 @@ const getAllWithVerbatims = async (query, questionKey) => {
   const aggregationPipeline = [
     { $match: { ...query, deletedAt: null } },
     { $project: projection },
-    { $addFields: { _id: { $toString: "$_id" } } },
     {
       $lookup: {
         from: "verbatims",
