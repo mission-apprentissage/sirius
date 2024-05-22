@@ -1,6 +1,6 @@
 - name: Add cron to classify verbatims
   ansible.builtin.cron:
     name: "classify-verbatims"
-    minute: "0"
+    minute: "50"
     hour: "15"
-    job: "sudo docker exec sirius_server yarn cli db classify-verbatims"
+    job: "sudo docker exec sirius_server yarn cli db classify-verbatims >> /var/log/cron.log 2>&1"
