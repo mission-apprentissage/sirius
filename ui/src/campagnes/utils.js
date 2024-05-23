@@ -298,3 +298,5 @@ export const getChampsLibreField = (questionnaireUI, onlyOpenQuestions = false) 
 
   return fieldsWithCustomMessageReceived;
 };
+
+export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
