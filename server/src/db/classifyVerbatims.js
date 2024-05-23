@@ -7,18 +7,36 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const CLASSIFICATION_API = "https://huynhdoo--sirius-moderation-score.modal.run";
 
 const classifyVerbatim = async (verbatim, classificationCount, gemVerbatims) => {
+  const MAX_RETRIES = 5;
+  const INITIAL_DELAY = 500;
+
+  const fetchWithRetry = async (url, options, retries = MAX_RETRIES, delay = INITIAL_DELAY) => {
+    try {
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      if (retries === 0) {
+        throw error;
+      }
+
+      console.log(`Retrying in ${delay}ms... (${MAX_RETRIES - retries + 1}/${MAX_RETRIES})`);
+      await sleep(delay);
+      return fetchWithRetry(url, options, retries - 1, delay * 2);
+    }
+  };
+
   try {
-    const response = await fetch(CLASSIFICATION_API, {
+    const data = await fetchWithRetry(CLASSIFICATION_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: verbatim.content }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
     console.log("Classification API response:", data);
 
     const highestScore = getHighestScore(data.scores);
@@ -123,7 +141,7 @@ module.exports = async () => {
     const unclassifiedVerbatims = await Verbatim.find({
       deletedAt: null,
       $or: [{ scores: { $exists: false } }, { scores: null }],
-    }).limit(20);
+    });
 
     const classificationCount = Object.keys(VERBATIM_STATUS).reduce((acc, status) => {
       if (status !== VERBATIM_STATUS.PENDING) {
