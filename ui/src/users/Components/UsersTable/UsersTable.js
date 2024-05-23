@@ -7,6 +7,7 @@ import {
   getCoreRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table";
+import { useQueryClient } from "@tanstack/react-query";
 import { UserContext } from "../../../context/UserContext";
 import ChangeUserStatusConfirmationModal from "../ChangeUserStatusConfirmationModal";
 import ChangeUserRoleConfirmationModal from "../ChangeUserRoleConfirmationModal";
@@ -31,11 +32,13 @@ const UsersTable = ({ users, setRefetchData }) => {
   const [search, setSearch] = useState([]);
   const navigate = useNavigate();
   const { onCopy: onCopyClipBoard, setValue: setClipboardValue } = useClipboard("");
+  const queryClient = useQueryClient();
 
   const { sudoUser, isSuccess } = useSudoUser({ userId: sudoUserId });
 
   useEffect(() => {
     if (isSuccess && sudoUser) {
+      queryClient.invalidateQueries({ queryKey: ["campagnesSorted"] });
       const decodedToken = jwt(sudoUser.token);
       setUserContext(() => {
         return {

@@ -273,3 +273,5 @@ export const splitIntoBatches = (array, batchSize) => {
   }
   return batchedArray;
 };
+
+export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

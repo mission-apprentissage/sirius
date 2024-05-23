@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { isPlural } from "../utils";
@@ -7,6 +8,8 @@ import { UserContext } from "../../context/UserContext";
 
 const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelectedCampagnes }) => {
   const [userContext] = useContext(UserContext);
+  const queryClient = useQueryClient();
+
   const persistedEtablissement = userContext.user?.etablissements?.length
     ? userContext.user?.etablissements[0]
     : "";
@@ -19,6 +22,7 @@ const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelected
       {
         onSuccess: () => {
           setSelectedCampagnes([]);
+          queryClient.invalidateQueries({ queryKey: ["campagnes"] });
           modal.close();
         },
       }

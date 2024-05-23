@@ -20,7 +20,7 @@ import useFetchTemoignagesDatavisualisation from "../hooks/useFetchTemoignagesDa
 import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
 import useFetchCampagnesByBatch from "../hooks/useFetchCampagnesByBatch";
 import { CAMPAGNE_TABLE_TYPES } from "../constants";
-import { isPlural } from "./utils";
+import { delay, isPlural } from "./utils";
 
 const MultipleQuestionnairesTabs = ({
   temoignages,
@@ -95,12 +95,17 @@ const ResultsCampagnesPage = () => {
 
   const handlePdfExport = async () => {
     setPdfExportLoading(true);
+    await delay(1000);
 
     const currentQuestionnaireCategories = datavisualisation?.find(
       (questionnaire) => questionnaire.questionnaireId === currentDatavisualisationQuestionnaireId
     ).categories;
 
-    const filteredCampagnesByQuestionnaireId = campagnes.filter(
+    const selectedCampagnes = campagnes.filter((campagne) =>
+      selectedCampagneIds.includes(campagne._id)
+    );
+
+    const filteredCampagnesByQuestionnaireId = selectedCampagnes.filter(
       (campagne) => campagne.questionnaireId === currentDatavisualisationQuestionnaireId
     );
 
