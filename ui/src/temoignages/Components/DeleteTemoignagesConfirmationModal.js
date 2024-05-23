@@ -1,4 +1,5 @@
 import React from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import useDeleteTemoignages from "../../hooks/useDeleteTemoignages";
@@ -9,12 +10,15 @@ const DeleteTemoignagesConfirmationModal = ({
   selectedTemoignagesIds,
   setSelectedTemoignagesIds,
 }) => {
+  const queryClient = useQueryClient();
+
   const { mutate: deleteTemoignages, isPending, isError } = useDeleteTemoignages();
 
   const handleOnClick = () => {
     deleteTemoignages(selectedTemoignagesIds, {
       onSuccess: () => {
         setSelectedTemoignagesIds([]);
+        queryClient.invalidateQueries({ queryKey: ["uncompliantTemoignages"] });
         modal.close();
       },
     });
