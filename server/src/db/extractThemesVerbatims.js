@@ -124,7 +124,7 @@ module.exports = async () => {
     const unthemedVerbatims = await Verbatim.find({
       deletedAt: null,
       $or: [{ themes: { $exists: false } }, { themes: null }],
-    }).limit(20);
+    });
 
     const themeCount = Object.keys(VERBATIM_THEMES_LABELS).reduce((acc, theme) => {
       acc[theme] = 0;
