@@ -30,7 +30,7 @@
         "git",
         "python3",
         "python3-pip",
-        "docker",
+        "docker-ce",
         "docker-compose",
       ]
 
