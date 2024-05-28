@@ -3,6 +3,7 @@ const runScript = require("../modules/runScript");
 const createUser = require("./createUser");
 const migrateVerbatims = require("./migrateVerbatims");
 const classifyVerbatims = require("./classifyVerbatims");
+const extractThemesVerbatims = require("./extractThemesVerbatims");
 
 cli
   .command("create-user")
@@ -28,6 +29,13 @@ cli
   .description("Classifie les verbatims exitants")
   .action(() => {
     runScript(() => classifyVerbatims());
+  });
+
+cli
+  .command("extract-themes-verbatims")
+  .description("Extrait les thèmes des verbatims exitants")
+  .action(() => {
+    runScript(() => extractThemesVerbatims());
   });
 
 cli.parse(process.argv);
