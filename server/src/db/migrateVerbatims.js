@@ -43,7 +43,7 @@ module.exports = async ({ isDryRun = false }) => {
           }
 
           if (typeof value === "object" && value !== null) {
-            verbatim.content = value.content || "";
+            verbatim.content = String(value.content) || "";
             verbatim.status = value.status || VERBATIM_STATUS.PENDING;
           } else {
             verbatim.content = value ? String(value) : "";
