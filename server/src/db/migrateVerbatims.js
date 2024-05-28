@@ -46,7 +46,7 @@ module.exports = async ({ isDryRun = false }) => {
             verbatim.content = value.content || "";
             verbatim.status = value.status || VERBATIM_STATUS.PENDING;
           } else {
-            verbatim.content = value;
+            verbatim.content = value ? String(value) : "";
             verbatim.status = VERBATIM_STATUS.PENDING;
           }
 
