@@ -1,40 +1,63 @@
-import React from "react";
-import { Select } from "chakra-react-select";
-import { useSearchParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import Alert from "@codegouvfr/react-dsfr/Alert";
+import { Select } from "@codegouvfr/react-dsfr/SelectNext";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import useFetchLocalFormations from "../../hooks/useFetchLocalFormations";
 
-const ModerationFormationPicker = ({ pickedEtablissementFormationIds }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const localFormationQuery = pickedEtablissementFormationIds?.map((id) => `id=${id}`).join("&");
-  const [formations, loading, error] = useFetchLocalFormations(localFormationQuery);
+const ModerationFormationPicker = ({ pickedEtablissementFormationIds, setPickedFormationId }) => {
+  const [search, setSearch] = useState("");
+  const [inputValue, setInputValue] = useState(search);
 
-  const matchedFormation =
-    formations?.find((formation) => formation._id === searchParams.get("formation")) ?? null;
+  const { localFormations, isSuccess, isError } = useFetchLocalFormations({
+    search,
+    formationIds: pickedEtablissementFormationIds,
+  });
 
-  const onChangeHandler = (e) => {
-    const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set("formation", e?._id ?? "all");
-    newSearchParams.set("page", 1);
-    setSearchParams(newSearchParams);
-  };
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearch(inputValue);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [inputValue, setSearch]);
+
+  if (isError) {
+    return (
+      <Alert
+        title="Une erreur s'est produite dans la récupération des formations"
+        description="Merci de réessayer ultérieurement"
+        severity="error"
+      />
+    );
+  }
 
   return (
-    <Select
-      id="formation"
-      name="formation"
-      variant="outline"
-      size="lg"
-      placeholder="Choix de la formation"
-      isSearchable
-      isClearable
-      isLoading={loading}
-      isDisabled={loading || !!error}
-      value={matchedFormation}
-      options={formations?.length ? formations : []}
-      getOptionLabel={(option) => option.data.intitule_long}
-      getOptionValue={(option) => option._id}
-      onChange={onChangeHandler}
-    />
+    <div>
+      <Input
+        label={`Rechercher une formation (${localFormations?.length || 0})`}
+        disabled={!isSuccess || (!localFormations?.length && !search)}
+        nativeInputProps={{
+          value: inputValue,
+          placeholder: "Par intitulé",
+          onChange: (e) => setInputValue(e.target.value),
+        }}
+      />
+      <Select
+        label="Choix de la formation"
+        nativeSelectProps={{
+          onChange: (event) => setPickedFormationId(event.target.value),
+        }}
+        disabled={!isSuccess || !localFormations?.length}
+        options={
+          (localFormations?.length &&
+            localFormations.map((formation) => ({
+              value: formation._id,
+              label: `${formation.data.intitule_long}`,
+            }))) ||
+          []
+        }
+      />
+    </div>
   );
 };
 

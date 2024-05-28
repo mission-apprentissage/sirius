@@ -1,8 +1,7 @@
 const { App } = require("@slack/bolt");
-
 const config = require("../config");
 
-const sendToSlack = async (main) => {
+const sendToSlack = async (main, thread_ts = null) => {
   if (!config.slack.token) return;
   if (!config.slack.channel) return;
 
@@ -11,13 +10,19 @@ const sendToSlack = async (main) => {
     signingSecret: config.slack.signingSecret ?? "",
   });
 
-  const sent = await slack.client.chat.postMessage({
+  const messagePayload = {
     text: "",
     blocks: main,
     channel: config.slack.channel,
-  });
+  };
 
-  return sent.ok;
+  if (thread_ts) {
+    messagePayload.thread_ts = thread_ts;
+  }
+
+  const sent = await slack.client.chat.postMessage(messagePayload);
+
+  return sent;
 };
 
 module.exports = {

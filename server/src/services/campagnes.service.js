@@ -3,6 +3,8 @@ const campagnesDao = require("../dao/campagnes.dao");
 const formationsDao = require("../dao/formations.dao");
 const etablissementsDao = require("../dao/etablissements.dao");
 const temoignagesDao = require("../dao/temoignages.dao");
+const verbatimsDao = require("../dao/verbatims.dao");
+const questionnairesDao = require("../dao/questionnaires.dao");
 const { appendDataWhenEmpty, getStatistics, getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
 const {
@@ -14,7 +16,7 @@ const {
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
-const { getChampsLibreCount, getChampsLibreRate } = require("../utils/verbatims.utils");
+const { getChampsLibreField } = require("../utils/verbatims.utils");
 
 const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, pageSize = 10, query, search }) => {
   try {
@@ -345,18 +347,34 @@ const getXlsxMultipleExport = async (ids) => {
 const getCampagnesStatistics = async (campagneIds) => {
   try {
     const query = { campagneIds: { $in: campagneIds.map((id) => ObjectId(id)) } };
-
     const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
 
+    const onlyQpenQuestionKeyList = [];
+    const questionnaireIds = campagnes.map((campagne) => campagne.questionnaireId);
+    const questionnaires = await questionnairesDao.getAll({ _id: { $in: questionnaireIds } });
+    questionnaires.forEach((questionnaire) => [
+      onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUI, true)),
+    ]);
+    const uniqueChampsLibreFields = [...new Set(onlyQpenQuestionKeyList.flat())];
+
+    const temoignagesList = campagnes.map((campagne) => campagne.temoignagesList).flat();
+    const temoignageIds = temoignagesList.map((temoignagne) => temoignagne._id?.toString());
+    const verbatimsQuery = {
+      temoignageId: { $in: temoignageIds.map((temoignageId) => ObjectId(temoignageId)) },
+      questionKey: { $in: uniqueChampsLibreFields },
+    };
+    const verbatimsCountByStatus = await verbatimsDao.count(verbatimsQuery);
+
+    const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
+
     campagnes.forEach((campagne) => {
-      campagne.champsLibreCount = getChampsLibreCount(campagne.questionnaireUI, campagne.temoignagesList);
-      campagne.champsLibreRate = getChampsLibreRate(campagne.questionnaireUI, campagne.temoignagesList);
+      campagne.possibleChampsLibreCount = getChampsLibreField(campagne.questionnaireUI, true).length;
       campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
     });
 
-    const statistics = getStatistics(campagnes);
+    const statistics = getStatistics(campagnes, totalVerbatimCount);
 
-    return { success: true, body: statistics };
+    return { success: true, body: { ...statistics, verbatimsCount: totalVerbatimCount } };
   } catch (error) {
     return { success: false, body: error };
   }

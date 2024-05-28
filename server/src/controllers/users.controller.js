@@ -298,7 +298,7 @@ const supportUser = tryCatch(async (req, res) => {
     },
   ]);
 
-  return res.status(200).json({ success: slackResponse });
+  return res.status(200).json({ success: slackResponse.ok });
 });
 
 const supportUserPublic = tryCatch(async (req, res) => {
@@ -345,7 +345,7 @@ const supportUserPublic = tryCatch(async (req, res) => {
     },
   ]);
 
-  return res.status(200).json({ success: slackResponse });
+  return res.status(200).json({ success: slackResponse.ok });
 });
 
 module.exports = {

@@ -26,9 +26,9 @@ const MultipleQuestionnairesTabs = ({
   temoignages,
   setCurrentDatavisualisationQuestionnaireId,
 }) => {
-  const tabs = temoignages.map((questionnaire, index) => {
+  const tabs = temoignages.map((questionnaire) => {
     return {
-      label: `Questionnaire version ${index + 1} (${
+      label: `${questionnaire.questionnaireName} (${
         questionnaire.temoignageCount
       } répondant·e${isPlural(questionnaire.temoignageCount)})`,
       content: <ResultsCampagnesVisualisation temoignages={questionnaire} />,

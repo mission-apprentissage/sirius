@@ -5,7 +5,7 @@ const create = async (temoignage) => {
   return Temoignage.create(temoignage);
 };
 
-const getAll = async (query, questionKey) => {
+const getAllWithVerbatims = async (query, questionKey) => {
   let projection = { reponses: 1 };
 
   if (questionKey && typeof questionKey === "string") {
@@ -24,7 +24,31 @@ const getAll = async (query, questionKey) => {
     deletedAt: 1,
   };
 
-  return Temoignage.find({ ...query, deletedAt: null }, projection).lean();
+  const aggregationPipeline = [
+    { $match: { ...query, deletedAt: null } },
+    { $project: projection },
+    {
+      $lookup: {
+        from: "verbatims",
+        localField: "_id",
+        foreignField: "temoignageId",
+        as: "verbatims",
+      },
+    },
+    {
+      $addFields: {
+        verbatims: {
+          $filter: {
+            input: "$verbatims",
+            as: "verbatim",
+            cond: { $eq: ["$$verbatim.deletedAt", undefined] },
+          },
+        },
+      },
+    },
+  ];
+
+  return Temoignage.aggregate(aggregationPipeline).exec();
 };
 
 const deleteOne = async (id) => {
@@ -119,7 +143,7 @@ const deleteMultiple = async (ids) => {
 
 module.exports = {
   create,
-  getAll,
+  getAllWithVerbatims,
   deleteOne,
   update,
   countByCampagne,

@@ -1,184 +1,196 @@
-import React, { useEffect, useState, useContext } from "react";
-import { VStack, Spinner, Box, Text, HStack } from "@chakra-ui/react";
-import { useSearchParams } from "react-router-dom";
-import ModerationTable from "./Moderation/ModerationTable";
-import ModerationStatistics from "./Moderation/ModerationStatistics";
+import React, { useState, useEffect } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+import { fr } from "@codegouvfr/react-dsfr";
+import { Table } from "@codegouvfr/react-dsfr/Table";
+import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
+import Pagination from "@codegouvfr/react-dsfr/Pagination";
+import Alert from "@codegouvfr/react-dsfr/Alert";
+import {
+  Container,
+  HeaderItem,
+  ModerationContainer,
+  SelectorsContainer,
+  TableContainer,
+} from "./moderationPage.style";
 import useFetchVerbatims from "../hooks/useFetchVerbatims";
 import ModerationEtablissementPicker from "./Moderation/ModerationEtablissementPicker";
 import ModerationFormationPicker from "./Moderation/ModerationFormationPicker";
-import ModerationQuestionPicker from "./Moderation/ModerationQuestionPicker";
-import ModerationFilters from "./Moderation/ModerationFilters";
-import ModerationGroupedAction from "./Moderation/ModerationGroupedAction";
-import { UserContext } from "../context/UserContext";
-import ModerationPagination from "./Moderation/ModerationPagination";
+import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../constants";
+import moderationTableRows from "./Moderation/moderationTableRows";
+import { LoaderContainer } from "../campagnes/styles/shared.style";
+import useFetchVerbatimsCount from "../hooks/useFetchVerbatimsCount";
+import ModerationActions from "./Moderation/ModerationActions";
+import usePatchVerbatims from "../hooks/usePatchVerbatims";
 
-const PAGE_SIZE = 100;
+const headers = [
+  "",
+  <HeaderItem key="verbatim">Verbatim</HeaderItem>,
+  <HeaderItem key="createdAt">Scores</HeaderItem>,
+  <HeaderItem key="formation">Formation</HeaderItem>,
+  <HeaderItem key="questionKey">Question</HeaderItem>,
+  <HeaderItem key="createdAt">Créé le</HeaderItem>,
+];
+
+const tabs = ({
+  verbatims,
+  selectedVerbatims,
+  setSelectedVerbatims,
+  pagination,
+  page,
+  setPage,
+  verbatimsCount,
+  showOnlyDiscrepancies,
+  setShowOnlyDiscrepancies,
+  isLoading,
+  patchVerbatims,
+}) =>
+  Object.keys(VERBATIM_STATUS).map((status) => ({
+    label: (
+      <>
+        {VERBATIM_STATUS_LABELS[status]} (
+        {verbatimsCount?.find((count) => count.status === status)?.count || 0})
+      </>
+    ),
+    content: (
+      <TableContainer>
+        <ModerationActions
+          selectedVerbatims={selectedVerbatims}
+          showOnlyDiscrepancies={showOnlyDiscrepancies}
+          setShowOnlyDiscrepancies={setShowOnlyDiscrepancies}
+          patchVerbatims={patchVerbatims}
+        />
+        {isLoading ? (
+          <LoaderContainer>
+            <BeatLoader
+              color="var(--background-action-high-blue-france)"
+              size={20}
+              aria-label="Loading Spinner"
+            />
+          </LoaderContainer>
+        ) : verbatims.length ? (
+          <>
+            <Table
+              headers={headers}
+              data={
+                moderationTableRows({ verbatims, selectedVerbatims, setSelectedVerbatims }) || []
+              }
+            />
+            {pagination.totalPages > 1 && (
+              <Pagination
+                count={pagination.totalPages}
+                defaultPage={page}
+                getPageLinkProps={(pageNumber) => ({
+                  onClick: (event) => {
+                    event.preventDefault();
+                    setPage(pageNumber);
+                  },
+                  key: `pagination-link-${pageNumber}`,
+                })}
+              />
+            )}
+          </>
+        ) : (
+          <Alert description="Aucun verbatim trouvé" severity="info">
+            Aucun verbatim à afficher
+          </Alert>
+        )}
+      </TableContainer>
+    ),
+    tabId: status,
+  }));
 
 const ModerationPage = () => {
-  const [displayedVerbatims, setDisplayedVerbatims] = useState([]);
-  const [questions, setQuestions] = useState([]);
   const [selectedVerbatims, setSelectedVerbatims] = useState([]);
-  const [userContext] = useContext(UserContext);
-  const [shouldRefresh, setShouldRefresh] = useState(false);
-  const [pickedEtablissementFormationIds, setPickedEtablissementFormationIds] = useState([]);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [isPatchSuccessful, setIsPatchSuccessful] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pickedEtablissement, setPickedEtablissement] = useState(null);
+  const [pickedFormationId, setPickedFormationId] = useState(null);
+  const [selectedTab, setSelectedTab] = useState(VERBATIM_STATUS.PENDING);
+  const [showOnlyDiscrepancies, setShowOnlyDiscrepancies] = useState(false);
 
-  const selectedEtablissement = searchParams.get("etablissement");
-  const selectedFormation = searchParams.get("formation");
-  const selectedQuestion = searchParams.get("question");
-  const page = searchParams.get("page") ? parseInt(searchParams.get("page")) : 1;
-  const selectedStatus = searchParams.get("selectedStatus");
+  const { verbatimsCount } = useFetchVerbatimsCount({
+    etablissementSiret: pickedEtablissement?.siret,
+    formationId: pickedFormationId,
+    showOnlyDiscrepancies: showOnlyDiscrepancies,
+  });
 
-  const hasSelectedEtablissement = selectedEtablissement && selectedEtablissement !== "all";
-  const hasSelectedFormation = selectedFormation && selectedFormation !== "all";
-  const hasSelectedQuestion = selectedQuestion && selectedQuestion !== "all";
-  const hasSelectedStatus = selectedStatus && selectedStatus !== "all";
+  const { verbatims, pagination, isLoading } = useFetchVerbatims({
+    etablissementSiret: pickedEtablissement?.siret,
+    formationId: pickedFormationId,
+    selectedStatus: selectedTab,
+    showOnlyDiscrepancies: showOnlyDiscrepancies,
+    page,
+  });
 
-  const etablissementVerbatimsQuery = hasSelectedEtablissement
-    ? `?etablissementSiret=${selectedEtablissement}`
-    : "";
+  const { mutate: patchVerbatims, patchedVerbatims } = usePatchVerbatims();
 
-  const formationVerbatimsQuery = hasSelectedFormation ? `&formationId=${selectedFormation}` : "";
-
-  const questionVerbatimsQuery = hasSelectedQuestion
-    ? `${hasSelectedEtablissement ? "&" : "?"}question=${selectedQuestion}`
-    : "";
-
-  const statusVerbatimsQuery = hasSelectedStatus
-    ? `${
-        etablissementVerbatimsQuery || formationVerbatimsQuery || questionVerbatimsQuery ? "&" : "?"
-      }selectedStatus=${selectedStatus}`
-    : "";
-
-  const paginationQuery =
-    hasSelectedEtablissement || hasSelectedQuestion || hasSelectedStatus
-      ? `&page=${page}`
-      : `?page=${page}`;
-
-  const finalQuery = `${etablissementVerbatimsQuery || ""}${formationVerbatimsQuery || ""}${
-    questionVerbatimsQuery || ""
-  }${statusVerbatimsQuery || ""}${paginationQuery}`;
-
-  const [verbatims, count, loadingVerbatims, errorVerbatims] = useFetchVerbatims(
-    finalQuery,
-    shouldRefresh
-  );
+  const patchedVerbatimCount = patchedVerbatims
+    ?.map((patchedVerbatim) => patchedVerbatim.modifiedCount)
+    .reduce((a, b) => a + b);
 
   useEffect(() => {
-    if (verbatims?.length) {
-      const orderedVerbatims = verbatims.sort((a, b) => {
-        const dateA = new Date(a.createdAt);
-        const dateB = new Date(b.createdAt);
-
-        return dateB - dateA;
-      });
-      setDisplayedVerbatims(orderedVerbatims);
+    if (patchedVerbatims?.length) {
+      if (patchedVerbatimCount === selectedVerbatims.length) {
+        setIsPatchSuccessful(true);
+      } else {
+        setIsPatchSuccessful(false);
+      }
+      setSelectedVerbatims([]);
+      setPage(1);
+      setTimeout(() => {
+        setIsPatchSuccessful(null);
+      }, 5000);
     }
-  }, [verbatims]);
-
-  useEffect(() => {
-    if (verbatims?.length) {
-      const questionsByFilteredVerbatims = verbatims.map((verbatim) => ({
-        label: verbatim.title,
-        value: verbatim.key,
-      }));
-
-      const deduplicatedQuestions = questionsByFilteredVerbatims.filter(
-        (question, index, self) => index === self.findIndex((t) => t.value === question.value)
-      );
-
-      setQuestions(deduplicatedQuestions);
-    }
-  }, [verbatims]);
-
-  useEffect(() => {
-    if (shouldRefresh) {
-      setShouldRefresh(false);
-    }
-  }, [shouldRefresh]);
-
-  if (loadingVerbatims || errorVerbatims) return <Spinner />;
+  }, [patchedVerbatims]);
 
   return (
-    <VStack my="5" w="100%" alignItems="flex-start">
-      <Box w="100%" my="5">
-        <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">
+    <Container>
+      <ModerationContainer>
+        <h1>
+          <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
           Modération des verbatims
-        </Text>
-      </Box>
-      <ModerationStatistics count={count} />
-      <Box w="100%" my="5">
-        <Text fontSize="2xl" fontWeight="600" color="brand.blue.700">
-          Filtres{" "}
-          <Text
-            as="span"
-            fontSize="xs"
-            color="black"
-            fontWeight="300"
-            cursor="pointer"
-            onClick={() => {
-              setSearchParams({
-                etablissement: "all",
-                formation: "all",
-                question: "all",
-              });
-              setDisplayedVerbatims(verbatims);
-            }}
-          >
-            Réinitialiser
-          </Text>
-        </Text>
-      </Box>
-      <HStack w="100%" mt="5" mb="2">
-        <Box w={hasSelectedEtablissement ? "33%" : "50%"}>
-          <ModerationEtablissementPicker
-            setPickedEtablissementFormationIds={setPickedEtablissementFormationIds}
+        </h1>
+        <SelectorsContainer>
+          <ModerationEtablissementPicker setPickedEtablissement={setPickedEtablissement} />
+          <ModerationFormationPicker
+            pickedEtablissementFormationIds={pickedEtablissement?.formationIds}
+            setPickedFormationId={setPickedFormationId}
           />
-        </Box>
-        {hasSelectedEtablissement && (
-          <Box w="33%">
-            <ModerationFormationPicker
-              pickedEtablissementFormationIds={pickedEtablissementFormationIds}
-            />
-          </Box>
+        </SelectorsContainer>
+        {isPatchSuccessful && patchedVerbatimCount && (
+          <Alert
+            severity="success"
+            title="Le status des verbatims a été mis à jour avec succès"
+            description={`${patchedVerbatimCount} verbatims impactés`}
+            closable
+          />
         )}
-        <Box w={hasSelectedEtablissement ? "33%" : "50%"}>
-          <ModerationQuestionPicker questions={questions} />
-        </Box>
-      </HStack>
-      <HStack w="100%" mb="2">
-        <Box w="max-content">
-          <ModerationFilters
-            verbatims={verbatims}
-            displayedVerbatims={displayedVerbatims}
-            setDisplayedVerbatims={setDisplayedVerbatims}
-            currentFilters={{ selectedEtablissement, selectedFormation, selectedQuestion }}
+        {isPatchSuccessful === false && (
+          <Alert
+            severity="error"
+            title="Une erreur s'est produite lors de la mise à jour des status"
+            description="Merci de réessayer plus tard"
+            closable
           />
-        </Box>
-        <Box w="max-content" minW="200px">
-          <ModerationGroupedAction
-            verbatims={displayedVerbatims}
-            selectedVerbatims={selectedVerbatims}
-            setSelectedVerbatims={setSelectedVerbatims}
-            setShouldRefresh={setShouldRefresh}
-            userContext={userContext}
-          />
-        </Box>
-      </HStack>
-      <Box w="100%" my="5">
-        <Text fontSize="2xl" fontWeight="600" color="brand.blue.700">
-          Verbatims
-        </Text>
-      </Box>
-      <ModerationPagination page={page} PAGE_SIZE={PAGE_SIZE} totalCount={count.totalCount} />
-      <ModerationTable
-        verbatims={displayedVerbatims}
-        selectedVerbatims={selectedVerbatims}
-        setSelectedVerbatims={setSelectedVerbatims}
-        userContext={userContext}
-      />
-      <ModerationPagination page={page} PAGE_SIZE={PAGE_SIZE} totalCount={count.totalCount} />
-    </VStack>
+        )}
+        <Tabs
+          tabs={tabs({
+            verbatims,
+            selectedVerbatims,
+            setSelectedVerbatims,
+            pagination,
+            page,
+            setPage,
+            verbatimsCount,
+            showOnlyDiscrepancies,
+            setShowOnlyDiscrepancies,
+            isLoading,
+            patchVerbatims,
+          })}
+          onTabChange={(tabId) => setSelectedTab(tabId.tab.tabId)}
+        />
+      </ModerationContainer>
+    </Container>
   );
 };
 

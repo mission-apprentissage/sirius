@@ -27,13 +27,13 @@ import School from "../assets/images/school.svg";
 import DocumentAdd from "../assets/images/document_add.svg";
 import Avatar from "../assets/images/avatar.svg";
 import Community from "../assets/images/community.svg";
-import useFetchEtablissementsPublicSuivi from "../hooks/useFetchEtablissementsPublicSuivi";
+import useFetchEtablissementsPublicStatistics from "../hooks/useFetchEtablissementsPublicStatistics";
 import NeedHelp from "../Components/NeedHelp";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [questionnaires] = useGet(`/api/questionnaires/`);
-  const [etablissementsSuiviPublic] = useFetchEtablissementsPublicSuivi();
+  const [etablissementsSuiviPublic] = useFetchEtablissementsPublicStatistics();
 
   const validatedQuestionnaire =
     questionnaires.length && questionnaires?.filter((questionnaire) => questionnaire.isValidated);
@@ -168,7 +168,7 @@ const HomePage = () => {
             <div>
               <img src={Community} alt="" />
               <p>
-                <b>{etablissementsSuiviPublic?.champsLibreCount || 0} verbatims</b> <br />
+                <b>{etablissementsSuiviPublic?.verbatimsCount || 0} verbatims</b> <br />
                 formulés
               </p>
             </div>

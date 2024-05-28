@@ -305,6 +305,10 @@ const getAll = async (query = {}) => {
   return Campagne.find({ deletedAt: null, ...query }).lean();
 };
 
+const count = async (query = {}) => {
+  return Campagne.countDocuments({ deletedAt: null, ...query });
+};
+
 module.exports = {
   getAllWithTemoignageCountAndTemplateName,
   getOneWithTemoignagneCountAndTemplateName,
@@ -316,4 +320,5 @@ module.exports = {
   getOne,
   getAll,
   getAllOnlyDiplomeTypeAndEtablissements,
+  count,
 };

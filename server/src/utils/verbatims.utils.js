@@ -23,21 +23,6 @@ const getChampsLibreField = (questionnaireUI, onlyOpenQuestions = false) => {
   return fieldsWithCustomMessageReceived;
 };
 
-const getChampsLibreRate = (questionnaireUI, temoignages) => {
-  const champsLibreField = getChampsLibreField(questionnaireUI, true);
-
-  const champsLibresFieldsCountWithAnswer = temoignages.reduce((acc, cur) => {
-    const answers = Object.keys(cur.reponses);
-    const count = answers.filter((answer) => champsLibreField.includes(answer)).length;
-    return acc + count;
-  }, 0);
-
-  const champsLibresFieldsCount = champsLibreField.length * temoignages.length;
-
-  const rate = Math.round((champsLibresFieldsCountWithAnswer / champsLibresFieldsCount) * 100);
-  return rate || 0;
-};
-
 const getChampsLibreCount = (questionnaireUI, temoignages) => {
   const champsLibreField = getChampsLibreField(questionnaireUI, true);
 
@@ -108,7 +93,7 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
 const appendVerbatimsWithCampagneNameAndRestructure = (
   verbatimsWithChampsLibre,
   campagnesByQuestionnaireId,
-  titles
+  champsLibreFieldsTitle
 ) => {
   const flattenVerbatims = [];
 
@@ -121,7 +106,7 @@ const appendVerbatimsWithCampagneNameAndRestructure = (
         createdAt,
         key,
         value: item.verbatims[key],
-        title: titles[key],
+        title: champsLibreFieldsTitle[key],
         formation,
         formationId,
         etablissement,
@@ -151,7 +136,6 @@ const appendFormationAndEtablissementToVerbatims = (temoignages, campagnesByQues
 
 module.exports = {
   getChampsLibreField,
-  getChampsLibreRate,
   getChampsLibreCount,
   findTitlesInJSON,
   filterChampsLibresAndFlatten,

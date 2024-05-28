@@ -60,15 +60,23 @@ const getTemoignagesCount = (campagnes) => {
   return campagnes.reduce((acc, campagne) => acc + campagne.temoignagesCount, 0);
 };
 
-const getChampsLibreRate = (campagnes) => {
+const getChampsLibreRate = (campagnes, verbatimsCount) => {
   const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
 
   if (!filteredCampagnes.length) {
     return "N/A";
   }
 
-  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.champsLibreRate, 0);
-  return Math.round(sum / filteredCampagnes.length) + "%";
+  filteredCampagnes.forEach(
+    (campagne) => (campagne.possibleChampsLibreCount = campagne.possibleChampsLibreCount * campagne.temoignagesCount)
+  );
+
+  const totalPossibleChampsLibreCount = filteredCampagnes.reduce(
+    (acc, campagne) => acc + campagne.possibleChampsLibreCount,
+    0
+  );
+
+  return Math.round((verbatimsCount * 100) / totalPossibleChampsLibreCount) + "%";
 };
 
 const getMedianDuration = (campagnes) => {
@@ -94,17 +102,12 @@ const getMedianDuration = (campagnes) => {
   return msToTime(Math.round(sum / filteredCampagnes.length));
 };
 
-const getVerbatimsCount = (campagnes) => {
-  return campagnes.reduce((acc, campagne) => acc + campagne.champsLibreCount, 0);
-};
-
-const getStatistics = (campagnes) => ({
+const getStatistics = (campagnes, verbatimsCount) => ({
   campagnesCount: campagnes?.length || 0,
   finishedCampagnesCount: campagnes?.length ? getFinishedCampagnes(campagnes).length : 0,
   temoignagesCount: campagnes?.length ? getTemoignagesCount(campagnes) : 0,
-  champsLibreRate: campagnes?.length ? getChampsLibreRate(campagnes) : "N/A",
+  champsLibreRate: campagnes?.length ? getChampsLibreRate(campagnes, verbatimsCount) : "N/A",
   medianDuration: campagnes?.length ? getMedianDuration(campagnes) : "N/A",
-  verbatimsCount: campagnes?.length ? getVerbatimsCount(campagnes) : "0",
 });
 
 module.exports = {

@@ -1,99 +1,31 @@
-const temoignagesDao = require("../dao/temoignages.dao");
-const campagnesDao = require("../dao/campagnes.dao");
-const questionnairesDao = require("../dao/questionnaires.dao");
-const { ErrorMessage } = require("../errors");
-const {
-  getChampsLibreField,
-  findTitlesInJSON,
-  appendFormationAndEtablissementToVerbatims,
-  filterChampsLibresAndFlatten,
-  appendVerbatimsWithCampagneNameAndRestructure,
-} = require("../utils/verbatims.utils");
-const { VERBATIM_STATUS } = require("../constants");
+const ObjectId = require("mongoose").mongo.ObjectId;
+const verbatimsDao = require("../dao/verbatims.dao");
 
-const getVerbatims = async (query) => {
-  const etablissementSiret = query.etablissementSiret || null;
-  const formationId = query.formationId || null;
-  const questionKey = query.question || null;
-  const selectedStatus = query.selectedStatus ? query.selectedStatus.split(",") : Object.keys(VERBATIM_STATUS);
-  const page = parseInt(query.page) || 1;
-  const pageSize = parseInt(query.pageSize) || 100;
-
+const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscrepancies, page, pageSize }) => {
   try {
-    const allQuestionnaires = await questionnairesDao.getAll();
+    let query = {};
 
-    let allVerbatims = [];
-    let totalCount = 0;
-    let pendingCount = 0;
-    let validatedCount = 0;
-    let rejectedCount = 0;
-
-    for (const questionnaire of allQuestionnaires) {
-      const fieldsWithChampsLibre = getChampsLibreField(questionnaire.questionnaireUI);
-      const titles = findTitlesInJSON(questionnaire.questionnaire, fieldsWithChampsLibre);
-
-      const campagneQuery = {
-        questionnaireId: questionnaire._id.toString(),
-        ...(etablissementSiret && { etablissementSiret }),
-        ...(formationId && { formationId }),
-      };
-
-      const campagnesByQuestionnaireId = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(
-        campagneQuery
-      );
-
-      if (!campagnesByQuestionnaireId) {
-        continue;
-      }
-
-      const temoignagesQuery = {
-        campagneId: { $in: campagnesByQuestionnaireId.map((campagne) => campagne._id) },
-      };
-
-      const temoignages = await temoignagesDao.getAll(temoignagesQuery, questionKey);
-
-      if (!temoignages) {
-        continue;
-      }
-
-      const verbatimsWithFormation = appendFormationAndEtablissementToVerbatims(
-        temoignages,
-        campagnesByQuestionnaireId
-      );
-
-      const verbatimsWithChampsLibre = filterChampsLibresAndFlatten(verbatimsWithFormation, fieldsWithChampsLibre);
-      const verbatimsWithCampagneName = appendVerbatimsWithCampagneNameAndRestructure(
-        verbatimsWithChampsLibre,
-        campagnesByQuestionnaireId,
-        titles
-      );
-
-      const filteredByStatus = verbatimsWithCampagneName.filter((verbatim) =>
-        selectedStatus.includes(verbatim?.value?.status)
-      );
-
-      allVerbatims = allVerbatims.concat(filteredByStatus);
-      totalCount += filteredByStatus.length;
-      pendingCount += filteredByStatus.filter((verbatim) => verbatim?.value?.status === VERBATIM_STATUS.PENDING).length;
-      pendingCount += filteredByStatus.filter((verbatim) => typeof verbatim?.value === "string").length;
-      validatedCount += filteredByStatus.filter(
-        (verbatim) => verbatim?.value?.status === VERBATIM_STATUS.VALIDATED
-      ).length;
-      rejectedCount += filteredByStatus.filter(
-        (verbatim) => verbatim?.value?.status === VERBATIM_STATUS.REJECTED
-      ).length;
+    if (etablissementSiret) {
+      query.etablissementSiret = etablissementSiret;
     }
 
-    const paginatedVerbatims = allVerbatims.slice((page - 1) * pageSize, page * pageSize);
+    if (formationId) {
+      query.formationId = formationId;
+    }
+
+    if (status) {
+      query.status = status;
+    }
+
+    const result = await verbatimsDao.getAllWithFormation(query, onlyDiscrepancies, page, pageSize);
 
     return {
       success: true,
-      body: { verbatims: paginatedVerbatims, totalCount, pendingCount, validatedCount, rejectedCount },
+      body: result[0].body,
       pagination: {
-        totalItems: totalCount,
-        currentPage: page,
-        pageSize: pageSize,
-        totalPages: Math.ceil(totalCount / pageSize),
+        ...result[0].pagination[0],
+        totalPages: Math.ceil(result[0]?.pagination[0]?.totalItems / pageSize),
+        hasMore: result[0].pagination[0]?.totalItems > page * pageSize,
       },
     };
   } catch (error) {
@@ -101,43 +33,55 @@ const getVerbatims = async (query) => {
   }
 };
 
-const patchVerbatim = async (id, updatedVerbatim) => {
+const getVerbatimsCount = async ({ etablissementSiret, formationId }) => {
   try {
-    const temoignageToUpdate = await temoignagesDao.getOne(id);
+    let query = {};
 
-    if (!temoignageToUpdate) {
-      return { success: false, body: ErrorMessage.TemoignageNotFoundError };
+    if (etablissementSiret) {
+      query.etablissementSiret = etablissementSiret;
     }
 
-    temoignageToUpdate.reponses[updatedVerbatim.questionId] = updatedVerbatim.payload;
+    if (formationId) {
+      query.formationId = formationId;
+    }
 
-    const updatedTemoignage = await temoignagesDao.update(id, temoignageToUpdate);
+    const count = await verbatimsDao.count(query);
 
-    return { success: true, body: updatedTemoignage };
+    return { success: true, body: count };
   } catch (error) {
     return { success: false, body: error };
   }
 };
 
-const patchMultiVerbatim = async (verbatims) => {
+const patchVerbatims = async (verbatims) => {
   try {
-    let updatedTemoignages = [];
+    const result = await verbatimsDao.updateMany(verbatims);
 
-    for (const verbatim of verbatims) {
-      const temoignageToUpdate = await temoignagesDao.getOne(verbatim.temoignageId);
-      if (!temoignageToUpdate) {
-        return { success: false, body: ErrorMessage.TemoignageNotFoundError };
-      }
-
-      temoignageToUpdate.reponses[verbatim.questionId] = verbatim.payload;
-      const updatedTemoignage = await temoignagesDao.update(verbatim.temoignageId, temoignageToUpdate);
-      updatedTemoignages.push(updatedTemoignage);
-    }
-
-    return { success: true, body: updatedTemoignages };
+    return { success: true, body: result };
   } catch (error) {
     return { success: false, body: error };
   }
 };
 
-module.exports = { getVerbatims, patchVerbatim, patchMultiVerbatim };
+const createVerbatim = async (verbatim) => {
+  try {
+    const existingVerbatim = await verbatimsDao.findOne({
+      temoignageId: ObjectId(verbatim.temoignageId),
+      questionKey: verbatim.questionKey,
+    });
+
+    let result;
+
+    if (existingVerbatim?._id) {
+      result = await verbatimsDao.updateOne({ _id: ObjectId(existingVerbatim._id) }, verbatim);
+    } else {
+      result = await verbatimsDao.create(verbatim);
+    }
+
+    return { success: true, body: result };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+module.exports = { getVerbatims, patchVerbatims, getVerbatimsCount, createVerbatim };

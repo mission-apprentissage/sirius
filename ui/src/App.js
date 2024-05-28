@@ -65,6 +65,7 @@ function App() {
         }
       >
         <Route exact path="/temoignages/gestion" element={<ManageTemoignagesPage />} />
+        <Route exact path="/verbatims/moderation" element={<ModerationPage />} />
       </Route>
       <Route
         element={
@@ -77,7 +78,6 @@ function App() {
         <Route exact path="/questionnaires/ajout" element={<QuestionnaireForm />} />
         <Route exact path="/questionnaires/:id/edition" element={<EditQuestionnaire />} />
         <Route exact path="/utilisateurs/gestion" element={<UsersManaging />} />
-        <Route exact path="/verbatims/moderation" element={<ModerationPage />} />
         <Route exact path="/suivi/etablissements" element={<SuiviEtablissementsPage />} />
         <Route exact path="/suivi/campagnes" element={<SuiviCampagnesPage />} />
       </Route>

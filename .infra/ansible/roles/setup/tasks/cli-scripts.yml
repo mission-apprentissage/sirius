@@ -1,0 +1,13 @@
+- name: Add cron to classify verbatims
+  ansible.builtin.cron:
+    name: "classify-verbatims"
+    minute: "0"
+    hour: "3"
+    job: "sudo docker exec sirius_server yarn cli db classify-verbatims >> /var/log/cron.log 2>&1"
+
+- name: Add cron to extract themes from verbatims
+  ansible.builtin.cron:
+    name: "extract-themes-verbatims"
+    minute: "0"
+    hour: "5"
+    job: "sudo docker exec sirius_server yarn cli db extract-themes-verbatims >> /var/log/cron.log 2>&1"

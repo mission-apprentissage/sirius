@@ -1,7 +1,10 @@
 const etablissementsDao = require("../dao/etablissements.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
+const campagnesDao = require("../dao/campagnes.dao");
+const temoignagesDao = require("../dao/temoignages.dao");
+const verbatimsDao = require("../dao/verbatims.dao");
 const retainFields = require("../utils/retainFields.utils");
-const { getChampsLibreCount } = require("../utils/verbatims.utils");
+const { getChampsLibreCount, getChampsLibreField } = require("../utils/verbatims.utils");
 
 const etablissementFieldsToRetain = [
   "_id",
@@ -35,8 +38,9 @@ const createEtablissements = async (etablissementsArray) => {
   }
 };
 
-const getEtablissements = async (query) => {
+const getEtablissements = async ({ search }) => {
   try {
+    const query = search ? { $text: { $search: search } } : {};
     const etablissements = await etablissementsDao.getAll(query);
 
     const cleanedEtablissements = retainFields(etablissements, etablissementFieldsToRetain);
@@ -122,6 +126,31 @@ const getEtablissementsSuivi = async () => {
   }
 };
 
+const getEtablissementsPublicStatistics = async () => {
+  try {
+    const etablissementsCount = await etablissementsDao.count();
+    const createdCampagnesCount = await campagnesDao.count();
+    const temoignagesCount = await temoignagesDao.count();
+
+    const onlyQpenQuestionKeyList = [];
+    const questionnaires = await questionnairesDao.getAll();
+    questionnaires.forEach((questionnaire) => [
+      onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUI, true)),
+    ]);
+    const uniqueChampsLibreFields = [...new Set(onlyQpenQuestionKeyList.flat())];
+
+    const verbatimsCountByStatus = await verbatimsDao.count({ questionKey: { $in: uniqueChampsLibreFields } });
+    const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
+
+    return {
+      success: true,
+      body: { etablissementsCount, createdCampagnesCount, temoignagesCount, verbatimsCount: totalVerbatimCount },
+    };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   createEtablissements,
   getEtablissements,
@@ -129,5 +158,6 @@ module.exports = {
   deleteEtablissement,
   updateEtablissement,
   getEtablissementsSuivi,
+  getEtablissementsPublicStatistics,
   etablissementFieldsToRetain,
 };

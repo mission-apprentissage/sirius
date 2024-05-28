@@ -13,8 +13,10 @@ const createFormation = tryCatch(async (req, res) => {
 });
 
 const getFormations = tryCatch(async (req, res) => {
-  const query = req.query;
-  const { success, body } = await formationsService.getFormations(query);
+  const search = req.query.search;
+  const formationIds = req.query.formationIds?.split(",") || [];
+
+  const { success, body } = await formationsService.getFormations({ search, formationIds });
 
   if (!success) throw new BasicError();
 

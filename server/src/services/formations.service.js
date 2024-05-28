@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const formationsDao = require("../dao/formations.dao");
 
 const createFormation = async (formation) => {
@@ -15,9 +16,16 @@ const createFormation = async (formation) => {
   }
 };
 
-const getFormations = async (query) => {
+const getFormations = async ({ formationIds, search }) => {
   try {
+    const query = search ? { $text: { $search: search } } : {};
+
+    if (formationIds.length) {
+      query._id = { $in: formationIds.map((formationId) => ObjectId(formationId)) };
+    }
+
     const formations = await formationsDao.getAll(query);
+
     return { success: true, body: formations };
   } catch (error) {
     return { success: false, body: error };
