@@ -155,6 +155,14 @@ const VERBATIM_THEMES_LABELS = {
   [VERBATIM_THEMES.RYTHME_PERSONNEL_ETABLISSEMENT]: "Rythme personnel - établissement scolaire",
 };
 
+const ANSWER_LABELS_TO_VERBATIM_THEMES = {
+  "<strong>Ton intégration et l’ambiance</strong> dans ton entreprise": VERBATIM_THEMES.INTEGRATION_AMBIANCE,
+  "<strong>Le rythme</strong> entreprise <-> école": VERBATIM_THEMES.RYTHME_ENTREPRISE_ETABLISSEMENT,
+  "<strong>Ce que tu apprends de ce métier</strong> dans ton entreprise": VERBATIM_THEMES.APPRENTISSAGE_METIER,
+  "<strong>Les horaires</strong> en entreprise": VERBATIM_THEMES.HORAIRES,
+  "D’avoir moins de <strong>vacances</strong>": VERBATIM_THEMES.MOINS_VACANCES,
+};
+
 module.exports = {
   USER_ROLES,
   USER_STATUS,
@@ -169,4 +177,5 @@ module.exports = {
   VERBATIM_THEMES,
   VERBATIM_THEMES_EMOJIS,
   VERBATIM_THEMES_LABELS,
+  ANSWER_LABELS_TO_VERBATIM_THEMES,
 };
