@@ -49,7 +49,7 @@ const count = (query = {}) => {
   ]);
 };
 
-const getAll = ({ query }) => {
+const getAll = (query) => {
   return Verbatim.find({ ...query, deletedAt: null });
 };
 

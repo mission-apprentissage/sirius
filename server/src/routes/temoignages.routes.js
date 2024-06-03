@@ -9,6 +9,7 @@ const {
   getDatavisualisation,
   getUncompliantTemoignages,
   deleteMultipleTemoignages,
+  getPublicDatavisualisation,
 } = require("../controllers/temoignages.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdmin } = require("../middlewares/isAdmin");
@@ -34,6 +35,10 @@ const temoignages = () => {
 
   router.put("/api/temoignages/:id", validator(updateTemoignageSchema), (req, res, next) => {
     updateTemoignage(req, res, next);
+  });
+
+  router.get("/api/temoignages/datavisualisation/public", (req, res, next) => {
+    getPublicDatavisualisation(req, res, next);
   });
 
   router.post("/api/temoignages/datavisualisation", verifyUser, (req, res, next) => {

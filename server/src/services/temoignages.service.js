@@ -1,6 +1,8 @@
 const temoignagesDao = require("../dao/temoignages.dao");
 const campagnesDao = require("../dao/campagnes.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
+const formationsDao = require("../dao/formations.dao");
+const verbatimsDao = require("../dao/verbatims.dao");
 const { ErrorMessage } = require("../errors");
 const { getChampsLibreField } = require("../utils/verbatims.utils");
 const {
@@ -9,6 +11,10 @@ const {
   getCategoriesWithEmojis,
   getFormattedResponses,
   appendFormationDataWhenEmpty,
+  getReponseRating,
+  getCommentVisTonExperienceEntrepriseOrder,
+  getGemVerbatimsByWantedQuestionKey,
+  verbatimAndcommentVisTonEntrepriseMatcher,
 } = require("../utils/temoignages.utils");
 const { VERBATIM_STATUS, UNCOMPLIANT_TEMOIGNAGE_TYPE } = require("../constants");
 
@@ -180,6 +186,65 @@ const getDatavisualisation = async (campagneIds) => {
   }
 };
 
+const getPublicDatavisualisation = async (intituleFormation) => {
+  try {
+    const campagneIds = (await formationsDao.getFormationByIntitule(intituleFormation)).map(
+      (formation) => formation.campagneId
+    );
+
+    const query = { campagneId: { $in: campagneIds } };
+    const temoignages = await temoignagesDao.getAll(query);
+
+    const commentCaSePasseEntreprise = temoignages.map(
+      (temoignage) => temoignage.reponses["commentCaSePasseEntreprise"]
+    );
+    const commentCaSePasseEntrepriseRates = getReponseRating(commentCaSePasseEntreprise);
+
+    const commentVisTonExperienceEntreprise = temoignages.map(
+      (temoignage) => temoignage.reponses["commentVisTonExperienceEntreprise"]
+    );
+
+    const commentVisTonEntrepriseOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceEntreprise);
+    const commentVisTonEntrepriseVerbatimsQuery = {
+      temoignageId: { $in: temoignages.map((temoignage) => temoignage._id) },
+      status: { $in: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED] },
+    };
+    const commentVisTonEntrepriseVerbatimsResults = await verbatimsDao.getAll(commentVisTonEntrepriseVerbatimsQuery);
+    const matchedVerbatimAndcommentVisTonEntreprise = verbatimAndcommentVisTonEntrepriseMatcher(
+      commentVisTonEntrepriseVerbatimsResults,
+      commentVisTonEntrepriseOrder
+    );
+
+    const passeEntreprise = temoignages.map((temoignage) => temoignage.reponses["passeEntreprise"]);
+
+    const passeEntrepriseRates = getReponseRating(passeEntreprise);
+
+    const verbatimsQuery = {
+      temoignageId: { $in: temoignages.map((temoignage) => temoignage._id) },
+      status: VERBATIM_STATUS.GEM,
+      questionKey: {
+        $in: ["descriptionMetierConseil", "peurChangementConseil", "choseMarquanteConseil", "trouverEntrepriseConseil"],
+      },
+    };
+
+    const verbatimsResults = await verbatimsDao.getAll(verbatimsQuery);
+
+    const displayedGems = getGemVerbatimsByWantedQuestionKey(verbatimsResults);
+
+    const result = {
+      temoignagesCount: temoignages.length,
+      commentCaSePasseEntrepriseRates,
+      commentVisTonEntreprise: matchedVerbatimAndcommentVisTonEntreprise,
+      displayedGems,
+      passeEntrepriseRates,
+    };
+
+    return { success: true, body: result };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 const getUncompliantTemoignages = async ({
   type,
   duration,
@@ -269,4 +334,5 @@ module.exports = {
   getDatavisualisation,
   getUncompliantTemoignages,
   deleteMultipleTemoignages,
+  getPublicDatavisualisation,
 };

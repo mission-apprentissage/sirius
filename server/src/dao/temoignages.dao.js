@@ -5,6 +5,10 @@ const create = async (temoignage) => {
   return Temoignage.create(temoignage);
 };
 
+const getAll = async (query) => {
+  return Temoignage.find({ ...query, deletedAt: null });
+};
+
 const getAllWithVerbatims = async (query, questionKey) => {
   let projection = { reponses: 1 };
 
@@ -152,4 +156,5 @@ module.exports = {
   getAllTemoignagesWithFormation,
   count,
   deleteMultiple,
+  getAll,
 };
