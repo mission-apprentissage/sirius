@@ -30,8 +30,9 @@ import StatisticsPage from "./statistics/StatisticsPage";
 import DsfrLayout from "./Components/DsfrLayout";
 import DiffusionGuidePage from "./guide/DiffusionGuidePage";
 import EtablissementOrAdminProtectedRoute from "./EtablissementOrAdminProtectedRoute";
+import DsfrIframeLayout from "./Components/DsfrIframeLayout";
+import IframeFormationPage from "./iframes/IframeFormationPage";
 import "./assets/fonts/fonts.css";
-import FormationsIframePage from "./iframes/FormationsIframePage";
 
 function App() {
   const { setIsDark } = useIsDark();
@@ -120,10 +121,14 @@ function App() {
         <Route exact path="/questionnaires/:id/apercu" element={<PreviewCampagnePage />} />
       </Route>
       <Route
-        exact
-        path="/iframes/formation/:intituleFormation"
-        element={<FormationsIframePage />}
-      />
+        element={
+          <DsfrIframeLayout>
+            <Outlet />
+          </DsfrIframeLayout>
+        }
+      >
+        <Route exact path="/iframes/formation" element={<IframeFormationPage />} />
+      </Route>
     </Routes>
   );
 }
