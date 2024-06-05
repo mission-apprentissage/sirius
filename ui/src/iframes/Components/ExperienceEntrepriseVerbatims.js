@@ -16,26 +16,46 @@ const Label = ({ label, index }) => (
   </>
 );
 
+const getRandomIndex = (currentIndex, length) => {
+  if (length <= 1) return 0;
+  let newIndex;
+  do {
+    newIndex = Math.floor(Math.random() * length);
+  } while (newIndex === currentIndex);
+  return newIndex;
+};
+
 const ExperienceEntrepriseVerbatims = ({ orderedVerbatims }) => {
+  if (!orderedVerbatims.length) return null;
+
   return (
     <ExperienceEntrepriseVerbatimsContainer>
       <div className={fr.cx("fr-accordions-group")}>
         {orderedVerbatims.map((theme, index) => {
           const [randomIndex, setRandomIndex] = useState(0);
-          const getRandomIndex = () => {
-            const index = Math.floor(Math.random() * theme.verbatims.length);
-            setRandomIndex(index);
+
+          const handleOtherVerbatimClick = () => {
+            setRandomIndex((prevIndex) => getRandomIndex(prevIndex, theme.verbatims.length));
           };
+
           return (
             <Accordion key={theme.label} label={<Label index={index} label={theme.label} />}>
               <VerbatimContainer>
-                <img src={ideaWoman} alt="" />
-                <p>« {theme.verbatims[randomIndex].content} »</p>
+                {theme.verbatims[randomIndex]?.content ? (
+                  <>
+                    <img src={ideaWoman} alt="" />
+                    <p>« {theme.verbatims[randomIndex]?.content} »</p>
+                  </>
+                ) : (
+                  <p>Il n'y a pas encore de témoignage sur ce thème</p>
+                )}
               </VerbatimContainer>
-              <OtherVerbatim onClick={getRandomIndex}>
-                Autre témoignage{" "}
-                <span className={fr.cx("fr-icon--sm fr-icon-refresh-line")} aria-hidden={true} />
-              </OtherVerbatim>
+              {theme.verbatims.length > 1 && (
+                <OtherVerbatim onClick={handleOtherVerbatimClick}>
+                  Autre témoignage{" "}
+                  <span className={fr.cx("fr-icon--sm fr-icon-refresh-line")} aria-hidden={true} />
+                </OtherVerbatim>
+              )}
             </Accordion>
           );
         })}

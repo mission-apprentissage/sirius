@@ -1,50 +1,40 @@
 import {
-  GoodRatingWeather,
-  MediumRatingWeather,
-  BadRatingWeather,
+  Rating,
+  GoodRating,
+  MediumRating,
+  BadRating,
   SearchEntrepriseRatingContainer,
   RatingWeatherContainer,
   SearchEntrepriseRatingLinks,
 } from "../IframeFormation.style";
 import sunFillGreen from "../../assets/icons/sun-fill-green.svg";
-import cloudLineBlue from "../../assets/icons/cloud-line-blue.svg";
-import stormLineOrange from "../../assets/icons/storm-line-orange.svg";
+import cloudFillBlue from "../../assets/icons/cloud-fill-blue.svg";
+import stormFillOrange from "../../assets/icons/storm-fill-orange.svg";
 
 const SearchEntrepriseRating = ({ rating }) => {
+  if (!rating) return null;
   return (
     <SearchEntrepriseRatingContainer>
       <p>Voici leur ressenti sur la recherche d’entreprise dans ce domaine</p>
       <RatingWeatherContainer>
-        <GoodRatingWeather>
-          <div>
-            {Array.from({ length: rating.Bien }).map((_, index) => (
-              <img src={sunFillGreen} key={index} />
-            ))}
-          </div>
-          <p>
-            <b>Bien</b> pour <span>{rating.Bien}/10</span>
-          </p>
-        </GoodRatingWeather>
-        <MediumRatingWeather>
-          <div>
-            {Array.from({ length: rating.Moyen }).map((_, index) => (
-              <img src={cloudLineBlue} key={index} />
-            ))}
-          </div>
-          <p>
-            <b>Moyen</b> pour <span>{rating.Moyen}/10</span>
-          </p>
-        </MediumRatingWeather>
-        <BadRatingWeather>
-          <div>
-            {Array.from({ length: rating.Mal }).map((_, index) => (
-              <img src={stormLineOrange} key={index} />
-            ))}
-          </div>
-          <p>
-            <b>Mal</b> pour <span>{rating.Mal}/10</span>
-          </p>
-        </BadRatingWeather>
+        <Rating>
+          <img src={sunFillGreen} alt="" />
+          <GoodRating>
+            Bien <br /> <span>{rating.Bien}%</span>
+          </GoodRating>
+        </Rating>
+        <Rating>
+          <img src={cloudFillBlue} alt="" />
+          <MediumRating>
+            Moyen <br /> <span>{rating.Moyen}%</span>
+          </MediumRating>
+        </Rating>
+        <Rating>
+          <img src={stormFillOrange} alt="" />
+          <BadRating>
+            Mal <br /> <span>{rating.Mal}%</span>
+          </BadRating>
+        </Rating>
       </RatingWeatherContainer>
       <SearchEntrepriseRatingLinks>
         <a

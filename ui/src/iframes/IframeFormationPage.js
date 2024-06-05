@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 import useFetchTemoignagesDatavisualisationPublic from "../hooks/useFetchTemoignagesDatavisualisationPublic";
@@ -13,6 +14,7 @@ import SearchEntrepriseRating from "./Components/SearchEntrepriseRating";
 import ExperienceEntrepriseVerbatims from "./Components/ExperienceEntrepriseVerbatims";
 
 const IframeFormationPage = () => {
+  const scrollableRef = useRef(null);
   const { search } = useLocation();
   const intituleFormation = new URLSearchParams(search).get("intitule");
 
@@ -20,6 +22,24 @@ const IframeFormationPage = () => {
     useFetchTemoignagesDatavisualisationPublic({
       intituleFormation,
     });
+
+  useEffect(() => {
+    if (isSuccess) {
+      window.parent.postMessage({ siriusHeight: document.body.scrollHeight + 50 }, "*");
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      window.parent.postMessage({ siriusHeight: document.body.scrollHeight + 50 }, "*");
+    };
+
+    document.addEventListener("click", handleResize);
+
+    return () => {
+      document.removeEventListener("click", handleResize);
+    };
+  }, []);
 
   if (isLoading) {
     return (
@@ -39,7 +59,7 @@ const IframeFormationPage = () => {
 
   return (
     isSuccess && (
-      <IframeContainer>
+      <IframeContainer ref={scrollableRef}>
         <h3>Suivre cette formation en apprentissage ?</h3>
         <p>
           Certains établissement proposent ce CAP en apprentissage. Tu hésites entre la voie
@@ -54,8 +74,8 @@ const IframeFormationPage = () => {
         <DatavisualisationContainer>
           <TestimonialsCount>
             <p>
-              <b>{datavisualisation.temoignagesCount} apprenti·es</b> en <b>{intituleFormation}</b>{" "}
-              racontent comment ils vivent leur <b>expérience en entreprise</b>
+              <b>Expérience en entreprise</b> ({datavisualisation.temoignagesCount} apprenti·es
+              interrogé·es)
             </p>
           </TestimonialsCount>
           <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseEntrepriseRates} />

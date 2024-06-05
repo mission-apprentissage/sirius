@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 
 export const IframeContainer = styled.main`
-  width: 720px;
+  width: 100%;
 `;
 
 export const DatavisualisationContainer = styled.div`
@@ -26,15 +26,9 @@ export const TestimonialsCount = styled.div`
 export const GemVerbatimContainer = styled.div`
   background: linear-gradient(-90deg, #ffffff, #ececfe);
   width: 100%;
-  padding: 10px 40px;
-  border: 1px solid var(--border-open-blue-france);
-
-  & > p {
-    text-align: center;
-    color: var(--text-action-high-blue-france);
-    cursor: pointer;
-    font-weight: 500;
-  }
+  padding: 20px 40px;
+  border-left: 1px solid var(--border-open-blue-france);
+  border-right: 1px solid var(--border-open-blue-france);
 `;
 
 export const GemContentContainer = styled.div`
@@ -44,7 +38,7 @@ export const GemContentContainer = styled.div`
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
-  min-height: 200px;
+  min-height: 100px;
 
   & span {
     margin-right: 5px;
@@ -76,36 +70,48 @@ export const ExperienceEntrepriseRatingContainer = styled.div`
 `;
 
 export const Rating = styled.div`
-  & p:first-of-type {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: bold;
-    margin-bottom: 0;
-  }
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
 
-  & p:last-of-type {
-    margin-top: 0;
+  & p {
+    text-align: left;
   }
 `;
 
-export const GoodRating = styled.span`
-  color: var(--background-flat-success);
+export const GoodRating = styled.p`
+  color: var(--background-flat-success) !important;
+  font-weight: bold;
+
+  & span {
+    font-size: 20px;
+  }
 `;
 
-export const MediumRating = styled.span`
-  color: var(--background-flat-info);
+export const MediumRating = styled.p`
+  color: var(--background-flat-info) !important;
+  font-weight: bold;
+
+  & span {
+    font-size: 20px;
+  }
 `;
 
-export const BadRating = styled.span`
-  color: #fa7a35;
+export const BadRating = styled.p`
+  color: #fa7a35 !important;
+  font-weight: bold;
+
+  & span {
+    font-size: 20px;
+  }
 `;
 
 export const SearchEntrepriseRatingContainer = styled.div`
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border-open-blue-france);
+  border-radius: 0 0 40px 40px;
   gap: 1rem;
   padding: ${fr.spacing("2w")} 0;
 
@@ -165,8 +171,8 @@ export const VerbatimContainer = styled.div`
 export const RatingWeatherContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  gap: 1rem;
+  justify-content: center;
+  gap: 7rem;
   padding: 1rem 0;
   text-align: center;
 
@@ -204,7 +210,6 @@ export const SearchEntrepriseRatingLinks = styled.div`
   flex-direction: row;
   justify-content: center;
   gap: 1rem;
-  border-radius: 0 0 20px 20px;
 
   & a {
     color: var(--text-action-high-blue-france);
