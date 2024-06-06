@@ -23,6 +23,14 @@ const getFormations = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getFormationsWithTemoignageCount = tryCatch(async (req, res) => {
+  const { success, body } = await formationsService.getFormationsWithTemoignageCount();
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 const getFormation = tryCatch(async (req, res) => {
   const id = req.params.id;
   const { success, body } = await formationsService.getFormation(id);
@@ -65,4 +73,5 @@ module.exports = {
   deleteFormation,
   updateFormation,
   alreadyExistingFormations,
+  getFormationsWithTemoignageCount,
 };

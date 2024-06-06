@@ -295,7 +295,6 @@ const getDatavisualisationEtablissement = async (uai) => {
       return null;
     });
 
-    console.log({ accompagneCfa });
     const accompagneCfaRates = getReponseRating(formattedAccompagneCfa);
 
     const verbatimsQuery = {

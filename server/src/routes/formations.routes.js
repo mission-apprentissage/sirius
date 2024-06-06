@@ -11,6 +11,7 @@ const {
   updateFormation,
   getFormations,
   alreadyExistingFormations,
+  getFormationsWithTemoignageCount,
 } = require("../controllers/formations.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdminOrAllowed, TYPES } = require("../middlewares/isAdminOrAllowed");
@@ -36,6 +37,10 @@ const formations = () => {
       getFormations(req, res, next);
     }
   );
+
+  router.get("/api/formations/temoignage-count", (req, res, next) => {
+    getFormationsWithTemoignageCount(req, res, next);
+  });
 
   // unused at the moment
   /*router.get("/api/formations/:id", verifyUser, (req, res, next) => {
