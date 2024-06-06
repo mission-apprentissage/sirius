@@ -61,9 +61,20 @@ const getDatavisualisation = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-const getPublicDatavisualisation = tryCatch(async (req, res) => {
+const getDatavisualisationFormation = tryCatch(async (req, res) => {
   const intituleFormation = req.query.intituleFormation;
-  const { success, body } = await temoignagesService.getPublicDatavisualisation(intituleFormation);
+
+  const { success, body } = await temoignagesService.getDatavisualisationFormation(intituleFormation);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
+const getDatavisualisationEtablissement = tryCatch(async (req, res) => {
+  const uai = req.query.uai;
+
+  const { success, body } = await temoignagesService.getDatavisualisationEtablissement(uai);
 
   if (!success) throw new BasicError();
 
@@ -110,5 +121,6 @@ module.exports = {
   getDatavisualisation,
   getUncompliantTemoignages,
   deleteMultipleTemoignages,
-  getPublicDatavisualisation,
+  getDatavisualisationFormation,
+  getDatavisualisationEtablissement,
 };

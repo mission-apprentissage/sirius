@@ -1,4 +1,4 @@
-const { VERBATIM_STATUS, ANSWER_LABELS_TO_VERBATIM_THEMES } = require("../constants");
+const { VERBATIM_STATUS } = require("../constants");
 
 const matchIdAndQuestions = (questionnaire) => {
   if (!questionnaire || !questionnaire.properties) {
@@ -237,11 +237,11 @@ const getReponseRating = (responses) => {
     Bien: responses.filter((el) => el === "Bien").length,
   };
 
-  const totalEntries = responses.length;
+  const totalEntries = counts.Mal + counts.Moyen + counts.Bien;
   const rates = {
-    Mal: (counts.Mal * 10) / totalEntries,
-    Moyen: (counts.Moyen * 10) / totalEntries,
-    Bien: (counts.Bien * 10) / totalEntries,
+    Mal: (counts.Mal * 100) / totalEntries,
+    Moyen: (counts.Moyen * 100) / totalEntries,
+    Bien: (counts.Bien * 100) / totalEntries,
   };
 
   // Round the rates and compute the total
@@ -253,8 +253,8 @@ const getReponseRating = (responses) => {
 
   const totalRounded = roundedRates.Mal + roundedRates.Moyen + roundedRates.Bien;
 
-  // Adjust the rates if the total is not 10
-  if (totalRounded !== 10) {
+  // Adjust the rates if the total is not 100
+  if (totalRounded !== 100) {
     const diffs = [
       { key: "Mal", diff: rates.Mal - roundedRates.Mal },
       { key: "Moyen", diff: rates.Moyen - roundedRates.Moyen },
@@ -265,7 +265,7 @@ const getReponseRating = (responses) => {
     diffs.sort((a, b) => b.diff - a.diff);
 
     // Adjust the largest difference
-    roundedRates[diffs[0].key] += totalRounded > 10 ? -1 : 1;
+    roundedRates[diffs[0].key] += totalRounded > 100 ? -1 : 1;
   }
 
   return roundedRates;
@@ -344,11 +344,16 @@ const getGemVerbatimsByWantedQuestionKey = (verbatims) => {
   return groupedVerbatims;
 };
 
-const verbatimAndcommentVisTonEntrepriseMatcher = (verbatims, commentVisTonEntrepriseOrder) => {
-  const result = commentVisTonEntrepriseOrder.map((item) => {
-    const theme = ANSWER_LABELS_TO_VERBATIM_THEMES[item.label];
+const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAnswers, matchedThemesAndLabels) => {
+  const result = orderedThemeAnswers.map((item) => {
+    const theme = matchedThemesAndLabels[item.label];
+
+    if (theme === undefined) {
+      return { ...item, verbatims: [] };
+    }
+
     const verbatimsForTheme = verbatims
-      .filter((verbatim) => verbatim.themes[theme] === true)
+      .filter((verbatim) => verbatim && verbatim.themes && verbatim.themes[theme] === true)
       .map((verbatim) => ({
         content: verbatim.content,
         status: verbatim.status,
@@ -378,5 +383,5 @@ module.exports = {
   getReponseRating,
   getCommentVisTonExperienceEntrepriseOrder,
   getGemVerbatimsByWantedQuestionKey,
-  verbatimAndcommentVisTonEntrepriseMatcher,
+  verbatimsAnOrderedThemeAnswersMatcher,
 };

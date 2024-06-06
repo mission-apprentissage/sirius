@@ -63,6 +63,22 @@ const getFormationByIntitule = async (intituleFormation) => {
   ]);
 };
 
+const getFormationByUai = async (uai) => {
+  return Formation.aggregate([
+    {
+      $match: {
+        deletedAt: null,
+        "data.etablissement_formateur_uai": uai,
+      },
+    },
+    {
+      $project: {
+        campagneId: 1,
+      },
+    },
+  ]);
+};
+
 module.exports = {
   create,
   getAll,
@@ -73,4 +89,5 @@ module.exports = {
   deleteManyByCampagneIdAndReturnsTheDeletedFormationId,
   getDataIdFormationByIds,
   getFormationByIntitule,
+  getFormationByUai,
 };
