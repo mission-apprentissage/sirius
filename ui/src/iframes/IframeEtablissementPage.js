@@ -9,9 +9,9 @@ import {
 } from "./IframeFormation.style";
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import GemVerbatim from "./Components/GemVerbatim";
-import ExperienceEntrepriseRating from "./Components/ExperienceEntrepriseRating";
-import SearchEntrepriseRating from "./Components/SearchEntrepriseRating";
-import ExperienceEntrepriseVerbatims from "./Components/ExperienceEntrepriseVerbatims";
+import ExperienceEntrepriseRating from "./Components/ExperienceRating";
+import SearchEntrepriseRating from "./Components/FeelingRating";
+import ExperienceEntrepriseVerbatims from "./Components/ExperienceVerbatims";
 
 const IframeEtablissementPage = () => {
   const scrollableRef = useRef(null);

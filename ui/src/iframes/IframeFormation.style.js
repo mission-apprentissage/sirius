@@ -45,7 +45,7 @@ export const GemContentContainer = styled.div`
   }
 `;
 
-export const ExperienceEntrepriseRatingContainer = styled.div`
+export const ExperienceRatingContainer = styled.div`
   display: flex;
   flex-direction: column;
   border-left: 1px solid var(--border-open-blue-france);
@@ -107,7 +107,7 @@ export const BadRating = styled.p`
   }
 `;
 
-export const SearchEntrepriseRatingContainer = styled.div`
+export const FeelingRatingContainer = styled.div`
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border-open-blue-france);
@@ -121,7 +121,7 @@ export const SearchEntrepriseRatingContainer = styled.div`
   }
 `;
 
-export const ExperienceEntrepriseVerbatimsContainer = styled.div`
+export const ExperienceVerbatimsContainer = styled.div`
   border-left: 1px solid var(--border-open-blue-france);
   border-right: 1px solid var(--border-open-blue-france);
 
@@ -205,7 +205,7 @@ export const BadRatingWeather = styled.div`
   }
 `;
 
-export const SearchEntrepriseRatingLinks = styled.div`
+export const FeelingRatingLinks = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;

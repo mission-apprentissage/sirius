@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { fr } from "@codegouvfr/react-dsfr";
 import {
-  ExperienceEntrepriseVerbatimsContainer,
+  ExperienceVerbatimsContainer,
   OtherVerbatim,
   CircledNumber,
   VerbatimContainer,
@@ -25,11 +25,11 @@ const getRandomIndex = (currentIndex, length) => {
   return newIndex;
 };
 
-const ExperienceEntrepriseVerbatims = ({ orderedVerbatims }) => {
+const ExperienceVerbatims = ({ orderedVerbatims }) => {
   if (!orderedVerbatims.length) return null;
 
   return (
-    <ExperienceEntrepriseVerbatimsContainer>
+    <ExperienceVerbatimsContainer>
       <div className={fr.cx("fr-accordions-group")}>
         {orderedVerbatims.map((theme, index) => {
           const [randomIndex, setRandomIndex] = useState(0);
@@ -60,8 +60,8 @@ const ExperienceEntrepriseVerbatims = ({ orderedVerbatims }) => {
           );
         })}
       </div>
-    </ExperienceEntrepriseVerbatimsContainer>
+    </ExperienceVerbatimsContainer>
   );
 };
 
-export default ExperienceEntrepriseVerbatims;
+export default ExperienceVerbatims;

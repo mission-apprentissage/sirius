@@ -1,5 +1,5 @@
 import {
-  ExperienceEntrepriseRatingContainer,
+  ExperienceRatingContainer,
   Rating,
   MediumRating,
   BadRating,
@@ -9,10 +9,10 @@ import happyFace from "../../assets/icons/happy-face-fill-green.svg";
 import mediumFace from "../../assets/icons/normal-face-fill-blue.svg";
 import sadFace from "../../assets/icons/sad-face-fill-orange.svg";
 
-const ExperienceEntrepriseRating = ({ rating }) => {
+const ExperienceRating = ({ rating }) => {
   if (!rating) return null;
   return (
-    <ExperienceEntrepriseRatingContainer>
+    <ExperienceRatingContainer>
       <p>Les apprenti·es disent que ça se passe</p>
       <div>
         <Rating>
@@ -35,8 +35,8 @@ const ExperienceEntrepriseRating = ({ rating }) => {
         </Rating>
       </div>
       <p>Voici le détail de leur expérience : du plus simple ① au plus difficile à vivre ⑤</p>
-    </ExperienceEntrepriseRatingContainer>
+    </ExperienceRatingContainer>
   );
 };
 
-export default ExperienceEntrepriseRating;
+export default ExperienceRating;
