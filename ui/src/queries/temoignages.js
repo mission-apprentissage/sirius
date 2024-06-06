@@ -10,8 +10,18 @@ export const fetchTemoignagesDatavisualisation = async ({ campagneIds, token }) 
   throw new Error("Erreur dans le chargement de la datavisualisation des campagnes");
 };
 
-export const fetchTemoignagesDatavisualisationPublic = async ({ intituleFormation }) => {
-  let url = `/api/temoignages/datavisualisation/public?intituleFormation=${intituleFormation}`;
+export const fetchDatavisualisationFormation = async ({ intituleFormation }) => {
+  const url = `/api/temoignages/datavisualisation/formation?intituleFormation=${intituleFormation}`;
+
+  const response = await _get(url);
+  if (response) {
+    return response;
+  }
+  throw new Error("Erreur dans le chargement de la datavisualisation des campagnes");
+};
+
+export const fetchDatavisualisationEtablissement = async ({ uai }) => {
+  const url = `/api/temoignages/datavisualisation/etablissement?uai=${uai}`;
 
   const response = await _get(url);
   if (response) {

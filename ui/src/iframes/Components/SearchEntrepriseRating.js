@@ -11,11 +11,12 @@ import sunFillGreen from "../../assets/icons/sun-fill-green.svg";
 import cloudFillBlue from "../../assets/icons/cloud-fill-blue.svg";
 import stormFillOrange from "../../assets/icons/storm-fill-orange.svg";
 
-const SearchEntrepriseRating = ({ rating }) => {
+const SearchEntrepriseRating = ({ rating, isFormation = false, isEtablissement = false }) => {
   if (!rating) return null;
   return (
     <SearchEntrepriseRatingContainer>
-      <p>Voici leur ressenti sur la recherche d’entreprise dans ce domaine</p>
+      {isFormation && <p>Voici leur ressenti sur la recherche d’entreprise dans ce domaine</p>}
+      {isEtablissement && <p>Voici leur ressenti sur le soutien de l’équipe pédagogique</p>}
       <RatingWeatherContainer>
         <Rating>
           <img src={sunFillGreen} alt="" />

@@ -32,6 +32,7 @@ import DiffusionGuidePage from "./guide/DiffusionGuidePage";
 import EtablissementOrAdminProtectedRoute from "./EtablissementOrAdminProtectedRoute";
 import DsfrIframeLayout from "./Components/DsfrIframeLayout";
 import IframeFormationPage from "./iframes/IframeFormationPage";
+import IframeEtablissementPage from "./iframes/IframeEtablissementPage";
 import "./assets/fonts/fonts.css";
 
 function App() {
@@ -128,6 +129,7 @@ function App() {
         }
       >
         <Route exact path="/iframes/formation" element={<IframeFormationPage />} />
+        <Route exact path="/iframes/etablissement" element={<IframeEtablissementPage />} />
       </Route>
     </Routes>
   );

@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
-import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
+import useFetchDatavisualisationEtablissement from "../hooks/useFetchDatavisualisationEtablissement";
 import {
   DatavisualisationContainer,
   IframeContainer,
@@ -13,14 +13,15 @@ import ExperienceEntrepriseRating from "./Components/ExperienceEntrepriseRating"
 import SearchEntrepriseRating from "./Components/SearchEntrepriseRating";
 import ExperienceEntrepriseVerbatims from "./Components/ExperienceEntrepriseVerbatims";
 
-const IframeFormationPage = () => {
+const IframeEtablissementPage = () => {
   const scrollableRef = useRef(null);
   const { search } = useLocation();
-  const intituleFormation = new URLSearchParams(search).get("intitule");
+  const uai = new URLSearchParams(search).get("uai");
 
-  const { datavisualisation, isSuccess, isError, isLoading } = useFetchDatavisualisationFormation({
-    intituleFormation,
-  });
+  const { datavisualisation, isSuccess, isError, isLoading } =
+    useFetchDatavisualisationEtablissement({
+      uai,
+    });
 
   useEffect(() => {
     if (isSuccess) {
@@ -61,30 +62,27 @@ const IframeFormationPage = () => {
       <IframeContainer ref={scrollableRef}>
         <h3>Suivre cette formation en apprentissage ?</h3>
         <p>
-          Certains établissement proposent ce CAP en apprentissage. Tu hésites entre la voie
-          scolaire et l’apprentissage ? Grace au questionnaire{" "}
+          Cet établissement propose de suivre certaines de ses formations en apprentissage. Grace au
+          questionnaire{" "}
           <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
             <b>Sirius</b>
           </a>
-          , les apprenti·es qui se forment à ce CAP en France te partagent leur expérience en
-          entreprise.
+          , les apprenti·es qui se forment dans cet établissement te partagent leur expérience.
         </p>
 
         <DatavisualisationContainer>
           <TestimonialsCount>
             <p>
-              <b>Expérience en entreprise</b> ({datavisualisation.temoignagesCount} apprenti·es
-              interrogé·es)
+              <b>Expérience dans cet établissement</b> ({datavisualisation.temoignagesCount}{" "}
+              apprenti·es interrogé·es)
             </p>
           </TestimonialsCount>
-          <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseEntrepriseRates} />
-          <ExperienceEntrepriseVerbatims
-            orderedVerbatims={datavisualisation.commentVisTonEntreprise}
-          />
+          <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseCfaRates} />
+          <ExperienceEntrepriseVerbatims orderedVerbatims={datavisualisation.commentVisTonCfa} />
           <GemVerbatim verbatim={datavisualisation.displayedGems} />
           <SearchEntrepriseRating
-            rating={datavisualisation.passeEntrepriseRates}
-            isFormation={true}
+            rating={datavisualisation.accompagneCfaRates}
+            isEtablissement={true}
           />
         </DatavisualisationContainer>
       </IframeContainer>
@@ -92,4 +90,4 @@ const IframeFormationPage = () => {
   );
 };
 
-export default IframeFormationPage;
+export default IframeEtablissementPage;
