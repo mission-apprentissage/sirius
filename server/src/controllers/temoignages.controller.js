@@ -61,6 +61,26 @@ const getDatavisualisation = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getDatavisualisationFormation = tryCatch(async (req, res) => {
+  const intituleFormation = req.query.intituleFormation;
+
+  const { success, body } = await temoignagesService.getDatavisualisationFormation(intituleFormation);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
+const getDatavisualisationEtablissement = tryCatch(async (req, res) => {
+  const uai = req.query.uai;
+
+  const { success, body } = await temoignagesService.getDatavisualisationEtablissement(uai);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 const getUncompliantTemoignages = tryCatch(async (req, res) => {
   const type = req.query.type || UNCOMPLIANT_TEMOIGNAGE_TYPE.ALL;
 
@@ -101,4 +121,6 @@ module.exports = {
   getDatavisualisation,
   getUncompliantTemoignages,
   deleteMultipleTemoignages,
+  getDatavisualisationFormation,
+  getDatavisualisationEtablissement,
 };

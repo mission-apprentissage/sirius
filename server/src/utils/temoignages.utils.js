@@ -230,10 +230,158 @@ const appendFormationDataWhenEmpty = (campagne) => {
   }
 };
 
+const getReponseRating = (responses) => {
+  const counts = {
+    Mal: responses.filter((el) => el === "Mal").length,
+    Moyen: responses.filter((el) => el === "Moyen").length,
+    Bien: responses.filter((el) => el === "Bien").length,
+  };
+
+  const totalEntries = counts.Mal + counts.Moyen + counts.Bien;
+  const rates = {
+    Mal: (counts.Mal * 100) / totalEntries,
+    Moyen: (counts.Moyen * 100) / totalEntries,
+    Bien: (counts.Bien * 100) / totalEntries,
+  };
+
+  // Round the rates and compute the total
+  const roundedRates = {
+    Mal: Math.round(rates.Mal),
+    Moyen: Math.round(rates.Moyen),
+    Bien: Math.round(rates.Bien),
+  };
+
+  const totalRounded = roundedRates.Mal + roundedRates.Moyen + roundedRates.Bien;
+
+  // Adjust the rates if the total is not 100
+  if (totalRounded !== 100) {
+    const diffs = [
+      { key: "Mal", diff: rates.Mal - roundedRates.Mal },
+      { key: "Moyen", diff: rates.Moyen - roundedRates.Moyen },
+      { key: "Bien", diff: rates.Bien - roundedRates.Bien },
+    ];
+
+    // Sort by the largest difference
+    diffs.sort((a, b) => b.diff - a.diff);
+
+    // Adjust the largest difference
+    roundedRates[diffs[0].key] += totalRounded > 100 ? -1 : 1;
+  }
+
+  return roundedRates;
+};
+
+const commentVisTonExperienceEntrepriseLabelReconciler = (label) => {
+  if (!label) return null;
+  const labelMap = {
+    "Je n'ai plus autant de vacances": "D’avoir moins de <strong>vacances</strong>",
+    "Le rythme entreprise / école": "<strong>Le rythme</strong> entreprise <-> école",
+    "Les horaires de travail": "<strong>Les horaires</strong> en entreprise",
+    "Les taches qu’on me confie lors de l’apprentissage de mon métier":
+      "<strong>Ce que tu apprends de ce métier</strong> dans ton entreprise",
+    "L'ambiance à l'entreprise et mon intégration":
+      "<strong>Ton intégration et l’ambiance</strong> dans ton entreprise",
+    "Les relations avec mes collègues et mon maître d’apprentissage":
+      "<strong>Ton intégration et l’ambiance</strong> dans ton entreprise",
+  };
+
+  return labelMap[label] || label;
+};
+
+const getCommentVisTonExperienceEntrepriseOrder = (commentVisTonExperienceEntrepriseResults) => {
+  const valueMapString = {
+    "Pas ok": 0,
+    Moyen: 1,
+    Bien: 2,
+  };
+
+  const valueMapNumber = {
+    1: 0,
+    2: 1,
+    3: 2,
+  };
+
+  // Step 1: Create a map to store the total values for each label
+  const labelTotals = {};
+
+  commentVisTonExperienceEntrepriseResults.forEach((itemList) => {
+    itemList?.forEach((item) => {
+      const label = commentVisTonExperienceEntrepriseLabelReconciler(item.label);
+      const value = typeof item.value === "number" ? valueMapNumber[item.value] : valueMapString[item.value]; // needed to reconcile the different formats of the values coming from different questionnaire versions
+
+      if (!labelTotals[label]) {
+        labelTotals[label] = 0;
+      }
+      labelTotals[label] += value;
+    });
+  });
+
+  // Step 2: Convert the map to an array of objects and sort them by total value
+  const sortedLabels = Object.keys(labelTotals)
+    .map((label) => ({ label, total: labelTotals[label] }))
+    .sort((a, b) => b.total - a.total);
+
+  return sortedLabels;
+};
+
+const getGemVerbatimsByWantedQuestionKey = (verbatims) => {
+  const questionKeyOrder = [
+    "descriptionMetierConseil",
+    "peurChangementConseil",
+    "choseMarquanteConseil",
+    "trouverEntrepriseConseil",
+  ];
+
+  const groupedVerbatims = verbatims.reduce((acc, verbatim) => {
+    const { questionKey, content } = verbatim;
+    if (questionKeyOrder.includes(questionKey)) {
+      acc[questionKey] = acc[questionKey] || [];
+      acc[questionKey].push(content);
+    }
+    return acc;
+  }, {});
+
+  return groupedVerbatims;
+};
+
+const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAnswers, matchedThemesAndLabels) => {
+  const result = orderedThemeAnswers.map((item) => {
+    const theme = matchedThemesAndLabels[item.label];
+
+    if (theme === undefined) {
+      return { ...item, verbatims: [] };
+    }
+
+    const verbatimsForTheme = verbatims
+      .filter((verbatim) => verbatim && verbatim.themes && verbatim.themes[theme] === true)
+      .map((verbatim) => ({
+        content: verbatim.content,
+        status: verbatim.status,
+      }))
+      .sort((a, b) => {
+        if (a.status.includes(VERBATIM_STATUS.GEM) && !b.status.includes(VERBATIM_STATUS.GEM)) {
+          return -1;
+        } else if (!a.status.includes(VERBATIM_STATUS.GEM) && b.status.includes(VERBATIM_STATUS.GEM)) {
+          return 1;
+        }
+        return 0;
+      })
+      .splice(0, 10);
+
+    return { ...item, verbatims: verbatimsForTheme };
+  });
+
+  return result;
+};
+
 module.exports = {
   matchIdAndQuestions,
   matchCardTypeAndQuestions,
   getCategoriesWithEmojis,
   getFormattedResponses,
   appendFormationDataWhenEmpty,
+  getReponseRating,
+  getCommentVisTonExperienceEntrepriseOrder,
+  getGemVerbatimsByWantedQuestionKey,
+  verbatimsAnOrderedThemeAnswersMatcher,
 };

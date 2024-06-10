@@ -30,6 +30,9 @@ import StatisticsPage from "./statistics/StatisticsPage";
 import DsfrLayout from "./Components/DsfrLayout";
 import DiffusionGuidePage from "./guide/DiffusionGuidePage";
 import EtablissementOrAdminProtectedRoute from "./EtablissementOrAdminProtectedRoute";
+import DsfrIframeLayout from "./Components/DsfrIframeLayout";
+import IframeFormationPage from "./iframes/IframeFormationPage";
+import IframeEtablissementPage from "./iframes/IframeEtablissementPage";
 import "./assets/fonts/fonts.css";
 
 function App() {
@@ -117,6 +120,16 @@ function App() {
       >
         <Route exact path="/campagnes/:id" element={<AnswerCampagnePage />} />
         <Route exact path="/questionnaires/:id/apercu" element={<PreviewCampagnePage />} />
+      </Route>
+      <Route
+        element={
+          <DsfrIframeLayout>
+            <Outlet />
+          </DsfrIframeLayout>
+        }
+      >
+        <Route exact path="/iframes/formation" element={<IframeFormationPage />} />
+        <Route exact path="/iframes/etablissement" element={<IframeEtablissementPage />} />
       </Route>
     </Routes>
   );

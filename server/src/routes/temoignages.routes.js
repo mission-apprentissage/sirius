@@ -9,6 +9,8 @@ const {
   getDatavisualisation,
   getUncompliantTemoignages,
   deleteMultipleTemoignages,
+  getDatavisualisationFormation,
+  getDatavisualisationEtablissement,
 } = require("../controllers/temoignages.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdmin } = require("../middlewares/isAdmin");
@@ -34,6 +36,14 @@ const temoignages = () => {
 
   router.put("/api/temoignages/:id", validator(updateTemoignageSchema), (req, res, next) => {
     updateTemoignage(req, res, next);
+  });
+
+  router.get("/api/temoignages/datavisualisation/formation", (req, res, next) => {
+    getDatavisualisationFormation(req, res, next);
+  });
+
+  router.get("/api/temoignages/datavisualisation/etablissement", (req, res, next) => {
+    getDatavisualisationEtablissement(req, res, next);
   });
 
   router.post("/api/temoignages/datavisualisation", verifyUser, (req, res, next) => {

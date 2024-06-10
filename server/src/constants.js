@@ -155,6 +155,24 @@ const VERBATIM_THEMES_LABELS = {
   [VERBATIM_THEMES.RYTHME_PERSONNEL_ETABLISSEMENT]: "Rythme personnel - établissement scolaire",
 };
 
+const ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES = {
+  "<strong>Ton intégration et l’ambiance</strong> dans ton entreprise": VERBATIM_THEMES.INTEGRATION_AMBIANCE,
+  "<strong>Le rythme</strong> entreprise <-> école": VERBATIM_THEMES.RYTHME_ENTREPRISE_ETABLISSEMENT,
+  "<strong>Ce que tu apprends de ce métier</strong> dans ton entreprise": VERBATIM_THEMES.APPRENTISSAGE_METIER,
+  "<strong>Les horaires</strong> en entreprise": VERBATIM_THEMES.HORAIRES,
+  "D’avoir moins de <strong>vacances</strong>": VERBATIM_THEMES.MOINS_VACANCES,
+};
+
+const ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES = {
+  "<strong>L'ambiance</strong>": VERBATIM_THEMES.AMBIANCE_ETABLISSEMENT,
+  "<strong>Le niveau de difficulté des cours</strong>": VERBATIM_THEMES.DIFFICULTES_COURS,
+  "<strong>L’enseignement</strong> proposé par le CFA": VERBATIM_THEMES.ENSEIGNEMENT_PROPOSE,
+  "<strong>Les équipements</strong> mis à ta disposition au CFA": VERBATIM_THEMES.EQUIPEMENTS,
+  "<strong>L’accessibilité du CFA</strong> pour les personnes en situation de handicap":
+    VERBATIM_THEMES.ACCESSIBILITE_HANDICAP,
+  "<strong>La charge de travail</strong>": VERBATIM_THEMES.CHARGE_TRAVAIL,
+};
+
 module.exports = {
   USER_ROLES,
   USER_STATUS,
@@ -169,4 +187,6 @@ module.exports = {
   VERBATIM_THEMES,
   VERBATIM_THEMES_EMOJIS,
   VERBATIM_THEMES_LABELS,
+  ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES,
+  ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES,
 };

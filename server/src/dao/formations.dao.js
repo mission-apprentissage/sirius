@@ -47,6 +47,38 @@ const getDataIdFormationByIds = async (ids) => {
     .lean();
 };
 
+const getFormationByIntitule = async (intituleFormation) => {
+  return Formation.aggregate([
+    {
+      $match: {
+        deletedAt: null,
+        "data.onisep_intitule": { $regex: new RegExp(`^${intituleFormation}$`, "i") },
+      },
+    },
+    {
+      $project: {
+        campagneId: 1,
+      },
+    },
+  ]);
+};
+
+const getFormationByUai = async (uai) => {
+  return Formation.aggregate([
+    {
+      $match: {
+        deletedAt: null,
+        "data.etablissement_formateur_uai": uai,
+      },
+    },
+    {
+      $project: {
+        campagneId: 1,
+      },
+    },
+  ]);
+};
+
 module.exports = {
   create,
   getAll,
@@ -56,4 +88,6 @@ module.exports = {
   update,
   deleteManyByCampagneIdAndReturnsTheDeletedFormationId,
   getDataIdFormationByIds,
+  getFormationByIntitule,
+  getFormationByUai,
 };
