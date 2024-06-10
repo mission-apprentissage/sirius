@@ -13,7 +13,7 @@ const slugify = (str) => {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('http://localhost/api/formations/temoignage-count')
+  fetch('https://sirius.inserjeunes.beta.gouv.fr/api/formations/temoignage-count')
     .then(response => response.json())
     .then(data => {
       const formationLink = document.getElementById('formation-link');
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('data').innerText = error;
     });
 
-  fetch('http://localhost/api/etablissements/temoignage-count')
+  fetch('http://sirius.inserjeunes.beta.gouv.fr/api/etablissements/temoignage-count')
     .then(response => response.json())
     .then(data => {
       const etablissementLink = document.getElementById('etablissement-link');

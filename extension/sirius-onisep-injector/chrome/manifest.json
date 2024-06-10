@@ -17,7 +17,7 @@
       },
     "content_scripts": [
         {
-            "matches": ["https://*.onisep.fr/*", "http://localhost/*"],
+            "matches": ["https://*.onisep.fr/*"],
             "js": ["contentScript.js"]
         }
     ],
