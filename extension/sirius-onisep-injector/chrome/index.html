@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="dsfr/dsfr.min.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="./assets/img/logo_republique.png" alt="Logo république française">
+        <img src="./assets/img/logo_sirius.png" alt="Logo république française">
+        <h1>Exposition</h1>
+      </header>
+      <p>Cette extension de navigateur permet de prévisualiser les <b>témoignages Sirius</b> sur les pages formations et établissements du site de l'<b>ONISEP</b>. <br />Ces témoignages sont visibles <b>uniquement</b> lorsque cette extension est activée.</p>
+      <section>
+        <div class="fr-tabs">
+          <ul class="fr-tabs__list" role="tablist" aria-label="Choix du type de liens">
+              <li role="presentation">
+                  <button id="tabpanel-formation" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="true" aria-controls="tabpanel-formation-panel">Formations couvertes</button>
+              </li>
+              <li role="presentation">
+                  <button id="tabpanel-etablissement" class="fr-tabs__tab" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-etablissement-panel">Établissements couverts</button>
+              </li>
+          </ul>
+          <div id="tabpanel-formation-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tabpanel-formation" tabindex="0">
+            <ul id="formation-link">
+            </ul> 
+          </div>
+          <div id="tabpanel-etablissement-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-405" tabindex="0">
+            <ul id="etablissement-link"></ul>
+          </div>
+      </div>
+      </section>
+      <section>
+        <div class="fr-toggle">
+          <input type="checkbox" class="fr-toggle__input" aria-describedby="activation-button-hint-text" id="activation-button" checked>
+          <label class="fr-toggle__label" for="activation-button">Désactiver l'affichage</label>
+      </div>
+      </section>
+    </main>
+    <script type="module" src="dsfr/dsfr.module.min.js"></script>
+    <script type="text/javascript" nomodule src="dsfr/dsfr.nomodule.min.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

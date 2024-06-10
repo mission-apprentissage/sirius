@@ -139,6 +139,83 @@ const count = (query) => {
   return Etablissement.countDocuments({ ...query, deletedAt: null });
 };
 
+const getAllWithTemoignageCount = async () => {
+  return Etablissement.aggregate([
+    { $match: { deletedAt: null } },
+    {
+      $addFields: {
+        formationIds: {
+          $map: {
+            input: "$formationIds",
+            as: "id",
+            in: { $toObjectId: "$$id" },
+          },
+        },
+      },
+    },
+    { $unwind: "$formationIds" },
+    {
+      $lookup: {
+        from: "formations",
+        localField: "formationIds",
+        foreignField: "_id",
+        as: "formationDetails",
+      },
+    },
+    { $unwind: "$formationDetails" },
+    { $match: { "formationDetails.deletedAt": null } },
+    {
+      $group: {
+        _id: "$_id",
+        formations: { $push: "$formationDetails" },
+        etablissement: { $first: "$$ROOT" },
+      },
+    },
+    {
+      $project: {
+        _id: "$etablissement._id",
+        onisep_nom: "$etablissement.data.onisep_nom",
+        enseigne: "$etablissement.data.enseigne",
+        entreprise_raison_sociale: "$etablissement.data.entreprise_raison_sociale",
+        uai: "$etablissement.data.uai",
+        formationIds: "$etablissement.formationIds",
+        onisep_url: "$etablissement.data.onisep_url",
+        localite: "$etablissement.data.localite",
+        formations: 1,
+      },
+    },
+    {
+      $lookup: {
+        from: "temoignages",
+        localField: "formations.campagneId",
+        foreignField: "campagneId",
+        as: "temoignages",
+      },
+    },
+    {
+      $addFields: {
+        temoignagesCount: { $size: "$temoignages" },
+      },
+    },
+    {
+      $project: {
+        onisep_nom: 1,
+        enseigne: 1,
+        entreprise_raison_sociale: 1,
+        uai: 1,
+        temoignagesCount: 1,
+        onisep_url: 1,
+        localite: 1,
+      },
+    },
+    {
+      $sort: {
+        temoignagesCount: -1,
+      },
+    },
+  ]);
+};
+
 module.exports = {
   create,
   getAll,
@@ -148,4 +225,5 @@ module.exports = {
   updateByFormationIds,
   getAllSuivi,
   count,
+  getAllWithTemoignageCount,
 };

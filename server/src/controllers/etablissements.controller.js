@@ -26,6 +26,14 @@ const getEtablissements = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getEtablissementsWithTemoignageCount = tryCatch(async (req, res) => {
+  const { success, body } = await etablissementsService.getEtablissementsWithTemoignageCount();
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 const getEtablissement = tryCatch(async (req, res) => {
   const id = req.params.id;
   const { success, body } = await etablissementsService.getEtablissement(id);
@@ -77,4 +85,5 @@ module.exports = {
   updateEtablissement,
   getEtablissementsSuivi,
   getEtablissementsPublicStatistics,
+  getEtablissementsWithTemoignageCount,
 };
