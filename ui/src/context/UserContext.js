@@ -45,36 +45,35 @@ const UserProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const forceLogout = async () => {
-      const result = await _get(`/api/users/logout`, state.token);
-      if (result.success) {
-        setState({ ...initialState, loading: false });
-      }
-    };
-
     if (state.token && !state.user) {
+      const forceLogout = async () => {
+        const result = await _get(`/api/users/logout`, state.token);
+        if (result.success) {
+          setState({ ...initialState, loading: false });
+        }
+      };
+
       forceLogout();
     }
-  });
+  }, [state.token, state.user]);
 
   useEffect(() => {
     if (!state.token) {
       verifyUser();
     } else {
       const intervalId = setInterval(verifyUser, 1000 * 60 * 14);
-
       return () => clearInterval(intervalId);
     }
   }, [state.token]);
 
   useEffect(() => {
     if (me && shouldHaveEtablissements) {
-      setState({
-        ...state,
-        user: { ...state.user, etablissements: me?.etablissements },
-      });
+      setState((prevState) => ({
+        ...prevState,
+        user: { ...prevState.user, etablissements: me?.etablissements },
+      }));
     }
-  }, [me]);
+  }, [me, shouldHaveEtablissements]);
 
   return <UserContext.Provider value={[state, setState]}>{children}</UserContext.Provider>;
 };

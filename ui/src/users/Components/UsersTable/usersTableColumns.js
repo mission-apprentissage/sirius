@@ -110,7 +110,7 @@ const usersTableColumns = (
         } else if (typeof scope?.value === "object") {
           return (
             <Box display="flex" flexDirection="column">
-              {scope.value.map((value) => (
+              {scope.value?.map((value) => (
                 <Text key={value}>{value}</Text>
               ))}
             </Box>

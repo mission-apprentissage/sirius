@@ -163,8 +163,16 @@ const AnswerCampagnePage = () => {
           content: formData[questionKey],
         });
       } else {
+        const reponses = { ...answers, ...formData, ...nestedData };
+        const reponsesWithoutChampsLibreFields = Object.keys(reponses).reduce((acc, key) => {
+          if (!champsLibresField.includes(key)) {
+            acc[key] = reponses[key];
+          }
+          return acc;
+        }, {});
+
         result = await _put(`/api/temoignages/${temoignageId}`, {
-          reponses: { ...answers, ...formData, ...nestedData },
+          reponses: reponsesWithoutChampsLibreFields,
           lastQuestionAt: new Date(),
           isBot,
         });

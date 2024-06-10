@@ -196,7 +196,7 @@ export const orderFormationByEtablissement = (formations = []) => {
   return orderedFormations;
 };
 
-export const isPlural = (count) => (count > 1 ? "s" : "");
+export const isPlural = (count) => ((count && count) > 1 ? "s" : "");
 
 const getValue = (obj, key) => {
   const value = obj[key];

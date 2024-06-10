@@ -17,11 +17,11 @@ const LoaderContainer = styled.main`
 const ProtectedRoute = () => {
   const [userContext, setUserContext] = useContext(UserContext);
 
-  const isAuthenticated = userContext?.token;
-  const isActive = userContext.user?.status === USER_STATUS.ACTIVE;
-  const hasAcceptedCgu = userContext.user?.acceptedCgu;
+  const isAuthenticated = !!userContext?.token;
+  const isActive = userContext?.user?.status === USER_STATUS.ACTIVE;
+  const hasAcceptedCgu = !!userContext?.user?.acceptedCgu;
 
-  if (userContext.loading)
+  if (userContext?.loading) {
     return (
       <LoaderContainer>
         <BeatLoader
@@ -31,9 +31,16 @@ const ProtectedRoute = () => {
         />
       </LoaderContainer>
     );
-  if (isAuthenticated && !isActive) return <Navigate to="/compte-desactive" />;
-  if (isAuthenticated && !hasAcceptedCgu)
+  }
+
+  if (isAuthenticated && !isActive) {
+    return <Navigate to="/compte-desactive" />;
+  }
+
+  if (isAuthenticated && !hasAcceptedCgu) {
     return <CguModal userContext={userContext} setUserContext={setUserContext} />;
+  }
+
   return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
 };
 
