@@ -3,6 +3,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 
 export const IframeContainer = styled.main`
   width: 100%;
+  padding: 0 5px;
 `;
 
 export const DatavisualisationContainer = styled.div`

@@ -60,7 +60,7 @@ const IframeEtablissementPage = () => {
   return (
     isSuccess && (
       <IframeContainer ref={scrollableRef}>
-        <h3>Suivre cette formation en apprentissage ?</h3>
+        <h3>Suivre une formation en apprentissage ?</h3>
         <p>
           Cet établissement propose de suivre certaines de ses formations en apprentissage. Grace au
           questionnaire{" "}

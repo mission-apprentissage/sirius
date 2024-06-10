@@ -79,6 +79,45 @@ const getFormationByUai = async (uai) => {
   ]);
 };
 
+const getAllWithTemoignageCount = async () => {
+  return Formation.aggregate([
+    {
+      $match: { deletedAt: null },
+    },
+    {
+      $group: {
+        _id: "$data.onisep_intitule",
+        formations: { $push: "$$ROOT" },
+        campagneIds: { $addToSet: "$campagneId" },
+      },
+    },
+    {
+      $lookup: {
+        from: "temoignages",
+        localField: "campagneIds",
+        foreignField: "campagneId",
+        as: "temoignages",
+      },
+    },
+    {
+      $addFields: {
+        temoignagesCount: { $size: "$temoignages" },
+      },
+    },
+    {
+      $project: {
+        onisep_intitule: "$_id",
+        temoignagesCount: 1,
+      },
+    },
+    {
+      $sort: {
+        temoignagesCount: -1,
+      },
+    },
+  ]);
+};
+
 module.exports = {
   create,
   getAll,
@@ -90,4 +129,5 @@ module.exports = {
   getDataIdFormationByIds,
   getFormationByIntitule,
   getFormationByUai,
+  getAllWithTemoignageCount,
 };

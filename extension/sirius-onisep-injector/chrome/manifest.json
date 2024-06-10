@@ -1,0 +1,32 @@
+{
+    "manifest_version": 3,
+    "name": "Sirius Exposition",
+    "description": "Cette extension expose les données Sirius sur les pages du site de l'ONISEP.",
+    "version": "1.0",
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": "favicon.png"
+    },
+    "icons": {
+        "16": "favicon.png",
+        "48": "favicon.png",
+        "128": "favicon.png"
+      },
+    "content_scripts": [
+        {
+            "matches": ["https://*.onisep.fr/*", "http://localhost/*"],
+            "js": ["contentScript.js"]
+        }
+    ],
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://*.onisep.fr/*"
+      ]
+  }

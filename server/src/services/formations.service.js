@@ -32,6 +32,15 @@ const getFormations = async ({ formationIds, search }) => {
   }
 };
 
+const getFormationsWithTemoignageCount = async () => {
+  try {
+    const formations = await formationsDao.getAllWithTemoignageCount();
+    return { success: true, body: formations };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 const getFormation = async (id) => {
   try {
     const formation = await formationsDao.getOne(id);
@@ -75,4 +84,5 @@ module.exports = {
   deleteFormation,
   updateFormation,
   alreadyExistingFormations,
+  getFormationsWithTemoignageCount,
 };
