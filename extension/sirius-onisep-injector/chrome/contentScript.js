@@ -1,6 +1,6 @@
-const IFRAME_FORMATION_BASE_URL = 'https://sirius.inserjeunes.gouv.fr/iframes/formation'
+const IFRAME_FORMATION_BASE_URL = 'https://sirius.inserjeunes.beta.gouv.fr/iframes/formation'
 
-const IFRAME_ETABLISSEMENT_BASE_URL = 'https://sirius-recette.inserjeunes.gouv.fr/iframes/etablissement'
+const IFRAME_ETABLISSEMENT_BASE_URL = 'https://sirius.inserjeunes.beta.gouv.fr/iframes/etablissement'
 
 const isFormationPage = (url) => {
     return url.includes('univers-formation')
