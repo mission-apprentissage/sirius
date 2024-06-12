@@ -17,16 +17,18 @@
       },
     "content_scripts": [
         {
-            "matches": ["https://*.onisep.fr/*", "http://localhost/*"],
+            "matches": ["https://*.onisep.fr/*"],
             "js": ["contentScript.js"]
         }
     ],
     "permissions": [
         "tabs",
         "activeTab",
-        "scripting"
+        "scripting",
+        "storage"
     ],
     "host_permissions": [
-        "https://*.onisep.fr/*"
+        "https://*.onisep.fr/*",
+        "https://sirius.inserjeunes.beta.gouv.fr/*"
       ]
   }
