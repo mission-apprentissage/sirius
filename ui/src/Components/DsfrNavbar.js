@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import * as Sentry from "@sentry/react";
 import { Header } from "@codegouvfr/react-dsfr/Header";
 import Logo from "../assets/images/logo.svg";
 import { UserContext } from "../context/UserContext";
@@ -21,7 +20,6 @@ const DsfrNavbar = () => {
     e.preventDefault();
     const result = await _get(`/api/users/logout`, userContext.token);
     if (result.success) {
-      Sentry.setUser(null);
       navigate(0);
     }
   };
