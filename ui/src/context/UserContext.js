@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
+import * as Sentry from "@sentry/react";
 import useRefreshTokenUser from "../hooks/useRefreshTokenUser";
 import useFetchMe from "../hooks/useFetchMe";
 import { USER_ROLES } from "../constants";
@@ -36,9 +37,14 @@ const UserProvider = ({ children }) => {
             token: result.token,
             user: decodedToken.user,
           });
+          Sentry.setUser({
+            id: decodedToken.user._id,
+            email: decodedToken.user.email,
+          });
         },
         onError: () => {
           setState({ ...initialState, loading: false });
+          Sentry.setUser(null);
         },
       }
     );
@@ -50,6 +56,7 @@ const UserProvider = ({ children }) => {
         const result = await _get(`/api/users/logout`, state.token);
         if (result.success) {
           setState({ ...initialState, loading: false });
+          Sentry.setUser(null);
         }
       };
 
