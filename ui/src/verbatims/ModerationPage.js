@@ -5,6 +5,7 @@ import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import Pagination from "@codegouvfr/react-dsfr/Pagination";
 import Alert from "@codegouvfr/react-dsfr/Alert";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import {
   Container,
   HeaderItem,
@@ -22,8 +23,37 @@ import useFetchVerbatimsCount from "../hooks/useFetchVerbatimsCount";
 import ModerationActions from "./Moderation/ModerationActions";
 import usePatchVerbatims from "../hooks/usePatchVerbatims";
 
-const headers = [
-  "",
+const SelectAll = ({ selectedVerbatims, setSelectedVerbatims, verbatims }) => {
+  const allVerbatimsSelected = selectedVerbatims.length === verbatims.length;
+
+  return (
+    <Checkbox
+      options={[
+        {
+          nativeInputProps: {
+            name: "select-all",
+            checked: allVerbatimsSelected,
+            onChange: () => {
+              if (allVerbatimsSelected) {
+                setSelectedVerbatims([]);
+              } else {
+                setSelectedVerbatims(verbatims.map((verbatim) => verbatim));
+              }
+            },
+          },
+        },
+      ]}
+    />
+  );
+};
+
+const getHeaders = ({ selectedVerbatims, setSelectedVerbatims, verbatims }) => [
+  <SelectAll
+    key="selectAll"
+    selectedVerbatims={selectedVerbatims}
+    setSelectedVerbatims={setSelectedVerbatims}
+    verbatims={verbatims}
+  />,
   <HeaderItem key="verbatim">Verbatim</HeaderItem>,
   <HeaderItem key="createdAt">Scores</HeaderItem>,
   <HeaderItem key="formation">Formation</HeaderItem>,
@@ -70,7 +100,7 @@ const tabs = ({
         ) : verbatims.length ? (
           <>
             <Table
-              headers={headers}
+              headers={getHeaders({ selectedVerbatims, setSelectedVerbatims, verbatims })}
               data={
                 moderationTableRows({ verbatims, selectedVerbatims, setSelectedVerbatims }) || []
               }
@@ -107,7 +137,7 @@ const ModerationPage = () => {
   const [pickedFormationId, setPickedFormationId] = useState(null);
   const [selectedTab, setSelectedTab] = useState(VERBATIM_STATUS.PENDING);
   const [showOnlyDiscrepancies, setShowOnlyDiscrepancies] = useState(false);
-
+  console.log({ selectedVerbatims });
   const { verbatimsCount } = useFetchVerbatimsCount({
     etablissementSiret: pickedEtablissement?.siret,
     formationId: pickedFormationId,
