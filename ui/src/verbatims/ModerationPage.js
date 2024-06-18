@@ -137,7 +137,7 @@ const ModerationPage = () => {
   const [pickedFormationId, setPickedFormationId] = useState(null);
   const [selectedTab, setSelectedTab] = useState(VERBATIM_STATUS.PENDING);
   const [showOnlyDiscrepancies, setShowOnlyDiscrepancies] = useState(false);
-  console.log({ selectedVerbatims });
+
   const { verbatimsCount } = useFetchVerbatimsCount({
     etablissementSiret: pickedEtablissement?.siret,
     formationId: pickedFormationId,

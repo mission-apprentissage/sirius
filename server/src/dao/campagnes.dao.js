@@ -194,6 +194,10 @@ const getAllWithTemoignageCountAndTemplateName = async ({ siret, query, scope })
     matchConditions["formation.data.etablissement_formateur_siret"] = query.etablissementFormateurSiret;
   }
 
+  if (query && query.departement) {
+    matchConditions["formation.data.num_departement"] = query.departement;
+  }
+
   if (query && query.campagneIds) {
     matchConditions["_id"] = query.campagneIds;
   }

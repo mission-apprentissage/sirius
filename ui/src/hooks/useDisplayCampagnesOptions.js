@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useFetchCampagnes from "./useFetchCampagnes";
-import { campagnesDisplayMode } from "../constants";
+import { campagneDisplayModeRegionObserver, campagnesDisplayMode } from "../constants";
 
 const useDisplayCampagnesOptions = ({
   search,
@@ -17,6 +17,8 @@ const useDisplayCampagnesOptions = ({
     query = `diplome=${openedAccordion}`;
   } else if (displayMode === campagnesDisplayMode[1].value) {
     query = `etablissementFormateurSiret=${openedAccordion}`;
+  } else if (displayMode === campagneDisplayModeRegionObserver[2].value) {
+    query = `departement=${openedAccordion}`;
   }
 
   if (search) {

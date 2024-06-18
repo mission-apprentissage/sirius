@@ -101,6 +101,25 @@ export const campagnesDisplayMode = [
   },
 ];
 
+export const campagneDisplayModeRegionObserver = [
+  {
+    label: "Niveau de diplôme",
+    value: "DIPLOME_TYPE",
+  },
+  {
+    label: "Établissement",
+    value: "ETABLISSEMENT",
+  },
+  {
+    label: "Département",
+    value: "DEPARTEMENT",
+  },
+  {
+    label: "Toutes",
+    value: "ALL",
+  },
+];
+
 export const campagnesSortingOptions = [
   { label: "Formation (A-Z)", value: "formation-asc" },
   { label: "Formation (Z-A)", value: "formation-desc" },

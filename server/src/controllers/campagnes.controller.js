@@ -15,6 +15,7 @@ const getCampagnes = tryCatch(async (req, res) => {
   const diplome = req.query.diplome;
   const etablissementFormateurSiret = req.query.etablissementFormateurSiret;
   const search = req.query.search;
+  const departement = req.query.departement;
 
   let query = {};
 
@@ -32,6 +33,10 @@ const getCampagnes = tryCatch(async (req, res) => {
 
   if (etablissementFormateurSiret && etablissementFormateurSiret === "N/A") {
     query = { etablissementFormateurSiret: { $exists: false } };
+  }
+
+  if (departement) {
+    query = { departement };
   }
 
   const { success, body, pagination } = await campagnesService.getCampagnes({

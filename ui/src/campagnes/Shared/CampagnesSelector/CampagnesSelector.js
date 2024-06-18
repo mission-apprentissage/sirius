@@ -16,12 +16,14 @@ import {
   OBSERVER_SCOPES,
   OBSERVER_SCOPES_LABELS,
   USER_ROLES,
+  campagneDisplayModeRegionObserver,
   campagnesDisplayMode,
 } from "../../../constants";
 import { isPlural } from "../../utils";
 import { UserContext } from "../../../context/UserContext";
 import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
 import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
+import DisplayByDepartementTable from "./Accordions/DisplayByDepartement";
 
 const AccordionComponentGetter = ({
   campagnesSorted,
@@ -68,6 +70,19 @@ const AccordionComponentGetter = ({
         setSearch={setSearch}
         campagneTableType={campagneTableType}
         displayMode={displayMode}
+      />
+    );
+  } else if (displayMode === campagneDisplayModeRegionObserver[2].value) {
+    return (
+      <DisplayByDepartementTable
+        campagnesSorted={campagnesSorted}
+        selectedCampagneIds={selectedCampagneIds}
+        setSelectedCampagneIds={setSelectedCampagneIds}
+        search={search}
+        setSearch={setSearch}
+        campagneTableType={campagneTableType}
+        displayMode={displayMode}
+        searchedCampagnes={searchedCampagnes}
       />
     );
   }
@@ -179,9 +194,8 @@ const CampagnesSelector = ({
             setSearch={setSearch}
             searchResultCount={searchedCampagnes?.pagination?.totalItems}
             setIsOpened={setIsOpened}
-            organizeLabel={
-              isManage ? "Organiser mes campagnes par" : "Sélectionner les résultats à afficher"
-            }
+            organizeLabel="Organiser mes campagnes par"
+            userScope={userContext?.user.scope}
           />
           {isLoadingSearchedCampagnes ? (
             <LoaderContainer>
