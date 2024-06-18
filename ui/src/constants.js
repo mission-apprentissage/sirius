@@ -142,11 +142,13 @@ export const OBSERVER_SCOPES = {
   NUM_DEPARTEMENT: "num_departement",
   REGION: "region",
   SIRETS: "sirets",
+  NATIONAL: "national",
 };
 
 export const OBSERVER_SCOPES_LABELS = {
   [OBSERVER_SCOPES.NUM_DEPARTEMENT]: "Numéro de département",
   [OBSERVER_SCOPES.REGION]: "Nom de la région",
+  [OBSERVER_SCOPES.NATIONAL]: "National",
   [OBSERVER_SCOPES.SIRETS]: "Liste de SIRET",
 };
 

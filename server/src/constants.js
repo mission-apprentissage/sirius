@@ -174,6 +174,13 @@ const ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES = {
   "<strong>La charge de travail</strong>": VERBATIM_THEMES.CHARGE_TRAVAIL,
 };
 
+const OBSERVER_SCOPES = {
+  NUM_DEPARTEMENT: "num_departement",
+  REGION: "region",
+  SIRETS: "sirets",
+  NATIONAL: "national",
+};
+
 module.exports = {
   USER_ROLES,
   USER_STATUS,
@@ -190,4 +197,5 @@ module.exports = {
   VERBATIM_THEMES_LABELS,
   ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES,
   ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES,
+  OBSERVER_SCOPES,
 };

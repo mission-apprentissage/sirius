@@ -1,4 +1,5 @@
 const ObjectId = require("mongoose").mongo.ObjectId;
+const { OBSERVER_SCOPES } = require("../constants");
 const Campagne = require("../models/campagne.model");
 
 const temoignageCountQuery = [
@@ -216,11 +217,11 @@ const getAllOnlyDiplomeTypeAndEtablissements = async (query, scope) => {
     deletedAt: null,
   };
 
-  if (scope && scope.field !== "sirets") {
+  if (scope && (scope.field === OBSERVER_SCOPES.REGION || scope.field === OBSERVER_SCOPES.NUM_DEPARTEMENT)) {
     matchConditions[`formation.data.${scope.field}`] = scope.value;
   }
 
-  if (scope && scope.field && scope.field === "sirets" && scope.value.length) {
+  if (scope && scope?.field === OBSERVER_SCOPES.SIRETS && scope.value.length) {
     matchConditions[`formation.data.etablissement_gestionnaire_siret`] = { $in: scope.value };
   }
 

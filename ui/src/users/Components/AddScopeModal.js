@@ -45,7 +45,7 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
     },
     onSubmit: async () => {
       setIsSubmitting(true);
-      if (!scopeField || !scopeValue) {
+      if (!scopeField || (!scopeValue && scopeField !== OBSERVER_SCOPES.NATIONAL)) {
         setIsSubmitting(false);
         return;
       }
@@ -138,13 +138,15 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
                   value={scopeValue}
                 />
               ) : (
-                <Input
-                  name="value"
-                  placeholder="Valeur"
-                  value={scopeValue}
-                  w="50%"
-                  onChange={(e) => setScopeValue(e.target.value ? e.target.value : null)}
-                />
+                scopeField !== OBSERVER_SCOPES.NATIONAL && (
+                  <Input
+                    name="value"
+                    placeholder="Valeur"
+                    value={scopeValue}
+                    w="50%"
+                    onChange={(e) => setScopeValue(e.target.value ? e.target.value : null)}
+                  />
+                )
               )}
             </Stack>
           </ModalBody>
@@ -155,7 +157,7 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
               colorScheme="brand.blue"
               type="submit"
               isLoading={isSubmitting}
-              isDisabled={!scopeField || !scopeValue}
+              isDisabled={!scopeField || (!scopeValue && scopeField !== OBSERVER_SCOPES.NATIONAL)}
             >
               Ajouter
             </Button>
