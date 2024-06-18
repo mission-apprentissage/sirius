@@ -137,7 +137,9 @@ module.exports = async () => {
       await extractThemesVerbatims(verbatim, themeCount);
     }
 
-    await sendSummaryToSlack(unthemedVerbatims.length, themeCount);
+    if (unthemedVerbatims.length) {
+      await sendSummaryToSlack(unthemedVerbatims.length, themeCount);
+    }
 
     console.log("Theme extraction completed successfully.");
   } catch (err) {

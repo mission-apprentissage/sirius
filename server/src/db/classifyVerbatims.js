@@ -158,7 +158,11 @@ module.exports = async () => {
       await classifyVerbatim(verbatim, classificationCount, gemVerbatims);
     }
 
-    await sendSummaryToSlack(unclassifiedVerbatims.length, classificationCount, gemVerbatims);
+    const totalClassifiedVerbatims = Object.values(classificationCount).reduce((acc, count) => acc + count, 0);
+
+    if (totalClassifiedVerbatims) {
+      await sendSummaryToSlack(totalClassifiedVerbatims, totalClassifiedVerbatims, gemVerbatims);
+    }
 
     console.log("Classification completed successfully.");
   } catch (err) {
