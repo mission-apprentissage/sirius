@@ -24,7 +24,7 @@ renew_certificate() {
 }
 
 handle_error() {
-  bash /opt/sirius/tools/send-to-slack.sh "[SSL] Unable to renew certificate covering domains: $DOMAINS"
+  bash /opt/sirius/tools/send-to-slack.sh "[SSL] Unable to renew certificate"
   start_reverse_proxy
 }
 trap handle_error ERR
@@ -35,4 +35,4 @@ echo "****************************"
 stop_reverse_proxy
 renew_certificate
 start_reverse_proxy
-bash /opt/sirius/tools/send-to-slack.sh "[SSL] Certificate has been renewed for domains: $DOMAINS"
+bash /opt/sirius/tools/send-to-slack.sh "[SSL] Certificat has been renewed"
