@@ -14,31 +14,20 @@ function start_http_server_for_acme_challenge() {
 }
 
 function generate_certificate() {
-  local domains=(${1//,/ })  # Split input domains separated by commas into an array
-  local certbot_domains=()   # Initialize an array for certbot domain arguments
+  local dns_name="${1}"
 
-  echo "Generating certificate for domains: ${1}..."
-
-  # Loop over the domains and add each one to the certbot_domains array
-  for domain in "${domains[@]}"; do
-    certbot_domains+=("--domain" "${domain}")
-  done
-
-  # Run certbot with all the collected domain arguments
+  echo "Generating certificate for domain ${dns_name}..."
   certbot certonly \
     --email contact@inserjeunes.beta.gouv.fr \
     --agree-tos \
     --non-interactive \
     --webroot \
     --webroot-path /var/www \
-    "${certbot_domains[@]}"
+    --domain "${dns_name}"
 
-  # Assuming all domains are managed under a common certificate directory
-  local primary_domain="${domains[0]}"
-  cp "/etc/letsencrypt/live/${primary_domain}/fullchain.pem" "${SSL_OUTPUT_DIR}"
-  cp "/etc/letsencrypt/live/${primary_domain}/privkey.pem" "${SSL_OUTPUT_DIR}"
+  cp "/etc/letsencrypt/live/${dns_name}/fullchain.pem" "${SSL_OUTPUT_DIR}"
+  cp "/etc/letsencrypt/live/${dns_name}/privkey.pem" "${SSL_OUTPUT_DIR}"
 }
-
 
 function generate_self_signed_certificate() {
   openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
@@ -48,19 +37,15 @@ function generate_self_signed_certificate() {
 }
 
 function renew_certificate() {
-  local domains=(${1//,/ })  # Split input domains separated by commas into an array
-  local primary_domain="${domains[0]}"
+  local dns_name="${1}"
 
-  echo "Preparing to renew certificates for domains: ${1}..."
-  # Ensure the renewal uses the specific SSL directory, if required
-  cp -R "${SSL_OUTPUT_DIR}" "/etc/letsencrypt/live/${primary_domain}"
+  cp -R "${SSL_OUTPUT_DIR}" "/etc/letsencrypt/live/${dns_name}"
 
-  echo "Renewing certificate..."
-  certbot renew --cert-name "${primary_domain}"
+  echo "Renewing certificate for domain ${dns_name}..."
+  certbot renew
 
-  echo "Copying renewed certificates for domain ${primary_domain} to the SSL output directory..."
-  cp "/etc/letsencrypt/live/${primary_domain}/fullchain.pem" "${SSL_OUTPUT_DIR}"
-  cp "/etc/letsencrypt/live/${primary_domain}/privkey.pem" "${SSL_OUTPUT_DIR}"
+  cp "/etc/letsencrypt/live/${dns_name}/fullchain.pem" "${SSL_OUTPUT_DIR}"
+  cp "/etc/letsencrypt/live/${dns_name}/privkey.pem" "${SSL_OUTPUT_DIR}"
 }
 
 function main() {
