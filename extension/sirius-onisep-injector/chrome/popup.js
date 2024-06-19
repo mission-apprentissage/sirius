@@ -13,7 +13,12 @@ const slugify = (str) => {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('http://localhost/api/formations/temoignage-count')
+  fetch('https://sirius.inserjeunes.beta.gouv.fr/api/formations/temoignage-count',{
+    method: 'GET',
+    mode: 'cors',
+    headers: {
+        'Content-Type': 'application/json'
+    }} )
     .then(response => response.json())
     .then(data => {
       const formationLink = document.getElementById('formation-link');
@@ -35,11 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     })
     .catch(error => {
-      console.error('Error fetching data:', error);
-      document.getElementById('data').innerText = error;
+      const errorContainer = document.getElementById('formation-error');
+      const errorText = document.getElementById('formation-error-text');
+      errorContainer.style.display = 'block';
+      errorText.innerText = error;
     });
 
-  fetch('http://localhost/api/etablissements/temoignage-count')
+  fetch('https://sirius.inserjeunes.beta.gouv.fr/api/etablissements/temoignage-count',{
+    method: 'GET',
+    mode: 'cors',
+    headers: {
+        'Content-Type': 'application/json'
+    }} )
     .then(response => response.json())
     .then(data => {
       const etablissementLink = document.getElementById('etablissement-link');
@@ -61,7 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     })
     .catch(error => {
-      console.error('Error fetching data:', error);
-      document.getElementById('data').innerText = error;
+      const errorContainer = document.getElementById('etablissement-error');
+      const errorText = document.getElementById('etablissement-error-text');
+      errorContainer.style.display = 'block';
+      errorText.innerText = error;
     });
 });
