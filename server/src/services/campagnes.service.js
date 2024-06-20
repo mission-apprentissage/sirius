@@ -164,6 +164,26 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
       });
 
       results = formattedResults;
+    } else if (sortingType === CAMPAGNE_SORTING_TYPE.DEPARTEMENT) {
+      const campagnesGroupedByDepartement = campagnes.reduce((acc, campagne) => {
+        appendDataWhenEmpty(campagne);
+        const departement = campagne.formation.data.num_departement;
+        if (!acc[departement]) {
+          acc[departement] = [];
+        }
+        acc[departement].push(campagne);
+        return acc;
+      }, {});
+
+      const formattedResults = Object.keys(campagnesGroupedByDepartement).map((key) => {
+        const campagneIds = campagnesGroupedByDepartement[key].map((campagne) => campagne._id);
+        return {
+          departement: key,
+          campagneIds: campagneIds,
+        };
+      });
+
+      results = formattedResults;
     } else if (sortingType === CAMPAGNE_SORTING_TYPE.ALL) {
       const formattedResults = {
         campagneIds: campagnes.map((campagne) => campagne._id),

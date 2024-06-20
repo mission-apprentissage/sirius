@@ -54,7 +54,6 @@ const getEtablissements = async ({ search }) => {
 const getEtablissementsWithTemoignageCount = async () => {
   try {
     const formations = await etablissementsDao.getAllWithTemoignageCount();
-    console.log({ formations });
     return { success: true, body: formations };
   } catch (error) {
     return { success: false, body: error };

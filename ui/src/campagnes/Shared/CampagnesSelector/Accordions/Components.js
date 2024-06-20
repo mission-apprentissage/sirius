@@ -56,7 +56,12 @@ export const SelectAllCampagnesCheckbox = ({
   );
 };
 
-export const AccordionLabel = ({ diplome = null, etablissementFormateur = null, count }) => {
+export const AccordionLabel = ({
+  diplome = null,
+  etablissementFormateur = null,
+  departement = null,
+  count,
+}) => {
   if (diplome) {
     return (
       <AccordionLabelByDiplomeTypeContainer>
@@ -119,6 +124,17 @@ export const AccordionLabel = ({ diplome = null, etablissementFormateur = null, 
           {isPlural(count)}
         </p>
       </AccordionLabelByEtablissementContainer>
+    );
+  } else if (departement) {
+    return (
+      <AccordionLabelByDiplomeTypeContainer>
+        <h5>{departement}</h5>
+        <p>
+          {count} campagne
+          {isPlural(count)} sélectionnée
+          {isPlural(count)}
+        </p>
+      </AccordionLabelByDiplomeTypeContainer>
     );
   }
 };

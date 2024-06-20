@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { SortButtonsContainer, SearchContainer } from "./sortButtons.style";
-import { campagnesDisplayMode } from "../../../constants";
+import {
+  OBSERVER_SCOPES,
+  campagneDisplayModeRegionObserver,
+  campagnesDisplayMode,
+} from "../../../constants";
 import { isPlural } from "../../utils";
 
 const SortButtons = ({
@@ -13,8 +17,10 @@ const SortButtons = ({
   searchResultCount,
   setIsOpened = () => {},
   organizeLabel,
+  userScope,
 }) => {
   const [inputValue, setInputValue] = useState(search);
+  const isRegionObserver = userScope?.field === OBSERVER_SCOPES.REGION;
 
   useEffect(() => {
     if (search !== inputValue) {
@@ -44,7 +50,7 @@ const SortButtons = ({
             setIsOpened(true);
           },
         }}
-        options={campagnesDisplayMode}
+        options={isRegionObserver ? campagneDisplayModeRegionObserver : campagnesDisplayMode}
       />
       <SearchContainer>
         <Input

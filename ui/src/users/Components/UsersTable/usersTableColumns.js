@@ -1,8 +1,9 @@
 import { Tooltip, Box, Select, Text, IconButton } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { CheckIcon, AddIcon, CopyIcon, CloseIcon, UnlockIcon } from "@chakra-ui/icons";
-import { USER_ROLES, USER_STATUS } from "../../../constants";
+import { OBSERVER_SCOPES, USER_ROLES, USER_STATUS } from "../../../constants";
 import { etablissementLabelGetter } from "../../../utils/etablissement";
+import { REGIONS } from "../../../regions";
 
 const columnHelper = createColumnHelper();
 
@@ -100,6 +101,28 @@ const usersTableColumns = (
         const singleEtablissement = info.getValue[1];
         const etablissements = info.getValue()[2];
         const scope = info.getValue()[3];
+
+        if (scope?.field === OBSERVER_SCOPES.NATIONAL) {
+          return (
+            <Box display="flex" flexDirection="column">
+              <Text>National</Text>
+            </Box>
+          );
+        }
+
+        if (scope?.field === OBSERVER_SCOPES.NUM_DEPARTEMENT) {
+          return (
+            <Box display="flex" flexDirection="column">
+              <Text>
+                {
+                  REGIONS.flatMap((region) => region.departements).find(
+                    (departement) => departement.code === scope.value
+                  ).nom
+                }
+              </Text>
+            </Box>
+          );
+        }
 
         if (typeof scope?.value === "string") {
           return (
