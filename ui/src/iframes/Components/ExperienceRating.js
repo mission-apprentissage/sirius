@@ -34,7 +34,7 @@ const ExperienceRating = ({ rating }) => {
           </BadRating>
         </Rating>
       </div>
-      <p>Voici le détail de leur expérience : du plus simple ① au plus difficile à vivre ⑤</p>
+      <p>Voici le détail de leur expérience : du plus simple ① au plus difficile à vivre ⑥</p>
     </ExperienceRatingContainer>
   );
 };
