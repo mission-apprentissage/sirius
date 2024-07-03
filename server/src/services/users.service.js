@@ -23,12 +23,10 @@ const loginUser = async (id) => {
         _id: id,
         role: user.role,
         status: user.status,
-        siret: user.siret,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         acceptedCgu: user.acceptedCgu,
-        scope: user.scope,
       },
     });
     const refreshToken = getRefreshToken({
@@ -36,12 +34,10 @@ const loginUser = async (id) => {
         _id: id,
         role: user.role,
         status: user.status,
-        siret: user.siret,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         acceptedCgu: user.acceptedCgu,
-        scope: user.scope,
       },
     });
 
@@ -64,13 +60,11 @@ const sudo = async (id) => {
         _id: id,
         role: user.role,
         status: user.status,
-        siret: user.siret,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         acceptedCgu: user.acceptedCgu,
         isSudo: true,
-        scope: user.scope,
       },
     });
     const refreshToken = getRefreshToken({
@@ -78,13 +72,11 @@ const sudo = async (id) => {
         _id: id,
         role: user.role,
         status: user.status,
-        siret: user.siret,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         acceptedCgu: user.acceptedCgu,
         isSudo: true,
-        scope: user.scope,
       },
     });
 
@@ -112,12 +104,10 @@ const refreshTokenUser = async (refreshToken) => {
         _id: userId,
         role: user.role,
         status: user.status,
-        siret: user.siret,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         acceptedCgu: user.acceptedCgu,
-        scope: user.scope,
       },
     });
     const newRefreshToken = getRefreshToken({
@@ -125,12 +115,10 @@ const refreshTokenUser = async (refreshToken) => {
         _id: userId,
         role: user.role,
         status: user.status,
-        siret: user.siret,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         acceptedCgu: user.acceptedCgu,
-        scope: user.scope,
       },
     });
     user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };

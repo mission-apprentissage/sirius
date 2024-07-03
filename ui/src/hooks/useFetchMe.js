@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { UserContext } from "../context/UserContext";
 import { me } from "../queries/users";
 
 const useFetchMe = ({ enabled, token }) => {
