@@ -20,8 +20,10 @@ const UserProvider = ({ children }) => {
   const shouldHaveEtablissements =
     state.user?.role === USER_ROLES.ETABLISSEMENT && !state.user?.etablissements?.length;
 
+  const shouldHaveScope = state.user?.role === USER_ROLES.OBSERVER && !state.user?.scope;
+
   const { me } = useFetchMe({
-    enabled: !!state?.token && shouldHaveEtablissements,
+    enabled: !!state?.token && (shouldHaveEtablissements || shouldHaveScope),
     token: state?.token,
   });
 
@@ -73,7 +75,13 @@ const UserProvider = ({ children }) => {
         user: { ...prevState.user, etablissements: me?.etablissements },
       }));
     }
-  }, [me, shouldHaveEtablissements]);
+    if (me && shouldHaveScope) {
+      setState((prevState) => ({
+        ...prevState,
+        user: { ...prevState.user, scope: me?.scope },
+      }));
+    }
+  }, [me, shouldHaveEtablissements, shouldHaveScope]);
 
   return <UserContext.Provider value={[state, setState]}>{children}</UserContext.Provider>;
 };
