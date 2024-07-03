@@ -17,7 +17,7 @@ const useFetchTemoignagesDatavisualisation = () => {
     datavisualisation: data,
     isSuccess,
     isError,
-    isLoading: isPending || isIdle,
+    isLoading: isPending,
     isIdle,
   };
 };
