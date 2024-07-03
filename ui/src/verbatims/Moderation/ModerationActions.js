@@ -18,19 +18,22 @@ const ModerationActions = ({
 }) => {
   const handleAcceptClassification = () => {
     if (!selectedVerbatims.length) return;
-    const updatedVerbatims = selectedVerbatims.map((verbatim) => {
-      const highestScore = Object.entries(verbatim.scores)
-        .filter(([key]) => key !== "NOT_VALIDATED")
-        .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)[0];
+    const updatedVerbatims = selectedVerbatims
+      .map((verbatim) => {
+        if (!verbatim.scores) return;
+        const highestScore = Object.entries(verbatim.scores)
+          .filter(([key]) => key !== "NOT_VALIDATED")
+          .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)[0];
 
-      const isGem = verbatim.scores.GEM.avis === "oui";
-      const status = isGem ? VERBATIM_STATUS.GEM : highestScore[0];
+        const isGem = verbatim.scores.GEM.avis === "oui";
+        const status = isGem ? VERBATIM_STATUS.GEM : highestScore[0];
 
-      return {
-        _id: verbatim._id,
-        status: status,
-      };
-    });
+        return {
+          _id: verbatim._id,
+          status: status,
+        };
+      })
+      .filter(Boolean);
     patchVerbatims(updatedVerbatims);
   };
 

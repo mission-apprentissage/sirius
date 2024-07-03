@@ -117,6 +117,13 @@ const ResultsCampagnesPage = () => {
     setPdfExportLoading(false);
   };
 
+  const hasNoTemoignages =
+    (!datavisualisation?.length &&
+      !isErrorCampagnesDatavisualisation &&
+      !isLoadingCampagnesDatavisualisation &&
+      !isIdleCampagnesDatavisualisation) ||
+    !selectedCampagneIds.length;
+
   return (
     <Container>
       <ResultsCampagneContainer>
@@ -143,7 +150,13 @@ const ResultsCampagnesPage = () => {
               priority="secondary"
               iconId="fr-icon-file-download-fill"
               onClick={handlePdfExport}
-              disabled={pdfExportLoading || isLoadingCampagnesBatch || !selectedCampagneIds.length}
+              disabled={
+                pdfExportLoading ||
+                isLoadingCampagnesBatch ||
+                isLoadingCampagnesDatavisualisation ||
+                !selectedCampagneIds.length ||
+                hasNoTemoignages
+              }
             >
               {pdfExportLoading ? (
                 <BeatLoader
@@ -173,23 +186,20 @@ const ResultsCampagnesPage = () => {
             severity="error"
           />
         ) : null}
-        {!datavisualisation &&
-          !isErrorCampagnesDatavisualisation &&
-          !isLoadingCampagnesDatavisualisation &&
-          isIdleCampagnesDatavisualisation && (
-            <Alert
-              title="Aucun témoignage n'est disponible pour les campagnes sélectionnées"
-              description="Merci de sélectionner d'autres campagnes"
-              severity="info"
-            />
-          )}
+        {hasNoTemoignages && (
+          <Alert
+            title="Aucun témoignage n'est disponible pour les campagnes sélectionnées"
+            description="Merci de sélectionner d'autres campagnes"
+            severity="info"
+          />
+        )}
         {shouldDisplayTabbedResults && !pdfExportLoading ? (
           <MultipleQuestionnairesTabs
             temoignages={datavisualisation}
             setCurrentDatavisualisationQuestionnaireId={setCurrentDatavisualisationQuestionnaireId}
           />
         ) : null}
-        {shouldDisplayResults && !pdfExportLoading ? (
+        {shouldDisplayResults && !pdfExportLoading && !hasNoTemoignages ? (
           <ResultsCampagnesVisualisation temoignages={datavisualisation[0]} />
         ) : null}
         {pdfExportLoading ? (
