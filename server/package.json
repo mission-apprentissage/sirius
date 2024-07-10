@@ -4,12 +4,14 @@
   "description": "",
   "main": "deca/index.js",
   "scripts": {
-    "start": "nodemon --ignore test/ src/cli.js http",
-    "debug": "nodemon --inspect=0.0.0.0 --signal SIGINT --ignore test/ src/cli.js http",
-    "cli": "node src/cli.js",
-    "test": "mocha --recursive --exit --timeout 5000 test/",
-    "test:watch": "nodemon --exec \"mocha --recursive --exit --timeout 5000 test/\"",
-    "test:coverage": "nyc --reporter=html --temp-dir .coverage/build --report-dir .coverage mocha --recursive --exit --timeout 500 test/"
+    "start": "nodemon --ignore test/ dist/cli.js http",
+    "debug": "nodemon --inspect=0.0.0.0 --signal SIGINT --ignore test/ dist/cli.js http",
+    "cli": "node dist/cli.js",
+    "test": "mocha --require ts-node/register --recursive --exit --timeout 5000 test/**/*.test.ts",
+    "test:watch": "nodemon --exec \"mocha --require ts-node/register --recursive --exit --timeout 5000 test/**/*.test.ts\"",
+    "test:coverage": "nyc --reporter=html --temp-dir .coverage/build --report-dir .coverage mocha --require ts-node/register --recursive --exit --timeout 500 test/**/*.test.ts",
+    "build": "tsc",
+    "dev": "ts-node src/cli.js http"
   },
   "author": "",
   "license": "ISC",
@@ -59,6 +61,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "7.6.0",
+    "@types/node": "20.14.10",
     "chai": "4.3.7",
     "eslint": "8.34.0",
     "eslint-config-prettier": "8.6.0",
@@ -71,7 +74,9 @@
     "prettier": "2.8.4",
     "sinon": "15.0.1",
     "sinon-chai": "3.7.0",
-    "supertest": "6.3.3"
+    "supertest": "6.3.3",
+    "ts-node": "10.9.2",
+    "typescript": "5.5.3"
   },
   "prettier": {
     "printWidth": 120,

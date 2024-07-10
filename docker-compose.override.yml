@@ -23,7 +23,7 @@ services:
         - SIRIUS_ENV=dev
 
   server:
-    command: yarn debug
+    command: yarn dev
     ports:
       - "127.0.0.1:9229:9229" #Allows remote debugging
     volumes:
