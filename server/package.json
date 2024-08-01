@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "engines": {
-    "node": ">=18.14.0"
+    "node": ">=v20.16.0"
   },
   "dependencies": {
     "@hapi/boom": "10.0.0",
