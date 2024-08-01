@@ -12,4 +12,5 @@ WORKDIR /app
 
 VOLUME /data
 EXPOSE 5000
-CMD ["yarn", "start"]
+
+CMD sh -c 'if [ "$NODE_ENV" = "dev" ]; then yarn dev; else yarn start; fi'

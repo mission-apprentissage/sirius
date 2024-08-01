@@ -7,7 +7,7 @@ hooks:
 	chmod +x misc/git-hooks/*
 
 start:
-	docker-compose up --build --force-recreate
+	@NODE_ENV=$(NODE_ENV) docker-compose up --build --force-recreate
 
 stop:
 	docker-compose stop
