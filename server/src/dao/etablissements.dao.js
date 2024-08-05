@@ -5,7 +5,7 @@ const create = async (etablissement) => {
 };
 
 const getAll = async (query) => {
-  return Etablissement.find({ ...query, deletedAt: null }).lean();
+  return Etablissement.find({ ...query }).lean();
 };
 
 const getOne = (id) => {

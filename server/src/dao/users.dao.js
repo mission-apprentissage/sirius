@@ -20,7 +20,7 @@ const create = ({ email, firstName, lastName, password, comment, role, etablisse
 };
 
 const getAll = () => {
-  return User.find().select("-refreshToken -authStrategy").lean();
+  return User.find({}, "+salt +hash");
 };
 
 module.exports = {

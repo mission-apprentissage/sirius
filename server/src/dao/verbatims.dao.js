@@ -50,7 +50,7 @@ const count = (query = {}) => {
 };
 
 const getAll = (query) => {
-  return Verbatim.find({ ...query, deletedAt: null });
+  return Verbatim.find({ ...query });
 };
 
 const getAllWithFormation = async (query = {}, onlyDiscrepancies, page = 1, pageSize = 100) => {
