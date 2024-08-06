@@ -18,32 +18,32 @@ export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface Campagnes {
-  created_at: Timestamp | null;
+  created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
-  end_date: Timestamp | null;
-  id: string;
-  nom_campagne: string | null;
+  end_date: Timestamp;
+  id: Generated<string>;
+  nom_campagne: string;
   questionnaire_id: string | null;
   seats: number | null;
-  start_date: Timestamp | null;
-  updated_at: Timestamp | null;
+  start_date: Timestamp;
+  updated_at: Generated<Timestamp | null>;
 }
 
 export interface Etablissements {
   catalogue_data: Json | null;
   catalogue_id: string | null;
-  created_at: Timestamp | null;
+  created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   enseigne: string | null;
   entreprise_raison_sociale: string | null;
-  id: string;
+  id: Generated<string>;
   localite: string | null;
   onisep_nom: string | null;
   onisep_url: string | null;
   region_implantation_nom: string | null;
   siret: string | null;
   uai: string | null;
-  updated_at: Timestamp | null;
+  updated_at: Generated<Timestamp | null>;
 }
 
 export interface Formations {
@@ -51,7 +51,7 @@ export interface Formations {
   catalogue_data: Json | null;
   catalogue_id: string | null;
   code_postal: string | null;
-  created_at: Timestamp | null;
+  created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   diplome: string | null;
   duree: number | null;
@@ -63,7 +63,7 @@ export interface Formations {
   etablissement_gestionnaire_enseigne: string | null;
   etablissement_gestionnaire_siret: string | null;
   etablissement_id: string | null;
-  id: string;
+  id: Generated<string>;
   intitule_court: string | null;
   intitule_long: string | null;
   lieu_formation_adresse: string | null;
@@ -72,28 +72,28 @@ export interface Formations {
   num_departement: string | null;
   region: string | null;
   tags: Json | null;
-  updated_at: Timestamp | null;
+  updated_at: Generated<Timestamp | null>;
 }
 
 export interface Questionnaires {
-  created_at: Timestamp | null;
+  created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
-  id: string;
-  is_validated: boolean | null;
-  nom: string | null;
+  id: Generated<string>;
+  is_validated: Generated<boolean | null>;
+  nom: string;
   questionnaire: Json | null;
   questionnaire_ui: Json | null;
-  updated_at: Timestamp | null;
+  updated_at: Generated<Timestamp | null>;
 }
 
 export interface Temoignages {
-  created_at: Timestamp | null;
+  created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
-  id: string;
-  is_bot: boolean | null;
+  id: Generated<string>;
+  is_bot: Generated<boolean | null>;
   last_question_at: Timestamp | null;
   reponses: Json | null;
-  updated_at: Timestamp | null;
+  updated_at: Generated<Timestamp | null>;
 }
 
 export interface TemoignagesCampagnes {
@@ -103,17 +103,17 @@ export interface TemoignagesCampagnes {
 }
 
 export interface Users {
-  accepted_cgu: boolean | null;
+  accepted_cgu: Generated<boolean | null>;
   comment: string | null;
   confirmation_token: string | null;
-  email: string | null;
-  email_confirmed: boolean | null;
-  firstname: string | null;
+  email: string;
+  email_confirmed: Generated<boolean | null>;
+  firstname: string;
   hash: string | null;
-  id: string;
-  lastname: string | null;
+  id: Generated<string>;
+  lastname: string;
   refresh_token: Json | null;
-  role: string | null;
+  role: string;
   salt: string | null;
   scope: Json | null;
   status: string | null;
@@ -127,7 +127,7 @@ export interface UsersEtablissements {
 
 export interface Verbatims {
   content: string | null;
-  created_at: Timestamp | null;
+  created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   id: Generated<string>;
   question_key: string | null;
@@ -135,7 +135,7 @@ export interface Verbatims {
   status: string | null;
   temoignage_id: string | null;
   themes: Json | null;
-  updated_at: Timestamp | null;
+  updated_at: Generated<Timestamp | null>;
 }
 
 export interface DB {

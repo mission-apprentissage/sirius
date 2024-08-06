@@ -6,33 +6,33 @@ export const up = async (db: Kysely<unknown>) => {
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
         CREATE TABLE etablissements (
-            id VARCHAR(255) PRIMARY KEY,
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             catalogue_id VARCHAR(255),
-            siret VARCHAR,
-            onisep_nom VARCHAR,
-            onisep_url VARCHAR,
-            enseigne VARCHAR,
-            entreprise_raison_sociale VARCHAR,
-            uai VARCHAR,
-            localite VARCHAR,
-            region_implantation_nom VARCHAR,
+            siret VARCHAR(14),
+            onisep_nom VARCHAR(255),
+            onisep_url VARCHAR(255),
+            enseigne VARCHAR(255),
+            entreprise_raison_sociale VARCHAR(255),
+            uai VARCHAR(8),
+            localite VARCHAR(255),
+            region_implantation_nom VARCHAR(255),
             catalogue_data JSONB,
             deleted_at TIMESTAMPTZ,
-            created_at TIMESTAMPTZ,
-            updated_at TIMESTAMPTZ
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW()
         );
 
         CREATE TABLE users (
-            id VARCHAR(255) PRIMARY KEY,
-            firstname VARCHAR,
-            lastname VARCHAR,
-            email VARCHAR UNIQUE,
-            email_confirmed BOOLEAN,
-            role VARCHAR,
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            firstname VARCHAR(255) NOT NULL,
+            lastname VARCHAR(255) NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            email_confirmed BOOLEAN DEFAULT FALSE,
+            role VARCHAR(255) NOT NULL,
             scope JSONB,
-            status VARCHAR,
+            status VARCHAR(255),
             comment TEXT,
-            accepted_cgu BOOLEAN,
+            accepted_cgu BOOLEAN DEFAULT FALSE,
             confirmation_token TEXT,
             refresh_token JSONB,
             salt TEXT,
@@ -41,90 +41,98 @@ export const up = async (db: Kysely<unknown>) => {
 
         CREATE TABLE users_etablissements (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-            user_id VARCHAR(255) REFERENCES users(id),
-            etablissement_id VARCHAR(255)
+            user_id UUID REFERENCES users(id),
+            etablissement_id UUID REFERENCES etablissements(id)
+        );
+
+        CREATE TABLE questionnaires (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            nom VARCHAR(255) NOT NULL,
+            questionnaire JSONB,
+            questionnaire_ui JSONB,
+            is_validated BOOLEAN DEFAULT FALSE,
+            deleted_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW()
         );
 
         CREATE TABLE campagnes (
-            id VARCHAR(255) PRIMARY KEY,
-            nom_campagne VARCHAR,
-            start_date TIMESTAMPTZ,
-            end_date TIMESTAMPTZ,
-            questionnaire_id VARCHAR(255),
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            nom_campagne VARCHAR(255) NOT NULL,
+            start_date TIMESTAMPTZ NOT NULL,
+            end_date TIMESTAMPTZ NOT NULL,
+            questionnaire_id UUID REFERENCES questionnaires(id) ON DELETE SET NULL,
             seats SMALLINT,
             deleted_at TIMESTAMPTZ,
-            created_at TIMESTAMPTZ,
-            updated_at TIMESTAMPTZ
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW()
         );
 
         CREATE TABLE temoignages (
-            id VARCHAR(255) PRIMARY KEY,
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             reponses JSONB,
-            is_bot BOOLEAN,
+            is_bot BOOLEAN DEFAULT FALSE,
             last_question_at TIMESTAMPTZ,
-            created_at TIMESTAMPTZ,
-            updated_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW(),
             deleted_at TIMESTAMPTZ
         );
 
         CREATE TABLE temoignages_campagnes (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-            temoignage_id VARCHAR(255),
-            campagne_id VARCHAR(255)
-        );
-
-        CREATE TABLE questionnaires (
-            id VARCHAR(255) PRIMARY KEY,
-            nom VARCHAR,
-            questionnaire JSONB,
-            questionnaire_ui JSONB,
-            is_validated BOOLEAN,
-            deleted_at TIMESTAMPTZ,
-            created_at TIMESTAMPTZ,
-            updated_at TIMESTAMPTZ
+            temoignage_id UUID REFERENCES temoignages(id),
+            campagne_id UUID REFERENCES campagnes(id)
         );
 
         CREATE TABLE formations (
-            id VARCHAR(255) PRIMARY KEY,
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             catalogue_id VARCHAR(255),
-            region VARCHAR,
-            num_departement VARCHAR,
-            intitule_long VARCHAR,
-            intitule_court VARCHAR,
-            diplome VARCHAR,
-            localite VARCHAR,
+            region VARCHAR(255),
+            num_departement VARCHAR(255),
+            intitule_long VARCHAR(255),
+            intitule_court VARCHAR(255),
+            diplome VARCHAR(255),
+            localite VARCHAR(255),
             tags JSONB,
-            lieu_formation_adresse VARCHAR,
-            lieu_formation_adresse_computed VARCHAR,
-            code_postal VARCHAR,
+            lieu_formation_adresse VARCHAR(255),
+            lieu_formation_adresse_computed VARCHAR(255),
+            code_postal VARCHAR(10),
             duree INTEGER,
-            etablissement_gestionnaire_siret VARCHAR,
-            etablissement_gestionnaire_enseigne VARCHAR,
-            etablissement_formateur_siret VARCHAR,
-            etablissement_formateur_enseigne VARCHAR,
-            etablissement_formateur_entreprise_raison_sociale VARCHAR,
-            etablissement_formateur_adresse VARCHAR,
-            etablissement_formateur_localite VARCHAR,
+            etablissement_gestionnaire_siret VARCHAR(14),
+            etablissement_gestionnaire_enseigne VARCHAR(255),
+            etablissement_formateur_siret VARCHAR(14),
+            etablissement_formateur_enseigne VARCHAR(255),
+            etablissement_formateur_entreprise_raison_sociale VARCHAR(255),
+            etablissement_formateur_adresse VARCHAR(255),
+            etablissement_formateur_localite VARCHAR(255),
             catalogue_data JSONB,
-            etablissement_id VARCHAR(255) REFERENCES etablissements(id),
-            campagne_id VARCHAR(255),
+            etablissement_id UUID REFERENCES etablissements(id) ON DELETE SET NULL,
+            campagne_id UUID REFERENCES campagnes(id) ON DELETE SET NULL,
             deleted_at TIMESTAMPTZ,
-            created_at TIMESTAMPTZ,
-            updated_at TIMESTAMPTZ
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW()
         );
 
         CREATE TABLE verbatims (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-            temoignage_id VARCHAR(255),
-            question_key VARCHAR,
+            temoignage_id UUID REFERENCES temoignages(id),
+            question_key VARCHAR(255),
             content TEXT,
-            status VARCHAR,
+            status VARCHAR(255),
             scores JSONB,
             themes JSONB,
             deleted_at TIMESTAMPTZ,
-            created_at TIMESTAMPTZ,
-            updated_at TIMESTAMPTZ
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW()
         );
+
+        CREATE INDEX idx_users_email ON users(email);
+        CREATE INDEX idx_users_etablissements_user_id ON users_etablissements(user_id);
+        CREATE INDEX idx_users_etablissements_etablissement_id ON users_etablissements(etablissement_id);
+        CREATE INDEX idx_temoignages_campagnes_temoignage_id ON temoignages_campagnes(temoignage_id);
+        CREATE INDEX idx_temoignages_campagnes_campagne_id ON temoignages_campagnes(campagne_id);
+        CREATE INDEX idx_formations_etablissement_id ON formations(etablissement_id);
+        CREATE INDEX idx_formations_campagne_id ON formations(campagne_id);
     `.compile(db)
   );
 };
@@ -132,15 +140,24 @@ export const up = async (db: Kysely<unknown>) => {
 export const down = async (db: Kysely<unknown>) => {
   await db.executeQuery(
     sql`
+          ALTER TABLE campagnes DROP CONSTRAINT IF EXISTS campagnes_questionnaire_id_fkey;
+          ALTER TABLE formations DROP CONSTRAINT IF EXISTS formations_campagne_id_fkey;
+          ALTER TABLE formations DROP CONSTRAINT IF EXISTS formations_etablissement_id_fkey;
+          ALTER TABLE temoignages_campagnes DROP CONSTRAINT IF EXISTS temoignages_campagnes_temoignage_id_fkey;
+          ALTER TABLE temoignages_campagnes DROP CONSTRAINT IF EXISTS temoignages_campagnes_campagne_id_fkey;
+          ALTER TABLE verbatims DROP CONSTRAINT IF EXISTS verbatims_temoignage_id_fkey;
+          ALTER TABLE users_etablissements DROP CONSTRAINT IF EXISTS users_etablissements_user_id_fkey;
+          ALTER TABLE users_etablissements DROP CONSTRAINT IF EXISTS users_etablissements_etablissement_id_fkey;
+  
           DROP TABLE IF EXISTS verbatims;
-          DROP TABLE IF EXISTS formations;
-          DROP TABLE IF EXISTS questionnaires;
           DROP TABLE IF EXISTS temoignages_campagnes;
+          DROP TABLE IF EXISTS formations;
           DROP TABLE IF EXISTS temoignages;
-          DROP TABLE IF EXISTS campagnes;
           DROP TABLE IF EXISTS users_etablissements;
+          DROP TABLE IF EXISTS campagnes;
+          DROP TABLE IF EXISTS questionnaires;
           DROP TABLE IF EXISTS users;
           DROP TABLE IF EXISTS etablissements;
-      `.compile(db)
+        `.compile(db)
   );
 };
