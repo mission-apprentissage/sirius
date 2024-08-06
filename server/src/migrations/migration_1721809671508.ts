@@ -6,7 +6,7 @@ export const up = async (db: Kysely<unknown>) => {
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
         CREATE TABLE etablissements (
-            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
             catalogue_id VARCHAR(255) NOT NULL,
             siret VARCHAR(14) NOT NULL,
             onisep_nom VARCHAR(255),
@@ -23,16 +23,16 @@ export const up = async (db: Kysely<unknown>) => {
         );
 
         CREATE TABLE users (
-            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
             first_name VARCHAR(255) NOT NULL,
             last_name VARCHAR(255) NOT NULL,
             email VARCHAR(255) UNIQUE NOT NULL,
-            email_confirmed BOOLEAN DEFAULT FALSE,
+            email_confirmed BOOLEAN,
             role VARCHAR(255) NOT NULL,
             scope JSONB,
             status VARCHAR(255) NOT NULL,
             comment TEXT,
-            accepted_cgu BOOLEAN DEFAULT FALSE,
+            accepted_cgu BOOLEAN,
             confirmation_token TEXT,
             refresh_token JSONB,
             salt VARCHAR(64) NOT NULL,
@@ -40,13 +40,13 @@ export const up = async (db: Kysely<unknown>) => {
         );
 
         CREATE TABLE users_etablissements (
-            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
             user_id UUID REFERENCES users(id) NOT NULL,
             etablissement_id UUID REFERENCES etablissements(id) NOT NULL
         );
 
         CREATE TABLE questionnaires (
-            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
             nom VARCHAR(255) NOT NULL,
             questionnaire JSON NOT NULL,
             questionnaire_ui JSON NOT NULL,
@@ -57,7 +57,7 @@ export const up = async (db: Kysely<unknown>) => {
         );
 
         CREATE TABLE campagnes (
-            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
             nom_campagne VARCHAR(255) NOT NULL,
             start_date TIMESTAMPTZ NOT NULL,
             end_date TIMESTAMPTZ NOT NULL,
@@ -70,8 +70,8 @@ export const up = async (db: Kysely<unknown>) => {
 
         CREATE TABLE temoignages (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-            reponses JSONB NOT NULL,
-            is_bot BOOLEAN DEFAULT FALSE NOT NULL,
+            reponses JSONB,
+            is_bot BOOLEAN DEFAULT FALSE,
             last_question_at TIMESTAMPTZ,
             created_at TIMESTAMPTZ DEFAULT NOW(),
             updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -80,12 +80,12 @@ export const up = async (db: Kysely<unknown>) => {
 
         CREATE TABLE temoignages_campagnes (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-            temoignage_id UUID REFERENCES temoignages(id) NOT NULL,
+            temoignage_id UUID REFERENCES temoignages(id),
             campagne_id UUID REFERENCES campagnes(id)
         );
 
         CREATE TABLE formations (
-            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
             catalogue_id VARCHAR(255) NOT NULL,
             region VARCHAR(255) NOT NULL,
             num_departement VARCHAR(255) NOT NULL,
@@ -114,7 +114,7 @@ export const up = async (db: Kysely<unknown>) => {
         );
 
         CREATE TABLE verbatims (
-            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
             temoignage_id UUID REFERENCES temoignages(id) NOT NULL,
             question_key VARCHAR(255) NOT NULL,
             content TEXT,
