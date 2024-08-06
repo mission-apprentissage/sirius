@@ -1,7 +1,8 @@
 import type { ColumnType } from "kysely";
 
-export type Generated<T> =
-  T extends ColumnType<infer S, infer I, infer U> ? ColumnType<S, I | undefined, U> : ColumnType<T, T | undefined, T>;
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
 
 export type Json = JsonValue;
 
@@ -30,8 +31,8 @@ export interface Campagnes {
 }
 
 export interface Etablissements {
-  catalogue_data: Json | null;
-  catalogue_id: string | null;
+  catalogue_data: Json;
+  catalogue_id: string;
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   enseigne: string | null;
@@ -41,36 +42,36 @@ export interface Etablissements {
   onisep_nom: string | null;
   onisep_url: string | null;
   region_implantation_nom: string | null;
-  siret: string | null;
+  siret: string;
   uai: string | null;
   updated_at: Generated<Timestamp | null>;
 }
 
 export interface Formations {
   campagne_id: string | null;
-  catalogue_data: Json | null;
-  catalogue_id: string | null;
-  code_postal: string | null;
+  catalogue_data: Json;
+  catalogue_id: string;
+  code_postal: string;
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
-  diplome: string | null;
-  duree: number | null;
+  diplome: string;
+  duree: number;
   etablissement_formateur_adresse: string | null;
   etablissement_formateur_enseigne: string | null;
   etablissement_formateur_entreprise_raison_sociale: string | null;
   etablissement_formateur_localite: string | null;
-  etablissement_formateur_siret: string | null;
+  etablissement_formateur_siret: string;
   etablissement_gestionnaire_enseigne: string | null;
-  etablissement_gestionnaire_siret: string | null;
+  etablissement_gestionnaire_siret: string;
   etablissement_id: string | null;
   id: Generated<string>;
   intitule_court: string | null;
   intitule_long: string | null;
   lieu_formation_adresse: string | null;
   lieu_formation_adresse_computed: string | null;
-  localite: string | null;
-  num_departement: string | null;
-  region: string | null;
+  localite: string;
+  num_departement: string;
+  region: string;
   tags: Json | null;
   updated_at: Generated<Timestamp | null>;
 }
@@ -79,10 +80,10 @@ export interface Questionnaires {
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   id: Generated<string>;
-  is_validated: Generated<boolean | null>;
+  is_validated: Generated<boolean>;
   nom: string;
-  questionnaire: Json | null;
-  questionnaire_ui: Json | null;
+  questionnaire: Json;
+  questionnaire_ui: Json;
   updated_at: Generated<Timestamp | null>;
 }
 
@@ -90,16 +91,16 @@ export interface Temoignages {
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   id: Generated<string>;
-  is_bot: Generated<boolean | null>;
+  is_bot: Generated<boolean>;
   last_question_at: Timestamp | null;
-  reponses: Json | null;
+  reponses: Json;
   updated_at: Generated<Timestamp | null>;
 }
 
 export interface TemoignagesCampagnes {
   campagne_id: string | null;
   id: Generated<string>;
-  temoignage_id: string | null;
+  temoignage_id: string;
 }
 
 export interface Users {
@@ -109,31 +110,31 @@ export interface Users {
   email: string;
   email_confirmed: Generated<boolean | null>;
   firstname: string;
-  hash: string | null;
+  hash: string;
   id: Generated<string>;
   lastname: string;
   refresh_token: Json | null;
   role: string;
-  salt: string | null;
+  salt: string;
   scope: Json | null;
-  status: string | null;
+  status: string;
 }
 
 export interface UsersEtablissements {
-  etablissement_id: string | null;
+  etablissement_id: string;
   id: Generated<string>;
-  user_id: string | null;
+  user_id: string;
 }
 
 export interface Verbatims {
-  content: string | null;
+  content: string;
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   id: Generated<string>;
-  question_key: string | null;
+  question_key: string;
   scores: Json | null;
-  status: string | null;
-  temoignage_id: string | null;
+  status: string;
+  temoignage_id: string;
   themes: Json | null;
   updated_at: Generated<Timestamp | null>;
 }
