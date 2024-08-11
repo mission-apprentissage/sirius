@@ -1,8 +1,7 @@
 import type { ColumnType } from "kysely";
 
-export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
-  ? ColumnType<S, I | undefined, U>
-  : ColumnType<T, T | undefined, T>;
+export type Generated<T> =
+  T extends ColumnType<infer S, infer I, infer U> ? ColumnType<S, I | undefined, U> : ColumnType<T, T | undefined, T>;
 
 export type Json = JsonValue;
 
@@ -109,10 +108,10 @@ export interface Users {
   confirmation_token: string | null;
   email: string;
   email_confirmed: Generated<boolean | null>;
-  firstname: string;
+  first_name: string;
   hash: string;
   id: Generated<string>;
-  lastname: string;
+  last_name: string;
   refresh_token: Json | null;
   role: string;
   salt: string;

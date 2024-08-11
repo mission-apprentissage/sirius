@@ -65,8 +65,8 @@ export const up = async (db: Kysely<DB>) => {
         .insertInto("users")
         .values({
           id: newId,
-          firstname: user.firstName,
-          lastname: user.lastName,
+          first_name: user.firstName,
+          last_name: user.lastName,
           email: user.email,
           email_confirmed: user.emailConfirmed,
           role: user.role,
@@ -89,6 +89,11 @@ export const up = async (db: Kysely<DB>) => {
 
           if (foundEtablissement) {
             const newIdEtablissement = findNewId(etablissementsIdsMapping, foundEtablissement._id.toString());
+
+            if (!newIdEtablissement) {
+              console.log("No newIdEtablissement found for etablissement", foundEtablissement._id.toString());
+              continue;
+            }
 
             await db
               .insertInto("users_etablissements")
@@ -253,6 +258,11 @@ export const up = async (db: Kysely<DB>) => {
 
   for (const verbatim of allVerbatims) {
     const newTemoignageId = findNewId(temoignagesIdsMapping, verbatim.temoignageId.toString());
+
+    if (!newTemoignageId) {
+      console.log("No newTemoignageId found for verbatim", verbatim._id.toString());
+      continue;
+    }
 
     try {
       await db

@@ -24,8 +24,8 @@ export const up = async (db: Kysely<unknown>) => {
 
         CREATE TABLE users (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-            firstname VARCHAR(255) NOT NULL,
-            lastname VARCHAR(255) NOT NULL,
+            first_name VARCHAR(255) NOT NULL,
+            last_name VARCHAR(255) NOT NULL,
             email VARCHAR(255) UNIQUE NOT NULL,
             email_confirmed BOOLEAN DEFAULT FALSE,
             role VARCHAR(255) NOT NULL,
