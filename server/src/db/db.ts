@@ -1,6 +1,7 @@
-import { Kysely, PostgresDialect } from "kysely";
+import { CamelCasePlugin, DeduplicateJoinsPlugin, Kysely, PostgresDialect } from "kysely";
 import { Pool, types } from "pg";
 import config from "../config";
+import { DB } from "./schema";
 
 types.setTypeParser(types.builtins.INT8, (val) => parseInt(val));
 types.setTypeParser(types.builtins.INT4, (val) => parseInt(val));
@@ -18,8 +19,9 @@ pool.on("error", (error) => {
   console.error("lost connection with DB: ", error);
 });
 
-export const kdb = new Kysely({
+export const kdb = new Kysely<DB>({
   dialect: new PostgresDialect({ pool }),
+  plugins: [new CamelCasePlugin(), new DeduplicateJoinsPlugin()],
   log: (event) => {
     if (event.level === config.psql.logLevel) {
       console.log(`\n====================================\n`);
