@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { verifyPassword } from "./auth.helpers";
 import { kdb } from "../../db/db";
 import { User } from "../../types";
+import { UnauthorizedError } from "../../errors";
 
 passport.use(
   new LocalStrategy(
@@ -16,10 +17,10 @@ passport.use(
         const user = await kdb.selectFrom("users").selectAll().where("email", "=", email).executeTakeFirst();
 
         if (!user) {
-          return done(null, false, { message: "Incorrect email." });
+          return done(new UnauthorizedError(), false, { message: "Incorrect email." });
         }
         if (!verifyPassword(password, user.hash, user.salt)) {
-          return done(null, false, { message: "Incorrect password." });
+          return done(new UnauthorizedError(), false, { message: "Incorrect password." });
         }
 
         return done(null, user);
