@@ -71,7 +71,7 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
       );
 
       const resultUser = await _put(
-        `/api/users/${user._id}`,
+        `/api/users/${user.id}`,
         {
           etablissements: [...previousEtablissementsWithoutEmpty, ...newEtablissementsPayload],
         },
@@ -87,7 +87,7 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
         remoteEtablissementsToCreate.map((etablissement) => {
           return {
             data: etablissement,
-            createdBy: user._id,
+            createdBy: user.id,
           };
         }),
         userContext.token

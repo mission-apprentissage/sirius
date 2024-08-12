@@ -27,7 +27,7 @@ const ChangeUserRoleConfirmationModal = ({
   if (!user) return null;
 
   const handleChangeRoleConfirmation = async () => {
-    const result = await _put(`/api/users/${user._id}`, { role: selectedRole }, userContext.token);
+    const result = await _put(`/api/users/${user.id}`, { role: selectedRole }, userContext.token);
     if (result?.modifiedCount === 1) {
       toast({
         title: "Role modifié",

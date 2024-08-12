@@ -106,7 +106,7 @@ const SignupPage = () => {
         })),
       });
 
-      if (resultUser._id) {
+      if (resultUser.id) {
         setError(null);
         setIsSuccessful(true);
         setIsSubmitting(false);

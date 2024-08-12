@@ -48,7 +48,7 @@ const ChangeUserStatusConfirmationModal = ({
         const payload = remoteEtablissementsToCreate.map((etablissement) => {
           return {
             data: etablissement,
-            createdBy: user._id,
+            createdBy: user.id,
           };
         });
 
@@ -60,7 +60,7 @@ const ChangeUserStatusConfirmationModal = ({
       const localEtablissementsCreatedResult = await createLocalEtablissements();
 
       const userResult = await _put(
-        `/api/users/${user._id}`,
+        `/api/users/${user.id}`,
         { status: selectedStatus },
         userContext.token
       );
@@ -81,7 +81,7 @@ const ChangeUserStatusConfirmationModal = ({
       }
     } else {
       const userResult = await _put(
-        `/api/users/${user._id}`,
+        `/api/users/${user.id}`,
         { status: selectedStatus },
         userContext.token
       );

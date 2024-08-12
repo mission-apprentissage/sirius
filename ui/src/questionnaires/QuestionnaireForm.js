@@ -53,7 +53,7 @@ const submitHandler = async (values, editedQuestionnaireId, userContext) => {
         ...values,
         questionnaire: JSON.parse(values.questionnaire),
         questionnaireUI: JSON.parse(values.questionnaireUI),
-        createdBy: userContext.user?._id,
+        createdBy: userContext.user.id,
       },
       userContext.token
     );

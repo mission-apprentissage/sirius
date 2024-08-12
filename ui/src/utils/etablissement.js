@@ -1,6 +1,6 @@
 export const etablissementLabelGetter = (data) => {
   if (!data || !Object.keys(data)?.length) return "";
-  return data?.onisep_nom || data?.enseigne || data?.entreprise_raison_sociale || "";
+  return data?.onisepNom || data?.enseigne || data?.entrepriseRaisonSociale || "";
 };
 
 // Vérifie si le SIRET est valide à travers sa longueur et l'algorythme de Luhn
