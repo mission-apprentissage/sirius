@@ -89,7 +89,7 @@ const createUser = tryCatch(async (req, res) => {
 });
 
 const loginUser = tryCatch(async (req, res) => {
-  const { success, body } = await usersService.loginUser(req.user._id);
+  const { success, body } = await usersService.loginUser(req.user.id);
 
   if (!success) throw new BasicError();
 
@@ -135,7 +135,7 @@ const logoutUser = tryCatch(async (req, res) => {
     throw new UnauthorizedError();
   }
 
-  const { success } = await usersService.logoutUser(req.user._id, refreshToken);
+  const { success } = await usersService.logoutUser(req.user.id, refreshToken);
 
   if (!success) throw new BasicError();
 
