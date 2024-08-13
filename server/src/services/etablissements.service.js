@@ -3,18 +3,7 @@ const questionnairesDao = require("../dao/questionnaires.dao");
 const campagnesDao = require("../dao/campagnes.dao");
 const temoignagesDao = require("../dao/temoignages.dao");
 const verbatimsDao = require("../dao/verbatims.dao");
-const retainFields = require("../utils/retainFields.utils");
-const { getChampsLibreCount, getChampsLibreField } = require("../utils/verbatims.utils");
-
-const etablissementFieldsToRetain = [
-  "_id",
-  "formationIds",
-  "data._id",
-  "data.onisep_nom",
-  "data.enseigne",
-  "data.entreprise_raison_sociale",
-  "data.siret",
-];
+const { getChampsLibreField } = require("../utils/verbatims.utils");
 
 const createEtablissements = async (etablissementsArray) => {
   try {
@@ -22,9 +11,9 @@ const createEtablissements = async (etablissementsArray) => {
 
     for (const etablissement of etablissementsArray) {
       const existingEtablissementQuery = {
-        "data._id": etablissement.data._id,
+        "catalogue_id": etablissement._id,
       };
-      const existingEtablissement = await etablissementsDao.getAll(existingEtablissementQuery);
+      const existingEtablissement = await etablissementsDao.findAll(existingEtablissementQuery);
 
       if (!existingEtablissement.length) {
         const createdEtablissement = await etablissementsDao.create(etablissement);
@@ -41,11 +30,9 @@ const createEtablissements = async (etablissementsArray) => {
 const getEtablissements = async ({ search }) => {
   try {
     const query = search ? { $text: { $search: search } } : {};
-    const etablissements = await etablissementsDao.getAll(query);
+    const etablissements = await etablissementsDao.findAll(query);
 
-    const cleanedEtablissements = retainFields(etablissements, etablissementFieldsToRetain);
-
-    return { success: true, body: cleanedEtablissements };
+    return { success: true, body: etablissements };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -53,7 +40,7 @@ const getEtablissements = async ({ search }) => {
 
 const getEtablissementsWithTemoignageCount = async () => {
   try {
-    const formations = await etablissementsDao.getAllWithTemoignageCount();
+    const formations = await etablissementsDao.findAllWithTemoignageCount();
     return { success: true, body: formations };
   } catch (error) {
     return { success: false, body: error };
@@ -62,7 +49,7 @@ const getEtablissementsWithTemoignageCount = async () => {
 
 const getEtablissement = async (id) => {
   try {
-    const etablissement = await etablissementsDao.getOne(id);
+    const etablissement = await etablissementsDao.findOne(id);
     return { success: true, body: etablissement };
   } catch (error) {
     return { success: false, body: error };
@@ -92,42 +79,7 @@ const updateEtablissement = async (id, updatedEtablissement) => {
 
 const getEtablissementsSuivi = async () => {
   try {
-    const etablissements = await etablissementsDao.getAllSuivi();
-
-    let questionnaireIds = [];
-
-    etablissements.forEach((etablissement) => {
-      const campagnesQuestionnairesIds = etablissement.campagnes.map((campagne) => campagne.questionnaireId);
-      questionnaireIds.push(...campagnesQuestionnairesIds);
-    });
-
-    const uniqueQuestionnaireIds = [...new Set(questionnaireIds)];
-
-    let questionnairePromises = uniqueQuestionnaireIds.map((questionnaireId) => {
-      return questionnairesDao.getOne(questionnaireId);
-    });
-
-    let uniqueQuestionnaire = await Promise.all(questionnairePromises);
-
-    etablissements.forEach((etablissement) => {
-      etablissement.campagnes.forEach((campagne) => {
-        const questionnaire = uniqueQuestionnaire.find(
-          (questionnaire) => questionnaire._id.toString() === campagne.questionnaireId
-        );
-        const temoignagesList = etablissement.temoignages.filter(
-          (temoignage) => temoignage.campagneId.toString() === campagne._id.toString()
-        );
-
-        campagne.champsLibreCount = getChampsLibreCount(questionnaire.questionnaireUI, temoignagesList);
-      });
-      const allCampagneChampsLibreCount = etablissement.campagnes.map((campagne) => campagne.champsLibreCount);
-
-      etablissement.champsLibreCount = allCampagneChampsLibreCount.reduce((a, b) => a + b, 0);
-      etablissement.temoignagesCount = etablissement.temoignages.length;
-
-      delete etablissement.temoignages;
-      delete etablissement.campagnes;
-    });
+    const etablissements = await etablissementsDao.findAllEtablissementWithCounts();
 
     return { success: true, body: etablissements };
   } catch (error) {
@@ -168,6 +120,5 @@ module.exports = {
   updateEtablissement,
   getEtablissementsSuivi,
   getEtablissementsPublicStatistics,
-  etablissementFieldsToRetain,
   getEtablissementsWithTemoignageCount,
 };
