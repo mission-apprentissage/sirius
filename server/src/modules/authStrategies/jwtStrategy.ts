@@ -1,8 +1,8 @@
 import passport from "passport";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import config from "../../config";
-import { kdb } from "../../db/db";
 import { User } from "../../types";
+import { findOneByIdWithEtablissement } from "../../dao/users.dao";
 
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -17,7 +17,7 @@ passport.use(
       done: (error: unknown | null, user?: User | false, options?: { message: string }) => void
     ) => {
       try {
-        const user = await kdb.selectFrom("users").selectAll().where("id", "=", jwt_payload.user.id).executeTakeFirst();
+        const user = await findOneByIdWithEtablissement(jwt_payload.user.id);
 
         if (user) {
           return done(null, user);

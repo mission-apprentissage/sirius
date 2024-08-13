@@ -19,8 +19,6 @@ const TYPES = {
 const isAdminOrAllowed = async (req, next, type) => {
   const { status, role, siret, etablissements } = req.user;
 
-  const multipleSiret = etablissements.map((etablissement) => etablissement.siret);
-
   if (role === USER_ROLES.ADMIN && status === USER_STATUS.ACTIVE) {
     return next();
   }
@@ -37,6 +35,8 @@ const isAdminOrAllowed = async (req, next, type) => {
 
       if (body) return next();
     }
+
+    const multipleSiret = etablissements.map((etablissement) => etablissement.siret);
 
     // check campagneIds
     if (type === TYPES.CAMPAGNE_IDS) {
