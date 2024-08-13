@@ -18,11 +18,11 @@ const SuiviEtablissementsSearch = ({
     }
     const filteredEtablissements = etablissements.filter((etablissement) => {
       return (
-        etablissement.data?.enseigne?.toLowerCase().includes(search) ||
-        etablissement.data?.entreprise_raison_sociale?.toLowerCase().includes(search) ||
-        etablissement.data?.onisep_nom?.toLowerCase().includes(search) ||
-        etablissement.data?.siret?.toLowerCase().includes(search) ||
-        etablissement.data?.region_implantation_nom?.toLowerCase().includes(search)
+        etablissement.enseigne?.toLowerCase().includes(search) ||
+        etablissement.entreprise_raison_sociale?.toLowerCase().includes(search) ||
+        etablissement.onisep_nom?.toLowerCase().includes(search) ||
+        etablissement.siret?.toLowerCase().includes(search) ||
+        etablissement.region_implantation_nom?.toLowerCase().includes(search)
       );
     });
     setDisplayedEtablissements(filteredEtablissements);
