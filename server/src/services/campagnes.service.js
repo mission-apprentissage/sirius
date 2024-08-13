@@ -285,7 +285,7 @@ const getPdfExport = async (id) => {
   try {
     const campagne = await campagnesDao.getOne(id);
 
-    const formation = await formationsDao.getAll({ campagneId: id });
+    const formation = await formationsDao.findAll({ campagne_id: id });
 
     const campagneName = campagne.nomCampagne || formation[0].data.intitule_long || formation[0].data.intitule_court;
 

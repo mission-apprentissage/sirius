@@ -195,7 +195,7 @@ const getDatavisualisation = async (campagneIds) => {
 const getDatavisualisationFormation = async (intituleFormation) => {
   try {
     const formattedIntituleFormation = intituleFormationFormatter(intituleFormation);
-    const campagneIds = (await formationsDao.getFormationByIntitule(formattedIntituleFormation)).map(
+    const campagneIds = (await formationsDao.findFormationByIntitule(formattedIntituleFormation)).map(
       (formation) => formation.campagneId
     );
 
@@ -255,7 +255,7 @@ const getDatavisualisationFormation = async (intituleFormation) => {
 
 const getDatavisualisationEtablissement = async (uai) => {
   try {
-    const campagneIds = (await formationsDao.getFormationByUai(uai)).map((formation) => formation.campagneId);
+    const campagneIds = (await formationsDao.findFormationByUai(uai)).map((formation) => formation.campagneId);
 
     const query = { campagneId: { $in: campagneIds } };
     const temoignages = await temoignagesDao.getAll(query);

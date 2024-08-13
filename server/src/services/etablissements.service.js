@@ -29,7 +29,7 @@ const createEtablissements = async (etablissementsArray) => {
 
 const getEtablissements = async ({ search }) => {
   try {
-    const query = search ? { $text: { $search: search } } : {};
+    const query = search ? { searchText: search } : {};
     const etablissements = await etablissementsDao.findAll(query);
 
     return { success: true, body: etablissements };

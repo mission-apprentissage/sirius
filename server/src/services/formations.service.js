@@ -1,9 +1,8 @@
-const { ObjectId } = require("mongodb");
 const formationsDao = require("../dao/formations.dao");
 
 const createFormation = async (formation) => {
   try {
-    const existingFormation = await formationsDao.getOneByDataId(formation.data._id);
+    const existingFormation = await formationsDao.findOneByCatalogueId(formation.data._id);
     if (existingFormation.length) {
       throw new Error("Formation déjà existante");
     }
@@ -18,13 +17,13 @@ const createFormation = async (formation) => {
 
 const getFormations = async ({ formationIds, search }) => {
   try {
-    const query = search ? { $text: { $search: search } } : {};
+    const query = search ? { searchText: search } : {};
 
     if (formationIds.length) {
-      query._id = { $in: formationIds.map((formationId) => ObjectId(formationId)) };
+      query.formationIds = formationIds;
     }
 
-    const formations = await formationsDao.getAll(query);
+    const formations = await formationsDao.findAll(query);
 
     return { success: true, body: formations };
   } catch (error) {
@@ -34,7 +33,7 @@ const getFormations = async ({ formationIds, search }) => {
 
 const getFormationsWithTemoignageCount = async () => {
   try {
-    const formations = await formationsDao.getAllWithTemoignageCount();
+    const formations = await formationsDao.findAllWithTemoignageCount();
     return { success: true, body: formations };
   } catch (error) {
     return { success: false, body: error };
@@ -43,7 +42,7 @@ const getFormationsWithTemoignageCount = async () => {
 
 const getFormation = async (id) => {
   try {
-    const formation = await formationsDao.getOne(id);
+    const formation = await formationsDao.findOne(id);
     return { success: true, body: formation };
   } catch (error) {
     return { success: false, body: error };
@@ -72,9 +71,9 @@ const updateFormation = async (id, updatedFormation) => {
 };
 
 const alreadyExistingFormations = async (ids) => {
-  const existingFormations = await formationsDao.getDataIdFormationByIds(ids);
+  const existingFormations = await formationsDao.findDataIdFormationByIds(ids);
 
-  return { success: true, body: existingFormations.map((formation) => formation.data._id) };
+  return { success: true, body: existingFormations.map((formation) => formation.catalogue_id) };
 };
 
 module.exports = {
