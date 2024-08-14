@@ -10,9 +10,9 @@ const createQuestionnaire = async (questionnaire) => {
   }
 };
 
-const getQuestionnaires = async (query) => {
+const getQuestionnaires = async () => {
   try {
-    const questionnaires = await questionnairesDao.getAllWithCreatorName(query);
+    const questionnaires = await questionnairesDao.findAll();
     return { success: true, body: questionnaires };
   } catch (error) {
     return { success: false, body: error };

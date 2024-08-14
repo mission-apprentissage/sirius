@@ -82,7 +82,7 @@ const DsfrNavbar = () => {
       iconId: "fr-icon-eye-fill",
       linkProps: {
         to: `/questionnaires/${
-          validatedQuestionnaire?.length && validatedQuestionnaire[0]._id
+          validatedQuestionnaire?.length && validatedQuestionnaire[0].id
         }/apercu`,
       },
       text: "Aperçu du questionnaire Sirius",
