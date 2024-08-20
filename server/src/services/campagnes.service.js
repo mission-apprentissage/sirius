@@ -377,10 +377,10 @@ const getCampagnesStatistics = async (campagneIds) => {
     const uniqueChampsLibreFields = [...new Set(onlyQpenQuestionKeyList.flat())];
 
     const temoignagesList = campagnes.map((campagne) => campagne.temoignagesList).flat();
-    const temoignageIds = temoignagesList.map((temoignagne) => temoignagne._id?.toString());
+    const temoignageIds = temoignagesList.map((temoignagne) => temoignagne.id);
     const verbatimsQuery = {
-      temoignageId: { $in: temoignageIds.map((temoignageId) => ObjectId(temoignageId)) },
-      questionKey: { $in: uniqueChampsLibreFields },
+      temoignageIds: temoignageIds,
+      questionKey: uniqueChampsLibreFields,
     };
     const verbatimsCountByStatus = await verbatimsDao.count(verbatimsQuery);
 

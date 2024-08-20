@@ -1,4 +1,3 @@
-const ObjectId = require("mongoose").mongo.ObjectId;
 const verbatimsDao = require("../dao/verbatims.dao");
 
 const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscrepancies, page, pageSize }) => {
@@ -21,7 +20,7 @@ const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscr
 
     return {
       success: true,
-      body: result[0].body,
+      body: result.rows,
       pagination: {
         ...result[0].pagination[0],
         totalPages: Math.ceil(result[0]?.pagination[0]?.totalItems / pageSize),
@@ -65,15 +64,15 @@ const patchVerbatims = async (verbatims) => {
 
 const createVerbatim = async (verbatim) => {
   try {
-    const existingVerbatim = await verbatimsDao.findOne({
-      temoignageId: ObjectId(verbatim.temoignageId),
+    const existingVerbatim = await verbatimsDao.getOne({
+      temoignageId: verbatim.temoignageId,
       questionKey: verbatim.questionKey,
     });
 
     let result;
 
-    if (existingVerbatim?._id) {
-      result = await verbatimsDao.updateOne({ _id: ObjectId(existingVerbatim._id) }, verbatim);
+    if (existingVerbatim?.id) {
+      result = await verbatimsDao.updateOne(existingVerbatim.id, verbatim);
     } else {
       result = await verbatimsDao.create(verbatim);
     }

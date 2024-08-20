@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const migrateVerbatims = require("../db/migrateVerbatims");
 
 module.exports = ({ uri }) =>
   new Promise((resolve, reject) => {
@@ -19,7 +18,6 @@ module.exports = ({ uri }) =>
         } else {
           console.log("Connected to MongoDB");
           try {
-            await migrateVerbatims({ isDryRun: false });
             console.log("Migration executed successfully.");
             resolve(client);
           } catch (migrationErr) {

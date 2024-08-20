@@ -211,8 +211,8 @@ const getDatavisualisationFormation = async (intituleFormation) => {
 
     const commentVisTonEntrepriseOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceEntreprise);
     const commentVisTonEntrepriseVerbatimsQuery = {
-      temoignageId: { $in: temoignages.map((temoignage) => temoignage.id) },
-      status: { $in: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED] },
+      temoignageIds: temoignages.map((temoignage) => temoignage.id),
+      status: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED],
     };
     const commentVisTonEntrepriseVerbatimsResults = await verbatimsDao.getAll(commentVisTonEntrepriseVerbatimsQuery);
     const matchedVerbatimAndcommentVisTonEntreprise = verbatimsAnOrderedThemeAnswersMatcher(
@@ -226,11 +226,14 @@ const getDatavisualisationFormation = async (intituleFormation) => {
     const passeEntrepriseRates = getReponseRating(passeEntreprise);
 
     const verbatimsQuery = {
-      temoignageId: { $in: temoignages.map((temoignage) => temoignage.id) },
-      status: VERBATIM_STATUS.GEM,
-      questionKey: {
-        $in: ["descriptionMetierConseil", "peurChangementConseil", "choseMarquanteConseil", "trouverEntrepriseConseil"],
-      },
+      temoignageIds: temoignages.map((temoignage) => temoignage.id),
+      status: [VERBATIM_STATUS.GEM],
+      questionKey: [
+        "descriptionMetierConseil",
+        "peurChangementConseil",
+        "choseMarquanteConseil",
+        "trouverEntrepriseConseil",
+      ],
     };
 
     const verbatimsResults = await verbatimsDao.getAll(verbatimsQuery);
@@ -267,8 +270,8 @@ const getDatavisualisationEtablissement = async (uai) => {
 
     const commentVisTonExperienceCfaOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceCfa); // change name if working for CFA
     const commentVisTonCfaVerbatimsQuery = {
-      temoignageId: { $in: temoignages.map((temoignage) => temoignage._id) },
-      status: { $in: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED] },
+      temoignageIds: temoignages.map((temoignage) => temoignage._id),
+      status: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED],
     };
     const commentVisTonCfaVerbatimsResults = await verbatimsDao.getAll(commentVisTonCfaVerbatimsQuery);
 
@@ -296,11 +299,14 @@ const getDatavisualisationEtablissement = async (uai) => {
     const accompagneCfaRates = getReponseRating(formattedAccompagneCfa);
 
     const verbatimsQuery = {
-      temoignageId: { $in: temoignages.map((temoignage) => temoignage._id) },
-      status: VERBATIM_STATUS.GEM,
-      questionKey: {
-        $in: ["descriptionMetierConseil", "peurChangementConseil", "choseMarquanteConseil", "trouverEntrepriseConseil"],
-      },
+      temoignageIds: temoignages.map((temoignage) => temoignage.id),
+      status: [VERBATIM_STATUS.GEM],
+      questionKey: [
+        "descriptionMetierConseil",
+        "peurChangementConseil",
+        "choseMarquanteConseil",
+        "trouverEntrepriseConseil",
+      ],
     };
 
     const verbatimsResults = await verbatimsDao.getAll(verbatimsQuery);

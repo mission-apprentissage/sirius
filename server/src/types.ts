@@ -1,4 +1,4 @@
-import { Etablissements, Formations, Questionnaires, Temoignages, Users } from "./db/schema";
+import { Etablissements, Formations, Questionnaires, Temoignages, Users, Verbatims } from "./db/schema";
 
 export type User = Omit<Users, "id"> & { id: string };
 
@@ -35,6 +35,13 @@ export type Temoignage = Omit<
   id: string;
   is_bot: boolean | null;
   last_question_at: Date | null;
+  created_at: Date | null;
+  deleted_at: Date | null;
+  updated_at: Date | null;
+};
+
+export type Verbatim = Omit<Verbatims, "id" | "created_at" | "deleted_at" | "updated_at"> & {
+  id: string;
   created_at: Date | null;
   deleted_at: Date | null;
   updated_at: Date | null;

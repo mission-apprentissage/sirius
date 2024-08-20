@@ -100,7 +100,7 @@ const getEtablissementsPublicStatistics = async () => {
     ]);
     const uniqueChampsLibreFields = [...new Set(onlyQpenQuestionKeyList.flat())];
 
-    const verbatimsCountByStatus = await verbatimsDao.count({ questionKey: { $in: uniqueChampsLibreFields } });
+    const verbatimsCountByStatus = await verbatimsDao.count({ questionKey: uniqueChampsLibreFields });
     const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
 
     return {
