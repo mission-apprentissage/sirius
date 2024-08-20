@@ -94,7 +94,7 @@ const getEtablissementsPublicStatistics = async () => {
     const temoignagesCount = await temoignagesDao.count();
 
     const onlyQpenQuestionKeyList = [];
-    const questionnaires = await questionnairesDao.getAll();
+    const questionnaires = await questionnairesDao.findAll();
     questionnaires.forEach((questionnaire) => [
       onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUI, true)),
     ]);

@@ -86,7 +86,7 @@ const ManageTemoignagesPage = () => {
     answeredQuestions,
     includeUnavailableDuration,
     page,
-    pageSize: 100,
+    pageSize: 50,
   });
 
   useEffect(() => {
@@ -108,9 +108,9 @@ const ManageTemoignagesPage = () => {
   };
   const tabs = [
     createTab("Tous", "all", count?.total, tabsProps),
-    createTab("Durée", "quick", count?.quick, tabsProps),
-    createTab("Complétion", "incomplete", count?.incomplete, tabsProps),
-    createTab("Bot", "bot", count?.bot, tabsProps),
+    createTab("Durée", "quick", count?.quickCount, tabsProps),
+    createTab("Complétion", "incomplete", count?.incompleteCount, tabsProps),
+    createTab("Bot", "bot", count?.botCount, tabsProps),
   ];
 
   return (

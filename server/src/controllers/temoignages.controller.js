@@ -89,7 +89,7 @@ const getUncompliantTemoignages = tryCatch(async (req, res) => {
   const includeUnavailableDuration = req.query.includeUnavailableDuration === "true";
 
   const page = req.query.page || 1;
-  const pageSize = req.query.pageSize || 100;
+  const pageSize = req.query.pageSize || 50;
 
   const { success, body, count, pagination } = await temoignagesService.getUncompliantTemoignages({
     type,

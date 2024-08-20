@@ -370,8 +370,7 @@ const getCampagnesStatistics = async (campagneIds) => {
     const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
 
     const onlyQpenQuestionKeyList = [];
-    const questionnaireIds = campagnes.map((campagne) => campagne.questionnaireId);
-    const questionnaires = await questionnairesDao.getAll({ _id: { $in: questionnaireIds } });
+    const questionnaires = await questionnairesDao.findAll();
     questionnaires.forEach((questionnaire) => [
       onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUI, true)),
     ]);

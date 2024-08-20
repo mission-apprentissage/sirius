@@ -43,33 +43,33 @@ const ManageTemoignagesTable = ({
   const data = temoignages?.map((temoignage) => {
     return [
       <Checkbox
-        key={temoignage._id}
+        key={temoignage.id}
         options={[
           {
             nativeInputProps: {
-              name: `temoignage-${temoignage._id}`,
-              checked: selectedTemoignagesIds.includes(temoignage._id),
+              name: `temoignage-${temoignage.id}`,
+              checked: selectedTemoignagesIds.includes(temoignage.id),
               onChange: () =>
                 setSelectedTemoignagesIds((prevValues) => {
-                  if (prevValues.includes(temoignage._id)) {
-                    return prevValues.filter((id) => id !== temoignage._id);
+                  if (prevValues.includes(temoignage.id)) {
+                    return prevValues.filter((id) => id !== temoignage.id);
                   } else {
-                    return [...prevValues, temoignage._id];
+                    return [...prevValues, temoignage.id];
                   }
                 }),
             },
           },
         ]}
       />,
-      <div key={temoignage._id}>
-        <p>{temoignage.formation.data.intitule_long}</p>
-        <p key={temoignage._id}>
-          {temoignage.formation.data.etablissement_formateur_entreprise_raison_sociale ||
-            temoignage.formation.data.etablissement_formateur_enseigne}
+      <div key={temoignage.id}>
+        <p>{temoignage.formation.intituleLong}</p>
+        <p key={temoignage.id}>
+          {temoignage.formation.etablissementFormateurEntrepriseRaisonSociale ||
+            temoignage.formation.etablissementFormateurEnseigne}
         </p>
       </div>,
       <Tooltip
-        key={temoignage._id}
+        key={temoignage.id}
         background="var(--background-default-grey)"
         border="var(--border-default-grey)"
         color="var(--text-default-grey)"
@@ -98,9 +98,9 @@ const ManageTemoignagesTable = ({
             : "N/A"}
         </p>
       </Tooltip>,
-      <p key={temoignage._id}>{Object.keys(temoignage.reponses).length}</p>,
-      <p key={temoignage._id}>{temoignage.isBot ? "Oui" : "Non"}</p>,
-      <ActionsContainer key={temoignage._id}>
+      <p key={temoignage.id}>{Object.keys(temoignage.reponses).length}</p>,
+      <p key={temoignage.id}>{temoignage.isBot ? "Oui" : "Non"}</p>,
+      <ActionsContainer key={temoignage.id}>
         <Button
           iconId="fr-icon-eye-fill"
           priority="tertiary no outline"
@@ -134,11 +134,11 @@ const ManageTemoignagesTable = ({
               nativeInputProps: {
                 name: `SelectAll`,
                 checked: temoignages
-                  .map((temoignage) => temoignage._id)
+                  .map((temoignage) => temoignage.id)
                   .every((id) => selectedTemoignagesIds.includes(id)),
                 onChange: (e) => {
                   setSelectedTemoignagesIds(
-                    e.target.checked ? temoignages.map((temoignage) => temoignage._id) : []
+                    e.target.checked ? temoignages.map((temoignage) => temoignage.id) : []
                   );
                 },
               },

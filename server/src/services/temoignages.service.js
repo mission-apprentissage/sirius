@@ -10,7 +10,6 @@ const {
   matchCardTypeAndQuestions,
   getCategoriesWithEmojis,
   getFormattedResponses,
-  appendFormationDataWhenEmpty,
   getReponseRating,
   getCommentVisTonExperienceEntrepriseOrder,
   getGemVerbatimsByWantedQuestionKey,
@@ -53,8 +52,8 @@ const createTemoignage = async (temoignage) => {
 
 const getTemoignages = async (campagneIds) => {
   try {
-    const query = { campagneId: { $in: campagneIds } };
-    const temoignages = await temoignagesDao.getAllWithVerbatims(query);
+    const query = { campagneIds };
+    const temoignages = await temoignagesDao.findAllWithVerbatims(query);
     for (const temoignage of temoignages) {
       const campagne = await campagnesDao.getOne(temoignage.campagneId);
 
@@ -97,7 +96,7 @@ const deleteTemoignage = async (id) => {
 
 const updateTemoignage = async (id, updatedTemoignage) => {
   try {
-    const temoignageToUpdate = await temoignagesDao.getOne(id);
+    const temoignageToUpdate = await temoignagesDao.findOne(id);
     const campagneQuery = { id: temoignageToUpdate.campagneId };
     const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(campagneQuery);
 
@@ -113,9 +112,10 @@ const updateTemoignage = async (id, updatedTemoignage) => {
 
 const getDatavisualisation = async (campagneIds) => {
   try {
-    const query = { campagneId: { $in: campagneIds } };
-    const temoignages = await temoignagesDao.getAllWithVerbatims(query);
-    const allQuestionnaires = await questionnairesDao.getAll();
+    const query = { campagneIds };
+    const temoignages = await temoignagesDao.findAllWithVerbatims(query);
+    const allQuestionnaires = await questionnairesDao.findAll();
+
     const campagnes = await campagnesDao.getAll({ _id: { $in: campagneIds } });
 
     let questionnaireTemoignagesMap = {};
@@ -141,9 +141,7 @@ const getDatavisualisation = async (campagneIds) => {
 
     // crée un objet avec les catégories et les questions pour chaque questionnaire
     const result = Object.keys(questionnaireTemoignagesMap).map((questionnaireId) => {
-      const questionnaireById = allQuestionnaires.find(
-        (questionnaire) => questionnaire._id.toString() === questionnaireId
-      );
+      const questionnaireById = allQuestionnaires.find((questionnaire) => questionnaire.id === questionnaireId);
 
       const matchedIdAndQuestions = matchIdAndQuestions(questionnaireById.questionnaire);
       const matchedCardTypeAndQuestions = matchCardTypeAndQuestions(
@@ -161,7 +159,7 @@ const getDatavisualisation = async (campagneIds) => {
                 ? { type: matchedCardTypeAndQuestions[questionId] }
                 : matchedCardTypeAndQuestions[questionId];
 
-            const responses = questionnaireTemoignagesMap[questionnaireById._id.toString()]
+            const responses = questionnaireTemoignagesMap[questionnaireById.id.toString()]
               .map((temoignage) => temoignage.reponses[questionId])
               .flat()
               .filter(Boolean);
@@ -179,7 +177,7 @@ const getDatavisualisation = async (campagneIds) => {
       });
 
       return {
-        questionnaireId: questionnaireById._id,
+        questionnaireId: questionnaireById.id,
         questionnaireName: questionnaireById.nom,
         categories: categories,
         temoignageCount: questionnaireTemoignagesMap[questionnaireId].length,
@@ -199,8 +197,8 @@ const getDatavisualisationFormation = async (intituleFormation) => {
       (formation) => formation.campagneId
     );
 
-    const query = { campagneId: { $in: campagneIds } };
-    const temoignages = await temoignagesDao.getAll(query);
+    const query = { campagneIds };
+    const temoignages = await temoignagesDao.findAll(query);
 
     const commentCaSePasseEntreprise = temoignages.map(
       (temoignage) => temoignage.reponses["commentCaSePasseEntreprise"]
@@ -213,7 +211,7 @@ const getDatavisualisationFormation = async (intituleFormation) => {
 
     const commentVisTonEntrepriseOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceEntreprise);
     const commentVisTonEntrepriseVerbatimsQuery = {
-      temoignageId: { $in: temoignages.map((temoignage) => temoignage._id) },
+      temoignageId: { $in: temoignages.map((temoignage) => temoignage.id) },
       status: { $in: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED] },
     };
     const commentVisTonEntrepriseVerbatimsResults = await verbatimsDao.getAll(commentVisTonEntrepriseVerbatimsQuery);
@@ -228,7 +226,7 @@ const getDatavisualisationFormation = async (intituleFormation) => {
     const passeEntrepriseRates = getReponseRating(passeEntreprise);
 
     const verbatimsQuery = {
-      temoignageId: { $in: temoignages.map((temoignage) => temoignage._id) },
+      temoignageId: { $in: temoignages.map((temoignage) => temoignage.id) },
       status: VERBATIM_STATUS.GEM,
       questionKey: {
         $in: ["descriptionMetierConseil", "peurChangementConseil", "choseMarquanteConseil", "trouverEntrepriseConseil"],
@@ -257,8 +255,8 @@ const getDatavisualisationEtablissement = async (uai) => {
   try {
     const campagneIds = (await formationsDao.findFormationByUai(uai)).map((formation) => formation.campagneId);
 
-    const query = { campagneId: { $in: campagneIds } };
-    const temoignages = await temoignagesDao.getAll(query);
+    const query = { campagneIds };
+    const temoignages = await temoignagesDao.findAll(query);
 
     const commentCaSePasseCfa = temoignages.map((temoignage) => temoignage.reponses["commentCaSePasseCfa"]);
     const commentCaSePasseCfaRates = getReponseRating(commentCaSePasseCfa);
@@ -331,63 +329,57 @@ const getUncompliantTemoignages = async ({
   page,
   pageSize,
 }) => {
-  const isBotQuery = { isBot: true };
-  console;
-  const isIncompleteQuery = {
-    $expr: {
-      $lt: [{ $size: { $objectToArray: "$reponses" } }, answeredQuestions],
-    },
-  };
-  const hasAnsweredQuicklyQuery = {
-    $and: [
-      !includeUnavailableDuration ? { lastQuestionAt: { $exists: true, $ne: null } } : {},
-      { $expr: { $lt: [{ $subtract: ["$lastQuestionAt", "$createdAt"] }, 1000 * 60 * duration] } },
-    ],
-  };
-
-  const allQuery = {
-    $or: [isBotQuery, isIncompleteQuery, hasAnsweredQuicklyQuery],
+  const uncompliantsQuery = {
+    isBot: true,
+    incompleteNumber: answeredQuestions,
+    timeToRespondLimit: 1000 * 60 * duration,
+    includeUnavailableDuration,
   };
 
   let temoignages = [];
   try {
+    const uncompliantsCount = await temoignagesDao.uncompliantsCount(uncompliantsQuery);
+    let totalItemsCountPerType = 0;
+
     if (type === UNCOMPLIANT_TEMOIGNAGE_TYPE.BOT) {
-      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(isBotQuery, page, pageSize);
+      temoignages = await temoignagesDao.getAllTemoignagesWithFormation({ isBot: true }, page, pageSize);
+      totalItemsCountPerType = uncompliantsCount.botCount;
     }
     if (type === UNCOMPLIANT_TEMOIGNAGE_TYPE.INCOMPLETE) {
-      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(isIncompleteQuery, page, pageSize);
+      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(
+        { incompleteNumber: answeredQuestions },
+        page,
+        pageSize
+      );
+      totalItemsCountPerType = uncompliantsCount.incompleteCount;
     }
     if (type === UNCOMPLIANT_TEMOIGNAGE_TYPE.QUICK) {
-      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(hasAnsweredQuicklyQuery, page, pageSize);
+      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(
+        { timeToRespondLimit: 1000 * 60 * duration },
+        page,
+        pageSize
+      );
+      totalItemsCountPerType = uncompliantsCount.quickCount;
     }
     if (type === UNCOMPLIANT_TEMOIGNAGE_TYPE.ALL) {
-      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(allQuery, page, pageSize);
+      temoignages = await temoignagesDao.getAllTemoignagesWithFormation(uncompliantsQuery, page, pageSize);
+      totalItemsCountPerType =
+        uncompliantsCount.botCount + uncompliantsCount.incompleteCount + uncompliantsCount.quickCount;
     }
-
-    const allCount = await temoignagesDao.count(allQuery);
-    const botCount = await temoignagesDao.count(isBotQuery);
-    const incompleteCount = await temoignagesDao.count(isIncompleteQuery);
-    const quickCount = await temoignagesDao.count(hasAnsweredQuicklyQuery);
-
-    temoignages[0].data.forEach((temoignage) => {
-      appendFormationDataWhenEmpty(temoignage);
-    });
 
     return {
       success: true,
-      body: temoignages[0].data,
+      body: temoignages.rows,
       count: {
-        total: allCount,
-        bot: botCount,
-        incomplete: incompleteCount,
-        quick: quickCount,
+        total: uncompliantsCount.botCount + uncompliantsCount.incompleteCount + uncompliantsCount.quickCount,
+        ...uncompliantsCount,
       },
       pagination: {
-        totalItems: temoignages[0].totalCount,
+        totalItemsCountPerType,
         currentPage: parseInt(page),
         pageSize: pageSize,
-        totalPages: Math.ceil(temoignages[0].totalCount / pageSize),
-        hasMore: temoignages[0].totalCount > page * pageSize,
+        totalPages: Math.ceil(totalItemsCountPerType / pageSize),
+        hasMore: temoignages.hasNextPage || false,
       },
     };
   } catch (error) {
