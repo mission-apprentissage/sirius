@@ -46,3 +46,5 @@ export type Verbatim = Omit<Verbatims, "id" | "created_at" | "deleted_at" | "upd
   deleted_at: Date | null;
   updated_at: Date | null;
 };
+
+export type ObserverScope = { field: "region" | "num_departement" | "sirets"; value: string };

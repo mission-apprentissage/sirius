@@ -25,8 +25,7 @@ const { intituleFormationFormatter } = require("../utils/formations.utils");
 
 const createTemoignage = async (temoignage) => {
   try {
-    const campagneQuery = { id: temoignage.campagneId };
-    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(campagneQuery);
+    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(temoignage.campagneId);
 
     if (!campagne) throw new Error("Campagne not found");
 
@@ -97,8 +96,7 @@ const deleteTemoignage = async (id) => {
 const updateTemoignage = async (id, updatedTemoignage) => {
   try {
     const temoignageToUpdate = await temoignagesDao.findOne(id);
-    const campagneQuery = { id: temoignageToUpdate.campagneId };
-    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(campagneQuery);
+    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(temoignageToUpdate.campagneId);
 
     if (!campagne?.length) throw new Error("Campagne not found");
 
@@ -116,7 +114,7 @@ const getDatavisualisation = async (campagneIds) => {
     const temoignages = await temoignagesDao.findAllWithVerbatims(query);
     const allQuestionnaires = await questionnairesDao.findAll();
 
-    const campagnes = await campagnesDao.getAll({ _id: { $in: campagneIds } });
+    const campagnes = await campagnesDao.getAll(campagneIds);
 
     let questionnaireTemoignagesMap = {};
 

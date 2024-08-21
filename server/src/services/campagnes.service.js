@@ -201,10 +201,10 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
   }
 };
 
-const getOneCampagne = async (query) => {
+const getOneCampagne = async (campagneId) => {
   try {
-    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(query);
-    return { success: true, body: campagne[0] };
+    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(campagneId);
+    return { success: true, body: campagne };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -297,11 +297,9 @@ const getPdfExport = async (id) => {
   }
 };
 
-const getPdfMultipleExport = async (ids, user) => {
+const getPdfMultipleExport = async (campagneIds = [], user) => {
   try {
-    const query = { _id: { $in: ids.map((id) => ObjectId(id)) } };
-
-    const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(query);
+    const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(campagneIds);
 
     const formattedCampagnes = campagnes.map((campagne) => ({
       campagneId: campagne._id.toString(),
@@ -334,11 +332,9 @@ const getPdfMultipleExport = async (ids, user) => {
   }
 };
 
-const getXlsxMultipleExport = async (ids) => {
+const getXlsxMultipleExport = async (campagneIds = []) => {
   try {
-    const query = ids?.length ? { _id: { $in: ids.map((id) => ObjectId(id)) } } : {};
-
-    const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(query);
+    const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(campagneIds);
 
     const formattedCampagnes = campagnes.map((campagne) => ({
       campagneName: campagne.nomCampagne,
