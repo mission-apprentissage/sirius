@@ -56,7 +56,7 @@ const ModerationEtablissementPicker = ({ setPickedEtablissement }) => {
           (localEtablissements?.length &&
             localEtablissements.map((etablissement) => ({
               value: etablissement.siret,
-              label: `${etablissement.etablissement_formateur_entreprise_raison_sociale} - ${etablissement.localite} - ${etablissement.formationIds?.length} formations`,
+              label: `${etablissement.etablissementFormateurEntrepriseRaisonSociale} - ${etablissement.localite} - ${etablissement.formationIds?.length} formations`,
             }))) ||
           []
         }

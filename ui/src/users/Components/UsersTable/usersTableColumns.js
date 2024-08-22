@@ -242,7 +242,7 @@ const usersTableColumns = (
     },
     header: "Role",
   }),
-  columnHelper.accessor("_id", {
+  columnHelper.accessor("id", {
     cell: (info) => {
       const user = info.row.original;
       if (user.role === USER_ROLES.ADMIN) return null;

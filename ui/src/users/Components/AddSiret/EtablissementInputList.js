@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Stack, Text, Link } from "@chakra-ui/react";
 import { ExternalLinkIcon, DeleteIcon } from "@chakra-ui/icons";
-import { etablissementLabelGetter } from "../../../utils/etablissement";
+import { remoteEtablissementLabelGetter } from "../../../utils/etablissement";
 
 const EtablissementInputList = ({ formik, etablissement, index }) => {
   const handleDeleteEtablissement = (index) => {
@@ -46,7 +46,7 @@ const EtablissementInputList = ({ formik, etablissement, index }) => {
           />
         </Box>
         <Text mt="25px" mb="5px" fontWeight="semibold" textAlign="left">
-          {etablissementLabelGetter(etablissement)}
+          {remoteEtablissementLabelGetter(etablissement)}
         </Text>
         <Text mb="5px" fontSize="14px" textAlign="left">
           {etablissement.siret}

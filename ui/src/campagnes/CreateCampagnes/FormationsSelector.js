@@ -103,7 +103,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   });
 
   const allRemoteFormationsIds = remoteFormations?.length
-    ? [...new Set(remoteFormations?.map((formation) => formation._id).flat())]
+    ? [...new Set(remoteFormations?.map((formation) => formation.id).flat())]
     : [];
 
   const {
@@ -113,7 +113,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     isLoading: isLoadingExistingFormationIds,
   } = useFetchAlreadyExistingFormations({
     campagneIds: allRemoteFormationsIds,
-    enabled: !!allRemoteFormationsIds.length || isAdmin,
+    enabled: !!allRemoteFormationsIds.length,
   });
 
   const checkboxLabel = (

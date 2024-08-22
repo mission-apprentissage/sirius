@@ -45,10 +45,20 @@ const ManageCampagnesPage = () => {
     }
   }, [allCampagneIds]);
 
+  const emptyStatistics = {
+    campagnesCount: 0,
+    finishedCampagnesCount: 0,
+    temoignagesCount: 0,
+    verbatimsCount: 0,
+  };
+
   return (
     <>
       <Container>
-        <Statistics statistics={statistics} title="Sirius & vous en quelques chiffres" />
+        <Statistics
+          statistics={statistics || emptyStatistics}
+          title="Sirius & vous en quelques chiffres"
+        />
         <ManageCampagneContainer>
           <div>
             <h1>

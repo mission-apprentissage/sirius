@@ -2,7 +2,11 @@ import { Etablissements, Formations, Questionnaires, Temoignages, Users, Verbati
 
 export type User = Omit<Users, "id"> & { id: string };
 
-export type UserCreation = User & { confirmationToken: string };
+export type UserCreation = Omit<User, "first_name" | "last_name"> & {
+  confirmationToken: string;
+  firstName: string;
+  lastName: string;
+};
 
 export type UserPublic = Omit<User, "salt" | "hash" | "refresh_token">;
 

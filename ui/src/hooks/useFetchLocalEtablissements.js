@@ -13,23 +13,23 @@ const useFetchLocalEtablissements = ({ search }) => {
   });
 
   const deduplicatedData = data?.reduce((acc, item) => {
-    const siret = item.data.etablissement_formateur_siret || "N/A";
+    const siret = item.etablissementFormateurSiret || "N/A";
 
     if (!acc[siret]) {
       acc[siret] = {
-        code_postal: item.data.code_postal,
-        localite: item.data.localite,
-        lieu_formation_adresse: item.data.lieu_formation_adresse,
-        lieu_formation_adresse_computed: item.data.lieu_formation_adresse_computed,
-        etablissement_formateur_enseigne: item.data.etablissement_formateur_enseigne,
-        etablissement_formateur_entreprise_raison_sociale:
-          item.data.etablissement_formateur_entreprise_raison_sociale,
+        codePostal: item.codePostal,
+        localite: item.localite,
+        lieuFormationAdresse: item.lieuFormationAdresse,
+        lieuFormationAdresseComputed: item.lieuFormationAdresseComputed,
+        etablissementFormateurEnseigne: item.etablissementFormateurEnseigne,
+        etablissementFormateurEntrepriseRaisonSociale:
+          item.etablissementFormateurEntrepriseRaisonSociale,
         siret: siret,
-        formationIds: [item._id],
+        formationIds: [item.id],
       };
     } else {
-      if (!acc[siret].formationIds.includes(item._id)) {
-        acc[siret].formationIds.push(item._id);
+      if (!acc[siret].formationIds.includes(item.id)) {
+        acc[siret].formationIds.push(item.id);
       }
     }
 

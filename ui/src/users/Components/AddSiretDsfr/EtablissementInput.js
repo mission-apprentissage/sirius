@@ -100,7 +100,7 @@ const EtablissementInput = ({ formik, setError, userSiret }) => {
           .join("");
 
         const newEtablissement = {
-          id: firstEtablissement._id,
+          _id: firstEtablissement._id,
           siret: firstEtablissement.siret,
           onisep_nom: firstEtablissement.onisep_nom,
           enseigne: firstEtablissement.enseigne,

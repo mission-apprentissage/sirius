@@ -19,8 +19,8 @@ const SuiviEtablissementsSearch = ({
     const filteredEtablissements = etablissements.filter((etablissement) => {
       return (
         etablissement.enseigne?.toLowerCase().includes(search) ||
-        etablissement.entreprise_raison_sociale?.toLowerCase().includes(search) ||
-        etablissement.onisep_nom?.toLowerCase().includes(search) ||
+        etablissement.entrepriseRaisonSociale?.toLowerCase().includes(search) ||
+        etablissement.onisepNom?.toLowerCase().includes(search) ||
         etablissement.siret?.toLowerCase().includes(search) ||
         etablissement.region_implantation_nom?.toLowerCase().includes(search)
       );

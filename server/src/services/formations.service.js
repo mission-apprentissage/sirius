@@ -71,9 +71,12 @@ const updateFormation = async (id, updatedFormation) => {
 };
 
 const alreadyExistingFormations = async (ids) => {
-  const existingFormations = await formationsDao.findDataIdFormationByIds(ids);
-
-  return { success: true, body: existingFormations.map((formation) => formation.catalogue_id) };
+  try {
+    const existingFormations = await formationsDao.findDataIdFormationByIds(ids);
+    return { success: true, body: existingFormations.map((formation) => formation.catalogueId) };
+  } catch (error) {
+    return { success: false, body: error };
+  }
 };
 
 module.exports = {

@@ -4,20 +4,36 @@ const campagnesDao = require("../dao/campagnes.dao");
 const temoignagesDao = require("../dao/temoignages.dao");
 const verbatimsDao = require("../dao/verbatims.dao");
 const { getChampsLibreField } = require("../utils/verbatims.utils");
+const catalogue = require("../modules/catalogue");
 
-const createEtablissements = async (etablissementsArray) => {
+const createEtablissements = async (etablissementsArray, relatedUserId) => {
   try {
     let createdEtablissements = [];
 
     for (const etablissement of etablissementsArray) {
       const existingEtablissementQuery = {
-        "catalogue_id": etablissement._id,
+        "siret": etablissement.siret,
       };
       const existingEtablissement = await etablissementsDao.findAll(existingEtablissementQuery);
-
       if (!existingEtablissement.length) {
-        const createdEtablissement = await etablissementsDao.create(etablissement);
+        const etablissementFromCatalogue = await catalogue.getEtablissement(etablissement.siret);
+        const formattedEtablissement = {
+          catalogue_id: etablissementFromCatalogue._id,
+          siret: etablissementFromCatalogue.siret,
+          onisep_nom: etablissementFromCatalogue.onisep_nom,
+          onisep_url: etablissementFromCatalogue.onisep_url,
+          enseigne: etablissementFromCatalogue.enseigne,
+          entreprise_raison_sociale: etablissementFromCatalogue.entreprise_raison_sociale,
+          uai: etablissementFromCatalogue.uai,
+          localite: etablissementFromCatalogue.localite,
+          region_implantation_nom: etablissementFromCatalogue.region_implantation_nom,
+          catalogue_data: JSON.stringify(etablissementFromCatalogue),
+        };
+        const createdEtablissement = await etablissementsDao.create(formattedEtablissement, relatedUserId);
         createdEtablissements.push(createdEtablissement);
+      } else {
+        const createdRelation = await etablissementsDao.createUserRelation(existingEtablissement[0].id, relatedUserId);
+        createdEtablissements.push(createdRelation);
       }
     }
 
@@ -98,9 +114,8 @@ const getEtablissementsPublicStatistics = async () => {
     questionnaires.forEach((questionnaire) => [
       onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUI, true)),
     ]);
-    const uniqueChampsLibreFields = [...new Set(onlyQpenQuestionKeyList.flat())];
 
-    const verbatimsCountByStatus = await verbatimsDao.count({ questionKey: uniqueChampsLibreFields });
+    const verbatimsCountByStatus = await verbatimsDao.count();
     const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
 
     return {

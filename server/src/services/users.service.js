@@ -12,6 +12,7 @@ const createUser = async (user) => {
     const hash = hashPassword(user.password, salt);
 
     const newUser = await usersDao.create({ ...user, salt, hash });
+
     return { success: true, body: newUser };
   } catch (error) {
     return { success: false, body: error };

@@ -1,4 +1,4 @@
-import { InsertResult, UpdateResult, sql } from "kysely";
+import { UpdateResult, sql } from "kysely";
 import { kdb } from "../db/db";
 import { Verbatim } from "../types";
 import { executeWithOffsetPagination } from "kysely-paginate";
@@ -23,28 +23,36 @@ export const getAll = async (query: {
 
 export const count = async (
   query: Partial<{
-    temoignagesIds: string[];
+    temoignageIds: string[];
     questionKey: string[];
     etablissementSiret: string;
     formationId: string;
   }>
 ) => {
-  const whereConditions = kdb
+  let baseQuery = kdb
     .selectFrom("verbatims")
     .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.campagne_id")
     .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
     .where("verbatims.deleted_at", "is", null);
 
-  if (query.etablissementSiret) {
-    whereConditions.where("formations.etablissement_formateur_siret", "=", query.etablissementSiret);
+  if (query?.etablissementSiret) {
+    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "=", query.etablissementSiret);
   }
 
-  if (query.formationId) {
-    whereConditions.where("formations.id", "=", query.formationId);
+  if (query?.formationId) {
+    baseQuery = baseQuery.where("formations.id", "=", query.formationId);
   }
 
-  const result = await whereConditions
+  if (query?.temoignageIds) {
+    baseQuery = baseQuery.where("verbatims.temoignage_id", "in", query.temoignageIds);
+  }
+
+  if (query?.questionKey) {
+    baseQuery = baseQuery.where("verbatims.question_key", "in", query.questionKey);
+  }
+
+  const result = await baseQuery
     .select(["verbatims.status", sql`count(*)`.as("count")])
     .groupBy("verbatims.status")
     .execute();
@@ -119,8 +127,8 @@ export const getAllWithFormation = async (
   return paginatedQuery;
 };
 
-export const updateOne = async (id: string, update: Partial<Verbatim>): Promise<UpdateResult> => {
-  return kdb.updateTable("verbatims").set(update).where("id", "=", id).executeTakeFirst();
+export const updateOne = async (id: string, update: Partial<Verbatim>): Promise<{ id: string } | undefined> => {
+  return kdb.updateTable("verbatims").set(update).where("id", "=", id).returning("id").executeTakeFirst();
 };
 
 export const updateMany = async (verbatims: Partial<Verbatim>[]): Promise<UpdateResult[]> => {
@@ -135,8 +143,8 @@ export const updateMany = async (verbatims: Partial<Verbatim>[]): Promise<Update
   return Promise.all(promises);
 };
 
-export const create = async (verbatim: Verbatim): Promise<InsertResult> => {
-  return kdb.insertInto("verbatims").values(verbatim).executeTakeFirst();
+export const create = async (verbatim: Verbatim): Promise<{ id: string } | undefined> => {
+  return kdb.insertInto("verbatims").values(verbatim).returning("id").executeTakeFirst();
 };
 
 export const getOne = async (query: { temoignageId: string; questionKey: string }): Promise<Verbatim | undefined> => {

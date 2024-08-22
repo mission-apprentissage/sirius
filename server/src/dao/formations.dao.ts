@@ -1,9 +1,9 @@
-import { DeleteResult, InsertResult, sql } from "kysely";
+import { DeleteResult, sql } from "kysely";
 import { kdb } from "../db/db";
 import { Formation } from "../types";
 
-export const create = async (formation: Formation): Promise<InsertResult> => {
-  return kdb.insertInto("formations").values(formation).executeTakeFirst();
+export const create = async (formation: Formation): Promise<{ id: string } | undefined> => {
+  return kdb.insertInto("formations").values(formation).returning("id").executeTakeFirst();
 };
 
 export const findAll = async (query: {
@@ -144,15 +144,17 @@ export const deleteOne = async (id: string): Promise<DeleteResult> => {
 
 export const deleteManyByCampagneIdAndReturnsTheDeletedFormationId = async (
   campagneIds: string[]
-): Promise<{ id: string }[]> => {
-  return kdb
+): Promise<string[]> => {
+  const results = await kdb
     .updateTable("formations")
     .set({
       deleted_at: new Date(),
     })
-    .where("campagne_id", "in", campagneIds)
     .returning("id")
+    .where("campagne_id", "in", campagneIds)
     .execute();
+
+  return results.map((result) => result.id);
 };
 
 export const update = async (id: string, updatedFormation: Partial<Formation>): Promise<boolean> => {
@@ -163,7 +165,7 @@ export const update = async (id: string, updatedFormation: Partial<Formation>): 
     .where("deleted_at", "is", null)
     .executeTakeFirst();
 
-  return result.numUpdatedRows > 0;
+  return result.numUpdatedRows === BigInt(1);
 };
 
 export const findDataIdFormationByIds = async (catalogue_ids: string[]): Promise<Partial<Formation>[]> => {

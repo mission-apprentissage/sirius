@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const usersService = require("../services/users.service");
-const { BasicError, UnauthorizedError, UserAlreadyExistsError, ErrorMessage } = require("../errors");
+const etablissementsService = require("../services/etablissements.service");
+const { BasicError, UnauthorizedError, ErrorMessage } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
 const { COOKIE_OPTIONS } = require("../utils/authenticate.utils");
 const mailer = require("../modules/mailer");
@@ -13,26 +14,29 @@ const createUser = tryCatch(async (req, res) => {
     expiresIn: "1y",
   });
 
-  const { success, body } = await usersService.createUser({ ...req.body, confirmationToken });
+  const { success: successUser, body: bodyUser } = await usersService.createUser({ ...req.body, confirmationToken });
+  const { success: successEtablissements } = await etablissementsService.createEtablissements(
+    req.body.etablissements,
+    bodyUser.id
+  );
 
-  if (!success && body?.name === "UserExistsError") throw new UserAlreadyExistsError();
-  if (!success) throw new BasicError();
+  if (!successUser && !successEtablissements) throw new BasicError();
 
   await mailer.shootTemplate({
     template: "confirm_user",
     subject: "Sirius : activation de votre compte",
-    to: body.email,
+    to: req.body.email,
     data: {
       confirmationToken,
       recipient: {
-        email: body.email,
-        firstname: body.firstName,
-        lastname: body.lastName,
+        email: req.body.email,
+        firstname: req.body.firstName,
+        lastname: req.body.lastName,
       },
     },
   });
 
-  const etablissementsDisplay = body.etablissements
+  const etablissementsDisplay = req.body.etablissements
     .map((etablissement) => {
       return `• ${etablissement.siret} - ${
         etablissement.onisep_nom || etablissement.enseigne || etablissement.entreprise_raison_sociale
@@ -56,14 +60,14 @@ const createUser = tryCatch(async (req, res) => {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `:star2: *Nom:* ${body.firstName} ${body.lastName}`,
+        text: `:star2: *Nom:* ${req.body.firstName} ${req.body.lastName}`,
       },
     },
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `:email: *Email:* ${body.email}`,
+        text: `:email: *Email:* ${req.body.email}`,
       },
     },
     {
@@ -77,7 +81,7 @@ const createUser = tryCatch(async (req, res) => {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `:memo: *Commentaire:* \n${body.comment}`,
+        text: `:memo: *Commentaire:* \n${req.body.comment}`,
       },
     },
     {
@@ -85,7 +89,7 @@ const createUser = tryCatch(async (req, res) => {
     },
   ]);
 
-  res.status(201).json(body);
+  res.status(201).json(bodyUser);
 });
 
 const loginUser = tryCatch(async (req, res) => {
@@ -164,17 +168,18 @@ const updateUser = tryCatch(async (req, res) => {
     newUser = {
       ...oldUser,
       role: USER_ROLES.OBSERVER,
-      etablissements: [],
     };
   } else if (oldUser.role === USER_ROLES.OBSERVER && req.body.role === USER_ROLES.ETABLISSEMENT) {
     newUser = {
       ...oldUser,
       role: USER_ROLES.ETABLISSEMENT,
-      scope: [],
+      scope: null,
     };
   }
 
-  const { success: successUpdatedUser, body: updatedUser } = await usersService.updateUser(id, newUser);
+  const formattedUser = { ...newUser, refreshToken: JSON.stringify(newUser.refreshToken) };
+
+  const { success: successUpdatedUser, body: updatedUser } = await usersService.updateUser(id, formattedUser);
 
   if (
     successOldUser &&

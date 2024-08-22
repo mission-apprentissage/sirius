@@ -1,4 +1,4 @@
-import { InsertResult, UpdateResult, sql } from "kysely";
+import { sql } from "kysely";
 import { USER_STATUS } from "../constants";
 import { kdb } from "../db/db";
 import { User, UserCreation, UserPublic } from "../types";
@@ -157,31 +157,35 @@ export const findAllWithEtablissement = (): Promise<(UserPublic & any)[] | undef
     .execute();
 };
 
-export const update = (id: string, user: User): Promise<UpdateResult[]> => {
-  return kdb.updateTable("users").set(user).where("id", "=", id).execute();
+export const update = async (id: string, user: User): Promise<boolean> => {
+  const result = await kdb.updateTable("users").set(user).where("id", "=", id).executeTakeFirst();
+
+  return result.numUpdatedRows === BigInt(1);
 };
 
 export const create = async ({
   email,
-  first_name,
-  last_name,
+  firstName,
+  lastName,
   comment,
   role,
   confirmationToken,
   salt,
   hash,
-}: UserCreation): Promise<InsertResult> => {
+}: UserCreation): Promise<{ id: string } | undefined> => {
   const newUser = {
     email: email.toLowerCase(),
-    first_name,
-    last_name,
+    first_name: firstName,
+    last_name: lastName,
     role,
     comment,
     confirmation_token: confirmationToken,
     salt,
     hash,
     status: USER_STATUS.PENDING,
+    accepted_cgu: false,
+    email_confirmed: false,
+    refresh_token: [],
   };
-
-  return kdb.insertInto("users").values(newUser).executeTakeFirst();
+  return kdb.insertInto("users").values(newUser).returning("id").executeTakeFirst();
 };

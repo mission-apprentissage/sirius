@@ -21,7 +21,7 @@ const useFetchRemoteFormations = ({ query, enabled, page = 1, pageSize = 1000 })
   }, [data, page, queryClient]);
 
   const orderedFormations = data?.formations.sort((a, b) =>
-    a.intitule_long > b.intitule_long ? 1 : b.intitule_long > a.intitule_long ? -1 : 0
+    a.intituleLong > b.intituleLong ? 1 : b.intituleLong > a.intituleLong ? -1 : 0
   );
 
   return {

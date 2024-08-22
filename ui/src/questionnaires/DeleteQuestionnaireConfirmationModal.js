@@ -34,7 +34,7 @@ const DeleteQuestionnaireConfirmationModal = ({
             variant="solid"
             colorScheme="purple"
             onClick={() => {
-              setDeletedQuestionnaireId(questionnaire._id);
+              setDeletedQuestionnaireId(questionnaire.id);
               onClose();
             }}
           >

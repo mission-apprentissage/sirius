@@ -53,7 +53,7 @@ const classifyVerbatim = async (verbatim, classificationCount, gemVerbatims) => 
     console.log("----------------");
     await sleep(500);
   } catch (err) {
-    console.error("Failed to classify verbatim:", verbatim._id.toString(), err);
+    console.error("Failed to classify verbatim:", verbatim.id, err);
   }
 };
 
@@ -64,12 +64,12 @@ const getHighestScore = (scores) => {
 };
 
 const updateVerbatimScores = async (verbatim, scores) => {
-  const updateResult = await Verbatim.updateOne({ _id: verbatim._id }, { scores });
+  const updateResult = await Verbatim.updateOne({ id: verbatim.id }, { scores });
 
   if (updateResult.modifiedCount === 1) {
-    console.log("Verbatim updated successfully:", verbatim._id.toString());
+    console.log("Verbatim updated successfully:", verbatim.id);
   } else {
-    console.error("Failed to update verbatim:", verbatim._id.toString());
+    console.error("Failed to update verbatim:", verbatim.id);
   }
 };
 

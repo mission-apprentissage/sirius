@@ -30,7 +30,7 @@ export const SelectAllCampagnesCheckbox = ({
   const handleSelectAll = (e, campagneIds) => {
     setSelectedCampagneIds((prevValues) => {
       if (e.target.checked && search) {
-        return searchedCampagnes.map((campagne) => campagne._id);
+        return searchedCampagnes.map((campagne) => campagne.id);
       } else if (e.target.checked) {
         return [...new Set([...prevValues, ...campagneIds])];
       }
@@ -77,8 +77,8 @@ export const AccordionLabel = ({
     return (
       <AccordionLabelByEtablissementContainer>
         <div>
-          {etablissementFormateur.etablissement_formateur_siret ===
-          etablissementFormateur.etablissement_gestionnaire_siret ? (
+          {etablissementFormateur.etablissementFormateurSiret ===
+          etablissementFormateur.etablissementGestionnaireSiret ? (
             <Tooltip
               background="var(--background-default-grey)"
               border="var(--border-default-grey)"
@@ -109,15 +109,15 @@ export const AccordionLabel = ({
             </Tooltip>
           )}
           <h5>
-            {etablissementFormateur.etablissement_formateur_entreprise_raison_sociale ||
-              etablissementFormateur.etablissement_formateur_enseigne}
+            {etablissementFormateur.etablissementFormateurEntrepriseRaisonSociale ||
+              etablissementFormateur.etablissementFormateurEnseigne}
           </h5>
         </div>
         <p>
-          {etablissementFormateur.lieu_formation_adresse_computed ||
-            `${etablissementFormateur.lieu_formation_adresse}, ${etablissementFormateur.code_postal} ${etablissementFormateur.localite}`}
+          {etablissementFormateur.lieuFormationAdresseComputed ||
+            `${etablissementFormateur.lieuFormationAdresse}, ${etablissementFormateur.codePostal} ${etablissementFormateur.localite}`}
         </p>
-        <p>N° SIRET : {etablissementFormateur.etablissement_formateur_siret}</p>
+        <p>N° SIRET : {etablissementFormateur.etablissementFormateurSiret}</p>
         <p>
           {count} campagne
           {isPlural(count)} sélectionnée

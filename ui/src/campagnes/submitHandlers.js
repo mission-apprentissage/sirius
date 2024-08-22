@@ -16,7 +16,7 @@ export const multiCreationSubmitHandler = async (payload, userContext) => {
 export const simpleEditionSubmitHandler = async (campagneId, values, userContext) => {
   const campagneResult = await _put(`/api/campagnes/${campagneId}`, values, userContext.token);
 
-  return campagneResult?.modifiedCount
+  return campagneResult
     ? {
         status: "success",
         description: "La campagne a été mise à jour",

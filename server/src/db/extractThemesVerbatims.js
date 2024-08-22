@@ -61,17 +61,17 @@ const extractThemesVerbatims = async (verbatim, themeCount) => {
     console.log("----------------");
     await sleep(500);
   } catch (err) {
-    console.error("Failed to classify verbatim:", verbatim._id.toString(), err);
+    console.error("Failed to classify verbatim:", verbatim.id, err);
   }
 };
 
 const updateVerbatimThemes = async (verbatim, formattedThemes) => {
-  const updateResult = await Verbatim.updateOne({ _id: verbatim._id }, { themes: formattedThemes });
+  const updateResult = await Verbatim.updateOne({ id: verbatim.id }, { themes: formattedThemes });
 
   if (updateResult.modifiedCount === 1) {
-    console.log("Verbatim updated successfully:", verbatim._id.toString());
+    console.log("Verbatim updated successfully:", verbatim.id);
   } else {
-    console.error("Failed to update verbatim:", verbatim._id.toString());
+    console.error("Failed to update verbatim:", verbatim.id);
   }
 };
 

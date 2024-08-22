@@ -69,7 +69,7 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
         userContext.token
       );
 
-      if (resultUser.modifiedCount === 1) {
+      if (resultUser === true) {
         toast({
           title: "Scope ajouté",
           description: "Les nouveaux scopes ont bien été ajouté.",

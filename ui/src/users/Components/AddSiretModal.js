@@ -20,9 +20,9 @@ import AddSiret from "./AddSiret/AddSiret";
 
 const etablissement = Yup.object({
   siret: Yup.string().required(),
-  onisep_nom: Yup.string().nullable(),
+  onisepNom: Yup.string().nullable(),
   enseigne: Yup.string().nullable(),
-  entreprise_raison_sociale: Yup.string().nullable(),
+  entrepriseRaisonSociale: Yup.string().nullable(),
 });
 
 const validationSchema = Yup.object({
@@ -59,25 +59,6 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
         (etablissement) => !user.etablissements.find((e) => e.siret === etablissement.siret)
       );
 
-      const newEtablissementsPayload = filteredEtablissements.map((etablissement) => ({
-        siret: etablissement.siret,
-        onisep_nom: etablissement.onisep_nom,
-        enseigne: etablissement.enseigne,
-        entreprise_raison_sociale: etablissement.entreprise_raison_sociale,
-      }));
-
-      const previousEtablissementsWithoutEmpty = user.etablissements.filter(
-        (obj) => Object.keys(obj).length !== 0
-      );
-
-      const resultUser = await _put(
-        `/api/users/${user.id}`,
-        {
-          etablissements: [...previousEtablissementsWithoutEmpty, ...newEtablissementsPayload],
-        },
-        userContext.token
-      );
-
       const siretList = filteredEtablissements.map((etablissement) => etablissement.siret);
 
       const remoteEtablissementsToCreate = await getRemoteEtablissementsToCreate(siretList);
@@ -86,14 +67,15 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
         `/api/etablissements/`,
         remoteEtablissementsToCreate.map((etablissement) => {
           return {
-            data: etablissement,
-            createdBy: user.id,
+            _id: etablissement._id,
+            siret: etablissement.siret,
+            userId: user.id,
           };
         }),
         userContext.token
       );
 
-      if (resultUser.modifiedCount === 1 && resultEtablissements) {
+      if (resultEtablissements.length) {
         toast({
           title: "SIRET ajouté",
           description: `Les nouveaux SIRET ont bien été ajouté. ${

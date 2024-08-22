@@ -7,7 +7,7 @@ const DisplayReponsesModal = ({ modal, temoignage }) => {
       title={
         <>
           <span className={fr.cx("fr-icon-arrow-right-line")} />
-          Réponses brutes pour la réponse {temoignage?._id}
+          Réponses brutes pour la réponse {temoignage?.id}
         </>
       }
       size="large"

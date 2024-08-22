@@ -28,6 +28,7 @@ const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscr
       },
     };
   } catch (error) {
+    console.log({ error });
     return { success: false, body: error };
   }
 };

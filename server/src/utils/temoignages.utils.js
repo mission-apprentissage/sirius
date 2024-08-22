@@ -213,17 +213,17 @@ const appendFormationDataWhenEmpty = (campagne) => {
   if (!campagne.formation) {
     campagne.formation = {
       id: "N/A",
-      intitule_long: "N/A",
+      intituleLong: "N/A",
       tags: [],
-      lieu_formation_adresse_computed: "N/A",
+      lieuFormationAdresseComputed: "N/A",
       diplome: "N/A",
       localite: "N/A",
       duree: 0,
-      etablissement_formateur_siret: "N/A",
-      etablissement_gestionnaire_siret: "N/A",
-      etablissement_gestionnaire_enseigne: "N/A",
-      etablissement_formateur_enseigne: "N/A",
-      etablissement_formateur_entreprise_raison_sociale: "N/A",
+      etablissementFormateurSiret: "N/A",
+      etablissementGestionnaireSiret: "N/A",
+      etablissementGestionnaireEnseigne: "N/A",
+      etablissementFormateurEnseigne: "N/A",
+      etablissementFormateurEntrepriseRaisonSociale: "N/A",
     };
   }
 };

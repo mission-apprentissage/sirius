@@ -38,9 +38,7 @@ const DisplayByEtablissementTable = ({
     search && searchedCampagnes.body.length > 0
       ? [
           ...new Set(
-            searchedCampagnes.body.map(
-              (campagne) => campagne.formation.data.etablissement_formateur_siret
-            )
+            searchedCampagnes.body.map((campagne) => campagne.formation.etablissementFormateurSiret)
           ),
         ]
       : [];
@@ -48,7 +46,7 @@ const DisplayByEtablissementTable = ({
   return campagnesSorted.map(({ etablissementFormateur, campagneIds }) => {
     if (
       uniqueEtablissementFromSearch.length &&
-      !uniqueEtablissementFromSearch.includes(etablissementFormateur.etablissement_formateur_siret)
+      !uniqueEtablissementFromSearch.includes(etablissementFormateur.etablissementFormateurSiret)
     ) {
       return null;
     }
@@ -57,12 +55,8 @@ const DisplayByEtablissementTable = ({
 
     return (
       <StyledAccordion
-        key={etablissementFormateur.etablissement_formateur_siret}
-        onExpandedChange={(isExpanded) =>
-          isExpanded
-            ? setOpenedAccordion(etablissementFormateur.etablissement_formateur_siret)
-            : setOpenedAccordion(null)
-        }
+        key={etablissementFormateur.etablissementFormateurSiret}
+        onClick={() => setOpenedAccordion(etablissementFormateur.etablissementFormateurSiret)}
         label={
           <AccordionLabel
             etablissementFormateur={etablissementFormateur}
@@ -92,12 +86,12 @@ const DisplayByEtablissementTable = ({
             <SelectAllCampagnesCheckbox
               count={campagnesSelectedCount}
               campagneIds={campagneIds}
-              name={`selectAll${etablissementFormateur.etablissement_formateur_siret}`}
+              name={`selectAll${etablissementFormateur.etablissementFormateurSiret}`}
               setSelectedCampagneIds={setSelectedCampagneIds}
               searchedCampagnes={searchedCampagnes?.body.filter(
                 (searchedCampagne) =>
-                  searchedCampagne.formation.data.etablissement_formateur_siret ===
-                  etablissementFormateur.etablissement_formateur_siret
+                  searchedCampagne.formation.etablissementFormateurSiret ===
+                  etablissementFormateur.etablissementFormateurSiret
               )}
               search={search}
             />
@@ -112,13 +106,13 @@ const DisplayByEtablissementTable = ({
               {campagnes.pagination.totalPages > 1 && (
                 <Pagination
                   count={campagnes.pagination.totalPages}
-                  defaultPage={page[etablissementFormateur.etablissement_formateur_siret]}
+                  defaultPage={page[etablissementFormateur.etablissementFormateurSiret]}
                   getPageLinkProps={(pageNumber) => ({
                     onClick: (event) => {
                       event.preventDefault();
                       setPage((prevValue) => ({
                         ...prevValue,
-                        [etablissementFormateur.etablissement_formateur_siret]: pageNumber,
+                        [etablissementFormateur.etablissementFormateurSiret]: pageNumber,
                       }));
                     },
                     key: `pagination-link-${pageNumber}`,

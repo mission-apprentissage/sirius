@@ -1,4 +1,3 @@
-const ObjectId = require("mongoose").mongo.ObjectId;
 const campagnesDao = require("../dao/campagnes.dao");
 const formationsDao = require("../dao/formations.dao");
 const etablissementsDao = require("../dao/etablissements.dao");
@@ -56,11 +55,11 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, p
       ? campagnes.filter((campagne) => {
           return (
             campagne.nomCampagne.toLowerCase()?.includes(search.toLowerCase()) ||
-            campagne.formation?.data.intitule_long.toLowerCase()?.includes(search.toLowerCase()) ||
-            campagne.formation?.data.localite.toLowerCase()?.includes(search.toLowerCase()) ||
-            campagne.formation?.data.lieu_formation_adresse_computed?.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.data.lieu_formation_adresse?.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.data.tags?.join("-").toLowerCase().includes(search.toLowerCase())
+            campagne.formation?.intituleLong?.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.localite?.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.lieuFormationAdresseComputed?.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.lieuFormationAdresse?.toLowerCase().includes(search.toLowerCase()) ||
+            campagne.formation?.tags?.join("-").toLowerCase().includes(search.toLowerCase())
           );
         })
       : campagnes;
@@ -70,7 +69,7 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, p
     paginatedCampagnes.map((campagne) => {
       delete campagne.questionnaireUI;
       delete campagne.questionnaire;
-      delete campagne.temoignagesList;
+      delete campagne.temoignages;
       appendDataWhenEmpty(campagne);
     });
 
@@ -90,7 +89,7 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, p
   }
 };
 
-const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, scope) => {
+const getSortedCampagnes = async (isAdmin, isObserver, userSiret = [], sortingType, scope) => {
   try {
     let campagnes = [];
     const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
@@ -127,7 +126,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
     if (sortingType === CAMPAGNE_SORTING_TYPE.DIPLOME_TYPE) {
       const campagnesGroupedByDiplome = campagnes.reduce((acc, campagne) => {
         appendDataWhenEmpty(campagne);
-        const diplome = campagne.formation?.data.diplome;
+        const diplome = campagne.formation?.diplome;
         if (!acc[diplome]) {
           acc[diplome] = [];
         }
@@ -136,7 +135,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
       }, {});
 
       const formattedResults = Object.keys(campagnesGroupedByDiplome).map((key) => {
-        const campagneIds = campagnesGroupedByDiplome[key].map((campagne) => campagne._id);
+        const campagneIds = campagnesGroupedByDiplome[key].map((campagne) => campagne.id);
         return {
           diplome: key,
           campagneIds: campagneIds,
@@ -147,7 +146,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
     } else if (sortingType === CAMPAGNE_SORTING_TYPE.ETABLISSEMENT) {
       const campagnesGroupedByEtablissement = campagnes.reduce((acc, campagne) => {
         appendDataWhenEmpty(campagne);
-        const siret = campagne.formation.data.etablissement_formateur_siret;
+        const siret = campagne.formation.etablissementFormateurSiret;
         if (!acc[siret]) {
           acc[siret] = [];
         }
@@ -156,9 +155,9 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
       }, {});
 
       const formattedResults = Object.keys(campagnesGroupedByEtablissement).map((key) => {
-        const campagneIds = campagnesGroupedByEtablissement[key].map((campagne) => campagne._id);
+        const campagneIds = campagnesGroupedByEtablissement[key].map((campagne) => campagne.id);
         return {
-          etablissementFormateur: campagnesGroupedByEtablissement[key][0].formation.data,
+          etablissementFormateur: campagnesGroupedByEtablissement[key][0].formation,
           campagneIds: campagneIds,
         };
       });
@@ -167,7 +166,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
     } else if (sortingType === CAMPAGNE_SORTING_TYPE.DEPARTEMENT) {
       const campagnesGroupedByDepartement = campagnes.reduce((acc, campagne) => {
         appendDataWhenEmpty(campagne);
-        const departement = campagne.formation.data.num_departement;
+        const departement = campagne.formation.numDepartement;
         if (!acc[departement]) {
           acc[departement] = [];
         }
@@ -176,7 +175,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
       }, {});
 
       const formattedResults = Object.keys(campagnesGroupedByDepartement).map((key) => {
-        const campagneIds = campagnesGroupedByDepartement[key].map((campagne) => campagne._id);
+        const campagneIds = campagnesGroupedByDepartement[key].map((campagne) => campagne.id);
         return {
           departement: key,
           campagneIds: campagneIds,
@@ -186,7 +185,7 @@ const getSortedCampagnes = async (isAdmin, isObserver, userSiret, sortingType, s
       results = formattedResults;
     } else if (sortingType === CAMPAGNE_SORTING_TYPE.ALL) {
       const formattedResults = {
-        campagneIds: campagnes.map((campagne) => campagne._id),
+        campagneIds: campagnes.map((campagne) => campagne.id),
       };
 
       results = [formattedResults];
@@ -222,14 +221,13 @@ const createCampagne = async (campagne) => {
 const deleteCampagnes = async (ids) => {
   try {
     const deletedCampagnes = await campagnesDao.deleteMany(ids);
-    await temoignagesDao.deleteManyByCampagneId(ids);
+    const deletedTemoignages = await temoignagesDao.deleteManyByCampagneId(ids);
     const deletedFormationsIds = await formationsDao.deleteManyByCampagneIdAndReturnsTheDeletedFormationId(ids);
 
-    const deletedFormationsStringifiedIds = deletedFormationsIds.map((id) => id.toString());
-
-    await etablissementsDao.updateByFormationIds(deletedFormationsStringifiedIds);
-
-    return { success: true, body: deletedCampagnes };
+    return {
+      success: true,
+      body: deletedCampagnes && deletedTemoignages && deletedFormationsIds.length === ids.length,
+    };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -244,34 +242,61 @@ const updateCampagne = async (id, updatedCampagne) => {
   }
 };
 
-const createMultiCampagne = async (campagnes) => {
+const createMultiCampagne = async (campagnes, currentUserId) => {
   try {
     const formationsIds = [];
 
     for (const campagne of campagnes) {
-      const { formation, etablissementFormateurSiret } = campagne;
+      const { formation, etablissementFormateurSiret, ...rest } = campagne;
 
-      const createdCampagne = await campagnesDao.create(campagne);
+      const etablissement = await etablissementsDao.findAll({ siret: etablissementFormateurSiret });
+
+      const createdCampagne = await campagnesDao.create(rest);
+
       const createdFormation = await formationsDao.create({
-        data: formation,
-        campagneId: createdCampagne._id,
-        createdBy: formation.createdBy,
+        catalogue_id: formation._id,
+        region: formation.region,
+        num_departement: formation.num_departement,
+        intitule_long: formation.intitule_long,
+        intitule_court: formation.intitule_court,
+        diplome: formation.diplome,
+        localite: formation.localite,
+        tags: JSON.stringify(formation.tags),
+        lieu_formation_adresse: formation.lieu_formation_adresse,
+        lieu_formation_adresse_computed: formation.lieu_formation_adresse_computed,
+        code_postal: formation.code_postal,
+        duree: formation.duree,
+        etablissement_gestionnaire_siret: formation.etablissement_gestionnaire_siret,
+        etablissement_gestionnaire_enseigne: formation.etablissement_gestionnaire_enseigne,
+        etablissement_formateur_siret: formation.etablissement_formateur_siret,
+        etablissement_formateur_enseigne: formation.etablissement_formateur_enseigne,
+        etablissement_formateur_entreprise_raison_sociale: formation.etablissement_formateur_entreprise_raison_sociale,
+        etablissement_formateur_adresse: formation.etablissement_formateur_adresse,
+        etablissement_formateur_localite: formation.etablissement_formateur_localite,
+        catalogue_data: JSON.stringify(formation),
+        etablissement_id: etablissement.id,
+        campagneId: createdCampagne.id,
       });
 
-      formationsIds.push(createdFormation._id.toString());
-      const etablissement = await etablissementsDao.getAll({ "data.siret": etablissementFormateurSiret });
+      formationsIds.push(createdFormation.id);
 
-      if (etablissement.length) {
-        await etablissementsDao.update(etablissement[0]._id, {
-          formationIds: [...etablissement[0].formationIds, createdFormation._id.toString()],
-        });
-      } else {
+      if (!etablissement.length) {
         const etablissement = await catalogue.getEtablissement(etablissementFormateurSiret);
-        await etablissementsDao.create({
-          data: etablissement,
-          formationIds: [createdFormation._id.toString()],
-          createdBy: formation.createdBy,
-        });
+        await etablissementsDao.create(
+          {
+            catalogue_id: etablissement._id,
+            siret: etablissement.siret,
+            onisep_nom: etablissement.onisep_nom,
+            onisep_url: etablissement.onisep_url,
+            enseigne: etablissement.enseigne,
+            entreprise_raison_sociale: etablissement.entreprise_raison_sociale,
+            uai: etablissement.uai,
+            localite: etablissement.localite,
+            region_implantation_nom: etablissement.region_implantation_nom,
+            catalogue_data: JSON.stringify(etablissement),
+          },
+          currentUserId
+        );
       }
     }
 
@@ -285,11 +310,11 @@ const getPdfExport = async (id) => {
   try {
     const campagne = await campagnesDao.getOne(id);
 
-    const formation = await formationsDao.findAll({ campagne_id: id });
+    const formation = await formationsDao.findAll({ campagneid: id });
 
-    const campagneName = campagne.nomCampagne || formation[0].data.intitule_long || formation[0].data.intitule_court;
+    const campagneName = campagne.nomCampagne || formation[0].intituleLong || formation[0].intitule_court;
 
-    const generatedPdf = await pdfExport.generatePdf(campagne._id, campagneName);
+    const generatedPdf = await pdfExport.generatePdf(campagne.id, campagneName);
 
     return { success: true, body: { data: generatedPdf, fileName: campagneName + ".pdf" } };
   } catch (error) {
@@ -302,22 +327,21 @@ const getPdfMultipleExport = async (campagneIds = [], user) => {
     const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(campagneIds);
 
     const formattedCampagnes = campagnes.map((campagne) => ({
-      campagneId: campagne._id.toString(),
-      campagneName:
-        campagne.nomCampagne || campagne.formation.data.intitule_long || campagne.formation.data.intitule_court,
-      localite: campagne.formation.data.localite,
-      adresse: campagne.formation.data.lieu_formation_adresse_computed,
-      tags: campagne.formation.data.tags,
-      duree: campagne.formation.data.duree,
+      campagneId: campagne.id,
+      campagneName: campagne.nomCampagne || campagne.formation.intituleLong || campagne.formation.intitule_court,
+      localite: campagne.formation.localite,
+      adresse: campagne.formation.lieuFormationAdresseComputed,
+      tags: campagne.formation.tags,
+      duree: campagne.formation.duree,
     }));
 
     const etablissementLabel =
-      campagnes[0].etablissement.data.onisep_nom ||
-      campagnes[0].etablissement.data.enseigne ||
-      campagnes[0].etablissement.data.entreprise_raison_sociale ||
+      campagnes[0].etablissement.onisepNom ||
+      campagnes[0].etablissement.enseigne ||
+      campagnes[0].etablissement.entrepriseRaisonSociale ||
       "";
 
-    const diplome = DIPLOME_TYPE_MATCHER[campagnes[0].formation.data.diplome] || campagnes[0].formation.data.diplome;
+    const diplome = DIPLOME_TYPE_MATCHER[campagnes[0].formation.diplome] || campagnes[0].formation.diplome;
 
     const generatedPdf = await pdfExport.generateMultiplePdf(formattedCampagnes, diplome, etablissementLabel, user);
 
@@ -338,11 +362,11 @@ const getXlsxMultipleExport = async (campagneIds = []) => {
 
     const formattedCampagnes = campagnes.map((campagne) => ({
       campagneName: campagne.nomCampagne,
-      formation: campagne.formation?.data.intitule_long,
-      etablissementFormateurSiret: campagne.formation?.data.etablissement_formateur_siret,
-      etablissementResponsableSiret: campagne.formation?.data.etablissement_gestionnaire_siret,
-      etablissementFormateurLabel: campagne.formation?.data.etablissement_formateur_entreprise_raison_sociale,
-      etablissementResponsableLabel: campagne.formation?.data.etablissement_gestionnaire_enseigne,
+      formation: campagne.formation?.intituleLong,
+      etablissementFormateurSiret: campagne.formation?.etablissementFormateurSiret,
+      etablissementResponsableSiret: campagne.formation?.etablissementGestionnaireSiret,
+      etablissementFormateurLabel: campagne.formation?.etablissementFormateurEntrepriseRaisonSociale,
+      etablissementResponsableLabel: campagne.formation?.etablissementGestionnaireEnseigne,
       seats: campagne.seats || "Illimité",
       temoignagesCount: campagne.temoignagesCount,
     }));
@@ -360,31 +384,29 @@ const getXlsxMultipleExport = async (campagneIds = []) => {
   }
 };
 
-const getCampagnesStatistics = async (campagneIds) => {
+const getCampagnesStatistics = async (campagneIds = []) => {
   try {
-    const query = { campagneIds: { $in: campagneIds.map((id) => ObjectId(id)) } };
+    const query = { campagneIds };
     const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
 
-    const onlyQpenQuestionKeyList = [];
     const questionnaires = await questionnairesDao.findAll();
-    questionnaires.forEach((questionnaire) => [
-      onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUI, true)),
-    ]);
-    const uniqueChampsLibreFields = [...new Set(onlyQpenQuestionKeyList.flat())];
 
-    const temoignagesList = campagnes.map((campagne) => campagne.temoignagesList).flat();
-    const temoignageIds = temoignagesList.map((temoignagne) => temoignagne.id);
+    const temoignages = campagnes.map((campagne) => campagne.temoignages).flat();
+    const temoignageIds = temoignages.map((temoignagne) => temoignagne.id);
     const verbatimsQuery = {
       temoignageIds: temoignageIds,
-      questionKey: uniqueChampsLibreFields,
     };
+
     const verbatimsCountByStatus = await verbatimsDao.count(verbatimsQuery);
 
     const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
 
     campagnes.forEach((campagne) => {
-      campagne.possibleChampsLibreCount = getChampsLibreField(campagne.questionnaireUI, true).length;
-      campagne.medianDurationInMs = getMedianDuration(campagne.temoignagesList);
+      const questionnaireUI = questionnaires.find(
+        (questionnaire) => questionnaire.id === campagne.questionnaireId
+      ).questionnaireUi;
+      campagne.possibleChampsLibreCount = getChampsLibreField(questionnaireUI, true).length;
+      campagne.medianDurationInMs = getMedianDuration(campagne.temoignages);
     });
 
     const statistics = getStatistics(campagnes, totalVerbatimCount);

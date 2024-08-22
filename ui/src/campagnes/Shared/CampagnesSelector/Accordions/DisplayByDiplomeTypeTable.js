@@ -20,6 +20,7 @@ const DisplayByDiplomeTypeTable = ({
   const {
     page,
     setPage,
+    openedAccordion,
     setOpenedAccordion,
     campagnes,
     isSuccessCampagnes,
@@ -36,7 +37,7 @@ const DisplayByDiplomeTypeTable = ({
 
   const uniqueDiplomeTypeFromSearch =
     search && searchedCampagnes.body.length > 0
-      ? [...new Set(searchedCampagnes.body.map((campagne) => campagne.formation.data.diplome))]
+      ? [...new Set(searchedCampagnes.body.map((campagne) => campagne.formation.diplome))]
       : [];
   return campagnesSorted.map(({ diplome, campagneIds }) => {
     if (uniqueDiplomeTypeFromSearch.length && !uniqueDiplomeTypeFromSearch.includes(diplome)) {
@@ -48,9 +49,7 @@ const DisplayByDiplomeTypeTable = ({
     return (
       <StyledAccordion
         key={diplome}
-        onExpandedChange={(isExpanded) =>
-          isExpanded ? setOpenedAccordion(diplome) : setOpenedAccordion(null)
-        }
+        onClick={() => setOpenedAccordion(diplome)}
         label={<AccordionLabel diplome={diplome} count={campagnesSelectedCount} />}
       >
         {isLoadingCampagnes && (

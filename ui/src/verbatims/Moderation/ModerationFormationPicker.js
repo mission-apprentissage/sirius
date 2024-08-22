@@ -51,8 +51,8 @@ const ModerationFormationPicker = ({ pickedEtablissementFormationIds, setPickedF
         options={
           (localFormations?.length &&
             localFormations.map((formation) => ({
-              value: formation._id,
-              label: `${formation.data.intitule_long}`,
+              value: formation.id,
+              label: `${formation.intituleLong}`,
             }))) ||
           []
         }

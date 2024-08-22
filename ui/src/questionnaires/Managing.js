@@ -36,7 +36,7 @@ const QuestionnaireTable = ({
   const toast = useToast();
   const handleValidationChange = async (e, questionnaire) => {
     const result = await _put(
-      `/api/questionnaires/${questionnaire._id}`,
+      `/api/questionnaires/${questionnaire.id}`,
       {
         isValidated: !questionnaire?.isValidated,
       },
@@ -71,7 +71,7 @@ const QuestionnaireTable = ({
           </Thead>
           <Tbody>
             {questionnaires?.map((questionnaire) => (
-              <Tr key={questionnaire._id}>
+              <Tr key={questionnaire.id}>
                 <Td sx={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>
                   <Tooltip label={questionnaire.nom} hasArrow arrowSize={15}>
                     {questionnaire.nom}
@@ -117,7 +117,7 @@ const QuestionnaireTable = ({
                     icon={<ViewIcon />}
                     onClick={() =>
                       window.open(
-                        `/questionnaires/${questionnaire._id}/apercu`,
+                        `/questionnaires/${questionnaire.id}/apercu`,
                         "_blank",
                         "noreferrer"
                       )
@@ -140,7 +140,7 @@ const QuestionnaireTable = ({
                     variant="outline"
                     colorScheme="purple"
                     icon={<EditIcon />}
-                    onClick={() => navigate(`/questionnaires/${questionnaire._id}/edition`)}
+                    onClick={() => navigate(`/questionnaires/${questionnaire.id}/edition`)}
                     mx={2}
                   />
                   <IconButton
@@ -217,7 +217,7 @@ const Managing = () => {
         });
       }
       const filteredDisplayedQuestionnaire = displayedQuestionnaires.filter(
-        (questionnaire) => questionnaire._id !== deletedQuestionnaireId
+        (questionnaire) => questionnaire.id !== deletedQuestionnaireId
       );
       setDisplayedQuestionnaires(filteredDisplayedQuestionnaire);
       setDeletedQuestionnaireId(null);

@@ -43,7 +43,7 @@ const CguModal = ({ userContext, setUserContext, isOpen = true, setHasAcceptedCg
             { acceptedCgu: true },
             userContext.token
           );
-          if (result.acknowledged) {
+          if (result === true) {
             setUserContext((oldValues) => {
               return { ...oldValues, user: { ...oldValues.user, acceptedCgu: true } };
             });

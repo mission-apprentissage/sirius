@@ -84,7 +84,7 @@ const HomePage = () => {
                 <Link
                   className="fr-link fr-icon-arrow-right-line fr-link--icon-right"
                   to={`/questionnaires/${
-                    validatedQuestionnaire?.length && validatedQuestionnaire[0]._id
+                    validatedQuestionnaire?.length && validatedQuestionnaire[0].id
                   }/apercu`}
                 >
                   Aperçu du questionnaire
@@ -123,7 +123,7 @@ const HomePage = () => {
               onClick={() =>
                 navigate(
                   `/questionnaires/${
-                    validatedQuestionnaire?.length && validatedQuestionnaire[0]._id
+                    validatedQuestionnaire?.length && validatedQuestionnaire[0].id
                   }/apercu`
                 )
               }

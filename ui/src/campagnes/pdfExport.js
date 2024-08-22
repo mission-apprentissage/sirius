@@ -43,12 +43,12 @@ const addSelectedCampagnesContent = async (doc, selectedCampagnes) => {
   doc.setFont("MarianneRegular", "normal");
 
   selectedCampagnes.forEach((campagne, index) => {
-    const campagneName = campagne.campagneName || campagne.formation.data.intitule_long;
+    const campagneName = campagne.campagneName || campagne.formation.intituleLong;
     const etablissementName =
-      campagne.formation.data.etablissement_formateur_entreprise_raison_sociale || "";
+      campagne.formation.etablissementFormateurEntrepriseRaisonSociale || "";
     const localite =
-      campagne.formation.data.lieu_formation_adresse_computed ||
-      `${campagne.formation.data.lieu_formation_adresse}, ${campagne.formation.data.code_postal} ${campagne.formation.data.localite}`;
+      campagne.formation.lieuFormationAdresseComputed ||
+      `${campagne.formation.lieuFormationAdresse}, ${campagne.formation.codePostal} ${campagne.formation.localite}`;
 
     // Check if new content exceeds page height, if so, add a new page and reapply the template
     if (yPos > pageHeight - bottomMargin) {

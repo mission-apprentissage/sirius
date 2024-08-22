@@ -47,7 +47,7 @@ const CreateCampagnesPage = () => {
       seats: 0,
       etablissementFormateurSiret: formation.etablissement_formateur_siret,
       formationId: formation._id,
-      questionnaireId: validatedQuestionnaire[0]?._id,
+      questionnaireId: validatedQuestionnaire[0]?.id,
     };
     return accumulator;
   }, {});

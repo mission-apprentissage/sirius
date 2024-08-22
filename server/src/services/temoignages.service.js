@@ -95,11 +95,6 @@ const deleteTemoignage = async (id) => {
 
 const updateTemoignage = async (id, updatedTemoignage) => {
   try {
-    const temoignageToUpdate = await temoignagesDao.findOne(id);
-    const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(temoignageToUpdate.campagneId);
-
-    if (!campagne?.length) throw new Error("Campagne not found");
-
     const temoignage = await temoignagesDao.update(id, updatedTemoignage);
 
     return { success: true, body: temoignage };
@@ -124,7 +119,8 @@ const getDatavisualisation = async (campagneIds) => {
         (verbatim) =>
           (temoignage.reponses[verbatim.questionKey] = { content: verbatim.content, status: verbatim.status })
       );
-      const campagne = campagnes.filter((el) => el._id.toString() === temoignage.campagneId)[0];
+
+      const campagne = campagnes.filter((campagne) => campagne.id === temoignage.campagneId)[0];
       if (!campagne) {
         return { success: false, body: ErrorMessage.CampagneNotFoundError };
       }
@@ -144,7 +140,7 @@ const getDatavisualisation = async (campagneIds) => {
       const matchedIdAndQuestions = matchIdAndQuestions(questionnaireById.questionnaire);
       const matchedCardTypeAndQuestions = matchCardTypeAndQuestions(
         questionnaireById.questionnaire,
-        questionnaireById.questionnaireUI
+        questionnaireById.questionnaireUi
       );
       const categories = getCategoriesWithEmojis(questionnaireById.questionnaire);
 
@@ -157,7 +153,7 @@ const getDatavisualisation = async (campagneIds) => {
                 ? { type: matchedCardTypeAndQuestions[questionId] }
                 : matchedCardTypeAndQuestions[questionId];
 
-            const responses = questionnaireTemoignagesMap[questionnaireById.id.toString()]
+            const responses = questionnaireTemoignagesMap[questionnaireById.id]
               .map((temoignage) => temoignage.reponses[questionId])
               .flat()
               .filter(Boolean);
@@ -268,7 +264,7 @@ const getDatavisualisationEtablissement = async (uai) => {
 
     const commentVisTonExperienceCfaOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceCfa); // change name if working for CFA
     const commentVisTonCfaVerbatimsQuery = {
-      temoignageIds: temoignages.map((temoignage) => temoignage._id),
+      temoignageIds: temoignages.map((temoignage) => temoignage.id),
       status: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED],
     };
     const commentVisTonCfaVerbatimsResults = await verbatimsDao.getAll(commentVisTonCfaVerbatimsQuery);

@@ -13,41 +13,30 @@ const msToTime = (duration) => {
 };
 
 const appendDataWhenEmpty = (campagne) => {
-  if (!campagne.formation) {
+  if (!campagne.formation.id) {
     campagne.formation = {
-      _id: "N/A",
-      data: {
-        intitule_long: "N/A",
-        tags: [],
-        lieu_formation_adresse_computed: "N/A",
-        lieu_formation_adresse: "N/A",
-        code_postal: "N/A",
-        diplome: "N/A",
-        localite: "N/A",
-        duree: 0,
-        etablissement_formateur_siret: "N/A",
-        etablissement_gestionnaire_siret: "N/A",
-        etablissement_gestionnaire_enseigne: "N/A",
-        etablissement_formateur_enseigne: "N/A",
-        etablissement_formateur_entreprise_raison_sociale: "N/A",
-      },
-    };
-  }
-  if (!campagne.etablissement) {
-    campagne.etablissement = {
-      _id: "N/A",
+      id: "N/A",
+      intituleLong: "N/A",
+      tags: [],
+      lieuFormationAdresseComputed: "N/A",
+      lieuFormationAdresse: "N/A",
+      codePostal: "N/A",
+      diplome: "N/A",
+      localite: "N/A",
+      duree: 0,
+      etablissementFormateurSiret: "N/A",
+      etablissementGestionnaireSiret: "N/A",
+      etablissementGestionnaireEnseigne: "N/A",
+      etablissementFormateurEnseigne: "N/A",
+      etablissementFormateurEntrepriseRaisonSociale: "N/A",
       formationIds: [],
-      data: {
-        onisep_nom: "N/A",
-        enseigne: "N/A",
-        entreprise_raison_sociale: "N/A",
-        siret: "N/A",
-        numero_voie: "N/A",
-        type_voie: "N/A",
-        nom_voie: "N/A",
-        code_postal: "N/A",
-        localite: "N/A",
-      },
+      onisepNom: "N/A",
+      enseigne: "N/A",
+      entrepriseRaisonSociale: "N/A",
+      siret: "N/A",
+      numeroVoie: "N/A",
+      typeVoie: "N/A",
+      nomVoie: "N/A",
     };
   }
 };
@@ -88,13 +77,13 @@ const getMedianDuration = (campagnes) => {
 
   filteredCampagnes.forEach((campagne) => {
     campagne.medianDurationInMs =
-      campagne.temoignagesList.reduce(
+      campagne.temoignages.reduce(
         (acc, answer) =>
           answer?.lastQuestionAt
             ? acc + new Date(answer?.lastQuestionAt).getTime() - new Date(answer?.createdAt).getTime()
             : 0,
         0
-      ) / campagne.temoignagesList.length;
+      ) / campagne.temoignages.length;
   });
 
   const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.medianDurationInMs, 0);

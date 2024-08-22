@@ -36,6 +36,7 @@ import {
 } from "./utils";
 import ErrorTemplate from "./Shared/ErrorTemplate";
 import BotDetectedModal from "./AnswerCampagne/BotDetectedModal";
+import { VERBATIM_STATUS } from "../constants";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -57,7 +58,6 @@ const fields = {
 
 const AnswerCampagnePage = () => {
   const { id } = useParams();
-  const [campagne, loading] = useGet(`/api/campagnes/${id}`);
   const toast = useToast();
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -73,6 +73,8 @@ const AnswerCampagnePage = () => {
   const [nestedData, setNestedData] = useState({});
   const [champsLibresField, setChampsLibresField] = useState([]);
   const isMobile = breakpoint === "base";
+
+  const [campagne, loading] = useGet(`/api/campagnes/${id}`);
 
   useEffect(() => {
     async function getBotdResult() {
@@ -99,13 +101,20 @@ const AnswerCampagnePage = () => {
     : false;
 
   useEffect(() => {
-    if (campagne.questionnaire && Object.keys(campagne.questionnaire).length) {
-      setFormattedQuestionnnaire(multiStepQuestionnaireFormatter(campagne.questionnaire));
-      setCategories(getCategoriesWithEmojis(campagne.questionnaire));
+    if (
+      campagne?.questionnaire?.questionnaire &&
+      Object.keys(campagne.questionnaire.questionnaire).length
+    ) {
+      setFormattedQuestionnnaire(
+        multiStepQuestionnaireFormatter(campagne.questionnaire.questionnaire)
+      );
+      setCategories(getCategoriesWithEmojis(campagne.questionnaire.questionnaire));
     }
-    if (campagne.questionnaireUI) {
-      setFormattedQuestionnnaireUI(multiStepQuestionnaireUIFormatter(campagne.questionnaireUI));
-      setChampsLibresField(getChampsLibreField(campagne.questionnaireUI));
+    if (campagne?.questionnaire?.questionnaireUI) {
+      setFormattedQuestionnnaireUI(
+        multiStepQuestionnaireUIFormatter(campagne.questionnaire.questionnaireUI)
+      );
+      setChampsLibresField(getChampsLibreField(campagne.questionnaire.questionnaireUI));
     }
   }, [campagne]);
 
@@ -118,8 +127,8 @@ const AnswerCampagnePage = () => {
         isBot,
       });
 
-      if (result._id) {
-        setTemoignageId(result._id);
+      if (result) {
+        setTemoignageId(result.id);
         if (isLastQuestion) {
           setIsTemoignageSent(true);
           return;
@@ -161,6 +170,7 @@ const AnswerCampagnePage = () => {
           temoignageId,
           questionKey,
           content: formData[questionKey],
+          status: VERBATIM_STATUS.PENDING,
         });
       } else {
         const reponses = { ...answers, ...formData, ...nestedData };
@@ -178,11 +188,7 @@ const AnswerCampagnePage = () => {
         });
       }
 
-      if (
-        !(isChampsLibre && result._id) &&
-        !(isChampsLibre && result.acknowledged) &&
-        !(!isChampsLibre && result.acknowledged)
-      ) {
+      if (!(isChampsLibre && result.id) && !(!isChampsLibre && result === true)) {
         if (result.statusCode === 403) {
           toast({
             title: "Une erreur est survenue",

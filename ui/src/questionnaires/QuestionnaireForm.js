@@ -58,7 +58,7 @@ const submitHandler = async (values, editedQuestionnaireId, userContext) => {
       userContext.token
     );
 
-    return result._id
+    return result.id
       ? {
           success: true,
           message: "Le questionnaire a été créée",
@@ -106,7 +106,7 @@ const QuestionnaireForm = ({ editedQuestionnaire = null, duplicatedQuestionnaire
     validationSchema: validationSchema(isQuestionnaireValid, isQuestionnaireUIValid),
     onSubmit: async (values) => {
       const questionnaireId =
-        currentQuestionnaire && !isDuplicating ? currentQuestionnaire._id : null;
+        currentQuestionnaire && !isDuplicating ? currentQuestionnaire.id : null;
 
       const sentQuestionnaire = questionnaire ? questionnaire : values.questionnaire;
       const sentQuestionnaireUI = questionnaireUI ? questionnaireUI : values.questionnaireUI;

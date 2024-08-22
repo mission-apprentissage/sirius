@@ -17,7 +17,7 @@ const createVerifyAndLoginUser = async (httpClient, isAdmin = false) => {
     [etablissement]
   );
 
-  await usersDao.update(createdUser._id, {
+  await usersDao.update(createdUser.id, {
     ...createdUser.toObject(),
     emailConfirmed: true,
     status: USER_STATUS.ACTIVE,

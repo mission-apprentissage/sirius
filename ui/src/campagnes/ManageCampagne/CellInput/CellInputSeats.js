@@ -11,9 +11,9 @@ const CellInputSeats = ({ id, name, campagne, handleCellUpdate }) => {
   const ref = useRef(null);
 
   const submitHandler = async () => {
-    const { _id, nomCampagne, startDate, endDate, seats, questionnaireId } = campagne;
+    const { id, nomCampagne, startDate, endDate, seats, questionnaireId } = campagne;
 
-    const result = await handleCellUpdate(_id, {
+    const result = await handleCellUpdate(id, {
       nomCampagne,
       startDate,
       endDate,

@@ -1,9 +1,39 @@
-import { InsertResult, sql } from "kysely";
+import { sql } from "kysely";
 import { kdb } from "../db/db";
 import { Etablissement } from "../types";
 
-export const create = async (etablissement: Etablissement): Promise<InsertResult> => {
-  return kdb.insertInto("etablissements").values(etablissement).executeTakeFirst();
+export const create = async (etablissement: Etablissement, relatedUserId: string): Promise<string | undefined> => {
+  const transaction = await kdb.transaction().execute(async (trx) => {
+    const insertedEtablissement = await trx
+      .insertInto("etablissements")
+      .values(etablissement)
+      .returning("id")
+      .executeTakeFirst();
+
+    if (insertedEtablissement?.id) {
+      await trx
+        .insertInto("users_etablissements")
+        .values({
+          user_id: relatedUserId,
+          etablissement_id: insertedEtablissement.id,
+        })
+        .execute();
+    }
+
+    return insertedEtablissement?.id;
+  });
+  return transaction;
+};
+
+export const createUserRelation = async (etablissementId: string, relatedUserId: string): Promise<any> => {
+  await kdb
+    .insertInto("users_etablissements")
+    .values({
+      user_id: relatedUserId,
+      etablissement_id: etablissementId,
+    })
+    .returning("id")
+    .executeTakeFirst();
 };
 
 export const findAll = async (
@@ -63,7 +93,7 @@ export const deleteOne = async (id: string): Promise<boolean> => {
     .where("id", "=", id)
     .executeTakeFirst();
 
-  return result.numUpdatedRows > 0;
+  return result.numUpdatedRows === BigInt(1);
 };
 
 export const update = async (id: string, updatedEtablissement: Partial<Etablissement>): Promise<boolean> => {
@@ -74,7 +104,7 @@ export const update = async (id: string, updatedEtablissement: Partial<Etablisse
     .where("deleted_at", "is", null)
     .executeTakeFirst();
 
-  return result.numUpdatedRows > 0;
+  return result.numUpdatedRows === BigInt(1);
 };
 
 export const findAllEtablissementWithCounts = async (): Promise<

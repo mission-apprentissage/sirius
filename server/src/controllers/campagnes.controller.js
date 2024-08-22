@@ -7,7 +7,7 @@ const getCampagnes = tryCatch(async (req, res) => {
   const isAdmin = req.user.role === USER_ROLES.ADMIN;
   const isObserver = req.user.role === USER_ROLES.OBSERVER;
   const scope = isObserver ? req.user.scope : null;
-  const userSiret = req.user.etablissements.map((etablissement) => etablissement.siret);
+  const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
 
   const page = req.query.page || 1;
   const pageSize = req.query.pageSize || 10;
@@ -56,8 +56,8 @@ const getCampagnes = tryCatch(async (req, res) => {
 });
 
 const getCampagne = tryCatch(async (req, res) => {
-  const query = { id: req.params.id };
-  const { success, body } = await campagnesService.getOneCampagne(query);
+  const campagneId = req.params.id;
+  const { success, body } = await campagnesService.getOneCampagne(campagneId);
 
   if (!success) throw new BasicError();
   if (!body) throw new CampagneNotFoundError();
@@ -78,7 +78,7 @@ const deleteCampagnes = tryCatch(async (req, res) => {
   const { success, body } = await campagnesService.deleteCampagnes(ids);
 
   if (!success) throw new BasicError();
-  if (body.modifiedCount === 0) throw new CampagneNotFoundError();
+  if (!body) throw new CampagneNotFoundError();
 
   return res.status(200).json(body);
 });
@@ -92,7 +92,7 @@ const updateCampagne = tryCatch(async (req, res) => {
 });
 
 const createMultiCampagne = tryCatch(async (req, res) => {
-  const { success, body } = await campagnesService.createMultiCampagne(req.body);
+  const { success, body } = await campagnesService.createMultiCampagne(req.body, req.user.id);
 
   if (!success) throw new BasicError();
 
@@ -142,7 +142,7 @@ const getSortedCampagnes = tryCatch(async (req, res) => {
     throw new SortingTypeNotFoundError();
   }
 
-  const userSiret = req.user.etablissements.map((etablissement) => etablissement.siret);
+  const userSiret = req.user.etablissements?.map((etablissement) => etablissement.siret);
 
   const { success, body } = await campagnesService.getSortedCampagnes(isAdmin, isObserver, userSiret, type, scope);
 
@@ -152,7 +152,7 @@ const getSortedCampagnes = tryCatch(async (req, res) => {
 });
 
 const getCampagnesStatistics = tryCatch(async (req, res) => {
-  const campagneIds = req.body;
+  const campagneIds = req.body || [];
   const { success, body } = await campagnesService.getCampagnesStatistics(campagneIds);
 
   if (!success) throw new BasicError();

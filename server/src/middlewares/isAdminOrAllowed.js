@@ -45,25 +45,23 @@ const isAdminOrAllowed = async (req, next, type) => {
 
       if (!multipleSiret.includes(usedSiret)) return next(new UnauthorizedError());
 
-      const queries = ids.map((id) => ({ id, siret: siret ? siret : { $in: multipleSiret } }));
-
       const etablissementFormateurSIRET = await referentiel.getEtablissementSIRETFromRelationType(
         usedSiret,
         ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR
       );
 
-      const campagnePromises = queries.map(async (query) => {
+      const campagnePromises = ids.map(async (query) => {
         const { body } = await campagnesService.getOneCampagne(query);
 
         if (
           body &&
-          (siret === body.etablissement.data.siret ||
-            multipleSiret.includes(body.etablissement.data.siret) ||
-            etablissementFormateurSIRET.includes(body.etablissement.data.siret) ||
-            multipleSiret.includes(body.formation.data.etablissement_formateur_siret) ||
-            multipleSiret.includes(body.formation.data.etablissement_gestionnaire_siret))
+          (siret === body.etablissement.siret ||
+            multipleSiret.includes(body.etablissement.siret) ||
+            etablissementFormateurSIRET.includes(body.etablissement.siret) ||
+            multipleSiret.includes(body.formation.etablissementFormateurSiret) ||
+            multipleSiret.includes(body.formation.etablissementGestionnaireSiret))
         ) {
-          return body._id.toString();
+          return body.id;
         }
         return null;
       });
@@ -114,13 +112,13 @@ const isAdminOrAllowed = async (req, next, type) => {
     //check etablissementId
     if (type === TYPES.ETABLISSEMENT_ID) {
       const { body } = await etablissementsService.getEtablissement(req.params.id);
-      if ((body && body.data.siret === siret) || multipleSiret.includes(body.data.siret)) return next();
+      if ((body && body.siret === siret) || multipleSiret.includes(body.siret)) return next();
     }
 
     //check formation related to etablissement siret
     if (type === TYPES.SIRET_IN_FORMATION) {
-      const siretGestionnaire = req.body.data.etablissement_gestionnaire_siret;
-      const siretFormateur = req.body.data.etablissement_formateur_siret;
+      const siretGestionnaire = req.body.etablissementGestionnaireSiret;
+      const siretFormateur = req.body.etablissementFormateurSiret;
 
       if (
         siret === siretGestionnaire ||
@@ -135,8 +133,8 @@ const isAdminOrAllowed = async (req, next, type) => {
     if (type === TYPES.FORMATION_ID) {
       const formationId = req.params.id;
       const { body } = await formationsService.getFormation(formationId);
-      const siretGestionnaire = body.data.etablissement_gestionnaire_siret;
-      const siretFormateur = body.data.etablissement_formateur_siret;
+      const siretGestionnaire = body.etablissementGestionnaireSiret;
+      const siretFormateur = body.etablissementFormateurSiret;
 
       if (
         siret === siretGestionnaire ||
@@ -152,8 +150,8 @@ const isAdminOrAllowed = async (req, next, type) => {
       const { body: formations } = await formationsService.getFormations(req.query);
 
       const formationsSiret = formations.map((formation) => ({
-        siretGestionnaire: formation.data.etablissement_gestionnaire_siret,
-        siretFormateur: formation.data.etablissement_formateur_siret,
+        siretGestionnaire: formation.etablissementGestionnaireSiret,
+        siretFormateur: formation.etablissementFormateurSiret,
       }));
 
       const isOwnFormations = formationsSiret.every(
