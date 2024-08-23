@@ -264,7 +264,7 @@ export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
 };
 
 export const getAllWithTemoignageCountFormationEtablissement = async (campagneIds: string[]) => {
-  const baseQuery = kdb
+  let baseQuery = kdb
     .selectFrom("campagnes")
     .select([
       "campagnes.id",
@@ -275,50 +275,53 @@ export const getAllWithTemoignageCountFormationEtablissement = async (campagneId
       "campagnes.created_at",
       "campagnes.updated_at",
       sql`json_build_object(
-      'id', formations.id,
-      'catalogue_id', formations.catalogue_id,
-      'code_postal', formations.code_postal,
-      'num_departement', formations.num_departement,
-      'region', formations.region,
-      'localite', formations.localite,
-      'intitule_long', formations.intitule_long,
-      'diplome', formations.diplome,
-      'duree', formations.duree,
-      'lieu_formation_adresse', formations.lieu_formation_adresse,
-      'lieu_formation_adresse_computed', formations.lieu_formation_adresse_computed,
-      'tags', formations.tags,
-      'etablissement_gestionnaire_siret', formations.etablissement_gestionnaire_siret,
-      'etablissement_gestionnaire_enseigne', formations.etablissement_gestionnaire_enseigne,
-      'etablissement_formateur_siret', formations.etablissement_formateur_siret,
-      'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
-      'etablissment_formateur_adresse', formations.etablissement_formateur_adresse,
-      'etablissement_formateur_localite', formations.etablissement_formateur_localite,
-      'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale
-    )`.as("formation"),
+        'id', formations.id,
+        'catalogue_id', formations.catalogue_id,
+        'code_postal', formations.code_postal,
+        'num_departement', formations.num_departement,
+        'region', formations.region,
+        'localite', formations.localite,
+        'intitule_long', formations.intitule_long,
+        'diplome', formations.diplome,
+        'duree', formations.duree,
+        'lieu_formation_adresse', formations.lieu_formation_adresse,
+        'lieu_formation_adresse_computed', formations.lieu_formation_adresse_computed,
+        'tags', formations.tags,
+        'etablissement_gestionnaire_siret', formations.etablissement_gestionnaire_siret,
+        'etablissement_gestionnaire_enseigne', formations.etablissement_gestionnaire_enseigne,
+        'etablissement_formateur_siret', formations.etablissement_formateur_siret,
+        'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
+        'etablissment_formateur_adresse', formations.etablissement_formateur_adresse,
+        'etablissement_formateur_localite', formations.etablissement_formateur_localite,
+        'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale
+      )`.as("formation"),
       sql`json_build_object(
-      'id', etablissements.id,
-      'catalogue_id', etablissements.catalogue_id,
-      'siret', etablissements.siret,
-      'onisep_nom', etablissements.onisep_nom,
-      'enseigne', etablissements.enseigne,
-      'entreprise_raison_sociale', etablissements.entreprise_raison_sociale,
-      'uai', etablissements.uai,
-      'localite', etablissements.localite,
-      'region_implantation_nom', etablissements.region_implantation_nom,
-      'numero_voie', etablissements.catalogue_data ->> 'numero_voie',
-      'type_voie', etablissements.catalogue_data ->> 'type_voie',
-      'nom_voie', etablissements.catalogue_data ->> 'nom_voie',
-      'code_postal', etablissements.catalogue_data ->> 'code_postal'
-    )`.as("etablissement"),
+        'id', etablissements.id,
+        'catalogue_id', etablissements.catalogue_id,
+        'siret', etablissements.siret,
+        'onisep_nom', etablissements.onisep_nom,
+        'enseigne', etablissements.enseigne,
+        'entreprise_raison_sociale', etablissements.entreprise_raison_sociale,
+        'uai', etablissements.uai,
+        'localite', etablissements.localite,
+        'region_implantation_nom', etablissements.region_implantation_nom,
+        'numero_voie', etablissements.catalogue_data ->> 'numero_voie',
+        'type_voie', etablissements.catalogue_data ->> 'type_voie',
+        'nom_voie', etablissements.catalogue_data ->> 'nom_voie',
+        'code_postal', etablissements.catalogue_data ->> 'code_postal'
+      )`.as("etablissement"),
       sql`COUNT(temoignages.id)`.as("temoignagesCount"),
     ])
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
-    .leftJoin("temoignages", "campagnes.id", "temoignages_campagnes.campagne_id")
+    .leftJoin("temoignages", "temoignages_campagnes.temoignage_id", "temoignages.id")
     .leftJoin("formations", "campagnes.id", "formations.campagne_id")
     .leftJoin("etablissements", "formations.etablissement_id", "etablissements.id")
     .where("campagnes.deleted_at", "is", null)
-    .where("campagnes.id", "in", campagneIds)
     .groupBy(["campagnes.id", "formations.id", "etablissements.id"]);
+
+  if (campagneIds.length) {
+    baseQuery = baseQuery.where("campagnes.id", "in", campagneIds);
+  }
 
   return baseQuery.execute();
 };

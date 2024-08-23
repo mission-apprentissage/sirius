@@ -178,7 +178,7 @@ const DsfrNavbar = () => {
         },
         {
           linkProps: {
-            to: "/utilisateurs/campagnes",
+            to: "/suivi/campagnes",
           },
           text: "Campagnes",
         },

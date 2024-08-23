@@ -24,11 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const formationLink = document.getElementById('formation-link');
       data.forEach(item => {
         if(item.temoignagesCount < 1) return;
-        if(item.onisep_intitule === null) return;
+        if(item.onisepIntitule === null) return;
         const li = document.createElement('li');
         const a = document.createElement('a');
-        a.innerText = item.onisep_intitule.replace('bac pro', "BAC Pro");
-        a.href = `https://www.onisep.fr/ressources/univers-formation/formations/lycees/${slugify(item.onisep_intitule)}`;
+        a.innerText = item.onisepIntitule.replace('bac pro', "BAC Pro");
+        a.href = `https://www.onisep.fr/ressources/univers-formation/formations/lycees/${slugify(item.onisepIntitule)}`;
         a.target = "_blank";
         li.appendChild(a);
         
@@ -57,11 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const etablissementLink = document.getElementById('etablissement-link');
       data.forEach(item => {
         if(item.temoignagesCount < 1) return;
-        if(item.onisep_url === null) return;
+        if(item.onisepUrl === null) return;
         const li = document.createElement('li');
         const a = document.createElement('a');
-        a.innerText = item.onisep_nom || item.enseigne || item.entreprise_raison_sociale;
-        a.href = `https://${item.onisep_url}`;
+        a.innerText = item.onisepNom || item.enseigne || item.entrepriseRaisonSociale;
+        a.href = `https://${item.onisepUrl}`;
         a.target = "_blank";
         li.appendChild(a);
         

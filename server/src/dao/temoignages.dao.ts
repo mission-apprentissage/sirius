@@ -30,9 +30,17 @@ export const create = async (
 export const findAll = async (query: { campagneIds: string[] }): Promise<Temoignage[] | undefined> => {
   let queryBuilder = kdb
     .selectFrom("temoignages")
-    .select(["id", "reponses", "is_bot", "last_question_at", "deleted_at", "created_at", "updated_at"])
+    .select([
+      "temoignages.id",
+      "temoignages.reponses",
+      "temoignages.is_bot",
+      "temoignages.last_question_at",
+      "temoignages.deleted_at",
+      "temoignages.created_at",
+      "temoignages.updated_at",
+    ])
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
-    .where("deleted_at", "is", null);
+    .where("temoignages.deleted_at", "is", null);
 
   if ("campagneIds" in query && query.campagneIds) {
     queryBuilder = queryBuilder.where("temoignages_campagnes.campagne_id", "in", query.campagneIds);

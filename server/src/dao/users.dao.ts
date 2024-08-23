@@ -185,7 +185,7 @@ export const create = async ({
     status: USER_STATUS.PENDING,
     accepted_cgu: false,
     email_confirmed: false,
-    refresh_token: [],
+    refresh_token: JSON.stringify([]),
   };
   return kdb.insertInto("users").values(newUser).returning("id").executeTakeFirst();
 };

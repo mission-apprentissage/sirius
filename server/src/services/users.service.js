@@ -46,8 +46,12 @@ const loginUser = async (id) => {
       },
     });
 
-    user.refreshToken.push({ refreshToken: refreshToken });
-    user.refreshToken = JSON.stringify(user.refreshToken);
+    if (user.refreshToken.length) {
+      user.refreshToken.push({ refreshToken: refreshToken });
+      user.refreshToken = JSON.stringify(user.refreshToken);
+    } else {
+      user.refreshToken = JSON.stringify([{ refreshToken }]);
+    }
 
     await usersDao.update(id, user);
 
@@ -86,8 +90,12 @@ const sudo = async (id) => {
       },
     });
 
-    user.refreshToken.push({ refreshToken });
-    user.refreshToken = JSON.stringify(user.refreshToken);
+    if (user.refreshToken.length) {
+      user.refreshToken.push({ refreshToken: refreshToken });
+      user.refreshToken = JSON.stringify(user.refreshToken);
+    } else {
+      user.refreshToken = JSON.stringify([{ refreshToken }]);
+    }
 
     await usersDao.update(id, user);
 
