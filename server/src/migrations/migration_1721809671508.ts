@@ -117,7 +117,7 @@ export const up = async (db: Kysely<unknown>) => {
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             temoignage_id UUID REFERENCES temoignages(id) NOT NULL,
             question_key VARCHAR(255) NOT NULL,
-            content TEXT NOT NULL,
+            content TEXT,
             status VARCHAR(255) NOT NULL,
             scores JSONB,
             themes JSONB,
