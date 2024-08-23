@@ -24,7 +24,7 @@ const formatScores = (verbatim, index) => {
   const sortedEntries = gemEntry ? [gemEntry, ...otherEntries] : otherEntries;
 
   return sortedEntries.map(([key, score]) =>
-    key === VERBATIM_STATUS.GEM && score.avis === "oui" ? (
+    key === VERBATIM_STATUS.GEM && score?.avis === "oui" ? (
       <p key={key}>
         <Tooltip
           background="var(--background-default-grey)"

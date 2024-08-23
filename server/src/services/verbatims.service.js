@@ -18,17 +18,31 @@ const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscr
 
     const result = await verbatimsDao.getAllWithFormation(query, onlyDiscrepancies, page, pageSize);
 
+    // needed because of camelCase to snake_case conversion from kysely plugin
+    result.rows.forEach((verbatim) => {
+      if (verbatim?.scores) {
+        verbatim.scores.TO_FIX = verbatim.scores?.TOFIX;
+        verbatim.scores.NOT_VALIDATED = verbatim.scores?.NOTVALIDATED;
+        delete verbatim.scores.TOFIX;
+        delete verbatim.scores.NOTVALIDATED;
+      }
+    });
+
+    const count = await verbatimsDao.count();
+    const totalItemsByStatus = count.filter((c) => c.status === status)[0].count;
+    const totalPagesByStatus = Math.ceil(totalItemsByStatus / pageSize);
+
     return {
       success: true,
       body: result.rows,
       pagination: {
-        ...result[0].pagination[0],
-        totalPages: Math.ceil(result[0]?.pagination[0]?.totalItems / pageSize),
-        hasMore: result[0].pagination[0]?.totalItems > page * pageSize,
+        totalPages: totalPagesByStatus,
+        hasMore: result.hasNextPage,
+        pageSize: pageSize,
+        currentPage: page,
       },
     };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };
@@ -56,7 +70,6 @@ const getVerbatimsCount = async ({ etablissementSiret, formationId }) => {
 const patchVerbatims = async (verbatims) => {
   try {
     const result = await verbatimsDao.updateMany(verbatims);
-
     return { success: true, body: result };
   } catch (error) {
     return { success: false, body: error };

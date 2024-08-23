@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "ts-node src/cli.ts http",
-    "debug": "nodemon --inspect=0.0.0.0 --signal SIGINT --ignore test/ dist/cli.ts http",
-    "cli": "ts-node -T src/cli.ts",
+    "start": "ts-node src/cli.js http",
+    "debug": "nodemon --inspect=0.0.0.0 --signal SIGINT --ignore test/ dist/cli.js http",
+    "cli": "ts-node -T src/cli.js",
     "test": "mocha --require ts-node/register --recursive --exit --timeout 5000 test/**/*.test.ts",
     "test:watch": "nodemon --exec \"mocha --require ts-node/register --recursive --exit --timeout 5000 test/**/*.test.ts\"",
     "test:coverage": "nyc --reporter=html --temp-dir .coverage/build --report-dir .coverage mocha --require ts-node/register --recursive --exit --timeout 500 test/**/*.test.ts",
     "build": "tsc",
-    "dev": "nodemon --watch src --ext ts,js,json --ignore test/ dist/cli.ts http",
+    "dev": "nodemon --watch src --ext ts,js,json --ignore test/ dist/cli.js http",
     "kysely": "npx kysely-codegen --schema public --out-file=./src/db/schema.ts --dialect postgres"
   },
   "author": "",

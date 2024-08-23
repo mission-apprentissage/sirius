@@ -1,6 +1,6 @@
-const Verbatim = require("../models/verbatim.model");
 const { VERBATIM_THEMES_LABELS, VERBATIM_THEMES, VERBATIM_THEMES_EMOJIS } = require("../constants");
 const { sendToSlack } = require("../modules/slack");
+const { kdb } = require("./db");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -66,9 +66,14 @@ const extractThemesVerbatims = async (verbatim, themeCount) => {
 };
 
 const updateVerbatimThemes = async (verbatim, formattedThemes) => {
-  const updateResult = await Verbatim.updateOne({ id: verbatim.id }, { themes: formattedThemes });
+  const updateResult = await kdb
+    .updateTable("verbatims")
+    .set("themes", formattedThemes)
+    .where("id", "=", verbatim.id)
+    .returning("id")
+    .executeTakeFirst();
 
-  if (updateResult.modifiedCount === 1) {
+  if (updateResult.id) {
     console.log("Verbatim updated successfully:", verbatim.id);
   } else {
     console.error("Failed to update verbatim:", verbatim.id);
@@ -121,10 +126,12 @@ const sendSummaryToSlack = async (totalVerbatims, themeCount) => {
 
 module.exports = async () => {
   try {
-    const unthemedVerbatims = await Verbatim.find({
-      deletedAt: null,
-      $or: [{ themes: { $exists: false } }, { themes: null }],
-    });
+    const unthemedVerbatims = await kdb
+      .selectFrom("verbatims")
+      .selectAll()
+      .where("deleted_at", "is", null)
+      .where("themes", "is", null)
+      .execute();
 
     const themeCount = Object.keys(VERBATIM_THEMES_LABELS).reduce((acc, theme) => {
       acc[theme] = 0;

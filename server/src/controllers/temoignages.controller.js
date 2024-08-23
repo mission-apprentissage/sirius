@@ -55,7 +55,7 @@ const updateTemoignage = tryCatch(async (req, res) => {
 const getDatavisualisation = tryCatch(async (req, res) => {
   const campagneIds = req.body;
   const { success, body } = await temoignagesService.getDatavisualisation(campagneIds);
-  console.log({ success, body });
+
   if (!success) throw new BasicError();
 
   return res.status(200).json(body);

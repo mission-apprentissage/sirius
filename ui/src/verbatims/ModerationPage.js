@@ -154,9 +154,7 @@ const ModerationPage = () => {
 
   const { mutate: patchVerbatims, patchedVerbatims } = usePatchVerbatims();
 
-  const patchedVerbatimCount = patchedVerbatims
-    ?.map((patchedVerbatim) => patchedVerbatim.modifiedCount)
-    .reduce((a, b) => a + b);
+  const patchedVerbatimCount = patchedVerbatims?.length;
 
   useEffect(() => {
     if (patchedVerbatims?.length) {
