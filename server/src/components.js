@@ -1,32 +1,14 @@
-const connectToMongoDB = require("./modules/connectToMongoDB");
 const creatHttpClient = require("./modules/httpClient");
-const campagnesDAO = require("./dao/campagnes.dao");
-const temoignagesDAO = require("./dao/temoignages.dao");
-const formationsDAO = require("./dao/formations.dao");
-const etablissementsDAO = require("./dao/etablissements.dao");
 const createLogger = require("./modules/logger");
-const usersDAO = require("./dao/users.dao");
-const questionnairesDAO = require("./dao/questionnaires.dao");
-const verbatimsDAO = require("./dao/verbatims.dao");
 const defaults = require("./config");
-const Log = require("./models/log");
 
 module.exports = async (options = {}) => {
   let config = options.config || defaults;
-  let client = options.client || (await connectToMongoDB(config.mongodb));
-  let logger = options.logger || createLogger(config, { Log });
+  let logger = options.logger || createLogger(config);
 
   return {
     config,
     logger,
     httpClient: options.httpClient || creatHttpClient(logger),
-    campagnes: options.campagnes || campagnesDAO,
-    temoignages: options.temoignages || temoignagesDAO,
-    users: options.users || usersDAO,
-    questionnaires: options.questionnaires || questionnairesDAO,
-    formations: options.formations || formationsDAO,
-    etablissements: options.etablissements || etablissementsDAO,
-    verbatims: options.verbatims || verbatimsDAO,
-    close: () => client.connection.close(),
   };
 };

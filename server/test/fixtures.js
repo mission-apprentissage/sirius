@@ -1,7 +1,6 @@
 const { faker } = require("@faker-js/faker");
 const moment = require("moment");
 const _ = require("lodash");
-const ObjectId = require("mongoose").mongo.ObjectId;
 const { STRATEGIES } = require("../src/middlewares/verifyUserMiddleware");
 const { USER_ROLES, USER_STATUS } = require("../src/constants");
 
@@ -10,7 +9,7 @@ faker.locale = "fr";
 const newCampagne = (custom = {}, hasId = false) => {
   return _.merge(
     {
-      ...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
+      //...(hasId && { id: faker.database.uuid() }),
       nomCampagne: "nom de la campagne",
       startDate: moment(new Date("2022-01-01")).format("YYYY-MM-DD"),
       endDate: moment(new Date("2025-01-01")).format("YYYY-MM-DD"),
@@ -24,7 +23,7 @@ const newCampagne = (custom = {}, hasId = false) => {
 const newTemoignage = (custom = {}, hasId = false) => {
   return _.merge(
     {
-      ...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
+      //...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
       campagneId: faker.database.mongodbObjectId(),
       reponses: {
         test: faker.lorem.paragraph(),
@@ -39,7 +38,7 @@ const newTemoignage = (custom = {}, hasId = false) => {
 const newUser = (custom = {}, hasId = false) => {
   return _.merge(
     {
-      ...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
+      //...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
       firstName: faker.name.firstName(),
       lastName: faker.name.lastName(),
       email: faker.internet.email().toLowerCase(),
@@ -60,7 +59,7 @@ const newUser = (custom = {}, hasId = false) => {
 const newFormation = (custom = {}, hasId = false) => {
   return _.merge(
     {
-      ...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
+      //...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
       data: {
         intituleLong: faker.lorem.words(),
         tags: ["2020", "2021", "2022"],
@@ -74,7 +73,7 @@ const newFormation = (custom = {}, hasId = false) => {
       },
       campagneId: faker.database.mongodbObjectId(),
       deletedAt: null,
-      createdBy: ObjectId(faker.database.mongodbObjectId()),
+      //createdBy: ObjectId(faker.database.mongodbObjectId()),
     },
     custom
   );
@@ -83,7 +82,7 @@ const newFormation = (custom = {}, hasId = false) => {
 const newEtablissement = (custom = {}, hasId = false) => {
   return _.merge(
     {
-      ...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
+      //...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
       data: {
         onisepNom: faker.lorem.words(),
         enseigne: faker.lorem.words(),
@@ -101,7 +100,7 @@ const newEtablissement = (custom = {}, hasId = false) => {
 const newQuestionnaire = (custom = {}, hasId = false) => {
   return _.merge(
     {
-      ...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
+      //...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
       nom: faker.lorem.words(),
       questionnaire: questionnaire,
       questionnaireUI: questionnaireUI,
