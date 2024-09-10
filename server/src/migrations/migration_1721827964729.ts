@@ -259,6 +259,11 @@ export const up = async (db: Kysely<DB>) => {
   for (const verbatim of allVerbatims) {
     const newTemoignageId = findNewId(temoignagesIdsMapping, verbatim.temoignageId.toString());
 
+    if (!verbatim?.content?.trim()) {
+      console.log("Empty content for verbatim", verbatim._id.toString());
+      continue;
+    }
+
     if (!newTemoignageId) {
       console.log("No newTemoignageId found for verbatim", verbatim._id.toString());
       continue;
