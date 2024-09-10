@@ -278,7 +278,7 @@ export const up = async (db: Kysely<DB>) => {
           content: verbatim.content,
           status: verbatim.status,
           scores: verbatim?.scores ? JSON.stringify(verbatim.scores) : null,
-          themes: verbatim?.themes ?  JSON.stringify(verbatim.themes) : null,
+          themes: verbatim?.themes ? JSON.stringify(verbatim.themes) : null,
           created_at: verbatim.createdAt,
           updated_at: verbatim.updatedAt,
           deleted_at: verbatim.deletedAt,

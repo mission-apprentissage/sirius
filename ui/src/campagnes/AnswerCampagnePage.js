@@ -165,14 +165,16 @@ const AnswerCampagnePage = () => {
       const isChampsLibre = champsLibresField.includes(questionKey);
       let result;
 
-      if (isChampsLibre) {
+      const isTrimmedChampsLibreEmpty = isChampsLibre && !formData[questionKey]?.trim();
+
+      if (isChampsLibre && !isTrimmedChampsLibreEmpty) {
         result = await _post(`/api/verbatims/`, {
           temoignageId,
           questionKey,
           content: formData[questionKey],
           status: VERBATIM_STATUS.PENDING,
         });
-      } else {
+      } else if (!isChampsLibre) {
         const reponses = { ...answers, ...formData, ...nestedData };
         const reponsesWithoutChampsLibreFields = Object.keys(reponses).reduce((acc, key) => {
           if (!champsLibresField.includes(key)) {
@@ -188,7 +190,10 @@ const AnswerCampagnePage = () => {
         });
       }
 
-      if (!(isChampsLibre && result.id) && !(!isChampsLibre && result === true)) {
+      if (
+        !(isChampsLibre && (result?.id || isTrimmedChampsLibreEmpty)) &&
+        !(!isChampsLibre && result === true)
+      ) {
         if (result.statusCode === 403) {
           toast({
             title: "Une erreur est survenue",
