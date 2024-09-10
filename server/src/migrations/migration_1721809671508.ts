@@ -48,8 +48,8 @@ export const up = async (db: Kysely<unknown>) => {
         CREATE TABLE questionnaires (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             nom VARCHAR(255) NOT NULL,
-            questionnaire JSONB  NOT NULL,
-            questionnaire_ui JSONB  NOT NULL,
+            questionnaire JSON NOT NULL,
+            questionnaire_ui JSON NOT NULL,
             is_validated BOOLEAN DEFAULT FALSE  NOT NULL,
             deleted_at TIMESTAMPTZ,
             created_at TIMESTAMPTZ DEFAULT NOW(),
