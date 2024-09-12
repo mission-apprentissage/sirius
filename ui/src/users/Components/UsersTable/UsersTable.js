@@ -38,7 +38,7 @@ const UsersTable = ({ users, setRefetchData }) => {
 
   useEffect(() => {
     if (isSuccess && sudoUser) {
-      queryClient.invalidateQueries({ queryKey: ["campagnesSorted"] });
+      queryClient.invalidateQueries(["campagnesSorted"]);
       const decodedToken = jwt(sudoUser.token);
       setUserContext(() => {
         return {

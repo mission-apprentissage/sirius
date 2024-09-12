@@ -18,7 +18,7 @@ const DeleteTemoignagesConfirmationModal = ({
     deleteTemoignages(selectedTemoignagesIds, {
       onSuccess: () => {
         setSelectedTemoignagesIds([]);
-        queryClient.invalidateQueries({ queryKey: ["uncompliantTemoignages"] });
+        queryClient.invalidateQueries(["uncompliantTemoignages"]);
         modal.close();
       },
     });
