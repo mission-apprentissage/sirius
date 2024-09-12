@@ -390,16 +390,8 @@ const getCampagnesStatistics = async (campagneIds = []) => {
     const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
 
     const questionnaires = await questionnairesDao.findAll();
-
     const temoignages = campagnes.map((campagne) => campagne.temoignages).flat();
     const temoignageIds = temoignages.map((temoignagne) => temoignagne.id);
-    const verbatimsQuery = {
-      temoignageIds: temoignageIds,
-    };
-
-    const verbatimsCountByStatus = await verbatimsDao.count(verbatimsQuery);
-
-    const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
 
     campagnes.forEach((campagne) => {
       const questionnaireUI = questionnaires.find(
@@ -408,6 +400,17 @@ const getCampagnesStatistics = async (campagneIds = []) => {
       campagne.possibleChampsLibreCount = getChampsLibreField(questionnaireUI, true).length;
       campagne.medianDurationInMs = getMedianDuration(campagne.temoignages);
     });
+
+    let totalVerbatimCount = 0;
+    if (temoignageIds.length) {
+      const verbatimsQuery = {
+        temoignageIds: temoignageIds,
+      };
+
+      const verbatimsCountByStatus = await verbatimsDao.count(verbatimsQuery);
+
+      totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
+    }
 
     const statistics = getStatistics(campagnes, totalVerbatimCount);
 
