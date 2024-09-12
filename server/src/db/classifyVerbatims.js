@@ -4,7 +4,7 @@ const { kdb } = require("./db");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const CLASSIFICATION_API = "https://huynhdoo--sirius-moderation-score.modal.run";
+const CLASSIFICATION_API = "https://745687f3-c89b-4920-92f4-93c7e24bdcbf.app.gra.ai.cloud.ovh.net/score";
 
 const classifyVerbatim = async (verbatim, classificationCount, gemVerbatims) => {
   const MAX_RETRIES = 5;
