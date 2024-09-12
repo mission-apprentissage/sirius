@@ -98,7 +98,6 @@ export const deleteOne = async (id: string): Promise<boolean> => {
 };
 
 export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boolean> => {
-  // Step 1: Identify the ids of the records to update
   const idsToUpdate = await kdb
     .selectFrom("temoignages")
     .select("temoignages.id")
@@ -108,7 +107,6 @@ export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boo
 
   const ids = idsToUpdate.map((row) => row.id);
 
-  // Step 2: Update the records with matching ids
   if (ids.length > 0) {
     const result = await kdb
       .updateTable("temoignages")
@@ -119,7 +117,7 @@ export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boo
     return result[0].numUpdatedRows === BigInt(ids.length);
   }
 
-  return false; // If no records were found to update
+  return true;
 };
 
 export const update = async (id: string, updatedTemoignage: Partial<Temoignage>): Promise<boolean> => {
