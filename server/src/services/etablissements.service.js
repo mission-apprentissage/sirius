@@ -5,6 +5,8 @@ const temoignagesDao = require("../dao/temoignages.dao");
 const verbatimsDao = require("../dao/verbatims.dao");
 const { getChampsLibreField } = require("../utils/verbatims.utils");
 const catalogue = require("../modules/catalogue");
+const referentiel = require("../modules/referentiel");
+const { ETABLISSEMENT_RELATION_TYPE } = require("../constants");
 
 const createEtablissements = async (etablissementsArray, relatedUserId) => {
   try {
@@ -105,7 +107,22 @@ const getEtablissementsSuivi = async () => {
 
 const getEtablissementsPublicStatistics = async () => {
   try {
-    const etablissementsCount = await etablissementsDao.count();
+    const allEtablissements = await etablissementsDao.findAll({});
+    const allEtablissementCount = allEtablissements.length;
+
+    const etablissementsSiret = allEtablissements.map((etablissement) => etablissement.siret);
+    const etablissementsFromReferentiel = await referentiel.getEtablissements(etablissementsSiret);
+    const etablissementsRelationsCount = etablissementsFromReferentiel
+      .map((etablissement) => {
+        if (etablissement?.relations?.length) {
+          return etablissement.relations;
+        }
+      })
+      .filter(Boolean)
+      .flat()
+      .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
+      .filter((relation) => !etablissementsSiret.includes(relation.siret)).length;
+
     const createdCampagnesCount = await campagnesDao.count();
     const temoignagesCount = await temoignagesDao.count();
 
@@ -120,7 +137,12 @@ const getEtablissementsPublicStatistics = async () => {
 
     return {
       success: true,
-      body: { etablissementsCount, createdCampagnesCount, temoignagesCount, verbatimsCount: totalVerbatimCount },
+      body: {
+        etablissementsCount: allEtablissementCount + etablissementsRelationsCount,
+        createdCampagnesCount,
+        temoignagesCount,
+        verbatimsCount: totalVerbatimCount,
+      },
     };
   } catch (error) {
     return { success: false, body: error };
