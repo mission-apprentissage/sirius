@@ -73,6 +73,7 @@ const PreviewCampagnePage = () => {
     : false;
 
   useEffect(() => {
+    console.log({ previewedQuestionnaire });
     if (
       previewedQuestionnaire.questionnaire &&
       Object.keys(previewedQuestionnaire.questionnaire).length
@@ -82,9 +83,9 @@ const PreviewCampagnePage = () => {
       );
       setCategories(getCategoriesWithEmojis(previewedQuestionnaire.questionnaire));
     }
-    if (previewedQuestionnaire.questionnaireUI) {
+    if (previewedQuestionnaire.questionnaireUi) {
       setFormattedQuestionnnaireUI(
-        multiStepQuestionnaireUIFormatter(previewedQuestionnaire.questionnaireUI)
+        multiStepQuestionnaireUIFormatter(previewedQuestionnaire.questionnaireUi)
       );
     }
   }, [previewedQuestionnaire]);
