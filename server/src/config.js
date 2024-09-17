@@ -11,7 +11,7 @@ module.exports = {
   },
   psql: {
     uri: env.get("SIRIUS_PSQL_URI").default("postgresql://postgres:password@127.0.0.1:5432/postgres").asString(),
-    ca: env.get("SIRIUS_PILOTAGE_PSQL_CA").default("").asString(),
+    ca: env.get("SIRIUS_PSQL_CA").default("").asString(),
     logLevel: env.get("SIRIUS_PILOTAGE_PSQL_LOG_LEVEL").default("info").asString(),
   },
   auth: {
