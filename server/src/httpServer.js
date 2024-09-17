@@ -18,7 +18,7 @@ const verbatims = require("./routes/verbatims.routes");
 const { version } = require("../package.json");
 
 module.exports = async (components) => {
-  const { campagnes: campagnesDao, config, logger } = components;
+  const { config, logger } = components;
 
   const app = express();
 
@@ -56,21 +56,9 @@ module.exports = async (components) => {
   app.get(
     "/api/healthcheck",
     tryCatch(async (req, res) => {
-      let mongodbStatus;
-      await campagnesDao
-        .getAll()
-        .then(() => {
-          mongodbStatus = true;
-        })
-        .catch((e) => {
-          mongodbStatus = false;
-          logger.error("Healthcheck failed", e);
-        });
-
       return res.json({
         version,
         env: config.env,
-        healthcheck: mongodbStatus,
       });
     })
   );

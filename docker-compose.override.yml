@@ -38,21 +38,6 @@ services:
       - SIRIUS_SMTP_PORT=1025
     depends_on:
       - smtp
-      - mongodb
-
-  mongodb:
-    image: mongo:4.4.1-bionic
-    container_name: sirius_mongodb
-    tty: true
-    mem_limit: 1g
-    restart: unless-stopped
-    networks:
-      - sirius_network
-    ports:
-      - "127.0.0.1:27017:27017"
-    volumes:
-      - .local/mongodb/db:/data/db
-      - .local/mongodb/configdb:/data/configdb
 
   postgres:
     image: postgres:15.5

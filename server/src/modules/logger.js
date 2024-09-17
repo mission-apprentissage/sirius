@@ -1,5 +1,4 @@
 const bunyan = require("bunyan");
-const { writeData } = require("oleoduc");
 const PrettyStream = require("bunyan-prettystream");
 
 const jsonStream = (level) => {
@@ -20,23 +19,11 @@ const consoleStream = (level) => {
   };
 };
 
-const mongodbStream = (Log, level) => {
-  return {
-    name: "mongodb",
-    level,
-    stream: writeData((record) => Log.create(JSON.parse(record))),
-  };
-};
-
-module.exports = (config, options = {}) => {
+module.exports = (config) => {
   let { log } = config;
   let { type, level } = log;
-  let { Log } = options;
 
-  let streams = [
-    ...(type === "console" ? [consoleStream(level)] : [jsonStream(level)]),
-    ...(Log ? [mongodbStream(Log, level)] : []),
-  ];
+  let streams = [...(type === "console" ? [consoleStream(level)] : [jsonStream(level)])];
 
   return bunyan.createLogger({
     name: "sirius",
