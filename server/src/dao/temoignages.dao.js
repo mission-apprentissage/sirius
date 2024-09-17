@@ -6,7 +6,7 @@ const create = async (temoignage) => {
 };
 
 const getAll = async (query) => {
-  return Temoignage.find({ ...query, deletedAt: null });
+  return Temoignage.find({ ...query });
 };
 
 const getAllWithVerbatims = async (query, questionKey) => {

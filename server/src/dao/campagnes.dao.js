@@ -307,7 +307,7 @@ const getAllWithTemoignageCountFormationEtablissement = async (query = {}) => {
 };
 
 const getAll = async (query = {}) => {
-  return Campagne.find({ deletedAt: null, ...query }).lean();
+  return Campagne.find({ ...query }).lean();
 };
 
 const count = async (query = {}) => {

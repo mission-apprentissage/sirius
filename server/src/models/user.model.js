@@ -78,13 +78,11 @@ const userSchema = new mongoose.Schema({
   scope: {
     type: ScopeSchema,
   },
-});
-
-//Remove refreshToken from the response
-userSchema.set("toJSON", {
-  transform: function (doc, ret) {
-    delete ret.refreshToken;
-    return ret;
+  salt: {
+    type: String,
+  },
+  hash: {
+    type: String,
   },
 });
 

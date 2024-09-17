@@ -23,7 +23,7 @@ services:
         - SIRIUS_ENV=dev
 
   server:
-    command: yarn debug
+    command: yarn dev
     ports:
       - "127.0.0.1:9229:9229" #Allows remote debugging
     volumes:
@@ -52,6 +52,19 @@ services:
       - .local/mongodb/db:/data/db
       - .local/mongodb/configdb:/data/configdb
 
+  postgres:
+    image: postgres:15.5
+    container_name: sirius_postgres
+    restart: unless-stopped
+    networks:
+      - sirius_network
+    environment:
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - sirius_postgres_data:/var/lib/postgresql/data:z
+
   smtp:
     image: axllent/mailpit:v1.5.5
     container_name: sirius_smtp
@@ -78,3 +91,6 @@ volumes:
   sirius_mailpit_data:
     driver: local
     name: sirius_mailpit_data
+  sirius_postgres_data:
+    driver: local
+    name: sirius_postgres_data
