@@ -62,14 +62,14 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
         return;
       }
       const resultUser = await _put(
-        `/api/users/${user._id}`,
+        `/api/users/${user.id}`,
         {
           scope: { field: scopeField, value: scopeValue },
         },
         userContext.token
       );
 
-      if (resultUser.modifiedCount === 1) {
+      if (resultUser === true) {
         toast({
           title: "Scope ajouté",
           description: "Les nouveaux scopes ont bien été ajouté.",

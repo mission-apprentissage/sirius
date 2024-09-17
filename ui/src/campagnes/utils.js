@@ -130,7 +130,7 @@ export const formateDateToInputFormat = (date, monthsAdded = 0) => {
 
 export const getUniqueDiplomeTypesFromCampagne = (campagnes) =>
   campagnes?.length
-    ? [...new Set(campagnes.map((campagne) => campagne.formation?.data?.diplome))].sort()
+    ? [...new Set(campagnes.map((campagne) => campagne.formation?.diplome))].sort()
     : [];
 
 export const getUniqueDiplomeTypesFromFormation = (formations) =>
@@ -139,9 +139,7 @@ export const getUniqueDiplomeTypesFromFormation = (formations) =>
 export const getUniqueEtablissementFromCampagne = (campagnes) =>
   campagnes?.length
     ? [
-        ...new Set(
-          campagnes.map((campagne) => campagne.formation.data.etablissement_formateur_siret)
-        ),
+        ...new Set(campagnes.map((campagne) => campagne.formation.etablissementFormateurSiret)),
       ].sort()
     : [];
 
@@ -154,7 +152,7 @@ export const orderCampagnesByDiplomeType = (campagnes) => {
   const orderedCampagnes = {};
   getUniqueDiplomeTypesFromCampagne(campagnes)?.forEach((diplomeType) => {
     const campagnesByDiplomeType = campagnes.filter(
-      (campagne) => campagne.formation?.data?.diplome === diplomeType
+      (campagne) => campagne.formation?.diplome === diplomeType
     );
     orderedCampagnes[diplomeType] = campagnesByDiplomeType;
   });
@@ -176,10 +174,10 @@ export const orderCampagnesByEtablissement = (campagnes) => {
   const orderedCampagnes = {};
   campagnes.forEach((campagne) => {
     const { formation } = campagne;
-    if (!orderedCampagnes[formation.data.etablissement_formateur_siret]) {
-      orderedCampagnes[formation.data.etablissement_formateur_siret] = [];
+    if (!orderedCampagnes[formation.etablissementFormateurSiret]) {
+      orderedCampagnes[formation.etablissementFormateurSiret] = [];
     }
-    orderedCampagnes[formation.data.etablissement_formateur_siret].push(campagne);
+    orderedCampagnes[formation.etablissementFormateurSiret].push(campagne);
   });
   return orderedCampagnes;
 };
@@ -205,13 +203,9 @@ const getValue = (obj, key) => {
 
 export const sortingKeys = (a, b) => ({
   "formation-asc": () =>
-    getValue(a.formation.data, "intitule_long").localeCompare(
-      getValue(b.formation.data, "intitule_long")
-    ),
+    getValue(a.formation, "intituleLong").localeCompare(getValue(b.formation, "intituleLong")),
   "formation-desc": () =>
-    getValue(b.formation.data, "intitule_long").localeCompare(
-      getValue(a.formation.data, "intitule_long")
-    ),
+    getValue(b.formation, "intituleLong").localeCompare(getValue(a.formation, "intituleLong")),
   "nomCampagne-asc": () => getValue(a, "nomCampagne").localeCompare(getValue(b, "nomCampagne")),
   "nomCampagne-desc": () => getValue(b, "nomCampagne").localeCompare(getValue(a, "nomCampagne")),
   "startDate-asc": () => getValue(a, "startDate").localeCompare(getValue(b, "startDate")),

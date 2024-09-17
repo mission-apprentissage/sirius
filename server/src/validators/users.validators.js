@@ -8,6 +8,7 @@ const loginSchema = Joi.object({
 });
 
 const etablissementSchema = Joi.object({
+  _id: Joi.string().required(),
   siret: Joi.string().required(),
   onisep_nom: Joi.string().allow(null, ""),
   enseigne: Joi.string().allow(null, ""),

@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const validator = require("../middlewares/validatorMiddleware");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { hasPermissionToEditUser } = require("../middlewares/hasPermissionToEditUser");
@@ -35,8 +36,12 @@ const users = () => {
 
   router.post("/api/users/", rateLimiter, validator(subscribeSchema), (req, res, next) => createUser(req, res, next));
 
-  router.post("/api/users/login/", rateLimiter, validator(loginSchema), verifyUser, (req, res, next) =>
-    loginUser(req, res, next)
+  router.post(
+    "/api/users/login/",
+    rateLimiter,
+    validator(loginSchema),
+    passport.authenticate("local", { session: false }),
+    (req, res, next) => loginUser(req, res, next)
   );
 
   router.get("/api/users/sudo/:id", rateLimiter, verifyUser, isAdmin, (req, res, next) => sudo(req, res, next));

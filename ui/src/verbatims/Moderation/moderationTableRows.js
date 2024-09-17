@@ -24,7 +24,7 @@ const formatScores = (verbatim, index) => {
   const sortedEntries = gemEntry ? [gemEntry, ...otherEntries] : otherEntries;
 
   return sortedEntries.map(([key, score]) =>
-    key === VERBATIM_STATUS.GEM && score.avis === "oui" ? (
+    key === VERBATIM_STATUS.GEM && score?.avis === "oui" ? (
       <p key={key}>
         <Tooltip
           background="var(--background-default-grey)"
@@ -47,61 +47,59 @@ const formatScores = (verbatim, index) => {
 const moderationTableRows = ({ verbatims, selectedVerbatims, setSelectedVerbatims }) => {
   return verbatims.map((verbatim, index) => {
     const isSelected = selectedVerbatims
-      .map((selectedVerbatim) => selectedVerbatim._id)
-      .includes(verbatim._id);
+      .map((selectedVerbatim) => selectedVerbatim.id)
+      .includes(verbatim.id);
 
     const handleOnChange = () => {
       setSelectedVerbatims((prevValue) =>
         isSelected
           ? prevValue
-              .filter((item) => item._id !== verbatim._id)
-              .map((item) => ({ _id: item._id, status: item.status, scores: item.scores }))
+              .filter((item) => item.id !== verbatim.id)
+              .map((item) => ({ id: item.id, status: item.status, scores: item.scores }))
           : [...prevValue, verbatim]
       );
     };
     return [
       <Checkbox
-        key={`${verbatims._id}-id`}
+        key={`${verbatims.id}-id`}
         options={[
           {
             nativeInputProps: {
-              name: `verbatim-${verbatims._id}`,
+              name: `verbatim-${verbatims.id}`,
               checked: isSelected,
               onChange: handleOnChange,
             },
           },
         ]}
       />,
-      <p key={`${verbatims._id}-content`}>{verbatim.content}</p>,
-      <ScoresContainer key={`${verbatims._id}-scores`}>
+      <p key={`${verbatims.id}-content`}>{verbatim.content}</p>,
+      <ScoresContainer key={`${verbatims.id}-scores`}>
         {formatScores(verbatim, index)}
       </ScoresContainer>,
-      <FormationContainer key={`${verbatims._id}-formation-etablissement`}>
+      <FormationContainer key={`${verbatims.id}-formation-etablissement`}>
         <Tooltip
           background="var(--background-default-grey)"
           border="var(--border-default-grey)"
           color="var(--text-default-grey)"
           placement="top"
-          content={
-            <p>{verbatim.formation?.data.etablissement_formateur_entreprise_raison_sociale}</p>
-          }
+          content={<p>{verbatim.formation?.etablissementFormateurEntrepriseRaisonSociale}</p>}
         >
-          <p>{verbatim.formation?.data.etablissement_formateur_entreprise_raison_sociale}</p>
+          <p>{verbatim.formation?.etablissementFormateurEntrepriseRaisonSociale}</p>
         </Tooltip>
         <Tooltip
           background="var(--background-default-grey)"
           border="var(--border-default-grey)"
           color="var(--text-default-grey)"
           placement="top"
-          content={<p>{verbatim.formation?.data.intitule_long}</p>}
+          content={<p>{verbatim.formation?.intituleLong}</p>}
         >
-          <p>{verbatim.formation?.data.intitule_long}</p>
+          <p>{verbatim.formation?.intituleLong}</p>
         </Tooltip>
       </FormationContainer>,
-      <QuestionKeyContainer key={`${verbatims._id}-question`}>
+      <QuestionKeyContainer key={`${verbatims.id}-question`}>
         {verbatim.questionKey}
       </QuestionKeyContainer>,
-      <p key={`${verbatims._id}-created-at`}>
+      <p key={`${verbatims.id}-created-at`}>
         {new Date(verbatim.createdAt).toLocaleDateString("fr-FR")}
       </p>,
     ];

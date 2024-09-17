@@ -21,6 +21,7 @@ const DisplayByDepartementTable = ({
   const {
     page,
     setPage,
+    openedAccordion,
     setOpenedAccordion,
     campagnes,
     isSuccessCampagnes,
@@ -37,11 +38,7 @@ const DisplayByDepartementTable = ({
 
   const uniqueDepartementFromSearch =
     search && searchedCampagnes.body.length > 0
-      ? [
-          ...new Set(
-            searchedCampagnes.body.map((campagne) => campagne.formation.data.num_departement)
-          ),
-        ]
+      ? [...new Set(searchedCampagnes.body.map((campagne) => campagne.formation.numDepartement))]
       : [];
 
   const allDepartements = REGIONS.flatMap((region) => region.departements);
@@ -56,9 +53,7 @@ const DisplayByDepartementTable = ({
     return (
       <StyledAccordion
         key={departement}
-        onExpandedChange={(isExpanded) =>
-          isExpanded ? setOpenedAccordion(departement) : setOpenedAccordion(null)
-        }
+        onClick={() => setOpenedAccordion(departement)}
         label={<AccordionLabel departement={departementLabel} count={campagnesSelectedCount} />}
       >
         {isLoadingCampagnes && (

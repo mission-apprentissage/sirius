@@ -34,7 +34,7 @@ const useDisplayCampagnesOptions = ({
 
   if (!page) {
     const elem = campagnesSorted.map((etablissementFormateur) => ({
-      [etablissementFormateur.etablissement_formateur_siret]: 1,
+      [etablissementFormateur.etablissementFormateurSiret]: 1,
     }));
     setPage(elem);
   }

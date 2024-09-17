@@ -1,6 +1,11 @@
 export const etablissementLabelGetter = (data) => {
   if (!data || !Object.keys(data)?.length) return "";
-  return data?.onisep_nom || data?.enseigne || data?.entreprise_raison_sociale || "";
+  return data?.onisepNom || data?.enseigne || data?.entrepriseRaisonSociale || "";
+};
+
+export const remoteEtablissementLabelGetter = (data) => {
+  if (!data || !Object.keys(data)?.length) return "";
+  return data?.onisepN_nom || data?.enseigne || data?.entreprise_raison_sociale || "";
 };
 
 // Vérifie si le SIRET est valide à travers sa longueur et l'algorythme de Luhn
@@ -31,9 +36,9 @@ export const isValidSIRET = (siret) => {
 };
 
 export const buildEtablissementAddress = (etablissement) => {
-  return `${etablissement.numero_voie ? etablissement.numero_voie : ""} ${
-    etablissement.type_voie ? etablissement.type_voie : ""
-  } ${etablissement.nom_voie ? etablissement.nom_voie : ""} ${
-    etablissement.code_postal ? etablissement.code_postal : ""
+  return `${etablissement.numeroVoie ? etablissement.numeroVoie : ""} ${
+    etablissement.typeVoie ? etablissement.typeVoie : ""
+  } ${etablissement.nomVoie ? etablissement.nomVoie : ""} ${
+    etablissement.codePostal ? etablissement.codePostal : ""
   } ${etablissement.localite ? etablissement.localite : ""}`;
 };

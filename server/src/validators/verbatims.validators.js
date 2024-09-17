@@ -2,7 +2,7 @@ const Joi = require("joi");
 const { VERBATIM_STATUS } = require("../constants");
 
 const patchVerbatim = Joi.object({
-  _id: Joi.string().required(),
+  id: Joi.string().required(),
   status: Joi.string()
     .valid(...Object.values(VERBATIM_STATUS))
     .required(),

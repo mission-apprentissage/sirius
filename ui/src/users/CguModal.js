@@ -39,11 +39,11 @@ const CguModal = ({ userContext, setUserContext, isOpen = true, setHasAcceptedCg
         setIsSubmitting(true);
         if (userContext?.token) {
           const result = await _put(
-            `/api/users/${userContext.user?._id}`,
+            `/api/users/${userContext.user.id}`,
             { acceptedCgu: true },
             userContext.token
           );
-          if (result.acknowledged) {
+          if (result === true) {
             setUserContext((oldValues) => {
               return { ...oldValues, user: { ...oldValues.user, acceptedCgu: true } };
             });

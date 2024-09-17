@@ -31,12 +31,12 @@ const SuiviEtablissementsFilters = ({ setDisplayedEtablissements, etablissements
 
     if (!isFilterSelected("withCampagnes")) {
       filteredEtablissements = filteredEtablissements.filter(
-        (etablissement) => etablissement.campagneIds.length === 0
+        (etablissement) => etablissement.campagnesCount === 0
       );
     }
     if (!isFilterSelected("withoutCampagnes")) {
       filteredEtablissements = filteredEtablissements.filter(
-        (etablissement) => etablissement.campagneIds.length !== 0
+        (etablissement) => etablissement.campagnesCount !== 0
       );
     }
 

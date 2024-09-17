@@ -36,6 +36,7 @@ import NeedHelp from "../Components/NeedHelp";
 import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
 
 const etablissement = Yup.object({
+  _id: Yup.string().required(),
   siret: Yup.string().required(),
   onisep_nom: Yup.string().nullable(),
   enseigne: Yup.string().nullable(),
@@ -99,6 +100,7 @@ const SignupPage = () => {
         email: email.toLowerCase(),
         password,
         etablissements: etablissementsWitoutEmpty.map((etablissement) => ({
+          _id: etablissement._id,
           siret: etablissement.siret,
           onisep_nom: etablissement.onisep_nom,
           enseigne: etablissement.enseigne,
@@ -106,7 +108,7 @@ const SignupPage = () => {
         })),
       });
 
-      if (resultUser._id) {
+      if (resultUser.id) {
         setError(null);
         setIsSuccessful(true);
         setIsSubmitting(false);

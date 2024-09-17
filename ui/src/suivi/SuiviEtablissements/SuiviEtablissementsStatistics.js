@@ -2,7 +2,7 @@ import { Card, CardHeader, CardBody, Text, SimpleGrid } from "@chakra-ui/react";
 
 const SuiviEtablissementsStatistics = ({ etablissements }) => {
   const createdCampagnesCount = etablissements.reduce(
-    (accumulator, etablissement) => accumulator + etablissement.campagneIds.length,
+    (accumulator, etablissement) => accumulator + etablissement.campagnesCount,
     0
   );
 
@@ -12,7 +12,7 @@ const SuiviEtablissementsStatistics = ({ etablissements }) => {
   );
 
   const champsLibreCount = etablissements.reduce(
-    (accumulator, etablissement) => accumulator + etablissement.champsLibreCount,
+    (accumulator, etablissement) => accumulator + etablissement.verbatimsCount,
     0
   );
 

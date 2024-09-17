@@ -6,8 +6,8 @@ import Alert from "@codegouvfr/react-dsfr/Alert";
 import { fr } from "@codegouvfr/react-dsfr";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { useQueryClient } from "@tanstack/react-query";
 import { UserContext } from "../context/UserContext";
-import { multiCreationSubmitHandler } from "./submitHandlers";
 import { formateDateToInputFormat, isPlural } from "./utils";
 import { useGet } from "../common/hooks/httpHooks";
 import {
@@ -19,6 +19,7 @@ import SupportModal from "./Shared/SupportModal";
 import FormationsSelector from "./CreateCampagnes/FormationsSelector";
 import CampagneConfigurator from "./CreateCampagnes/CampagneConfigurator";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
+import useCreateCampagnes from "../hooks/useCreateCampagnes";
 
 const supportModal = createModal({
   id: "support-modal-loggedIn",
@@ -32,6 +33,7 @@ const CreateCampagnesPage = () => {
   const [submitRequested, setSubmitRequested] = useState(false);
   const [hasErrorSubmitting, setHasErrorSubmitting] = useState(false);
   const [userContext] = useContext(UserContext);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const [questionnaires] = useGet(`/api/questionnaires/`);
@@ -47,7 +49,7 @@ const CreateCampagnesPage = () => {
       seats: 0,
       etablissementFormateurSiret: formation.etablissement_formateur_siret,
       formationId: formation._id,
-      questionnaireId: validatedQuestionnaire[0]?._id,
+      questionnaireId: validatedQuestionnaire[0]?.id,
     };
     return accumulator;
   }, {});
@@ -61,6 +63,8 @@ const CreateCampagnesPage = () => {
     enabled: submitRequested,
   });
 
+  const { mutate: createdCampagnes } = useCreateCampagnes();
+
   const formik = useFormik({
     initialValues: initialValues,
     enableReinitialize: true,
@@ -73,7 +77,7 @@ const CreateCampagnesPage = () => {
 
       const formationsWithCreator = remoteFormations.map((formation) => ({
         ...formation,
-        createdBy: userContext.user?._id,
+        createdBy: userContext.user.id,
       }));
 
       const payload = formattedValues.map((campagne) => {
@@ -84,15 +88,19 @@ const CreateCampagnesPage = () => {
         };
       });
 
-      const result = await multiCreationSubmitHandler(payload, userContext);
-
-      setIsSubmitting(false);
-      setSubmitRequested(false);
-      if (result.status === "success") {
-        navigate("/campagnes/gestion", { state: { successCreation: true } });
-      } else {
-        setHasErrorSubmitting(true);
-      }
+      createdCampagnes(payload, {
+        onSuccess: () => {
+          setIsSubmitting(false);
+          setSubmitRequested(false);
+          queryClient.invalidateQueries(["fetchCampagnesStatistics", "campagnesSorted"]);
+          navigate("/campagnes/gestion", { state: { successCreation: true } });
+        },
+        onError: () => {
+          setIsSubmitting(false);
+          setSubmitRequested(false);
+          setHasErrorSubmitting(true);
+        },
+      });
     };
 
     if (submitRequested && isSuccessFormations && remoteFormations.length) {

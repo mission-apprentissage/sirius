@@ -2,7 +2,7 @@ import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import styled from "@emotion/styled";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
-import { etablissementLabelGetter } from "../../../utils/etablissement";
+import { remoteEtablissementLabelGetter } from "../../../utils/etablissement";
 import { Link } from "react-router-dom";
 
 const IndexBadge = styled.span`
@@ -44,7 +44,7 @@ const EtablissementInputList = ({ formik, etablissement, index }) => {
             onClick={() => handleDeleteEtablissement(index)}
           />
           <IndexBadge>{index + 1}</IndexBadge>
-          {etablissementLabelGetter(etablissement)}
+          {remoteEtablissementLabelGetter(etablissement)}
         </>
       }
     >

@@ -29,7 +29,7 @@ const ModerationActions = ({
         const status = isGem ? VERBATIM_STATUS.GEM : highestScore[0];
 
         return {
-          _id: verbatim._id,
+          id: verbatim.id,
           status: status,
         };
       })
@@ -41,7 +41,7 @@ const ModerationActions = ({
     if (!selectedVerbatims.length) return;
     const updatedVerbatims = selectedVerbatims.map((verbatim) => {
       return {
-        _id: verbatim._id,
+        id: verbatim.id,
         status: status,
       };
     });

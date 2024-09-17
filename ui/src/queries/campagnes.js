@@ -43,3 +43,14 @@ export const deleteCampagnes = async ({ campagneIds, siret, token }) => {
   }
   throw new Error("Erreur dans la suppression des campagnes");
 };
+
+export const createCampagnes = async ({ campagnes, token }) => {
+  let url = `/api/campagnes/multi`;
+
+  const response = await _post(url, campagnes, token);
+
+  if (response.createdCount) {
+    return response;
+  }
+  throw new Error("Erreur dans la création des campagnes");
+};

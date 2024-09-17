@@ -35,7 +35,7 @@ const ResultsCampagnesVisualisation = ({ temoignages }) => {
         return (
           <Accordion
             key={index}
-            onExpandedChange={() => setExpandedAccordion(category.id)}
+            onClick={() => setExpandedAccordion(category.id)}
             expanded={expandedAccordion === category.id ? true : false}
             label={
               <h6>

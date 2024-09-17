@@ -102,7 +102,7 @@ const ResultsCampagnesPage = () => {
     ).categories;
 
     const selectedCampagnes = campagnes.filter((campagne) =>
-      selectedCampagneIds.includes(campagne._id)
+      selectedCampagneIds.includes(campagne.id)
     );
 
     const filteredCampagnesByQuestionnaireId = selectedCampagnes.filter(
@@ -124,6 +124,13 @@ const ResultsCampagnesPage = () => {
       !isIdleCampagnesDatavisualisation) ||
     !selectedCampagneIds.length;
 
+  const emptyStatistics = {
+    campagnesCount: 0,
+    finishedCampagnesCount: 0,
+    temoignagesCount: 0,
+    verbatimsCount: 0,
+  };
+
   return (
     <Container>
       <ResultsCampagneContainer>
@@ -138,7 +145,10 @@ const ResultsCampagnesPage = () => {
           campagneTableType={CAMPAGNE_TABLE_TYPES.RESULTS}
         />
       </ResultsCampagneContainer>
-      <Statistics statistics={statistics} title="Statistiques des campagnes sélectionnées" />
+      <Statistics
+        statistics={statistics || emptyStatistics}
+        title="Statistiques des campagnes sélectionnées"
+      />
       <ResultsCampagneContainer>
         <TestimonialHeader>
           <h1>

@@ -1,9 +1,11 @@
-import { program as cli } from "commander";
-import { writeFileSync } from "fs";
+const cli = require("commander").program;
+const { writeFileSync } = require("fs");
 
-import createComponents from "./components";
-import httpServer from "./httpServer";
-import { migrateDownDB, migrateToLatest } from "./migrations/migrate";
+const createComponents = require("./components");
+const httpServer = require("./httpServer");
+const { migrateDownDB, migrateToLatest } = require("./migrations/migrate");
+const classifyVerbatims = require("./db/classifyVerbatims");
+const extractThemesVerbatims = require("./db/extractThemesVerbatims");
 
 process.on("unhandledRejection", (e) => console.log("An unexpected error occurred", e));
 process.on("uncaughtException", (e) => console.log("An unexpected error occurred", e));
@@ -18,13 +20,19 @@ cli
     server.listen(5000, () => components.logger.info(`Server ready and listening on port ${5000}`));
   });
 
-cli.command("db", "Manipulation de la base de données", {
-  executableFile: "db/dbCli",
-});
-
 cli.command("migrateDB").action(async () => {
   await migrateToLatest();
 });
+
+cli
+  .command("classify-verbatims")
+  .description("Classifie les verbatims exitants")
+  .action(async () => await classifyVerbatims());
+
+cli
+  .command("extract-themes-verbatims")
+  .description("Extrait les thèmes des verbatims exitants")
+  .action(async () => await extractThemesVerbatims());
 
 cli
   .command("migrateDownDB")

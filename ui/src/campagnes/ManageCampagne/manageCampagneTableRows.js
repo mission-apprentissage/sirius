@@ -28,24 +28,22 @@ const manageCampagneTableRows = ({
   };
 
   return displayedCampagnes.map((campagne) => {
-    const formation = campagne.formation.data;
-    const isSelected = selectedCampagneIds.includes(campagne._id);
+    const formation = campagne.formation;
+    const isSelected = selectedCampagneIds.includes(campagne.id);
 
     const handleOnChange = () => {
       setSelectedCampagneIds((prevValue) =>
-        isSelected
-          ? prevValue.filter((item) => item !== campagne._id)
-          : [...prevValue, campagne._id]
+        isSelected ? prevValue.filter((item) => item !== campagne.id) : [...prevValue, campagne.id]
       );
     };
 
     return [
       <Checkbox
-        key={campagne._id}
+        key={campagne.id}
         options={[
           {
             nativeInputProps: {
-              name: `campagne-${campagne._id}`,
+              name: `campagne-${campagne.id}`,
               checked: isSelected,
               onChange: handleOnChange,
             },
@@ -53,9 +51,9 @@ const manageCampagneTableRows = ({
         ]}
       />,
       <>
-        <FormationContainer key={campagne._id}>
+        <FormationContainer key={campagne.id}>
           <p>
-            <b>{formation.intitule_long}</b>
+            <b>{formation.intituleLong}</b>
           </p>
           <div>
             <p>{formation.tags.join("-")} </p>
@@ -77,12 +75,12 @@ const manageCampagneTableRows = ({
               content={
                 <ToolTipContainer>
                   <p>
-                    {formation.lieu_formation_adresse_computed ||
-                      `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
+                    {formation.lieuFormationAdresseComputed ||
+                      `${formation.lieuFormationAdresse}, ${formation.codePostal} ${formation.localite}`}
                   </p>
-                  <p>N° Siret: {formation.etablissement_formateur_siret}</p>
-                  {formation.etablissement_formateur_siret ===
-                  formation.etablissement_gestionnaire_siret ? (
+                  <p>N° Siret: {formation.etablissementFormateurSiret}</p>
+                  {formation.etablissementFormateurSiret ===
+                  formation.etablissementGestionnaireSiret ? (
                     <p>
                       <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
                       établissement est gestionnaire et rattaché à votre compte Sirius
@@ -98,8 +96,8 @@ const manageCampagneTableRows = ({
               }
             >
               <p>
-                {formation.etablissement_formateur_entreprise_raison_sociale ||
-                  formation.etablissement_formateur_enseigne}
+                {formation.etablissementFormateurEntrepriseRaisonSociale ||
+                  formation.etablissementFormateurEnseigne}
               </p>
             </Tooltip>
           </EtablissementLabelContainer>
@@ -110,7 +108,7 @@ const manageCampagneTableRows = ({
         )}
       </>,
       <CellInput
-        key={campagne._id}
+        key={campagne.id}
         id="nomCampagne"
         name="nomCampagne"
         campagne={campagne}
@@ -118,7 +116,7 @@ const manageCampagneTableRows = ({
         type="text"
       />,
       <CellInput
-        key={campagne._id}
+        key={campagne.id}
         id="startDate"
         name="startDate"
         campagne={campagne}
@@ -126,7 +124,7 @@ const manageCampagneTableRows = ({
         type="date"
       />,
       <CellInput
-        key={campagne._id}
+        key={campagne.id}
         id="endDate"
         name="endDate"
         campagne={campagne}
@@ -134,13 +132,13 @@ const manageCampagneTableRows = ({
         type="date"
       />,
       <CellInputSeats
-        key={campagne._id}
+        key={campagne.id}
         id="seats"
         name="seats"
         campagne={campagne}
         handleCellUpdate={handleCellUpdate}
       />,
-      <TemoignagesCount key={campagne._id}>
+      <TemoignagesCount key={campagne.id}>
         {campagne.seats > 0
           ? Math.round((campagne.temoignagesCount * 100) / campagne.seats) + "%"
           : campagne.temoignagesCount}

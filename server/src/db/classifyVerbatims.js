@@ -1,6 +1,6 @@
 const { VERBATIM_STATUS, VERBATIM_STATUS_EMOJIS, VERBATIM_STATUS_LABELS } = require("../constants");
-const Verbatim = require("../models/verbatim.model");
 const { sendToSlack } = require("../modules/slack");
+const { kdb } = require("./db");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -53,7 +53,7 @@ const classifyVerbatim = async (verbatim, classificationCount, gemVerbatims) => 
     console.log("----------------");
     await sleep(500);
   } catch (err) {
-    console.error("Failed to classify verbatim:", verbatim._id.toString(), err);
+    console.error("Failed to classify verbatim:", verbatim.id, err);
   }
 };
 
@@ -64,12 +64,17 @@ const getHighestScore = (scores) => {
 };
 
 const updateVerbatimScores = async (verbatim, scores) => {
-  const updateResult = await Verbatim.updateOne({ _id: verbatim._id }, { scores });
+  const updateResult = await kdb
+    .updateTable("verbatims")
+    .set("scores", scores)
+    .where("id", "=", verbatim.id)
+    .returning("id")
+    .executeTakeFirst();
 
-  if (updateResult.modifiedCount === 1) {
-    console.log("Verbatim updated successfully:", verbatim._id.toString());
+  if (updateResult.id) {
+    console.log("Verbatim updated successfully:", verbatim.id);
   } else {
-    console.error("Failed to update verbatim:", verbatim._id.toString());
+    console.error("Failed to update verbatim:", verbatim.id);
   }
 };
 
@@ -138,10 +143,12 @@ const sendSummaryToSlack = async (totalVerbatims, classificationCount, gemVerbat
 
 module.exports = async () => {
   try {
-    const unclassifiedVerbatims = await Verbatim.find({
-      deletedAt: null,
-      $or: [{ scores: { $exists: false } }, { scores: null }],
-    });
+    const unclassifiedVerbatims = await kdb
+      .selectFrom("verbatims")
+      .selectAll()
+      .where("deleted_at", "is", null)
+      .where("scores", "is", null)
+      .execute();
 
     const classificationCount = Object.keys(VERBATIM_STATUS).reduce((acc, status) => {
       if (status !== VERBATIM_STATUS.PENDING) {

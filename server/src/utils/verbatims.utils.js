@@ -73,18 +73,18 @@ const filterChampsLibresAndFlatten = (temoignages, fieldsWithChampsLibre) => {
 
     return Object.keys(champsLibre).length
       ? {
-          temoignageId: verbatim._id,
+          temoignageId: verbatim.id,
           verbatims: champsLibre,
           createdAt: verbatim.createdAt,
           campagneId: verbatim.campagneId,
-          formation: verbatim.formation ? verbatim.formation.data.intitule_long : "",
-          formationId: verbatim.formation ? verbatim.formation._id : "",
+          formation: verbatim.formation ? verbatim.formation.intituleLong : "",
+          formationId: verbatim.formation ? verbatim.formation.id : "",
           etablissement: verbatim.etablissement
-            ? verbatim.etablissement.data.onisep_nom ||
-              verbatim.etablissement.data.enseigne ||
-              verbatim.etablissement.data.entreprise_raison_sociale
+            ? verbatim.etablissement.onisepNom ||
+              verbatim.etablissement.enseigne ||
+              verbatim.etablissement.entrepriseRaisonSociale
             : "",
-          etablissementSiret: verbatim.etablissement ? verbatim.etablissement.data.siret : "",
+          etablissementSiret: verbatim.etablissement ? verbatim.etablissement.siret : "",
         }
       : null;
   });
@@ -99,7 +99,7 @@ const appendVerbatimsWithCampagneNameAndRestructure = (
 
   verbatimsWithChampsLibre.filter(Boolean).forEach((item) => {
     const { temoignageId, createdAt, campagneId, formation, formationId, etablissement, etablissementSiret } = item;
-    const campagne = campagnesByQuestionnaireId.find((campagne) => campagne._id.toString() === campagneId);
+    const campagne = campagnesByQuestionnaireId.find((campagne) => campagne.id === campagneId);
     for (const key in item.verbatims) {
       const newObject = {
         temoignageId,
@@ -122,7 +122,7 @@ const appendVerbatimsWithCampagneNameAndRestructure = (
 
 const appendFormationAndEtablissementToVerbatims = (temoignages, campagnesByQuestionnaireId) => {
   const result = temoignages.map((temoignage) => {
-    const campagne = campagnesByQuestionnaireId.find((campagne) => campagne._id.toString() === temoignage.campagneId);
+    const campagne = campagnesByQuestionnaireId.find((campagne) => campagne.id === temoignage.campagneId);
     return {
       ...temoignage,
       etablissement: campagne && campagne.etablissement ? campagne.etablissement : null,

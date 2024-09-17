@@ -12,27 +12,24 @@ import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 const columnHelper = createColumnHelper();
 
 const getColumns = [
-  columnHelper.accessor("data.siret", {
+  columnHelper.accessor("siret", {
     cell: (info) => <p>{info.getValue()}</p>,
     header: "SIRET",
   }),
-  columnHelper.accessor(
-    (row) => [row.data.onisep_nom, row.data.enseigne, row.data.entreprise_raison_sociale],
-    {
-      cell: (info) => <p>{info.getValue()[0] || info.getValue()[1] || info.getValue()[2]}</p>,
-      header: "Label",
-    }
-  ),
-  columnHelper.accessor((row) => [row.data.region_implantation_nom], {
+  columnHelper.accessor((row) => [row.onisepNom, row.enseigne, row.entrepriseRaisonSociale], {
+    cell: (info) => <p>{info.getValue()[0] || info.getValue()[1] || info.getValue()[2]}</p>,
+    header: "Label",
+  }),
+  columnHelper.accessor((row) => [row.regionImplantationNom], {
     cell: (info) => <p>{info.getValue()}</p>,
     header: "Région",
   }),
-  columnHelper.accessor("campagneIds", {
-    cell: (info) => <p>{info.getValue().length}</p>,
+  columnHelper.accessor("campagnesCount", {
+    cell: (info) => <p>{info.getValue()}</p>,
     header: "Campagnes",
     sortingFn: (rowA, rowB, columnId, desc) => {
-      const lengthA = rowA.getValue(columnId)?.length ?? 0;
-      const lengthB = rowB.getValue(columnId)?.length ?? 0;
+      const lengthA = rowA.getValue(columnId) ?? 0;
+      const lengthB = rowB.getValue(columnId) ?? 0;
 
       if (lengthA > lengthB) {
         return desc ? -1 : 1;
@@ -47,7 +44,7 @@ const getColumns = [
     cell: (info) => <p>{info.getValue()}</p>,
     header: "Témoignages",
   }),
-  columnHelper.accessor("champsLibreCount", {
+  columnHelper.accessor("verbatimsCount", {
     cell: (info) => <p>{info.getValue()}</p>,
     header: "Verbatims",
   }),

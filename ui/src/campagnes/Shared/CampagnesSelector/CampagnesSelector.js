@@ -132,7 +132,7 @@ const CampagnesSelector = ({
   useEffect(() => {
     if (isResults && !paramsCampagneIds?.length) {
       setSelectedCampagneIds(allCampagneIds);
-    } else if (isManage && campagnesSorted?.length) {
+    } else if (isManage && isSuccess && campagnesSorted?.length) {
       setAllCampagneIds(allCampagneIds);
     }
   }, [campagnesSorted]);
@@ -221,7 +221,7 @@ const CampagnesSelector = ({
                         onChange: (e) => {
                           setSelectedCampagneIds(() => {
                             if (e.target.checked && search) {
-                              return searchedCampagnes.body.map((campagne) => campagne._id);
+                              return searchedCampagnes.body.map((campagne) => campagne.id);
                             } else if (e.target.checked) {
                               return allCampagneIds;
                             }

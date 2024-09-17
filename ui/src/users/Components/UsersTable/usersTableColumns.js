@@ -89,11 +89,12 @@ const usersTableColumns = (
     header: "Confirmé",
   }),
   columnHelper.accessor(
-    ({ siret, etablissement, etablissements, scope }) => [
+    ({ siret, etablissement, etablissements, scope, id }) => [
       siret,
       etablissement,
       etablissements,
       scope,
+      id,
     ],
     {
       cell: (info) => {
@@ -153,7 +154,7 @@ const usersTableColumns = (
             )}
             {etablissements?.map((etablissement) => (
               <Tooltip
-                key={etablissement.siret}
+                key={etablissement.id}
                 label={etablissementLabelGetter(etablissement)}
                 hasArrow
                 arrowSize={15}
@@ -183,7 +184,7 @@ const usersTableColumns = (
 
       return (
         <Box minW="100px">
-          {user._id === userContext.user?._id ? (
+          {user.id === userContext.user?.id ? (
             <Tooltip label="Vous ne pouvez pas modifier votre propre status" hasArrow>
               <span>{USER_STATUS[user.status]}</span>
             </Tooltip>
@@ -215,7 +216,7 @@ const usersTableColumns = (
 
       return (
         <Box minW="150px">
-          {user._id === userContext.user?._id ? (
+          {user.id === userContext.user.id ? (
             <Tooltip label="Vous ne pouvez pas modifier votre propre role" hasArrow>
               <span>{USER_ROLES[user.role]}</span>
             </Tooltip>
@@ -241,7 +242,7 @@ const usersTableColumns = (
     },
     header: "Role",
   }),
-  columnHelper.accessor("_id", {
+  columnHelper.accessor("id", {
     cell: (info) => {
       const user = info.row.original;
       if (user.role === USER_ROLES.ADMIN) return null;
@@ -280,7 +281,7 @@ const usersTableColumns = (
               size="sm"
               aria-label="Se connecter en tant que l'utilisateur"
               icon={<UnlockIcon />}
-              onClick={() => setSudoUserId(user._id)}
+              onClick={() => setSudoUserId(user.id)}
             />
           </Tooltip>
         </Box>

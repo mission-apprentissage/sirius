@@ -10,7 +10,7 @@ module.exports = {
     uri: env.get("SIRIUS_MONGODB_URI").default("mongodb://127.0.0.1:27017/sirius").asString(),
   },
   psql: {
-    uri: env.get("SIRIUS_PSQL_URI").default("postgresql://postgres:password@127.0.0.1:5432/postgres").asString(),
+    uri: env.get("SIRIUS_PSQL_URI").default("postgresql://postgres:password@sirius_postgres:5432/postgres").asString(),
     ca: env.get("SIRIUS_PSQL_CA").default("").asString(),
     logLevel: env.get("SIRIUS_PILOTAGE_PSQL_LOG_LEVEL").default("info").asString(),
   },

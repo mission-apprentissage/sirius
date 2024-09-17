@@ -1,7 +1,6 @@
 const questionnairesService = require("../services/questionnaires.service");
 const { QuestionnaireNotFoundError, BasicError } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
-const { USER_ROLES } = require("../constants");
 
 const createQuestionnaire = tryCatch(async (req, res) => {
   const { success, body } = await questionnairesService.createQuestionnaire(req.body);
@@ -12,12 +11,7 @@ const createQuestionnaire = tryCatch(async (req, res) => {
 });
 
 const getQuestionnaires = tryCatch(async (req, res) => {
-  let query = req.query;
-  const userRole = req.user?.role;
-  if (!userRole || userRole !== USER_ROLES.ADMIN) {
-    query = { ...query };
-  }
-  const { success, body } = await questionnairesService.getQuestionnaires(query);
+  const { success, body } = await questionnairesService.getQuestionnaires();
 
   if (!success) throw new BasicError();
 

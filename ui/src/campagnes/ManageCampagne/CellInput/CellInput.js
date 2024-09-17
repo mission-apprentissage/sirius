@@ -13,8 +13,8 @@ const CellInput = ({ id, name, campagne, handleCellUpdate = null, type }) => {
   const displayedValue = type === "date" ? formatDate(value || campagne[name]) : value;
 
   const submitHandler = async () => {
-    const { _id, nomCampagne, startDate, endDate, seats, questionnaireId } = campagne;
-    const result = await handleCellUpdate(_id, {
+    const { id, nomCampagne, startDate, endDate, seats, questionnaireId } = campagne;
+    const result = await handleCellUpdate(id, {
       nomCampagne,
       startDate,
       endDate,
