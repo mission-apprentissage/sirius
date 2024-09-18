@@ -389,37 +389,66 @@ const stripHtmlTags = (str) => {
   return str;
 };
 
-const getFormattedReponsesByTemoignages = (temoignages) => {
+const getFormattedReponsesByTemoignages = (temoignages, questionnaires) => {
   return temoignages
     .flatMap((temoignage) => {
-      const { reponses, formation, questionnaire } = temoignage;
+      const { reponses, formation, questionnaireId } = temoignage;
+      const questionnaire = questionnaires.find((questionnaire) => questionnaire.id === questionnaireId).questionnaire;
+
       return Object.keys(reponses).flatMap((key) => {
+        const isAutreKey = key.includes("Autre");
+        const formattedKey = key.includes("Autre") ? key.split("Autre")[0] : key;
+
         if (typeof reponses[key] === "string") {
           return {
             value: stripHtmlTags(reponses[key]),
             formation: formation,
-            question: stripHtmlTags(matchIdAndQuestions(questionnaire)[key] || key),
-            theme: getCategoryTitleFromResponseKey(key, questionnaire),
+            question: isAutreKey
+              ? stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]) + " - Autre"
+              : stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]),
+            theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
           };
         }
         if (Array.isArray(reponses[key]) && typeof reponses[key][0] === "string") {
           return reponses[key].map((response) => ({
             value: stripHtmlTags(response),
             formation: formation,
-            question: stripHtmlTags(matchIdAndQuestions(questionnaire)[key] || key),
-            theme: getCategoryTitleFromResponseKey(key, questionnaire),
+            question: isAutreKey
+              ? stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]) + " - Autre"
+              : stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]),
+            theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
           }));
         }
         if (Array.isArray(reponses[key]) && typeof reponses[key][0] === "object") {
           return reponses[key].map((response) => ({
             value: stripHtmlTags(response.value),
             formation: formation,
-            question: stripHtmlTags(`${matchIdAndQuestions(questionnaire)[key]} - ${response.label}` || key),
-            theme: getCategoryTitleFromResponseKey(key, questionnaire),
+            question: stripHtmlTags(`${matchIdAndQuestions(questionnaire)[formattedKey]} - ${response.label}`),
+            theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
           }));
         }
         return [];
       });
+    })
+    .filter(Boolean);
+};
+
+const getFormattedReponsesByVerbatims = (verbatims, questionnaires) => {
+  return verbatims
+    .map((verbatim) => {
+      const { content, questionKey, formation, questionnaireId } = verbatim;
+      const isAutreKey = questionKey.includes("Autre");
+      const formattedKey = questionKey.includes("Autre") ? questionKey.split("Autre")[0] : questionKey;
+
+      const questionnaire = questionnaires.find((questionnaire) => questionnaire.id === questionnaireId).questionnaire;
+      return {
+        value: content,
+        formation: formation,
+        question: isAutreKey
+          ? stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]) + " - Autre"
+          : stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]),
+        theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
+      };
     })
     .filter(Boolean);
 };
@@ -435,4 +464,5 @@ module.exports = {
   getGemVerbatimsByWantedQuestionKey,
   verbatimsAnOrderedThemeAnswersMatcher,
   getFormattedReponsesByTemoignages,
+  getFormattedReponsesByVerbatims,
 };

@@ -1,10 +1,11 @@
-import { Formation, Questionnaire } from "../../types";
+import { Formation } from "../../types";
 
 export type GetAllWithFormationAndQuestionnaire =
   | {
       id: string;
       reponses: Record<string, any>;
       nom_campagne: string | null;
+      questionnaire_id: string;
       formation: Pick<
         Formation,
         | "intitule_long"
@@ -13,6 +14,5 @@ export type GetAllWithFormationAndQuestionnaire =
         | "etablissement_formateur_entreprise_raison_sociale"
         | "etablissement_formateur_siret"
       >;
-      questionnaire: Pick<Questionnaire, "questionnaire">;
     }
   | undefined;

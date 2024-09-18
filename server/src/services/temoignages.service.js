@@ -15,6 +15,7 @@ const {
   getGemVerbatimsByWantedQuestionKey,
   verbatimsAnOrderedThemeAnswersMatcher,
   getFormattedReponsesByTemoignages,
+  getFormattedReponsesByVerbatims,
 } = require("../utils/temoignages.utils");
 const {
   VERBATIM_STATUS,
@@ -400,9 +401,19 @@ const deleteMultipleTemoignages = async (temoignagesIds) => {
 
 const getXlsExportTemoignages = async (campagneIds) => {
   try {
+    const questionnaires = await questionnairesDao.findAll();
+
     const temoignages = await temoignagesDao.getAllWithFormationAndQuestionnaire(campagneIds);
-    const formatted = getFormattedReponsesByTemoignages(temoignages);
-    const generatedXlsExport = await xlsxExport.generateRawTemoignage(formatted);
+
+    const temoignagesIds = temoignages.map((temoignage) => temoignage.id);
+    const moderatedVerbatimStatus = [VERBATIM_STATUS.VALIDATED, VERBATIM_STATUS.TO_FIX, VERBATIM_STATUS.GEM];
+
+    const verbatims = await verbatimsDao.getAllWithFormationAndCampagne(temoignagesIds, moderatedVerbatimStatus);
+
+    const formattedTemoignages = getFormattedReponsesByTemoignages(temoignages, questionnaires);
+    const formattedVerbatims = getFormattedReponsesByVerbatims(verbatims, questionnaires);
+
+    const generatedXlsExport = await xlsxExport.generateRawTemoignage(formattedTemoignages, formattedVerbatims);
     const fileName = `sirius_export_reponses_brut.xlsx`;
 
     return {

@@ -45,12 +45,24 @@ const generateMultipleCampagnes = async (campagnes) => {
   return base64;
 };
 
-const generateRawTemoignage = async (temoignages) => {
+const generateRawTemoignage = async (temoignages, verbatims) => {
   const workbook = new Excel.Workbook();
 
-  const worksheet = workbook.addWorksheet("Témoignages");
+  const temoignagesWorksheet = workbook.addWorksheet("Témoignages");
+  const verbatimsWorksheet = workbook.addWorksheet("Verbatims");
 
-  worksheet.columns = [
+  temoignagesWorksheet.columns = [
+    { header: "Thème", key: "theme", width: 22 },
+    { header: "SIRET", key: "siret", width: 15 },
+    { header: "Établissement", key: "etablissement", width: 30 },
+    { header: "Campagne", key: "campagne", width: 20 },
+    { header: "Formation", key: "formation", width: 20 },
+    { header: "Localité", key: "localite", width: 20 },
+    { header: "Question", key: "question", width: 50 },
+    { header: "Réponse", key: "reponse", width: 100 },
+  ];
+
+  verbatimsWorksheet.columns = [
     { header: "Thème", key: "theme", width: 22 },
     { header: "SIRET", key: "siret", width: 15 },
     { header: "Établissement", key: "etablissement", width: 30 },
@@ -62,7 +74,7 @@ const generateRawTemoignage = async (temoignages) => {
   ];
 
   for (const temoignage of temoignages) {
-    worksheet.addRow({
+    temoignagesWorksheet.addRow({
       theme: temoignage.theme,
       siret: temoignage.formation.etablissementFormateurSiret,
       etablissement:
@@ -73,6 +85,21 @@ const generateRawTemoignage = async (temoignages) => {
       localite: temoignage.formation.localite,
       question: temoignage.question,
       reponse: temoignage.value,
+    });
+  }
+
+  for (const verbatim of verbatims) {
+    verbatimsWorksheet.addRow({
+      theme: verbatim.theme,
+      siret: verbatim.formation.etablissementFormateurSiret,
+      etablissement:
+        verbatim.formation.etablissementFormateurEntrepriseRaisonSociale ||
+        verbatim.formation.etablissementFormateurEnseigne,
+      campagne: verbatim.nomCampagne,
+      formation: verbatim.formation.intituleLong,
+      localite: verbatim.formation.localite,
+      question: verbatim.question,
+      reponse: verbatim.value,
     });
   }
 

@@ -257,13 +257,11 @@ export const getAllWithFormationAndQuestionnaire = async (
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
     .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
-    .leftJoin("questionnaires", "campagnes.questionnaire_id", "questionnaires.id")
     .select([
       "temoignages.id",
       "temoignages.reponses",
-      "questionnaire",
-      "questionnaires.questionnaire",
       "campagnes.nom_campagne",
+      "campagnes.questionnaire_id",
       sql`json_build_object(
       'intitule_long', formations.intitule_long,
       'localite', formations.localite,
