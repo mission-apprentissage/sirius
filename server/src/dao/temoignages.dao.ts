@@ -2,6 +2,7 @@ import { sql } from "kysely";
 import { kdb } from "../db/db";
 import { Temoignage } from "../types";
 import { executeWithOffsetPagination } from "kysely-paginate";
+import { GetAllWithFormationAndQuestionnaire } from "./types/temoignages";
 
 export const create = async (
   temoignage: Partial<Temoignage> & { campagneId: string }
@@ -246,6 +247,38 @@ export const getAllTemoignagesWithFormation = async (query: Partial<Temoignage>,
   const result = await executeWithOffsetPagination(baseQuery, { page: Number(page), perPage: Number(pageSize) });
 
   return result;
+};
+
+export const getAllWithFormationAndQuestionnaire = async (
+  campagneIds: string[]
+): Promise<GetAllWithFormationAndQuestionnaire[]> => {
+  const result = await kdb
+    .selectFrom("temoignages")
+    .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
+    .leftJoin("campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
+    .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("questionnaires", "campagnes.questionnaire_id", "questionnaires.id")
+    .select([
+      "temoignages.id",
+      "temoignages.reponses",
+      "questionnaire",
+      "questionnaires.questionnaire",
+      "campagnes.nom_campagne",
+      sql`json_build_object(
+      'intitule_long', formations.intitule_long,
+      'localite', formations.localite,
+      'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
+      'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
+      'etablissement_formateur_siret', formations.etablissement_formateur_siret
+    )`.as("formation"),
+    ])
+    .where("temoignages.deleted_at", "is", null)
+    .where("campagnes.deleted_at", "is", null)
+    .where("formations.deleted_at", "is", null)
+    .where("temoignages_campagnes.campagne_id", "in", campagneIds)
+    .execute();
+
+  return result as GetAllWithFormationAndQuestionnaire[];
 };
 
 export const deleteMultiple = async (ids: string[]): Promise<boolean> => {

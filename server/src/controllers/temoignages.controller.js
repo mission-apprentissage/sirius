@@ -113,6 +113,15 @@ const deleteMultipleTemoignages = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getXlsExport = tryCatch(async (req, res) => {
+  const campagneIds = req.body;
+  const { success, body } = await temoignagesService.getXlsExportTemoignages(campagneIds);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 module.exports = {
   createTemoignage,
   getTemoignages,
@@ -123,4 +132,5 @@ module.exports = {
   deleteMultipleTemoignages,
   getDatavisualisationFormation,
   getDatavisualisationEtablissement,
+  getXlsExport,
 };

@@ -45,6 +45,43 @@ const generateMultipleCampagnes = async (campagnes) => {
   return base64;
 };
 
+const generateRawTemoignage = async (temoignages) => {
+  const workbook = new Excel.Workbook();
+
+  const worksheet = workbook.addWorksheet("Témoignages");
+
+  worksheet.columns = [
+    { header: "Thème", key: "theme", width: 22 },
+    { header: "SIRET", key: "siret", width: 15 },
+    { header: "Établissement", key: "etablissement", width: 30 },
+    { header: "Campagne", key: "campagne", width: 20 },
+    { header: "Formation", key: "formation", width: 20 },
+    { header: "Localité", key: "localite", width: 20 },
+    { header: "Question", key: "question", width: 50 },
+    { header: "Réponse", key: "reponse", width: 100 },
+  ];
+
+  for (const temoignage of temoignages) {
+    worksheet.addRow({
+      theme: temoignage.theme,
+      siret: temoignage.formation.etablissementFormateurSiret,
+      etablissement:
+        temoignage.formation.etablissementFormateurEntrepriseRaisonSociale ||
+        temoignage.formation.etablissementFormateurEnseigne,
+      campagne: temoignage.nomCampagne,
+      formation: temoignage.formation.intituleLong,
+      localite: temoignage.formation.localite,
+      question: temoignage.question,
+      reponse: temoignage.value,
+    });
+  }
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const base64 = buffer.toString("base64");
+  return base64;
+};
+
 module.exports = {
   generateMultipleCampagnes,
+  generateRawTemoignage,
 };

@@ -372,6 +372,58 @@ const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAnswers, m
   return result;
 };
 
+const getCategoryTitleFromResponseKey = (responseKey, questionnaire) => {
+  for (const categoryKey in questionnaire.properties) {
+    const category = questionnaire.properties[categoryKey];
+    if (category.properties && category.properties[responseKey]) {
+      return category.title;
+    }
+  }
+  return null;
+};
+
+const stripHtmlTags = (str) => {
+  if (typeof str === "string") {
+    return str.replace(/<\/?[^>]+(>|$)/g, "");
+  }
+  return str;
+};
+
+const getFormattedReponsesByTemoignages = (temoignages) => {
+  return temoignages
+    .flatMap((temoignage) => {
+      const { reponses, formation, questionnaire } = temoignage;
+      return Object.keys(reponses).flatMap((key) => {
+        if (typeof reponses[key] === "string") {
+          return {
+            value: stripHtmlTags(reponses[key]),
+            formation: formation,
+            question: stripHtmlTags(matchIdAndQuestions(questionnaire)[key] || key),
+            theme: getCategoryTitleFromResponseKey(key, questionnaire),
+          };
+        }
+        if (Array.isArray(reponses[key]) && typeof reponses[key][0] === "string") {
+          return reponses[key].map((response) => ({
+            value: stripHtmlTags(response),
+            formation: formation,
+            question: stripHtmlTags(matchIdAndQuestions(questionnaire)[key] || key),
+            theme: getCategoryTitleFromResponseKey(key, questionnaire),
+          }));
+        }
+        if (Array.isArray(reponses[key]) && typeof reponses[key][0] === "object") {
+          return reponses[key].map((response) => ({
+            value: stripHtmlTags(response.value),
+            formation: formation,
+            question: stripHtmlTags(`${matchIdAndQuestions(questionnaire)[key]} - ${response.label}` || key),
+            theme: getCategoryTitleFromResponseKey(key, questionnaire),
+          }));
+        }
+        return [];
+      });
+    })
+    .filter(Boolean);
+};
+
 module.exports = {
   matchIdAndQuestions,
   matchCardTypeAndQuestions,
@@ -382,4 +434,5 @@ module.exports = {
   getCommentVisTonExperienceEntrepriseOrder,
   getGemVerbatimsByWantedQuestionKey,
   verbatimsAnOrderedThemeAnswersMatcher,
+  getFormattedReponsesByTemoignages,
 };

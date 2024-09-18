@@ -14,6 +14,7 @@ const {
   getCommentVisTonExperienceEntrepriseOrder,
   getGemVerbatimsByWantedQuestionKey,
   verbatimsAnOrderedThemeAnswersMatcher,
+  getFormattedReponsesByTemoignages,
 } = require("../utils/temoignages.utils");
 const {
   VERBATIM_STATUS,
@@ -22,6 +23,7 @@ const {
   ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES,
 } = require("../constants");
 const { intituleFormationFormatter } = require("../utils/formations.utils");
+const xlsxExport = require("../modules/xlsxExport");
 
 const createTemoignage = async (temoignage) => {
   try {
@@ -396,6 +398,22 @@ const deleteMultipleTemoignages = async (temoignagesIds) => {
   }
 };
 
+const getXlsExportTemoignages = async (campagneIds) => {
+  try {
+    const temoignages = await temoignagesDao.getAllWithFormationAndQuestionnaire(campagneIds);
+    const formatted = getFormattedReponsesByTemoignages(temoignages);
+    const generatedXlsExport = await xlsxExport.generateRawTemoignage(formatted);
+    const fileName = `sirius_export_reponses_brut.xlsx`;
+
+    return {
+      success: true,
+      body: { data: generatedXlsExport, fileName },
+    };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   createTemoignage,
   getTemoignages,
@@ -406,4 +424,5 @@ module.exports = {
   deleteMultipleTemoignages,
   getDatavisualisationFormation,
   getDatavisualisationEtablissement,
+  getXlsExportTemoignages,
 };
