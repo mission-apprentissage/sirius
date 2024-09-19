@@ -1,4 +1,4 @@
-import { _post, _get } from "../utils/httpClient";
+import { _post, _get, _postFile } from "../utils/httpClient";
 
 export const fetchTemoignagesDatavisualisation = async ({ campagneIds, token }) => {
   let url = `/api/temoignages/datavisualisation`;
@@ -61,7 +61,7 @@ export const deleteTemoignages = async ({ temoignagesIds, token }) => {
 export const fetchTemoignagesXlsExport = async ({ campagneIds, token }) => {
   let url = `/api/temoignages/xls-export`;
 
-  const response = await _post(url, campagneIds, token);
+  const response = await _postFile(url, campagneIds, token);
   if (response) {
     return response;
   }

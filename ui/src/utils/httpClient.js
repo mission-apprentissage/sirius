@@ -23,6 +23,15 @@ export const _post = async (path, body, token = null) => {
   }).then((res) => res.json());
 };
 
+export const _postFile = async (path, body, token = null) => {
+  return fetch(`${path}`, {
+    method: "POST",
+    headers: getHeaders(token),
+    body: JSON.stringify(body),
+    credentials: "same-origin",
+  }).then((res) => res.blob());
+};
+
 export const _put = async (path, body = {}, token = null) => {
   return fetch(`${path}`, {
     method: "PUT",

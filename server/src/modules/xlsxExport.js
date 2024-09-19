@@ -45,11 +45,12 @@ const generateMultipleCampagnes = async (campagnes) => {
   return base64;
 };
 
-const generateRawTemoignage = async (temoignages, verbatims) => {
-  const workbook = new Excel.Workbook();
+const generateTemoignagesXlsx = async (temoignages, verbatims, res) => {
+  const workbook = new Excel.stream.xlsx.WorkbookWriter({
+    stream: res,
+  });
 
   const temoignagesWorksheet = workbook.addWorksheet("Témoignages");
-  const verbatimsWorksheet = workbook.addWorksheet("Verbatims");
 
   temoignagesWorksheet.columns = [
     { header: "Thème", key: "theme", width: 22 },
@@ -62,6 +63,25 @@ const generateRawTemoignage = async (temoignages, verbatims) => {
     { header: "Réponse", key: "reponse", width: 100 },
   ];
 
+  for (const temoignage of temoignages) {
+    temoignagesWorksheet
+      .addRow({
+        theme: temoignage.theme,
+        siret: temoignage.formation.etablissementFormateurSiret,
+        etablissement:
+          temoignage.formation.etablissementFormateurEntrepriseRaisonSociale ||
+          temoignage.formation.etablissementFormateurEnseigne,
+        campagne: temoignage.nomCampagne,
+        formation: temoignage.formation.intituleLong,
+        localite: temoignage.formation.localite,
+        question: temoignage.question,
+        reponse: temoignage.value,
+      })
+      .commit();
+  }
+
+  const verbatimsWorksheet = workbook.addWorksheet("Verbatims");
+
   verbatimsWorksheet.columns = [
     { header: "Thème", key: "theme", width: 22 },
     { header: "SIRET", key: "siret", width: 15 },
@@ -73,42 +93,27 @@ const generateRawTemoignage = async (temoignages, verbatims) => {
     { header: "Réponse", key: "reponse", width: 100 },
   ];
 
-  for (const temoignage of temoignages) {
-    temoignagesWorksheet.addRow({
-      theme: temoignage.theme,
-      siret: temoignage.formation.etablissementFormateurSiret,
-      etablissement:
-        temoignage.formation.etablissementFormateurEntrepriseRaisonSociale ||
-        temoignage.formation.etablissementFormateurEnseigne,
-      campagne: temoignage.nomCampagne,
-      formation: temoignage.formation.intituleLong,
-      localite: temoignage.formation.localite,
-      question: temoignage.question,
-      reponse: temoignage.value,
-    });
-  }
-
   for (const verbatim of verbatims) {
-    verbatimsWorksheet.addRow({
-      theme: verbatim.theme,
-      siret: verbatim.formation.etablissementFormateurSiret,
-      etablissement:
-        verbatim.formation.etablissementFormateurEntrepriseRaisonSociale ||
-        verbatim.formation.etablissementFormateurEnseigne,
-      campagne: verbatim.nomCampagne,
-      formation: verbatim.formation.intituleLong,
-      localite: verbatim.formation.localite,
-      question: verbatim.question,
-      reponse: verbatim.value,
-    });
+    verbatimsWorksheet
+      .addRow({
+        theme: verbatim.theme,
+        siret: verbatim.formation.etablissementFormateurSiret,
+        etablissement:
+          verbatim.formation.etablissementFormateurEntrepriseRaisonSociale ||
+          verbatim.formation.etablissementFormateurEnseigne,
+        campagne: verbatim.nomCampagne,
+        formation: verbatim.formation.intituleLong,
+        localite: verbatim.formation.localite,
+        question: verbatim.question,
+        reponse: verbatim.value,
+      })
+      .commit();
   }
 
-  const buffer = await workbook.xlsx.writeBuffer();
-  const base64 = buffer.toString("base64");
-  return base64;
+  await workbook.commit();
 };
 
 module.exports = {
   generateMultipleCampagnes,
-  generateRawTemoignage,
+  generateTemoignagesXlsx,
 };

@@ -399,10 +399,9 @@ const deleteMultipleTemoignages = async (temoignagesIds) => {
   }
 };
 
-const getXlsExportTemoignages = async (campagneIds) => {
+const exportTemoignagesToXlsx = async (campagneIds, res) => {
   try {
     const questionnaires = await questionnairesDao.findAll();
-
     const temoignages = await temoignagesDao.getAllWithFormationAndQuestionnaire(campagneIds);
 
     const temoignagesIds = temoignages.map((temoignage) => temoignage.id);
@@ -413,15 +412,9 @@ const getXlsExportTemoignages = async (campagneIds) => {
     const formattedTemoignages = getFormattedReponsesByTemoignages(temoignages, questionnaires);
     const formattedVerbatims = getFormattedReponsesByVerbatims(verbatims, questionnaires);
 
-    const generatedXlsExport = await xlsxExport.generateRawTemoignage(formattedTemoignages, formattedVerbatims);
-    const fileName = `sirius_export_reponses_brut.xlsx`;
-
-    return {
-      success: true,
-      body: { data: generatedXlsExport, fileName },
-    };
+    await xlsxExport.generateTemoignagesXlsx(formattedTemoignages, formattedVerbatims, res);
   } catch (error) {
-    return { success: false, body: error };
+    throw new Error("Error fetching data or generating Excel");
   }
 };
 
@@ -435,5 +428,5 @@ module.exports = {
   deleteMultipleTemoignages,
   getDatavisualisationFormation,
   getDatavisualisationEtablissement,
-  getXlsExportTemoignages,
+  exportTemoignagesToXlsx,
 };

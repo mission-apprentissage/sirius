@@ -86,15 +86,19 @@ const ResultsCampagnesPage = () => {
   }, [datavisualisation]);
 
   useEffect(() => {
-    if (isSuccessFetchTemoignagesXlsExport) {
-      const base64Data = `data:application/xlsx;base64,${temoignagesXlsExport.data}`;
-
+    const downloadFile = async () => {
+      const url = window.URL.createObjectURL(temoignagesXlsExport);
       const a = document.createElement("a");
-      a.href = base64Data;
-      a.download = temoignagesXlsExport.fileName;
+      a.href = url;
+      a.download = "sirius_export_reponses_brut.xlsx";
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(base64Data);
+      window.URL.revokeObjectURL(url);
+      setXlsExportLoading(false);
+    };
+
+    if (isSuccessFetchTemoignagesXlsExport) {
+      downloadFile();
     }
   }, [isSuccessFetchTemoignagesXlsExport]);
 
@@ -138,12 +142,6 @@ const ResultsCampagnesPage = () => {
       statistics
     );
     setPdfExportLoading(false);
-  };
-
-  const handleXlsExport = async () => {
-    setXlsExportLoading(true);
-    mutateFetchTemoignagesXlsExport(selectedCampagneIds);
-    setXlsExportLoading(false);
   };
 
   const hasNoTemoignages =
@@ -211,7 +209,10 @@ const ResultsCampagnesPage = () => {
             <Button
               priority="secondary"
               iconId="fr-icon-file-download-fill"
-              onClick={handleXlsExport}
+              onClick={() => {
+                setXlsExportLoading(true);
+                mutateFetchTemoignagesXlsExport(selectedCampagneIds);
+              }}
               disabled={
                 pdfExportLoading ||
                 xlsExportLoading ||
