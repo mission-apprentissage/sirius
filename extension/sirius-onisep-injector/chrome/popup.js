@@ -21,8 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }} )
     .then(response => response.json())
     .then(data => {
+      console.log({data})
       const formationLink = document.getElementById('formation-link');
       data.forEach(item => {
+        console.log({item})
         if(item.temoignagesCount < 1) return;
         if(item.onisepIntitule === null) return;
         const li = document.createElement('li');

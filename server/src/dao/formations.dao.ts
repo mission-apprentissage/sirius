@@ -293,6 +293,7 @@ export const findAllWithTemoignageCount = async (): Promise<Partial<Formation>[]
       sql<number>`COUNT(DISTINCT temoignages_campagnes.temoignage_id) FILTER (WHERE temoignages_campagnes.temoignage_id IS NOT NULL)`.as(
         "temoignagesCount"
       ),
+      sql<string>`catalogue_data->>'onisep_intitule'`.as("onisep_intitule"),
     ])
     .leftJoin("campagnes", "campagnes.id", "formations.campagne_id")
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations.campagne_id")

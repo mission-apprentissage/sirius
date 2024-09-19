@@ -34,7 +34,13 @@ const getFormations = async ({ formationIds, search }) => {
 const getFormationsWithTemoignageCount = async () => {
   try {
     const formations = await formationsDao.findAllWithTemoignageCount();
-    return { success: true, body: formations };
+
+    const reformatForExtension = formations.map((formation) => ({
+      ...formation,
+      onisep_intitule: formation.onisepIntitule,
+    }));
+
+    return { success: true, body: reformatForExtension };
   } catch (error) {
     return { success: false, body: error };
   }
