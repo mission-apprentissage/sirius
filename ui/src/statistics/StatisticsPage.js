@@ -39,8 +39,8 @@ const StatisticsPage = () => {
           <div>
             <img src={DocumentAdd} alt="" />
             <p>
-              <b>{etablissementsSuiviPublic?.createdCampagnesCount || 0} campagnes</b> <br />
-              de diffusion crées
+              <b>{etablissementsSuiviPublic?.createdCampagnesCount || 0} promotions</b> <br />
+              interrogées
             </p>
           </div>
           <div>

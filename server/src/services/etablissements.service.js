@@ -129,7 +129,7 @@ const getEtablissementsPublicStatistics = async () => {
       .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
       .filter((relation) => !etablissementsSiret.includes(relation.siret)).length;
 
-    const createdCampagnesCount = await campagnesDao.count();
+    const createdCampagnesCount = await campagnesDao.countWithAtLeastOneTemoignages();
     const temoignagesCount = await temoignagesDao.count();
 
     const onlyQpenQuestionKeyList = [];
