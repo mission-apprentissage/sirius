@@ -58,8 +58,14 @@ const getEtablissements = async ({ search }) => {
 
 const getEtablissementsWithTemoignageCount = async () => {
   try {
-    const formations = await etablissementsDao.findAllWithTemoignageCount();
-    return { success: true, body: formations };
+    const etablissement = await etablissementsDao.findAllWithTemoignageCount();
+    const reformatForExtension = etablissement.map((etablissement) => ({
+      ...etablissement,
+      onisep_url: etablissement.onisepUrl,
+      onisep_nom: etablissement.onisepNom,
+      entreprise_raison_sociale: etablissement.entrepriseRaisonSociale,
+    }));
+    return { success: true, body: reformatForExtension };
   } catch (error) {
     return { success: false, body: error };
   }
