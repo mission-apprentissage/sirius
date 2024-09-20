@@ -181,7 +181,7 @@ const ModerationPage = () => {
         <SelectorsContainer>
           <ModerationEtablissementPicker setPickedEtablissement={setPickedEtablissement} />
           <ModerationFormationPicker
-            pickedEtablissementFormationIds={pickedEtablissement?.formationIds}
+            pickedEtablissementSiret={pickedEtablissement?.siret}
             setPickedFormationId={setPickedFormationId}
           />
         </SelectorsContainer>

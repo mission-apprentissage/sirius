@@ -3,6 +3,7 @@ import Alert from "@codegouvfr/react-dsfr/Alert";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import useFetchLocalEtablissements from "../../hooks/useFetchLocalEtablissements";
+import { etablissementLabelGetter } from "../../utils/etablissement";
 
 const ModerationEtablissementPicker = ({ setPickedEtablissement }) => {
   const [search, setSearch] = useState("");
@@ -33,7 +34,7 @@ const ModerationEtablissementPicker = ({ setPickedEtablissement }) => {
   return (
     <div>
       <Input
-        label={`Rechercher un établissement (${localEtablissements?.length || 0})`}
+        label="Rechercher un établissement"
         disabled={!isSuccess || (!localEtablissements?.length && !search)}
         nativeInputProps={{
           value: inputValue,
@@ -42,7 +43,7 @@ const ModerationEtablissementPicker = ({ setPickedEtablissement }) => {
         }}
       />
       <Select
-        label="Choix de l'établissement"
+        label={`Choix de l'établissement (${localEtablissements?.length || 0})`}
         nativeSelectProps={{
           onChange: (event) =>
             setPickedEtablissement(
@@ -56,7 +57,7 @@ const ModerationEtablissementPicker = ({ setPickedEtablissement }) => {
           (localEtablissements?.length &&
             localEtablissements.map((etablissement) => ({
               value: etablissement.siret,
-              label: `${etablissement.etablissementFormateurEntrepriseRaisonSociale} - ${etablissement.localite} - ${etablissement.formationIds?.length} formations`,
+              label: `${etablissementLabelGetter(etablissement)} - ${etablissement.localite}`,
             }))) ||
           []
         }

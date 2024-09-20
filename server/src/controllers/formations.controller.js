@@ -14,9 +14,9 @@ const createFormation = tryCatch(async (req, res) => {
 
 const getFormations = tryCatch(async (req, res) => {
   const search = req.query.search;
-  const formationIds = req.query.formationIds?.split(",") || [];
+  const etablissementSiret = req.query.etablissementSiret;
 
-  const { success, body } = await formationsService.getFormations({ search, formationIds });
+  const { success, body } = await formationsService.getFormations({ search, etablissementSiret });
 
   if (!success) throw new BasicError();
 

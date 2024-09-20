@@ -24,21 +24,26 @@ export const fetchAlreadyExistingFormations = async ({ campagneIds, token }) => 
   throw new Error("Erreur dans le chargement des formations déjà créées");
 };
 
-export const fetchLocalFormations = async ({ token, formationIds = [], search }) => {
+export const fetchLocalFormations = async ({ token, etablissementSiret, search }) => {
   let url = `/api/formations?`;
 
-  if (formationIds.length) {
-    url += `&formationIds=${formationIds.join(",")}`;
+  const params = [];
+
+  if (etablissementSiret) {
+    params.push(`etablissementSiret=${etablissementSiret}`);
   }
 
   if (search) {
-    url += `&search=${search}`;
+    params.push(`search=${search}`);
   }
+
+  url += params.join("&");
 
   const response = await _get(url, token);
 
   if (response.error) {
     throw new Error("Erreur dans le chargement des formations locales");
   }
+
   return response;
 };

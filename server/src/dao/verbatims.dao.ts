@@ -27,12 +27,13 @@ export const count = async (
     questionKey: string[];
     etablissementSiret: string;
     formationId: string;
+    status: string;
   }>
 ) => {
   let baseQuery = kdb
     .selectFrom("verbatims")
     .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
-    .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.campagne_id")
+    .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
     .where("verbatims.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
@@ -52,6 +53,10 @@ export const count = async (
 
   if (query?.questionKey) {
     baseQuery = baseQuery.where("verbatims.question_key", "in", query.questionKey);
+  }
+
+  if (query?.status) {
+    baseQuery = baseQuery.where("verbatims.status", "=", query.status);
   }
 
   const result = await baseQuery
@@ -88,7 +93,7 @@ export const getAllWithFormation = async (
       )`.as("formation"),
     ])
     .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
-    .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.campagne_id")
+    .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
     .where("verbatims.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
