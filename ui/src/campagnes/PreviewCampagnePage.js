@@ -73,7 +73,6 @@ const PreviewCampagnePage = () => {
     : false;
 
   useEffect(() => {
-    console.log({ previewedQuestionnaire });
     if (
       previewedQuestionnaire.questionnaire &&
       Object.keys(previewedQuestionnaire.questionnaire).length

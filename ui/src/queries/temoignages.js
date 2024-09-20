@@ -1,4 +1,4 @@
-import { _post, _get } from "../utils/httpClient";
+import { _post, _get, _postFile } from "../utils/httpClient";
 
 export const fetchTemoignagesDatavisualisation = async ({ campagneIds, token }) => {
   let url = `/api/temoignages/datavisualisation`;
@@ -56,4 +56,14 @@ export const deleteTemoignages = async ({ temoignagesIds, token }) => {
     return response;
   }
   throw new Error("Erreur dans la suppression des témoignages");
+};
+
+export const fetchTemoignagesXlsExport = async ({ campagneIds, token }) => {
+  let url = `/api/temoignages/xls-export`;
+
+  const response = await _postFile(url, campagneIds, token);
+  if (response) {
+    return response;
+  }
+  throw new Error("Erreur dans le chargement de l'export des témoignages");
 };

@@ -113,6 +113,19 @@ const deleteMultipleTemoignages = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getXlsExport = async (req, res) => {
+  try {
+    const campagneIds = req.body;
+
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", 'attachment; filename="sirius_export_reponses_brut.xlsx"');
+
+    await temoignagesService.exportTemoignagesToXlsx(campagneIds, res);
+  } catch (error) {
+    res.status(500).json({ error: "Error generating Excel file", details: error });
+  }
+};
+
 module.exports = {
   createTemoignage,
   getTemoignages,
@@ -123,4 +136,5 @@ module.exports = {
   deleteMultipleTemoignages,
   getDatavisualisationFormation,
   getDatavisualisationEtablissement,
+  getXlsExport,
 };

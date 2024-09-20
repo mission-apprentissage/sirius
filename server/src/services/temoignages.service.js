@@ -14,6 +14,8 @@ const {
   getCommentVisTonExperienceEntrepriseOrder,
   getGemVerbatimsByWantedQuestionKey,
   verbatimsAnOrderedThemeAnswersMatcher,
+  getFormattedReponsesByTemoignages,
+  getFormattedReponsesByVerbatims,
 } = require("../utils/temoignages.utils");
 const {
   VERBATIM_STATUS,
@@ -22,6 +24,7 @@ const {
   ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES,
 } = require("../constants");
 const { intituleFormationFormatter } = require("../utils/formations.utils");
+const xlsxExport = require("../modules/xlsxExport");
 
 const createTemoignage = async (temoignage) => {
   try {
@@ -396,6 +399,25 @@ const deleteMultipleTemoignages = async (temoignagesIds) => {
   }
 };
 
+const exportTemoignagesToXlsx = async (campagneIds, res) => {
+  try {
+    const questionnaires = await questionnairesDao.findAll();
+    const temoignages = await temoignagesDao.getAllWithFormationAndQuestionnaire(campagneIds);
+
+    const temoignagesIds = temoignages.map((temoignage) => temoignage.id);
+    const moderatedVerbatimStatus = [VERBATIM_STATUS.VALIDATED, VERBATIM_STATUS.TO_FIX, VERBATIM_STATUS.GEM];
+
+    const verbatims = await verbatimsDao.getAllWithFormationAndCampagne(temoignagesIds, moderatedVerbatimStatus);
+
+    const formattedTemoignages = getFormattedReponsesByTemoignages(temoignages, questionnaires);
+    const formattedVerbatims = getFormattedReponsesByVerbatims(verbatims, questionnaires);
+
+    await xlsxExport.generateTemoignagesXlsx(formattedTemoignages, formattedVerbatims, res);
+  } catch (error) {
+    throw new Error("Error fetching data or generating Excel");
+  }
+};
+
 module.exports = {
   createTemoignage,
   getTemoignages,
@@ -406,4 +428,5 @@ module.exports = {
   deleteMultipleTemoignages,
   getDatavisualisationFormation,
   getDatavisualisationEtablissement,
+  exportTemoignagesToXlsx,
 };

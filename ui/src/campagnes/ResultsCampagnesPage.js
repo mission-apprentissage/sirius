@@ -21,6 +21,7 @@ import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
 import useFetchCampagnesByBatch from "../hooks/useFetchCampagnesByBatch";
 import { CAMPAGNE_TABLE_TYPES } from "../constants";
 import { delay, isPlural } from "./utils";
+import useFetchTemoignagesXlsExport from "../hooks/useFetchTemoignagesXlsExport";
 
 const MultipleQuestionnairesTabs = ({
   temoignages,
@@ -44,6 +45,8 @@ const MultipleQuestionnairesTabs = ({
 const ResultsCampagnesPage = () => {
   const [selectedCampagneIds, setSelectedCampagneIds] = useState([]);
   const [pdfExportLoading, setPdfExportLoading] = useState(false);
+  const [xlsExportLoading, setXlsExportLoading] = useState(false);
+
   const [currentDatavisualisationQuestionnaireId, setCurrentDatavisualisationQuestionnaireId] =
     useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -62,6 +65,13 @@ const ResultsCampagnesPage = () => {
   } = useFetchTemoignagesDatavisualisation();
 
   const { mutate: mutateCampagnesStatistics, statistics } = useFetchCampagnesStatistics();
+
+  const {
+    mutate: mutateFetchTemoignagesXlsExport,
+    temoignagesXlsExport,
+    isSuccess: isSuccessFetchTemoignagesXlsExport,
+  } = useFetchTemoignagesXlsExport();
+
   useEffect(() => {
     if (selectedCampagneIds.length) {
       mutateCampagnesDatavisualisation(selectedCampagneIds);
@@ -74,6 +84,23 @@ const ResultsCampagnesPage = () => {
       setCurrentDatavisualisationQuestionnaireId(datavisualisation[0].questionnaireId);
     }
   }, [datavisualisation]);
+
+  useEffect(() => {
+    const downloadFile = async () => {
+      const url = window.URL.createObjectURL(temoignagesXlsExport);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sirius_export_reponses_brut.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      setXlsExportLoading(false);
+    };
+
+    if (isSuccessFetchTemoignagesXlsExport) {
+      downloadFile();
+    }
+  }, [isSuccessFetchTemoignagesXlsExport]);
 
   const { campagnes, isLoading: isLoadingCampagnesBatch } = useFetchCampagnesByBatch({
     campagneIds: selectedCampagneIds,
@@ -162,6 +189,7 @@ const ResultsCampagnesPage = () => {
               onClick={handlePdfExport}
               disabled={
                 pdfExportLoading ||
+                xlsExportLoading ||
                 isLoadingCampagnesBatch ||
                 isLoadingCampagnesDatavisualisation ||
                 !selectedCampagneIds.length ||
@@ -176,6 +204,32 @@ const ResultsCampagnesPage = () => {
                 />
               ) : (
                 "Exporter en PDF"
+              )}
+            </Button>
+            <Button
+              priority="secondary"
+              iconId="fr-icon-file-download-fill"
+              onClick={() => {
+                setXlsExportLoading(true);
+                mutateFetchTemoignagesXlsExport(selectedCampagneIds);
+              }}
+              disabled={
+                pdfExportLoading ||
+                xlsExportLoading ||
+                isLoadingCampagnesBatch ||
+                isLoadingCampagnesDatavisualisation ||
+                !selectedCampagneIds.length ||
+                hasNoTemoignages
+              }
+            >
+              {xlsExportLoading ? (
+                <BeatLoader
+                  color="var(--background-action-high-blue-france)"
+                  size={10}
+                  aria-label="Loading Spinner"
+                />
+              ) : (
+                "Exporter en XLS"
               )}
             </Button>
           </div>

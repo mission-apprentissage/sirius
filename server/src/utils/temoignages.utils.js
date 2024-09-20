@@ -372,6 +372,102 @@ const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAnswers, m
   return result;
 };
 
+const getCategoryTitleFromResponseKey = (responseKey, questionnaire) => {
+  for (const categoryKey in questionnaire.properties) {
+    const category = questionnaire.properties[categoryKey];
+    if (category.properties && category.properties[responseKey]) {
+      return category.title;
+    }
+  }
+  return null;
+};
+
+const stripHtmlTags = (str) => {
+  if (typeof str === "string") {
+    return str.replace(/<\/?[^>]+(>|$)/g, "");
+  }
+  return str;
+};
+
+const oldQuestionnaireValueMapping = (value) => {
+  if (value == 0) {
+    return "Pas ok";
+  }
+  if (value == 1) {
+    return "Moyen";
+  }
+  if (value == 2 || value == 3) {
+    return "Bien";
+  }
+
+  return value;
+};
+
+const getFormattedReponsesByTemoignages = (temoignages, questionnaires) => {
+  return temoignages
+    .flatMap((temoignage) => {
+      const { reponses, formation, questionnaireId } = temoignage;
+      const questionnaire = questionnaires.find((questionnaire) => questionnaire.id === questionnaireId).questionnaire;
+
+      return Object.keys(reponses).flatMap((key) => {
+        const isAutreKey = key.includes("Autre");
+        const formattedKey = key.includes("Autre") ? key.split("Autre")[0] : key;
+
+        if (typeof reponses[key] === "string") {
+          return {
+            value: oldQuestionnaireValueMapping(stripHtmlTags(reponses[key])),
+            formation: formation,
+            question: isAutreKey
+              ? stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]) + " - Autre"
+              : stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]),
+            theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
+          };
+        }
+        if (Array.isArray(reponses[key]) && typeof reponses[key][0] === "string") {
+          return reponses[key].map((response) => ({
+            value: oldQuestionnaireValueMapping(stripHtmlTags(response)),
+            formation: formation,
+            question: isAutreKey
+              ? stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]) + " - Autre"
+              : stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]),
+            theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
+          }));
+        }
+        if (Array.isArray(reponses[key]) && typeof reponses[key][0] === "object") {
+          return reponses[key].map((response) => ({
+            value: oldQuestionnaireValueMapping(stripHtmlTags(response.value)),
+            formation: formation,
+            question: stripHtmlTags(`${matchIdAndQuestions(questionnaire)[formattedKey]} - ${response.label}`),
+            theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
+          }));
+        }
+        return [];
+      });
+    })
+    .filter(Boolean);
+};
+
+const getFormattedReponsesByVerbatims = (verbatims, questionnaires) => {
+  return verbatims
+    .map((verbatim) => {
+      const { content, questionKey, formation, questionnaireId, status } = verbatim;
+      const isAutreKey = questionKey.includes("Autre");
+      const formattedKey = questionKey.includes("Autre") ? questionKey.split("Autre")[0] : questionKey;
+
+      const questionnaire = questionnaires.find((questionnaire) => questionnaire.id === questionnaireId).questionnaire;
+      return {
+        value: content,
+        formation: formation,
+        question: isAutreKey
+          ? stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]) + " - Autre"
+          : stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]),
+        theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
+        status: status,
+      };
+    })
+    .filter(Boolean);
+};
+
 module.exports = {
   matchIdAndQuestions,
   matchCardTypeAndQuestions,
@@ -382,4 +478,6 @@ module.exports = {
   getCommentVisTonExperienceEntrepriseOrder,
   getGemVerbatimsByWantedQuestionKey,
   verbatimsAnOrderedThemeAnswersMatcher,
+  getFormattedReponsesByTemoignages,
+  getFormattedReponsesByVerbatims,
 };

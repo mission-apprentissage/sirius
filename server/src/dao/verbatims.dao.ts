@@ -136,6 +136,35 @@ export const getAllWithFormation = async (
   return paginatedQuery;
 };
 
+export const getAllWithFormationAndCampagne = async (temoignagesIds: string[], status: string[]) => {
+  return kdb
+    .selectFrom("verbatims")
+    .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
+    .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
+    .leftJoin("campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
+    .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .select([
+      "verbatims.id",
+      "verbatims.question_key",
+      "verbatims.content",
+      "verbatims.status",
+      "campagnes.nom_campagne",
+      "campagnes.questionnaire_id",
+      sql`json_build_object(
+        'intitule_long', formations.intitule_long,
+        'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
+        'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
+        'etablissement_formateur_siret', formations.etablissement_formateur_siret
+      )`.as("formation"),
+    ])
+    .where("verbatims.temoignage_id", "in", temoignagesIds)
+    .where("verbatims.status", "in", status)
+    .where("verbatims.deleted_at", "is", null)
+    .where("formations.deleted_at", "is", null)
+    .where("temoignages.deleted_at", "is", null)
+    .execute();
+};
+
 export const updateOne = async (id: string, update: Partial<Verbatim>): Promise<{ id: string } | undefined> => {
   return kdb.updateTable("verbatims").set(update).where("id", "=", id).returning("id").executeTakeFirst();
 };

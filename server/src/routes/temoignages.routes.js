@@ -11,6 +11,7 @@ const {
   deleteMultipleTemoignages,
   getDatavisualisationFormation,
   getDatavisualisationEtablissement,
+  getXlsExport,
 } = require("../controllers/temoignages.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdmin } = require("../middlewares/isAdmin");
@@ -52,6 +53,10 @@ const temoignages = () => {
 
   router.get("/api/temoignages/uncompliant", verifyUser, isAdmin, (req, res, next) => {
     getUncompliantTemoignages(req, res, next);
+  });
+
+  router.post("/api/temoignages/xls-export", verifyUser, (req, res, next) => {
+    getXlsExport(req, res, next);
   });
 
   return router;
