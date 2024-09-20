@@ -389,6 +389,20 @@ const stripHtmlTags = (str) => {
   return str;
 };
 
+const oldQuestionnaireValueMapping = (value) => {
+  if (value == 0) {
+    return "Pas ok";
+  }
+  if (value == 1) {
+    return "Moyen";
+  }
+  if (value == 2 || value == 3) {
+    return "Bien";
+  }
+
+  return value;
+};
+
 const getFormattedReponsesByTemoignages = (temoignages, questionnaires) => {
   return temoignages
     .flatMap((temoignage) => {
@@ -401,7 +415,7 @@ const getFormattedReponsesByTemoignages = (temoignages, questionnaires) => {
 
         if (typeof reponses[key] === "string") {
           return {
-            value: stripHtmlTags(reponses[key]),
+            value: oldQuestionnaireValueMapping(stripHtmlTags(reponses[key])),
             formation: formation,
             question: isAutreKey
               ? stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]) + " - Autre"
@@ -411,7 +425,7 @@ const getFormattedReponsesByTemoignages = (temoignages, questionnaires) => {
         }
         if (Array.isArray(reponses[key]) && typeof reponses[key][0] === "string") {
           return reponses[key].map((response) => ({
-            value: stripHtmlTags(response),
+            value: oldQuestionnaireValueMapping(stripHtmlTags(response)),
             formation: formation,
             question: isAutreKey
               ? stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]) + " - Autre"
@@ -421,7 +435,7 @@ const getFormattedReponsesByTemoignages = (temoignages, questionnaires) => {
         }
         if (Array.isArray(reponses[key]) && typeof reponses[key][0] === "object") {
           return reponses[key].map((response) => ({
-            value: stripHtmlTags(response.value),
+            value: oldQuestionnaireValueMapping(stripHtmlTags(response.value)),
             formation: formation,
             question: stripHtmlTags(`${matchIdAndQuestions(questionnaire)[formattedKey]} - ${response.label}`),
             theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
