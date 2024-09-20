@@ -198,6 +198,17 @@ export const count = async () => {
   return result?.count || 0;
 };
 
+export const countWithAtLeastOneTemoignages = async () => {
+  const result = await kdb
+    .selectFrom("campagnes")
+    .innerJoin("temoignages_campagnes", "campagnes.id", "temoignages_campagnes.campagne_id")
+    .select(sql<number>`count(distinct campagnes.id)`.as("count"))
+    .where("campagnes.deleted_at", "is", null)
+    .executeTakeFirst();
+
+  return result?.count || 0;
+};
+
 export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
   const baseQuery = kdb
     .selectFrom("campagnes")
