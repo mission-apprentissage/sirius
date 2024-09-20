@@ -10,6 +10,7 @@ export const findAll = async (query: {
   formationIds?: string[];
   campagne_id?: string;
   searchText?: string;
+  etablissementSiret?: string;
 }): Promise<Partial<Formation>[] | undefined> => {
   let baseQuery = kdb
     .selectFrom("formations")
@@ -69,6 +70,10 @@ export const findAll = async (query: {
         qb("etablissement_gestionnaire_siret", "ilike", `%${query.searchText}%`),
       ])
     );
+  }
+
+  if ("etablissementSiret" in query && query.etablissementSiret) {
+    baseQuery = baseQuery.where("etablissement_formateur_siret", "=", query.etablissementSiret);
   }
 
   return baseQuery.execute();

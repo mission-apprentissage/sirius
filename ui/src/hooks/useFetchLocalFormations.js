@@ -3,13 +3,13 @@ import { UserContext } from "../context/UserContext";
 import { fetchLocalFormations } from "../queries/formations";
 import { useQuery } from "@tanstack/react-query";
 
-const useFetchLocalFormations = ({ formationIds, search }) => {
+const useFetchLocalFormations = ({ etablissementSiret, search }) => {
   const [userContext] = useContext(UserContext);
 
   const { data, isSuccess, isError, isLoading } = useQuery({
-    queryKey: ["local-formations", formationIds, search],
-    queryFn: () => fetchLocalFormations({ token: userContext.token, formationIds, search }),
-    enabled: !!userContext.token && !!formationIds?.length,
+    queryKey: ["local-formations", etablissementSiret, search],
+    queryFn: () => fetchLocalFormations({ token: userContext.token, etablissementSiret, search }),
+    enabled: !!userContext.token && !!etablissementSiret,
   });
 
   return { localFormations: data, isSuccess, isError, isLoading };

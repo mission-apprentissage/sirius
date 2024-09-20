@@ -15,18 +15,23 @@ const createFormation = async (formation) => {
   }
 };
 
-const getFormations = async ({ formationIds, search }) => {
+const getFormations = async ({ formationIds, etablissementSiret, search }) => {
   try {
     const query = search ? { searchText: search } : {};
 
-    if (formationIds.length) {
+    if (formationIds?.length) {
       query.formationIds = formationIds;
+    }
+
+    if (etablissementSiret) {
+      query.etablissementSiret = etablissementSiret;
     }
 
     const formations = await formationsDao.findAll(query);
 
     return { success: true, body: formations };
   } catch (error) {
+    console.log({ error });
     return { success: false, body: error };
   }
 };

@@ -4,13 +4,13 @@ import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import useFetchLocalFormations from "../../hooks/useFetchLocalFormations";
 
-const ModerationFormationPicker = ({ pickedEtablissementFormationIds, setPickedFormationId }) => {
+const ModerationFormationPicker = ({ pickedEtablissementSiret, setPickedFormationId }) => {
   const [search, setSearch] = useState("");
   const [inputValue, setInputValue] = useState(search);
 
   const { localFormations, isSuccess, isError } = useFetchLocalFormations({
     search,
-    formationIds: pickedEtablissementFormationIds,
+    etablissementSiret: pickedEtablissementSiret,
   });
 
   useEffect(() => {
@@ -33,17 +33,8 @@ const ModerationFormationPicker = ({ pickedEtablissementFormationIds, setPickedF
 
   return (
     <div>
-      <Input
-        label={`Rechercher une formation (${localFormations?.length || 0})`}
-        disabled={!isSuccess || (!localFormations?.length && !search)}
-        nativeInputProps={{
-          value: inputValue,
-          placeholder: "Par intitulé",
-          onChange: (e) => setInputValue(e.target.value),
-        }}
-      />
       <Select
-        label="Choix de la formation"
+        label={`Choix de la formation (${localFormations?.length || 0})`}
         nativeSelectProps={{
           onChange: (event) => setPickedFormationId(event.target.value),
         }}
