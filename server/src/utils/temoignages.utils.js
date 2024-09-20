@@ -436,7 +436,7 @@ const getFormattedReponsesByTemoignages = (temoignages, questionnaires) => {
 const getFormattedReponsesByVerbatims = (verbatims, questionnaires) => {
   return verbatims
     .map((verbatim) => {
-      const { content, questionKey, formation, questionnaireId } = verbatim;
+      const { content, questionKey, formation, questionnaireId, status } = verbatim;
       const isAutreKey = questionKey.includes("Autre");
       const formattedKey = questionKey.includes("Autre") ? questionKey.split("Autre")[0] : questionKey;
 
@@ -448,6 +448,7 @@ const getFormattedReponsesByVerbatims = (verbatims, questionnaires) => {
           ? stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]) + " - Autre"
           : stripHtmlTags(matchIdAndQuestions(questionnaire)[formattedKey]),
         theme: getCategoryTitleFromResponseKey(formattedKey, questionnaire),
+        status: status,
       };
     })
     .filter(Boolean);

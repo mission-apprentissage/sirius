@@ -1,3 +1,5 @@
+import { VERBATIM_STATUS_LABELS } from "../constants";
+
 const Excel = require("exceljs");
 
 const generateMultipleCampagnes = async (campagnes) => {
@@ -91,6 +93,7 @@ const generateTemoignagesXlsx = async (temoignages, verbatims, res) => {
     { header: "Localité", key: "localite", width: 20 },
     { header: "Question", key: "question", width: 50 },
     { header: "Réponse", key: "reponse", width: 100 },
+    { header: "Modération", key: "status", width: 30 },
   ];
 
   for (const verbatim of verbatims) {
@@ -106,6 +109,7 @@ const generateTemoignagesXlsx = async (temoignages, verbatims, res) => {
         localite: verbatim.formation.localite,
         question: verbatim.question,
         reponse: verbatim.value,
+        status: VERBATIM_STATUS_LABELS[verbatim.status],
       })
       .commit();
   }
