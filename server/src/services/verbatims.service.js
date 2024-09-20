@@ -28,7 +28,7 @@ const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscr
       }
     });
 
-    const count = await verbatimsDao.count();
+    const count = await verbatimsDao.count(query);
     const totalItemsByStatus = count.filter((c) => c.status === status)[0]?.count;
     const totalPagesByStatus = Math.ceil(totalItemsByStatus / pageSize);
 
