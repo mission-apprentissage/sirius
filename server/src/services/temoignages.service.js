@@ -194,8 +194,16 @@ const getDatavisualisationFormation = async (intituleFormation) => {
       (formation) => formation.campagneId
     );
 
+    if (!campagneIds.length) {
+      return { success: true, body: { temoignagesCount: 0 } };
+    }
+
     const query = { campagneIds };
     const temoignages = await temoignagesDao.findAll(query);
+
+    if (!temoignages.length) {
+      return { success: true, body: { temoignagesCount: 0 } };
+    }
 
     const commentCaSePasseEntreprise = temoignages.map(
       (temoignage) => temoignage.reponses["commentCaSePasseEntreprise"]
@@ -255,8 +263,16 @@ const getDatavisualisationEtablissement = async (uai) => {
   try {
     const campagneIds = (await formationsDao.findFormationByUai(uai)).map((formation) => formation.campagneId);
 
+    if (!campagneIds.length) {
+      return { success: true, body: { temoignagesCount: 0 } };
+    }
+
     const query = { campagneIds };
     const temoignages = await temoignagesDao.findAll(query);
+
+    if (!temoignages.length) {
+      return { success: true, body: { temoignagesCount: 0 } };
+    }
 
     const commentCaSePasseCfa = temoignages.map((temoignage) => temoignage.reponses["commentCaSePasseCfa"]);
     const commentCaSePasseCfaRates = getReponseRating(commentCaSePasseCfa);

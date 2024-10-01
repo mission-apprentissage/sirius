@@ -75,7 +75,7 @@ const getDatavisualisationEtablissement = tryCatch(async (req, res) => {
   const uai = req.query.uai;
 
   const { success, body } = await temoignagesService.getDatavisualisationEtablissement(uai);
-
+  console.log({ success, body });
   if (!success) throw new BasicError();
 
   return res.status(200).json(body);
