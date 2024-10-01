@@ -52,7 +52,7 @@ const IframeFormationPage = () => {
     );
   }
 
-  if (isError || datavisualisation.temoignagesCount === 0) {
+  if (!datavisualisation || isError || datavisualisation.temoignagesCount === 0) {
     return null;
   }
 

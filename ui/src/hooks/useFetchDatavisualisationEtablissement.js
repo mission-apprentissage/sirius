@@ -3,6 +3,7 @@ import { fetchDatavisualisationEtablissement } from "../queries/temoignages";
 
 const useFetchDatavisualisationEtablissement = ({ uai }) => {
   const { data, isSuccess, isError, isLoading } = useQuery({
+    enabled: !!uai,
     queryKey: ["datavisualisation-etablissement", uai],
     queryFn: () => fetchDatavisualisationEtablissement({ uai }),
   });
