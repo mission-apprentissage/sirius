@@ -110,7 +110,7 @@ export const getAllOnlyDiplomeTypeAndEtablissements = async (query?: { siret?: s
   let baseQuery = kdb
     .selectFrom("campagnes")
     .leftJoin("formations", "campagnes.id", "formations.campagne_id")
-    .leftJoin("etablissements", "formations.etablissement_gestionnaire_siret", "etablissements.siret")
+    .leftJoin("etablissements", "formations.etablissement_formateur_siret", "etablissements.siret")
     .select([
       "campagnes.id",
       sql`json_build_object(
