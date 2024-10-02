@@ -35,7 +35,6 @@ export const migrateToLatest = async (keepAlive?: boolean) => {
   const migrator = makeMigrator();
 
   const { error, results } = await migrator.migrateToLatest();
-
   results?.forEach((it) => {
     if (it.status === "Success") {
       console.log(`migration "${it.migrationName}" was executed successfully (UP)`);
@@ -46,14 +45,14 @@ export const migrateToLatest = async (keepAlive?: boolean) => {
     }
   });
 
-  if (!results?.length) {
-    console.log("already up to date !");
-    process.exit(1);
-  }
-
   if (error) {
     console.error("failed to migrate up");
     console.error(error);
+    process.exit(1);
+  }
+
+  if (!results?.length) {
+    console.log("already up to date !");
     process.exit(1);
   }
 
