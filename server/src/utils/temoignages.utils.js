@@ -350,6 +350,23 @@ const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAnswers, m
       return { ...item, verbatims: [] };
     }
 
+    // needed because of camelCase to snake_case conversion from kysely plugin
+    verbatims.forEach((verbatim) => {
+      if (verbatim?.themes) {
+        verbatim.themes.CHARGE_TRAVAIL = verbatim.themes.CHARGETRAVAIL;
+        verbatim.themes.MOINS_VACANCES = verbatim.themes.MOINSVACANCES;
+        verbatim.themes.DIFFICULTES_COURS = verbatim.themes.DIFFICULTESCOURS;
+        verbatim.themes.APPRENTISSAGE_METIER = verbatim.themes.APPRENTISSAGEMETIER;
+        verbatim.themes.ENSEIGNEMENT_PROPOSE = verbatim.themes.ENSEIGNEMENTPROPOSE;
+        verbatim.themes.INTEGRATION_AMBIANCE = verbatim.themes.INTEGRATIONAMBIANCE;
+        verbatim.themes.ACCESSIBILITE_HANDICAP = verbatim.themes.ACCESSIBILITEHANDICAP;
+        verbatim.themes.JOURNEE_TYPE_ENTREPRISE = verbatim.themes.JOURNEETYPEENTREPRISE;
+        verbatim.themes.JOURNEE_TYPE_ETABLISSEMENT = verbatim.themes.JOURNEETYPEETABLISSEMENT;
+        verbatim.themes.RYTHME_PERSONNEL_ETABLISSEMENT = verbatim.themes.RYTHMEPERSONNELETABLISSEMENT;
+        verbatim.themes.RYTHME_ENTREPRISE_ETABLISSEMENT = verbatim.themes.RYTHMEENTREPRISEETABLISSEMENT;
+      }
+    });
+
     const verbatimsForTheme = verbatims
       .filter((verbatim) => verbatim && verbatim.themes && verbatim.themes[theme] === true)
       .map((verbatim) => ({

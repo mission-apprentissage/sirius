@@ -8,14 +8,14 @@ export const getAll = async (query: {
   status: string[];
   questionKey?: string;
 }): Promise<Verbatim[]> => {
-  const dbQuery = kdb
+  let dbQuery = kdb
     .selectFrom("verbatims")
     .selectAll()
     .where("temoignage_id", "in", query.temoignageIds)
     .where("status", "in", query.status);
 
   if (query.questionKey) {
-    dbQuery.where("question_key", "=", query.questionKey);
+    dbQuery = dbQuery.where("question_key", "in", query.questionKey);
   }
 
   return dbQuery.execute();
