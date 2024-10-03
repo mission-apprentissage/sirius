@@ -45,7 +45,7 @@ export const deleteCampagnes = async ({ campagneIds, siret, token }) => {
 };
 
 export const createCampagnes = async ({ campagnes, token }) => {
-  let url = `/api/campagnes/multi`;
+  let url = `/api/campagnes`;
 
   const response = await _post(url, campagnes, token);
 

@@ -4,10 +4,9 @@ const { createCampagneSchema, createMultiCampagneSchema } = require("../validato
 const {
   getCampagnes,
   getCampagne,
-  createCampagne,
+  createCampagnes,
   deleteCampagnes,
   updateCampagne,
-  createMultiCampagne,
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
@@ -33,17 +32,13 @@ const campagnes = () => {
     getCampagnesStatistics(req, res, next);
   });
 
-  router.post("/api/campagnes/", verifyUser, validator(createCampagneSchema), (req, res, next) => {
-    createCampagne(req, res, next);
-  });
-
   router.post(
-    "/api/campagnes/multi",
+    "/api/campagnes",
     verifyUser,
     (req, res, next) => isAdminOrAllowed(req, next, TYPES.ETABLISSEMENT_FORMATEUR_SIRET),
     validator(createMultiCampagneSchema),
     (req, res, next) => {
-      createMultiCampagne(req, res, next);
+      createCampagnes(req, res, next);
     }
   );
 

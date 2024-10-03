@@ -65,14 +65,6 @@ const getCampagne = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-const createCampagne = tryCatch(async (req, res) => {
-  const { success, body } = await campagnesService.createCampagne(req.body);
-
-  if (!success) throw new BasicError();
-
-  return res.status(201).json(body);
-});
-
 const deleteCampagnes = tryCatch(async (req, res) => {
   const ids = req.query.ids.split(",");
   const { success, body } = await campagnesService.deleteCampagnes(ids);
@@ -91,7 +83,7 @@ const updateCampagne = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-const createMultiCampagne = tryCatch(async (req, res) => {
+const createCampagnes = tryCatch(async (req, res) => {
   const { success, body } = await campagnesService.createMultiCampagne(req.body, req.user.id);
 
   if (!success) throw new BasicError();
@@ -163,10 +155,9 @@ const getCampagnesStatistics = tryCatch(async (req, res) => {
 module.exports = {
   getCampagnes,
   getCampagne,
-  createCampagne,
+  createCampagnes,
   deleteCampagnes,
   updateCampagne,
-  createMultiCampagne,
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,

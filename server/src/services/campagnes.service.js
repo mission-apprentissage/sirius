@@ -209,15 +209,6 @@ const getOneCampagne = async (campagneId) => {
   }
 };
 
-const createCampagne = async (campagne) => {
-  try {
-    const createdCampagne = await campagnesDao.create(campagne);
-    return { success: true, body: createdCampagne };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
 const deleteCampagnes = async (ids) => {
   try {
     const deletedCampagnes = await campagnesDao.deleteMany(ids);
@@ -242,7 +233,7 @@ const updateCampagne = async (id, updatedCampagne) => {
   }
 };
 
-const createMultiCampagne = async (campagnes, currentUserId) => {
+const createCampagnes = async (campagnes, currentUserId) => {
   try {
     const formationsIds = [];
 
@@ -423,10 +414,9 @@ const getCampagnesStatistics = async (campagneIds = []) => {
 module.exports = {
   getCampagnes,
   getOneCampagne,
-  createCampagne,
   deleteCampagnes,
   updateCampagne,
-  createMultiCampagne,
+  createCampagnes,
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
