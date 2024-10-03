@@ -15,7 +15,7 @@ export const getAll = async (query: {
     .where("status", "in", query.status);
 
   if (query.questionKey) {
-    dbQuery = dbQuery.where("question_key", "=", query.questionKey);
+    dbQuery = dbQuery.where("question_key", "in", query.questionKey);
   }
 
   return dbQuery.execute();
