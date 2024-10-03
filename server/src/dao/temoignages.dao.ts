@@ -191,7 +191,8 @@ export const getAllTemoignagesWithFormation = async (query: Partial<Temoignage>,
   let baseQuery = kdb
     .selectFrom("temoignages")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
-    .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .select([
       "temoignages.id",
       "temoignages.reponses",
@@ -256,7 +257,8 @@ export const getAllWithFormationAndQuestionnaire = async (
     .selectFrom("temoignages")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
-    .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .select([
       "temoignages.id",
       "temoignages.reponses",

@@ -70,7 +70,8 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
     .leftJoin("temoignages", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("questionnaires", "campagnes.questionnaire_id", "questionnaires.id")
-    .leftJoin("formations", "campagnes.id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "campagnes.id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations.id", "formations_campagnes.formation_id")
     .leftJoin("etablissements", "formations.etablissement_id", "etablissements.id")
     .where("campagnes.deleted_at", "is", null)
     .groupBy(["campagnes.id", "questionnaires.id", "formations.id", "etablissements.id"]);
@@ -109,7 +110,8 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
 export const getAllOnlyDiplomeTypeAndEtablissements = async (query?: { siret?: string[] }, scope?: ObserverScope) => {
   let baseQuery = kdb
     .selectFrom("campagnes")
-    .leftJoin("formations", "campagnes.id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "campagnes.id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations.id", "formations_campagnes.formation_id")
     .leftJoin("etablissements", "formations.etablissement_formateur_siret", "etablissements.siret")
     .select([
       "campagnes.id",
@@ -265,7 +267,8 @@ export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
     .leftJoin("temoignages", "temoignages_campagnes.temoignage_id", "temoignages.id")
     .leftJoin("questionnaires", "campagnes.questionnaire_id", "questionnaires.id")
-    .leftJoin("formations", "campagnes.id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "campagnes.id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations.id", "formations_campagnes.formation_id")
     .leftJoin("etablissements", "formations.etablissement_id", "etablissements.id")
     .where("campagnes.deleted_at", "is", null)
     .where("campagnes.id", "=", id)
@@ -325,7 +328,8 @@ export const getAllWithTemoignageCountFormationEtablissement = async (campagneId
     ])
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
     .leftJoin("temoignages", "temoignages_campagnes.temoignage_id", "temoignages.id")
-    .leftJoin("formations", "campagnes.id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "campagnes.id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations.id", "formations_campagnes.formation_id")
     .leftJoin("etablissements", "formations.etablissement_id", "etablissements.id")
     .where("campagnes.deleted_at", "is", null)
     .groupBy(["campagnes.id", "formations.id", "etablissements.id"]);

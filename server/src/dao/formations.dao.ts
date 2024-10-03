@@ -15,65 +15,66 @@ export const findAll = async (query: {
   let baseQuery = kdb
     .selectFrom("formations")
     .select([
-      "id",
-      "campagne_id",
-      "catalogue_id",
-      "region",
-      "num_departement",
-      "intitule_long",
-      "intitule_court",
-      "diplome",
-      "localite",
-      "tags",
-      "lieu_formation_adresse",
-      "lieu_formation_adresse_computed",
-      "code_postal",
-      "duree",
-      "etablissement_formateur_adresse",
-      "etablissement_formateur_enseigne",
-      "etablissement_formateur_entreprise_raison_sociale",
-      "etablissement_formateur_localite",
-      "etablissement_formateur_siret",
-      "etablissement_gestionnaire_enseigne",
-      "etablissement_gestionnaire_siret",
-      "etablissement_id",
+      "formations.id",
+      "formations.catalogue_id",
+      "formations.region",
+      "formations.num_departement",
+      "formations.intitule_long",
+      "formations.intitule_court",
+      "formations.diplome",
+      "formations.localite",
+      "formations.tags",
+      "formations.lieu_formation_adresse",
+      "formations.lieu_formation_adresse_computed",
+      "formations.code_postal",
+      "formations.duree",
+      "formations.etablissement_formateur_adresse",
+      "formations.etablissement_formateur_enseigne",
+      "formations.etablissement_formateur_entreprise_raison_sociale",
+      "formations.etablissement_formateur_localite",
+      "formations.etablissement_formateur_siret",
+      "formations.etablissement_gestionnaire_enseigne",
+      "formations.etablissement_gestionnaire_siret",
+      "formations.etablissement_id",
     ])
-    .where("deleted_at", "is", null);
+    .where("formations.deleted_at", "is", null);
 
   if ("formationIds" in query && query.formationIds && query.formationIds.length > 0) {
-    baseQuery = baseQuery.where("id", "in", query.formationIds);
+    baseQuery = baseQuery.where("formations.id", "in", query.formationIds);
   }
 
   if ("campagne_id" in query && query.campagne_id) {
-    baseQuery = baseQuery.where("campagne_id", "=", query.campagne_id);
+    baseQuery = baseQuery
+      .innerJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
+      .where("formations_campagnes.campagne_id", "=", query.campagne_id);
   }
 
   if ("searchText" in query && query.searchText) {
     baseQuery = baseQuery.where((qb) =>
       qb.or([
-        qb("region", "ilike", `%${query.searchText}%`),
-        qb("num_departement", "ilike", `%${query.searchText}%`),
-        qb("intitule_long", "ilike", `%${query.searchText}%`),
-        qb("intitule_court", "ilike", `%${query.searchText}%`),
-        qb("diplome", "ilike", `%${query.searchText}%`),
-        qb("localite", "ilike", `%${query.searchText}%`),
-        qb("tags", "ilike", `%${query.searchText}%`),
-        qb("lieu_formation_adresse", "ilike", `%${query.searchText}%`),
-        qb("lieu_formation_adresse_computed", "ilike", `%${query.searchText}%`),
-        qb("code_postal", "ilike", `%${query.searchText}%`),
-        qb("etablissement_formateur_adresse", "ilike", `%${query.searchText}%`),
-        qb("etablissement_formateur_enseigne", "ilike", `%${query.searchText}%`),
-        qb("etablissement_formateur_entreprise_raison_sociale", "ilike", `%${query.searchText}%`),
-        qb("etablissement_formateur_localite", "ilike", `%${query.searchText}%`),
-        qb("etablissement_formateur_siret", "ilike", `%${query.searchText}%`),
-        qb("etablissement_gestionnaire_enseigne", "ilike", `%${query.searchText}%`),
-        qb("etablissement_gestionnaire_siret", "ilike", `%${query.searchText}%`),
+        qb("formations.region", "ilike", `%${query.searchText}%`),
+        qb("formations.num_departement", "ilike", `%${query.searchText}%`),
+        qb("formations.intitule_long", "ilike", `%${query.searchText}%`),
+        qb("formations.intitule_court", "ilike", `%${query.searchText}%`),
+        qb("formations.diplome", "ilike", `%${query.searchText}%`),
+        qb("formations.localite", "ilike", `%${query.searchText}%`),
+        qb("formations.tags", "ilike", `%${query.searchText}%`),
+        qb("formations.lieu_formation_adresse", "ilike", `%${query.searchText}%`),
+        qb("formations.lieu_formation_adresse_computed", "ilike", `%${query.searchText}%`),
+        qb("formations.code_postal", "ilike", `%${query.searchText}%`),
+        qb("formations.etablissement_formateur_adresse", "ilike", `%${query.searchText}%`),
+        qb("formations.etablissement_formateur_enseigne", "ilike", `%${query.searchText}%`),
+        qb("formations.etablissement_formateur_entreprise_raison_sociale", "ilike", `%${query.searchText}%`),
+        qb("formations.etablissement_formateur_localite", "ilike", `%${query.searchText}%`),
+        qb("formations.etablissement_formateur_siret", "ilike", `%${query.searchText}%`),
+        qb("formations.etablissement_gestionnaire_enseigne", "ilike", `%${query.searchText}%`),
+        qb("formations.etablissement_gestionnaire_siret", "ilike", `%${query.searchText}%`),
       ])
     );
   }
 
   if ("etablissementSiret" in query && query.etablissementSiret) {
-    baseQuery = baseQuery.where("etablissement_formateur_siret", "=", query.etablissementSiret);
+    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "=", query.etablissementSiret);
   }
 
   return baseQuery.execute();
@@ -82,64 +83,66 @@ export const findAll = async (query: {
 export const findOne = async (id: string): Promise<Partial<Formation> | undefined> => {
   return kdb
     .selectFrom("formations")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id") // Join with formations_campagnes table
     .select([
-      "id",
-      "campagne_id",
-      "catalogue_id",
-      "region",
-      "num_departement",
-      "intitule_long",
-      "intitule_court",
-      "diplome",
-      "localite",
-      "tags",
-      "lieu_formation_adresse",
-      "lieu_formation_adresse_computed",
-      "code_postal",
-      "duree",
-      "etablissement_formateur_adresse",
-      "etablissement_formateur_enseigne",
-      "etablissement_formateur_entreprise_raison_sociale",
-      "etablissement_formateur_localite",
-      "etablissement_formateur_siret",
-      "etablissement_gestionnaire_enseigne",
-      "etablissement_gestionnaire_siret",
-      "etablissement_id",
+      "formations.id",
+      "formations.catalogue_id",
+      "formations.region",
+      "formations.num_departement",
+      "formations.intitule_long",
+      "formations.intitule_court",
+      "formations.diplome",
+      "formations.localite",
+      "formations.tags",
+      "formations.lieu_formation_adresse",
+      "formations.lieu_formation_adresse_computed",
+      "formations.code_postal",
+      "formations.duree",
+      "formations.etablissement_formateur_adresse",
+      "formations.etablissement_formateur_enseigne",
+      "formations.etablissement_formateur_entreprise_raison_sociale",
+      "formations.etablissement_formateur_localite",
+      "formations.etablissement_formateur_siret",
+      "formations.etablissement_gestionnaire_enseigne",
+      "formations.etablissement_gestionnaire_siret",
+      "formations.etablissement_id",
+      "formations_campagnes.campagne_id",
     ])
-    .where("id", "=", id)
-    .where("deleted_at", "is", null)
+    .where("formations.id", "=", id)
+    .where("formations.deleted_at", "is", null)
     .executeTakeFirst();
 };
 
 export const findOneByCatalogueId = async (catalogueId: string): Promise<Partial<Formation> | undefined> => {
   return kdb
     .selectFrom("formations")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
     .select([
-      "id",
-      "campagne_id",
-      "catalogue_id",
-      "region",
-      "num_departement",
-      "intitule_long",
-      "intitule_court",
-      "diplome",
-      "localite",
-      "tags",
-      "lieu_formation_adresse",
-      "lieu_formation_adresse_computed",
-      "code_postal",
-      "duree",
-      "etablissement_formateur_adresse",
-      "etablissement_formateur_enseigne",
-      "etablissement_formateur_entreprise_raison_sociale",
-      "etablissement_formateur_localite",
-      "etablissement_formateur_siret",
-      "etablissement_gestionnaire_enseigne",
-      "etablissement_gestionnaire_siret",
-      "etablissement_id",
+      "formations.id",
+      "formations.catalogue_id",
+      "formations.region",
+      "formations.num_departement",
+      "formations.intitule_long",
+      "formations.intitule_court",
+      "formations.diplome",
+      "formations.localite",
+      "formations.tags",
+      "formations.lieu_formation_adresse",
+      "formations.lieu_formation_adresse_computed",
+      "formations.code_postal",
+      "formations.duree",
+      "formations.etablissement_formateur_adresse",
+      "formations.etablissement_formateur_enseigne",
+      "formations.etablissement_formateur_entreprise_raison_sociale",
+      "formations.etablissement_formateur_localite",
+      "formations.etablissement_formateur_siret",
+      "formations.etablissement_gestionnaire_enseigne",
+      "formations.etablissement_gestionnaire_siret",
+      "formations.etablissement_id",
+      "formations_campagnes.campagne_id",
     ])
-    .where("catalogue_id", "=", catalogueId)
-    .where("deleted_at", "is", null)
+    .where("formations.catalogue_id", "=", catalogueId)
+    .where("formations.deleted_at", "is", null)
     .executeTakeFirst();
 };
 
@@ -155,8 +158,9 @@ export const deleteManyByCampagneIdAndReturnsTheDeletedFormationId = async (
     .set({
       deleted_at: new Date(),
     })
-    .returning("id")
-    .where("campagne_id", "in", campagneIds)
+    .returning("formations.id")
+    .innerJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
+    .where("formations_campagnes.campagne_id", "in", campagneIds)
     .execute();
 
   return results.map((result) => result.id);
@@ -178,7 +182,6 @@ export const findDataIdFormationByIds = async (catalogue_ids: string[]): Promise
     .selectFrom("formations")
     .select([
       "formations.id",
-      "formations.campagne_id",
       "formations.catalogue_id",
       "formations.region",
       "formations.num_departement",
@@ -208,9 +211,9 @@ export const findDataIdFormationByIds = async (catalogue_ids: string[]): Promise
 export const findFormationByIntitule = async (intitule: string): Promise<Partial<Formation>[] | undefined> => {
   return kdb
     .selectFrom("formations")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
     .select([
       "formations.id",
-      "formations.campagne_id",
       "formations.catalogue_id",
       "formations.region",
       "formations.num_departement",
@@ -240,9 +243,9 @@ export const findFormationByIntitule = async (intitule: string): Promise<Partial
 export const findFormationByUai = async (uai: string): Promise<Partial<Formation>[] | undefined> => {
   return kdb
     .selectFrom("formations")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
     .select([
       "formations.id",
-      "formations.campagne_id",
       "formations.catalogue_id",
       "formations.region",
       "formations.num_departement",
@@ -272,9 +275,10 @@ export const findFormationByUai = async (uai: string): Promise<Partial<Formation
 export const findAllWithTemoignageCount = async (): Promise<Partial<Formation>[] | undefined> => {
   return kdb
     .selectFrom("formations")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
+    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
     .select([
       "formations.id",
-      "formations.campagne_id",
       "formations.catalogue_id",
       "formations.region",
       "formations.num_departement",
@@ -300,8 +304,6 @@ export const findAllWithTemoignageCount = async (): Promise<Partial<Formation>[]
       ),
       sql<string>`catalogue_data->>'onisep_intitule'`.as("onisep_intitule"),
     ])
-    .leftJoin("campagnes", "campagnes.id", "formations.campagne_id")
-    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations.campagne_id")
     .groupBy("formations.id")
     .orderBy("temoignagesCount", "desc")
     .execute();
