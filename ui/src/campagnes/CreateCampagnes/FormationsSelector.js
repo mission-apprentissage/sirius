@@ -1,41 +1,19 @@
 import React, { useState, useContext } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
-import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import SortButtons from "../Shared/SortButtons/SortButtons";
 import { LoaderContainer, TableContainer } from "../styles/shared.style";
-import { USER_ROLES, campagnesDisplayMode } from "../../constants";
+import { USER_ROLES } from "../../constants";
 import { UserContext } from "../../context/UserContext";
 import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
-import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
-import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
 import DisplayByAllCards from "./Accordions/DisplayByAllCards";
 import useFetchAlreadyExistingFormations from "../../hooks/useFetchAlreadyExistingFormation";
 import { isPlural } from "../utils";
 
-const AccordionComponentGetter = ({ displayMode, ...props }) => {
-  if (displayMode === campagnesDisplayMode[0].value) {
-    return (
-      <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
-        <DisplayByDiplomeTypeCards {...props} />
-      </div>
-    );
-  } else if (displayMode === campagnesDisplayMode[1].value) {
-    return (
-      <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
-        <DisplayByEtablissementCards {...props} />
-      </div>
-    );
-  } else if (displayMode === campagnesDisplayMode[2].value) {
-    return <DisplayByAllCards {...props} />;
-  }
-};
-
 const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
-  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [search, setSearch] = useState("");
   const [userContext] = useContext(UserContext);
   const [page, setPage] = useState(1);
@@ -137,8 +115,6 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
       )}
       <>
         <SortButtons
-          displayMode={displayMode}
-          setDisplayMode={setDisplayMode}
           search={search}
           setSearch={setSearch}
           organizeLabel="Organiser mes formations par"
@@ -195,11 +171,10 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
               ]}
             />
             <TableContainer>
-              <AccordionComponentGetter
+              <DisplayByAllCards
                 displayedFormations={remoteFormations}
                 selectedFormations={selectedFormations}
                 setSelectedFormations={setSelectedFormations}
-                displayMode={displayMode}
                 existingFormationIds={existingFormationIds}
               />
               {remoteFormationsPagination.nombre_de_page > 1 && (

@@ -1,26 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
 import { SortButtonsContainer, SearchContainer } from "./sortButtons.style";
-import {
-  OBSERVER_SCOPES,
-  campagneDisplayModeRegionObserver,
-  campagnesDisplayMode,
-} from "../../../constants";
 import { isPlural } from "../../utils";
 
-const SortButtons = ({
-  displayMode,
-  setDisplayMode,
-  search,
-  setSearch,
-  searchResultCount,
-  setIsOpened = () => {},
-  organizeLabel,
-  userScope,
-}) => {
+const SortButtons = ({ search, setSearch, searchResultCount, setIsOpened = () => {} }) => {
   const [inputValue, setInputValue] = useState(search);
-  const isRegionObserver = userScope?.field === OBSERVER_SCOPES.REGION;
 
   useEffect(() => {
     if (search !== inputValue) {
@@ -41,17 +25,6 @@ const SortButtons = ({
 
   return (
     <SortButtonsContainer>
-      <Select
-        label={organizeLabel}
-        nativeSelectProps={{
-          value: displayMode,
-          onChange: (event) => {
-            setDisplayMode(event.target.value);
-            setIsOpened(true);
-          },
-        }}
-        options={isRegionObserver ? campagneDisplayModeRegionObserver : campagnesDisplayMode}
-      />
       <SearchContainer>
         <Input
           nativeInputProps={{

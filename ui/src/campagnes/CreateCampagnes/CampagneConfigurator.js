@@ -1,32 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import SortButtons from "../Shared/SortButtons/SortButtons";
 import { StepContainer } from "../styles/createCampagnes.style";
 import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
 import { orderFormationsByDiplomeType } from "../utils";
-import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
-import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
 import DisplayByAllTable from "./Accordions/DisplayByAllTable";
-
-const AccordionComponentGetter = ({ displayMode, ...props }) => {
-  if (displayMode === campagnesDisplayMode[0].value) {
-    return (
-      <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
-        <DisplayByDiplomeTypeTable {...props} />
-      </div>
-    );
-  } else if (displayMode === campagnesDisplayMode[1].value) {
-    return (
-      <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
-        <DisplayByEtablissementTable {...props} />
-      </div>
-    );
-  } else if (displayMode === campagnesDisplayMode[2].value) {
-    return <DisplayByAllTable {...props} />;
-  }
-};
 
 const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formik }) => {
   const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
@@ -95,8 +74,7 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
         />
       ) : null}
       {searchedDiplayedFormations?.length ? (
-        <AccordionComponentGetter
-          displayMode={displayMode}
+        <DisplayByAllTable
           selectedFormations={searchedDiplayedFormations}
           setSearchedDiplayedFormations={setSearchedDiplayedFormations}
           setSelectedFormations={setSelectedFormations}
