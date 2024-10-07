@@ -10,6 +10,10 @@ import {
   Duration,
   HeaderCardContainer,
   FormationCardByDiplomeType,
+  ExistingCampagnesContainer,
+  BodyCardContainer,
+  EtablissementLabelContainer,
+  MiscellaneousInformationContainer,
 } from "./accordions.style";
 import { ToolTipContainer } from "../../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
@@ -23,72 +27,63 @@ const DisplayByAllCards = ({
   return (
     <FormationCardContainer>
       {displayedFormations.map((formation) => {
-        const isAlreadyCreated = existingFormationIds?.includes(formation._id);
+        const alreadyCreatedCount = existingFormationIds?.filter(
+          (existingFormationId) => existingFormationId === formation._id
+        ).length;
         const isSelected = selectedFormations.some(
           (selectedFormation) => selectedFormation._id === formation._id
+        );
+        const selectedFormationIds = selectedFormations.map(
+          (selectedFormation) => selectedFormation._id
         );
 
         return (
           <FormationCardByDiplomeType
             key={formation._id}
-            isAlreadyCreated={isAlreadyCreated}
-            isChecked={selectedFormations.includes(formation.id)}
+            isChecked={selectedFormationIds.includes(formation._id)}
           >
-            <HeaderCardContainer>
+            {!!alreadyCreatedCount && (
+              <ExistingCampagnesContainer>
+                <p>
+                  {alreadyCreatedCount} campagne{isPlural(alreadyCreatedCount)} déjà créée
+                  {isPlural(alreadyCreatedCount)}
+                </p>
+                <span className={fr.cx("fr-icon--sm fr-icon-info-line")} aria-hidden={true} />
+              </ExistingCampagnesContainer>
+            )}
+            <HeaderCardContainer isAlreadyCreated={!!alreadyCreatedCount}>
               <div>
-                <StyledBadge small isAlreadyCreated={isAlreadyCreated}>
-                  {formation.tags.join(" - ")}
-                </StyledBadge>
+                <StyledBadge small>{formation.tags.join(" - ")}</StyledBadge>
                 {formation.duree && (
                   <Duration>
                     En {formation.duree} an{isPlural(parseInt(formation.duree))}
                   </Duration>
                 )}
               </div>
-              {isAlreadyCreated ? (
-                <Tooltip
-                  background="var(--background-default-grey)"
-                  border="var(--border-default-grey)"
-                  color="var(--text-default-grey)"
-                  placement="right"
-                  content={
-                    <ToolTipContainer>
-                      <p>
-                        Une campagne a déjà été créée pour cette formation, vous ne pouvez donc pas
-                        la sélectionner.
-                      </p>
-                    </ToolTipContainer>
-                  }
-                >
-                  <span className={fr.cx("fr-icon-info-fill")} />
-                </Tooltip>
-              ) : (
-                <Checkbox
-                  key={formation.id}
-                  disabled={isAlreadyCreated}
-                  options={[
-                    {
-                      nativeInputProps: {
-                        name: `campagne-${formation.id}`,
-                        checked: isSelected,
-                        onChange: () => {
-                          setSelectedFormations((prevValue) =>
-                            isSelected
-                              ? prevValue.filter(
-                                  (selectedFormation) => selectedFormation._id !== formation._id
-                                )
-                              : [...prevValue, formation]
-                          );
-                        },
+              <Checkbox
+                key={formation.id}
+                options={[
+                  {
+                    nativeInputProps: {
+                      name: `campagne-${formation.id}`,
+                      checked: isSelected,
+                      onChange: () => {
+                        setSelectedFormations((prevValue) =>
+                          isSelected
+                            ? prevValue.filter(
+                                (selectedFormation) => selectedFormation._id !== formation._id
+                              )
+                            : [...prevValue, formation]
+                        );
                       },
                     },
-                  ]}
-                />
-              )}
+                  },
+                ]}
+              />
             </HeaderCardContainer>
-            <h6>{formation.intitule_long}</h6>
-            <div>
-              <p>
+            <BodyCardContainer>
+              <h6>{formation.intitule_long}</h6>
+              <EtablissementLabelContainer>
                 {formation.etablissement_formateur_siret ===
                 formation.etablissement_gestionnaire_siret ? (
                   <Tooltip
@@ -120,24 +115,28 @@ const DisplayByAllCards = ({
                     <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} />
                   </Tooltip>
                 )}
-                {formation.etablissement_formateur_entreprise_raison_sociale ||
-                  formation.etablissement_formateur_enseigne}
-              </p>
+                <p>
+                  {formation.etablissement_formateur_entreprise_raison_sociale ||
+                    formation.etablissement_formateur_enseigne}
+                </p>
+              </EtablissementLabelContainer>
+              <MiscellaneousInformationContainer>
+                <p>
+                  {formation.lieu_formation_adresse_computed ||
+                    `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
+                </p>
+                <p>N° SIRET : {formation.etablissement_formateur_siret}</p>
+                <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
+              </MiscellaneousInformationContainer>
               <p>
-                {formation.lieu_formation_adresse_computed ||
-                  `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
+                <Link
+                  to={`https://catalogue-apprentissage.intercariforef.org/formation/${formation.id}`}
+                  target="_blank"
+                >
+                  Voir détail formation (CARIF OREF)
+                </Link>
               </p>
-              <p>N° SIRET : {formation.etablissement_formateur_siret}</p>
-            </div>
-            <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
-            <p>
-              <Link
-                to={`https://catalogue-apprentissage.intercariforef.org/formation/${formation.id}`}
-                target="_blank"
-              >
-                Voir détail formation (CARIF OREF)
-              </Link>
-            </p>
+            </BodyCardContainer>
           </FormationCardByDiplomeType>
         );
       })}

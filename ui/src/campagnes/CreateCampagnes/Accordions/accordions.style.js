@@ -96,22 +96,6 @@ export const FormationCardByEtablissement = styled.div`
     align-items: center;
   }
 
-  & > h6 {
-    margin: 1rem 0;
-    color: var(--text-action-high-blue-france);
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 24px;
-
-    ${(props) => {
-      if (props.isAlreadyCreated) {
-        return `
-        color: var(--border-default-grey) !important;
-        `;
-      }
-    }}
-  }
-
   & > p {
     font-size: 14px;
 
@@ -143,23 +127,17 @@ export const FormationCardByDiplomeType = styled.div`
   flex-direction: column;
   justify-content: space-between;
   border: 1px solid #dddddd;
-  padding: 1rem 1rem 0 1rem;
   margin: 0.5rem 0.5rem;
   width: calc(25% - 1rem);
+
   border-bottom: ${(props) =>
-    props.isChecked && !props.isAlreadyCreated
+    props.isChecked
       ? "4px solid var(--border-active-blue-france)"
       : "4px solid var(--border-default-grey)"};
 
-  ${(props) => {
-    if (!props.isAlreadyCreated) {
-      return `
-    &:hover {
-      background-color: var(--background-default-grey-hover);
-    }
-    `;
-    }
-  }}
+  &:hover {
+    background-color: var(--background-default-grey-hover);
+  }
 
   ${fr.breakpoints.down("lg")} {
     width: calc(33% - 1rem);
@@ -169,99 +147,14 @@ export const FormationCardByDiplomeType = styled.div`
     width: calc(50% - 1rem);
   }
 
-  ${fr.breakpoints.down("xs")} {
+  ${fr.breakpoints.down("sm")} {
     width: 100%;
-  }
-
-  & > div:first-of-type {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  & > div:nth-of-type(2) {
-    display: flex;
-    flex-direction: column;
-    margin: 1.5rem 0;
-
-    & > p {
-      margin: 0;
-      ${(props) => {
-        if (props.isAlreadyCreated) {
-          return `
-        color: var(--border-default-grey) !important;
-        `;
-        }
-      }}
-    }
-
-    & > p:first-of-type {
-      font-size: 14px;
-    }
-    & > p:nth-of-type(2),
-    & > p:nth-of-type(3) {
-      font-size: 12px;
-    }
-  }
-
-  & > h6 {
-    margin: 1rem 0;
-    color: var(--text-action-high-blue-france);
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 24px;
-
-    ${(props) => {
-      if (props.isAlreadyCreated) {
-        return `
-      color: var(--border-default-grey) !important;
-      `;
-      }
-    }}
-  }
-
-  & > p {
-    font-size: 14px;
-
-    ${(props) => {
-      if (props.isAlreadyCreated) {
-        return `
-      color: var(--border-default-grey);
-      `;
-      }
-    }}
-  }
-
-  & > p:last-of-type {
-    color: var(--text-action-high-blue-france);
-    font-size: 12px;
-
-    ${(props) => {
-      if (props.isAlreadyCreated) {
-        return `
-      color: var(--text-disabled-grey)!important;
-      `;
-      }
-    }}
   }
 `;
 
-export const StyledBadge = styled((props) => {
-  // eslint-disable-next-line no-unused-vars
-  const { isAlreadyCreated, ...rest } = props;
-  return <Badge {...rest} />;
-})`
+export const StyledBadge = styled(Badge)`
   background-color: var(--background-contrast-purple-glycine) !important;
   color: var(--background-flat-purple-glycine) !important;
-
-  ${(props) => {
-    if (props.isAlreadyCreated) {
-      return `
-        background-color: var(--border-default-grey) !important;
-        color: var(--text-disabled-grey) !important;
-      `;
-    }
-  }}
 `;
 
 export const ButtonContainer = styled.div`
@@ -274,13 +167,32 @@ export const ButtonContainer = styled.div`
 export const Duration = styled.p`
   font-size: 12px;
   color: var(--text-disabled-grey);
+  margin-bottom: 0;
+`;
+
+export const ExistingCampagnesContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+
+  background-color: var(--background-action-low-blue-france);
+  color: var(--text-action-high-blue-france);
+
+  & > p {
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0;
+  }
 `;
 
 export const HeaderCardContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
+  padding: ${(props) => (props.isAlreadyCreated ? "0.5rem 1rem 0 1rem" : "2.5rem 1rem 0 1rem")};
 
   & input {
     margin: 0 !important;
@@ -289,8 +201,48 @@ export const HeaderCardContainer = styled.div`
   & label {
     margin: 0 !important;
   }
+`;
 
-  & span {
-    color: var(--text-disabled-grey);
+export const BodyCardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem 1rem 2.5rem 1rem;
+
+  & > h6 {
+    color: var(--text-action-high-blue-france);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    margin-bottom: 10px;
+  }
+
+  & > p:last-of-type {
+    color: var(--text-action-high-blue-france);
+    font-size: 12px;
+    margin: 0;
+  }
+`;
+
+export const EtablissementLabelContainer = styled.div`
+  margin-top: 10px;
+  margin-bottom: 8px;
+
+  & > p {
+    display: inline;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+`;
+
+export const MiscellaneousInformationContainer = styled.div`
+  margin-bottom: 14px;
+
+  & > p {
+    font-size: 12px;
+    color: var(--text-mention-grey);
+    margin: 5px 0;
+    line-height: 20px;
   }
 `;
