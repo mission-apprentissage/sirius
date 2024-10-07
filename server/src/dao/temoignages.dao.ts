@@ -95,6 +95,8 @@ export const deleteOne = async (id: string): Promise<boolean> => {
     .where("id", "=", id)
     .executeTakeFirst();
 
+  await kdb.deleteFrom("temoignages_campagnes").where("temoignage_id", "=", id).execute();
+
   return result.numUpdatedRows === BigInt(1);
 };
 
@@ -109,6 +111,8 @@ export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boo
   const ids = idsToUpdate.map((row) => row.id);
 
   if (ids.length > 0) {
+    await kdb.deleteFrom("temoignages_campagnes").where("temoignage_id", "in", ids).execute();
+
     const result = await kdb
       .updateTable("temoignages")
       .set({ deleted_at: new Date() })

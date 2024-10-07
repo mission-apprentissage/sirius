@@ -1,4 +1,4 @@
-import { sql } from "kysely";
+import { sql, UpdateResult } from "kysely";
 import { kdb } from "../db/db";
 import { Verbatim } from "../types";
 import { executeWithOffsetPagination } from "kysely-paginate";
@@ -8,14 +8,14 @@ export const getAll = async (query: {
   status: string[];
   questionKey?: string;
 }): Promise<Verbatim[]> => {
-  const dbQuery = kdb
+  let dbQuery = kdb
     .selectFrom("verbatims")
     .selectAll()
     .where("temoignage_id", "in", query.temoignageIds)
     .where("status", "in", query.status);
 
   if (query.questionKey) {
-    dbQuery.where("question_key", "=", query.questionKey);
+    dbQuery = dbQuery.where("question_key", "in", query.questionKey);
   }
 
   return dbQuery.execute();
@@ -202,4 +202,20 @@ export const getOne = async (query: { temoignageId: string; questionKey: string 
     .where("temoignage_id", "=", query.temoignageId)
     .where("question_key", "=", query.questionKey)
     .executeTakeFirst();
+};
+
+export const deleteManyByCampagneIds = async (campagneIds: string[]): Promise<UpdateResult[]> => {
+  const temoignages = await kdb
+    .selectFrom("temoignages_campagnes")
+    .select("temoignage_id")
+    .where("campagne_id", "in", campagneIds)
+    .execute();
+
+  const temoignagesIds = temoignages.map((t) => t.temoignage_id);
+
+  return kdb
+    .updateTable("verbatims")
+    .set({ deleted_at: new Date() })
+    .where("temoignage_id", "in", temoignagesIds)
+    .execute();
 };

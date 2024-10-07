@@ -212,12 +212,12 @@ const getOneCampagne = async (campagneId) => {
 const deleteCampagnes = async (ids) => {
   try {
     const deletedCampagnes = await campagnesDao.deleteMany(ids);
+    const deletedVerbatims = await verbatimsDao.deleteManyByCampagneIds(ids);
     const deletedTemoignages = await temoignagesDao.deleteManyByCampagneId(ids);
-    const deletedFormationsIds = await formationsDao.deleteManyByCampagneIdAndReturnsTheDeletedFormationId(ids);
 
     return {
       success: true,
-      body: deletedCampagnes && deletedTemoignages && deletedFormationsIds.length === ids.length,
+      body: deletedCampagnes && deletedTemoignages && deletedVerbatims,
     };
   } catch (error) {
     return { success: false, body: error };
@@ -235,64 +235,76 @@ const updateCampagne = async (id, updatedCampagne) => {
 
 const createCampagnes = async (campagnes, currentUserId) => {
   try {
-    const formationsIds = [];
+    const createdCampagneIds = [];
 
     for (const campagne of campagnes) {
       const { formation, etablissementFormateurSiret, ...rest } = campagne;
 
-      const etablissement = await etablissementsDao.findAll({ siret: etablissementFormateurSiret });
+      let etablissement;
 
-      const createdCampagne = await campagnesDao.create(rest);
+      etablissement = await etablissementsDao.findAll({ siret: etablissementFormateurSiret });
 
-      const createdFormation = await formationsDao.create({
-        catalogue_id: formation._id,
-        region: formation.region,
-        num_departement: formation.num_departement,
-        intitule_long: formation.intitule_long,
-        intitule_court: formation.intitule_court,
-        diplome: formation.diplome,
-        localite: formation.localite,
-        tags: JSON.stringify(formation.tags),
-        lieu_formation_adresse: formation.lieu_formation_adresse,
-        lieu_formation_adresse_computed: formation.lieu_formation_adresse_computed,
-        code_postal: formation.code_postal,
-        duree: formation.duree,
-        etablissement_gestionnaire_siret: formation.etablissement_gestionnaire_siret,
-        etablissement_gestionnaire_enseigne: formation.etablissement_gestionnaire_enseigne,
-        etablissement_formateur_siret: formation.etablissement_formateur_siret,
-        etablissement_formateur_enseigne: formation.etablissement_formateur_enseigne,
-        etablissement_formateur_entreprise_raison_sociale: formation.etablissement_formateur_entreprise_raison_sociale,
-        etablissement_formateur_adresse: formation.etablissement_formateur_adresse,
-        etablissement_formateur_localite: formation.etablissement_formateur_localite,
-        catalogue_data: JSON.stringify(formation),
-        etablissement_id: etablissement.id,
-        campagneId: createdCampagne.id,
-      });
+      const foundFormation = await formationsDao.findAll({ catalogueId: formation._id });
 
-      formationsIds.push(createdFormation.id);
+      // La formation existe déjà et donc l'établissement aussi
+      if (foundFormation.length) {
+        const createdCampagne = await campagnesDao.create(rest, foundFormation[0].id);
+        createdCampagneIds.push(createdCampagne);
 
-      if (!etablissement.length) {
-        const etablissement = await catalogue.getEtablissement(etablissementFormateurSiret);
-        await etablissementsDao.create(
-          {
-            catalogue_id: etablissement._id,
-            siret: etablissement.siret,
-            onisep_nom: etablissement.onisep_nom,
-            onisep_url: etablissement.onisep_url,
-            enseigne: etablissement.enseigne,
-            entreprise_raison_sociale: etablissement.entreprise_raison_sociale,
-            uai: etablissement.uai,
-            localite: etablissement.localite,
-            region_implantation_nom: etablissement.region_implantation_nom,
-            catalogue_data: JSON.stringify(etablissement),
-          },
-          currentUserId
-        );
+        // La formation n'existe pas
+      } else {
+        if (!etablissement.length) {
+          const foundEtablissement = await catalogue.getEtablissement(etablissementFormateurSiret);
+          etablissement = await etablissementsDao.create(
+            {
+              catalogue_id: foundEtablissement._id,
+              siret: foundEtablissement.siret,
+              onisep_nom: foundEtablissement.onisep_nom,
+              onisep_url: foundEtablissement.onisep_url,
+              enseigne: foundEtablissement.enseigne,
+              entreprise_raison_sociale: foundEtablissement.entreprise_raison_sociale,
+              uai: foundEtablissement.uai,
+              localite: foundEtablissement.localite,
+              region_implantation_nom: foundEtablissement.region_implantation_nom,
+              catalogue_data: JSON.stringify(foundEtablissement),
+            },
+            currentUserId
+          );
+        }
+        const newFormation = {
+          catalogue_id: campagne.formation._id,
+          region: campagne.formation.region,
+          num_departement: campagne.formation.num_departement,
+          intitule_long: campagne.formation.intitule_long,
+          intitule_court: campagne.formation.intitule_court,
+          diplome: campagne.formation.diplome,
+          localite: campagne.formation.localite,
+          tags: JSON.stringify(campagne.formation?.tags || []),
+          lieu_formation_adresse: campagne.formation.lieu_formation_adresse,
+          lieu_formation_adresse_computed: campagne.formation.lieu_formation_adresse_computed,
+          code_postal: campagne.formation.code_postal,
+          duree: campagne.formation.duree,
+          etablissement_gestionnaire_siret: campagne.formation.etablissement_gestionnaire_siret,
+          etablissement_gestionnaire_enseigne: campagne.formation.etablissement_gestionnaire_enseigne,
+          etablissement_formateur_siret: campagne.formation.etablissement_formateur_siret,
+          etablissement_formateur_enseigne: campagne.formation.etablissement_formateur_enseigne,
+          etablissement_formateur_entreprise_raison_sociale:
+            campagne.formation.etablissement_formateur_entreprise_raison_sociale,
+          etablissement_formateur_adresse: campagne.formation.etablissement_formateur_adresse,
+          etablissement_formateur_localite: campagne.formation.etablissement_formateur_localite,
+          catalogue_data: JSON.stringify(campagne.formation),
+          etablissement_id: etablissement.id,
+        };
+
+        const createdCampagne = await campagnesDao.createWithFormation(rest, newFormation);
+
+        createdCampagneIds.push(createdCampagne);
       }
     }
 
-    return { success: true, body: { createdCount: formationsIds.length } };
+    return { success: true, body: { createdCount: createdCampagneIds.length } };
   } catch (error) {
+    console.log({ error });
     return { success: false, body: error };
   }
 };

@@ -11,6 +11,7 @@ export const findAll = async (query: {
   campagne_id?: string;
   searchText?: string;
   etablissementSiret?: string;
+  catalogueId?: string;
 }): Promise<Partial<Formation>[] | undefined> => {
   let baseQuery = kdb
     .selectFrom("formations")
@@ -75,6 +76,10 @@ export const findAll = async (query: {
 
   if ("etablissementSiret" in query && query.etablissementSiret) {
     baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "=", query.etablissementSiret);
+  }
+
+  if ("catalogueId" in query && query.catalogueId) {
+    baseQuery = baseQuery.where("formations.catalogue_id", "=", query.catalogueId);
   }
 
   return baseQuery.execute();
@@ -153,17 +158,25 @@ export const deleteOne = async (id: string): Promise<DeleteResult> => {
 export const deleteManyByCampagneIdAndReturnsTheDeletedFormationId = async (
   campagneIds: string[]
 ): Promise<string[]> => {
-  const results = await kdb
+  const formationIds = await kdb
+    .selectFrom("formations")
+    .innerJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
+    .select("formations.id")
+    .where("formations_campagnes.campagne_id", "in", campagneIds)
+    .execute();
+
+  const idsToDelete = formationIds.map((result) => result.id);
+
+  await kdb
     .updateTable("formations")
     .set({
       deleted_at: new Date(),
     })
-    .returning("formations.id")
-    .innerJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
-    .where("formations_campagnes.campagne_id", "in", campagneIds)
+    .where("formations.id", "in", idsToDelete)
+    .returning("id")
     .execute();
 
-  return results.map((result) => result.id);
+  return idsToDelete;
 };
 
 export const update = async (id: string, updatedFormation: Partial<Formation>): Promise<boolean> => {

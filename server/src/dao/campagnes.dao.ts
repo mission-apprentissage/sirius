@@ -158,16 +158,68 @@ export const getOne = async (id: string) => {
   return kdb.selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
 };
 
-export const create = async (campagne: any): Promise<{ id: string } | undefined> => {
-  const result = await kdb.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+export const create = async (campagne: any, formationId: string): Promise<string | undefined> => {
+  if (!formationId) {
+    return undefined;
+  }
 
-  return result;
+  const transaction = await kdb.transaction().execute(async (trx) => {
+    const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+    if (insertedCampagne?.id) {
+      await trx
+        .insertInto("formations_campagnes")
+        .values({
+          formation_id: formationId,
+          campagne_id: insertedCampagne.id,
+        })
+        .returning("id")
+        .executeTakeFirst();
+    }
+    return insertedCampagne?.id;
+  });
+
+  return transaction;
+};
+
+export const createWithFormation = async (campagne: any, formation: any): Promise<string | undefined> => {
+  const transaction = await kdb.transaction().execute(async (trx) => {
+    const insertedFormation = await trx.insertInto("formations").values(formation).returning("id").executeTakeFirst();
+
+    if (insertedFormation?.id) {
+      const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+      await trx
+        .insertInto("formations_campagnes")
+        .values({ formation_id: insertedFormation.id, campagne_id: insertedCampagne?.id })
+        .execute();
+      return insertedCampagne?.id;
+    }
+  });
+
+  return transaction;
 };
 
 export const deleteMany = async (ids: string[]): Promise<boolean> => {
-  const result = await kdb.updateTable("campagnes").set({ deleted_at: new Date() }).where("id", "in", ids).execute();
+  const transaction = await kdb.transaction().execute(async (trx) => {
+    const result = await trx.updateTable("campagnes").set({ deleted_at: new Date() }).where("id", "in", ids).execute();
+    const formations = (await trx
+      .deleteFrom("formations_campagnes")
+      .where("campagne_id", "in", ids)
+      .returning("formation_id")
+      .execute()) as unknown as { formationId: string }[] | null;
 
-  return result[0].numUpdatedRows === BigInt(ids.length);
+    if (formations?.length) {
+      const formationIdValues = formations.map((formation) => formation.formationId);
+
+      await trx
+        .updateTable("formations")
+        .set({ deleted_at: new Date() })
+        .where("id", "in", formationIdValues)
+        .execute();
+    }
+    return result[0].numUpdatedRows === BigInt(ids.length);
+  });
+
+  return transaction;
 };
 
 export const update = async (id: string, updatedCampagne: any): Promise<boolean> => {

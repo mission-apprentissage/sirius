@@ -84,7 +84,7 @@ const updateCampagne = tryCatch(async (req, res) => {
 });
 
 const createCampagnes = tryCatch(async (req, res) => {
-  const { success, body } = await campagnesService.createMultiCampagne(req.body, req.user.id);
+  const { success, body } = await campagnesService.createCampagnes(req.body, req.user.id);
 
   if (!success) throw new BasicError();
 
