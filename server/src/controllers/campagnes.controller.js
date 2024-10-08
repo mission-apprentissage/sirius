@@ -1,7 +1,7 @@
 const campagnesService = require("../services/campagnes.service");
-const { BasicError, CampagneNotFoundError, SortingTypeNotFoundError } = require("../errors");
+const { BasicError, CampagneNotFoundError } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
-const { USER_ROLES, CAMPAGNE_SORTING_TYPE } = require("../constants");
+const { USER_ROLES } = require("../constants");
 
 const getCampagnes = tryCatch(async (req, res) => {
   const isAdmin = req.user.role === USER_ROLES.ADMIN;
@@ -123,26 +123,6 @@ const getXlsxMultipleExport = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-const getSortedCampagnes = tryCatch(async (req, res) => {
-  const isAdmin = req.user.role === USER_ROLES.ADMIN;
-  const isObserver = req.user.role === USER_ROLES.OBSERVER;
-  const scope = isObserver ? req.user.scope : null;
-
-  const { type } = req.query;
-
-  if (!Object.keys(CAMPAGNE_SORTING_TYPE).includes(type)) {
-    throw new SortingTypeNotFoundError();
-  }
-
-  const userSiret = req.user.etablissements?.map((etablissement) => etablissement.siret);
-
-  const { success, body } = await campagnesService.getSortedCampagnes(isAdmin, isObserver, userSiret, type, scope);
-
-  if (!success) throw new BasicError();
-
-  return res.status(200).json(body);
-});
-
 const getCampagnesStatistics = tryCatch(async (req, res) => {
   const campagneIds = req.body || [];
   const { success, body } = await campagnesService.getCampagnesStatistics(campagneIds);
@@ -161,6 +141,5 @@ module.exports = {
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
-  getSortedCampagnes,
   getCampagnesStatistics,
 };

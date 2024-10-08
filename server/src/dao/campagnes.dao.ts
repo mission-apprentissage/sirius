@@ -107,53 +107,6 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
   return baseQuery.execute();
 };
 
-export const getAllOnlyDiplomeTypeAndEtablissements = async (query?: { siret?: string[] }, scope?: ObserverScope) => {
-  let baseQuery = kdb
-    .selectFrom("campagnes")
-    .leftJoin("formations_campagnes", "campagnes.id", "formations_campagnes.campagne_id")
-    .leftJoin("formations", "formations.id", "formations_campagnes.formation_id")
-    .leftJoin("etablissements", "formations.etablissement_formateur_siret", "etablissements.siret")
-    .select([
-      "campagnes.id",
-      sql`json_build_object(
-        'id', formations.id,
-        'catalogue_id', formations.catalogue_id,
-        'code_postal', formations.code_postal,
-        'num_departement', formations.num_departement,
-        'region', formations.region,
-        'localite', formations.localite,
-        'intitule_long', formations.intitule_long,
-        'diplome', formations.diplome,
-        'duree', formations.duree,
-        'lieu_formation_adresse', formations.lieu_formation_adresse,
-        'lieu_formation_adresse_computed', formations.lieu_formation_adresse_computed,
-        'tags', formations.tags,
-        'etablissement_gestionnaire_siret', formations.etablissement_gestionnaire_siret,
-        'etablissement_gestionnaire_enseigne', formations.etablissement_gestionnaire_enseigne,
-        'etablissement_formateur_siret', formations.etablissement_formateur_siret,
-        'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
-        'etablissment_formateur_adresse', formations.etablissement_formateur_adresse,
-        'etablissement_formateur_localite', formations.etablissement_formateur_localite,
-        'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale
-      )`.as("formation"),
-    ])
-    .where("campagnes.deleted_at", "is", null);
-
-  if (scope && (scope.field === "region" || scope.field === "num_departement")) {
-    baseQuery = baseQuery.where(`formations.${scope.field}`, "=", scope.value);
-  }
-
-  if (scope && scope.field === "sirets" && scope.value) {
-    baseQuery = baseQuery.where("formations.etablissement_gestionnaire_siret", "in", scope.value);
-  }
-
-  if (query?.siret) {
-    baseQuery = baseQuery.where("etablissements.siret", "in", query.siret);
-  }
-
-  return baseQuery.execute();
-};
-
 export const getOne = async (id: string) => {
   return kdb.selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
 };

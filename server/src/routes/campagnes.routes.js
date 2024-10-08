@@ -10,7 +10,6 @@ const {
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
-  getSortedCampagnes,
   getCampagnesStatistics,
 } = require("../controllers/campagnes.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
@@ -22,10 +21,6 @@ const campagnes = () => {
 
   router.get("/api/campagnes/", verifyUser, (req, res, next) => {
     getCampagnes(req, res, next);
-  });
-
-  router.get("/api/campagnes/sorted", verifyUser, (req, res, next) => {
-    getSortedCampagnes(req, res, next);
   });
 
   router.post("/api/campagnes/statistics", verifyUser, (req, res, next) => {
