@@ -56,6 +56,8 @@ export const DIPLOME_TYPE_MATCHER = {
     "Brevet Professionnel de la Jeunesse, de l'Éducation Populaire et du Sport",
   "CERTIFICAT D'APTITUDES PROFESSIONNELLES AGRICOLES":
     "Certificat d’Aptitudes Professionnelles Agricoles",
+  "CERTIFICAT D'APTITUDE PROFESSIONNELLE AGRICOLE":
+    "Certificat d’Aptitude Professionnelle Agricole",
   "CERTIFICAT DE SPECIALISATION AGRICOLE DE NIVEAU 4":
     "Certificat de Spécialisation Agricole de Niveau 4",
   "CERTIFICAT DE SPECIALISATION AGRICOLE DE NIVEAU 5":

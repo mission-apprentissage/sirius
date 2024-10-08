@@ -61,3 +61,11 @@ export const HeaderContainer = styled.div`
     margin-bottom: 0;
   }
 `;
+
+export const SelectAllFormationContainer = styled.div`
+  margin-top: 1rem;
+
+  & > fieldset {
+    margin-bottom: 0;
+  }
+`;
