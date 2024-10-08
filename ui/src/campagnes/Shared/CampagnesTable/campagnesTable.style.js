@@ -7,7 +7,7 @@ export const EtablissementLabelContainer = styled.div`
   align-items: center;
   margin-top: 0.5rem;
 
-  & p {
+  & > p {
     font-size: 14px;
     line-height: 16px;
   }
@@ -31,4 +31,10 @@ export const TableContainer = styled.div`
   & > .fr-table > table {
     padding-bottom: ${fr.spacing("3w")};
   }
+`;
+
+export const DiplomeLabel = styled.p`
+  font-size: 14px;
+  color: var(--text-disabled-grey);
+  margin-top: 10px;
 `;

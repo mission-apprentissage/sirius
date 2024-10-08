@@ -181,7 +181,7 @@ const CampagnesSelector = ({
                     displayedCampagnes={campagnes}
                     selectedCampagneIds={selectedCampagneIds}
                     setSelectedCampagneIds={setSelectedCampagneIds}
-                    campagneTableType={CAMPAGNE_TABLE_TYPES.MANAGE}
+                    campagneTableType={campagneTableType}
                   />
                 </div>
               )}

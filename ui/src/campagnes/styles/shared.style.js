@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
+import Badge from "@codegouvfr/react-dsfr/Badge";
 
 export const ToolTipContainer = styled.div`
   display: flex;
@@ -75,4 +76,23 @@ export const ButtonContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
   gap: ${fr.spacing("2w")};
+`;
+
+export const IntituleFormation = styled.h6`
+  color: var(--text-action-high-blue-france);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  margin: 10px 0;
+`;
+
+export const StyledBadge = styled(Badge)`
+  background-color: var(--background-contrast-purple-glycine) !important;
+  color: var(--background-flat-purple-glycine) !important;
+`;
+
+export const Duration = styled.p`
+  font-size: 12px;
+  color: var(--text-disabled-grey);
+  margin-bottom: 0;
 `;

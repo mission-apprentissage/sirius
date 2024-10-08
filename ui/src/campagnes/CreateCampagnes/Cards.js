@@ -6,8 +6,6 @@ import { Tooltip } from "react-tooltip";
 import { formatDate, isPlural } from "../utils";
 import {
   FormationCardContainer,
-  StyledBadge,
-  Duration,
   HeaderCardContainer,
   FormationCardByDiplomeType,
   ExistingCampagnesContainer,
@@ -16,6 +14,7 @@ import {
   MiscellaneousInformationContainer,
 } from "../styles/createCampagnes.style";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
+import { IntituleFormation, StyledBadge, Duration } from "../styles/shared.style";
 
 const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations, campagnes }) => {
   return (
@@ -100,7 +99,7 @@ const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations,
               />
             </HeaderCardContainer>
             <BodyCardContainer>
-              <h6>{formation.intitule_long}</h6>
+              <IntituleFormation>{formation.intitule_long}</IntituleFormation>
               <EtablissementLabelContainer>
                 {formation.etablissement_formateur_siret ===
                 formation.etablissement_gestionnaire_siret ? (

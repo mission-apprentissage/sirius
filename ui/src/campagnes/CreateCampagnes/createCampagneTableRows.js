@@ -1,12 +1,19 @@
 import React from "react";
-import Tooltip from "react-simple-tooltip";
+import { Tooltip } from "react-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { isPlural } from "../utils";
-import { FormationContainer, ToolTipContainer } from "../styles/shared.style";
+import {
+  Duration,
+  FormationContainer,
+  IntituleFormation,
+  StyledBadge,
+} from "../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
 import CellInputConfigure from "../ManageCampagne/CellInput/CellInputConfigure";
 import CellInputSeatsConfigure from "../ManageCampagne/CellInput/CellInputSeatsConfigure";
+import { EtablissementLabelContainer } from "../styles/createCampagnes.style";
+import { DiplomeLabel } from "../Shared/CampagnesTable/campagnesTable.style";
 
 const createCampagneTableRows = ({
   selectedFormations,
@@ -34,53 +41,51 @@ const createCampagneTableRows = ({
           },
         ]}
       />,
-      <FormationContainer key={`${formation._id}-formation`}>
-        <div>
-          <p>{formation.tags.join("-")} </p>
-          {formation?.duree && parseInt(formation?.duree) && (
-            <p>
-              · En {formation.duree} an{isPlural(parseInt(formation.duree))}
-            </p>
-          )}
-        </div>
-        <p>
-          <b>{formation.intitule_long}</b>
-        </p>
-        <Tooltip
-          background="var(--background-default-grey)"
-          border="var(--border-default-grey)"
-          color="var(--text-default-grey)"
-          placement="right"
-          content={
-            <ToolTipContainer>
-              <p>
-                {formation.lieu_formation_adresse_computed ||
-                  `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
-              </p>
-              <p>N° SIRET : {formation.etablissement_formateur_siret}</p>
-              {formation.etablissement_formateur_siret ===
-              formation.etablissement_gestionnaire_siret ? (
-                <p>
-                  <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
-                  établissement est gestionnaire et rattaché à votre compte Sirius
-                </p>
-              ) : (
-                <p>
-                  <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
-                  établissement est formateur et dispense des formations pour un établissement
-                  gestionnaire
-                </p>
-              )}
-            </ToolTipContainer>
-          }
-        >
-          <p>
+      <>
+        <FormationContainer key={formation._id}>
+          <div>
+            <StyledBadge small>{formation.tags.join("-")}</StyledBadge>
+            {formation?.duree && parseInt(formation?.duree) && (
+              <Duration>
+                · En {formation.duree} an{isPlural(parseInt(formation.duree))}
+              </Duration>
+            )}
+          </div>
+          <IntituleFormation>{formation.intitule_long}</IntituleFormation>
+        </FormationContainer>
+        <EtablissementLabelContainer>
+          <p data-tooltip-id="tooltip-already-created">
             {formation.etablissement_formateur_entreprise_raison_sociale ||
               formation.etablissement_formateur_enseigne}
           </p>
-        </Tooltip>
-        <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
-      </FormationContainer>,
+          <Tooltip
+            id="tooltip-already-created"
+            variant="light"
+            opacity={1}
+            style={{ zIndex: 99999, boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", maxWidth: "500px" }}
+          >
+            <p>
+              {formation.lieu_formation_adresse_computed ||
+                `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
+            </p>
+            <p>N° Siret: {formation.etablissement_formateur_siret}</p>
+            {formation.etablissement_formateur_siret ===
+            formation.etablissement_gestionnaire_siret ? (
+              <p>
+                <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
+                établissement est gestionnaire et rattaché à votre compte Sirius
+              </p>
+            ) : (
+              <p>
+                <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
+                établissement est formateur et dispense des formations pour un établissement
+                gestionnaire
+              </p>
+            )}
+          </Tooltip>
+        </EtablissementLabelContainer>
+        <DiplomeLabel>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</DiplomeLabel>
+      </>,
       <CellInputConfigure
         key={`${formation._id}-nomCampagne`}
         id={formation._id}

@@ -90,7 +90,6 @@ const CampagnesTable = ({
     return (
       <TableContainer>
         <Table
-          bordered={false}
           headers={createHeaders}
           data={createCampagneTableRows({
             selectedFormations,

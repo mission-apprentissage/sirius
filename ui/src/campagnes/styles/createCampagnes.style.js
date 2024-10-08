@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Badge } from "@codegouvfr/react-dsfr/Badge";
 
 export const Container = styled.main`
   margin: 0 auto;
@@ -59,17 +58,6 @@ export const FormationCardContainer = styled.div`
   width: 100%;
 `;
 
-export const StyledBadge = styled(Badge)`
-  background-color: var(--background-contrast-purple-glycine) !important;
-  color: var(--background-flat-purple-glycine) !important;
-`;
-
-export const Duration = styled.p`
-  font-size: 12px;
-  color: var(--text-disabled-grey);
-  margin-bottom: 0;
-`;
-
 export const ExistingCampagnesContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -108,14 +96,6 @@ export const BodyCardContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: 1rem 1rem 2.5rem 1rem;
-
-  & > h6 {
-    color: var(--text-action-high-blue-france);
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 24px;
-    margin-bottom: 10px;
-  }
 
   & > p:last-of-type {
     color: var(--text-action-high-blue-france);
