@@ -190,37 +190,6 @@ export const update = async (id: string, updatedFormation: Partial<Formation>): 
   return result.numUpdatedRows === BigInt(1);
 };
 
-export const findDataIdFormationByIds = async (catalogue_ids: string[]): Promise<Partial<Formation>[]> => {
-  return kdb
-    .selectFrom("formations")
-    .select([
-      "formations.id",
-      "formations.catalogue_id",
-      "formations.region",
-      "formations.num_departement",
-      "formations.intitule_long",
-      "formations.intitule_court",
-      "formations.diplome",
-      "formations.localite",
-      "formations.tags",
-      "formations.lieu_formation_adresse",
-      "formations.lieu_formation_adresse_computed",
-      "formations.code_postal",
-      "formations.duree",
-      "formations.etablissement_formateur_adresse",
-      "formations.etablissement_formateur_enseigne",
-      "formations.etablissement_formateur_entreprise_raison_sociale",
-      "formations.etablissement_formateur_localite",
-      "formations.etablissement_formateur_siret",
-      "formations.etablissement_gestionnaire_enseigne",
-      "formations.etablissement_gestionnaire_siret",
-      "formations.etablissement_id",
-    ])
-    .where("formations.catalogue_id", "in", catalogue_ids)
-    .where("formations.deleted_at", "is", null)
-    .execute();
-};
-
 export const findFormationByIntitule = async (intitule: string): Promise<Partial<Formation>[] | undefined> => {
   return kdb
     .selectFrom("formations")
