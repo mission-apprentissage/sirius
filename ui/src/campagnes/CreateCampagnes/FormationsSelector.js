@@ -14,8 +14,8 @@ import { USER_ROLES } from "../../constants";
 import { UserContext } from "../../context/UserContext";
 import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
 import DisplayByAllCards from "./Accordions/DisplayByAllCards";
-import useFetchAlreadyExistingFormations from "../../hooks/useFetchAlreadyExistingFormation";
 import { isPlural } from "../utils";
+import useFetchCampagnes from "../../hooks/useFetchCampagnes";
 
 const REMOTE_FORMATION_BASE_QUERY = {
   published: "true",
@@ -93,18 +93,15 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     pageSize: 1000,
   });
 
-  const allRemoteFormationsIds = remoteFormations?.length
-    ? [...new Set(remoteFormations?.map((formation) => formation.id).flat())]
-    : [];
-
   const {
-    existingFormationIds,
-    isSuccess: isSuccessExistingFormationIds,
-    isError: isErrorExistingFormationIds,
-    isLoading: isLoadingExistingFormationIds,
-  } = useFetchAlreadyExistingFormations({
-    campagneIds: allRemoteFormationsIds,
-    enabled: !!allRemoteFormationsIds.length,
+    campagnes: campagnes,
+    isSuccess: isSuccessCampagnes,
+    isError: isErrorCampagnes,
+    isLoading: isLoadingCampagnes,
+  } = useFetchCampagnes({
+    key: search,
+    enabled: !!remoteFormations?.length,
+    pageSize: 1000,
   });
 
   const checkboxLabel = (
@@ -117,7 +114,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
 
   return (
     <>
-      {(isErrorFormations || isErrorExistingFormationIds) && (
+      {(isErrorFormations || isErrorCampagnes) && (
         <Alert
           title="Une erreur s'est produite dans le chargement des formations"
           description="Merci de réessayer ultérieurement"
@@ -126,7 +123,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
       )}
       <>
         <SortButtons search={search} setSearch={setSearch} />
-        {(isLoadingFormations || isLoadingExistingFormationIds) && (
+        {(isLoadingFormations || isLoadingCampagnes) && (
           <LoaderContainer>
             <BeatLoader
               color="var(--background-action-high-blue-france)"
@@ -135,7 +132,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
             />
           </LoaderContainer>
         )}
-        {isSuccessExistingFormationIds && isSuccessFormations && !remoteFormations?.length ? (
+        {isSuccessCampagnes && isSuccessFormations && !remoteFormations?.length ? (
           <Alert
             title={`Aucun résultats pour votre recherche « ${search} »`}
             description={
@@ -146,7 +143,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
             severity="info"
           />
         ) : null}
-        {isSuccessExistingFormationIds && isSuccessFormations && remoteFormations.length ? (
+        {isSuccessCampagnes && isSuccessFormations && remoteFormations.length ? (
           <>
             <SelectAllFormationContainer>
               <Checkbox
@@ -178,7 +175,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
                 displayedFormations={remoteFormations}
                 selectedFormations={selectedFormations}
                 setSelectedFormations={setSelectedFormations}
-                existingFormationIds={existingFormationIds}
+                campagnes={campagnes?.body}
               />
               {remoteFormationsPagination.nombre_de_page > 1 && (
                 <Pagination
