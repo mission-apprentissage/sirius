@@ -3,14 +3,13 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import SortButtons from "../Shared/SortButtons/SortButtons";
 import { StepContainer } from "../styles/createCampagnes.style";
-import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
+import { campagnesSortingOptions } from "../../constants";
 import { orderFormationsByDiplomeType } from "../utils";
-import DisplayByAllTable from "./Accordions/DisplayByAllTable";
+import Table from "./Table";
 
 const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formik }) => {
   const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
   const [searchedDiplayedFormations, setSearchedDiplayedFormations] = useState([]);
-  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [sortingMode, setSortingMode] = useState(campagnesSortingOptions[0].value);
   const [search, setSearch] = useState("");
 
@@ -53,8 +52,6 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
   return (
     <StepContainer>
       <SortButtons
-        displayMode={displayMode}
-        setDisplayMode={setDisplayMode}
         sortingMode={sortingMode}
         setSortingMode={setSortingMode}
         search={search}
@@ -74,7 +71,7 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
         />
       ) : null}
       {searchedDiplayedFormations?.length ? (
-        <DisplayByAllTable
+        <Table
           selectedFormations={searchedDiplayedFormations}
           setSearchedDiplayedFormations={setSearchedDiplayedFormations}
           setSelectedFormations={setSelectedFormations}

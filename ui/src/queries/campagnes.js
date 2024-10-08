@@ -14,16 +14,6 @@ export const fetchCampagnes = async ({ query = null, page = 1, pageSize = 10, to
   throw new Error("Erreur dans le chargement des campagnes");
 };
 
-export const fetchCampagnesSorted = async ({ type = null, token }) => {
-  let url = `/api/campagnes/sorted?type=${type}`;
-
-  const response = await _get(url, token);
-  if (response) {
-    return response;
-  }
-  throw new Error("Erreur dans le chargement des campagnes triées");
-};
-
 export const fetchCampagnesStatistics = async ({ campagneIds, token }) => {
   let url = `/api/campagnes/statistics`;
 

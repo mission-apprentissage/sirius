@@ -52,7 +52,6 @@ const CampagnesTable = ({
   displayedCampagnes = [],
   selectedCampagneIds,
   setSelectedCampagneIds,
-  displayMode,
   campagneTableType,
   formik = {},
   selectedFormations = [],
@@ -68,7 +67,6 @@ const CampagnesTable = ({
             displayedCampagnes,
             selectedCampagneIds,
             setSelectedCampagneIds,
-            displayMode,
           })}
         />
       </TableContainer>
@@ -83,7 +81,6 @@ const CampagnesTable = ({
             displayedCampagnes,
             selectedCampagneIds,
             setSelectedCampagneIds,
-            displayMode,
           })}
         />
       </TableContainer>
@@ -93,13 +90,13 @@ const CampagnesTable = ({
     return (
       <TableContainer>
         <Table
+          bordered={false}
           headers={createHeaders}
           data={createCampagneTableRows({
             selectedFormations,
             selectedFormationsAction,
             setSelectedFormationsAction,
             formik,
-            displayMode,
           })}
         />
       </TableContainer>

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Tooltip } from "react-tooltip";
-import { formatDate, isPlural } from "../../utils";
+import { formatDate, isPlural } from "../utils";
 import {
   FormationCardContainer,
   StyledBadge,
@@ -14,15 +14,10 @@ import {
   BodyCardContainer,
   EtablissementLabelContainer,
   MiscellaneousInformationContainer,
-} from "./accordions.style";
-import { DIPLOME_TYPE_MATCHER } from "../../../constants";
+} from "../styles/createCampagnes.style";
+import { DIPLOME_TYPE_MATCHER } from "../../constants";
 
-const DisplayByAllCards = ({
-  displayedFormations,
-  selectedFormations,
-  setSelectedFormations,
-  campagnes,
-}) => {
+const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations, campagnes }) => {
   return (
     <FormationCardContainer>
       {displayedFormations.map((formation) => {
@@ -158,4 +153,4 @@ const DisplayByAllCards = ({
   );
 };
 
-export default DisplayByAllCards;
+export default Cards;

@@ -92,7 +92,7 @@ const CreateCampagnesPage = () => {
         onSuccess: () => {
           setIsSubmitting(false);
           setSubmitRequested(false);
-          queryClient.invalidateQueries(["fetchCampagnesStatistics", "campagnesSorted"]);
+          queryClient.invalidateQueries(["fetchCampagnesStatistics"]);
           navigate("/campagnes/gestion", { state: { successCreation: true } });
         },
         onError: () => {

@@ -13,7 +13,7 @@ import {
 import { USER_ROLES } from "../../constants";
 import { UserContext } from "../../context/UserContext";
 import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
-import DisplayByAllCards from "./Accordions/DisplayByAllCards";
+import Cards from "./Cards";
 import { isPlural } from "../utils";
 import useFetchCampagnes from "../../hooks/useFetchCampagnes";
 
@@ -171,11 +171,11 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
               />
             </SelectAllFormationContainer>
             <TableContainer>
-              <DisplayByAllCards
+              <Cards
                 displayedFormations={remoteFormations}
                 selectedFormations={selectedFormations}
                 setSelectedFormations={setSelectedFormations}
-                campagnes={campagnes?.body}
+                campagnes={campagnes || []}
               />
               {remoteFormationsPagination.nombre_de_page > 1 && (
                 <Pagination

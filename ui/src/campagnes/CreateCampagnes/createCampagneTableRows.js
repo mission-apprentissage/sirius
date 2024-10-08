@@ -4,7 +4,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { isPlural } from "../utils";
 import { FormationContainer, ToolTipContainer } from "../styles/shared.style";
-import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../constants";
+import { DIPLOME_TYPE_MATCHER } from "../../constants";
 import CellInputConfigure from "../ManageCampagne/CellInput/CellInputConfigure";
 import CellInputSeatsConfigure from "../ManageCampagne/CellInput/CellInputSeatsConfigure";
 
@@ -13,7 +13,6 @@ const createCampagneTableRows = ({
   selectedFormationsAction,
   setSelectedFormationsAction,
   formik,
-  displayMode,
 }) => {
   return selectedFormations?.map((formation) => {
     return [
@@ -36,9 +35,6 @@ const createCampagneTableRows = ({
         ]}
       />,
       <FormationContainer key={`${formation._id}-formation`}>
-        <p>
-          <b>{formation.intitule_long}</b>
-        </p>
         <div>
           <p>{formation.tags.join("-")} </p>
           {formation?.duree && parseInt(formation?.duree) && (
@@ -47,44 +43,43 @@ const createCampagneTableRows = ({
             </p>
           )}
         </div>
-        {displayMode === campagnesDisplayMode[0].value && (
-          <Tooltip
-            background="var(--background-default-grey)"
-            border="var(--border-default-grey)"
-            color="var(--text-default-grey)"
-            placement="right"
-            content={
-              <ToolTipContainer>
+        <p>
+          <b>{formation.intitule_long}</b>
+        </p>
+        <Tooltip
+          background="var(--background-default-grey)"
+          border="var(--border-default-grey)"
+          color="var(--text-default-grey)"
+          placement="right"
+          content={
+            <ToolTipContainer>
+              <p>
+                {formation.lieu_formation_adresse_computed ||
+                  `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
+              </p>
+              <p>N° SIRET : {formation.etablissement_formateur_siret}</p>
+              {formation.etablissement_formateur_siret ===
+              formation.etablissement_gestionnaire_siret ? (
                 <p>
-                  {formation.lieu_formation_adresse_computed ||
-                    `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
+                  <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
+                  établissement est gestionnaire et rattaché à votre compte Sirius
                 </p>
-                <p>N° SIRET : {formation.etablissement_formateur_siret}</p>
-                {formation.etablissement_formateur_siret ===
-                formation.etablissement_gestionnaire_siret ? (
-                  <p>
-                    <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
-                    établissement est gestionnaire et rattaché à votre compte Sirius
-                  </p>
-                ) : (
-                  <p>
-                    <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
-                    établissement est formateur et dispense des formations pour un établissement
-                    gestionnaire
-                  </p>
-                )}
-              </ToolTipContainer>
-            }
-          >
-            <p>
-              {formation.etablissement_formateur_entreprise_raison_sociale ||
-                formation.etablissement_formateur_enseigne}
-            </p>
-          </Tooltip>
-        )}
-        {displayMode === campagnesDisplayMode[1].value && (
-          <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
-        )}
+              ) : (
+                <p>
+                  <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
+                  établissement est formateur et dispense des formations pour un établissement
+                  gestionnaire
+                </p>
+              )}
+            </ToolTipContainer>
+          }
+        >
+          <p>
+            {formation.etablissement_formateur_entreprise_raison_sociale ||
+              formation.etablissement_formateur_enseigne}
+          </p>
+        </Tooltip>
+        <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
       </FormationContainer>,
       <CellInputConfigure
         key={`${formation._id}-nomCampagne`}
