@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import Button from "@codegouvfr/react-dsfr/Button";
 import { ButtonContainer } from "../../styles/resultsCampagnes.style";
 import SortButtons from "../SortButtons/SortButtons";
@@ -17,6 +18,7 @@ import { UserContext } from "../../../context/UserContext";
 import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
 import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
 import CampagnesTable from "../CampagnesTable/CampagnesTable";
+import { TableContainer } from "../CampagnesTable/campagnesTable.style";
 
 const CampagnesSelector = ({
   selectedCampagneIds,
@@ -26,9 +28,8 @@ const CampagnesSelector = ({
   campagneTableType,
 }) => {
   const [search, setSearch] = useState("");
-  const [searchPage] = useState(1);
   const [isOpened, setIsOpened] = useState(false);
-
+  const [page, setPage] = useState(1);
   const [userContext] = useContext(UserContext);
 
   const isManage = campagneTableType === CAMPAGNE_TABLE_TYPES.MANAGE;
@@ -49,8 +50,8 @@ const CampagnesSelector = ({
     query: searchQuery,
     key: search,
     enabled: true,
-    page: searchPage,
-    pageSize: 1000,
+    page: page,
+    pageSize: 50,
   });
 
   const allCampagneIds = campagnes?.length
@@ -176,14 +177,29 @@ const CampagnesSelector = ({
                   severity="info"
                 />
               ) : (
-                <div style={{ display: isOpened || isManage ? "inherit" : "none" }}>
-                  <CampagnesTable
-                    displayedCampagnes={campagnes}
-                    selectedCampagneIds={selectedCampagneIds}
-                    setSelectedCampagneIds={setSelectedCampagneIds}
-                    campagneTableType={campagneTableType}
-                  />
-                </div>
+                <TableContainer>
+                  <div style={{ display: isOpened || isManage ? "inherit" : "none" }}>
+                    <CampagnesTable
+                      displayedCampagnes={campagnes}
+                      selectedCampagneIds={selectedCampagneIds}
+                      setSelectedCampagneIds={setSelectedCampagneIds}
+                      campagneTableType={campagneTableType}
+                    />
+                    {campagnesPagination.totalPages > 1 && (
+                      <Pagination
+                        count={campagnesPagination.totalPages}
+                        defaultPage={page}
+                        getPageLinkProps={(pageNumber) => ({
+                          onClick: (event) => {
+                            event.preventDefault();
+                            setPage(pageNumber);
+                          },
+                          key: `pagination-link-${pageNumber}`,
+                        })}
+                      />
+                    )}
+                  </div>
+                </TableContainer>
               )}
             </>
           )}

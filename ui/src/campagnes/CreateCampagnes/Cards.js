@@ -45,13 +45,13 @@ const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations,
                 <span
                   className={fr.cx("fr-icon--sm fr-icon-info-line")}
                   aria-hidden={true}
-                  data-tooltip-id="tooltip-already-created"
+                  data-tooltip-id={`tooltip-already-created-${formation._id}`}
                 />
                 <Tooltip
-                  id="tooltip-already-created"
+                  id={`tooltip-already-created-${formation._id}`}
                   variant="light"
                   opacity={1}
-                  style={{ zIndex: 99999, boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)" }}
+                  style={{ zIndex: 99999, boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)" }}
                 >
                   <p>
                     Campagne{isPlural(alreadyCreatedCount)} créée{isPlural(alreadyCreatedCount)}{" "}

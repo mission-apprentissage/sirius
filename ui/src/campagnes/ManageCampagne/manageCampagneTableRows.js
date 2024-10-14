@@ -68,15 +68,15 @@ const manageCampagneTableRows = ({
           <IntituleFormation>{formation.intituleLong}</IntituleFormation>
         </FormationContainer>
         <EtablissementLabelContainer>
-          <p data-tooltip-id="tooltip-formateur-gestionnaire">
+          <p data-tooltip-id={`tooltip-formateur-gestionnaire-${campagne.id}`}>
             {formation.etablissementFormateurEntrepriseRaisonSociale ||
               formation.etablissementFormateurEnseigne}
           </p>
           <Tooltip
-            id="tooltip-formateur-gestionnaire"
+            id={`tooltip-formateur-gestionnaire-${campagne.id}`}
             variant="light"
             opacity={1}
-            style={{ zIndex: 99999, boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", maxWidth: "500px" }}
+            style={{ zIndex: 99999, boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)", maxWidth: "500px" }}
           >
             <p>
               {formation.lieuFormationAdresseComputed ||

@@ -60,45 +60,39 @@ const CampagnesTable = ({
 }) => {
   if (campagneTableType === CAMPAGNE_TABLE_TYPES.MANAGE) {
     return (
-      <TableContainer>
-        <Table
-          headers={headers}
-          data={manageCampagneTableRows({
-            displayedCampagnes,
-            selectedCampagneIds,
-            setSelectedCampagneIds,
-          })}
-        />
-      </TableContainer>
+      <Table
+        headers={headers}
+        data={manageCampagneTableRows({
+          displayedCampagnes,
+          selectedCampagneIds,
+          setSelectedCampagneIds,
+        })}
+      />
     );
   }
   if (campagneTableType === CAMPAGNE_TABLE_TYPES.RESULTS) {
     return (
-      <TableContainer>
-        <Table
-          headers={headers}
-          data={resultsCampagneTableRows({
-            displayedCampagnes,
-            selectedCampagneIds,
-            setSelectedCampagneIds,
-          })}
-        />
-      </TableContainer>
+      <Table
+        headers={headers}
+        data={resultsCampagneTableRows({
+          displayedCampagnes,
+          selectedCampagneIds,
+          setSelectedCampagneIds,
+        })}
+      />
     );
   }
   if (campagneTableType === CAMPAGNE_TABLE_TYPES.CREATE) {
     return (
-      <TableContainer>
-        <Table
-          headers={createHeaders}
-          data={createCampagneTableRows({
-            selectedFormations,
-            selectedFormationsAction,
-            setSelectedFormationsAction,
-            formik,
-          })}
-        />
-      </TableContainer>
+      <Table
+        headers={createHeaders}
+        data={createCampagneTableRows({
+          selectedFormations,
+          selectedFormationsAction,
+          setSelectedFormationsAction,
+          formik,
+        })}
+      />
     );
   }
 };

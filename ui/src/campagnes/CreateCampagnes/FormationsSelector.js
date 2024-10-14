@@ -90,7 +90,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     query: stringifiedQuery,
     enabled: !!userSiret.length || isAdmin,
     page,
-    pageSize: 1000,
+    pageSize: 50,
   });
 
   const {

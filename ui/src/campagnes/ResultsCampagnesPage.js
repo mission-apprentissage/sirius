@@ -73,10 +73,8 @@ const ResultsCampagnesPage = () => {
   } = useFetchTemoignagesXlsExport();
 
   useEffect(() => {
-    if (selectedCampagneIds.length) {
-      mutateCampagnesDatavisualisation(selectedCampagneIds);
-      mutateCampagnesStatistics(selectedCampagneIds);
-    }
+    mutateCampagnesDatavisualisation(selectedCampagneIds);
+    mutateCampagnesStatistics(selectedCampagneIds);
   }, [selectedCampagneIds]);
 
   useEffect(() => {
