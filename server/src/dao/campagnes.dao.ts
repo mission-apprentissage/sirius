@@ -101,7 +101,12 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
   }
 
   if (siret) {
-    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", siret);
+    baseQuery = baseQuery.where((qb) =>
+      qb.or([
+        qb("formations.etablissement_gestionnaire_siret", "in", siret),
+        qb("formations.etablissement_formateur_siret", "in", siret),
+      ])
+    );
   }
 
   return baseQuery.execute();

@@ -6,13 +6,22 @@ const verbatimsDao = require("../dao/verbatims.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
 const { appendDataWhenEmpty, getStatistics, getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
-const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
+const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE, USER_ROLES } = require("../constants");
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
 const { getChampsLibreField } = require("../utils/verbatims.utils");
 
-const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, pageSize = 10, query, search }) => {
+const getCampagnes = async ({
+  isAdmin,
+  isObserver,
+  userSiret,
+  scope = null,
+  page = 1,
+  pageSize = 10,
+  query = {},
+  search = null,
+}) => {
   try {
     let campagnes = [];
 
@@ -188,7 +197,6 @@ const createCampagnes = async (campagnes, currentUserId) => {
 
     return { success: true, body: { createdCount: createdCampagneIds.length } };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };
@@ -271,10 +279,26 @@ const getXlsxMultipleExport = async (campagneIds = []) => {
   }
 };
 
-const getCampagnesStatistics = async (campagneIds = []) => {
+const getCampagnesStatistics = async (campagneIds = [], user) => {
   try {
-    const query = { campagneIds };
-    const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
+    let query = { campagneIds };
+    let campagnes = [];
+
+    if (!campagneIds.length) {
+      if (user.role === USER_ROLES.ADMIN) {
+        campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
+      }
+      if (user.role === USER_ROLES.ETABLISSEMENT) {
+        const siret = user.etablissements.map((etablissement) => etablissement.siret);
+        campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret, query });
+      }
+      if (user.role === USER_ROLES.OBSERVER) {
+        const scope = user.scope;
+        campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ scope, query });
+      }
+    } else {
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
+    }
 
     const questionnaires = await questionnairesDao.findAll();
     const temoignages = campagnes.map((campagne) => campagne.temoignages).flat();

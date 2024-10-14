@@ -125,7 +125,8 @@ const getXlsxMultipleExport = tryCatch(async (req, res) => {
 
 const getCampagnesStatistics = tryCatch(async (req, res) => {
   const campagneIds = req.body || [];
-  const { success, body } = await campagnesService.getCampagnesStatistics(campagneIds);
+  const user = req.user;
+  const { success, body } = await campagnesService.getCampagnesStatistics(campagneIds, user);
 
   if (!success) throw new BasicError();
 

@@ -31,7 +31,6 @@ const getFormations = async ({ formationIds, etablissementSiret, search }) => {
 
     return { success: true, body: formations };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };
