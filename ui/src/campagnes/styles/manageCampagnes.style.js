@@ -27,8 +27,7 @@ export const ManageCampagneContainer = styled.section`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: ${fr.spacing("6w")};
-    margin: 0 0 ${fr.spacing("5w")} 0;
+    margin: 0 0 ${fr.spacing("2w")} 0;
   }
 
   & h1 {

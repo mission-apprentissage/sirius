@@ -159,15 +159,6 @@ const Errors = {
       return 403;
     }
   },
-  SortingTypeNotFoundError: class NotFoundError extends BasicError {
-    constructor(message, extra) {
-      super(message || ErrorMessage.SortingTypeNotFound, extra);
-    }
-
-    get status() {
-      return 400;
-    }
-  },
 };
 
 module.exports = { ...Errors, BasicError, ErrorMessage };

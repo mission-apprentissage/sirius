@@ -92,7 +92,7 @@ const CreateCampagnesPage = () => {
         onSuccess: () => {
           setIsSubmitting(false);
           setSubmitRequested(false);
-          queryClient.invalidateQueries(["fetchCampagnesStatistics", "campagnesSorted"]);
+          queryClient.invalidateQueries(["fetchCampagnesStatistics"]);
           navigate("/campagnes/gestion", { state: { successCreation: true } });
         },
         onError: () => {
@@ -119,8 +119,8 @@ const CreateCampagnesPage = () => {
                 Créer des campagnes (1/2)
               </h1>
               <p>
-                <b>Une formation sélectionnée = Une campagne créée.</b> Dans cette première version
-                de Sirius, seules vos formations infra-bac sont disponibles.
+                Dans cette première version de Sirius, seules vos formations infra-bac sont
+                disponibles.
               </p>
               <p>
                 Formations extraites du{" "}
