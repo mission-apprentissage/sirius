@@ -111,6 +111,7 @@ export const OBSERVER_SCOPES = {
   REGION: "region",
   SIRETS: "sirets",
   NATIONAL: "national",
+  OPCO: "opco",
 };
 
 export const OBSERVER_SCOPES_LABELS = {
@@ -118,7 +119,21 @@ export const OBSERVER_SCOPES_LABELS = {
   [OBSERVER_SCOPES.REGION]: "Nom de la région",
   [OBSERVER_SCOPES.NATIONAL]: "National",
   [OBSERVER_SCOPES.SIRETS]: "Liste de SIRET",
+  [OBSERVER_SCOPES.OPCO]: "OPCO",
 };
+
+export const OPCO_LIST = [
+  { label: "afdas", value: "afdas" },
+  { label: "atlas", value: "atlas" },
+  { label: "uniformation", value: "uniformation" },
+  { label: "akto", value: "akto" },
+  { label: "ocapiat", value: "ocapiat" },
+  { label: "2i", value: "2i" },
+  { label: "constructys", value: "constructys" },
+  { label: "mobilites", value: "mobilites" },
+  { label: "ep", value: "ep" },
+  { label: "sante", value: "sante" },
+];
 
 export const CAMPAGNE_TABLE_TYPES = {
   MANAGE: "MANAGE",

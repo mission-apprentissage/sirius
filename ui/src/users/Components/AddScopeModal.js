@@ -17,7 +17,7 @@ import { Select } from "chakra-react-select";
 import { useFormik } from "formik";
 import { _put } from "../../utils/httpClient";
 import { UserContext } from "../../context/UserContext";
-import { OBSERVER_SCOPES, OBSERVER_SCOPES_LABELS } from "../../constants";
+import { OBSERVER_SCOPES, OBSERVER_SCOPES_LABELS, OPCO_LIST } from "../../constants";
 import { REGIONS } from "../../regions";
 
 const scopesOptions = Object.entries(OBSERVER_SCOPES_LABELS).map(([value, label]) => ({
@@ -182,6 +182,32 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
                       ? { label: scopeValue, value: scopeValue }
                       : departementsOptions.find((dep) => dep.value === scopeValue)
                   }
+                />
+              )}
+              {scopeField === OBSERVER_SCOPES.OPCO && (
+                <Select
+                  size="md"
+                  onChange={(e) => setScopeValue(e.value)}
+                  options={OPCO_LIST}
+                  placeholder="Valeur"
+                  w="50%"
+                  chakraStyles={{
+                    placeholder: (baseStyles) => ({
+                      ...baseStyles,
+                      color: "brand.black.500",
+                    }),
+                    container: (baseStyles) => ({
+                      ...baseStyles,
+                      width: "50%",
+                      borderColor: "brand.blue.400",
+                    }),
+                    multiValue: (baseStyles) => ({
+                      ...baseStyles,
+                      backgroundColor: "brand.blue.500",
+                      color: "white",
+                    }),
+                  }}
+                  isClearable={false}
                 />
               )}
             </Stack>
