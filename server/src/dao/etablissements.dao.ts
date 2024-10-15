@@ -127,14 +127,17 @@ export const findAllEtablissementWithCounts = async (): Promise<
       "etablissements.entreprise_raison_sociale",
       "etablissements.region_implantation_nom",
       "etablissements.created_at",
-      sql<number>`COUNT(DISTINCT formations.campagne_id) FILTER (WHERE formations.id IS NOT NULL)`.as("campagnesCount"),
+      sql<number>`COUNT(DISTINCT formations_campagnes.campagne_id) FILTER (WHERE formations.id IS NOT NULL)`.as(
+        "campagnesCount"
+      ),
       sql<number>`COUNT(DISTINCT temoignages_campagnes.temoignage_id) FILTER (WHERE temoignages_campagnes.temoignage_id IS NOT NULL)`.as(
         "temoignagesCount"
       ),
       sql<number>`COUNT(DISTINCT verbatims.id) FILTER (WHERE verbatims.id IS NOT NULL)`.as("verbatimsCount"),
     ])
     .leftJoin("formations", "formations.etablissement_id", "etablissements.id")
-    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
+    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
     .leftJoin("verbatims", "verbatims.temoignage_id", "temoignages_campagnes.temoignage_id")
     .where("etablissements.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
@@ -187,7 +190,8 @@ export const findAllWithTemoignageCount = async (): Promise<
       ),
     ])
     .leftJoin("formations", "formations.etablissement_id", "etablissements.id")
-    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
+    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
     .where("etablissements.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
     .groupBy("etablissements.id")

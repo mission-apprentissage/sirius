@@ -7,7 +7,7 @@ export const EtablissementLabelContainer = styled.div`
   align-items: center;
   margin-top: 0.5rem;
 
-  & p {
+  & > p {
     font-size: 14px;
     line-height: 16px;
   }
@@ -19,11 +19,18 @@ export const TemoignagesCount = styled.p`
 `;
 
 export const TableContainer = styled.div`
-  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 ${fr.spacing("2w")};
+
+  & > div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 0;
+  }
 
   & > .fr-table {
     margin-bottom: 0;
@@ -31,4 +38,10 @@ export const TableContainer = styled.div`
   & > .fr-table > table {
     padding-bottom: ${fr.spacing("3w")};
   }
+`;
+
+export const DiplomeLabel = styled.p`
+  font-size: 14px;
+  color: var(--text-disabled-grey);
+  margin-top: 10px;
 `;

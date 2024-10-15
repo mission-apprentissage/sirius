@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { _put, _post, _get } from "../../utils/httpClient";
+import { _post, _get } from "../../utils/httpClient";
 import { UserContext } from "../../context/UserContext";
 import AddSiret from "./AddSiret/AddSiret";
 

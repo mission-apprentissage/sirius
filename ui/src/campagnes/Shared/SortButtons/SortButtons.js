@@ -1,26 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
-import { SortButtonsContainer, SearchContainer } from "./sortButtons.style";
-import {
-  OBSERVER_SCOPES,
-  campagneDisplayModeRegionObserver,
-  campagnesDisplayMode,
-} from "../../../constants";
-import { isPlural } from "../../utils";
+import { SearchContainer } from "./sortButtons.style";
 
-const SortButtons = ({
-  displayMode,
-  setDisplayMode,
-  search,
-  setSearch,
-  searchResultCount,
-  setIsOpened = () => {},
-  organizeLabel,
-  userScope,
-}) => {
+const SortButtons = ({ search, setSearch, setIsOpened = () => {} }) => {
   const [inputValue, setInputValue] = useState(search);
-  const isRegionObserver = userScope?.field === OBSERVER_SCOPES.REGION;
 
   useEffect(() => {
     if (search !== inputValue) {
@@ -40,34 +23,15 @@ const SortButtons = ({
   }, [inputValue, setSearch, setIsOpened]);
 
   return (
-    <SortButtonsContainer>
-      <Select
-        label={organizeLabel}
-        nativeSelectProps={{
-          value: displayMode,
-          onChange: (event) => {
-            setDisplayMode(event.target.value);
-            setIsOpened(true);
-          },
+    <SearchContainer>
+      <Input
+        nativeInputProps={{
+          value: inputValue,
+          placeholder: "Rechercher",
+          onChange: (e) => setInputValue(e.target.value),
         }}
-        options={isRegionObserver ? campagneDisplayModeRegionObserver : campagnesDisplayMode}
       />
-      <SearchContainer>
-        <Input
-          nativeInputProps={{
-            value: inputValue,
-            placeholder: "Rechercher",
-            onChange: (e) => setInputValue(e.target.value),
-          }}
-        />
-        {searchResultCount ? (
-          <p>
-            {searchResultCount} campagne{isPlural(searchResultCount)} trouvée
-            {isPlural(searchResultCount)}
-          </p>
-        ) : null}
-      </SearchContainer>
-    </SortButtonsContainer>
+    </SearchContainer>
   );
 };
 

@@ -58,20 +58,11 @@ const updateFormation = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
-const alreadyExistingFormations = tryCatch(async (req, res) => {
-  const { success, body } = await formationsService.alreadyExistingFormations(req.body);
-
-  if (!success) throw new BasicError();
-
-  return res.status(200).json(body);
-});
-
 module.exports = {
   createFormation,
   getFormations,
   getFormation,
   deleteFormation,
   updateFormation,
-  alreadyExistingFormations,
   getFormationsWithTemoignageCount,
 };

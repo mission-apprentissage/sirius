@@ -6,12 +6,7 @@ const verbatimsDao = require("../dao/verbatims.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
 const { appendDataWhenEmpty, getStatistics, getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
-const {
-  DIPLOME_TYPE_MATCHER,
-  ETABLISSEMENT_NATURE,
-  ETABLISSEMENT_RELATION_TYPE,
-  CAMPAGNE_SORTING_TYPE,
-} = require("../constants");
+const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
@@ -51,6 +46,8 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, p
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: allSirets, query });
     }
 
+    const unpaginatedCampagnesIds = campagnes.map((campagne) => campagne.id);
+
     const searchedCampagnes = search
       ? campagnes.filter((campagne) => {
           return (
@@ -76,6 +73,7 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, p
     return {
       success: true,
       body: paginatedCampagnes,
+      ids: unpaginatedCampagnesIds,
       pagination: {
         totalItems: searchedCampagnes.length,
         currentPage: parseInt(page),
@@ -83,117 +81,6 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, p
         totalPages: Math.ceil(searchedCampagnes.length / pageSize),
         hasMore: searchedCampagnes.length > page * pageSize,
       },
-    };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-const getSortedCampagnes = async (isAdmin, isObserver, userSiret = [], sortingType, scope) => {
-  try {
-    let campagnes = [];
-    const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
-
-    if (isAdmin) {
-      campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements();
-    } else if (isObserver) {
-      campagnes = scope ? await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements(null, scope) : [];
-    } else {
-      let allSirets = [];
-      for (const siret of userSiret) {
-        const etablissement = etablissementsFromReferentiel.find((etablissement) => etablissement.siret === siret);
-        if (!etablissement) continue;
-
-        let relatedSirets = [siret];
-        if (
-          [ETABLISSEMENT_NATURE.GESTIONNAIRE, ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR].includes(
-            etablissement.nature
-          )
-        ) {
-          relatedSirets.push(
-            ...etablissement.relations
-              .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
-              .map((etablissement) => etablissement.siret)
-          );
-        }
-        allSirets.push(...relatedSirets);
-      }
-
-      campagnes = await campagnesDao.getAllOnlyDiplomeTypeAndEtablissements({ siret: allSirets });
-    }
-    let results = [];
-
-    if (sortingType === CAMPAGNE_SORTING_TYPE.DIPLOME_TYPE) {
-      const campagnesGroupedByDiplome = campagnes.reduce((acc, campagne) => {
-        appendDataWhenEmpty(campagne);
-        const diplome = campagne.formation?.diplome;
-        if (!acc[diplome]) {
-          acc[diplome] = [];
-        }
-        acc[diplome].push(campagne);
-        return acc;
-      }, {});
-
-      const formattedResults = Object.keys(campagnesGroupedByDiplome).map((key) => {
-        const campagneIds = campagnesGroupedByDiplome[key].map((campagne) => campagne.id);
-        return {
-          diplome: key,
-          campagneIds: campagneIds,
-        };
-      });
-
-      results = formattedResults;
-    } else if (sortingType === CAMPAGNE_SORTING_TYPE.ETABLISSEMENT) {
-      const campagnesGroupedByEtablissement = campagnes.reduce((acc, campagne) => {
-        appendDataWhenEmpty(campagne);
-        const siret = campagne.formation.etablissementFormateurSiret;
-        if (!acc[siret]) {
-          acc[siret] = [];
-        }
-        acc[siret].push(campagne);
-        return acc;
-      }, {});
-
-      const formattedResults = Object.keys(campagnesGroupedByEtablissement).map((key) => {
-        const campagneIds = campagnesGroupedByEtablissement[key].map((campagne) => campagne.id);
-        return {
-          etablissementFormateur: campagnesGroupedByEtablissement[key][0].formation,
-          campagneIds: campagneIds,
-        };
-      });
-
-      results = formattedResults;
-    } else if (sortingType === CAMPAGNE_SORTING_TYPE.DEPARTEMENT) {
-      const campagnesGroupedByDepartement = campagnes.reduce((acc, campagne) => {
-        appendDataWhenEmpty(campagne);
-        const departement = campagne.formation.numDepartement;
-        if (!acc[departement]) {
-          acc[departement] = [];
-        }
-        acc[departement].push(campagne);
-        return acc;
-      }, {});
-
-      const formattedResults = Object.keys(campagnesGroupedByDepartement).map((key) => {
-        const campagneIds = campagnesGroupedByDepartement[key].map((campagne) => campagne.id);
-        return {
-          departement: key,
-          campagneIds: campagneIds,
-        };
-      });
-
-      results = formattedResults;
-    } else if (sortingType === CAMPAGNE_SORTING_TYPE.ALL) {
-      const formattedResults = {
-        campagneIds: campagnes.map((campagne) => campagne.id),
-      };
-
-      results = [formattedResults];
-    }
-
-    return {
-      success: true,
-      body: results,
     };
   } catch (error) {
     return { success: false, body: error };
@@ -209,24 +96,15 @@ const getOneCampagne = async (campagneId) => {
   }
 };
 
-const createCampagne = async (campagne) => {
-  try {
-    const createdCampagne = await campagnesDao.create(campagne);
-    return { success: true, body: createdCampagne };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
 const deleteCampagnes = async (ids) => {
   try {
     const deletedCampagnes = await campagnesDao.deleteMany(ids);
+    const deletedVerbatims = await verbatimsDao.deleteManyByCampagneIds(ids);
     const deletedTemoignages = await temoignagesDao.deleteManyByCampagneId(ids);
-    const deletedFormationsIds = await formationsDao.deleteManyByCampagneIdAndReturnsTheDeletedFormationId(ids);
 
     return {
       success: true,
-      body: deletedCampagnes && deletedTemoignages && deletedFormationsIds.length === ids.length,
+      body: deletedCampagnes && deletedTemoignages && deletedVerbatims,
     };
   } catch (error) {
     return { success: false, body: error };
@@ -242,65 +120,76 @@ const updateCampagne = async (id, updatedCampagne) => {
   }
 };
 
-const createMultiCampagne = async (campagnes, currentUserId) => {
+const createCampagnes = async (campagnes, currentUserId) => {
   try {
-    const formationsIds = [];
+    const createdCampagneIds = [];
 
     for (const campagne of campagnes) {
       const { formation, etablissementFormateurSiret, ...rest } = campagne;
 
-      const etablissement = await etablissementsDao.findAll({ siret: etablissementFormateurSiret });
+      let etablissement;
 
-      const createdCampagne = await campagnesDao.create(rest);
+      etablissement = await etablissementsDao.findAll({ siret: etablissementFormateurSiret });
 
-      const createdFormation = await formationsDao.create({
-        catalogue_id: formation._id,
-        region: formation.region,
-        num_departement: formation.num_departement,
-        intitule_long: formation.intitule_long,
-        intitule_court: formation.intitule_court,
-        diplome: formation.diplome,
-        localite: formation.localite,
-        tags: JSON.stringify(formation.tags),
-        lieu_formation_adresse: formation.lieu_formation_adresse,
-        lieu_formation_adresse_computed: formation.lieu_formation_adresse_computed,
-        code_postal: formation.code_postal,
-        duree: formation.duree,
-        etablissement_gestionnaire_siret: formation.etablissement_gestionnaire_siret,
-        etablissement_gestionnaire_enseigne: formation.etablissement_gestionnaire_enseigne,
-        etablissement_formateur_siret: formation.etablissement_formateur_siret,
-        etablissement_formateur_enseigne: formation.etablissement_formateur_enseigne,
-        etablissement_formateur_entreprise_raison_sociale: formation.etablissement_formateur_entreprise_raison_sociale,
-        etablissement_formateur_adresse: formation.etablissement_formateur_adresse,
-        etablissement_formateur_localite: formation.etablissement_formateur_localite,
-        catalogue_data: JSON.stringify(formation),
-        etablissement_id: etablissement.id,
-        campagneId: createdCampagne.id,
-      });
+      const foundFormation = await formationsDao.findAll({ catalogueId: formation._id });
 
-      formationsIds.push(createdFormation.id);
+      // La formation existe déjà et donc l'établissement aussi
+      if (foundFormation.length) {
+        const createdCampagne = await campagnesDao.create(rest, foundFormation[0].id);
+        createdCampagneIds.push(createdCampagne);
 
-      if (!etablissement.length) {
-        const etablissement = await catalogue.getEtablissement(etablissementFormateurSiret);
-        await etablissementsDao.create(
-          {
-            catalogue_id: etablissement._id,
-            siret: etablissement.siret,
-            onisep_nom: etablissement.onisep_nom,
-            onisep_url: etablissement.onisep_url,
-            enseigne: etablissement.enseigne,
-            entreprise_raison_sociale: etablissement.entreprise_raison_sociale,
-            uai: etablissement.uai,
-            localite: etablissement.localite,
-            region_implantation_nom: etablissement.region_implantation_nom,
-            catalogue_data: JSON.stringify(etablissement),
-          },
-          currentUserId
-        );
+        // La formation n'existe pas
+      } else {
+        if (!etablissement.length) {
+          const foundEtablissement = await catalogue.getEtablissement(etablissementFormateurSiret);
+          etablissement = await etablissementsDao.create(
+            {
+              catalogue_id: foundEtablissement._id,
+              siret: foundEtablissement.siret,
+              onisep_nom: foundEtablissement.onisep_nom,
+              onisep_url: foundEtablissement.onisep_url,
+              enseigne: foundEtablissement.enseigne,
+              entreprise_raison_sociale: foundEtablissement.entreprise_raison_sociale,
+              uai: foundEtablissement.uai,
+              localite: foundEtablissement.localite,
+              region_implantation_nom: foundEtablissement.region_implantation_nom,
+              catalogue_data: JSON.stringify(foundEtablissement),
+            },
+            currentUserId
+          );
+        }
+        const newFormation = {
+          catalogue_id: campagne.formation._id,
+          region: campagne.formation.region,
+          num_departement: campagne.formation.num_departement,
+          intitule_long: campagne.formation.intitule_long,
+          intitule_court: campagne.formation.intitule_court,
+          diplome: campagne.formation.diplome,
+          localite: campagne.formation.localite,
+          tags: JSON.stringify(campagne.formation?.tags || []),
+          lieu_formation_adresse: campagne.formation.lieu_formation_adresse,
+          lieu_formation_adresse_computed: campagne.formation.lieu_formation_adresse_computed,
+          code_postal: campagne.formation.code_postal,
+          duree: campagne.formation.duree,
+          etablissement_gestionnaire_siret: campagne.formation.etablissement_gestionnaire_siret,
+          etablissement_gestionnaire_enseigne: campagne.formation.etablissement_gestionnaire_enseigne,
+          etablissement_formateur_siret: campagne.formation.etablissement_formateur_siret,
+          etablissement_formateur_enseigne: campagne.formation.etablissement_formateur_enseigne,
+          etablissement_formateur_entreprise_raison_sociale:
+            campagne.formation.etablissement_formateur_entreprise_raison_sociale,
+          etablissement_formateur_adresse: campagne.formation.etablissement_formateur_adresse,
+          etablissement_formateur_localite: campagne.formation.etablissement_formateur_localite,
+          catalogue_data: JSON.stringify(campagne.formation),
+          etablissement_id: etablissement.id,
+        };
+
+        const createdCampagne = await campagnesDao.createWithFormation(rest, newFormation);
+
+        createdCampagneIds.push(createdCampagne);
       }
     }
 
-    return { success: true, body: { createdCount: formationsIds.length } };
+    return { success: true, body: { createdCount: createdCampagneIds.length } };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -423,13 +312,11 @@ const getCampagnesStatistics = async (campagneIds = []) => {
 module.exports = {
   getCampagnes,
   getOneCampagne,
-  createCampagne,
   deleteCampagnes,
   updateCampagne,
-  createMultiCampagne,
+  createCampagnes,
   getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
-  getSortedCampagnes,
   getCampagnesStatistics,
 };

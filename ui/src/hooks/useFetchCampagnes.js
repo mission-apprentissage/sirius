@@ -23,7 +23,14 @@ const useFetchCampagnes = ({ query, enabled, page, pageSize = 10 }) => {
     }
   }, [data, page, queryClient]);
 
-  return { campagnes: data, isSuccess, isError, isLoading };
+  return {
+    campagnes: data?.body,
+    campagnesPagination: data?.pagination,
+    campagnesIds: data?.ids,
+    isSuccess,
+    isError,
+    isLoading,
+  };
 };
 
 export default useFetchCampagnes;

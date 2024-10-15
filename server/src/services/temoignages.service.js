@@ -106,10 +106,11 @@ const updateTemoignage = async (id, updatedTemoignage) => {
   }
 };
 
-const getDatavisualisation = async (campagneIds) => {
+const getDatavisualisation = async (campagneIds = []) => {
   try {
     const query = { campagneIds };
     const temoignages = await temoignagesDao.findAllWithVerbatims(query);
+
     const allQuestionnaires = await questionnairesDao.findAll();
 
     const campagnes = await campagnesDao.getAll(campagneIds);

@@ -22,11 +22,7 @@ const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelected
       {
         onSuccess: () => {
           setSelectedCampagnes([]);
-          queryClient.invalidateQueries([
-            "campagnes",
-            "campagnesSorted",
-            "fetchCampagnesStatistics",
-          ]);
+          queryClient.invalidateQueries(["campagnes", "fetchCampagnesStatistics"]);
           modal.close();
         },
       }

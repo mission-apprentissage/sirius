@@ -73,7 +73,7 @@ const ResultsCampagnesPage = () => {
   } = useFetchTemoignagesXlsExport();
 
   useEffect(() => {
-    if (selectedCampagneIds.length) {
+    if (selectedCampagneIds) {
       mutateCampagnesDatavisualisation(selectedCampagneIds);
       mutateCampagnesStatistics(selectedCampagneIds);
     }
@@ -145,11 +145,10 @@ const ResultsCampagnesPage = () => {
   };
 
   const hasNoTemoignages =
-    (!datavisualisation?.length &&
-      !isErrorCampagnesDatavisualisation &&
-      !isLoadingCampagnesDatavisualisation &&
-      !isIdleCampagnesDatavisualisation) ||
-    !selectedCampagneIds.length;
+    !datavisualisation?.length &&
+    !isErrorCampagnesDatavisualisation &&
+    !isLoadingCampagnesDatavisualisation &&
+    !isIdleCampagnesDatavisualisation;
 
   const emptyStatistics = {
     campagnesCount: 0,
@@ -173,7 +172,7 @@ const ResultsCampagnesPage = () => {
         />
       </ResultsCampagneContainer>
       <Statistics
-        statistics={statistics || emptyStatistics}
+        statistics={selectedCampagneIds.length ? statistics : emptyStatistics}
         title="Statistiques des campagnes sélectionnées"
       />
       <ResultsCampagneContainer>

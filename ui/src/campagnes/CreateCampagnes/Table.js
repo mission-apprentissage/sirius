@@ -2,12 +2,12 @@ import React from "react";
 import Checkbox from "@codegouvfr/react-dsfr/Checkbox";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import Button from "@codegouvfr/react-dsfr/Button";
-import { CAMPAGNE_TABLE_TYPES, campagnesDisplayMode } from "../../../constants";
-import { ButtonContainer } from "./accordions.style";
-import RemoveFormationModal from "../RemoveFormationModal";
-import { isPlural } from "../../utils";
-import CommonEndDateModal from "../CommonEndDateModal";
-import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
+import { CAMPAGNE_TABLE_TYPES } from "../../constants";
+import { ButtonContainer } from "../styles/shared.style";
+import RemoveFormationModal from "./RemoveFormationModal";
+import { isPlural } from "../utils";
+import CommonEndDateModal from "./CommonEndDateModal";
+import CampagnesTable from "../Shared/CampagnesTable/CampagnesTable";
 
 const modal = createModal({
   id: "remove-formation-modal",
@@ -19,7 +19,7 @@ const commonEndDateModal = createModal({
   isOpenedByDefault: false,
 });
 
-const DisplayByAllTable = ({
+const Table = ({
   selectedFormations,
   setSelectedFormations,
   setSearchedDiplayedFormations,
@@ -83,7 +83,6 @@ const DisplayByAllTable = ({
         selectedFormationsAction={selectedFormationsAction}
         setSelectedFormationsAction={setSelectedFormationsAction}
         formik={formik}
-        displayMode={campagnesDisplayMode[2].value}
         campagneTableType={CAMPAGNE_TABLE_TYPES.CREATE}
       />
       <RemoveFormationModal
@@ -103,4 +102,4 @@ const DisplayByAllTable = ({
   );
 };
 
-export default DisplayByAllTable;
+export default Table;

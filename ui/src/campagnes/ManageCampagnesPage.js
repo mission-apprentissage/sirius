@@ -40,7 +40,7 @@ const ManageCampagnesPage = () => {
   const { mutate: mutateCampagnesStatistics, statistics } = useFetchCampagnesStatistics();
 
   useEffect(() => {
-    if (allCampagneIds.length) {
+    if (allCampagneIds?.length) {
       mutateCampagnesStatistics(allCampagneIds);
     }
   }, [allCampagneIds]);
@@ -76,8 +76,8 @@ const ManageCampagnesPage = () => {
           <CampagnesSelector
             selectedCampagneIds={selectedCampagneIds}
             setSelectedCampagneIds={setSelectedCampagneIds}
-            setAllCampagneIds={setAllCampagneIds}
             campagneTableType={CAMPAGNE_TABLE_TYPES.MANAGE}
+            setAllCampagneIds={setAllCampagneIds}
           />
           <p>
             Formations extraites du{" "}
