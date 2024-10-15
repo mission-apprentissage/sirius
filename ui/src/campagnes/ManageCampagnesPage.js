@@ -25,6 +25,7 @@ const successCreationModal = createModal({
 
 const ManageCampagnesPage = () => {
   const [selectedCampagneIds, setSelectedCampagneIds] = useState([]);
+  const [allCampagneIds, setAllCampagneIds] = useState([]);
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,8 +40,10 @@ const ManageCampagnesPage = () => {
   const { mutate: mutateCampagnesStatistics, statistics } = useFetchCampagnesStatistics();
 
   useEffect(() => {
-    mutateCampagnesStatistics();
-  }, []);
+    if (allCampagneIds?.length) {
+      mutateCampagnesStatistics(allCampagneIds);
+    }
+  }, [allCampagneIds]);
 
   const emptyStatistics = {
     campagnesCount: 0,
@@ -74,6 +77,7 @@ const ManageCampagnesPage = () => {
             selectedCampagneIds={selectedCampagneIds}
             setSelectedCampagneIds={setSelectedCampagneIds}
             campagneTableType={CAMPAGNE_TABLE_TYPES.MANAGE}
+            setAllCampagneIds={setAllCampagneIds}
           />
           <p>
             Formations extraites du{" "}

@@ -29,7 +29,7 @@ export const TableContainer = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 0 ${fr.spacing("2w")};
+    padding: 0;
   }
 
   & > .fr-table {

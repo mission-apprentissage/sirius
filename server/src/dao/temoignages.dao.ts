@@ -80,7 +80,7 @@ export const findAllWithVerbatims = async (query: { campagneIds: string[] }) => 
     .where("verbatims.deleted_at", "is", null)
     .groupBy(["temoignages.id", "temoignages_campagnes.campagne_id"]);
 
-  if ("campagneIds" in query && query.campagneIds) {
+  if ("campagneIds" in query && query.campagneIds.length) {
     queryBuilder = queryBuilder.where("temoignages_campagnes.campagne_id", "in", query.campagneIds);
   }
 

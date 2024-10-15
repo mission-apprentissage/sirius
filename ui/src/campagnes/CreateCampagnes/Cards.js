@@ -106,22 +106,26 @@ const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations,
                   <span
                     className={fr.cx("fr-icon-award-fill")}
                     aria-hidden={true}
-                    data-tooltip-id="tooltip-gestionnaire-formateur"
+                    data-tooltip-id={`tooltip-gestionnaire-formateur-${formation.id}`}
                     data-tooltip-content="Cet établissement est gestionnaire et rattaché à votre compte Sirius"
                   />
                 ) : (
                   <span
                     className={fr.cx("fr-icon-award-line")}
                     aria-hidden={true}
-                    data-tooltip-id="tooltip-gestionnaire-formateur"
+                    data-tooltip-id={`tooltip-gestionnaire-formateur-${formation.id}`}
                     data-tooltip-content="Cet établissement est formateur et dispense des formations pour un établissement gestionnaire"
                   />
                 )}
                 <Tooltip
-                  id="tooltip-gestionnaire-formateur"
+                  id={`tooltip-gestionnaire-formateur-${formation.id}`}
                   variant="light"
                   opacity={1}
-                  style={{ zIndex: 99999, boxShadow: "0 0 2px rgba(0, 0, 0, 0.1)" }}
+                  style={{
+                    zIndex: 99999,
+                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+                    maxWidth: "500px",
+                  }}
                 />
                 <p>
                   {formation.etablissement_formateur_entreprise_raison_sociale ||

@@ -1,7 +1,6 @@
 import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { TableContainer } from "./campagnesTable.style";
 import { HeaderItem } from "../../styles/shared.style";
 import manageCampagneTableRows from "../../ManageCampagne/manageCampagneTableRows";
 import resultsCampagneTableRows from "../../ResultsCampagnes/resultsCampagnesTableRows";

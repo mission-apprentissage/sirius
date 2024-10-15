@@ -61,6 +61,10 @@ export const HeaderContainer = styled.div`
   & fieldset {
     margin-bottom: 0;
   }
+
+  & .fr-checkbox-group {
+    width: 350px;
+  }
 `;
 
 export const SelectAllFormationContainer = styled.div`

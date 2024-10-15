@@ -122,7 +122,6 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
         />
       )}
       <>
-        <SortButtons search={search} setSearch={setSearch} />
         {(isLoadingFormations || isLoadingCampagnes) && (
           <LoaderContainer>
             <BeatLoader
@@ -145,13 +144,14 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
         ) : null}
         {isSuccessCampagnes && isSuccessFormations && remoteFormations.length ? (
           <>
+            <SortButtons search={search} setSearch={setSearch} />
             <SelectAllFormationContainer>
               <Checkbox
                 options={[
                   {
                     label: checkboxLabel,
                     hintText: `${selectedFormations.length}/${
-                      remoteFormations.length
+                      remoteFormationsPagination.total
                     } formation${isPlural(selectedFormations.length)} sélectionnée${isPlural(
                       selectedFormations.length
                     )}`,

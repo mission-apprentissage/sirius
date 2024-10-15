@@ -24,8 +24,8 @@ const CampagnesSelector = ({
   selectedCampagneIds,
   setSelectedCampagneIds,
   paramsCampagneIds = [],
-  setAllCampagneIds = () => {},
   campagneTableType,
+  setAllCampagneIds,
 }) => {
   const [search, setSearch] = useState("");
   const [isOpened, setIsOpened] = useState(false);
@@ -42,6 +42,7 @@ const CampagnesSelector = ({
 
   const {
     campagnes,
+    campagnesIds,
     campagnesPagination,
     isSuccess: isSuccessCampagnes,
     isError: isErrorCampagnes,
@@ -54,27 +55,40 @@ const CampagnesSelector = ({
     pageSize: 50,
   });
 
-  const allCampagneIds = campagnes?.length
-    ? [...new Set(campagnes?.map((campagne) => campagne.id).flat())]
-    : [];
+  const currentPageCampagneIds = campagnes?.map((campagne) => campagne.id);
+
+  const hasSelectedAllCampagneFromCurrentPage =
+    selectedCampagneIds.length &&
+    currentPageCampagneIds?.every((id) => selectedCampagneIds.includes(id));
+
+  const isResultsAndEveryCampagneIsSelected =
+    isResults && selectedCampagneIds.length === campagnesIds?.length;
 
   useEffect(() => {
-    if (isResults && !paramsCampagneIds?.length) {
-      setSelectedCampagneIds(allCampagneIds);
-    } else if (isManage && isSuccessCampagnes && campagnes?.length) {
-      setAllCampagneIds(allCampagneIds);
+    if (
+      isResults &&
+      !paramsCampagneIds?.length &&
+      campagnesIds?.length &&
+      !selectedCampagneIds.length
+    ) {
+      setSelectedCampagneIds(campagnesIds);
     }
-  }, [campagnes]);
+    if (isManage) {
+      setAllCampagneIds(campagnesIds);
+    }
+  }, [campagnesIds]);
 
   const checkboxLabel = (
     <b>
-      {selectedCampagneIds.length
-        ? `${selectedCampagneIds.length} campagne${isPlural(
-            selectedCampagneIds.length
-          )} sélectionnée${isPlural(selectedCampagneIds.length)}`
-        : "Tout sélectionner"}
+      {(hasSelectedAllCampagneFromCurrentPage && isManage) || isResultsAndEveryCampagneIsSelected
+        ? "Désélectionner toutes les campagnes"
+        : "Sélectionner toutes les campagnes"}
     </b>
   );
+
+  const checkboxHintText = `${selectedCampagneIds.length}/${
+    campagnesIds?.length
+  } campagne${isPlural(campagnesIds?.length)} sélectionnée${isPlural(campagnesIds?.length)}`;
 
   return (
     <>
@@ -140,20 +154,29 @@ const CampagnesSelector = ({
                   options={[
                     {
                       label: checkboxLabel,
+                      hintText: checkboxHintText,
                       nativeInputProps: {
-                        name: `selectAllCampagnes`,
-                        checked: search
-                          ? selectedCampagneIds.length === campagnes.length
-                          : selectedCampagneIds.length === allCampagneIds.length,
-                        onChange: (e) => {
-                          setSelectedCampagneIds(() => {
-                            if (e.target.checked && search) {
-                              return campagnes.map((campagne) => campagne.id);
-                            } else if (e.target.checked) {
-                              return allCampagneIds;
+                        name: `selectAll`,
+                        checked: hasSelectedAllCampagneFromCurrentPage,
+                        onChange: () => {
+                          if (isResults) {
+                            if (hasSelectedAllCampagneFromCurrentPage) {
+                              setSelectedCampagneIds([]);
+                            } else {
+                              setSelectedCampagneIds(campagnesIds);
                             }
-                            return [];
-                          });
+                          }
+                          if (isManage) {
+                            if (hasSelectedAllCampagneFromCurrentPage) {
+                              setSelectedCampagneIds((prevValues) => [
+                                ...prevValues.filter((id) => !currentPageCampagneIds.includes(id)),
+                              ]);
+                            } else {
+                              setSelectedCampagneIds((prevValues) => [
+                                ...new Set([...prevValues, ...currentPageCampagneIds]),
+                              ]);
+                            }
+                          }
                         },
                       },
                     },

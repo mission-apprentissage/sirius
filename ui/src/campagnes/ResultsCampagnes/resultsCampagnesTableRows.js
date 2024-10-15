@@ -57,12 +57,12 @@ const resultsCampagneTableRows = ({
           <IntituleFormation>{formation.intituleLong}</IntituleFormation>
         </FormationContainer>
         <EtablissementLabelContainer>
-          <p data-tooltip-id="tooltip-already-created">
+          <p data-tooltip-id={`tooltip-results-${formation.id}`}>
             {formation.etablissementFormateurEntrepriseRaisonSociale ||
               formation.etablissementFormateurEnseigne}
           </p>
           <Tooltip
-            id="tooltip-already-created"
+            id={`tooltip-results-${formation.id}`}
             variant="light"
             opacity={1}
             style={{ zIndex: 99999, boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", maxWidth: "500px" }}

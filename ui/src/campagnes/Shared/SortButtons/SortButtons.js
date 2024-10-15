@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "@codegouvfr/react-dsfr/Input";
-import { SortButtonsContainer, SearchContainer } from "./sortButtons.style";
-import { isPlural } from "../../utils";
+import { SearchContainer } from "./sortButtons.style";
 
-const SortButtons = ({ search, setSearch, searchResultCount, setIsOpened = () => {} }) => {
+const SortButtons = ({ search, setSearch, setIsOpened = () => {} }) => {
   const [inputValue, setInputValue] = useState(search);
 
   useEffect(() => {
@@ -24,23 +23,15 @@ const SortButtons = ({ search, setSearch, searchResultCount, setIsOpened = () =>
   }, [inputValue, setSearch, setIsOpened]);
 
   return (
-    <SortButtonsContainer>
-      <SearchContainer>
-        <Input
-          nativeInputProps={{
-            value: inputValue,
-            placeholder: "Rechercher",
-            onChange: (e) => setInputValue(e.target.value),
-          }}
-        />
-        {searchResultCount ? (
-          <p>
-            {searchResultCount} campagne{isPlural(searchResultCount)} trouvée
-            {isPlural(searchResultCount)}
-          </p>
-        ) : null}
-      </SearchContainer>
-    </SortButtonsContainer>
+    <SearchContainer>
+      <Input
+        nativeInputProps={{
+          value: inputValue,
+          placeholder: "Rechercher",
+          onChange: (e) => setInputValue(e.target.value),
+        }}
+      />
+    </SearchContainer>
   );
 };
 

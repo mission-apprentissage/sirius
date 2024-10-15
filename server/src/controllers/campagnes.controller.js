@@ -39,7 +39,7 @@ const getCampagnes = tryCatch(async (req, res) => {
     query = { departement };
   }
 
-  const { success, body, pagination } = await campagnesService.getCampagnes({
+  const { success, body, ids, pagination } = await campagnesService.getCampagnes({
     isAdmin,
     isObserver,
     userSiret,
@@ -52,7 +52,7 @@ const getCampagnes = tryCatch(async (req, res) => {
 
   if (!success) throw new BasicError();
 
-  return res.status(200).json({ body, pagination });
+  return res.status(200).json({ body, ids, pagination });
 });
 
 const getCampagne = tryCatch(async (req, res) => {
@@ -124,9 +124,9 @@ const getXlsxMultipleExport = tryCatch(async (req, res) => {
 });
 
 const getCampagnesStatistics = tryCatch(async (req, res) => {
-  const campagneIds = req.body || [];
-  const user = req.user;
-  const { success, body } = await campagnesService.getCampagnesStatistics(campagneIds, user);
+  const campagneIds = req.body;
+
+  const { success, body } = await campagnesService.getCampagnesStatistics(campagneIds);
 
   if (!success) throw new BasicError();
 

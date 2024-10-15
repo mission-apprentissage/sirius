@@ -1,5 +1,4 @@
 const temoignagesService = require("../services/temoignages.service");
-const campagnesService = require("../services/campagnes.service");
 const {
   BasicError,
   TemoignageNotFoundError,
@@ -9,7 +8,7 @@ const {
   ErrorMessage,
 } = require("../errors");
 const tryCatch = require("../utils/tryCatch.utils");
-const { UNCOMPLIANT_TEMOIGNAGE_TYPE, USER_ROLES } = require("../constants");
+const { UNCOMPLIANT_TEMOIGNAGE_TYPE } = require("../constants");
 
 const createTemoignage = tryCatch(async (req, res) => {
   const { success, body } = await temoignagesService.createTemoignage(req.body);
@@ -54,21 +53,10 @@ const updateTemoignage = tryCatch(async (req, res) => {
 });
 
 const getDatavisualisation = tryCatch(async (req, res) => {
-  let campagneIds = req.body || [];
-  const userEtablissementsSiret = req.user.etablissements.map((etablissement) => etablissement.siret);
+  const campagneIds = req.body;
 
-  if (!campagneIds.length) {
-    const campagnesQuery = {
-      isAdmin: req.user.role === USER_ROLES.ADMIN,
-      isObserver: req.user.role === USER_ROLES.OBSERVER,
-      userSiret: userEtablissementsSiret,
-      pageSize: 10000,
-    };
+  if (!campagneIds.length) return res.status(200).json([]);
 
-    const { body: campagnes } = await campagnesService.getCampagnes(campagnesQuery);
-
-    campagneIds = campagnes.map((campagne) => campagne.id);
-  }
   const { success, body } = await temoignagesService.getDatavisualisation(campagneIds);
 
   if (!success) throw new BasicError();

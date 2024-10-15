@@ -26,6 +26,7 @@ const useFetchCampagnes = ({ query, enabled, page, pageSize = 10 }) => {
   return {
     campagnes: data?.body,
     campagnesPagination: data?.pagination,
+    campagnesIds: data?.ids,
     isSuccess,
     isError,
     isLoading,

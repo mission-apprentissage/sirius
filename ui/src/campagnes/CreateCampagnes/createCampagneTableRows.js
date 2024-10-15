@@ -54,12 +54,12 @@ const createCampagneTableRows = ({
           <IntituleFormation>{formation.intitule_long}</IntituleFormation>
         </FormationContainer>
         <EtablissementLabelContainer>
-          <p data-tooltip-id="tooltip-already-created">
+          <p data-tooltip-id={`tooltip-already-created-${formation._id}`}>
             {formation.etablissement_formateur_entreprise_raison_sociale ||
               formation.etablissement_formateur_enseigne}
           </p>
           <Tooltip
-            id="tooltip-already-created"
+            id={`tooltip-already-created-${formation._id}`}
             variant="light"
             opacity={1}
             style={{ zIndex: 99999, boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", maxWidth: "500px" }}
