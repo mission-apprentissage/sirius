@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const campagnesDao = require("../dao/campagnes.dao");
 const formationsDao = require("../dao/formations.dao");
 const etablissementsDao = require("../dao/etablissements.dao");
@@ -6,7 +8,12 @@ const verbatimsDao = require("../dao/verbatims.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
 const { appendDataWhenEmpty, getStatistics, getMedianDuration } = require("../utils/campagnes.utils");
 const pdfExport = require("../modules/pdfExport");
-const { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } = require("../constants");
+const {
+  DIPLOME_TYPE_MATCHER,
+  ETABLISSEMENT_NATURE,
+  ETABLISSEMENT_RELATION_TYPE,
+  OBSERVER_SCOPES,
+} = require("../constants");
 const referentiel = require("../modules/referentiel");
 const xlsxExport = require("../modules/xlsxExport");
 const catalogue = require("../modules/catalogue");
@@ -19,6 +26,14 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, p
     if (isAdmin) {
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
     } else if (isObserver) {
+      // Nécessaire pour ne pas stocker la liste de code RNCP dans le scope d'un user et réconcilier les labels/valeurs
+      if (scope.field === OBSERVER_SCOPES.OPCO) {
+        const SCOPE_LIST = path.join(__dirname, "../modules/opco.json");
+        const opcos = JSON.parse(fs.readFileSync(SCOPE_LIST, "utf8"));
+        const rncpCodes = opcos.find((opco) => opco.label === scope.value).value;
+
+        scope.value = rncpCodes;
+      }
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ scope, query });
     } else {
       const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
@@ -83,6 +98,7 @@ const getCampagnes = async ({ isAdmin, isObserver, userSiret, scope, page = 1, p
       },
     };
   } catch (error) {
+    console.log({ error });
     return { success: false, body: error };
   }
 };

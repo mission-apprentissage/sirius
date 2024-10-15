@@ -172,6 +172,7 @@ const OBSERVER_SCOPES = {
   REGION: "region",
   SIRETS: "sirets",
   NATIONAL: "national",
+  OPCO: "opco",
 };
 
 module.exports = {
