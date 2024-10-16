@@ -4,7 +4,7 @@ const { kdb } = require("./db");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const THEME_EXTRACTION_API = "https://745687f3-c89b-4920-92f4-93c7e24bdcbf.app.gra.ai.cloud.ovh.net/expose";
+const THEME_EXTRACTION_API = "https://2b1d0760-a1f7-485d-8b69-2ecdf299615a.app.gra.ai.cloud.ovh.net/expose";
 
 const extractThemesVerbatims = async (verbatim, themeCount) => {
   const MAX_RETRIES = 5;
