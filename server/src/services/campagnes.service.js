@@ -369,6 +369,8 @@ const getXlsxMultipleExport = async (campagneIds = []) => {
       etablissementResponsableLabel: campagne.formation?.etablissementGestionnaireEnseigne,
       seats: campagne.seats || "Illimité",
       temoignagesCount: campagne.temoignagesCount,
+      onisepUrl: campagne.etablissement?.onisepUrl,
+      rncpCode: campagne.formation?.rncpCode,
     }));
 
     const generatedXlsx = await xlsxExport.generateMultipleCampagnes(formattedCampagnes);
