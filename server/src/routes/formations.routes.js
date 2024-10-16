@@ -7,6 +7,7 @@ const {
   updateFormation,
   getFormations,
   getFormationsWithTemoignageCount,
+  getFormationsDiplomesWithCampagnes,
 } = require("../controllers/formations.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdminOrAllowed, TYPES } = require("../middlewares/isAdminOrAllowed");
@@ -53,6 +54,15 @@ const formations = () => {
     validator(updateFormationSchema),
     (req, res, next) => {
       updateFormation(req, res, next);
+    }
+  );
+
+  router.get(
+    "/api/formations/diplomes-with-campagnes",
+    verifyUser,
+    (req, res, next) => isAdminOrAllowed(req, next, TYPES.FORMATION_IDS),
+    (req, res, next) => {
+      getFormationsDiplomesWithCampagnes(req, res, next);
     }
   );
 

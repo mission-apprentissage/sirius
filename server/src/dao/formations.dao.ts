@@ -290,3 +290,42 @@ export const findAllWithTemoignageCount = async (): Promise<Partial<Formation>[]
     .orderBy("temoignagesCount", "desc")
     .execute();
 };
+
+export const findAllWithCampagnesCount = async (siret: string[]): Promise<Partial<Formation>[] | undefined> => {
+  let baseQuery = kdb
+    .selectFrom("formations")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
+    .select([
+      "formations.id",
+      "formations.catalogue_id",
+      "formations.region",
+      "formations.num_departement",
+      "formations.intitule_long",
+      "formations.intitule_court",
+      "formations.diplome",
+      "formations.localite",
+      "formations.tags",
+      "formations.lieu_formation_adresse",
+      "formations.lieu_formation_adresse_computed",
+      "formations.code_postal",
+      "formations.duree",
+      "formations.etablissement_formateur_adresse",
+      "formations.etablissement_formateur_enseigne",
+      "formations.etablissement_formateur_entreprise_raison_sociale",
+      "formations.etablissement_formateur_localite",
+      "formations.etablissement_formateur_siret",
+      "formations.etablissement_gestionnaire_enseigne",
+      "formations.etablissement_gestionnaire_siret",
+      "formations.etablissement_id",
+      sql<number>`COUNT(DISTINCT formations_campagnes.campagne_id)`.as("campagnesCount"),
+    ])
+    .groupBy("formations.id")
+    .orderBy("campagnesCount", "desc")
+    .where("formations.deleted_at", "is", null);
+
+  if (siret?.length > 0) {
+    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", siret);
+  }
+
+  return baseQuery.execute();
+};
