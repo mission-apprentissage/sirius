@@ -155,6 +155,18 @@ const getEtablissementsPublicStatistics = async () => {
   }
 };
 
+const getEtablissementsWithCampagnes = async ({ userSiret }) => {
+  try {
+    const etablissements = await etablissementsDao.findAllEtablissementWithCounts(userSiret);
+
+    const etablissementsWithCampagnes = etablissements.filter((etablissement) => etablissement.campagnesCount > 0);
+
+    return { success: true, body: etablissementsWithCampagnes };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   createEtablissements,
   getEtablissements,
@@ -164,4 +176,5 @@ module.exports = {
   getEtablissementsSuivi,
   getEtablissementsPublicStatistics,
   getEtablissementsWithTemoignageCount,
+  getEtablissementsWithCampagnes,
 };

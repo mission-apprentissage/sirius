@@ -10,6 +10,7 @@ const {
   getEtablissementsSuivi,
   getEtablissementsPublicStatistics,
   getEtablissementsWithTemoignageCount,
+  getEtablissementsWithCampagnes,
 } = require("../controllers/etablissements.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdmin } = require("../middlewares/isAdmin");
@@ -28,6 +29,15 @@ const etablissements = () => {
     (req, res, next) => isAdminOrAllowed(req, next, TYPES.SIRET),
     (req, res, next) => {
       getEtablissements(req, res, next);
+    }
+  );
+
+  router.get(
+    "/api/etablissements/with-campagnes",
+    verifyUser,
+    (req, res, next) => isAdminOrAllowed(req, next, TYPES.SIRET),
+    (req, res, next) => {
+      getEtablissementsWithCampagnes(req, res, next);
     }
   );
 

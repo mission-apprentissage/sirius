@@ -77,6 +77,16 @@ const getEtablissementsPublicStatistics = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getEtablissementsWithCampagnes = tryCatch(async (req, res) => {
+  const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
+
+  const { success, body } = await etablissementsService.getEtablissementsWithCampagnes({ userSiret });
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 module.exports = {
   createEtablissement,
   getEtablissements,
@@ -86,4 +96,5 @@ module.exports = {
   getEtablissementsSuivi,
   getEtablissementsPublicStatistics,
   getEtablissementsWithTemoignageCount,
+  getEtablissementsWithCampagnes,
 };
