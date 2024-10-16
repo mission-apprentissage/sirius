@@ -37,3 +37,15 @@ export const fetchLocalFormations = async ({ token, etablissementSiret, search }
 
   return response;
 };
+
+export const fetchDiplomesWithCampagnes = async ({ token }) => {
+  const url = `/api/formations/diplomes-with-campagnes`;
+
+  const response = await _get(url, token);
+
+  if (response.error) {
+    throw new Error("Erreur dans le chargement des diplômes");
+  }
+
+  return response;
+};
