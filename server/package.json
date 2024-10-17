@@ -1,7 +1,14 @@
 {
-  "name": "sirius",
-  "version": "1.0.0",
+  "name": "server",
+  "version": "0.0.0",
   "description": "",
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "engines": {
+    "node": ">=22",
+    "npm": "please-use-yarn"
+  },
   "scripts": {
     "start": "ts-node src/cli.js http",
     "debug": "nodemon --inspect=0.0.0.0 --signal SIGINT --ignore test/ dist/cli.js http",
@@ -12,11 +19,6 @@
     "build": "tsc",
     "dev": "nodemon --watch src --ext ts,js,json --ignore test/ dist/cli.js http",
     "kysely": "npx kysely-codegen --schema public --out-file=./src/db/schema.ts --dialect postgres"
-  },
-  "author": "",
-  "license": "ISC",
-  "engines": {
-    "node": ">=v20.16.0"
   },
   "dependencies": {
     "@hapi/boom": "10.0.0",
@@ -74,17 +76,6 @@
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
     "chai": "4.3.7",
-    "eslint": "8.55.0",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-jsx-a11y": "6.8.0",
-    "eslint-plugin-mocha": "10.2.0",
-    "eslint-plugin-n": "^16.3.1",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-prettier": "5.2.1",
-    "eslint-plugin-simple-import-sort": "12.1.1",
-    "eslint-plugin-unused-imports": "4.0.1",
     "globals": "15.8.0",
     "kysely-codegen": "0.15.0",
     "mocha": "10.2.0",
@@ -97,10 +88,5 @@
     "supertest": "6.3.3",
     "ts-node": "10.9.2",
     "typescript": "5.0.2"
-  },
-  "prettier": {
-    "printWidth": 120,
-    "bracketSpacing": true,
-    "trailingComma": "es5"
   }
 }

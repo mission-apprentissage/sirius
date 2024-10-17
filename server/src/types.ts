@@ -1,4 +1,4 @@
-import { Etablissements, Formations, Questionnaires, Temoignages, Users, Verbatims } from "./db/schema";
+import type { Etablissements, Formations, Questionnaires, Temoignages, Users, Verbatims } from "./db/schema";
 
 export type User = Omit<Users, "id"> & { id: string };
 

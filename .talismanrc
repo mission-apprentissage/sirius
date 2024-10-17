@@ -1,0 +1,24 @@
+fileignoreconfig:
+- filename: README.md
+  checksum: 00ac991f0b2746c5a5ffa14e2b3c5427b739c0d952aa3730efe1f234ac1fc3ca
+scopeconfig:
+- scope: node
+custom_patterns:
+- (?s)[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}
+allowed_patterns:
+- key
+- Key
+- secret
+- SECRET
+- password
+- Password
+- pass
+- apiKey
+- ApiKey
+- api_key
+- '@mail.com'
+- '@exemple.fr'
+- '@apprentissage.beta.gouv.fr'
+- '@alternance.beta.gouv.fr'
+threshold: medium
+version: "1.0"

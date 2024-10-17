@@ -1,17 +1,19 @@
 import "react-app-polyfill/ie11";
 import "react-app-polyfill/stable";
-import React from "react";
-import { createRoot } from "react-dom/client";
+
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
 import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
-import { BrowserRouter as Router, Link } from "react-router-dom";
-import App from "./App";
-import * as serviceWorker from "./serviceWorker";
-import { UserProvider } from "./context/UserContext";
-import { startReactDsfr } from "@codegouvfr/react-dsfr/spa";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter as Router, Link } from "react-router-dom";
+
+import App from "./App";
+import { UserProvider } from "./context/UserContext";
+import * as serviceWorker from "./serviceWorker";
 
 Sentry.init({
   dsn: "https://f97984280f4e4a4e8075e8b353b9234a@sentry.incubateur.net/153",
@@ -22,13 +24,20 @@ Sentry.init({
   environment: process.env.REACT_APP_SIRIUS_ENV,
 });
 
-startReactDsfr({ defaultColorScheme: "light", Link });
+const QUERY_CLIENT_RETRY_DELAY = 3000;
+const QUERY_CLIENT_RETRY_ATTEMPTS = 1;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+startReactDsfr({ defaultColorScheme: "light", Link: Link as any });
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 4 * (60 * 1000),
-      cacheTime: 4 * (60 * 1000),
+      retry: QUERY_CLIENT_RETRY_ATTEMPTS, // retry failing requests just once, see https://react-query.tanstack.com/guides/query-retries
+      retryDelay: QUERY_CLIENT_RETRY_DELAY, // retry failing requests after 3 seconds
+      refetchOnWindowFocus: false, // see https://react-query.tanstack.com/guides/important-defaults
+      refetchOnReconnect: false,
     },
   },
 });
@@ -117,12 +126,11 @@ export const theme = extendTheme({
     },
   },
 });
-const container = document.getElementById("root");
 
-const root = createRoot(container);
+const root = createRoot(document.getElementById("root") as HTMLElement);
 
 root.render(
-  <React.StrictMode>
+  <StrictMode>
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
         <UserProvider>
@@ -133,7 +141,7 @@ root.render(
       </ChakraProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </React.StrictMode>
+  </StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change

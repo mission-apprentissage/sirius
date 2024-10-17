@@ -1,7 +1,9 @@
 import { CamelCasePlugin, DeduplicateJoinsPlugin, Kysely, PostgresDialect } from "kysely";
 import { Pool, types } from "pg";
-import config from "../config";
-import { DB } from "./schema";
+
+import config from "@/config";
+
+import type { DB } from "./schema";
 
 types.setTypeParser(types.builtins.INT8, (val) => parseInt(val));
 types.setTypeParser(types.builtins.INT4, (val) => parseInt(val));
