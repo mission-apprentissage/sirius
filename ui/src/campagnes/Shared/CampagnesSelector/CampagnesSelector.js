@@ -97,7 +97,7 @@ const CampagnesSelector = ({
 }) => {
   const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [search, setSearch] = useState("");
-  const [searchPage, _] = useState(1);
+  const [searchPage] = useState(1);
   const [isOpened, setIsOpened] = useState(false);
 
   const [userContext] = useContext(UserContext);

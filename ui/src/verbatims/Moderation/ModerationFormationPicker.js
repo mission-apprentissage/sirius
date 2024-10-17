@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Alert from "@codegouvfr/react-dsfr/Alert";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import useFetchLocalFormations from "../../hooks/useFetchLocalFormations";
 
 const ModerationFormationPicker = ({ pickedEtablissementSiret, setPickedFormationId }) => {
   const [search, setSearch] = useState("");
-  const [inputValue, setInputValue] = useState(search);
+  const [inputValue] = useState(search);
 
   const { localFormations, isSuccess, isError } = useFetchLocalFormations({
     search,

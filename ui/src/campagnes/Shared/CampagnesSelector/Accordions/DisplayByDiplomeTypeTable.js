@@ -20,7 +20,6 @@ const DisplayByDiplomeTypeTable = ({
   const {
     page,
     setPage,
-    openedAccordion,
     setOpenedAccordion,
     campagnes,
     isSuccessCampagnes,

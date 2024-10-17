@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { _put, _post, _get } from "../../utils/httpClient";
+import { _post, _get } from "../../utils/httpClient";
 import { UserContext } from "../../context/UserContext";
 import AddSiret from "./AddSiret/AddSiret";
 
@@ -40,7 +40,7 @@ const getRemoteEtablissementsToCreate = async (siretList) => {
 
 const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
   const [userContext] = useContext(UserContext);
   const toast = useToast();
 

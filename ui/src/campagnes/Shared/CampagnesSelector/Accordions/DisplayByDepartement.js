@@ -21,7 +21,6 @@ const DisplayByDepartementTable = ({
   const {
     page,
     setPage,
-    openedAccordion,
     setOpenedAccordion,
     campagnes,
     isSuccessCampagnes,
