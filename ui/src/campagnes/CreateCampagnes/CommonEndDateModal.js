@@ -1,12 +1,7 @@
-import React, { useState } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
+import { useState } from "react";
 
-const CommonEndDateModal = ({
-  modal,
-  selectedFormationsAction,
-  setSelectedFormationsAction,
-  formik,
-}) => {
+const CommonEndDateModal = ({ modal, selectedFormationsAction, setSelectedFormationsAction, formik }) => {
   const [selectedDate, setSelectedDate] = useState(null);
 
   const handleDateSelection = () => {

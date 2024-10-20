@@ -1,13 +1,8 @@
-import React from "react";
-import Tooltip from "react-simple-tooltip";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import Tooltip from "react-simple-tooltip";
+
 import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../../constants";
-import {
-  ScoresContainer,
-  FormationContainer,
-  QuestionKeyContainer,
-  TooltipContainer,
-} from "../moderationPage.style";
+import { FormationContainer, QuestionKeyContainer, ScoresContainer, TooltipContainer } from "../moderationPage.style";
 
 const formatScores = (verbatim, index) => {
   const scores = verbatim.scores;
@@ -46,9 +41,7 @@ const formatScores = (verbatim, index) => {
 
 const moderationTableRows = ({ verbatims, selectedVerbatims, setSelectedVerbatims }) => {
   return verbatims.map((verbatim, index) => {
-    const isSelected = selectedVerbatims
-      .map((selectedVerbatim) => selectedVerbatim.id)
-      .includes(verbatim.id);
+    const isSelected = selectedVerbatims.map((selectedVerbatim) => selectedVerbatim.id).includes(verbatim.id);
 
     const handleOnChange = () => {
       setSelectedVerbatims((prevValue) =>
@@ -73,9 +66,7 @@ const moderationTableRows = ({ verbatims, selectedVerbatims, setSelectedVerbatim
         ]}
       />,
       <p key={`${verbatims.id}-content`}>{verbatim.content}</p>,
-      <ScoresContainer key={`${verbatims.id}-scores`}>
-        {formatScores(verbatim, index)}
-      </ScoresContainer>,
+      <ScoresContainer key={`${verbatims.id}-scores`}>{formatScores(verbatim, index)}</ScoresContainer>,
       <FormationContainer key={`${verbatims.id}-formation-etablissement`}>
         <Tooltip
           background="var(--background-default-grey)"
@@ -96,12 +87,8 @@ const moderationTableRows = ({ verbatims, selectedVerbatims, setSelectedVerbatim
           <p>{verbatim.formation?.intituleLong}</p>
         </Tooltip>
       </FormationContainer>,
-      <QuestionKeyContainer key={`${verbatims.id}-question`}>
-        {verbatim.questionKey}
-      </QuestionKeyContainer>,
-      <p key={`${verbatims.id}-created-at`}>
-        {new Date(verbatim.createdAt).toLocaleDateString("fr-FR")}
-      </p>,
+      <QuestionKeyContainer key={`${verbatims.id}-question`}>{verbatim.questionKey}</QuestionKeyContainer>,
+      <p key={`${verbatims.id}-created-at`}>{new Date(verbatim.createdAt).toLocaleDateString("fr-FR")}</p>,
     ];
   });
 };

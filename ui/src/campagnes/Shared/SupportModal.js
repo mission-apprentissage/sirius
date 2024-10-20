@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { Input } from "@codegouvfr/react-dsfr/Input";
-import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { fr } from "@codegouvfr/react-dsfr";
-import * as Yup from "yup";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import { useFormik } from "formik";
+import { useState } from "react";
+import * as Yup from "yup";
+
 import { _post } from "../../utils/httpClient";
 
 const validationSchema = Yup.object({
@@ -75,8 +76,8 @@ const SupportModal = ({ modal, token }) => {
         }
       >
         <p>
-          Les formations sont extraites du Catalogue des offres de formations en apprentissage du
-          réseau des CARIF OREF. Rapprochez-vous d’eux pour tout besoin de mise à jour.
+          Les formations sont extraites du Catalogue des offres de formations en apprentissage du réseau des CARIF OREF.
+          Rapprochez-vous d’eux pour tout besoin de mise à jour.
         </p>
         <p>
           <b>Un problème plus urgent à signaler ? Contactez directement l’équipe Sirius</b>
@@ -103,9 +104,7 @@ const SupportModal = ({ modal, token }) => {
         {isSupportSubmitted && (
           <Alert
             severity={supportError ? "error" : "success"}
-            description={
-              supportError ? "Une erreur s'est produite." : "Le message a été envoyé avec succès."
-            }
+            description={supportError ? "Une erreur s'est produite." : "Le message a été envoyé avec succès."}
           />
         )}
       </modal.Component>

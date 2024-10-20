@@ -1,21 +1,13 @@
-import React from "react";
-import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { formatDate, isPlural } from "../utils";
-import {
-  TemoignagesCount,
-  EtablissementLabelContainer,
-} from "../Shared/CampagnesTable/campagnesTable.style";
-import { FormationContainer, ToolTipContainer } from "../styles/shared.style";
-import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../constants";
+import Tooltip from "react-simple-tooltip";
 
-const resultsCampagneTableRows = ({
-  displayedCampagnes,
-  selectedCampagneIds,
-  setSelectedCampagneIds,
-  displayMode,
-}) => {
+import { campagnesDisplayMode, DIPLOME_TYPE_MATCHER } from "../../constants";
+import { EtablissementLabelContainer, TemoignagesCount } from "../Shared/CampagnesTable/campagnesTable.style";
+import { FormationContainer, ToolTipContainer } from "../styles/shared.style";
+import { formatDate, isPlural } from "../utils";
+
+const resultsCampagneTableRows = ({ displayedCampagnes, selectedCampagneIds, setSelectedCampagneIds, displayMode }) => {
   return displayedCampagnes.map((campagne) => {
     const formation = campagne.formation;
     const isSelected = selectedCampagneIds.includes(campagne.id);
@@ -53,8 +45,7 @@ const resultsCampagneTableRows = ({
             )}
           </div>
         </FormationContainer>
-        {(displayMode === campagnesDisplayMode[0].value ||
-          displayMode === campagnesDisplayMode[2].value) && (
+        {(displayMode === campagnesDisplayMode[0].value || displayMode === campagnesDisplayMode[2].value) && (
           <EtablissementLabelContainer>
             <Tooltip
               background="var(--background-default-grey)"
@@ -68,31 +59,27 @@ const resultsCampagneTableRows = ({
                       `${formation.lieuFormationAdresse}, ${formation.codePostal} ${formation.localite}`}
                   </p>
                   <p>N° Siret: {formation.etablissementFormateurSiret}</p>
-                  {formation.etablissementFormateurSiret ===
-                  formation.etablissementGestionnaireSiret ? (
+                  {formation.etablissementFormateurSiret === formation.etablissementGestionnaireSiret ? (
                     <p>
-                      <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
-                      établissement est gestionnaire et rattaché à votre compte Sirius
+                      <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet établissement est
+                      gestionnaire et rattaché à votre compte Sirius
                     </p>
                   ) : (
                     <p>
-                      <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
-                      établissement est formateur et dispense des formations pour un établissement
-                      gestionnaire
+                      <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet établissement est
+                      formateur et dispense des formations pour un établissement gestionnaire
                     </p>
                   )}
                 </ToolTipContainer>
               }
             >
               <p>
-                {formation.etablissementFormateurEntrepriseRaisonSociale ||
-                  formation.etablissementFormateurEnseigne}
+                {formation.etablissementFormateurEntrepriseRaisonSociale || formation.etablissementFormateurEnseigne}
               </p>
             </Tooltip>
           </EtablissementLabelContainer>
         )}
-        {(displayMode === campagnesDisplayMode[1].value ||
-          displayMode === campagnesDisplayMode[2].value) && (
+        {(displayMode === campagnesDisplayMode[1].value || displayMode === campagnesDisplayMode[2].value) && (
           <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
         )}
       </>,

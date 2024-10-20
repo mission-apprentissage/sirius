@@ -1,6 +1,5 @@
-import React from "react";
-import { StyledInput } from "./cellInput.style";
 import { numberRegex } from "../../../constants";
+import { StyledInput } from "./cellInput.style";
 
 const CellInputSeatsConfigure = ({ id, name, formik, width, ...rest }) => {
   const handleChange = (e) => {

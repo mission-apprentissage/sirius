@@ -1,8 +1,9 @@
+import { useQueries } from "@tanstack/react-query";
 import { useContext } from "react";
+
+import { splitIntoBatches } from "../campagnes/utils";
 import { UserContext } from "../context/UserContext";
 import { fetchCampagnes } from "../queries/campagnes";
-import { useQueries } from "@tanstack/react-query";
-import { splitIntoBatches } from "../campagnes/utils";
 
 const useFetchCampagnesByBatch = ({ campagneIds, enabled }) => {
   const [userContext] = useContext(UserContext);

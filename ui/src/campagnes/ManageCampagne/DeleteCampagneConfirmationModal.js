@@ -1,18 +1,17 @@
-import React, { useContext } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
-import { isPlural } from "../utils";
-import useDeleteCampagnes from "../../hooks/useDeleteCampagnes";
+import { useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
+
 import { UserContext } from "../../context/UserContext";
+import useDeleteCampagnes from "../../hooks/useDeleteCampagnes";
+import { isPlural } from "../utils";
 
 const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelectedCampagnes }) => {
   const [userContext] = useContext(UserContext);
   const queryClient = useQueryClient();
 
-  const persistedEtablissement = userContext.user?.etablissements?.length
-    ? userContext.user?.etablissements[0]
-    : "";
+  const persistedEtablissement = userContext.user?.etablissements?.length ? userContext.user?.etablissements[0] : "";
 
   const { mutate: deleteCampagnes, isLoading, error } = useDeleteCampagnes();
 
@@ -22,11 +21,7 @@ const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelected
       {
         onSuccess: () => {
           setSelectedCampagnes([]);
-          queryClient.invalidateQueries([
-            "campagnes",
-            "campagnesSorted",
-            "fetchCampagnesStatistics",
-          ]);
+          queryClient.invalidateQueries(["campagnes", "campagnesSorted", "fetchCampagnesStatistics"]);
           modal.close();
         },
       }
@@ -65,16 +60,8 @@ const DeleteCampagneConfirmationModal = ({ modal, selectedCampagnes, setSelected
         </b>
         . Certaines d’entre elles regroupent peut-être déjà des témoignages
       </p>
-      <p>
-        Êtes-vous certain·e de vouloir {selectedCampagnes.length > 1 ? "les" : "la"} supprimer ?
-      </p>
-      {error && (
-        <Alert
-          closable
-          description={error.message || "Une erreur est survenue."}
-          severity="error"
-        />
-      )}
+      <p>Êtes-vous certain·e de vouloir {selectedCampagnes.length > 1 ? "les" : "la"} supprimer ?</p>
+      {error && <Alert closable description={error.message || "Une erreur est survenue."} severity="error" />}
     </modal.Component>
   );
 };

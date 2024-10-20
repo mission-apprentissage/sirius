@@ -1,21 +1,22 @@
-import React, { useContext, useState } from "react";
 import {
+  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
   ModalFooter,
-  Button,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
   Text,
   useToast,
-  Stack,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
+import { useContext, useState } from "react";
 import * as Yup from "yup";
-import { _post, _get } from "../../utils/httpClient";
+
 import { UserContext } from "../../context/UserContext";
+import { _get, _post } from "../../utils/httpClient";
 import AddSiret from "./AddSiret/AddSiret";
 
 const etablissement = Yup.object({
@@ -51,9 +52,7 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
     validationSchema: validationSchema,
     onSubmit: async ({ etablissements }) => {
       setIsSubmitting(true);
-      const etablissementsWitoutEmpty = etablissements.filter(
-        (obj) => Object.keys(obj).length !== 0
-      );
+      const etablissementsWitoutEmpty = etablissements.filter((obj) => Object.keys(obj).length !== 0);
 
       const filteredEtablissements = etablissementsWitoutEmpty.filter(
         (etablissement) => !user.etablissements.find((e) => e.siret === etablissement.siret)
@@ -122,13 +121,7 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
             </Stack>
           </ModalBody>
           <ModalFooter alignItems="center" justifyContent="center" mt="15">
-            <Button
-              size="lg"
-              variant="solid"
-              colorScheme="brand.blue"
-              type="submit"
-              isLoading={isSubmitting}
-            >
+            <Button size="lg" variant="solid" colorScheme="brand.blue" type="submit" isLoading={isSubmitting}>
               Ajouter
             </Button>
           </ModalFooter>

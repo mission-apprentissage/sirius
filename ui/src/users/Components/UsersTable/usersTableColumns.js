@@ -1,9 +1,10 @@
-import { Tooltip, Box, Select, Text, IconButton } from "@chakra-ui/react";
+import { AddIcon, CheckIcon, CloseIcon, CopyIcon, UnlockIcon } from "@chakra-ui/icons";
+import { Box, IconButton, Select, Text, Tooltip } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
-import { CheckIcon, AddIcon, CopyIcon, CloseIcon, UnlockIcon } from "@chakra-ui/icons";
+
 import { OBSERVER_SCOPES, USER_ROLES, USER_STATUS } from "../../../constants";
-import { etablissementLabelGetter } from "../../../utils/etablissement";
 import { REGIONS } from "../../../regions";
+import { etablissementLabelGetter } from "../../../utils/etablissement";
 
 const columnHelper = createColumnHelper();
 
@@ -73,9 +74,8 @@ const usersTableColumns = (
                     ml="1"
                     cursor="pointer"
                     onClick={() => {
-                      setClipboardValue(
-                        `${window.location.hostname}/confirmer-utilisateur?token=${confirmationToken}`
-                      );
+                      // eslint-disable-next-line no-undef
+                      setClipboardValue(`${window.location.hostname}/confirmer-utilisateur?token=${confirmationToken}`);
                       onCopyClipBoard();
                     }}
                   />
@@ -89,13 +89,7 @@ const usersTableColumns = (
     header: "Confirmé",
   }),
   columnHelper.accessor(
-    ({ siret, etablissement, etablissements, scope, id }) => [
-      siret,
-      etablissement,
-      etablissements,
-      scope,
-      id,
-    ],
+    ({ siret, etablissement, etablissements, scope, id }) => [siret, etablissement, etablissements, scope, id],
     {
       cell: (info) => {
         const siret = info.getValue()[0];
@@ -144,21 +138,12 @@ const usersTableColumns = (
         return (
           <Box display="flex" flexDirection="column">
             {siret && (
-              <Tooltip
-                label={etablissementLabelGetter(singleEtablissement)}
-                hasArrow
-                arrowSize={15}
-              >
+              <Tooltip label={etablissementLabelGetter(singleEtablissement)} hasArrow arrowSize={15}>
                 <Text>{siret}</Text>
               </Tooltip>
             )}
             {etablissements?.map((etablissement) => (
-              <Tooltip
-                key={etablissement.id}
-                label={etablissementLabelGetter(etablissement)}
-                hasArrow
-                arrowSize={15}
-              >
+              <Tooltip key={etablissement.id} label={etablissementLabelGetter(etablissement)} hasArrow arrowSize={15}>
                 <Text>{etablissement.siret}</Text>
               </Tooltip>
             ))}

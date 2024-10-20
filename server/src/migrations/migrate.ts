@@ -2,8 +2,7 @@
 /* eslint-disable no-process-exit */
 import { Migrator } from "kysely";
 
-import { kdb } from "@/db/db";
-
+import { kdb } from "../db/db";
 import { migrations } from "./index";
 
 const makeMigrator = () => {

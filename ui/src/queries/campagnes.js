@@ -1,4 +1,4 @@
-import { _get, _post, _delete } from "../utils/httpClient";
+import { _delete, _get, _post } from "../utils/httpClient";
 
 export const fetchCampagnes = async ({ query = null, page = 1, pageSize = 10, token }) => {
   let url = `/api/campagnes?page=${page}&pageSize=${pageSize}`;

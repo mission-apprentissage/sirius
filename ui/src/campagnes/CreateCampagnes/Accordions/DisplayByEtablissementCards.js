@@ -1,24 +1,20 @@
-import React from "react";
-import { Link } from "react-router-dom";
 import { fr } from "@codegouvfr/react-dsfr";
-import Tooltip from "react-simple-tooltip";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import {
-  getUniqueEtablissementFromFormation,
-  orderFormationByEtablissement,
-  isPlural,
-} from "../../utils";
-import {
-  StyledAccordion,
-  AccordionLabelByEtablissementContainer,
-  FormationCardContainer,
-  FormationCardByEtablissement,
-  StyledBadge,
-  Duration,
-  HeaderCardContainer,
-} from "./accordions.style";
-import { ToolTipContainer } from "../../styles/shared.style";
+import { Link } from "react-router-dom";
+import Tooltip from "react-simple-tooltip";
+
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
+import { ToolTipContainer } from "../../styles/shared.style";
+import { getUniqueEtablissementFromFormation, isPlural, orderFormationByEtablissement } from "../../utils";
+import {
+  AccordionLabelByEtablissementContainer,
+  Duration,
+  FormationCardByEtablissement,
+  FormationCardContainer,
+  HeaderCardContainer,
+  StyledAccordion,
+  StyledBadge,
+} from "./accordions.style";
 
 const DisplayByEtablissementCards = ({
   displayedFormations,
@@ -74,8 +70,7 @@ const DisplayByEtablissementCards = ({
                   color="var(--text-default-grey)"
                   content={
                     <ToolTipContainer>
-                      Cet établissement est formateur et dispense des formations pour un
-                      établissement gestionnaire
+                      Cet établissement est formateur et dispense des formations pour un établissement gestionnaire
                     </ToolTipContainer>
                   }
                 >
@@ -109,9 +104,7 @@ const DisplayByEtablissementCards = ({
                 name: `selectAll${siret}`,
                 checked:
                   formationSelectedCountByEtablissement ===
-                  formationsByEtablissement.filter(
-                    (formation) => !existingFormationIds.includes(formation._id)
-                  ).length,
+                  formationsByEtablissement.filter((formation) => !existingFormationIds.includes(formation._id)).length,
                 onChange: (e) => {
                   setSelectedFormations((prevValues) => {
                     if (e.target.checked) {
@@ -125,8 +118,7 @@ const DisplayByEtablissementCards = ({
                       ];
                     } else {
                       return prevValues.filter(
-                        (selectedFormation) =>
-                          !formationsByEtablissement.includes(selectedFormation)
+                        (selectedFormation) => !formationsByEtablissement.includes(selectedFormation)
                       );
                     }
                   });
@@ -138,9 +130,7 @@ const DisplayByEtablissementCards = ({
         <FormationCardContainer>
           {formationsByEtablissement.map((formation) => {
             const isAlreadyCreated = existingFormationIds?.includes(formation._id);
-            const isSelected = selectedFormations.some(
-              (selectedFormation) => selectedFormation._id === formation._id
-            );
+            const isSelected = selectedFormations.some((selectedFormation) => selectedFormation._id === formation._id);
 
             return (
               <FormationCardByEtablissement
@@ -168,8 +158,7 @@ const DisplayByEtablissementCards = ({
                       content={
                         <ToolTipContainer>
                           <p>
-                            Une campagne a déjà été créée pour cette formation, vous ne pouvez donc
-                            pas la sélectionner.
+                            Une campagne a déjà été créée pour cette formation, vous ne pouvez donc pas la sélectionner.
                           </p>
                         </ToolTipContainer>
                       }
@@ -188,9 +177,7 @@ const DisplayByEtablissementCards = ({
                             onChange: () => {
                               setSelectedFormations((prevValue) =>
                                 isSelected
-                                  ? prevValue.filter(
-                                      (selectedFormation) => selectedFormation._id !== formation._id
-                                    )
+                                  ? prevValue.filter((selectedFormation) => selectedFormation._id !== formation._id)
                                   : [...prevValue, formation]
                               );
                             },

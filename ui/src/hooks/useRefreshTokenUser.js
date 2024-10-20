@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+
 import { refreshTokenUser } from "../queries/users";
 
 const useRefreshTokenUser = () => {

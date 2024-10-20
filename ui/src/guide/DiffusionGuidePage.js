@@ -1,30 +1,31 @@
-import React, { useState } from "react";
-import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { fr } from "@codegouvfr/react-dsfr";
+import { Tag } from "@codegouvfr/react-dsfr/Tag";
+import { useState } from "react";
 import ReactPlayer from "react-player/file";
-import {
-  Container,
-  GoalContainer,
-  CFAContainer,
-  CardContainer,
-  StyledCard,
-  TestimonyContainer,
-  QuotesContainer,
-  ExpressedTestimonies,
-  HowToContainer,
-  VideoContainer,
-  MultipleVideoContainer,
-} from "./diffusionGuide.style";
-import LogoWithoutText from "../assets/images/logo_without_text.svg";
-import IlluQuestionnaire from "../assets/images/illu_questionnaire.svg";
-import IlluPlateforme from "../assets/images/illu_plateforme.svg";
+
+import IlluCFA from "../assets/images/illu_cfa.svg";
 import IlluDonnees from "../assets/images/illu_donnees.svg";
 import IlluExpo from "../assets/images/illu_expo.svg";
-import IlluCFA from "../assets/images/illu_cfa.svg";
+import IlluPlateforme from "../assets/images/illu_plateforme.svg";
+import IlluQuestionnaire from "../assets/images/illu_questionnaire.svg";
+import LogoWithoutText from "../assets/images/logo_without_text.svg";
 import video1Questionnaire from "../assets/videos/video1_questionnaire.mp4";
 import video2Creation from "../assets/videos/video2_creation.mp4";
 import video3Diffusion from "../assets/videos/video3_diffusion.mp4";
 import video4Resultats from "../assets/videos/video4_resultats.mp4";
+import {
+  CardContainer,
+  CFAContainer,
+  Container,
+  ExpressedTestimonies,
+  GoalContainer,
+  HowToContainer,
+  MultipleVideoContainer,
+  QuotesContainer,
+  StyledCard,
+  TestimonyContainer,
+  VideoContainer,
+} from "./diffusionGuide.style";
 
 const DiffusionGuidePage = () => {
   const [video, setVideo] = useState("questionnaire");
@@ -33,9 +34,7 @@ const DiffusionGuidePage = () => {
     <Container>
       <h2>
         Avec Sirius recueillez les témoignages de vos apprenti·es{" "}
-        <span style={{ fontWeight: "400" }}>
-          infra-bac pour mieux informer sur la réalité de l'apprentissage
-        </span>
+        <span style={{ fontWeight: "400" }}>infra-bac pour mieux informer sur la réalité de l'apprentissage</span>
       </h2>
       <GoalContainer>
         <img src={LogoWithoutText} alt="" />
@@ -43,8 +42,8 @@ const DiffusionGuidePage = () => {
           <div>
             <h3>Recueillir</h3>
             <p>
-              <b>auprès des 4000 CFA</b> formateurs qui dispensent des formations en apprentissage
-              de <b>niveau infra-bac</b> (périmètre de notre première expérimentation)
+              <b>auprès des 4000 CFA</b> formateurs qui dispensent des formations en apprentissage de{" "}
+              <b>niveau infra-bac</b> (périmètre de notre première expérimentation)
             </p>
           </div>
           <div>
@@ -136,15 +135,12 @@ const DiffusionGuidePage = () => {
         <QuotesContainer>
           <img src={IlluCFA} alt="" />
           <div>
-            <p>
-              « Je n’ai que des retours positifs de mes équipes, est-ce que l’on peut élargir
-              l'échantillon ? »
-            </p>
+            <p>« Je n’ai que des retours positifs de mes équipes, est-ce que l’on peut élargir l'échantillon ? »</p>
             <p>« C’est innovant et précieux ce que vous faites ! »</p>
             <p>« Super outil, facile à prendre en main. »</p>
             <p>
-              « Je suis déçue… Mon CFA propose principalement des formations dans le supérieur, ce
-              sera bientôt disponible ? »
+              « Je suis déçue… Mon CFA propose principalement des formations dans le supérieur, ce sera bientôt
+              disponible ? »
             </p>
           </div>
         </QuotesContainer>

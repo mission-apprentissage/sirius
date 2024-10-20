@@ -1,6 +1,8 @@
-import { useState, useCallback, useEffect, useContext } from "react";
-import { _delete, _get, _put } from "../../utils/httpClient";
+import { useCallback, useContext, useEffect, useState } from "react";
+
 import { UserContext } from "../../context/UserContext";
+import { apiGet } from "../../utils/api.utils";
+import { _delete, _get, _put } from "../../utils/httpClient";
 
 export function useGet(url) {
   const [response, setResponse] = useState({});
@@ -13,7 +15,15 @@ export function useGet(url) {
     setError(null);
 
     try {
+      // console.log(
+      //   await apiGet(trimApiPath(url), {
+      //     headers: {
+      //       Authorization: `Bearer ${userContext.token}`,
+      //     },
+      //   })
+      // );
       const response = await _get(url, userContext.token);
+
       setResponse(response);
       setLoading(false);
     } catch (error) {
@@ -24,6 +34,7 @@ export function useGet(url) {
 
   useEffect(() => {
     async function run() {
+      console.log(await apiGet("/healthcheck", {}));
       return sendRequest();
     }
     run();

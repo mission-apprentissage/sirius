@@ -1,5 +1,6 @@
-import { FormControl, FormLabel, Input, Box } from "@chakra-ui/react";
+import { Box, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import parse from "html-react-parser";
+
 import DidYouKnow from "../DidYouKnow";
 
 const CustomText = (props) => {

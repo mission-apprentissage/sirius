@@ -1,29 +1,30 @@
-import { useContext } from "react";
+import { ChevronDownIcon, ChevronRightIcon, CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import {
+  Avatar,
   Box,
-  Flex,
-  Text,
-  IconButton,
   Button,
-  Stack,
   Collapse,
+  Flex,
   Icon,
+  IconButton,
   Link,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  useDisclosure,
   Menu,
   MenuButton,
-  Avatar,
-  MenuList,
   MenuItem,
+  MenuList,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Stack,
+  Text,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import MileySmall from "../assets/images/miley_small.png";
+
 import Logo from "../assets/images/logo.svg";
+import MileySmall from "../assets/images/miley_small.png";
 import { USER_ROLES, USER_STATUS } from "../constants";
 import { UserContext } from "../context/UserContext";
 import { _get } from "../utils/httpClient";
@@ -124,9 +125,7 @@ const NAV_ITEMS = [
 const filterNavItemsByRole = (items, currentUserRole) => {
   return items.reduce((acc, item) => {
     if (item.roles.includes(currentUserRole)) {
-      const filteredChildren = item.children
-        ? filterNavItemsByRole(item.children, currentUserRole)
-        : undefined;
+      const filteredChildren = item.children ? filterNavItemsByRole(item.children, currentUserRole) : undefined;
 
       acc.push({
         ...item,
@@ -161,14 +160,7 @@ const MenuWithSubnavigation = () => {
 
   return (
     <Box>
-      <Flex
-        bgColor="brand.blue.100"
-        color="gray.600"
-        minH="60px"
-        py={{ base: 2 }}
-        px={{ base: 4 }}
-        align="center"
-      >
+      <Flex bgColor="brand.blue.100" color="gray.600" minH="60px" py={{ base: 2 }} px={{ base: 4 }} align="center">
         <Flex ml={{ base: -2 }} display={{ base: "flex", md: "none" }}>
           <IconButton
             onClick={onToggle}
@@ -321,14 +313,7 @@ const MobileNavItem = ({ label, children, href }) => {
       </Flex>
 
       <Collapse in={isOpen} animateOpacity style={{ marginTop: "0!important" }}>
-        <Stack
-          mt={2}
-          pl={4}
-          borderLeft={1}
-          borderStyle="solid"
-          borderColor="gray.200"
-          align="start"
-        >
+        <Stack mt={2} pl={4} borderLeft={1} borderStyle="solid" borderColor="gray.200" align="start">
           {children &&
             children.map((child) => (
               <Link key={child.label} py={2} href={child.href}>

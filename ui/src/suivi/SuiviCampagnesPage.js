@@ -1,9 +1,11 @@
-import React, { useState, useContext } from "react";
-import { Box } from "@chakra-ui/react";
+/* eslint-disable no-undef */
 import { DownloadIcon } from "@chakra-ui/icons";
-import { _get } from "../utils/httpClient";
-import { UserContext } from "../context/UserContext";
+import { Box } from "@chakra-ui/react";
+import { useContext, useState } from "react";
+
 import Button from "../Components/Form/Button";
+import { UserContext } from "../context/UserContext";
+import { _get } from "../utils/httpClient";
 
 const SuiviCampagnesPage = () => {
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);

@@ -3,6 +3,7 @@ const { writeFileSync } = require("fs");
 
 const createComponents = require("./components");
 const httpServer = require("./httpServer");
+// eslint-disable-next-line n/no-missing-require
 const { migrateDownDB, migrateToLatest } = require("./migrations/migrate");
 const classifyVerbatims = require("./db/classifyVerbatims");
 const extractThemesVerbatims = require("./db/extractThemesVerbatims");
@@ -17,7 +18,7 @@ cli
     const components = await createComponents();
 
     const server = await httpServer(components);
-    server.listen(5000, () => components.logger.info(`Server ready and listening on port ${5000}`));
+    server.listen(5003, () => components.logger.info(`Server ready and listening on port ${5003}`));
   });
 
 cli.command("migrateDB").action(async () => {

@@ -1,4 +1,4 @@
-import { _post, _get, _postFile } from "../utils/httpClient";
+import { _get, _post, _postFile } from "../utils/httpClient";
 
 export const fetchTemoignagesDatavisualisation = async ({ campagneIds, token }) => {
   let url = `/api/temoignages/datavisualisation`;

@@ -1,29 +1,30 @@
-import React, { useState, useEffect, useContext } from "react";
-import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import Button from "@codegouvfr/react-dsfr/Button";
-import { ButtonContainer } from "../../styles/resultsCampagnes.style";
-import SortButtons from "../SortButtons/SortButtons";
-import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
-import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
-import DisplayByAllTable from "./Accordions/DisplayByAllTable";
-import { LoaderContainer, HeaderContainer } from "../../styles/shared.style";
-import useFetchCampagnesSorted from "../../../hooks/useFetchCampagnesSorted";
+import { useContext, useEffect, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+
 import {
   CAMPAGNE_TABLE_TYPES,
+  campagneDisplayModeRegionObserver,
+  campagnesDisplayMode,
   OBSERVER_SCOPES,
   OBSERVER_SCOPES_LABELS,
   USER_ROLES,
-  campagneDisplayModeRegionObserver,
-  campagnesDisplayMode,
 } from "../../../constants";
-import { isPlural } from "../../utils";
 import { UserContext } from "../../../context/UserContext";
-import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
 import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
+import useFetchCampagnesSorted from "../../../hooks/useFetchCampagnesSorted";
+import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
+import { ButtonContainer } from "../../styles/resultsCampagnes.style";
+import { HeaderContainer, LoaderContainer } from "../../styles/shared.style";
+import { isPlural } from "../../utils";
+import SortButtons from "../SortButtons/SortButtons";
+import DisplayByAllTable from "./Accordions/DisplayByAllTable";
 import DisplayByDepartementTable from "./Accordions/DisplayByDepartement";
+import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
+import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
 
 const AccordionComponentGetter = ({
   campagnesSorted,
@@ -92,6 +93,7 @@ const CampagnesSelector = ({
   selectedCampagneIds,
   setSelectedCampagneIds,
   paramsCampagneIds = [],
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAllCampagneIds = () => {},
   campagneTableType,
 }) => {
@@ -151,20 +153,13 @@ const CampagnesSelector = ({
     <>
       {userContext?.user.scope && (
         <p>
-          Vous avez accès aux campagnes pour{" "}
-          <b>{OBSERVER_SCOPES_LABELS[userContext.user?.scope.field]}</b>{" "}
-          {userContext.user?.scope.field !== OBSERVER_SCOPES.SIRETS && (
-            <b>{userContext.user?.scope.value}</b>
-          )}
+          Vous avez accès aux campagnes pour <b>{OBSERVER_SCOPES_LABELS[userContext.user?.scope.field]}</b>{" "}
+          {userContext.user?.scope.field !== OBSERVER_SCOPES.SIRETS && <b>{userContext.user?.scope.value}</b>}
         </p>
       )}
       {isLoading && (
         <LoaderContainer>
-          <BeatLoader
-            color="var(--background-action-high-blue-france)"
-            size={20}
-            aria-label="Loading Spinner"
-          />
+          <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
         </LoaderContainer>
       )}
       {isError ? (
@@ -246,9 +241,7 @@ const CampagnesSelector = ({
                   severity="error"
                 />
               )}
-              {search &&
-              isSuccessSearchedCampagnes &&
-              searchedCampagnes.pagination.totalItems === 0 ? (
+              {search && isSuccessSearchedCampagnes && searchedCampagnes.pagination.totalItems === 0 ? (
                 <Alert
                   title={`Aucun résultats pour votre recherche « ${search} »`}
                   description={

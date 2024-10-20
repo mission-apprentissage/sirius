@@ -1,5 +1,4 @@
-import React from "react";
-import { Text, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody } from "@chakra-ui/react";
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, Text } from "@chakra-ui/react";
 
 const BotDetectedModal = ({ isOpen }) => {
   return (

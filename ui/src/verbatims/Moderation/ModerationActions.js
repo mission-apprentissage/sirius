@@ -2,6 +2,7 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
 import Tooltip from "react-simple-tooltip";
+
 import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../../constants";
 import { ModerationActionsContainer } from "../moderationPage.style";
 
@@ -10,12 +11,7 @@ const verbatimsStatusOptions = Object.keys(VERBATIM_STATUS).map((status) => ({
   label: VERBATIM_STATUS_LABELS[status],
 }));
 
-const ModerationActions = ({
-  selectedVerbatims,
-  showOnlyDiscrepancies,
-  setShowOnlyDiscrepancies,
-  patchVerbatims,
-}) => {
+const ModerationActions = ({ selectedVerbatims, showOnlyDiscrepancies, setShowOnlyDiscrepancies, patchVerbatims }) => {
   const handleAcceptClassification = () => {
     if (!selectedVerbatims.length) return;
     const updatedVerbatims = selectedVerbatims
@@ -65,15 +61,11 @@ const ModerationActions = ({
           color="var(--text-default-grey)"
           placement="bottom"
           content={
-            <p>
-              Valider le premier choix de classification dans l'ordre affiché pour tous les
-              verbatims sélectionnés
-            </p>
+            <p>Valider le premier choix de classification dans l'ordre affiché pour tous les verbatims sélectionnés</p>
           }
         >
           <Button disabled={!selectedVerbatims?.length} onClick={handleAcceptClassification}>
-            Accepter la classification{" "}
-            {selectedVerbatims?.length ? `(${selectedVerbatims?.length})` : null}{" "}
+            Accepter la classification {selectedVerbatims?.length ? `(${selectedVerbatims?.length})` : null}{" "}
           </Button>
         </Tooltip>
         <Select

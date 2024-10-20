@@ -1,39 +1,40 @@
-import React from "react";
-import { Routes, Route, Outlet } from "react-router-dom";
+import "./assets/fonts/fonts.css";
+
 import { useIsDark } from "@codegouvfr/react-dsfr/useIsDark";
-import ProtectedRoute from "./ProtectedRoute";
+import { Outlet, Route, Routes } from "react-router-dom";
+
 import AdminProtectedRoute from "./AdminProtectedRoute";
-import ManageCampagnesPage from "./campagnes/ManageCampagnesPage";
-import ManageTemoignagesPage from "./temoignages/ManageTemoignagesPage";
-import QuestionnairesManaging from "./questionnaires/Managing";
-import QuestionnaireForm from "./questionnaires/QuestionnaireForm";
-import EditQuestionnaire from "./questionnaires/EditQuestionnaire";
-import PreviewCampagnePage from "./campagnes/PreviewCampagnePage";
-import CreateCampagnesPage from "./campagnes/CreateCampagnesPage";
 import AnswerCampagnePage from "./campagnes/AnswerCampagnePage";
-import LoginPage from "./users/LoginPage";
-import SignupPage from "./users/SignupPage";
-import PendingAccountPage from "./users/PendingAccountPage";
-import EmailConfirmationPage from "./users/EmailConfirmationPage";
-import MentionsInformationBackOfficePage from "./legal/MentionsInformationBackOfficePage";
-import MentionsInformationQuestionnairePage from "./legal/MentionsInformationQuestionnairePage";
-import CguPage from "./legal/CguPage";
-import UsersManaging from "./users/Managing";
-import ModerationPage from "./verbatims/ModerationPage";
+import CreateCampagnesPage from "./campagnes/CreateCampagnesPage";
+import ManageCampagnesPage from "./campagnes/ManageCampagnesPage";
+import PreviewCampagnePage from "./campagnes/PreviewCampagnePage";
+import ResultsCampagnesPage from "./campagnes/ResultsCampagnesPage";
+import DsfrIframeLayout from "./Components/DsfrIframeLayout";
+import DsfrLayout from "./Components/DsfrLayout";
 import Layout from "./Components/Layout";
 import QuestionnaireLayout from "./Components/QuestionnaireLayout";
-import ResultsCampagnesPage from "./campagnes/ResultsCampagnesPage";
-import SuiviEtablissementsPage from "./suivi/SuiviEtablissementsPage";
-import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
-import HomePage from "./home/HomePage";
-import StatisticsPage from "./statistics/StatisticsPage";
-import DsfrLayout from "./Components/DsfrLayout";
-import DiffusionGuidePage from "./guide/DiffusionGuidePage";
 import EtablissementOrAdminProtectedRoute from "./EtablissementOrAdminProtectedRoute";
-import DsfrIframeLayout from "./Components/DsfrIframeLayout";
-import IframeFormationPage from "./iframes/IframeFormationPage";
+import DiffusionGuidePage from "./guide/DiffusionGuidePage";
+import HomePage from "./home/HomePage";
 import IframeEtablissementPage from "./iframes/IframeEtablissementPage";
-import "./assets/fonts/fonts.css";
+import IframeFormationPage from "./iframes/IframeFormationPage";
+import CguPage from "./legal/CguPage";
+import MentionsInformationBackOfficePage from "./legal/MentionsInformationBackOfficePage";
+import MentionsInformationQuestionnairePage from "./legal/MentionsInformationQuestionnairePage";
+import ProtectedRoute from "./ProtectedRoute";
+import EditQuestionnaire from "./questionnaires/EditQuestionnaire";
+import QuestionnairesManaging from "./questionnaires/Managing";
+import QuestionnaireForm from "./questionnaires/QuestionnaireForm";
+import StatisticsPage from "./statistics/StatisticsPage";
+import SuiviCampagnesPage from "./suivi/SuiviCampagnesPage";
+import SuiviEtablissementsPage from "./suivi/SuiviEtablissementsPage";
+import ManageTemoignagesPage from "./temoignages/ManageTemoignagesPage";
+import EmailConfirmationPage from "./users/EmailConfirmationPage";
+import LoginPage from "./users/LoginPage";
+import UsersManaging from "./users/Managing";
+import PendingAccountPage from "./users/PendingAccountPage";
+import SignupPage from "./users/SignupPage";
+import ModerationPage from "./verbatims/ModerationPage";
 
 function App() {
   const { setIsDark } = useIsDark();
@@ -99,16 +100,8 @@ function App() {
         <Route exact path="/compte-desactive" element={<PendingAccountPage />} />
         <Route exact path="/cgu" element={<CguPage />} />
         <Route exact path="/guide-diffusion" element={<DiffusionGuidePage />} />
-        <Route
-          exact
-          path="/mentions-information-questionnaire"
-          element={<MentionsInformationQuestionnairePage />}
-        />
-        <Route
-          exact
-          path="/mentions-information-backoffice"
-          element={<MentionsInformationBackOfficePage />}
-        />
+        <Route exact path="/mentions-information-questionnaire" element={<MentionsInformationQuestionnairePage />} />
+        <Route exact path="/mentions-information-backoffice" element={<MentionsInformationBackOfficePage />} />
         <Route exact path="/confirmer-utilisateur" element={<EmailConfirmationPage />} />
       </Route>
       <Route

@@ -1,5 +1,6 @@
-import { Box, useCheckboxGroup, useCheckbox, Wrap, FormLabel, Text } from "@chakra-ui/react";
+import { Box, FormLabel, Text, useCheckbox, useCheckboxGroup, Wrap } from "@chakra-ui/react";
 import parse from "html-react-parser";
+
 import DidYouKnow from "../DidYouKnow";
 
 const CheckboxCard = (props) => {
@@ -31,9 +32,7 @@ const CheckboxCard = (props) => {
 };
 
 const CustomCheckboxes = (props) => {
-  const options = props.standalone
-    ? props.enum
-    : props.options.enumOptions.map((option) => option.label);
+  const options = props.standalone ? props.enum : props.options.enumOptions.map((option) => option.label);
   const { getCheckboxProps } = useCheckboxGroup({
     id: props.id,
     name: props.name,

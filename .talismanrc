@@ -1,6 +1,10 @@
 fileignoreconfig:
 - filename: README.md
   checksum: 00ac991f0b2746c5a5ffa14e2b3c5427b739c0d952aa3730efe1f234ac1fc3ca
+- filename: ui/src/config.public.ts
+  checksum: b13b0a1f3d9590d335062a88e76609c40ba790129e481f7e5c25fbdab6840617
+- filename: ui/src/utils/generateUri.ts
+  checksum: 505911d86f3b3f4a9337504a691132dba83dec4a950f9ff0e8bf76f5787ab325
 scopeconfig:
 - scope: node
 custom_patterns:

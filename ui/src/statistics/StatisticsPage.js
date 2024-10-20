@@ -1,15 +1,11 @@
-import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
-import useFetchEtablissementsPublicStatistics from "../hooks/useFetchEtablissementsPublicStatistics";
-import {
-  Container,
-  ExperimentationAndTestimonyContainer,
-  StatisticsContainer,
-} from "./statistics.style";
-import School from "../assets/images/school.svg";
-import DocumentAdd from "../assets/images/document_add.svg";
+
 import Avatar from "../assets/images/avatar.svg";
 import Community from "../assets/images/community.svg";
+import DocumentAdd from "../assets/images/document_add.svg";
+import School from "../assets/images/school.svg";
+import useFetchEtablissementsPublicStatistics from "../hooks/useFetchEtablissementsPublicStatistics";
+import { Container, ExperimentationAndTestimonyContainer, StatisticsContainer } from "./statistics.style";
 
 const StatisticsPage = () => {
   const [etablissementsSuiviPublic] = useFetchEtablissementsPublicStatistics();

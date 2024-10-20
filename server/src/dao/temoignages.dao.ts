@@ -1,8 +1,9 @@
 import { sql } from "kysely";
-import { kdb } from "../db/db";
-import { Temoignage } from "../types";
 import { executeWithOffsetPagination } from "kysely-paginate";
-import { GetAllWithFormationAndQuestionnaire } from "./types/temoignages";
+
+import { kdb } from "../db/db";
+import type { Temoignage } from "../types";
+import type { GetAllWithFormationAndQuestionnaire } from "./types/temoignages";
 
 export const create = async (
   temoignage: Partial<Temoignage> & { campagneId: string }

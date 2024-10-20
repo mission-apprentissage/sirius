@@ -1,5 +1,6 @@
-import React, { useState } from "react";
 import { Select } from "chakra-react-select";
+import { useState } from "react";
+
 import { USER_ROLES, USER_STATUS } from "../../../constants";
 
 const filterOptions = [
@@ -43,8 +44,7 @@ const UsersTableFilters = ({ setDisplayedUsers, users, setSearch }) => {
   const handleFilter = (selectedFilters) => {
     let filteredUsers = [...users];
 
-    const isFilterSelected = (filterValue) =>
-      selectedFilters.some((filter) => filter.value === filterValue);
+    const isFilterSelected = (filterValue) => selectedFilters.some((filter) => filter.value === filterValue);
 
     if (!isFilterSelected("emailConfirmedTrue")) {
       filteredUsers = filteredUsers.filter((user) => user.emailConfirmed !== true);

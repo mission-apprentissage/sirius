@@ -1,17 +1,18 @@
 import { sql } from "kysely";
+
 import { USER_STATUS } from "../constants";
 import { kdb } from "../db/db";
-import { User, UserCreation, UserPublic } from "../types";
+import type { User, UserCreation, UserPublic } from "../types";
 
-export const findOneById = (id: string): Promise<User | undefined> => {
+export const findOneById = async (id: string): Promise<User | undefined> => {
   return kdb.selectFrom("users").selectAll().where("id", "=", id).executeTakeFirst();
 };
 
-export const findOneByEmail = (email: string): Promise<User | undefined> => {
+export const findOneByEmail = async (email: string): Promise<User | undefined> => {
   return kdb.selectFrom("users").selectAll().where("email", "=", email).executeTakeFirst();
 };
 
-export const findAll = (): Promise<UserPublic[] | undefined> => {
+export const findAll = async (): Promise<UserPublic[] | undefined> => {
   return kdb
     .selectFrom("users")
     .select([
@@ -30,7 +31,7 @@ export const findAll = (): Promise<UserPublic[] | undefined> => {
     .execute();
 };
 
-export const findOneByEmailWithEtablissement = (email: string): Promise<(User & any) | undefined> => {
+export const findOneByEmailWithEtablissement = async (email: string): Promise<(User & any) | undefined> => {
   return kdb
     .selectFrom("users")
     .select([
@@ -74,7 +75,7 @@ export const findOneByEmailWithEtablissement = (email: string): Promise<(User & 
     .executeTakeFirst();
 };
 
-export const findOneByIdWithEtablissement = (id: string): Promise<(User & any) | undefined> => {
+export const findOneByIdWithEtablissement = async (id: string): Promise<(User & any) | undefined> => {
   return kdb
     .selectFrom("users")
     .select([
@@ -116,7 +117,7 @@ export const findOneByIdWithEtablissement = (id: string): Promise<(User & any) |
     .executeTakeFirst();
 };
 
-export const findAllWithEtablissement = (): Promise<(UserPublic & any)[] | undefined> => {
+export const findAllWithEtablissement = async (): Promise<(UserPublic & any)[] | undefined> => {
   return kdb
     .selectFrom("users")
     .select([

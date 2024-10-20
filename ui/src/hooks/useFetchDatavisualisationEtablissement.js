@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { fetchDatavisualisationEtablissement } from "../queries/temoignages";
 
 const useFetchDatavisualisationEtablissement = ({ uai }) => {

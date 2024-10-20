@@ -1,6 +1,7 @@
-import { InsertResult, UpdateResult } from "kysely";
+import type { InsertResult, UpdateResult } from "kysely";
+
 import { kdb } from "../db/db";
-import { Questionnaire } from "../types";
+import type { Questionnaire } from "../types";
 
 export const create = async (questionnaire: Questionnaire): Promise<InsertResult> => {
   return kdb.insertInto("questionnaires").values(questionnaire).executeTakeFirst();

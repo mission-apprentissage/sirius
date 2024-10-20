@@ -1,5 +1,6 @@
-import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
+
 import { UserContext } from "../context/UserContext";
 import { fetchAlreadyExistingFormations } from "../queries/formations";
 

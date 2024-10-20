@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from "react";
+import { Box, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+
 import useFetchEtablissementsSuivi from "../hooks/useFetchEtablissementsSuivi";
-import { Box, Text, Spinner, VStack, HStack } from "@chakra-ui/react";
-import SuiviEtablissementsTable from "./SuiviEtablissements/SuiviEtablissementsTable";
-import SuiviEtablissementsStatistics from "./SuiviEtablissements/SuiviEtablissementsStatistics";
-import SuiviEtablissementsSearch from "./SuiviEtablissements/SuiviEtablissementsSearch";
 import SuiviEtablissementsFilters from "./SuiviEtablissements/SuiviEtablissementsFilters";
+import SuiviEtablissementsSearch from "./SuiviEtablissements/SuiviEtablissementsSearch";
+import SuiviEtablissementsStatistics from "./SuiviEtablissements/SuiviEtablissementsStatistics";
+import SuiviEtablissementsTable from "./SuiviEtablissements/SuiviEtablissementsTable";
 
 const SuiviEtablissementsPage = () => {
   const [displayedEtablissements, setDisplayedEtablissements] = useState([]);
   const [search, setSearch] = useState([]);
 
-  const [etablissementsSuivi, etablissementsSuiviLoading, etablissementsSuiviError] =
-    useFetchEtablissementsSuivi();
+  const [etablissementsSuivi, etablissementsSuiviLoading, etablissementsSuiviError] = useFetchEtablissementsSuivi();
 
   useEffect(() => {
     setDisplayedEtablissements(etablissementsSuivi);
   }, [etablissementsSuivi]);
 
-  if (!displayedEtablissements || etablissementsSuiviLoading || etablissementsSuiviError)
-    return <Spinner />;
+  if (!displayedEtablissements || etablissementsSuiviLoading || etablissementsSuiviError) return <Spinner />;
 
   return (
     <VStack my="5" w="100%">

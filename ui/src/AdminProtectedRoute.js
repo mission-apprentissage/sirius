@@ -1,8 +1,9 @@
 import { Spinner } from "@chakra-ui/react";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { UserContext } from "./context/UserContext";
+
 import { USER_ROLES, USER_STATUS } from "./constants";
+import { UserContext } from "./context/UserContext";
 
 const AdminProtectedRoute = () => {
   const [userContext] = useContext(UserContext);

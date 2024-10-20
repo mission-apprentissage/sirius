@@ -1,9 +1,9 @@
-import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Navigate, useLocation } from "react-router-dom";
+
+import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
 import useConfirmUser from "../hooks/useConfirmUser";
 import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
-import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
 
 const EmailConfirmationPage = () => {
   const { search } = useLocation();
@@ -23,8 +23,8 @@ const EmailConfirmationPage = () => {
             <>
               <h2>Inscription confirmée !</h2>
               <p>
-                Votre adresse email a bien été confirmée. Notre équipe s’occupe de valider votre
-                compte. Vous recevrez un mail dès qu’il sera activé.
+                Votre adresse email a bien été confirmée. Notre équipe s’occupe de valider votre compte. Vous recevrez
+                un mail dès qu’il sera activé.
               </p>
             </>
           ) : (

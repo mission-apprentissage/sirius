@@ -1,5 +1,6 @@
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import parse from "html-react-parser";
+
 import { FullWidthContainer } from "../../styles/resultsCampagnes.style";
 
 const colors = ["#F95C5E", "#FCBFB7", "#C3FAD5", "#6A6AEC"];

@@ -1,6 +1,7 @@
 import { sql } from "kysely";
+
 import { kdb } from "../db/db";
-import { ObserverScope } from "../types";
+import type { ObserverScope } from "../types";
 
 export const getAllWithTemoignageCountAndTemplateName = async ({
   siret,

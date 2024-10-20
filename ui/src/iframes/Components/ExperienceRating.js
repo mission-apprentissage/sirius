@@ -1,13 +1,7 @@
-import {
-  ExperienceRatingContainer,
-  Rating,
-  MediumRating,
-  BadRating,
-  GoodRating,
-} from "../IframeFormation.style";
 import happyFace from "../../assets/icons/happy-face-fill-green.svg";
 import mediumFace from "../../assets/icons/normal-face-fill-blue.svg";
 import sadFace from "../../assets/icons/sad-face-fill-orange.svg";
+import { BadRating, ExperienceRatingContainer, GoodRating, MediumRating, Rating } from "../IframeFormation.style";
 
 const ExperienceRating = ({ rating }) => {
   if (!rating) return null;

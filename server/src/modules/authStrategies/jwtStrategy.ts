@@ -1,8 +1,9 @@
 import passport from "passport";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
+
 import config from "../../config";
-import { User } from "../../types";
 import { findOneByIdWithEtablissement } from "../../dao/users.dao";
+import type { User } from "../../types";
 
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

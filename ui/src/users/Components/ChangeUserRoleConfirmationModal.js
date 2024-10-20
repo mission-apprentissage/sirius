@@ -1,26 +1,21 @@
-import React, { useContext } from "react";
 import {
+  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
   ModalFooter,
-  Button,
+  ModalHeader,
+  ModalOverlay,
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { _put } from "../../utils/httpClient";
-import { UserContext } from "../../context/UserContext";
+import { useContext } from "react";
 
-const ChangeUserRoleConfirmationModal = ({
-  user,
-  onClose,
-  isOpen,
-  selectedRole,
-  setRefetchData,
-}) => {
+import { UserContext } from "../../context/UserContext";
+import { _put } from "../../utils/httpClient";
+
+const ChangeUserRoleConfirmationModal = ({ user, onClose, isOpen, selectedRole, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
   const toast = useToast();
 
@@ -67,12 +62,7 @@ const ChangeUserRoleConfirmationModal = ({
           </Text>
         </ModalBody>
         <ModalFooter alignItems="center" justifyContent="center" mt="15">
-          <Button
-            size="lg"
-            variant="solid"
-            colorScheme="brand.blue"
-            onClick={handleChangeRoleConfirmation}
-          >
+          <Button size="lg" variant="solid" colorScheme="brand.blue" onClick={handleChangeRoleConfirmation}>
             Confirmer
           </Button>
         </ModalFooter>

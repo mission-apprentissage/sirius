@@ -1,7 +1,9 @@
+// eslint-disable-next-line n/no-missing-require
 const { generateSalt, hashPassword } = require("../modules/authStrategies/auth.helpers");
 
 const jwt = require("jsonwebtoken");
 const config = require("../config");
+// eslint-disable-next-line n/no-missing-require
 const usersDao = require("../dao/users.dao");
 const { getToken, getRefreshToken } = require("../utils/authenticate.utils");
 const { ErrorMessage } = require("../errors");

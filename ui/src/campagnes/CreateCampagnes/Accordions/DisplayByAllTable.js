@@ -1,13 +1,13 @@
-import React from "react";
-import Checkbox from "@codegouvfr/react-dsfr/Checkbox";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import Button from "@codegouvfr/react-dsfr/Button";
+
 import { CAMPAGNE_TABLE_TYPES, campagnesDisplayMode } from "../../../constants";
-import { ButtonContainer } from "./accordions.style";
-import RemoveFormationModal from "../RemoveFormationModal";
+import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
 import { isPlural } from "../../utils";
 import CommonEndDateModal from "../CommonEndDateModal";
-import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
+import RemoveFormationModal from "../RemoveFormationModal";
+import { ButtonContainer } from "./accordions.style";
 
 const modal = createModal({
   id: "remove-formation-modal",
@@ -53,9 +53,7 @@ const DisplayByAllTable = ({
                   selectedFormationsActionCount === selectedFormationsAction.length,
                 onChange: (e) =>
                   setSelectedFormationsAction(
-                    e.target.checked
-                      ? [...selectedFormations.map((formation) => formation._id)]
-                      : []
+                    e.target.checked ? [...selectedFormations.map((formation) => formation._id)] : []
                   ),
               },
             },

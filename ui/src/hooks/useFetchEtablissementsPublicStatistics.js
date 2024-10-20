@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { _get } from "../utils/httpClient";
 
 const useFetchEtablissementsPublicStatistics = () => {

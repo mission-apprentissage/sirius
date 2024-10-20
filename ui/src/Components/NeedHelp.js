@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
-import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { createModal } from "@codegouvfr/react-dsfr/Modal";
+import styled from "@emotion/styled";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+
 import SupportModal from "./SupportModal";
 
 export const NeedHelpContainer = styled.section`
@@ -69,9 +70,7 @@ const NeedHelp = () => {
           <Alert
             closable
             severity={supportError ? "error" : "success"}
-            title={
-              supportError ? "Une erreur s'est produite." : "Le message a été envoyé avec succès."
-            }
+            title={supportError ? "Une erreur s'est produite." : "Le message a été envoyé avec succès."}
           />
         )}
         <h5>Besoin d'aide lors de la prise en main de le plateforme ?</h5>
@@ -100,11 +99,7 @@ const NeedHelp = () => {
           </div>
         </div>
       </NeedHelpContainer>
-      <SupportModal
-        modal={modal}
-        setIsSupportSubmitted={setIsSupportSubmitted}
-        setSupportError={setSupportError}
-      />
+      <SupportModal modal={modal} setIsSupportSubmitted={setIsSupportSubmitted} setSupportError={setSupportError} />
     </>
   );
 };

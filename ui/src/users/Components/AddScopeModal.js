@@ -1,24 +1,25 @@
-import React, { useContext, useEffect, useState } from "react";
 import {
+  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
   ModalFooter,
-  Button,
-  Text,
-  useToast,
+  ModalHeader,
+  ModalOverlay,
   Stack,
+  Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import { useFormik } from "formik";
-import { _put } from "../../utils/httpClient";
-import { UserContext } from "../../context/UserContext";
+import { useContext, useEffect, useState } from "react";
+
 import { OBSERVER_SCOPES, OBSERVER_SCOPES_LABELS } from "../../constants";
+import { UserContext } from "../../context/UserContext";
 import { REGIONS } from "../../regions";
+import { _put } from "../../utils/httpClient";
 
 const scopesOptions = Object.entries(OBSERVER_SCOPES_LABELS).map(([value, label]) => ({
   label,
@@ -138,9 +139,7 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
               {scopeField === OBSERVER_SCOPES.SIRETS && (
                 <Textarea
                   onChange={(e) =>
-                    setScopeValue(
-                      e.target.value ? e.target.value.split(",").map((siret) => siret.trim()) : null
-                    )
+                    setScopeValue(e.target.value ? e.target.value.split(",").map((siret) => siret.trim()) : null)
                   }
                   placeholder="Liste de SIRET, séparés par des virgules"
                   mt="10px"
@@ -150,14 +149,11 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
                   value={scopeValue}
                 />
               )}
-              {(scopeField === OBSERVER_SCOPES.REGION ||
-                scopeField === OBSERVER_SCOPES.NUM_DEPARTEMENT) && (
+              {(scopeField === OBSERVER_SCOPES.REGION || scopeField === OBSERVER_SCOPES.NUM_DEPARTEMENT) && (
                 <Select
                   size="md"
                   onChange={(e) => setScopeValue(e.value)}
-                  options={
-                    scopeField === OBSERVER_SCOPES.REGION ? regionsOptions : departementsOptions
-                  }
+                  options={scopeField === OBSERVER_SCOPES.REGION ? regionsOptions : departementsOptions}
                   placeholder="Valeur"
                   w="50%"
                   chakraStyles={{

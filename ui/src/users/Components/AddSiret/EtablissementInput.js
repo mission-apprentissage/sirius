@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import { FormControl, FormErrorMessage, Spinner, Text, Box } from "@chakra-ui/react";
+import { Box, FormControl, FormErrorMessage, Spinner, Text } from "@chakra-ui/react";
+import { useState } from "react";
+
 import InputText from "../../../Components/Form/InputText";
-import { _get } from "../../../utils/httpClient";
 import { isValidSIRET } from "../../../utils/etablissement";
+import { _get } from "../../../utils/httpClient";
 
 const CatalogueUnavailableMessage = () => (
   <>
     <Text>
-      La connexion au catalogue de formation a échouée. L'inscription n'est pas disponible pour le
-      moment. Merci de réessayer plus tard.
+      La connexion au catalogue de formation a échouée. L'inscription n'est pas disponible pour le moment. Merci de
+      réessayer plus tard.
     </Text>
     <Text>
       Pour toute question, nous restons disponibles :{" "}
@@ -78,9 +79,7 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret, userSiret }) => 
         formik.setFieldValue("etablissements", updatedEtablissements);
         setAddNewSiret(false);
       } else {
-        setSiretError(
-          "Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4."
-        );
+        setSiretError("Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4.");
       }
     } catch (error) {
       setError(CatalogueUnavailableMessage);
@@ -89,8 +88,7 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret, userSiret }) => 
     }
   };
 
-  const hasError =
-    (!!formik.errors.etablissements && !!formik.touched.etablissements) || siretError;
+  const hasError = (!!formik.errors.etablissements && !!formik.touched.etablissements) || siretError;
 
   return (
     <FormControl isInvalid={hasError}>

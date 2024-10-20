@@ -1,11 +1,4 @@
-import React from "react";
-import {
-  Input,
-  InputGroup,
-  FormControl,
-  FormErrorMessage,
-  InputRightElement,
-} from "@chakra-ui/react";
+import { FormControl, FormErrorMessage, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 
 const InputText = ({
   id,
@@ -19,11 +12,7 @@ const InputText = ({
   ...props
 }) => {
   return (
-    <FormControl
-      isInvalid={
-        (!!formik?.errors[name] || props.error) && (formik?.touched[name] || props.touched)
-      }
-    >
+    <FormControl isInvalid={(!!formik?.errors[name] || props.error) && (formik?.touched[name] || props.touched)}>
       <InputGroup w="100%">
         <Input
           id={id}
@@ -38,13 +27,9 @@ const InputText = ({
           borderColor="brand.blue.400"
           {...props}
         />
-        {rightElement && (
-          <InputRightElement {...rightElementProps}>{rightElement}</InputRightElement>
-        )}
+        {rightElement && <InputRightElement {...rightElementProps}>{rightElement}</InputRightElement>}
       </InputGroup>
-      {!noErrorMessage && (
-        <FormErrorMessage>{formik?.errors[name] || props.error}</FormErrorMessage>
-      )}
+      {!noErrorMessage && <FormErrorMessage>{formik?.errors[name] || props.error}</FormErrorMessage>}
     </FormControl>
   );
 };

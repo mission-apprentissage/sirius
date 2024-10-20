@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import styled from "@emotion/styled";
 
 export const AccordionLabelByDiplomeTypeContainer = styled.div`
   display: flex;
@@ -247,7 +247,7 @@ export const FormationCardByDiplomeType = styled.div`
 `;
 
 export const StyledBadge = styled((props) => {
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const { isAlreadyCreated, ...rest } = props;
   return <Badge {...rest} />;
 })`

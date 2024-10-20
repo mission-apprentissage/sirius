@@ -1,5 +1,6 @@
 const express = require("express");
 const helmet = require("helmet");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
@@ -37,6 +38,17 @@ module.exports = async (components) => {
   app.set("trust proxy", 1);
   app.use(helmet.contentSecurityPolicy());
   app.use(bodyParser.json({ limit: "50mb" }));
+
+  app.use(
+    cors({
+      ...(config.env === "dev"
+        ? {
+            origin: true,
+            credentials: true,
+          }
+        : {}),
+    })
+  );
   app.use(cookieParser(config.auth.cookieSecret));
   app.use(logMiddleware(logger));
   app.use(campagnes());
@@ -49,7 +61,9 @@ module.exports = async (components) => {
   app.use(passport.initialize());
 
   app.disable("x-powered-by");
+  // eslint-disable-next-line n/no-missing-require
   require("./modules/authStrategies/jwtStrategy");
+  // eslint-disable-next-line n/no-missing-require
   require("./modules/authStrategies/localStrategy");
 
   //Routes

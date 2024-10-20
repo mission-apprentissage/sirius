@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Card } from "@codegouvfr/react-dsfr/Card";
+import styled from "@emotion/styled";
 
 export const Container = styled.section`
   margin: ${fr.spacing("8w")} auto 0 auto;
@@ -100,7 +100,7 @@ export const CardContainer = styled.div`
   width: 100%;
 `;
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 export const StyledCard = styled(({ notClickable, isClicked, ...props }) => <Card {...props} />)`
   display: flex;
   align-items: center;
@@ -115,8 +115,7 @@ export const StyledCard = styled(({ notClickable, isClicked, ...props }) => <Car
 
   ${({ notClickable }) => notClickable && `cursor: default !important;`}
 
-  ${({ isClicked }) =>
-    isClicked && `border-bottom: 3px solid var(--border-active-blue-france)!important;`}
+  ${({ isClicked }) => isClicked && `border-bottom: 3px solid var(--border-active-blue-france)!important;`}
 
   ${fr.breakpoints.up("sm")} {
     width: 100%;

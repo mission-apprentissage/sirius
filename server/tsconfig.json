@@ -16,7 +16,7 @@
     // "moduleResolution": "node",
 
     "paths": {
-      "@/*": ["./src/*"],
+      // "@/*": ["./src/*"],
       "@tests/*": ["./tests/*"],
       "shared/*": ["../shared/src/*"]
     },

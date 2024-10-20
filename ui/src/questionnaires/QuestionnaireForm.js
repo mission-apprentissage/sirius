@@ -1,28 +1,30 @@
-import React, { useState, useContext } from "react";
-import * as Yup from "yup";
-import { useFormik } from "formik";
-import { HStack, useToast } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Box,
   Button,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  HStack,
   Input,
-  VStack,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Text,
   Switch,
+  Text,
+  useToast,
+  VStack,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
-import { _post, _put } from "../utils/httpClient";
+import { useFormik } from "formik";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+
 import { UserContext } from "../context/UserContext";
+import { _post, _put } from "../utils/httpClient";
 
 const submitHandler = async (values, editedQuestionnaireId, userContext) => {
   const isEdition = !!editedQuestionnaireId;
@@ -90,9 +92,7 @@ const QuestionnaireForm = ({ editedQuestionnaire = null, duplicatedQuestionnaire
   const [questionnaireUI, setQuestionnaireUI] = useState(null);
   const [userContext] = useContext(UserContext);
 
-  const currentQuestionnaire = duplicatedQuestionnaire
-    ? duplicatedQuestionnaire
-    : editedQuestionnaire;
+  const currentQuestionnaire = duplicatedQuestionnaire ? duplicatedQuestionnaire : editedQuestionnaire;
 
   const isDuplicating = !!duplicatedQuestionnaire;
 
@@ -105,8 +105,7 @@ const QuestionnaireForm = ({ editedQuestionnaire = null, duplicatedQuestionnaire
     },
     validationSchema: validationSchema(isQuestionnaireValid, isQuestionnaireUIValid),
     onSubmit: async (values) => {
-      const questionnaireId =
-        currentQuestionnaire && !isDuplicating ? currentQuestionnaire.id : null;
+      const questionnaireId = currentQuestionnaire && !isDuplicating ? currentQuestionnaire.id : null;
 
       const sentQuestionnaire = questionnaire ? questionnaire : values.questionnaire;
       const sentQuestionnaireUI = questionnaireUI ? questionnaireUI : values.questionnaireUI;
@@ -173,9 +172,7 @@ const QuestionnaireForm = ({ editedQuestionnaire = null, duplicatedQuestionnaire
               <AccordionItem>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
-                    <Text color={formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>
-                      Questionnaire JSON
-                    </Text>
+                    <Text color={formik.errors.questionnaire ? "#E53E3E" : "currentcolor"}>Questionnaire JSON</Text>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>

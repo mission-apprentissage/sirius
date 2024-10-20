@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { useEffect, useState } from "react";
+
+import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
 import SortButtons from "../Shared/SortButtons/SortButtons";
 import { StepContainer } from "../styles/createCampagnes.style";
-import { campagnesDisplayMode, campagnesSortingOptions } from "../../constants";
 import { orderFormationsByDiplomeType } from "../utils";
+import DisplayByAllTable from "./Accordions/DisplayByAllTable";
 import DisplayByDiplomeTypeTable from "./Accordions/DisplayByDiplomeTypeTable";
 import DisplayByEtablissementTable from "./Accordions/DisplayByEtablissementTable";
-import DisplayByAllTable from "./Accordions/DisplayByAllTable";
 
 const AccordionComponentGetter = ({ displayMode, ...props }) => {
   if (displayMode === campagnesDisplayMode[0].value) {
@@ -65,6 +66,7 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
   const formationCountByDiplomeType = {};
 
   for (const key in orderedFormationByDiplomeType) {
+    // eslint-disable-next-line no-prototype-builtins
     if (orderedFormationByDiplomeType.hasOwnProperty(key)) {
       const value = orderedFormationByDiplomeType[key];
       formationCountByDiplomeType[key] = value.length;

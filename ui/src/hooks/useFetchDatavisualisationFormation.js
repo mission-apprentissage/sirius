@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { fetchDatavisualisationFormation } from "../queries/temoignages";
 
 const useFetchDatavisualisationFormation = ({ intituleFormation }) => {

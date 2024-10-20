@@ -1,6 +1,8 @@
-import { DeleteResult, sql } from "kysely";
+import type { DeleteResult } from "kysely";
+import { sql } from "kysely";
+
 import { kdb } from "../db/db";
-import { Formation } from "../types";
+import type { Formation } from "../types";
 
 export const create = async (formation: Formation): Promise<{ id: string } | undefined> => {
   return kdb.insertInto("formations").values(formation).returning("id").executeTakeFirst();

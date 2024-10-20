@@ -1,37 +1,38 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
-import {
-  Container,
-  GoalContainer,
-  CFAContainer,
-  CardContainer,
-  StyledCard,
-  CFAButtonContainer,
-  ExperimentationAndTestimonyContainer,
-  StatisticsContainer,
-  QuotesContainer,
-  ExpressedTestimonies,
-  ScrollToTop,
-} from "./home.style";
-import { useGet } from "../common/hooks/httpHooks";
-import LogoWithoutText from "../assets/images/logo_without_text.svg";
-import IlluQuestionnaire from "../assets/images/illu_questionnaire.svg";
-import IlluPlateforme from "../assets/images/illu_plateforme.svg";
-import IlluDonnees from "../assets/images/illu_donnees.svg";
-import IlluExpo from "../assets/images/illu_expo.svg";
-import IlluCFA from "../assets/images/illu_cfa.svg";
-import School from "../assets/images/school.svg";
-import DocumentAdd from "../assets/images/document_add.svg";
+import { Link, useNavigate } from "react-router-dom";
+
 import Avatar from "../assets/images/avatar.svg";
 import Community from "../assets/images/community.svg";
-import useFetchEtablissementsPublicStatistics from "../hooks/useFetchEtablissementsPublicStatistics";
+import DocumentAdd from "../assets/images/document_add.svg";
+import IlluCFA from "../assets/images/illu_cfa.svg";
+import IlluDonnees from "../assets/images/illu_donnees.svg";
+import IlluExpo from "../assets/images/illu_expo.svg";
+import IlluPlateforme from "../assets/images/illu_plateforme.svg";
+import IlluQuestionnaire from "../assets/images/illu_questionnaire.svg";
+import LogoWithoutText from "../assets/images/logo_without_text.svg";
+import School from "../assets/images/school.svg";
+import { useGet } from "../common/hooks/httpHooks";
 import NeedHelp from "../Components/NeedHelp";
+import useFetchEtablissementsPublicStatistics from "../hooks/useFetchEtablissementsPublicStatistics";
+import {
+  CardContainer,
+  CFAButtonContainer,
+  CFAContainer,
+  Container,
+  ExperimentationAndTestimonyContainer,
+  ExpressedTestimonies,
+  GoalContainer,
+  QuotesContainer,
+  ScrollToTop,
+  StatisticsContainer,
+  StyledCard,
+} from "./home.style";
 
 const HomePage = () => {
   const navigate = useNavigate();
+
   const [questionnaires] = useGet(`/api/questionnaires/`);
   const [etablissementsSuiviPublic] = useFetchEtablissementsPublicStatistics();
 
@@ -43,9 +44,7 @@ const HomePage = () => {
       <Container>
         <h2>
           Avec Sirius recueillez les témoignages de vos apprenti·es{" "}
-          <span style={{ fontWeight: "400" }}>
-            infra-bac pour mieux informer sur la réalité de l'apprentissage
-          </span>
+          <span style={{ fontWeight: "400" }}>infra-bac pour mieux informer sur la réalité de l'apprentissage</span>
         </h2>
         <GoalContainer>
           <img src={LogoWithoutText} alt="" />
@@ -53,8 +52,8 @@ const HomePage = () => {
             <div>
               <h3>Recueillir</h3>
               <p>
-                <b>auprès des 4000 CFA</b> formateurs qui dispensent des formations en apprentissage
-                de <b>niveau infra-bac</b> (périmètre de notre première expérimentation)
+                <b>auprès des 4000 CFA</b> formateurs qui dispensent des formations en apprentissage de{" "}
+                <b>niveau infra-bac</b> (périmètre de notre première expérimentation)
               </p>
             </div>
             <div>
@@ -83,9 +82,7 @@ const HomePage = () => {
               footer={
                 <Link
                   className="fr-link fr-icon-arrow-right-line fr-link--icon-right"
-                  to={`/questionnaires/${
-                    validatedQuestionnaire?.length && validatedQuestionnaire[0].id
-                  }/apercu`}
+                  to={`/questionnaires/${validatedQuestionnaire?.length && validatedQuestionnaire[0].id}/apercu`}
                 >
                   Aperçu du questionnaire
                 </Link>
@@ -121,11 +118,7 @@ const HomePage = () => {
               iconId="fr-icon-questionnaire-fill"
               priority="secondary"
               onClick={() =>
-                navigate(
-                  `/questionnaires/${
-                    validatedQuestionnaire?.length && validatedQuestionnaire[0].id
-                  }/apercu`
-                )
+                navigate(`/questionnaires/${validatedQuestionnaire?.length && validatedQuestionnaire[0].id}/apercu`)
               }
             >
               Aperçu du questionnaire
@@ -188,20 +181,18 @@ const HomePage = () => {
           <QuotesContainer>
             <img src={IlluCFA} alt="" />
             <div>
-              <p>
-                « Je n’ai que des retours positifs de mes équipes, est-ce que l’on peut élargir
-                l'échantillon ? »
-              </p>
+              <p>« Je n’ai que des retours positifs de mes équipes, est-ce que l’on peut élargir l'échantillon ? »</p>
               <p>« C’est innovant et précieux ce que vous faites ! »</p>
               <p>« Super outil, facile à prendre en main. »</p>
               <p>
-                « Je suis déçue… Mon CFA propose principalement des formations dans le supérieur, ce
-                sera bientôt disponible ? »
+                « Je suis déçue… Mon CFA propose principalement des formations dans le supérieur, ce sera bientôt
+                disponible ? »
               </p>
             </div>
           </QuotesContainer>
         </ExperimentationAndTestimonyContainer>
         <NeedHelp />
+        {/* eslint-disable-next-line no-undef */}
         <ScrollToTop onClick={() => window.scrollTo(0, 0)}>
           <span className={fr.cx("fr-icon-arrow-up-fill")} aria-hidden={true} />
           <p>Haut de page</p>

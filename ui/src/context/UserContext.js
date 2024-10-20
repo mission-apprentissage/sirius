@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
-import useRefreshTokenUser from "../hooks/useRefreshTokenUser";
-import useFetchMe from "../hooks/useFetchMe";
+import { createContext, useEffect, useState } from "react";
+
 import { USER_ROLES } from "../constants";
+import useFetchMe from "../hooks/useFetchMe";
+import useRefreshTokenUser from "../hooks/useRefreshTokenUser";
 import { _get } from "../utils/httpClient";
 
-const UserContext = React.createContext();
+const UserContext = createContext();
 
 const initialState = {
   loading: true,
@@ -17,8 +18,7 @@ const UserProvider = ({ children }) => {
   const [state, setState] = useState(initialState);
   const { refreshTokenUser } = useRefreshTokenUser();
 
-  const shouldHaveEtablissements =
-    state.user?.role === USER_ROLES.ETABLISSEMENT && !state.user?.etablissements?.length;
+  const shouldHaveEtablissements = state.user?.role === USER_ROLES.ETABLISSEMENT && !state.user?.etablissements?.length;
 
   const shouldHaveScope = state.user?.role === USER_ROLES.OBSERVER && !state.user?.scope;
 

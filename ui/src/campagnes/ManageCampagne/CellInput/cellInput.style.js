@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import { Input } from "@codegouvfr/react-dsfr/Input";
+import styled from "@emotion/styled";
 
 export const NotEditingContainer = styled.div`
   display: flex;

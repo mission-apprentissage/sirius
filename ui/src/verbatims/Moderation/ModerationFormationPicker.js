@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import Alert from "@codegouvfr/react-dsfr/Alert";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
+import { useEffect, useState } from "react";
+
 import useFetchLocalFormations from "../../hooks/useFetchLocalFormations";
 
 const ModerationFormationPicker = ({ pickedEtablissementSiret, setPickedFormationId }) => {

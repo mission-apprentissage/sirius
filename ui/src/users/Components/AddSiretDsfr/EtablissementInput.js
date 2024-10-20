@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Input } from "@codegouvfr/react-dsfr/Input";
-import { _get } from "../../../utils/httpClient";
+import styled from "@emotion/styled";
+import { useState } from "react";
+
 import { isValidSIRET } from "../../../utils/etablissement";
+import { _get } from "../../../utils/httpClient";
 
 const EtablissementInputContainer = styled.div`
   display: flex;
@@ -113,9 +114,7 @@ const EtablissementInput = ({ formik, setError, userSiret }) => {
         formik.setFieldValue("etablissements", updatedEtablissements);
         setSiretValue("");
       } else {
-        setSiretError(
-          "Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4."
-        );
+        setSiretError("Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4.");
       }
     } catch (error) {
       setError(
@@ -126,16 +125,15 @@ const EtablissementInput = ({ formik, setError, userSiret }) => {
     }
   };
 
-  const hasError =
-    (!!formik.errors.etablissements && !!formik.touched.etablissements) || siretError;
+  const hasError = (!!formik.errors.etablissements && !!formik.touched.etablissements) || siretError;
 
   return (
     <EtablissementInputContainer>
       <label className="fr-label" htmlFor="siret">
         Numéro de SIRET de votre établissement
         <span className="fr-hint-text">
-          Si votre position vous le permet, ajoutez plus d’un SIRET pour suivre les campagnes de
-          plusieurs établissements
+          Si votre position vous le permet, ajoutez plus d’un SIRET pour suivre les campagnes de plusieurs
+          établissements
         </span>
       </label>
       <div>

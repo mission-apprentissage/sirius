@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
 import {
-  Slider,
-  SliderTrack,
-  SliderThumb,
   Box,
-  useBreakpoint,
   FormLabel,
+  Slider,
   SliderFilledTrack,
   SliderMark,
+  SliderThumb,
+  SliderTrack,
   Text,
+  useBreakpoint,
 } from "@chakra-ui/react";
 import parse from "html-react-parser";
+import { useEffect, useState } from "react";
+
 import DidYouKnow from "../DidYouKnow";
 
 const emojiGetter = (value) => {
@@ -48,8 +49,7 @@ const CustomMultiRange = (props) => {
           {parse(props.schema.title)}
         </FormLabel>
         <Text fontSize="xs" color="brand.blue.700">
-          (Pour chacune de ces propositions déplace le curseur sur l’émoji qui se rapproche le plus
-          de ton ressenti)
+          (Pour chacune de ces propositions déplace le curseur sur l’émoji qui se rapproche le plus de ton ressenti)
         </Text>
         <Box pt={2} pb={isMobile ? 6 : 2} w={isMobile ? "100%" : "90%"} m="auto">
           {props.schema.questions.map((question, index) => (
@@ -66,12 +66,7 @@ const CustomMultiRange = (props) => {
               w="calc(100% + 48px)"
               ml="-24px"
             >
-              <Box
-                w={isMobile ? "100%" : "50%"}
-                color="brand.blue.700"
-                fontSize="sm"
-                textAlign="center"
-              >
+              <Box w={isMobile ? "100%" : "50%"} color="brand.blue.700" fontSize="sm" textAlign="center">
                 {question}
               </Box>
               <Box w={isMobile ? "100%" : "50%"}>
@@ -111,9 +106,7 @@ const CustomMultiRange = (props) => {
                   <SliderTrack colorScheme="brand.blue">
                     <SliderFilledTrack />
                   </SliderTrack>
-                  <SliderThumb fontSize={26}>
-                    {emojiGetter(currentValue[index]?.value || 0)}
-                  </SliderThumb>
+                  <SliderThumb fontSize={26}>{emojiGetter(currentValue[index]?.value || 0)}</SliderThumb>
                 </Slider>
               </Box>
             </Box>

@@ -1,25 +1,13 @@
-import React from "react";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import {
-  orderFormationsByDiplomeType,
-  getUniqueDiplomeTypesFromFormation,
-  isPlural,
-} from "../../utils";
-import {
-  CAMPAGNE_TABLE_TYPES,
-  DIPLOME_TYPE_MATCHER,
-  campagnesDisplayMode,
-} from "../../../constants";
-import {
-  StyledAccordion,
-  AccordionLabelByDiplomeTypeContainer,
-  ButtonContainer,
-} from "./accordions.style";
-import RemoveFormationModal from "../RemoveFormationModal";
-import CommonEndDateModal from "../CommonEndDateModal";
+
+import { CAMPAGNE_TABLE_TYPES, campagnesDisplayMode, DIPLOME_TYPE_MATCHER } from "../../../constants";
 import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
+import { getUniqueDiplomeTypesFromFormation, isPlural, orderFormationsByDiplomeType } from "../../utils";
+import CommonEndDateModal from "../CommonEndDateModal";
+import RemoveFormationModal from "../RemoveFormationModal";
+import { AccordionLabelByDiplomeTypeContainer, ButtonContainer, StyledAccordion } from "./accordions.style";
 
 const modal = createModal({
   id: "remove-formation-modal",
@@ -88,9 +76,7 @@ const DisplayByDiplomeTypeTable = ({
                       formationSelectedCountByDiplomeType === selectedFormationsAction.length,
                     onChange: (e) =>
                       setSelectedFormationsAction(
-                        e.target.checked
-                          ? [...formationsByDiplomeType.map((formation) => formation._id)]
-                          : []
+                        e.target.checked ? [...formationsByDiplomeType.map((formation) => formation._id)] : []
                       ),
                   },
                 },

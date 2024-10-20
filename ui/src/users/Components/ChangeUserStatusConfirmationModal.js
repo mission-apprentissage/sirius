@@ -1,37 +1,28 @@
-import React, { useContext } from "react";
 import {
+  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
   ModalFooter,
-  Button,
+  ModalHeader,
+  ModalOverlay,
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { _put } from "../../utils/httpClient";
-import { UserContext } from "../../context/UserContext";
+import { useContext } from "react";
 
-const ChangeUserStatusConfirmationModal = ({
-  user,
-  onClose,
-  isOpen,
-  selectedStatus,
-  setRefetchData,
-}) => {
+import { UserContext } from "../../context/UserContext";
+import { _put } from "../../utils/httpClient";
+
+const ChangeUserStatusConfirmationModal = ({ user, onClose, isOpen, selectedStatus, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
   const toast = useToast();
 
   if (!user) return null;
 
   const handleChangeStatusConfirmation = async () => {
-    const userResult = await _put(
-      `/api/users/${user.id}`,
-      { status: selectedStatus },
-      userContext.token
-    );
+    const userResult = await _put(`/api/users/${user.id}`, { status: selectedStatus }, userContext.token);
     if (userResult === true) {
       toast({
         title: "Status modifié",
@@ -72,12 +63,7 @@ const ChangeUserStatusConfirmationModal = ({
           </Text>
         </ModalBody>
         <ModalFooter alignItems="center" justifyContent="center" mt="15">
-          <Button
-            size="lg"
-            variant="solid"
-            colorScheme="brand.blue"
-            onClick={handleChangeStatusConfirmation}
-          >
+          <Button size="lg" variant="solid" colorScheme="brand.blue" onClick={handleChangeStatusConfirmation}>
             Confirmer
           </Button>
         </ModalFooter>

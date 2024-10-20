@@ -1,5 +1,5 @@
-import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
+
 import UnderConstruction from "../../assets/images/under_construction.svg";
 
 const SuccessCreationModal = ({ modal }) => {

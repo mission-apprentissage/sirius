@@ -1,6 +1,7 @@
 import { sql } from "kysely";
+
 import { kdb } from "../db/db";
-import { Etablissement } from "../types";
+import type { Etablissement } from "../types";
 
 export const create = async (etablissement: Etablissement, relatedUserId: string): Promise<string | undefined> => {
   const transaction = await kdb.transaction().execute(async (trx) => {

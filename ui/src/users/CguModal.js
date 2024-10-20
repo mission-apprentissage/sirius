@@ -1,28 +1,27 @@
-import React, { useState } from "react";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  Text,
-  Stack,
-  Link,
-  Checkbox,
-  Box,
-} from "@chakra-ui/react";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Link,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { useFormik } from "formik";
+import { useState } from "react";
 import * as Yup from "yup";
-import { _put } from "../utils/httpClient";
+
 import FormError from "../Components/Form/FormError";
+import { _put } from "../utils/httpClient";
 
 const validationSchema = Yup.object({
-  acceptedCgu: Yup.boolean()
-    .required("Vous devez accepter les CGU")
-    .oneOf([true], "Vous devez accepter les CGU"),
+  acceptedCgu: Yup.boolean().required("Vous devez accepter les CGU").oneOf([true], "Vous devez accepter les CGU"),
 });
 
 const CguModal = ({ userContext, setUserContext, isOpen = true, setHasAcceptedCgu }) => {
@@ -38,11 +37,7 @@ const CguModal = ({ userContext, setUserContext, isOpen = true, setHasAcceptedCg
       try {
         setIsSubmitting(true);
         if (userContext?.token) {
-          const result = await _put(
-            `/api/users/${userContext.user.id}`,
-            { acceptedCgu: true },
-            userContext.token
-          );
+          const result = await _put(`/api/users/${userContext.user.id}`, { acceptedCgu: true }, userContext.token);
           if (result === true) {
             setUserContext((oldValues) => {
               return { ...oldValues, user: { ...oldValues.user, acceptedCgu: true } };
@@ -81,14 +76,12 @@ const CguModal = ({ userContext, setUserContext, isOpen = true, setHasAcceptedCg
             />
             <Stack textAlign="center">
               <Text color="brand.black.500">
-                Les conditions générales d’utilisation (dites « CGU ») fixent le cadre juridique de
-                “Sirius” et définissent les conditions d’accès et d’utilisation du service par ses
-                utilisateurs.
+                Les conditions générales d’utilisation (dites « CGU ») fixent le cadre juridique de “Sirius” et
+                définissent les conditions d’accès et d’utilisation du service par ses utilisateurs.
               </Text>
               <Text color="brand.blue.700" textDecoration="underline" mt="25px">
                 <Link href="/cgu" target="_blank">
-                  <ArrowForwardIcon /> Pour en savoir plus, visitez la page CGU de Sirius en suivant
-                  ce lien
+                  <ArrowForwardIcon /> Pour en savoir plus, visitez la page CGU de Sirius en suivant ce lien
                 </Link>
               </Text>
               <Box>

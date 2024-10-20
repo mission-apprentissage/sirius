@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 import { PasswordInput } from "@codegouvfr/react-dsfr/blocks/PasswordInput";
-import * as Yup from "yup";
-import { useFormik } from "formik";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
+import styled from "@emotion/styled";
+import { useFormik } from "formik";
+import { useState } from "react";
+import * as Yup from "yup";
 
 import { _post } from "../../utils/httpClient";
 import {
-  passwordComplexityRegex,
-  eightCharactersRegex,
-  oneUppercase,
-  oneLowercase,
-  oneDigit,
-  oneSpecialCharacter,
   allFieldMessage,
+  eightCharactersRegex,
   notCorrespondingPasswordMessage,
+  oneDigit,
+  oneLowercase,
+  oneSpecialCharacter,
+  oneUppercase,
+  passwordComplexityRegex,
 } from "../../utils/validators";
 
 const StyledPasswordInput = styled(PasswordInput)`

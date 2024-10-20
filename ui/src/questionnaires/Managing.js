@@ -1,28 +1,28 @@
-import React, { useState, useEffect, useContext } from "react";
+import { CopyIcon, DeleteIcon, EditIcon, ViewIcon } from "@chakra-ui/icons";
 import {
+  Box,
   IconButton,
   Spinner,
+  Switch,
   Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tooltip,
+  Tr,
   useDisclosure,
   useToast,
-  Tooltip,
-  Box,
-  Switch,
 } from "@chakra-ui/react";
-import { DeleteIcon, ViewIcon, EditIcon, CopyIcon } from "@chakra-ui/icons";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { _delete, _put } from "../utils/httpClient";
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
-import DuplicateQuestionnaireModal from "./DuplicateQuestionnaireModal";
+import { _delete, _put } from "../utils/httpClient";
 import DeleteQuestionnaireConfirmationModal from "./DeleteQuestionnaireConfirmationModal";
+import DuplicateQuestionnaireModal from "./DuplicateQuestionnaireModal";
 
 const QuestionnaireTable = ({
   questionnaires,
@@ -115,13 +115,8 @@ const QuestionnaireTable = ({
                     variant="outline"
                     colorScheme="purple"
                     icon={<ViewIcon />}
-                    onClick={() =>
-                      window.open(
-                        `/questionnaires/${questionnaire.id}/apercu`,
-                        "_blank",
-                        "noreferrer"
-                      )
-                    }
+                    // eslint-disable-next-line no-undef
+                    onClick={() => window.open(`/questionnaires/${questionnaire.id}/apercu`, "_blank", "noreferrer")}
                     mx={2}
                   />
                   <IconButton
@@ -174,16 +169,8 @@ const Managing = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const {
-    isOpen: isOpenDuplication,
-    onOpen: onOpenDuplication,
-    onClose: onCloseDuplication,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenDeletion,
-    onOpen: onOpenDeletion,
-    onClose: onCloseDeletion,
-  } = useDisclosure();
+  const { isOpen: isOpenDuplication, onOpen: onOpenDuplication, onClose: onCloseDuplication } = useDisclosure();
+  const { isOpen: isOpenDeletion, onOpen: onOpenDeletion, onClose: onCloseDeletion } = useDisclosure();
 
   const [questionnaires, loading, error] = useGet(`/api/questionnaires/`);
 
@@ -195,10 +182,7 @@ const Managing = () => {
 
   useEffect(() => {
     const deleteQuestionnaire = async () => {
-      const result = await _delete(
-        `/api/questionnaires/${deletedQuestionnaireId}`,
-        userContext.token
-      );
+      const result = await _delete(`/api/questionnaires/${deletedQuestionnaireId}`, userContext.token);
 
       if (result?.modifiedCount === 1) {
         toast({

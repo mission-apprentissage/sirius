@@ -33,7 +33,8 @@
     "**/*/build": true,
     "**/.webpack": true,
     "**/.next": true,
-    "**/node_modules": true
+    "**/node_modules": true,
+    "**/public/dsfr": true
   },
   "javascript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.importModuleSpecifier": "relative",

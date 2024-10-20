@@ -1,14 +1,16 @@
-import React, { useContext, useState } from "react";
+/* eslint-disable no-undef */
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { createModal } from "@codegouvfr/react-dsfr/Modal";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Tooltip from "react-simple-tooltip";
 import BeatLoader from "react-spinners/BeatLoader";
-import { Button } from "@codegouvfr/react-dsfr/Button";
-import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import DeleteCampagneConfirmationModal from "../DeleteCampagneConfirmationModal";
-import { _get } from "../../../utils/httpClient";
-import { ActionButtonsContainer, ToolTipContainer } from "./actionButtons.style";
-import { UserContext } from "../../../context/UserContext";
+
 import { USER_ROLES } from "../../../constants";
+import { UserContext } from "../../../context/UserContext";
+import { _get } from "../../../utils/httpClient";
+import DeleteCampagneConfirmationModal from "../DeleteCampagneConfirmationModal";
+import { ActionButtonsContainer, ToolTipContainer } from "./actionButtons.style";
 
 const modal = createModal({
   id: "delete-campagne-modal",
@@ -22,9 +24,7 @@ const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {
 
   const handleDownload = async () => {
     setIsLoadingDownload(true);
-    const persistedEtablissement = userContext.user?.etablissements?.length
-      ? userContext.user?.etablissements[0]
-      : "";
+    const persistedEtablissement = userContext.user?.etablissements?.length ? userContext.user?.etablissements[0] : "";
     const response = await _get(
       `/api/campagnes/export/pdf/multi?ids=${selectedCampagneIds}&siret=${
         userContext.user?.role === USER_ROLES.ADMIN ? "" : persistedEtablissement?.siret
@@ -53,9 +53,8 @@ const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {
           placement="right"
           content={
             <ToolTipContainer>
-              Générez un PDF à partir de votre sélection pour partager le questionnaire aux
-              apprenti·es associé·es. Plus d’infos via le <b>Guide de diffusion</b> en haut de cette
-              page
+              Générez un PDF à partir de votre sélection pour partager le questionnaire aux apprenti·es associé·es. Plus
+              d’infos via le <b>Guide de diffusion</b> en haut de cette page
             </ToolTipContainer>
           }
         >
@@ -67,11 +66,7 @@ const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {
             {!isLoadingDownload ? (
               "Partager"
             ) : (
-              <BeatLoader
-                color="var(--background-action-high-blue-france)"
-                size={10}
-                aria-label="Loading Spinner"
-              />
+              <BeatLoader color="var(--background-action-high-blue-france)" size={10} aria-label="Loading Spinner" />
             )}
           </Button>
         </Tooltip>
@@ -89,9 +84,7 @@ const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {
           <Button
             priority="secondary"
             iconId="fr-icon-quote-fill"
-            onClick={() =>
-              navigate(`/campagnes/resultats?campagneIds=${selectedCampagneIds.join(",")}`)
-            }
+            onClick={() => navigate(`/campagnes/resultats?campagneIds=${selectedCampagneIds.join(",")}`)}
             disabled={!selectedCampagneIds.length}
           >
             Voir les résultats

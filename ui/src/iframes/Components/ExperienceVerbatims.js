@@ -1,13 +1,14 @@
-import React, { useState } from "react";
-import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { fr } from "@codegouvfr/react-dsfr";
+import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
+import { useState } from "react";
+
+import ideaWoman from "../../assets/images/idea_woman_bw.svg";
 import {
+  CircledNumber,
   ExperienceVerbatimsContainer,
   OtherVerbatim,
-  CircledNumber,
   VerbatimContainer,
 } from "../IframeFormation.style";
-import ideaWoman from "../../assets/images/idea_woman_bw.svg";
 
 const Label = ({ label, index }) => (
   <>
@@ -32,6 +33,7 @@ const ExperienceVerbatims = ({ orderedVerbatims }) => {
     <ExperienceVerbatimsContainer>
       <div className={fr.cx("fr-accordions-group")}>
         {orderedVerbatims.map((theme, index) => {
+          // eslint-disable-next-line react-hooks/rules-of-hooks
           const [randomIndex, setRandomIndex] = useState(0);
 
           const handleOtherVerbatimClick = () => {
@@ -52,8 +54,7 @@ const ExperienceVerbatims = ({ orderedVerbatims }) => {
               </VerbatimContainer>
               {theme.verbatims.length > 1 && (
                 <OtherVerbatim onClick={handleOtherVerbatimClick}>
-                  Autre témoignage{" "}
-                  <span className={fr.cx("fr-icon--sm fr-icon-refresh-line")} aria-hidden={true} />
+                  Autre témoignage <span className={fr.cx("fr-icon--sm fr-icon-refresh-line")} aria-hidden={true} />
                 </OtherVerbatim>
               )}
             </Accordion>

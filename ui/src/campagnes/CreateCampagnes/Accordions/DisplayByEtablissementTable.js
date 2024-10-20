@@ -1,24 +1,16 @@
-import React from "react";
-import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import {
-  getUniqueEtablissementFromFormation,
-  orderFormationByEtablissement,
-  isPlural,
-} from "../../utils";
-import {
-  StyledAccordion,
-  AccordionLabelByEtablissementContainer,
-  ButtonContainer,
-} from "./accordions.style";
-import RemoveFormationModal from "../RemoveFormationModal";
+import Tooltip from "react-simple-tooltip";
+
 import { CAMPAGNE_TABLE_TYPES, campagnesDisplayMode } from "../../../constants";
-import { ToolTipContainer } from "../../styles/shared.style";
-import CommonEndDateModal from "../CommonEndDateModal";
 import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
+import { ToolTipContainer } from "../../styles/shared.style";
+import { getUniqueEtablissementFromFormation, isPlural, orderFormationByEtablissement } from "../../utils";
+import CommonEndDateModal from "../CommonEndDateModal";
+import RemoveFormationModal from "../RemoveFormationModal";
+import { AccordionLabelByEtablissementContainer, ButtonContainer, StyledAccordion } from "./accordions.style";
 
 const modal = createModal({
   id: "remove-formation-modal",
@@ -88,8 +80,7 @@ const DisplayByEtablissementTable = ({
                     placement="right"
                     content={
                       <ToolTipContainer>
-                        Cet établissement est formateur et dispense des formations pour un
-                        établissement gestionnaire
+                        Cet établissement est formateur et dispense des formations pour un établissement gestionnaire
                       </ToolTipContainer>
                     }
                   >
@@ -126,9 +117,7 @@ const DisplayByEtablissementTable = ({
                       formationSelectedCountByEtablissement === selectedFormationsAction.length,
                     onChange: (e) =>
                       setSelectedFormationsAction(
-                        e.target.checked
-                          ? [...formationsByEtablissement.map((formation) => formation._id)]
-                          : []
+                        e.target.checked ? [...formationsByEtablissement.map((formation) => formation._id)] : []
                       ),
                   },
                 },

@@ -1,6 +1,6 @@
-import React from "react";
-import { Box, Stack, Text, Link } from "@chakra-ui/react";
-import { ExternalLinkIcon, DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { Box, Link, Stack, Text } from "@chakra-ui/react";
+
 import { remoteEtablissementLabelGetter } from "../../../utils/etablissement";
 
 const EtablissementInputList = ({ formik, etablissement, index }) => {
@@ -39,11 +39,7 @@ const EtablissementInputList = ({ formik, etablissement, index }) => {
           alignItems="center"
           justifyContent="center"
         >
-          <DeleteIcon
-            cursor="pointer"
-            color="brand.red.500"
-            onClick={() => handleDeleteEtablissement(index)}
-          />
+          <DeleteIcon cursor="pointer" color="brand.red.500" onClick={() => handleDeleteEtablissement(index)} />
         </Box>
         <Text mt="25px" mb="5px" fontWeight="semibold" textAlign="left">
           {remoteEtablissementLabelGetter(etablissement)}

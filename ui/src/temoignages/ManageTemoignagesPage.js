@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
-import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import Tabs from "@codegouvfr/react-dsfr/Tabs";
-import Alert from "@codegouvfr/react-dsfr/Alert";
-import Range from "@codegouvfr/react-dsfr/Range";
+import { Range } from "@codegouvfr/react-dsfr/Range";
+import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
-import useFetchUncompliantTemoignages from "../hooks/useFetchUncompliantTemoignages";
-import { Container, ManageTemoignagesContainer, FiltersContainer } from "./manageTemoignages.style";
+import { useEffect, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+
 import { LoaderContainer } from "../campagnes/styles/shared.style";
-import ManageTemoignagesTable from "./Components/ManageTemoignagesTable";
+import useFetchUncompliantTemoignages from "../hooks/useFetchUncompliantTemoignages";
 import DeleteTemoignagesConfirmationModal from "./Components/DeleteTemoignagesConfirmationModal";
+import ManageTemoignagesTable from "./Components/ManageTemoignagesTable";
+import { Container, FiltersContainer, ManageTemoignagesContainer } from "./manageTemoignages.style";
 
 const deleteTemoignagesConfirmationModal = createModal({
   id: "delete-temoiganges-modal",
@@ -31,11 +32,7 @@ const TabContent = ({
     <>
       {isLoading && (
         <LoaderContainer>
-          <BeatLoader
-            color="var(--background-action-high-blue-france)"
-            size={20}
-            aria-label="Loading Spinner"
-          />
+          <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
         </LoaderContainer>
       )}
       {isError && (
