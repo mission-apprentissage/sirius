@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-module.exports = (logger) => {
+export default (logger) => {
   let instance = axios.create();
   instance.interceptors.request.use((request) => {
     let { method, url, params, data } = request;

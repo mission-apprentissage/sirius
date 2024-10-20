@@ -1,5 +1,6 @@
 import { CamelCasePlugin, DeduplicateJoinsPlugin, Kysely, PostgresDialect } from "kysely";
-import { Pool, types } from "pg";
+import pg from "pg";
+const { Pool, types } = pg;
 
 import config from "../config";
 import type { DB } from "./schema";

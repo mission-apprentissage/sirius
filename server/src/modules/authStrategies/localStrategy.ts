@@ -1,9 +1,10 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { verifyPassword } from "./auth.helpers";
-import { User } from "../../types";
-import { UnauthorizedError } from "../../errors";
+
 import { findOneByEmailWithEtablissement } from "../../dao/users.dao";
+import { UnauthorizedError } from "../../errors";
+import type { User } from "../../types";
+import { verifyPassword } from "./auth.helpers";
 
 passport.use(
   new LocalStrategy(

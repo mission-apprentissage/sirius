@@ -1,7 +1,8 @@
 import { sql } from "kysely";
-import { kdb } from "../db/db";
-import { Verbatim } from "../types";
 import { executeWithOffsetPagination } from "kysely-paginate";
+
+import { kdb } from "../db/db";
+import type { Verbatim } from "../types";
 
 export const getAll = async (query: {
   temoignageIds: string[];
@@ -70,12 +71,7 @@ export const count = async (
   }));
 };
 
-export const getAllWithFormation = async (
-  query: any = {},
-  onlyDiscrepancies: boolean,
-  page: number = 1,
-  pageSize: number = 100
-) => {
+export const getAllWithFormation = async (query: any = {}, onlyDiscrepancies: boolean, page = 1, pageSize = 100) => {
   let baseQuery = kdb
     .selectFrom("verbatims")
     .select([
