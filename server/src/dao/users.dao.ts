@@ -158,7 +158,7 @@ export const findAllWithEtablissement = async (): Promise<(UserPublic & any)[] |
     .execute();
 };
 
-export const update = async (id: string, user: User): Promise<boolean> => {
+export const update = async (id: string, user: Partial<User>): Promise<boolean> => {
   const result = await kdb.updateTable("users").set(user).where("id", "=", id).executeTakeFirst();
 
   return result.numUpdatedRows === BigInt(1);

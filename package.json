@@ -34,7 +34,12 @@
     "lint:fix": "yarn lint --fix",
     "prettier:fix": "prettier --write -u .",
     "prettier:check": "prettier --check -u .",
-    "postinstall": "husky"
+    "postinstall": "husky",
+    "test": "vitest",
+    "test:ci": "yarn test --run",
+    "test:ci:coverage": "yarn test:ci --coverage.include='ui' --coverage.include='server/src' --coverage.provider='v8' --coverage.enabled --coverage.all --coverage.exclude='**/tests' --coverage.exclude='**/.next'",
+    "test:watch": "vitest --watch",
+    "typecheck": "tsc -b ui/tsconfig.json server/tsconfig.json"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",
