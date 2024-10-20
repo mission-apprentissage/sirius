@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
 
-import { _post } from "../../utils/httpClient";
+import { apiPost } from "../../utils/api.utils";
 
 const validationSchema = Yup.object({
   title: Yup.string().required("Tous les champs doivent être complétés."),
@@ -25,14 +25,16 @@ const SupportModal = ({ modal, token }) => {
     validationSchema: validationSchema,
     onSubmit: async ({ title, message }) => {
       setIsSubmitting(true);
-      const result = await _post(
-        `/api/users/support`,
-        {
+      const result = await apiPost("/users/support", {
+        body: {
           title,
           message,
         },
-        token
-      );
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       if (!result.success) {
         setSupportError(true);
       }

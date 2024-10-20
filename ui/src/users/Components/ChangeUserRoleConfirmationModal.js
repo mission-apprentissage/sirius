@@ -13,7 +13,7 @@ import {
 import { useContext } from "react";
 
 import { UserContext } from "../../context/UserContext";
-import { _put } from "../../utils/httpClient";
+import { apiPut } from "../../utils/api.utils";
 
 const ChangeUserRoleConfirmationModal = ({ user, onClose, isOpen, selectedRole, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
@@ -22,7 +22,15 @@ const ChangeUserRoleConfirmationModal = ({ user, onClose, isOpen, selectedRole, 
   if (!user) return null;
 
   const handleChangeRoleConfirmation = async () => {
-    const result = await _put(`/api/users/${user.id}`, { role: selectedRole }, userContext.token);
+    const result = await apiPut(`/api/users/:id`, {
+      params: { id: user.id },
+      body: {
+        role: selectedRole,
+      },
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
     if (result === true) {
       toast({
         title: "Role modifié",

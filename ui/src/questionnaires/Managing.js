@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
-import { _delete, _put } from "../utils/httpClient";
+import { apiDelete, apiPut } from "../utils/api.utils";
 import DeleteQuestionnaireConfirmationModal from "./DeleteQuestionnaireConfirmationModal";
 import DuplicateQuestionnaireModal from "./DuplicateQuestionnaireModal";
 
@@ -35,13 +35,15 @@ const QuestionnaireTable = ({
 }) => {
   const toast = useToast();
   const handleValidationChange = async (e, questionnaire) => {
-    const result = await _put(
-      `/api/questionnaires/${questionnaire.id}`,
-      {
+    const result = await apiPut(`/api/questionnaires/:id`, {
+      params: { id: questionnaire.id },
+      body: {
         isValidated: !questionnaire?.isValidated,
       },
-      token
-    );
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (result.acknowledged) {
       navigate(0);
@@ -182,7 +184,11 @@ const Managing = () => {
 
   useEffect(() => {
     const deleteQuestionnaire = async () => {
-      const result = await _delete(`/api/questionnaires/${deletedQuestionnaireId}`, userContext.token);
+      const result = await apiDelete(`/questionnaires/${deletedQuestionnaireId}`, {
+        headers: {
+          Authorization: `Bearer ${userContext.token}`,
+        },
+      });
 
       if (result?.modifiedCount === 1) {
         toast({

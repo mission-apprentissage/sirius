@@ -5,7 +5,6 @@ import { useContext, useState } from "react";
 
 import Button from "../Components/Form/Button";
 import { UserContext } from "../context/UserContext";
-import { _get } from "../utils/httpClient";
 
 const SuiviCampagnesPage = () => {
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
@@ -14,7 +13,11 @@ const SuiviCampagnesPage = () => {
     e.stopPropagation();
     setIsLoadingDownload(true);
 
-    const response = await _get(`/api/campagnes/export/xlsx/multi`, userContext.token);
+    const response = await apiGet(`/campagnes/export/xlsx/multi`, {
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
 
     const base64Data = `data:application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${response.data}`;
 

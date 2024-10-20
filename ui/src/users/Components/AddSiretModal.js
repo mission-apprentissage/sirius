@@ -16,7 +16,7 @@ import { useContext, useState } from "react";
 import * as Yup from "yup";
 
 import { UserContext } from "../../context/UserContext";
-import { _get, _post } from "../../utils/httpClient";
+import { apiPost } from "../../utils/api.utils";
 import AddSiret from "./AddSiret/AddSiret";
 
 const etablissement = Yup.object({
@@ -31,11 +31,12 @@ const validationSchema = Yup.object({
 });
 
 const getRemoteEtablissementsToCreate = async (siretList) => {
-  const result = await _get(
+  const res = await fetch(
     `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={"siret": {"$in": ${JSON.stringify(
       siretList
     )}}}&page=1&limit=100`
   );
+  const result = await res.json();
   return result.etablissements;
 };
 
@@ -62,17 +63,18 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
 
       const remoteEtablissementsToCreate = await getRemoteEtablissementsToCreate(siretList);
 
-      const resultEtablissements = await _post(
-        `/api/etablissements/`,
-        remoteEtablissementsToCreate.map((etablissement) => {
+      const resultEtablissements = await apiPost("/etablissements", {
+        body: remoteEtablissementsToCreate.map((etablissement) => {
           return {
             _id: etablissement._id,
             siret: etablissement.siret,
             userId: user.id,
           };
         }),
-        userContext.token
-      );
+        headers: {
+          Authorization: `Bearer ${userContext.token}`,
+        },
+      });
 
       if (resultEtablissements.length) {
         toast({

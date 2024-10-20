@@ -24,21 +24,23 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 import { UserContext } from "../context/UserContext";
-import { _post, _put } from "../utils/httpClient";
+import { apiPost, apiPut } from "../utils/api.utils";
 
 const submitHandler = async (values, editedQuestionnaireId, userContext) => {
   const isEdition = !!editedQuestionnaireId;
 
   if (isEdition) {
-    const result = await _put(
-      `/api/questionnaires/${editedQuestionnaireId}`,
-      {
+    const result = await apiPut(`/api/questionnaires/:id`, {
+      params: { id: editedQuestionnaireId },
+      body: {
         ...values,
         questionnaire: JSON.parse(values.questionnaire),
         questionnaireUI: JSON.parse(values.questionnaireUI),
       },
-      userContext.token
-    );
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
 
     return result.acknowledged
       ? {
@@ -49,16 +51,17 @@ const submitHandler = async (values, editedQuestionnaireId, userContext) => {
           success: false,
         };
   } else {
-    const result = await _post(
-      `/api/questionnaires/`,
-      {
+    const result = await apiPost("/questionnaires", {
+      body: {
         ...values,
         questionnaire: JSON.parse(values.questionnaire),
         questionnaireUI: JSON.parse(values.questionnaireUI),
         createdBy: userContext.user.id,
       },
-      userContext.token
-    );
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
 
     return result.id
       ? {

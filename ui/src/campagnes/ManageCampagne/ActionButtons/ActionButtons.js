@@ -8,7 +8,6 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 import { USER_ROLES } from "../../../constants";
 import { UserContext } from "../../../context/UserContext";
-import { _get } from "../../../utils/httpClient";
 import DeleteCampagneConfirmationModal from "../DeleteCampagneConfirmationModal";
 import { ActionButtonsContainer, ToolTipContainer } from "./actionButtons.style";
 
@@ -25,12 +24,16 @@ const ActionButtons = ({ selectedCampagneIds, setSelectedCampagneIds }) => {
   const handleDownload = async () => {
     setIsLoadingDownload(true);
     const persistedEtablissement = userContext.user?.etablissements?.length ? userContext.user?.etablissements[0] : "";
-    const response = await _get(
-      `/api/campagnes/export/pdf/multi?ids=${selectedCampagneIds}&siret=${
-        userContext.user?.role === USER_ROLES.ADMIN ? "" : persistedEtablissement?.siret
-      }`,
-      userContext.token
-    );
+
+    const response = await apiGet("/api/campagnes/export/pdf/multi", {
+      querystring: {
+        ids: selectedCampagneIds,
+        siret: userContext.user?.role === USER_ROLES.ADMIN ? "" : persistedEtablissement?.siret,
+      },
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
 
     const base64Data = `data:application/pdf;base64,${response.data}`;
 

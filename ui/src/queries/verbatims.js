@@ -1,4 +1,4 @@
-import { _get, _patch } from "../utils/httpClient";
+import { apiGet, apiPatch } from "../utils/api.utils";
 
 export const fetchVerbatims = async ({
   token,
@@ -8,7 +8,7 @@ export const fetchVerbatims = async ({
   formationId,
   page,
 }) => {
-  let url = `/api/verbatims`;
+  let url = `/verbatims`;
   const params = new URLSearchParams();
 
   if (page !== undefined) {
@@ -35,7 +35,11 @@ export const fetchVerbatims = async ({
     url += `?${params.toString()}`;
   }
 
-  const response = await _get(url, token);
+  const response = await apiGet(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (response.error) {
     throw new Error("Erreur dans le chargement des verbatims");
@@ -43,13 +47,8 @@ export const fetchVerbatims = async ({
   return response;
 };
 
-export const fetchVerbatimsCount = async ({
-  token,
-  etablissementSiret,
-  formationId,
-  showOnlyDiscrepancies,
-}) => {
-  let url = `/api/verbatims/count`;
+export const fetchVerbatimsCount = async ({ token, etablissementSiret, formationId, showOnlyDiscrepancies }) => {
+  let url = `/verbatims/count`;
   const params = new URLSearchParams();
 
   if (etablissementSiret) {
@@ -68,7 +67,11 @@ export const fetchVerbatimsCount = async ({
     url += `?${params.toString()}`;
   }
 
-  const response = await _get(url, token);
+  const response = await apiGet(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (response.error) {
     throw new Error("Erreur dans le chargement du count des verbatims");
@@ -77,9 +80,12 @@ export const fetchVerbatimsCount = async ({
 };
 
 export const patchVerbatims = async ({ verbatims, token }) => {
-  const url = `/api/verbatims`;
-
-  const response = await _patch(url, verbatims, token);
+  const response = await apiPatch("/verbatims", {
+    body: verbatims,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (response.error) {
     throw new Error("Erreur dans la mise à jour des verbatims");

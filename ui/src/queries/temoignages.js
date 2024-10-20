@@ -1,9 +1,12 @@
-import { _get, _post, _postFile } from "../utils/httpClient";
+import { apiGet, apiPost, apiPostFile } from "../utils/api.utils";
 
 export const fetchTemoignagesDatavisualisation = async ({ campagneIds, token }) => {
-  let url = `/api/temoignages/datavisualisation`;
-
-  const response = await _post(url, campagneIds, token);
+  const response = await apiPost("/temoignages/datavisualisation", {
+    body: campagneIds,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (response) {
     return response;
   }
@@ -11,9 +14,7 @@ export const fetchTemoignagesDatavisualisation = async ({ campagneIds, token }) 
 };
 
 export const fetchDatavisualisationFormation = async ({ intituleFormation }) => {
-  const url = `/api/temoignages/datavisualisation/formation?intituleFormation=${intituleFormation}`;
-
-  const response = await _get(url);
+  const response = await apiGet(`/temoignages/datavisualisation/formation?intituleFormation=${intituleFormation}`, {});
   if (response) {
     return response;
   }
@@ -21,9 +22,7 @@ export const fetchDatavisualisationFormation = async ({ intituleFormation }) => 
 };
 
 export const fetchDatavisualisationEtablissement = async ({ uai }) => {
-  const url = `/api/temoignages/datavisualisation/etablissement?uai=${uai}`;
-
-  const response = await _get(url);
+  const response = await apiGet(`/temoignages/datavisualisation/etablissement?uai=${uai}`, {});
   if (response) {
     return response;
   }
@@ -39,9 +38,14 @@ export const fetchUncompliantTemoignages = async ({
   page,
   pageSize,
 }) => {
-  let url = `/api/temoignages/uncompliant?type=${type}&duration=${duration}&includeUnavailableDuration=${includeUnavailableDuration}&answeredQuestions=${answeredQuestions}&page=${page}&pageSize=${pageSize}`;
-
-  const response = await _get(url, token);
+  const response = await apiGet(
+    `/temoignages/uncompliant?type=${type}&duration=${duration}&includeUnavailableDuration=${includeUnavailableDuration}&answeredQuestions=${answeredQuestions}&page=${page}&pageSize=${pageSize}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   if (response) {
     return response;
   }
@@ -49,9 +53,12 @@ export const fetchUncompliantTemoignages = async ({
 };
 
 export const deleteTemoignages = async ({ temoignagesIds, token }) => {
-  let url = `/api/temoignages/delete`;
-
-  const response = await _post(url, temoignagesIds, token);
+  const response = await apiPost("/temoignages/delete", {
+    body: temoignagesIds,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (response) {
     return response;
   }
@@ -59,9 +66,13 @@ export const deleteTemoignages = async ({ temoignagesIds, token }) => {
 };
 
 export const fetchTemoignagesXlsExport = async ({ campagneIds, token }) => {
-  let url = `/api/temoignages/xls-export`;
+  const response = await apiPostFile("/temoignages/xls-export", {
+    body: campagneIds,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  const response = await _postFile(url, campagneIds, token);
   if (response) {
     return response;
   }

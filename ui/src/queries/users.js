@@ -1,9 +1,9 @@
-import { _get, _post } from "../utils/httpClient";
+import { apiGet, apiPost } from "../utils/api.utils";
 
 export const loginUser = async ({ email, password }) => {
-  let url = `/api/users/login`;
-
-  const response = await _post(url, { email, password });
+  const response = await apiPost("/users/login", {
+    body: { email, password },
+  });
 
   if (response.success) {
     return response;
@@ -14,9 +14,7 @@ export const loginUser = async ({ email, password }) => {
 };
 
 export const refreshTokenUser = async () => {
-  let url = `/api/users/refreshToken`;
-
-  const response = await _post(url);
+  const response = await apiPost("/users/refreshToken", {});
   if (response) {
     return response;
   }
@@ -24,9 +22,12 @@ export const refreshTokenUser = async () => {
 };
 
 export const sudoUser = async ({ userId, token }) => {
-  let url = `/api/users/sudo/${userId}`;
+  const response = await apiGet(`/users/sudo/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  const response = await _get(url, token);
   if (response) {
     return response;
   }
@@ -34,9 +35,12 @@ export const sudoUser = async ({ userId, token }) => {
 };
 
 export const me = async ({ token }) => {
-  let url = `/api/users/me`;
+  const response = await apiGet(`/users/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  const response = await _get(url, token);
   if (response) {
     return response;
   }

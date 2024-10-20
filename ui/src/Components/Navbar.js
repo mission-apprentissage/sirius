@@ -27,7 +27,7 @@ import Logo from "../assets/images/logo.svg";
 import MileySmall from "../assets/images/miley_small.png";
 import { USER_ROLES, USER_STATUS } from "../constants";
 import { UserContext } from "../context/UserContext";
-import { _get } from "../utils/httpClient";
+import { apiGet } from "../utils/api.utils";
 
 const NAV_ITEMS = [
   {
@@ -144,7 +144,11 @@ const MenuWithSubnavigation = () => {
   const toast = useToast();
 
   const handleLogout = async () => {
-    const result = await _get(`/api/users/logout`, userContext.token);
+    const result = await apiGet(`/api/users/logout`, {
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
     if (result.success) {
       navigate(0);
     } else {

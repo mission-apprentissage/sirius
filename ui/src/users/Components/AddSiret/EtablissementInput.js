@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import InputText from "../../../Components/Form/InputText";
 import { isValidSIRET } from "../../../utils/etablissement";
-import { _get } from "../../../utils/httpClient";
 
 const CatalogueUnavailableMessage = () => (
   <>
@@ -56,9 +55,10 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret, userSiret }) => 
     setIsLoadingRemoteEtablissement(true);
 
     try {
-      const result = await _get(
+      const res = await fetch(
         `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siretwithoutSpaces}"}&page=1&limit=1`
       );
+      const result = await res.json();
       if (result.etablissements?.length > 0) {
         const firstEtablissement = result.etablissements[0];
         const addressParts = ["numero_voie", "type_voie", "nom_voie", "code_postal", "localite"]

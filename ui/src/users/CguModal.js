@@ -18,7 +18,7 @@ import { useState } from "react";
 import * as Yup from "yup";
 
 import FormError from "../Components/Form/FormError";
-import { _put } from "../utils/httpClient";
+import { apiPut } from "../utils/api.utils";
 
 const validationSchema = Yup.object({
   acceptedCgu: Yup.boolean().required("Vous devez accepter les CGU").oneOf([true], "Vous devez accepter les CGU"),
@@ -37,7 +37,16 @@ const CguModal = ({ userContext, setUserContext, isOpen = true, setHasAcceptedCg
       try {
         setIsSubmitting(true);
         if (userContext?.token) {
-          const result = await _put(`/api/users/${userContext.user.id}`, { acceptedCgu: true }, userContext.token);
+          const result = await apiPut(`/api/users/:id`, {
+            params: { id: userContext.user.id },
+            body: {
+              acceptedCgu: true,
+            },
+            headers: {
+              Authorization: `Bearer ${userContext.token}`,
+            },
+          });
+
           if (result === true) {
             setUserContext((oldValues) => {
               return { ...oldValues, user: { ...oldValues.user, acceptedCgu: true } };

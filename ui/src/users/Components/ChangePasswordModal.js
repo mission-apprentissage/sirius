@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
 
-import { _post } from "../../utils/httpClient";
+import { apiPost } from "../../utils/api.utils";
 import {
   allFieldMessage,
   eightCharactersRegex,
@@ -46,9 +46,8 @@ const ChangePasswordModal = ({ token, setIsChangePasswordSubmitted, setChangePas
     validationSchema: validationSchema,
     onSubmit: async ({ password }) => {
       setIsSubmitting(true);
-      const result = await _post(`/api/users/reset-password`, {
-        password: password,
-        token: token,
+      const result = await apiPost("/users/reset-password", {
+        body: { password: password, token: token },
       });
       if (!result.success) {
         setChangePasswordError(true);

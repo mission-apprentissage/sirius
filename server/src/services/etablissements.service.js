@@ -1,3 +1,4 @@
+/* eslint-disable n/no-missing-require */
 const etablissementsDao = require("../dao/etablissements.dao");
 const questionnairesDao = require("../dao/questionnaires.dao");
 const campagnesDao = require("../dao/campagnes.dao");
@@ -14,7 +15,7 @@ const createEtablissements = async (etablissementsArray, relatedUserId) => {
 
     for (const etablissement of etablissementsArray) {
       const existingEtablissementQuery = {
-        "siret": etablissement.siret,
+        siret: etablissement.siret,
       };
       const existingEtablissement = await etablissementsDao.findAll(existingEtablissementQuery);
       if (!existingEtablissement.length) {

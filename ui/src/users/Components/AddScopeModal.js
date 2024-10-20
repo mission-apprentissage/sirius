@@ -19,7 +19,7 @@ import { useContext, useEffect, useState } from "react";
 import { OBSERVER_SCOPES, OBSERVER_SCOPES_LABELS } from "../../constants";
 import { UserContext } from "../../context/UserContext";
 import { REGIONS } from "../../regions";
-import { _put } from "../../utils/httpClient";
+import { apiPut } from "../../utils/api.utils";
 
 const scopesOptions = Object.entries(OBSERVER_SCOPES_LABELS).map(([value, label]) => ({
   label,
@@ -62,13 +62,15 @@ const AddScopeModal = ({ user, onClose, isOpen, setRefetchData }) => {
         setIsSubmitting(false);
         return;
       }
-      const resultUser = await _put(
-        `/api/users/${user.id}`,
-        {
+      const resultUser = await apiPut(`/api/users/:id`, {
+        params: { id: user.id },
+        body: {
           scope: { field: scopeField, value: scopeValue },
         },
-        userContext.token
-      );
+        headers: {
+          Authorization: `Bearer ${userContext.token}`,
+        },
+      });
 
       if (resultUser === true) {
         toast({

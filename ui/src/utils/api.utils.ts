@@ -62,7 +62,7 @@ const removeAtEnd = (url: string, removed: string): string =>
 export function generateUrl(path: string, options: WithQueryStringAndPathParam = {}): string {
   const params = "params" in options ? options.params : {};
   const querystring = "querystring" in options ? options.querystring : {};
-  return removeAtEnd(publicConfig.apiEndpoint, "/") + generateUri(path, { params, querystring });
+  return removeAtEnd(publicConfig.apiEndpoint, "/") + generateUri(trimApiPath(path), { params, querystring });
 }
 
 export interface ApiErrorContext {
@@ -140,6 +140,18 @@ export async function apiPost(path: string, options: any): Promise<any> {
   return res.json();
 }
 
+export async function apiPostFile(path: string, options: any): Promise<any> {
+  const { requestInit, headers } = await optionsToFetchParams("POST", options);
+
+  const res = await fetch(generateUrl(path, options), requestInit);
+
+  if (!res.ok) {
+    throw await ApiError.build(path, headers, options, res);
+  }
+
+  return res.blob();
+}
+
 export async function apiGet(path: string, options: any): Promise<any> {
   const { requestInit, headers } = await optionsToFetchParams("GET", options);
 
@@ -161,6 +173,15 @@ export async function apiPut(path: string, options: any): Promise<any> {
     throw await ApiError.build(path, headers, options, res);
   }
 
+  return res.json();
+}
+
+export async function apiPatch(path: string, options: any): Promise<any> {
+  const { requestInit, headers } = await optionsToFetchParams("PATCH", options);
+  const res = await fetch(generateUrl(path, options), requestInit);
+  if (!res.ok) {
+    throw await ApiError.build(path, headers, options, res);
+  }
   return res.json();
 }
 

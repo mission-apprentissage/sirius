@@ -5,7 +5,7 @@ import { useState } from "react";
 import * as Yup from "yup";
 
 import { emailWithTLDRegex } from "../constants";
-import { _post } from "../utils/httpClient";
+import { apiPost } from "../utils/api.utils";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -25,10 +25,14 @@ const SupportModal = ({ modal, setIsSupportSubmitted, setSupportError }) => {
     validationSchema: validationSchema,
     onSubmit: async ({ email, message }) => {
       setIsSubmitting(true);
-      const result = await _post(`/api/users/support/public`, {
-        email,
-        message,
+
+      const result = await apiPost("/users/support/public", {
+        body: {
+          email,
+          message,
+        },
       });
+
       if (!result.success) {
         setSupportError(true);
       }

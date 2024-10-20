@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 import { useGet } from "../common/hooks/httpHooks";
 import { Stepper } from "../Components/Stepper";
 import { VERBATIM_STATUS } from "../constants";
-import { _post, _put } from "../utils/httpClient";
+import { apiPost, apiPut } from "../utils/api.utils";
 import BotDetectedModal from "./AnswerCampagne/BotDetectedModal";
 import ErrorTemplate from "./Shared/ErrorTemplate";
 import { CustomNestedRadios } from "./Shared/fields";
@@ -113,11 +113,13 @@ const AnswerCampagnePage = () => {
 
   const onSubmitHandler = async (formData, isLastQuestion) => {
     if (!temoignageId) {
-      const result = await _post(`/api/temoignages/`, {
-        reponses: { ...answers, ...formData, ...nestedData },
-        campagneId: id,
-        lastQuestionAt: new Date(),
-        isBot,
+      const result = await apiPost("/temoignages", {
+        body: {
+          reponses: { ...answers, ...formData, ...nestedData },
+          campagneId: id,
+          lastQuestionAt: new Date(),
+          isBot,
+        },
       });
 
       if (result) {
@@ -161,11 +163,13 @@ const AnswerCampagnePage = () => {
       const isTrimmedChampsLibreEmpty = isChampsLibre && !formData[questionKey]?.trim();
 
       if (isChampsLibre && !isTrimmedChampsLibreEmpty) {
-        result = await _post(`/api/verbatims/`, {
-          temoignageId,
-          questionKey,
-          content: formData[questionKey],
-          status: VERBATIM_STATUS.PENDING,
+        result = await apiPost("/verbatims", {
+          body: {
+            temoignageId,
+            questionKey,
+            content: formData[questionKey],
+            status: VERBATIM_STATUS.PENDING,
+          },
         });
       } else if (!isChampsLibre) {
         const reponses = { ...answers, ...formData, ...nestedData };
@@ -176,10 +180,13 @@ const AnswerCampagnePage = () => {
           return acc;
         }, {});
 
-        result = await _put(`/api/temoignages/${temoignageId}`, {
-          reponses: reponsesWithoutChampsLibreFields,
-          lastQuestionAt: new Date(),
-          isBot,
+        result = await apiPut(`/api/temoignages/:id`, {
+          params: { id: temoignageId },
+          body: {
+            reponses: reponsesWithoutChampsLibreFields,
+            lastQuestionAt: new Date(),
+            isBot,
+          },
         });
       }
 

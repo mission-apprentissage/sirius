@@ -6,6 +6,10 @@
     "plugin:node/recommended"
   ],
   "plugins": ["zod"],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
   "rules": {
     "n/no-missing-import": 0,
     // "@dword-design/import-alias/prefer-alias": [

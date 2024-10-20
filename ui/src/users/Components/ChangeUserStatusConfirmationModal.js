@@ -13,7 +13,7 @@ import {
 import { useContext } from "react";
 
 import { UserContext } from "../../context/UserContext";
-import { _put } from "../../utils/httpClient";
+import { apiPut } from "../../utils/api.utils";
 
 const ChangeUserStatusConfirmationModal = ({ user, onClose, isOpen, selectedStatus, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
@@ -22,7 +22,15 @@ const ChangeUserStatusConfirmationModal = ({ user, onClose, isOpen, selectedStat
   if (!user) return null;
 
   const handleChangeStatusConfirmation = async () => {
-    const userResult = await _put(`/api/users/${user.id}`, { status: selectedStatus }, userContext.token);
+    const userResult = await apiPut(`/api/users/:id`, {
+      params: { id: user.id },
+      body: {
+        status: selectedStatus,
+      },
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
     if (userResult === true) {
       toast({
         title: "Status modifié",

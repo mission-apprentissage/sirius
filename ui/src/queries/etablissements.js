@@ -1,4 +1,4 @@
-import { _get } from "../utils/httpClient";
+import { apiGet } from "../utils/api.utils";
 
 export const fetchLocalEtablissements = async ({ token, search }) => {
   let url = `/api/etablissements?`;
@@ -11,7 +11,11 @@ export const fetchLocalEtablissements = async ({ token, search }) => {
 
   url += params.join("&");
 
-  const response = await _get(url, token);
+  const response = await apiGet(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (response.error) {
     throw new Error("Erreur dans le chargement des établissements localaux");

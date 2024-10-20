@@ -1,7 +1,6 @@
 #Override containers for dev
 version: "2.4"
 services:
-
   reverse_proxy:
     ports:
       - 80:80

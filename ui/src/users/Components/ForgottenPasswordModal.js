@@ -5,7 +5,7 @@ import { useState } from "react";
 import * as Yup from "yup";
 
 import { emailWithTLDRegex } from "../../constants";
-import { _post } from "../../utils/httpClient";
+import { apiPost } from "../../utils/api.utils";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -23,9 +23,11 @@ const ForgottenPasswordModal = ({ modal, setIsForgottenPasswordSubmitted, setFor
     validationSchema: validationSchema,
     onSubmit: async ({ email }) => {
       setIsSubmitting(true);
-      const result = await _post(`/api/users/forgot-password`, {
-        email: email.toLowerCase(),
+
+      const result = await apiPost("/users/forgot-password", {
+        body: { email: email.toLowerCase() },
       });
+
       if (!result.success) {
         setForgottenPasswordError(true);
       }

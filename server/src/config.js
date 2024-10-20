@@ -1,13 +1,13 @@
 const env = require("env-var");
 module.exports = {
   env: env.get("SIRIUS_ENV").default("dev").asString(),
-  publicUrl: env.get("SIRIUS_PUBLIC_URL").default("http://localhost").asString(),
+  publicUrl: env.get("SIRIUS_PUBLIC_URL").default("http://localhost:3000").asString(),
   log: {
     type: env.get("SIRIUS_LOG_TYPE").default("console").asString(),
     level: env.get("SIRIUS_LOG_LEVEL").default("info").asString(),
   },
   psql: {
-    uri: env.get("SIRIUS_PSQL_URI").default("postgresql://postgres:password@sirius_postgres:5432/postgres").asString(),
+    uri: env.get("SIRIUS_PSQL_URI").default("postgresql://postgres:password@localhost:5432/postgres").asString(),
     ca: env.get("SIRIUS_PSQL_CA").default("").asString(),
     logLevel: env.get("SIRIUS_PILOTAGE_PSQL_LOG_LEVEL").default("info").asString(),
   },

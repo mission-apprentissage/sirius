@@ -1,0 +1,47 @@
+version: "2.4"
+services:
+  reverse_proxy:
+    image: sirius_reverse_proxy
+    container_name: sirius_reverse_proxy
+    tty: true
+    build:
+      context: reverse_proxy
+    mem_limit: 256m
+    restart: unless-stopped
+    networks:
+      - sirius_network
+    depends_on:
+      - server
+      - ui
+
+  ui:
+    image: sirius_ui
+    container_name: sirius_ui
+    tty: true
+    build:
+      context: ui
+    mem_limit: 256m
+    restart: unless-stopped
+    networks:
+      - sirius_network
+    depends_on:
+      - server
+
+  server:
+    image: sirius_server
+    container_name: sirius_server
+    tty: true
+    build:
+      context: server
+    mem_limit: 1g
+    restart: unless-stopped
+    networks:
+      - sirius_network
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - SIRIUS_LOG_LEVEL=info
+      - SIRIUS_LOG_TYPE=console
+
+networks:
+  sirius_network:
+    name: sirius_network

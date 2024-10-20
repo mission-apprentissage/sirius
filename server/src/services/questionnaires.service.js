@@ -1,3 +1,4 @@
+// eslint-disable-next-line n/no-missing-require
 const questionnairesDao = require("../dao/questionnaires.dao");
 
 const createQuestionnaire = async (questionnaire) => {

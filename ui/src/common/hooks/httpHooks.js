@@ -1,8 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { UserContext } from "../../context/UserContext";
-import { apiGet } from "../../utils/api.utils";
-import { _delete, _get, _put } from "../../utils/httpClient";
+import { apiDelete, apiGet, apiPut } from "../../utils/api.utils";
 
 export function useGet(url) {
   const [response, setResponse] = useState({});
@@ -15,14 +14,11 @@ export function useGet(url) {
     setError(null);
 
     try {
-      // console.log(
-      //   await apiGet(trimApiPath(url), {
-      //     headers: {
-      //       Authorization: `Bearer ${userContext.token}`,
-      //     },
-      //   })
-      // );
-      const response = await _get(url, userContext.token);
+      const response = await apiGet(url, {
+        headers: {
+          Authorization: `Bearer ${userContext.token}`,
+        },
+      });
 
       setResponse(response);
       setLoading(false);
@@ -34,7 +30,6 @@ export function useGet(url) {
 
   useEffect(() => {
     async function run() {
-      console.log(await apiGet("/healthcheck", {}));
       return sendRequest();
     }
     run();
@@ -54,7 +49,12 @@ export function usePut(url, body) {
     setError(null);
 
     try {
-      const response = await _put(url, body || {}, userContext.token);
+      const response = await apiPut(url, {
+        body: body || {},
+        headers: {
+          Authorization: `Bearer ${userContext.token}`,
+        },
+      });
       setResponse(response);
       setLoading(false);
     } catch (error) {
@@ -84,7 +84,12 @@ export function useDelete(url) {
     setError(null);
 
     try {
-      const response = await _delete(url, userContext.token);
+      const response = await apiDelete(url, {
+        headers: {
+          Authorization: `Bearer ${userContext.token}`,
+        },
+      });
+
       setResponse(response);
       setLoading(false);
     } catch (error) {

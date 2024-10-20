@@ -16,7 +16,7 @@ const getEtablissements = async (siretArray) => {
       }),
     });
     const data = await response.json();
-    return data.organismes;
+    return data.statusCode === 200 ? data.organismes : [];
   } catch (e) {
     console.error(e);
     return [];

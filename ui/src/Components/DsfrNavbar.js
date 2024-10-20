@@ -6,7 +6,7 @@ import Logo from "../assets/images/logo.svg";
 import { useGet } from "../common/hooks/httpHooks";
 import { USER_ROLES } from "../constants";
 import { UserContext } from "../context/UserContext";
-import { _get } from "../utils/httpClient";
+import { apiGet } from "../utils/api.utils";
 
 const DsfrNavbar = () => {
   const location = useLocation();
@@ -19,7 +19,11 @@ const DsfrNavbar = () => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
-    const result = await _get(`/api/users/logout`, userContext.token);
+    const result = await apiGet(`/api/users/logout`, {
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
     if (result.success) {
       navigate(0);
     }
