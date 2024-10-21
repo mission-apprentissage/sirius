@@ -10,7 +10,7 @@
     {
       "name": "Ui",
       "description": "This run the ui",
-      "command": "yarn workspace ui dev"
+      "command": "yarn ui:dev"
     },
     {
       "name": "Cli",

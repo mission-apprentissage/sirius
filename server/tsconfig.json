@@ -43,7 +43,7 @@
     "noErrorTruncation": true
     // "noUncheckedSideEffectImports": true
   },
-  "include": ["./**/*.ts", "./**/*.js", "src/routes/etablissements.routes.ts"],
+  "include": ["./**/*.ts", "./**/*.js"],
   "exclude": ["**/node_modules", "coverage", "dist"],
   "typeAcquisition": {
     "enable": true,

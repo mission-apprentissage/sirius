@@ -1,6 +1,6 @@
 import env from "env-var";
 
-const environement = env.get("ENV").required().asEnum(["local", "recette", "production", "preview", "test"]);
+const environement = env.get("ENV").required().asEnum(["local", "recette", "production", "test"]);
 
 const config = {
   productName: env.get("PUBLIC_PRODUCT_NAME").required().asString(),
