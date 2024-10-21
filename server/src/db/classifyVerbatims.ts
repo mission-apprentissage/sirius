@@ -4,7 +4,7 @@ import { VERBATIM_STATUS, VERBATIM_STATUS_EMOJIS, VERBATIM_STATUS_LABELS } from 
 import logger from "../modules/logger";
 import { sendToSlack } from "../modules/slack";
 import { sleep } from "../utils/asyncUtils";
-import { kdb } from "./db";
+import { getKbdClient } from "./db";
 
 const CLASSIFICATION_API = "https://2b1d0760-a1f7-485d-8b69-2ecdf299615a.app.gra.ai.cloud.ovh.net/score";
 
@@ -66,7 +66,7 @@ const getHighestScore = (scores) => {
 };
 
 const updateVerbatimScores = async (verbatim, scores) => {
-  const updateResult = await kdb
+  const updateResult = await getKbdClient()
     .updateTable("verbatims")
     .set("scores", scores)
     .where("id", "=", verbatim.id)
@@ -145,7 +145,7 @@ const sendSummaryToSlack = async (totalVerbatims, classificationCount, gemVerbat
 
 export default async () => {
   try {
-    const unclassifiedVerbatims = await kdb
+    const unclassifiedVerbatims = await getKbdClient()
       .selectFrom("verbatims")
       .selectAll()
       .where("deleted_at", "is", null)

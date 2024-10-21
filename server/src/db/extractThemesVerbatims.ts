@@ -4,7 +4,7 @@ import { VERBATIM_THEMES, VERBATIM_THEMES_EMOJIS, VERBATIM_THEMES_LABELS } from 
 import logger from "../modules/logger";
 import { sendToSlack } from "../modules/slack";
 import { sleep } from "../utils/asyncUtils";
-import { kdb } from "./db";
+import { getKbdClient } from "./db";
 
 const THEME_EXTRACTION_API = "https://2b1d0760-a1f7-485d-8b69-2ecdf299615a.app.gra.ai.cloud.ovh.net/expose";
 
@@ -68,7 +68,7 @@ const extractThemesVerbatims = async (verbatim, themeCount) => {
 };
 
 const updateVerbatimThemes = async (verbatim, formattedThemes) => {
-  const updateResult = await kdb
+  const updateResult = await getKbdClient()
     .updateTable("verbatims")
     .set("themes", formattedThemes)
     .where("id", "=", verbatim.id)
@@ -128,7 +128,7 @@ const sendSummaryToSlack = async (totalVerbatims, themeCount) => {
 
 export default async () => {
   try {
-    const unthemedVerbatims = await kdb
+    const unthemedVerbatims = await getKbdClient()
       .selectFrom("verbatims")
       .selectAll()
       .where("deleted_at", "is", null)

@@ -2,12 +2,12 @@
 /* eslint-disable no-process-exit */
 import { Migrator } from "kysely";
 
-import { kdb } from "../db/db";
+import { getKbdClient } from "../db/db";
 import { migrations } from "./index";
 
 const makeMigrator = () => {
   return new Migrator({
-    db: kdb,
+    db: getKbdClient(),
     allowUnorderedMigrations: false,
     provider: { getMigrations: async () => migrations },
   });
@@ -32,7 +32,7 @@ export const migrateDownDB = async (numberOfMigrations: number) => {
   }
 };
 
-export const migrateToLatest = async (keepAlive?: boolean) => {
+export const migrateToLatest = async (keepAlive?: boolean, exitProcessInSuccess = true) => {
   const migrator = makeMigrator();
 
   const { error, results } = await migrator.migrateToLatest();
@@ -40,7 +40,7 @@ export const migrateToLatest = async (keepAlive?: boolean) => {
   results?.forEach((it) => {
     if (it.status === "Success") {
       console.log(`migration "${it.migrationName}" was executed successfully (UP)`);
-      process.exit(1);
+      if (exitProcessInSuccess) process.exit(1);
     } else if (it.status === "Error") {
       console.error(`failed to execute migration "${it.migrationName}" (UP)`);
       process.exit(1);
@@ -49,7 +49,7 @@ export const migrateToLatest = async (keepAlive?: boolean) => {
 
   if (!results?.length) {
     console.log("already up to date !");
-    process.exit(1);
+    if (exitProcessInSuccess) process.exit(1);
   }
 
   if (error) {
@@ -59,6 +59,6 @@ export const migrateToLatest = async (keepAlive?: boolean) => {
   }
 
   if (!keepAlive) {
-    await kdb.destroy();
+    await getKbdClient().destroy();
   }
 };

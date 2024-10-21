@@ -1,19 +1,19 @@
 import { sql } from "kysely";
 
 import { USER_STATUS } from "../constants";
-import { kdb } from "../db/db";
+import { getKbdClient } from "../db/db";
 import type { User, UserCreation, UserPublic } from "../types";
 
 export const findOneById = async (id: string): Promise<User | undefined> => {
-  return kdb.selectFrom("users").selectAll().where("id", "=", id).executeTakeFirst();
+  return getKbdClient().selectFrom("users").selectAll().where("id", "=", id).executeTakeFirst();
 };
 
 export const findOneByEmail = async (email: string): Promise<User | undefined> => {
-  return kdb.selectFrom("users").selectAll().where("email", "=", email).executeTakeFirst();
+  return getKbdClient().selectFrom("users").selectAll().where("email", "=", email).executeTakeFirst();
 };
 
 export const findAll = async (): Promise<UserPublic[] | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("users")
     .select([
       "id",
@@ -32,7 +32,7 @@ export const findAll = async (): Promise<UserPublic[] | undefined> => {
 };
 
 export const findOneByEmailWithEtablissement = async (email: string): Promise<(User & any) | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("users")
     .select([
       "users.id",
@@ -76,7 +76,7 @@ export const findOneByEmailWithEtablissement = async (email: string): Promise<(U
 };
 
 export const findOneByIdWithEtablissement = async (id: string): Promise<(User & any) | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("users")
     .select([
       "users.id",
@@ -118,7 +118,7 @@ export const findOneByIdWithEtablissement = async (id: string): Promise<(User & 
 };
 
 export const findAllWithEtablissement = async (): Promise<(UserPublic & any)[] | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("users")
     .select([
       "users.id",
@@ -159,7 +159,7 @@ export const findAllWithEtablissement = async (): Promise<(UserPublic & any)[] |
 };
 
 export const update = async (id: string, user: Partial<User>): Promise<boolean> => {
-  const result = await kdb.updateTable("users").set(user).where("id", "=", id).executeTakeFirst();
+  const result = await getKbdClient().updateTable("users").set(user).where("id", "=", id).executeTakeFirst();
 
   return result.numUpdatedRows === BigInt(1);
 };
@@ -188,5 +188,5 @@ export const create = async ({
     email_confirmed: false,
     refresh_token: JSON.stringify([]),
   };
-  return kdb.insertInto("users").values(newUser).returning("id").executeTakeFirst();
+  return getKbdClient().insertInto("users").values(newUser).returning("id").executeTakeFirst();
 };
