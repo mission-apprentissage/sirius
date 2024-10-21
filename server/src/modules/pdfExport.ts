@@ -2,16 +2,15 @@
 
 import fs from "node:fs";
 
-import path from "path";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import QRCode from "qrcode";
 
 import config from "../config";
+import { getStaticFilePath } from "../utils/getStaticFilePath";
 
-const publicPath = path.join(__dirname, "..", "..", "src", "public");
-const pdfSummaryFilePath = path.join(publicPath, "summary.pdf");
-const pdfExplanationFilePath = path.join(publicPath, "explanation.pdf");
-const pdfFSharePath = path.join(publicPath, "share.pdf");
+const pdfSummaryFilePath = getStaticFilePath(`./public/summary.pdf`);
+const pdfExplanationFilePath = getStaticFilePath(`./public/explanation.pdf`);
+const pdfFSharePath = getStaticFilePath(`./public/share.pdf`);
 
 const fillParagraph = (text, font, fontSize, maxWidth) => {
   const paragraphs = text.split("\n");
@@ -38,7 +37,7 @@ const fillParagraph = (text, font, fontSize, maxWidth) => {
   return paragraphs.join("\n");
 };
 
-const getPdfDocument = async (pdfFilePath) => {
+const getPdfDocument = async (pdfFilePath: string) => {
   return await PDFDocument.load(fs.readFileSync(pdfFilePath));
 };
 

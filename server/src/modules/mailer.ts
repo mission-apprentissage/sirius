@@ -1,7 +1,4 @@
 // @ts-nocheck -- TODO
-
-import path from "node:path";
-
 import ejs from "ejs";
 import { inject } from "injecti";
 import _ from "lodash";
@@ -10,8 +7,7 @@ import nodemailer from "nodemailer";
 import { htmlToText } from "nodemailer-html-to-text";
 
 import config from "../config";
-
-const basePath = path.join(__dirname, "../../");
+import { getStaticFilePath } from "../utils/getStaticFilePath";
 
 function createTransporter(smtp) {
   const needsAuthentication = !!smtp.auth.user;
@@ -37,11 +33,12 @@ const shootE = inject(
 export const shootEmail = shootE[0];
 
 export const shootTemplate = async ({ to, subject, template, data }) => {
+  const templateFile = getStaticFilePath(`./emails/${template}.mjml.ejs`);
   const html = await generateHtml({
     to,
     data,
     subject,
-    templateFile: path.join(basePath, `/emails/${template}.mjml.ejs`),
+    templateFile,
   });
 
   await shootEmail({ html, subject, to });

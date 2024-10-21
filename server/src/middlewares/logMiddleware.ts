@@ -25,8 +25,11 @@ const withoutSensibleFields = (obj: unknown, seen: Set<unknown>): unknown => {
     return Object.fromEntries(
       Object.entries(obj).map(([key, value]) => {
         const lower = key.toLowerCase();
-        if (lower.indexOf("token") !== -1 || ["authorization", "password", "applicant_file_content"].includes(lower)) {
-          return [key, null];
+        if (
+          lower.indexOf("token") !== -1 ||
+          ["email", "authorization", "password", "applicant_file_content"].includes(lower)
+        ) {
+          return [key, "*****"];
         }
 
         return [key, withoutSensibleFields(value, seen)];
@@ -43,6 +46,7 @@ const withoutSensibleFields = (obj: unknown, seen: Set<unknown>): unknown => {
 };
 
 export function logMiddleware() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (req: any, res: any, next: any) => {
     const relativeUrl = (req.baseUrl || "") + (req.url || "");
     const startTime = new Date().getTime();
@@ -83,8 +87,18 @@ export function logMiddleware() {
         const level = error || (statusCode >= 400 && statusCode < 600) ? "error" : "info";
 
         if (level !== "error") {
-          const { headers, ...resp } = response;
-          logger[level]({ ...data, response: { ...resp } }, `Http Request OK`);
+          const { headers: _hRequ, ...requ } = request;
+          const { headers: _hResp, ...resp } = response;
+          logger[level](
+            {
+              ...data,
+              request: {
+                ...requ,
+              },
+              response: { ...resp },
+            },
+            `Http Request OK`
+          );
         } else {
           logger[level]({ type, response, request, ...data }, `Http Request KO`);
         }

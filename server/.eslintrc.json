@@ -21,12 +21,12 @@
     //     }
     //   }
     // ],
-    "n/no-extraneous-import": [
-      "error",
-      {
-        "allowModules": ["shared"]
-      }
-    ],
+    // "n/no-extraneous-import": [
+    //   "error",
+    //   {
+    //     "allowModules": ["shared"]
+    //   }
+    // ],
     "node/no-deprecated-api": "off",
     "node/no-unsupported-features/es-syntax": [
       "error",
