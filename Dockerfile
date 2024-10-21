@@ -68,7 +68,7 @@ COPY ./ui ./ui
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED 1
+# ENV NEXT_TELEMETRY_DISABLED 1
 
 ARG PUBLIC_REPO_NAME
 ENV REACT_APP_PRODUCT_REPO=$PUBLIC_REPO_NAME
@@ -126,3 +126,4 @@ EXPOSE 3000
 ENV PORT=3000
 
 CMD ["node", "ui/server"]
+# CMD yarn serve

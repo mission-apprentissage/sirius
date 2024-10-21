@@ -1,4 +1,6 @@
 fileignoreconfig:
+- filename: .infra/ansible/roles/setup/vars/main/vault.yml
+  checksum: 09990a1239c96bc89535cb2bbd21f2034c6879adf67272fdc8957faf893e2636
 - filename: README.md
   checksum: 00ac991f0b2746c5a5ffa14e2b3c5427b739c0d952aa3730efe1f234ac1fc3ca
 - filename: ui/src/config.public.ts

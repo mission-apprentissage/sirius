@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-named-as-default
 import jsPDF from "jspdf";
 (function (jsPDFAPI) {
   const marianneRegular =
