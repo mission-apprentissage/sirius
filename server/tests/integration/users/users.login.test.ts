@@ -4,7 +4,10 @@ import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import * as usersDao from "../../../src/dao/users.dao";
 import { createUser } from "../../../src/services/users.service";
 import { newUser } from "../../fixtures";
+import { usePg } from "../utils/pg.test.utils";
 import { startServer } from "../utils/testUtils";
+
+usePg();
 
 describe("Login routes", () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

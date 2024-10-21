@@ -1,8 +1,11 @@
 // eslint-disable-next-line node/no-unpublished-import
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+import { usePg } from "../utils/pg.test.utils";
 import { startServer } from "../utils/testUtils";
 import { createVerifyAndLoginUser } from "../utils/user";
+
+usePg();
 
 describe("Login routes", () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

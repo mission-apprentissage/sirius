@@ -39,7 +39,7 @@ export const migrateToLatest = async (keepAlive?: boolean, exitProcessInSuccess 
 
   results?.forEach((it) => {
     if (it.status === "Success") {
-      console.log(`migration "${it.migrationName}" was executed successfully (UP)`);
+      // console.log(`migration "${it.migrationName}" was executed successfully (UP)`); // a lot of log
       if (exitProcessInSuccess) process.exit(1);
     } else if (it.status === "Error") {
       console.error(`failed to execute migration "${it.migrationName}" (UP)`);
