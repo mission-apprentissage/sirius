@@ -1,43 +1,73 @@
-// @ts-nocheck -- TODO
-
-import _ from "lodash";
-
 import logger from "../modules/logger";
 
-export default () => {
-  return (req, res, next) => {
+const withoutSensibleFields = (obj: unknown, seen: Set<unknown>): unknown => {
+  if (obj == null) return obj;
+
+  if (typeof obj === "object") {
+    if (seen.has(obj)) {
+      return "(ref)";
+    }
+
+    seen.add(obj);
+
+    if (Array.isArray(obj)) {
+      return obj.map((v) => withoutSensibleFields(v, seen));
+    }
+
+    if (obj instanceof Set) {
+      return Array.from(obj).map((v) => withoutSensibleFields(v, seen));
+    }
+
+    if (obj instanceof Map) {
+      return withoutSensibleFields(Object.fromEntries(obj.entries()), seen);
+    }
+
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => {
+        const lower = key.toLowerCase();
+        if (lower.indexOf("token") !== -1 || ["authorization", "password", "applicant_file_content"].includes(lower)) {
+          return [key, null];
+        }
+
+        return [key, withoutSensibleFields(value, seen)];
+      })
+    );
+  }
+
+  if (typeof obj === "string") {
+    // max 2Ko
+    return obj.length > 2000 ? obj.substring(0, 2_000) + "..." : obj;
+  }
+
+  return obj;
+};
+
+export function logMiddleware() {
+  return (req: any, res: any, next: any) => {
     const relativeUrl = (req.baseUrl || "") + (req.url || "");
     const startTime = new Date().getTime();
-    const withoutSensibleFields = (obj) => {
-      return _.omitBy(obj, (_value, key) => {
-        const lower = key.toLowerCase();
-        return lower.indexOf("token") !== -1 || ["authorization", "password"].includes(lower);
-      });
-    };
 
     const log = () => {
       try {
         const error = req.err;
         const statusCode = res.statusCode;
-        const data = {
+        const { type, response, request, ...data } = {
           type: "http",
           elapsedTime: new Date().getTime() - startTime,
           request: {
             requestId: req.requestId,
             method: req.method,
-            headers: {
-              ...withoutSensibleFields(req.headers),
-            },
+            headers: withoutSensibleFields(req.headers, new Set()),
             url: {
               relative: relativeUrl,
               path: (req.baseUrl || "") + (req.path || ""),
-              parameters: withoutSensibleFields(req.query),
+              parameters: withoutSensibleFields(req.query, new Set()),
             },
-            body: withoutSensibleFields(req.body),
+            body: typeof req.body === "object" ? withoutSensibleFields(req.body, new Set()) : null,
           },
           response: {
             statusCode,
-            headers: res.getHeaders(),
+            headers: typeof res.getHeaders === "function" ? withoutSensibleFields(res.getHeaders(), new Set()) : {},
           },
           ...(!error
             ? {}
@@ -52,7 +82,12 @@ export default () => {
 
         const level = error || (statusCode >= 400 && statusCode < 600) ? "error" : "info";
 
-        logger[level](data, `Http Request ${level === "error" ? "KO" : "OK"}`);
+        if (level !== "error") {
+          const { headers, ...resp } = response;
+          logger[level]({ ...data, response: { ...resp } }, `Http Request OK`);
+        } else {
+          logger[level]({ type, response, request, ...data }, `Http Request KO`);
+        }
       } finally {
         res.removeListener("finish", log);
         res.removeListener("close", log);
@@ -64,4 +99,4 @@ export default () => {
 
     next();
   };
-};
+}

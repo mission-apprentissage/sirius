@@ -8,7 +8,7 @@ import passport from "passport";
 
 import config from "./config";
 import errorMiddleware from "./middlewares/errorMiddleware";
-import logMiddleware from "./middlewares/logMiddleware";
+import { logMiddleware } from "./middlewares/logMiddleware";
 import { campagnes } from "./routes/campagnes.routes";
 import { etablissements } from "./routes/etablissements.routes";
 import { formations } from "./routes/formations.routes";

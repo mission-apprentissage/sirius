@@ -26,12 +26,12 @@ export const connectToPgDb = async (uri: string) => {
   pool.on("error", (error) => {
     logger.error("lost connection with DB: ", error);
   });
-  pool.on("connect", () => {
-    logger.info("Connected to PSQL");
-  });
-  pool.on("acquire", () => {
-    logger.info("acquire to PSQL");
-  });
+  // pool.on("connect", () => {
+  //   logger.info("Connected to PSQL");
+  // });
+  // pool.on("acquire", () => {
+  //   logger.info("acquire to PSQL");
+  // });
 
   kdb = new Kysely<DB>({
     dialect: new PostgresDialect({ pool }),
