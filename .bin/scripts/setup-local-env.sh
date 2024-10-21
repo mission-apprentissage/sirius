@@ -18,14 +18,14 @@ ANSIBLE_CONFIG="${ROOT_DIR}/.infra/ansible/ansible.cfg" ansible all \
 echo "PUBLIC_VERSION=0.0.0-local" >> "${ROOT_DIR}/server/.env"
 echo "PUBLIC_PRODUCT_NAME=\"${PRODUCT_NAME}\"" >> "${ROOT_DIR}/server/.env"
 
-echo "NEXT_PUBLIC_ENV=local" >> "${ROOT_DIR}/ui/.env"
-echo "NEXT_PUBLIC_VERSION=0.0.0-local" >> "${ROOT_DIR}/ui/.env"
-echo "NEXT_PUBLIC_PRODUCT_NAME=\"${PRODUCT_NAME}\"" >> "${ROOT_DIR}/ui/.env"
-echo "NEXT_PUBLIC_PRODUCT_REPO=\"${REPO_NAME}\"" >> "${ROOT_DIR}/ui/.env"
-echo "NEXT_PUBLIC_API_PORT=5001" >> "${ROOT_DIR}/ui/.env"
+echo "REACT_APP_ENV=local" >> "${ROOT_DIR}/ui/.env"
+echo "REACT_APP_VERSION=0.0.0-local" >> "${ROOT_DIR}/ui/.env"
+echo "REACT_APP_PRODUCT_NAME=\"${PRODUCT_NAME}\"" >> "${ROOT_DIR}/ui/.env"
+echo "REACT_APP_PRODUCT_REPO=\"${REPO_NAME}\"" >> "${ROOT_DIR}/ui/.env"
+echo "REACT_APP_API_PORT=5001" >> "${ROOT_DIR}/ui/.env"
 
 
-yarn
-yarn services:start
-yarn build:dev
-yarn cli migrations:up
+# yarn
+# yarn services:start
+# yarn build:dev
+# yarn cli migrations:up

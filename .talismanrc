@@ -1,6 +1,12 @@
 fileignoreconfig:
 - filename: .infra/ansible/roles/setup/vars/main/vault.yml
   checksum: 09990a1239c96bc89535cb2bbd21f2034c6879adf67272fdc8957faf893e2636
+- filename: .infra/ansible/tasks/preview_pr.yml
+  checksum: 80abb1f87649f4751c93053cae6fb0d04419ea910defe3f52163b1a6442ade3f
+- filename: .infra/files/configs/mongodb/seed.gpg
+  checksum: b1fa159bb2036a835b4138843b48043eca4ea374bcbb710ba4593bd39b1dfec1
+- filename: .infra/vault/vault.yml
+  checksum: 2f25472db7103acf8527497b1c6dabe9e853a5a3769c57ca65e7045772ed414e
 - filename: README.md
   checksum: 00ac991f0b2746c5a5ffa14e2b3c5427b739c0d952aa3730efe1f234ac1fc3ca
 - filename: ui/src/config.public.ts

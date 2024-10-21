@@ -7,41 +7,51 @@ const config = {
   port: env.get("SERVER_PORT").required().asPortNumber(),
   version: env.get("PUBLIC_VERSION").required().asString(),
   env: environement,
-  publicUrl: env.get("SIRIUS_PUBLIC_URL").default("http://localhost:3000").asString(),
+  publicUrl: env.get("PUBLIC_URL").required().asString(),
   log: {
-    type: env.get("SIRIUS_LOG_TYPE").default("console").asString(),
-    level: env.get("SIRIUS_LOG_LEVEL").default("info").asString(),
+    type: env.get("LOG_TYPE").required().asString(),
+    level: env.get("LOG_LEVEL").required().asString(),
   },
   psql: {
     uri: env.get("PSQL_URI").required().asString(),
-    ca: env.get("SIRIUS_PSQL_CA").default("").asString(),
-    logLevel: env.get("SIRIUS_PILOTAGE_PSQL_LOG_LEVEL").default("info").asString(),
+    ca: env
+      .get("PSQL_CA")
+      .required(environement === "production")
+      .asString(),
+    logLevel: env.get("PSQL_LOG_LEVEL").required().asString(),
   },
   auth: {
-    admin: env.get("SIRIUS_AUTH_ADMIN_PASSWORD").default("12345").asString(),
-    jwtSecret: env.get("SIRIUS_AUTH_JWT_SECRET").default("abcdef").asString(),
-    refreshTokenSecret: env.get("SIRIUS_AUTH_REFRESH_TOKEN_SECRET").default("abcdef").asString(),
-    sessionExpiry: env.get("SIRIUS_AUTH_SESSION_EXPIRY").default(900).asInt(),
-    refreshTokenExpiry: env.get("SIRIUS_AUTH_REFRESH_TOKEN_EXPIRY").default(2592000).asInt(),
-    cookieSecret: env.get("SIRIUS_AUTH_COOKIE_SECRET").default("abcdef").asString(),
+    jwtSecret: env.get("AUTH_JWT_SECRET").required().asString(),
+    refreshTokenSecret: env.get("AUTH_REFRESH_TOKEN_SECRET").required().asString(),
+    sessionExpiry: env.get("AUTH_SESSION_EXPIRY").required().asInt(),
+    refreshTokenExpiry: env.get("AUTH_REFRESH_TOKEN_EXPIRY").required().asInt(),
+    cookieSecret: env.get("AUTH_COOKIE_SECRET").required().asString(),
   },
   smtp: {
-    host: env.get("SIRIUS_SMTP_HOST").default("localhost").asString(),
-    port: env.get("SIRIUS_SMTP_PORT").default("1025").asString(),
-    secure: env.get("SIRIUS_SMTP_SECURE").default("false").asBoolStrict(),
+    host: env.get("SMTP_HOST").required().asString(),
+    port: env.get("SMTP_PORT").required().asString(),
     auth: {
-      user: env.get("SIRIUS_SMTP_AUTH_USER").asString(),
-      pass: env.get("SIRIUS_SMTP_AUTH_PASS").asString(),
+      user: env.get("SMTP_AUTH_USER").asString(),
+      pass: env.get("SMTP_AUTH_PASS").asString(),
     },
-    email_from: env.get("SIRIUS_EMAIL_FROM").default("sirius@test.fr").required().asString(),
+    email_from: env.get("EMAIL_FROM").required().asString(),
   },
   slack: {
-    token: env.get("SIRIUS_SLACK_TOKEN").default("").asString(),
-    signingSecret: env.get("SIRIUS_SLACK_SIGNING_SECRET").default("").asString(),
-    channel: env.get("SIRIUS_SLACK_CHANNEL").default("").asString(),
+    token: env
+      .get("SLACK_TOKEN")
+      .required(environement === "production")
+      .asString(),
+    signingSecret: env
+      .get("SLACK_SIGNING_SECRET")
+      .required(environement === "production")
+      .asString(),
+    channel: env
+      .get("SLACK_CHANNEL")
+      .required(environement !== "local" && environement !== "test")
+      .asString(),
   },
   sentry: {
-    dsn: env.get("SIRIUS_SENTRY_DSN").default("").asString(),
+    dsn: env.get("SENTRY_DSN").required().asString(),
   },
 };
 
