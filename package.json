@@ -30,6 +30,7 @@
     "deploy": ".bin/product deploy",
     "build": "yarn foreach:seq run build",
     "migrations:status": "yarn cli migrations:status",
+    "migrations:latest": "yarn cli migrations:latest",
     "migrations:up": "yarn cli migrations:up",
     "migrations:create": "yarn cli migrations:create",
     "server:dev": "yarn workspace server dev",

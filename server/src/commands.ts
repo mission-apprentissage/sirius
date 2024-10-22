@@ -116,6 +116,13 @@ program
   });
 
 program
+  .command("migrations:latest")
+  .description("Run migrations latest")
+  .action(async () => {
+    await migrateToLatest();
+  });
+
+program
   .command("migrations:status")
   .description("Check migrations status")
   .action(async () => {

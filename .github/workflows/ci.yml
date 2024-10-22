@@ -38,12 +38,10 @@ jobs:
       - name: lint
         run: yarn lint
 
-      # - name: start mongodb service
-      #   run: |
-      #     chmod 400 .infra/local/mongo_keyfile
-      #     sudo chown 999:999 .infra/local/mongo_keyfile
-      #     docker compose up -d --wait mongodb
-      #     yarn setup:mongodb
+      - name: start postgres service
+        run: |
+          docker compose up -d --wait postgres
+          yarn migrations:latest
 
       - name: test
         run: yarn test:ci
