@@ -91,8 +91,6 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y ca-certificates curl && update-ca-certificates && apt-get clean
 
 ENV NODE_ENV=production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
 
 ARG PUBLIC_REPO_NAME
 ENV REACT_APP_PRODUCT_REPO=$PUBLIC_REPO_NAME
@@ -109,8 +107,6 @@ ENV REACT_APP_ENV=$PUBLIC_ENV
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# You only need to copy next.config.mjs if you are NOT using the default configuration
-COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/next.config.mjs /app/
 COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/public /app/ui/public
 COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/package.json /app/ui/package.json
 

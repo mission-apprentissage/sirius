@@ -30,16 +30,21 @@ curl -sS --retry 5 --retry-all-errors https://{{dns_name}}/metabase/api/setup \
         \"cache_ttl\": null,
         \"refingerprint\": false,
         \"auto_run_queries\": true,
-        \"schedules\": {},
         \"details\": {
-            \"use-conn-uri\": true,
-            \"conn-uri\": \"{{ vault[env_type].MONGODB_METABASE_URI }}\",
-            \"tunnel-enabled\": false,
-            \"advanced-options\": true,
-            \"ssl\": true
+            \"ssl-use-client-auth\": false,
+            \"ssl\": true,
+            \"advanced-options\": false,
+            \"schema-filters-type\": \"all\",
+            \"ssl-mode\": \"allow\",
+            \"host\": \"{{ vault[env_type].PSQL_METABASE_HOST }}\",
+            \"port\": {{ vault[env_type].PSQL_METABASE_PORT }},
+            \"dbname\": \"{{ vault[env_type].PSQL_METABASE_DB }}\",
+            \"user\": \"{{ vault[env_type].PSQL_METABASE_USER }}\",
+            \"password\": \"{{ vault[env_type].PSQL_METABASE_PASSWORD }}\",
+            \"tunnel-enabled\": false
         },
-        \"name\": \"MongoDB\",
-        \"engine\": \"mongo\"
+        \"name\": \"PSQL\",
+        \"engine\": \"postgres\"
     },
     \"invite\": null,
     \"prefs\": {

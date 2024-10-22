@@ -25,14 +25,6 @@
       register: migration_status_output
       when: stack_status.stdout != ""
 
-    - name: "Shutdown processor"
-      shell:
-        chdir: /opt/app
-        cmd: "sudo docker service scale {{product_name}}_jobs_processor=0"
-      when:
-        - stack_status.stdout != ""
-        - '"migrations-status=synced" not in migration_status_output.stdout_lines'
-
     - name: "Activation du mode maintenance pour effectuer la migration"
       shell:
         chdir: /opt/app
@@ -58,11 +50,6 @@
         - '"migrations-status=synced" not in migration_status_output.stdout_lines'
       async: 18000
       poll: 10
-
-    - name: Trigger de la création des indexes
-      shell:
-        chdir: /opt/app
-        cmd: "sudo /opt/app/scripts/trigger-indexes-creation.sh"
 
     - name: Lancement de l'application {{env_type}}
       shell:
@@ -97,11 +84,11 @@
         chdir: /opt/app
         cmd: "sudo /opt/app/tools/ssl/renew-certificate.sh {{dns_name}}"
 
-    # - name: "Setup de la Metabase"
-    #   shell:
-    #     chdir: /opt/app
-    #     cmd: "sudo bash /opt/app/configs/metabase/setup-metabase.sh"
-    #   timeout: 86400 # 1 day
+    - name: "Setup de la Metabase"
+      shell:
+        chdir: /opt/app
+        cmd: "sudo bash /opt/app/configs/metabase/setup-metabase.sh"
+      timeout: 86400 # 1 day
 
     - name: "Prune Docker"
       shell:

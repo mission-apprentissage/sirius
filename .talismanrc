@@ -3,10 +3,12 @@ fileignoreconfig:
   checksum: 09990a1239c96bc89535cb2bbd21f2034c6879adf67272fdc8957faf893e2636
 - filename: .infra/ansible/tasks/preview_pr.yml
   checksum: 80abb1f87649f4751c93053cae6fb0d04419ea910defe3f52163b1a6442ade3f
+- filename: .infra/files/configs/mailpit/auth
+  checksum: 0b0a9c7bad5e1ec13d14c563d22c56c2cbcb2572fa40a4b2c5a11d6ca60eb8d1
 - filename: .infra/files/configs/mongodb/seed.gpg
   checksum: b1fa159bb2036a835b4138843b48043eca4ea374bcbb710ba4593bd39b1dfec1
 - filename: .infra/vault/vault.yml
-  checksum: 2f25472db7103acf8527497b1c6dabe9e853a5a3769c57ca65e7045772ed414e
+  checksum: 451c1d26327b6951b13ee06cdcf9046b15ef2ba15148601270cfd634fc2cf421
 - filename: README.md
   checksum: 00ac991f0b2746c5a5ffa14e2b3c5427b739c0d952aa3730efe1f234ac1fc3ca
 - filename: ui/src/config.public.ts

@@ -32,6 +32,13 @@ export const migrateDownDB = async (numberOfMigrations: number) => {
   }
 };
 
+export const statusMigration = async () => {
+  const migrator = makeMigrator();
+  const migrations = await migrator.getMigrations();
+  const pendingMigrations = migrations.filter((m) => !m.executedAt);
+  return pendingMigrations.length;
+};
+
 export const migrateToLatest = async (keepAlive?: boolean, exitProcessInSuccess = true) => {
   const migrator = makeMigrator();
 

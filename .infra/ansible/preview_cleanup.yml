@@ -18,8 +18,8 @@
       vars:
         build: false
         docker_images:
-          - "mna_{{product_name}}_ui"
-          - "mna_{{product_name}}_server"
+          - "ij_{{product_name}}_ui"
+          - "ij_{{product_name}}_server"
 
     - name: Prune Docker Containers
       shell:

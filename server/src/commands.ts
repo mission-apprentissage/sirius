@@ -9,7 +9,7 @@ import config from "./config";
 import classifyVerbatims from "./db/classifyVerbatims";
 import { closePgDbConnection } from "./db/db";
 import extractThemesVerbatims from "./db/extractThemesVerbatims";
-import { migrateDownDB, migrateToLatest } from "./migrations/migrate";
+import { migrateDownDB, migrateToLatest, statusMigration } from "./migrations/migrate";
 import logger from "./modules/logger";
 import { closeSentry } from "./modules/sentry";
 import createServer from "./server";
@@ -108,9 +108,44 @@ program
     }
   });
 
-program.command("migrateDB").action(async () => {
-  await migrateToLatest();
-});
+program
+  .command("migrations:up")
+  .description("Run migrations up")
+  .action(async () => {
+    await migrateToLatest();
+  });
+
+program
+  .command("migrations:status")
+  .description("Check migrations status")
+  .action(async () => {
+    const pendingMigrations = await statusMigration();
+    console.log(`migrations-status=${pendingMigrations === 0 ? "synced" : "pending"}`);
+    return;
+  });
+
+program
+  .command("migrations:down")
+  .description("Run migrations down")
+  .argument("[numberOfMigrations]", "number of migrations to rollback [default: 1]")
+  .action(async (numberOfMigrations = 1) => {
+    await migrateDownDB(numberOfMigrations);
+  });
+
+program
+  .command("migrations:create")
+  .description("Run migrations create")
+  .action(() =>
+    writeFileSync(
+      `${__dirname}/migrations/migration_${new Date().getTime()}.ts`,
+      `import { Kysely } from "kysely";
+
+     export const up = async (db: Kysely<unknown>) => {};
+
+     export const down = async (db: Kysely<unknown>) => {};
+    `
+    )
+  );
 
 program
   .command("classify-verbatims")
@@ -121,25 +156,6 @@ program
   .command("extract-themes-verbatims")
   .description("Extrait les thèmes des verbatims exitants")
   .action(async () => await extractThemesVerbatims());
-
-program
-  .command("migrateDownDB")
-  .argument("[numberOfMigrations]", "number of migrations to rollback [default: 1]")
-  .action(async (numberOfMigrations = 1) => {
-    await migrateDownDB(numberOfMigrations);
-  });
-
-program.command("create-migration").action(() =>
-  writeFileSync(
-    `${__dirname}/migrations/migration_${new Date().getTime()}.ts`,
-    `import { Kysely } from "kysely";
-
-     export const up = async (db: Kysely<unknown>) => {};
-
-     export const down = async (db: Kysely<unknown>) => {};
-    `
-  )
-);
 
 export async function startCLI() {
   await program.parseAsync(process.argv);
