@@ -51,7 +51,10 @@ const config = {
       .asString(),
   },
   sentry: {
-    dsn: env.get("SENTRY_DSN").required().asString(),
+    dsn: env
+      .get("SENTRY_DSN")
+      .required(environement !== "test")
+      .asString(),
   },
 };
 

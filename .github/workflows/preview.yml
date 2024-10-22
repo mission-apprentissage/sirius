@@ -1,7 +1,7 @@
 name: PR CI
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, closed]
+    types: [opened, synchronize, edited, reopened, ready_for_review, closed]
 
 jobs:
   tests:

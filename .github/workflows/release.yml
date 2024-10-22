@@ -1,7 +1,7 @@
 name: Release version
 on:
   push:
-    branches: [main, hotfix]
+    branches: [main, hotfix, next]
 
 jobs:
   tests:

@@ -3,7 +3,7 @@ import { Readable } from "node:stream";
 // eslint-disable-next-line node/no-unpublished-import
 import request from "supertest";
 
-import server from "../../../src/server.js";
+import server from "../../../src/server";
 
 export const randomize = (value: string) => `${value}-${Math.random().toString(36).substring(7)}`;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

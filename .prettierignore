@@ -1,2 +1,5 @@
 .yarn
 .talismanrc
+extension
+reverse_proxy
+ui/public/dsfr

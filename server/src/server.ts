@@ -9,6 +9,8 @@ import passport from "passport";
 import config from "./config";
 import errorMiddleware from "./middlewares/errorMiddleware";
 import { logMiddleware } from "./middlewares/logMiddleware";
+import { jwtStrategy } from "./modules/authStrategies/jwtStrategy";
+import { localStrategy } from "./modules/authStrategies/localStrategy";
 import { campagnes } from "./routes/campagnes.routes";
 import { etablissements } from "./routes/etablissements.routes";
 import { formations } from "./routes/formations.routes";
@@ -50,10 +52,8 @@ export default async () => {
 
   app.disable("x-powered-by");
 
-  // eslint-disable-next-line node/no-unsupported-features/es-syntax
-  import("./modules/authStrategies/jwtStrategy");
-  // eslint-disable-next-line node/no-unsupported-features/es-syntax
-  import("./modules/authStrategies/localStrategy");
+  jwtStrategy();
+  localStrategy();
 
   //Routes
   app.get(

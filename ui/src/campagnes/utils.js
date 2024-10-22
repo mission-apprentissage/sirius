@@ -12,24 +12,21 @@ export const multiStepQuestionnaireFormatter = (questionnaire) => {
     const [key] = property;
 
     // format questions for each categories
-    const nestedProperties = Object.entries(questionnaire.properties[key].properties).map(
-      (property) => {
-        const [nestedKey, nestedValue] = property;
-        return {
-          type: "object",
-          properties: {
-            [nestedKey]: {
-              ...nestedValue,
-            },
+    const nestedProperties = Object.entries(questionnaire.properties[key].properties).map((property) => {
+      const [nestedKey, nestedValue] = property;
+      return {
+        type: "object",
+        properties: {
+          [nestedKey]: {
+            ...nestedValue,
           },
-          dependencies: {
-            [nestedKey]: questionnaire.properties[key].dependencies[nestedKey],
-          },
-          required:
-            questionnaire.properties[key].required.indexOf(nestedKey) !== -1 ? [nestedKey] : [],
-        };
-      }
-    );
+        },
+        dependencies: {
+          [nestedKey]: questionnaire.properties[key].dependencies[nestedKey],
+        },
+        required: questionnaire.properties[key].required.indexOf(nestedKey) !== -1 ? [nestedKey] : [],
+      };
+    });
     // format category and returns them with formatted questions
     return {
       type: "object",
@@ -106,11 +103,7 @@ const padTo2Digits = (num) => {
 
 export const formatDate = (date) => {
   const typedDate = new Date(date);
-  return [
-    padTo2Digits(typedDate.getDate()),
-    padTo2Digits(typedDate.getMonth() + 1),
-    typedDate.getFullYear(),
-  ].join("/");
+  return [padTo2Digits(typedDate.getDate()), padTo2Digits(typedDate.getMonth() + 1), typedDate.getFullYear()].join("/");
 };
 
 export const formateDateToInputFormat = (date, monthsAdded = 0) => {
@@ -129,31 +122,23 @@ export const formateDateToInputFormat = (date, monthsAdded = 0) => {
 };
 
 export const getUniqueDiplomeTypesFromCampagne = (campagnes) =>
-  campagnes?.length
-    ? [...new Set(campagnes.map((campagne) => campagne.formation?.diplome))].sort()
-    : [];
+  campagnes?.length ? [...new Set(campagnes.map((campagne) => campagne.formation?.diplome))].sort() : [];
 
 export const getUniqueDiplomeTypesFromFormation = (formations) =>
   formations?.length ? [...new Set(formations.map((formation) => formation.diplome))].sort() : [];
 
 export const getUniqueEtablissementFromCampagne = (campagnes) =>
   campagnes?.length
-    ? [
-        ...new Set(campagnes.map((campagne) => campagne.formation.etablissementFormateurSiret)),
-      ].sort()
+    ? [...new Set(campagnes.map((campagne) => campagne.formation.etablissementFormateurSiret))].sort()
     : [];
 
 export const getUniqueEtablissementFromFormation = (formations) =>
-  formations?.length
-    ? [...new Set(formations.map((formation) => formation.etablissement_formateur_siret))].sort()
-    : [];
+  formations?.length ? [...new Set(formations.map((formation) => formation.etablissement_formateur_siret))].sort() : [];
 
 export const orderCampagnesByDiplomeType = (campagnes) => {
   const orderedCampagnes = {};
   getUniqueDiplomeTypesFromCampagne(campagnes)?.forEach((diplomeType) => {
-    const campagnesByDiplomeType = campagnes.filter(
-      (campagne) => campagne.formation?.diplome === diplomeType
-    );
+    const campagnesByDiplomeType = campagnes.filter((campagne) => campagne.formation?.diplome === diplomeType);
     orderedCampagnes[diplomeType] = campagnesByDiplomeType;
   });
   return orderedCampagnes;
@@ -162,9 +147,7 @@ export const orderCampagnesByDiplomeType = (campagnes) => {
 export const orderFormationsByDiplomeType = (formations = []) => {
   const orderedFormations = {};
   getUniqueDiplomeTypesFromFormation(formations)?.forEach((diplomeType) => {
-    const formationsByDiplomeType = formations.filter(
-      (formation) => formation?.diplome === diplomeType
-    );
+    const formationsByDiplomeType = formations.filter((formation) => formation?.diplome === diplomeType);
     orderedFormations[diplomeType] = formationsByDiplomeType;
   });
   return orderedFormations;
@@ -202,10 +185,8 @@ const getValue = (obj, key) => {
 };
 
 export const sortingKeys = (a, b) => ({
-  "formation-asc": () =>
-    getValue(a.formation, "intituleLong").localeCompare(getValue(b.formation, "intituleLong")),
-  "formation-desc": () =>
-    getValue(b.formation, "intituleLong").localeCompare(getValue(a.formation, "intituleLong")),
+  "formation-asc": () => getValue(a.formation, "intituleLong").localeCompare(getValue(b.formation, "intituleLong")),
+  "formation-desc": () => getValue(b.formation, "intituleLong").localeCompare(getValue(a.formation, "intituleLong")),
   "nomCampagne-asc": () => getValue(a, "nomCampagne").localeCompare(getValue(b, "nomCampagne")),
   "nomCampagne-desc": () => getValue(b, "nomCampagne").localeCompare(getValue(a, "nomCampagne")),
   "startDate-asc": () => getValue(a, "startDate").localeCompare(getValue(b, "startDate")),
