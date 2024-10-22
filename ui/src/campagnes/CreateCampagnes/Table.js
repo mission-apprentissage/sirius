@@ -27,40 +27,9 @@ const Table = ({
   setSelectedFormationsAction,
   formik,
 }) => {
-  const selectedFormationsActionCount = selectedFormationsAction.length;
-
-  const checkboxLabel = (
-    <b>
-      {selectedFormationsActionCount
-        ? `${selectedFormationsActionCount} formation${isPlural(
-            selectedFormationsActionCount
-          )} sélectionnée${isPlural(selectedFormationsActionCount)}`
-        : "Tout sélectionner"}
-    </b>
-  );
-
   return (
     <>
       <ButtonContainer>
-        <Checkbox
-          options={[
-            {
-              label: checkboxLabel,
-              nativeInputProps: {
-                name: `selectAll`,
-                checked:
-                  selectedFormationsAction.length > 0 &&
-                  selectedFormationsActionCount === selectedFormationsAction.length,
-                onChange: (e) =>
-                  setSelectedFormationsAction(
-                    e.target.checked
-                      ? [...selectedFormations.map((formation) => formation._id)]
-                      : []
-                  ),
-              },
-            },
-          ]}
-        />
         <Button
           priority="secondary"
           iconId="fr-icon-delete-line"

@@ -10,12 +10,13 @@ import {
   TableContainer,
   SelectAllFormationContainer,
 } from "../styles/shared.style";
-import { USER_ROLES } from "../../constants";
+import { DIPLOME_TYPE_MATCHER, USER_ROLES } from "../../constants";
 import { UserContext } from "../../context/UserContext";
 import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
 import Cards from "./Cards";
 import { isPlural } from "../utils";
 import useFetchCampagnes from "../../hooks/useFetchCampagnes";
+import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
 
 const REMOTE_FORMATION_BASE_QUERY = {
   published: "true",
@@ -59,8 +60,16 @@ const buildSearchQuery = (searchTerm) => {
     : [];
 };
 
+const buildDiplomeQuery = (selectedDiplomesIntitule) => {
+  return selectedDiplomesIntitule ? { $or: [{ diplome: selectedDiplomesIntitule }] } : [];
+};
+
 const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   const [search, setSearch] = useState("");
+  const [selectedEtablissementsSiret, setSelectedEtablissementsSiret] = useState(null);
+  const [selectedDiplomesIntitule, setSelectedDiplomesIntitule] = useState(null);
+  const [diplomesOptions, setDiplomesOptions] = useState([]);
+  const [etablissementsOptions, setEtablissementsOptions] = useState([]);
   const [userContext] = useContext(UserContext);
   const [page, setPage] = useState(1);
 
@@ -71,7 +80,15 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   const query = {
     $and: [
       REMOTE_FORMATION_BASE_QUERY,
-      buildSiretQuery(isAdmin, userSiret),
+      buildSiretQuery(
+        isAdmin,
+        selectedEtablissementsSiret?.length ? selectedEtablissementsSiret : userSiret
+      ),
+      {
+        ...(selectedDiplomesIntitule?.length && {
+          ...buildDiplomeQuery(selectedDiplomesIntitule),
+        }),
+      },
       ...buildSearchQuery(search),
     ],
   };
@@ -90,7 +107,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     query: stringifiedQuery,
     enabled: !!userSiret.length || isAdmin,
     page,
-    pageSize: 50,
+    pageSize: 100,
   });
 
   const {
@@ -112,6 +129,50 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     </b>
   );
 
+  if (
+    remoteFormationsPagination?.nombre_de_page < 2 &&
+    remoteFormations?.length &&
+    !etablissementsOptions.length &&
+    !diplomesOptions.length
+  ) {
+    const etablissements = remoteFormations
+      ?.map((formation) => {
+        const uniqueFormations = remoteFormations.filter(
+          (remoteFormation) =>
+            remoteFormation.etablissement_formateur_siret ===
+            formation.etablissement_formateur_siret
+        );
+
+        return {
+          value: formation.etablissement_formateur_siret,
+          label: remoteEtablissementLabelGetterFromFormation(formation),
+          hintText: `${uniqueFormations.length} formation${isPlural(uniqueFormations.length)}`,
+        };
+      })
+      .filter(
+        (formation, index, self) => index === self.findIndex((t) => t.value === formation.value)
+      );
+
+    const diplome = remoteFormations
+      ?.map((formation) => {
+        const uniqueFormations = remoteFormations.filter(
+          (remoteFormation) => remoteFormation.diplome === formation.diplome
+        );
+
+        return {
+          value: formation.diplome,
+          label: DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome,
+          hintText: `${uniqueFormations.length} formation${isPlural(uniqueFormations.length)}`,
+        };
+      })
+      .filter(
+        (formation, index, self) => index === self.findIndex((t) => t.value === formation.value)
+      );
+
+    setEtablissementsOptions(etablissements);
+    setDiplomesOptions(diplome);
+  }
+
   return (
     <>
       {(isErrorFormations || isErrorCampagnes) && (
@@ -122,42 +183,35 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
         />
       )}
       <>
-        {(isLoadingFormations || isLoadingCampagnes) && (
-          <LoaderContainer>
-            <BeatLoader
-              color="var(--background-action-high-blue-france)"
-              size={20}
-              aria-label="Loading Spinner"
-            />
-          </LoaderContainer>
-        )}
-        {isSuccessCampagnes && isSuccessFormations && !remoteFormations?.length ? (
-          <Alert
-            title={`Aucun résultats pour votre recherche « ${search} »`}
-            description={
-              <Button priority="secondary" onClick={() => setSearch("")}>
-                Réinitialiser la recherche
-              </Button>
-            }
-            severity="info"
-          />
-        ) : null}
-        {isSuccessCampagnes && isSuccessFormations && remoteFormations.length ? (
+        {isSuccessFormations && (
           <>
-            <SortButtons search={search} setSearch={setSearch} />
+            <SortButtons
+              search={search}
+              setSearch={setSearch}
+              selectedEtablissementsSiret={selectedEtablissementsSiret}
+              setSelectedEtablissementsSiret={setSelectedEtablissementsSiret}
+              selectedDiplomesIntitule={selectedDiplomesIntitule}
+              setSelectedDiplomesIntitule={setSelectedDiplomesIntitule}
+              etablissementsOptions={etablissementsOptions}
+              diplomesOptions={diplomesOptions}
+              showSelect={!!remoteFormationsPagination?.nombre_de_page < 2}
+            />
             <SelectAllFormationContainer>
               <Checkbox
+                disabled={!remoteFormations?.length}
                 options={[
                   {
                     label: checkboxLabel,
-                    hintText: `${selectedFormations.length}/${
-                      remoteFormationsPagination.total
-                    } formation${isPlural(selectedFormations.length)} sélectionnée${isPlural(
-                      selectedFormations.length
-                    )}`,
+                    hintText: remoteFormationsPagination?.total
+                      ? `${selectedFormations.length}/${
+                          remoteFormationsPagination?.total
+                        } formation${isPlural(selectedFormations.length)} sélectionnée${isPlural(
+                          selectedFormations.length
+                        )}`
+                      : "",
                     nativeInputProps: {
                       name: `selectAll`,
-                      checked: selectedFormations.length === remoteFormations.length,
+                      checked: selectedFormations?.length === remoteFormations?.length,
                       onChange: () => {
                         if (selectedFormations.length === remoteFormations.length) {
                           setSelectedFormations([]);
@@ -170,29 +224,50 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
                 ]}
               />
             </SelectAllFormationContainer>
-            <TableContainer>
-              <Cards
-                displayedFormations={remoteFormations}
-                selectedFormations={selectedFormations}
-                setSelectedFormations={setSelectedFormations}
-                campagnes={campagnes || []}
-              />
-              {remoteFormationsPagination.nombre_de_page > 1 && (
-                <Pagination
-                  count={remoteFormationsPagination.nombre_de_page}
-                  defaultPage={page}
-                  getPageLinkProps={(pageNumber) => ({
-                    onClick: (event) => {
-                      event.preventDefault();
-                      setPage(pageNumber);
-                    },
-                    key: `pagination-link-${pageNumber}`,
-                  })}
-                />
-              )}
-            </TableContainer>
           </>
+        )}
+        {isSuccessCampagnes && isSuccessFormations && search && !remoteFormations?.length ? (
+          <Alert
+            title={`Aucun résultats pour votre recherche « ${search} »`}
+            description={
+              <Button priority="secondary" onClick={() => setSearch("")}>
+                Réinitialiser la recherche
+              </Button>
+            }
+            severity="info"
+          />
         ) : null}
+        {isLoadingFormations || isLoadingCampagnes ? (
+          <LoaderContainer>
+            <BeatLoader
+              color="var(--background-action-high-blue-france)"
+              size={20}
+              aria-label="Loading Spinner"
+            />
+          </LoaderContainer>
+        ) : (
+          <TableContainer>
+            <Cards
+              displayedFormations={remoteFormations}
+              selectedFormations={selectedFormations}
+              setSelectedFormations={setSelectedFormations}
+              campagnes={campagnes || []}
+            />
+            {remoteFormationsPagination?.nombre_de_page > 1 && (
+              <Pagination
+                count={remoteFormationsPagination.nombre_de_page}
+                defaultPage={page}
+                getPageLinkProps={(pageNumber) => ({
+                  onClick: (event) => {
+                    event.preventDefault();
+                    setPage(pageNumber);
+                  },
+                  key: `pagination-link-${pageNumber}`,
+                })}
+              />
+            )}
+          </TableContainer>
+        )}
       </>
     </>
   );

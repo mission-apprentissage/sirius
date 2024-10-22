@@ -14,7 +14,19 @@ export const fetchLocalEtablissements = async ({ token, search }) => {
   const response = await _get(url, token);
 
   if (response.error) {
-    throw new Error("Erreur dans le chargement des établissements localaux");
+    throw new Error("Erreur dans le chargement des établissements locaux");
+  }
+
+  return response;
+};
+
+export const fetchEtablissementsWithCampagnesCount = async ({ token }) => {
+  let url = `/api/etablissements/with-campagnes-count`;
+
+  const response = await _get(url, token);
+
+  if (response.error) {
+    throw new Error("Erreur dans le chargement des établissements avec campagnes");
   }
 
   return response;

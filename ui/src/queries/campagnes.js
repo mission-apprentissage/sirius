@@ -1,16 +1,39 @@
-import { _get, _post, _delete } from "../utils/httpClient";
+import { _post, _delete } from "../utils/httpClient";
 
-export const fetchCampagnes = async ({ query = null, page = 1, pageSize = 10, token }) => {
-  let url = `/api/campagnes?page=${page}&pageSize=${pageSize}`;
+export const fetchCampagnes = async ({
+  search,
+  diplome,
+  siret,
+  page = 1,
+  pageSize = 10,
+  token,
+}) => {
+  const url = "/api/campagnes";
 
-  if (query) {
-    url += `&${query}`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      search,
+      diplome,
+      siret,
+      page,
+      pageSize,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Erreur dans le chargement des campagnes");
   }
 
-  const response = await _get(url, token);
-  if (response.body) {
-    return response;
+  const data = await response.json();
+  if (data.body) {
+    return data;
   }
+
   throw new Error("Erreur dans le chargement des campagnes");
 };
 
@@ -35,7 +58,7 @@ export const deleteCampagnes = async ({ campagneIds, siret, token }) => {
 };
 
 export const createCampagnes = async ({ campagnes, token }) => {
-  let url = `/api/campagnes`;
+  let url = `/api/campagnes/create`;
 
   const response = await _post(url, campagnes, token);
 

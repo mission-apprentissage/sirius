@@ -58,6 +58,16 @@ const updateFormation = tryCatch(async (req, res) => {
   return res.status(200).json(body);
 });
 
+const getFormationsDiplomesWithCampagnes = tryCatch(async (req, res) => {
+  const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
+
+  const { success, body } = await formationsService.getFormationsDiplomesWithCampagnes({ userSiret });
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 module.exports = {
   createFormation,
   getFormations,
@@ -65,4 +75,5 @@ module.exports = {
   deleteFormation,
   updateFormation,
   getFormationsWithTemoignageCount,
+  getFormationsDiplomesWithCampagnes,
 };

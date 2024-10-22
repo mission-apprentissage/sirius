@@ -294,7 +294,7 @@ const getXlsxMultipleExport = async (campagneIds = []) => {
 const getCampagnesStatistics = async (campagneIds = []) => {
   try {
     const query = { campagneIds };
-    const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
+    const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query, allowEmptyFilter: true });
 
     const questionnaires = await questionnairesDao.findAll();
     const temoignages = campagnes.map((campagne) => campagne.temoignages).flat();

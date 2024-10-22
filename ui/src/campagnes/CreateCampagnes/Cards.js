@@ -19,7 +19,7 @@ import { IntituleFormation, StyledBadge, Duration } from "../styles/shared.style
 const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations, campagnes }) => {
   return (
     <FormationCardContainer>
-      {displayedFormations.map((formation) => {
+      {displayedFormations?.map((formation) => {
         const alreadyCreatedCampagnes = campagnes?.filter(
           (campagne) => campagne.formation.catalogueId === formation._id
         );

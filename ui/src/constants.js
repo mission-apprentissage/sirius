@@ -88,19 +88,6 @@ export const emailWithTLDRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export const numberRegex = /^\d+$/;
 
-export const campagnesSortingOptions = [
-  { label: "Formation (A-Z)", value: "formation-asc" },
-  { label: "Formation (Z-A)", value: "formation-desc" },
-  { label: "Nom d'usage formation (A-Z)", value: "nomCampagne-asc" },
-  { label: "Nom d'usage formation (Z-A)", value: "nomCampagne-desc" },
-  { label: "Début campagne (Ancienne-Récente)", value: "startDate-asc" },
-  { label: "Début campagne (Récente-Ancienne)", value: "startDate-desc" },
-  { label: "Fin campagne (Ancienne-Récente)", value: "endDate-asc" },
-  { label: "Fin campagne (Récente-Ancienne)", value: "endDate-desc" },
-  { label: "Apprenti·es (0-1)", value: "seats-asc" },
-  { label: "Apprenti·es (1-0)", value: "seats-desc" },
-];
-
 export const ROLE_TYPE = {
   ETABLISSEMENT: "ETABLISSEMENT",
   OBSERVER: "OBSERVER",

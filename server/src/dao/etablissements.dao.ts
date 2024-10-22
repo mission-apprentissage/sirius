@@ -107,7 +107,9 @@ export const update = async (id: string, updatedEtablissement: Partial<Etablisse
   return result.numUpdatedRows === BigInt(1);
 };
 
-export const findAllEtablissementWithCounts = async (): Promise<
+export const findAllEtablissementWithCounts = async (
+  siret: string[]
+): Promise<
   (Pick<
     Etablissement,
     "id" | "created_at" | "enseigne" | "entreprise_raison_sociale" | "onisep_nom" | "region_implantation_nom" | "siret"
@@ -117,7 +119,7 @@ export const findAllEtablissementWithCounts = async (): Promise<
     verbatimsCount: number;
   })[]
 > => {
-  return kdb
+  let baseQuery = kdb
     .selectFrom("etablissements")
     .select([
       "etablissements.id",
@@ -143,8 +145,19 @@ export const findAllEtablissementWithCounts = async (): Promise<
     .where("formations.deleted_at", "is", null)
     .where("verbatims.deleted_at", "is", null)
     .groupBy("etablissements.id")
-    .orderBy("verbatimsCount", "desc")
-    .execute();
+    .orderBy("campagnesCount", "desc");
+
+  if (siret?.length) {
+    //baseQuery = baseQuery.where("siret", "in", siret);
+    baseQuery = baseQuery.where((qb) =>
+      qb.or([
+        qb("formations.etablissement_gestionnaire_siret", "in", siret),
+        qb("formations.etablissement_formateur_siret", "in", siret),
+      ])
+    );
+  }
+
+  return baseQuery.execute();
 };
 
 export const count = async (): Promise<number> => {

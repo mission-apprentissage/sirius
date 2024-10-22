@@ -19,6 +19,7 @@ import {
 } from "../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
 import { UserContext } from "../../context/UserContext";
+import { etablissementLabelGetter } from "../../utils/etablissement";
 
 const manageCampagneTableRows = ({
   displayedCampagnes,
@@ -34,6 +35,7 @@ const manageCampagneTableRows = ({
 
   return displayedCampagnes.map((campagne) => {
     const formation = campagne.formation;
+    const etablissement = campagne.etablissement;
     const isSelected = selectedCampagneIds.includes(campagne.id);
 
     const handleOnChange = () => {
@@ -69,8 +71,7 @@ const manageCampagneTableRows = ({
         </FormationContainer>
         <EtablissementLabelContainer>
           <p data-tooltip-id={`tooltip-formateur-gestionnaire-${campagne.id}`}>
-            {formation.etablissementFormateurEntrepriseRaisonSociale ||
-              formation.etablissementFormateurEnseigne}
+            {etablissementLabelGetter(etablissement)}
           </p>
           <Tooltip
             id={`tooltip-formateur-gestionnaire-${campagne.id}`}

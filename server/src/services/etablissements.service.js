@@ -155,6 +155,16 @@ const getEtablissementsPublicStatistics = async () => {
   }
 };
 
+const getEtablissementsWithCampagnesCount = async ({ userSiret }) => {
+  try {
+    const etablissements = await etablissementsDao.findAllEtablissementWithCounts(userSiret);
+
+    return { success: true, body: etablissements };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   createEtablissements,
   getEtablissements,
@@ -164,4 +174,5 @@ module.exports = {
   getEtablissementsSuivi,
   getEtablissementsPublicStatistics,
   getEtablissementsWithTemoignageCount,
+  getEtablissementsWithCampagnesCount,
 };

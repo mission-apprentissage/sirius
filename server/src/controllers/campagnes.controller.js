@@ -9,34 +9,26 @@ const getCampagnes = tryCatch(async (req, res) => {
   const scope = isObserver ? req.user.scope : null;
   const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
 
-  const page = req.query.page || 1;
-  const pageSize = req.query.pageSize || 10;
+  const page = req.body.page || 1;
+  const pageSize = req.body.pageSize || 10;
 
-  const diplome = req.query.diplome;
-  const etablissementFormateurSiret = req.query.etablissementFormateurSiret;
-  const search = req.query.search;
-  const departement = req.query.departement;
+  const diplome = req.body.diplome;
+  const etablissementFormateurSiret = req.body.siret;
+  const search = req.body.search;
+  const departement = req.body.departement;
 
   let query = {};
 
   if (diplome) {
-    query = { diplome };
-  }
-
-  if (diplome && diplome === "N/A") {
-    query = { diplome: { $exists: false } };
+    query.diplome = diplome;
   }
 
   if (etablissementFormateurSiret) {
-    query = { etablissementFormateurSiret };
-  }
-
-  if (etablissementFormateurSiret && etablissementFormateurSiret === "N/A") {
-    query = { etablissementFormateurSiret: { $exists: false } };
+    query.etablissementFormateurSiret = etablissementFormateurSiret;
   }
 
   if (departement) {
-    query = { departement };
+    query.departement = departement;
   }
 
   const { success, body, ids, pagination } = await campagnesService.getCampagnes({

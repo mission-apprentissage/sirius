@@ -7,10 +7,12 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
   siret,
   query,
   scope,
+  allowEmptyFilter = false,
 }: {
   siret?: string[];
   query: { diplome?: string; etablissementFormateurSiret?: string; departement?: string; campagneIds: string[] };
   scope?: ObserverScope;
+  allowEmptyFilter?: boolean;
 }) => {
   let baseQuery = kdb
     .selectFrom("campagnes")
@@ -89,12 +91,18 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     baseQuery = baseQuery.where(`formations.etablissement_gestionnaire_siret`, "in", scope.value);
   }
 
-  if (query && query.diplome) {
-    baseQuery = baseQuery.where("formations.diplome", "=", query.diplome);
+  if (query && query.diplome?.length) {
+    baseQuery = baseQuery.where("formations.diplome", "in", query.diplome);
+  } else if (!allowEmptyFilter) {
+    // Force query to return no results by adding a false condition
+    baseQuery = baseQuery.where("formations.diplome", "in", ["INVALID_DIPLOME"]);
   }
 
-  if (query && query.etablissementFormateurSiret) {
-    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "=", query.etablissementFormateurSiret);
+  if (query && query.etablissementFormateurSiret?.length) {
+    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", query.etablissementFormateurSiret);
+  } else if (!allowEmptyFilter) {
+    // Force query to return no results by adding a false condition
+    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", ["INVALID_SIRET"]);
   }
 
   if (query && query.departement) {

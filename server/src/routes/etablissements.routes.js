@@ -10,6 +10,7 @@ const {
   getEtablissementsSuivi,
   getEtablissementsPublicStatistics,
   getEtablissementsWithTemoignageCount,
+  getEtablissementsWithCampagnesCount,
 } = require("../controllers/etablissements.controller");
 const { verifyUser } = require("../middlewares/verifyUserMiddleware");
 const { isAdmin } = require("../middlewares/isAdmin");
@@ -30,6 +31,10 @@ const etablissements = () => {
       getEtablissements(req, res, next);
     }
   );
+
+  router.get("/api/etablissements/with-campagnes-count", verifyUser, (req, res, next) => {
+    getEtablissementsWithCampagnesCount(req, res, next);
+  });
 
   router.get("/api/etablissements/temoignage-count", (req, res, next) => {
     getEtablissementsWithTemoignageCount(req, res, next);

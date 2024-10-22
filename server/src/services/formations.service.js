@@ -80,6 +80,35 @@ const updateFormation = async (id, updatedFormation) => {
   }
 };
 
+const getFormationsDiplomesWithCampagnes = async ({ userSiret }) => {
+  try {
+    const formations = await formationsDao.findAllWithCampagnesCount(userSiret);
+
+    const formattedByDiplome = formations.reduce((acc, formation) => {
+      const diplome = formation.diplome || "N/A";
+
+      if (!acc[diplome]) {
+        acc[diplome] = 0;
+      }
+
+      acc[diplome] += formation.campagnesCount;
+
+      return acc;
+    }, {});
+
+    const result = Object.keys(formattedByDiplome)
+      .map((diplome) => ({
+        intitule: diplome,
+        campagnesCount: formattedByDiplome[diplome],
+      }))
+      .sort((a, b) => b.campagnesCount - a.campagnesCount);
+
+    return { success: true, body: result };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 module.exports = {
   createFormation,
   getFormations,
@@ -87,4 +116,5 @@ module.exports = {
   deleteFormation,
   updateFormation,
   getFormationsWithTemoignageCount,
+  getFormationsDiplomesWithCampagnes,
 };

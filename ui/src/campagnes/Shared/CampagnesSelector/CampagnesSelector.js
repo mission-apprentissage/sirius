@@ -9,6 +9,7 @@ import SortButtons from "../SortButtons/SortButtons";
 import { LoaderContainer, HeaderContainer } from "../../styles/shared.style";
 import {
   CAMPAGNE_TABLE_TYPES,
+  DIPLOME_TYPE_MATCHER,
   OBSERVER_SCOPES,
   OBSERVER_SCOPES_LABELS,
   USER_ROLES,
@@ -19,6 +20,9 @@ import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
 import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
 import CampagnesTable from "../CampagnesTable/CampagnesTable";
 import { TableContainer } from "../CampagnesTable/campagnesTable.style";
+import useFetchEtablissementsWithCampagnes from "../../../hooks/useFetchEtablissementsWithCampagnesCount";
+import { etablissementLabelGetter } from "../../../utils/etablissement";
+import useFetchDiplomesWithCampagnesCount from "../../../hooks/useFetchDiplomesWithCampagnesCount";
 
 const CampagnesSelector = ({
   selectedCampagneIds,
@@ -31,14 +35,11 @@ const CampagnesSelector = ({
   const [isOpened, setIsOpened] = useState(false);
   const [page, setPage] = useState(1);
   const [userContext] = useContext(UserContext);
+  const [selectedEtablissementsSiret, setSelectedEtablissementsSiret] = useState(null);
+  const [selectedDiplomesIntitule, setSelectedDiplomesIntitule] = useState(null);
 
   const isManage = campagneTableType === CAMPAGNE_TABLE_TYPES.MANAGE;
   const isResults = campagneTableType === CAMPAGNE_TABLE_TYPES.RESULTS;
-
-  let searchQuery = "";
-  if (search) {
-    searchQuery += `&search=${search}`;
-  }
 
   const {
     campagnes,
@@ -48,12 +49,18 @@ const CampagnesSelector = ({
     isError: isErrorCampagnes,
     isLoading: isLoadingCampagnes,
   } = useFetchCampagnes({
-    query: searchQuery,
+    search: search,
+    diplome: selectedDiplomesIntitule,
+    siret: selectedEtablissementsSiret,
     key: search,
     enabled: true,
     page: page,
-    pageSize: 50,
+    pageSize: 20,
   });
+  const { etablissementsWithCampagnes, isSuccess: isSuccessEtablissementsWithCampagnes } =
+    useFetchEtablissementsWithCampagnes();
+  const { diplomesWithCampagnes, isSuccess: isSuccessDiplomesWithCampagnes } =
+    useFetchDiplomesWithCampagnesCount();
 
   const currentPageCampagneIds = campagnes?.map((campagne) => campagne.id);
 
@@ -65,12 +72,7 @@ const CampagnesSelector = ({
     isResults && selectedCampagneIds.length === campagnesIds?.length;
 
   useEffect(() => {
-    if (
-      isResults &&
-      !paramsCampagneIds?.length &&
-      campagnesIds?.length &&
-      !selectedCampagneIds.length
-    ) {
+    if (isResults && !paramsCampagneIds?.length && campagnesIds?.length) {
       setSelectedCampagneIds(campagnesIds);
     }
     if (isManage) {
@@ -101,15 +103,7 @@ const CampagnesSelector = ({
           )}
         </p>
       )}
-      {isLoadingCampagnes && (
-        <LoaderContainer>
-          <BeatLoader
-            color="var(--background-action-high-blue-france)"
-            size={20}
-            aria-label="Loading Spinner"
-          />
-        </LoaderContainer>
-      )}
+
       {isErrorCampagnes ? (
         <Alert
           title="Une erreur s'est produite dans le chargement des campagnes"
@@ -117,126 +111,139 @@ const CampagnesSelector = ({
           severity="error"
         />
       ) : null}
-      {isSuccessCampagnes && !campagnes?.length && (
-        <Alert
-          title="Aucune campagne trouvée"
-          description={
-            userContext?.user.role === USER_ROLES.OBSERVER
-              ? "Votre scope n'est pas encore défini. Vous ne pouvez pas accéder aux campagnes. Merci de contacter un administrateur."
-              : "Aucune campagne n'a été trouvée."
-          }
-          severity="info"
+      {isSuccessDiplomesWithCampagnes && isSuccessEtablissementsWithCampagnes && (
+        <SortButtons
+          search={search}
+          setSearch={setSearch}
+          setIsOpened={setIsOpened}
+          selectedEtablissementsSiret={selectedEtablissementsSiret}
+          setSelectedEtablissementsSiret={setSelectedEtablissementsSiret}
+          selectedDiplomesIntitule={selectedDiplomesIntitule}
+          setSelectedDiplomesIntitule={setSelectedDiplomesIntitule}
+          etablissementsOptions={etablissementsWithCampagnes?.map((etablissement) => ({
+            label: etablissementLabelGetter(etablissement),
+            value: etablissement.siret,
+            hintText: `${etablissement.campagnesCount} campagne${isPlural(
+              etablissement.campagnesCount
+            )}`,
+          }))}
+          diplomesOptions={diplomesWithCampagnes?.map((diplome) => ({
+            label: DIPLOME_TYPE_MATCHER[diplome.intitule] || diplome.intitule,
+            value: diplome.intitule,
+            hintText: `${diplome.campagnesCount} campagne${isPlural(diplome.campagnesCount)}`,
+          }))}
         />
       )}
-      {isSuccessCampagnes && campagnes?.length ? (
-        <>
-          <SortButtons
-            search={search}
-            setSearch={setSearch}
-            searchResultCount={campagnesPagination.totalItems}
-            setIsOpened={setIsOpened}
-            organizeLabel="Organiser mes campagnes par"
-            userScope={userContext?.user.scope}
-          />
-          {isLoadingCampagnes ? (
-            <LoaderContainer>
-              <BeatLoader
-                color="var(--background-action-high-blue-france)"
-                size={15}
-                aria-label="Loading Spinner"
-                loading={isLoadingCampagnes}
-              />
-            </LoaderContainer>
-          ) : (
-            <>
-              <HeaderContainer>
-                <Checkbox
-                  options={[
-                    {
-                      label: checkboxLabel,
-                      hintText: checkboxHintText,
-                      nativeInputProps: {
-                        name: `selectAll`,
-                        checked: hasSelectedAllCampagneFromCurrentPage,
-                        onChange: () => {
-                          if (isResults) {
-                            if (hasSelectedAllCampagneFromCurrentPage) {
-                              setSelectedCampagneIds([]);
-                            } else {
-                              setSelectedCampagneIds(campagnesIds);
-                            }
+      <>
+        {isLoadingCampagnes ? (
+          <LoaderContainer>
+            <BeatLoader
+              color="var(--background-action-high-blue-france)"
+              size={15}
+              aria-label="Loading Spinner"
+              loading={isLoadingCampagnes}
+            />
+          </LoaderContainer>
+        ) : (
+          <>
+            <HeaderContainer>
+              <Checkbox
+                disabled={!campagnesIds?.length}
+                options={[
+                  {
+                    label: checkboxLabel,
+                    hintText: checkboxHintText,
+                    nativeInputProps: {
+                      name: `selectAll`,
+                      checked: hasSelectedAllCampagneFromCurrentPage,
+                      onChange: () => {
+                        if (isResults) {
+                          if (hasSelectedAllCampagneFromCurrentPage) {
+                            setSelectedCampagneIds([]);
+                          } else {
+                            setSelectedCampagneIds(campagnesIds);
                           }
-                          if (isManage) {
-                            if (hasSelectedAllCampagneFromCurrentPage) {
-                              setSelectedCampagneIds((prevValues) => [
-                                ...prevValues.filter((id) => !currentPageCampagneIds.includes(id)),
-                              ]);
-                            } else {
-                              setSelectedCampagneIds((prevValues) => [
-                                ...new Set([...prevValues, ...currentPageCampagneIds]),
-                              ]);
-                            }
+                        }
+                        if (isManage) {
+                          if (hasSelectedAllCampagneFromCurrentPage) {
+                            setSelectedCampagneIds((prevValues) => [
+                              ...prevValues.filter((id) => !currentPageCampagneIds.includes(id)),
+                            ]);
+                          } else {
+                            setSelectedCampagneIds((prevValues) => [
+                              ...new Set([...prevValues, ...currentPageCampagneIds]),
+                            ]);
                           }
-                        },
+                        }
                       },
                     },
-                  ]}
+                  },
+                ]}
+              />
+              {isManage && (
+                <ActionButtons
+                  selectedCampagneIds={selectedCampagneIds}
+                  setSelectedCampagneIds={setSelectedCampagneIds}
                 />
-                {isManage && (
-                  <ActionButtons
+              )}
+            </HeaderContainer>
+            {search && isSuccessCampagnes && campagnesPagination.totalItems === 0 ? (
+              <Alert
+                title={`Aucun résultats pour votre recherche « ${search} »`}
+                description={
+                  <Button priority="secondary" onClick={() => setSearch("")}>
+                    Réinitialiser la recherche
+                  </Button>
+                }
+                severity="info"
+              />
+            ) : isSuccessCampagnes && !campagnes?.length ? (
+              <Alert
+                title="Aucune campagne trouvée"
+                description={
+                  userContext?.user.role === USER_ROLES.OBSERVER
+                    ? "Votre scope n'est pas encore défini. Vous ne pouvez pas accéder aux campagnes. Merci de contacter un administrateur."
+                    : "Aucune campagne n'a été trouvée."
+                }
+                severity="info"
+              />
+            ) : (
+              <TableContainer>
+                <div style={{ display: isOpened || isManage ? "inherit" : "none" }}>
+                  <CampagnesTable
+                    displayedCampagnes={campagnes}
                     selectedCampagneIds={selectedCampagneIds}
                     setSelectedCampagneIds={setSelectedCampagneIds}
+                    campagneTableType={campagneTableType}
                   />
-                )}
-              </HeaderContainer>
-              {search && isSuccessCampagnes && campagnesPagination.totalItems === 0 ? (
-                <Alert
-                  title={`Aucun résultats pour votre recherche « ${search} »`}
-                  description={
-                    <Button priority="secondary" onClick={() => setSearch("")}>
-                      Réinitialiser la recherche
-                    </Button>
-                  }
-                  severity="info"
-                />
-              ) : (
-                <TableContainer>
-                  <div style={{ display: isOpened || isManage ? "inherit" : "none" }}>
-                    <CampagnesTable
-                      displayedCampagnes={campagnes}
-                      selectedCampagneIds={selectedCampagneIds}
-                      setSelectedCampagneIds={setSelectedCampagneIds}
-                      campagneTableType={campagneTableType}
+                  {campagnesPagination?.totalPages > 1 && (
+                    <Pagination
+                      count={campagnesPagination.totalPages}
+                      defaultPage={page}
+                      getPageLinkProps={(pageNumber) => ({
+                        onClick: (event) => {
+                          event.preventDefault();
+                          setPage(pageNumber);
+                        },
+                        key: `pagination-link-${pageNumber}`,
+                      })}
                     />
-                    {campagnesPagination.totalPages > 1 && (
-                      <Pagination
-                        count={campagnesPagination.totalPages}
-                        defaultPage={page}
-                        getPageLinkProps={(pageNumber) => ({
-                          onClick: (event) => {
-                            event.preventDefault();
-                            setPage(pageNumber);
-                          },
-                          key: `pagination-link-${pageNumber}`,
-                        })}
-                      />
-                    )}
-                  </div>
-                </TableContainer>
-              )}
-            </>
-          )}
-          {isResults && (
-            <ButtonContainer>
-              <Button
-                priority="secondary"
-                iconId={isOpened ? "fr-icon-arrow-up-s-line" : "fr-icon-arrow-down-s-line"}
-                onClick={() => setIsOpened((prevValue) => !prevValue)}
-              />
-            </ButtonContainer>
-          )}
-        </>
-      ) : null}
+                  )}
+                </div>
+              </TableContainer>
+            )}
+          </>
+        )}
+        {isResults && (
+          <ButtonContainer>
+            <Button
+              priority="secondary"
+              iconId={isOpened ? "fr-icon-arrow-up-s-line" : "fr-icon-arrow-down-s-line"}
+              onClick={() => setIsOpened((prevValue) => !prevValue)}
+            />
+          </ButtonContainer>
+        )}
+      </>
     </>
   );
 };

@@ -5,7 +5,18 @@ export const etablissementLabelGetter = (data) => {
 
 export const remoteEtablissementLabelGetter = (data) => {
   if (!data || !Object.keys(data)?.length) return "";
-  return data?.onisepN_nom || data?.enseigne || data?.entreprise_raison_sociale || "";
+  return data?.onisep_nom || data?.enseigne || data?.entreprise_raison_sociale || "";
+};
+
+export const remoteEtablissementLabelGetterFromFormation = (data) => {
+  if (!data || !Object.keys(data)?.length) return "";
+  return (
+    data?.etablissement_formateur_entreprise_raison_sociale ||
+    data?.etablissement_formateur_enseigne ||
+    data?.etablissement_gestionnaire_enseigne ||
+    data?.etablissement_gestionnaire_entreprise_raison_sociale ||
+    ""
+  );
 };
 
 // Vérifie si le SIRET est valide à travers sa longueur et l'algorythme de Luhn
