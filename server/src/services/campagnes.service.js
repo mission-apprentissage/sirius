@@ -369,6 +369,11 @@ const getXlsxMultipleExport = async (campagneIds = []) => {
       etablissementResponsableLabel: campagne.formation?.etablissementGestionnaireEnseigne,
       seats: campagne.seats || "Illimité",
       temoignagesCount: campagne.temoignagesCount,
+      onisepUrl: campagne.etablissement?.onisepUrl,
+      rncpCode: campagne.formation?.rncpCode,
+      certifInfo: campagne.formation?.id_certifinfo,
+      cfd: campagne.formation?.cfd,
+      mef: campagnes.formation?.bcn_mefs_10?.length ? campagnes.formation.bcn_mefs_10[0]?.mef10 : "",
     }));
 
     const generatedXlsx = await xlsxExport.generateMultipleCampagnes(formattedCampagnes);
