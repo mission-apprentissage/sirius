@@ -100,7 +100,7 @@ export const CardContainer = styled.div`
   width: 100%;
 `;
 
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+// eslint-disable-next-line no-unused-vars
 export const StyledCard = styled(({ notClickable, isClicked, ...props }) => <Card {...props} />)`
   display: flex;
   align-items: center;

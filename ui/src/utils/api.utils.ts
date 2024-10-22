@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { publicConfig } from "../config.public";
 import type { PathParam, QueryString, WithQueryStringAndPathParam } from "./generateUri";
 import { generateUri } from "./generateUri";

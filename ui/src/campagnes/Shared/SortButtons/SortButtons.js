@@ -12,7 +12,6 @@ const SortButtons = ({
   search,
   setSearch,
   searchResultCount,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setIsOpened = () => {},
   organizeLabel,
   userScope,

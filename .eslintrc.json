@@ -70,5 +70,6 @@
     "react": {
       "version": "detect"
     }
-  }
+  },
+  "ignorePatterns": ["ui/public/dsfr/*", "extension/*"]
 }

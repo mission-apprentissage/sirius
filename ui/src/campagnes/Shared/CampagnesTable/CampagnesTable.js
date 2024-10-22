@@ -57,7 +57,6 @@ const CampagnesTable = ({
   formik = {},
   selectedFormations = [],
   selectedFormationsAction = [],
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setSelectedFormationsAction = () => {},
 }) => {
   if (campagneTableType === CAMPAGNE_TABLE_TYPES.MANAGE) {

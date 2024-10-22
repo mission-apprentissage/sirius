@@ -247,7 +247,7 @@ export const FormationCardByDiplomeType = styled.div`
 `;
 
 export const StyledBadge = styled((props) => {
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const { isAlreadyCreated, ...rest } = props;
   return <Badge {...rest} />;
 })`

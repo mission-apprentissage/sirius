@@ -107,13 +107,13 @@ ENV REACT_APP_ENV=$PUBLIC_ENV
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/public /app/ui/public
-COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/package.json /app/ui/package.json
+# COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/public /app/ui/public
+COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/package.json /app/package.json
 
-# Automatically leverage output traces to reduce image size 
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/.next/standalone /app/
-COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/.next/static /app/ui/.next/static
+COPY --from=builder_ui --chown=nextjs:nodejs /app/ui/build /app/
+
+# RUN yarn global add serve
+RUN yarn global add local-web-server
 
 USER nextjs
 
@@ -121,5 +121,5 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD ["node", "ui/server"]
-# CMD yarn serve
+CMD ["yarn","serve"]
+# CMD ["serve"]

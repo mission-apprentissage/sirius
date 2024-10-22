@@ -9,7 +9,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "serve": "ws --port 3000 -d build --log.format dev --spa index.html",
+    "serve": "ws --port 3000 --log.format dev --spa index.html",
     "eject": "react-scripts eject",
     "prestart": "copy-dsfr-to-public && only-include-used-icons",
     "prebuild": "copy-dsfr-to-public && only-include-used-icons",

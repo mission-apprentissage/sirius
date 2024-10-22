@@ -93,7 +93,6 @@ const CampagnesSelector = ({
   selectedCampagneIds,
   setSelectedCampagneIds,
   paramsCampagneIds = [],
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAllCampagneIds = () => {},
   campagneTableType,
 }) => {

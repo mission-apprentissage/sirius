@@ -27,7 +27,6 @@ Sentry.init({
 const QUERY_CLIENT_RETRY_DELAY = 3000;
 const QUERY_CLIENT_RETRY_ATTEMPTS = 1;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 startReactDsfr({ defaultColorScheme: "light", Link: Link as any });
 
 const queryClient = new QueryClient({
