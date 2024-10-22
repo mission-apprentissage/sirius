@@ -1,11 +1,9 @@
 name: PR CI
 on:
-  # pull_request:
-  #   types: [opened, synchronize, edited, reopened, ready_for_review, closed]
-  push:
-    branches: [feature/upgrades]
+  pull_request:
+    types: [opened, synchronize, edited, reopened, ready_for_review, closed]
 
 jobs:
   tests:
-    # if: github.event.pull_request.state == 'open'
+    if: github.event.pull_request.state == 'open'
     uses: "./.github/workflows/ci.yml"
