@@ -39,9 +39,7 @@ jobs:
         run: yarn lint
 
       - name: start postgres service
-        run: |
-          docker compose up -d --wait postgres
-          yarn migrations:latest
+        run: docker compose up -d --wait postgres
 
       - name: test
         run: yarn test:ci
