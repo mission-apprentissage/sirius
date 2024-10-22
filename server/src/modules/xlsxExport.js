@@ -18,6 +18,9 @@ const generateMultipleCampagnes = async (campagnes) => {
     { header: "Nom de la campagne", key: "campagneName", width: 50 },
     { header: "ONISEP URL", key: "onisepUrl", width: 50 },
     { header: "Code RNCP", key: "rncpCode", width: 50 },
+    { header: "Code CertifInfo", key: "certifInfo", width: 50 },
+    { header: "CFD", key: "cfd", width: 50 },
+    { header: "MEF10", key: "mef", width: 50 },
   ];
 
   for (const campagne of campagnes) {
@@ -32,6 +35,9 @@ const generateMultipleCampagnes = async (campagnes) => {
       temoignagesCount: campagne.temoignagesCount,
       onisepUrl: campagne.onisepUrl,
       rncpCode: campagne.rncpCode,
+      certifInfo: campagne.certifInfo,
+      cfd: campagne.cfd,
+      mef: campagne.mef,
     });
   }
 
