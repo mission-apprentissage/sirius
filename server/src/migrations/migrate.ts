@@ -47,7 +47,7 @@ export const migrateToLatest = async (keepAlive?: boolean, exitProcessInSuccess 
   results?.forEach((it) => {
     if (it.status === "Success") {
       // console.log(`migration "${it.migrationName}" was executed successfully (UP)`); // a lot of log
-      if (exitProcessInSuccess) process.exit(1);
+      if (exitProcessInSuccess) process.exit(0);
     } else if (it.status === "Error") {
       console.error(`failed to execute migration "${it.migrationName}" (UP)`);
       process.exit(1);
@@ -56,7 +56,7 @@ export const migrateToLatest = async (keepAlive?: boolean, exitProcessInSuccess 
 
   if (!results?.length) {
     console.log("already up to date !");
-    if (exitProcessInSuccess) process.exit(1);
+    if (exitProcessInSuccess) process.exit(0);
   }
 
   if (error) {
