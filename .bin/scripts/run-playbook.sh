@@ -7,6 +7,8 @@ shift
 readonly ENV_FILTER=${1:?"Merci de préciser un ou plusieurs environnements (ex. recette ou production)"}
 shift
 
+readonly OP_ACCOUNT="inserjeunes"
+
 function runPlaybook() {
   echo "Lancement du playbook ${PLAYBOOK_NAME} pour l'environnement ${ENV_FILTER}..."
 
