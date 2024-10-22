@@ -359,22 +359,30 @@ const getPdfMultipleExport = async (campagneIds = [], user) => {
 const getXlsxMultipleExport = async (campagneIds = []) => {
   try {
     const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(campagneIds);
+    const formattedCampagnes = campagnes.map((campagne) => {
+      let mef = "";
+      const bcnMefs10 = campagne.formation?.bcnMefs10;
+      if (bcnMefs10) {
+        const parsedMefs = JSON.parse(bcnMefs10);
+        mef = Array.isArray(parsedMefs) && parsedMefs.length ? parsedMefs[0]?.mef10 || "" : "";
+      }
 
-    const formattedCampagnes = campagnes.map((campagne) => ({
-      campagneName: campagne.nomCampagne,
-      formation: campagne.formation?.intituleLong,
-      etablissementFormateurSiret: campagne.formation?.etablissementFormateurSiret,
-      etablissementResponsableSiret: campagne.formation?.etablissementGestionnaireSiret,
-      etablissementFormateurLabel: campagne.formation?.etablissementFormateurEntrepriseRaisonSociale,
-      etablissementResponsableLabel: campagne.formation?.etablissementGestionnaireEnseigne,
-      seats: campagne.seats || "Illimité",
-      temoignagesCount: campagne.temoignagesCount,
-      onisepUrl: campagne.etablissement?.onisepUrl,
-      rncpCode: campagne.formation?.rncpCode,
-      certifInfo: campagne.formation?.idCertifinfo,
-      cfd: campagne.formation?.cfd,
-      mef: campagnes.formation?.bcnMefs10?.length ? campagnes.formation.bcnMefs10[0]?.mef10 : "",
-    }));
+      return {
+        campagneName: campagne.nomCampagne,
+        formation: campagne.formation?.intituleLong,
+        etablissementFormateurSiret: campagne.formation?.etablissementFormateurSiret,
+        etablissementResponsableSiret: campagne.formation?.etablissementGestionnaireSiret,
+        etablissementFormateurLabel: campagne.formation?.etablissementFormateurEntrepriseRaisonSociale,
+        etablissementResponsableLabel: campagne.formation?.etablissementGestionnaireEnseigne,
+        seats: campagne.seats || "Illimité",
+        temoignagesCount: campagne.temoignagesCount,
+        onisepUrl: campagne.etablissement?.onisepUrl,
+        rncpCode: campagne.formation?.rncpCode,
+        certifInfo: campagne.formation?.idCertifinfo,
+        cfd: campagne.formation?.cfd,
+        mef: mef,
+      };
+    });
 
     const generatedXlsx = await xlsxExport.generateMultipleCampagnes(formattedCampagnes);
 
