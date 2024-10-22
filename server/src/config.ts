@@ -18,10 +18,7 @@ const config = {
       .get("PSQL_CA")
       .required(environement === "production")
       .asString(),
-    logLevel: env
-      .get("PSQL_LOG_LEVEL")
-      .required(environement === "production")
-      .asString(),
+    logLevel: env.get("PSQL_LOG_LEVEL").required().asString(),
   },
   auth: {
     jwtSecret: env.get("AUTH_JWT_SECRET").required().asString(),
