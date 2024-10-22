@@ -305,7 +305,10 @@ export const getAllWithTemoignageCountFormationEtablissement = async (campagneId
         'etablissment_formateur_adresse', formations.etablissement_formateur_adresse,
         'etablissement_formateur_localite', formations.etablissement_formateur_localite,
         'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
-        'rncp_code', formations.catalogue_data ->> 'rncp_code'
+        'rncp_code', formations.catalogue_data ->> 'rncp_code',
+        'id_certifinfo', formations.catalogue_data ->> 'id_certifinfo',
+        'cfd', formations.catalogue_data ->> 'cfd',
+        'bcn_mefs_10', formations.catalogue_data ->> 'bcn_mefs_10'
       )`.as("formation"),
       sql`json_build_object(
         'id', etablissements.id,
