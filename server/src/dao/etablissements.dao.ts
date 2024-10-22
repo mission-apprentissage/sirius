@@ -148,7 +148,13 @@ export const findAllEtablissementWithCounts = async (
     .orderBy("campagnesCount", "desc");
 
   if (siret?.length) {
-    baseQuery = baseQuery.where("siret", "in", siret);
+    //baseQuery = baseQuery.where("siret", "in", siret);
+    baseQuery = baseQuery.where((qb) =>
+      qb.or([
+        qb("formations.etablissement_gestionnaire_siret", "in", siret),
+        qb("formations.etablissement_formateur_siret", "in", siret),
+      ])
+    );
   }
 
   return baseQuery.execute();

@@ -6,6 +6,12 @@ export type User = Omit<Users, "id" | "accepted_cgu" | "email_confirmed"> & {
   email_confirmed: boolean | null;
 };
 
+export type UserWithEtablissementsSiret = User & {
+  etablissements: {
+    siret: string[];
+  }[];
+};
+
 export type UserCreation = Omit<User, "first_name" | "last_name"> & {
   confirmationToken: string;
   firstName: string;

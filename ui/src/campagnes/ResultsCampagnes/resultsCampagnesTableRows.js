@@ -15,6 +15,7 @@ import {
   StyledBadge,
 } from "../styles/shared.style";
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
+import { etablissementLabelGetter } from "../../utils/etablissement";
 
 const resultsCampagneTableRows = ({
   displayedCampagnes,
@@ -23,6 +24,7 @@ const resultsCampagneTableRows = ({
 }) => {
   return displayedCampagnes.map((campagne) => {
     const formation = campagne.formation;
+    const etablissement = campagne.etablissement;
     const isSelected = selectedCampagneIds.includes(campagne.id);
 
     const handleOnChange = () => {
@@ -58,8 +60,7 @@ const resultsCampagneTableRows = ({
         </FormationContainer>
         <EtablissementLabelContainer>
           <p data-tooltip-id={`tooltip-results-${formation.id}`}>
-            {formation.etablissementFormateurEntrepriseRaisonSociale ||
-              formation.etablissementFormateurEnseigne}
+            {etablissementLabelGetter(etablissement)}
           </p>
           <Tooltip
             id={`tooltip-results-${formation.id}`}

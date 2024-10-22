@@ -6,4 +6,9 @@ export const SearchContainer = styled.div`
   gap: 1rem;
   align-items: flex-end;
   margin: 25px 0 10px 0;
+
+  & > input,
+  & > div {
+    width: 33%;
+  }
 `;

@@ -57,14 +57,9 @@ const formations = () => {
     }
   );
 
-  router.get(
-    "/api/formations/diplomes-with-campagnes",
-    verifyUser,
-    (req, res, next) => isAdminOrAllowed(req, next, TYPES.FORMATION_IDS),
-    (req, res, next) => {
-      getFormationsDiplomesWithCampagnes(req, res, next);
-    }
-  );
+  router.get("/api/formations/diplomes-with-campagnes", verifyUser, (req, res, next) => {
+    getFormationsDiplomesWithCampagnes(req, res, next);
+  });
 
   return router;
 };

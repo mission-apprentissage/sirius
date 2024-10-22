@@ -20,8 +20,8 @@ export const fetchLocalEtablissements = async ({ token, search }) => {
   return response;
 };
 
-export const fetchEtablissementsWithCampagnes = async ({ token }) => {
-  let url = `/api/etablissements/with-campagnes`;
+export const fetchEtablissementsWithCampagnesCount = async ({ token }) => {
+  let url = `/api/etablissements/with-campagnes-count`;
 
   const response = await _get(url, token);
 

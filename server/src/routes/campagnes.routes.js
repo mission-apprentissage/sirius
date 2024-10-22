@@ -19,16 +19,8 @@ const { isAdmin } = require("../middlewares/isAdmin");
 const campagnes = () => {
   const router = express.Router();
 
-  router.get("/api/campagnes/", verifyUser, (req, res, next) => {
-    getCampagnes(req, res, next);
-  });
-
-  router.post("/api/campagnes/statistics", verifyUser, (req, res, next) => {
-    getCampagnesStatistics(req, res, next);
-  });
-
   router.post(
-    "/api/campagnes",
+    "/api/campagnes/create",
     verifyUser,
     (req, res, next) => isAdminOrAllowed(req, next, TYPES.ETABLISSEMENT_FORMATEUR_SIRET),
     validator(createMultiCampagneSchema),
@@ -36,6 +28,14 @@ const campagnes = () => {
       createCampagnes(req, res, next);
     }
   );
+
+  router.post("/api/campagnes/", verifyUser, (req, res, next) => {
+    getCampagnes(req, res, next);
+  });
+
+  router.post("/api/campagnes/statistics", verifyUser, (req, res, next) => {
+    getCampagnesStatistics(req, res, next);
+  });
 
   router.delete(
     "/api/campagnes",
