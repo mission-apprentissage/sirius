@@ -46,7 +46,7 @@ services:
     networks:
       - ij_network
     volumes:
-      - sirius_postgres_data:/var/lib/postgresql/data:z
+      - /opt/app/data/postgres:/var/lib/postgresql/data:z
     environment:
       - POSTGRES_PASSWORD={{ vault[env_type].PSQL_PWD }}
     logging:
