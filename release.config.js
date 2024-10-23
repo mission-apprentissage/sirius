@@ -2,7 +2,7 @@ module.exports = {
   branches: [
     "main",
     { name: "hotfix", channel: "hotfix", prerelease: "hotfix" },
-    { name: "next", channel: "rc", prerelease: true },
+    // { name: "next", channel: "rc", prerelease: true },
   ],
   plugins: [
     "@semantic-release/commit-analyzer",
