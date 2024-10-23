@@ -69,7 +69,7 @@ export function generateQueryString(query: QueryString = {}): string {
   const searchParams = new URLSearchParams();
   for (const [key, value] of Object.entries(query)) {
     if (Array.isArray(value)) {
-      value.forEach((v) => searchParams.append(key, v));
+      searchParams.append(key, value.join(","));
     } else {
       searchParams.append(key, value);
     }

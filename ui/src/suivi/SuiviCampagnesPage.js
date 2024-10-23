@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 
 import Button from "../Components/Form/Button";
 import { UserContext } from "../context/UserContext";
+import { apiGet } from "../utils/api.utils";
 
 const SuiviCampagnesPage = () => {
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
