@@ -4,13 +4,13 @@ import { beforeAll, beforeEach } from "vitest";
 import config from "../../../src/config";
 import { closePgDbConnection, connectToPgDb } from "../../../src/db/db";
 import { migrateToLatest } from "../../../src/migrations/migrate";
-import { createdb } from "./pgtools.test.utils";
+import { createdb } from "../../../src/utils/pgtools.utils";
 
 export const startAndConnectPg = async () => {
   const workerId = `${process.env.VITEST_POOL_ID}-${process.env.VITEST_WORKER_ID}`;
 
   const dbUri = config.psql.uri.replace("VITEST_POOL_ID", workerId);
-  const testDb = `postgres-test-${workerId}`;
+  const testDb = `sirius-test-${workerId}`;
 
   try {
     await createdb(testDb);

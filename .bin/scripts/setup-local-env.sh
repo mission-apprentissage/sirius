@@ -25,7 +25,6 @@ echo "REACT_APP_PRODUCT_REPO=\"${REPO_NAME}\"" >> "${ROOT_DIR}/ui/.env"
 echo "REACT_APP_API_PORT=5001" >> "${ROOT_DIR}/ui/.env"
 
 
-# yarn
-# yarn services:start
-# yarn build:dev
-# yarn cli migrations:up
+yarn
+yarn services:start
+yarn cli db:init

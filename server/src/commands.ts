@@ -13,6 +13,7 @@ import { migrateDownDB, migrateToLatest, statusMigration } from "./migrations/mi
 import logger from "./modules/logger";
 import { closeSentry } from "./modules/sentry";
 import createServer from "./server";
+import { createdb } from "./utils/pgtools.utils";
 
 program
   .configureHelp({
@@ -105,6 +106,17 @@ program
       logger.error(err);
       captureException(err);
       throw err;
+    }
+  });
+
+program
+  .command("db:init")
+  .description("Init db")
+  .action(async () => {
+    try {
+      await createdb("sirius");
+    } catch (error) {
+      console.error(error);
     }
   });
 

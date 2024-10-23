@@ -1,5 +1,8 @@
-import { Client } from "pg";
+import type Ipg from "pg";
+import pg from "pg";
 import type { EmptyObject } from "type-fest";
+
+const { Client } = pg;
 
 const knownErrors = {
   "42P04": {
@@ -51,7 +54,7 @@ export async function getDefaultClient() {
   return new Client(PG_DEFAULT_CONFIG);
 }
 
-export async function listDatabases(pgClient: Client) {
+export async function listDatabases(pgClient: Ipg.Client) {
   const dbs = await pgClient.query(`SELECT datname FROM pg_catalog.pg_database`);
   return dbs.rows.map(({ datname }: { datname: string }) => datname);
 }
@@ -67,7 +70,7 @@ function createFunction(action: "CREATE" | "DROP") {
           port: number;
         }
       | EmptyObject = {},
-    openedClient?: Client
+    openedClient?: Ipg.Client
   ) {
     if (!dbName) throw new TypeError("dbName not set");
 

@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 
-import { dropdb, getDefaultClient, listDatabases } from "./integration/utils/pgtools.test.utils";
+import { dropdb, getDefaultClient, listDatabases } from "../src/utils/pgtools.utils";
 
 export default async () => {
   return async () => {
