@@ -18,7 +18,7 @@ export const getEtablissements = async (siretArray: string[]) => {
       }),
     });
     const data = await response.json();
-    return data.statusCode === 200 ? data.organismes : [];
+    return data.organismes?.length ? data.organismes : [];
   } catch (e) {
     console.error(e);
     return [];
