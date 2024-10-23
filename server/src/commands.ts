@@ -115,8 +115,8 @@ program
   .action(async () => {
     try {
       await createdb("sirius", config.psql);
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
+      // console.error(error);
     }
   });
 

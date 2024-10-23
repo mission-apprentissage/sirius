@@ -27,4 +27,5 @@ echo "REACT_APP_API_PORT=5001" >> "${ROOT_DIR}/ui/.env"
 
 yarn
 yarn services:start
+yarn build
 yarn cli db:init
