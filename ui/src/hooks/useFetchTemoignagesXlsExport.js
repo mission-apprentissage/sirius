@@ -1,5 +1,6 @@
-import { useContext } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useContext } from "react";
+
 import { UserContext } from "../context/UserContext";
 import { fetchTemoignagesXlsExport } from "../queries/temoignages";
 
@@ -7,8 +8,7 @@ const useFetchTemoignagesXlsExport = () => {
   const [userContext] = useContext(UserContext);
 
   const { mutate, data, isSuccess, isError, isPending } = useMutation({
-    mutationFn: (campagneIds) =>
-      fetchTemoignagesXlsExport({ campagneIds, token: userContext.token }),
+    mutationFn: (campagneIds) => fetchTemoignagesXlsExport({ campagneIds, token: userContext.token }),
     mutationKey: "temoignagesXlsExport",
   });
 

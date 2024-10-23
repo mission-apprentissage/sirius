@@ -1,12 +1,12 @@
-import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { TableContainer } from "./campagnesTable.style";
-import { HeaderItem } from "../../styles/shared.style";
+
+import { CAMPAGNE_TABLE_TYPES } from "../../../constants";
+import createCampagneTableRows from "../../CreateCampagnes/createCampagneTableRows";
 import manageCampagneTableRows from "../../ManageCampagne/manageCampagneTableRows";
 import resultsCampagneTableRows from "../../ResultsCampagnes/resultsCampagnesTableRows";
-import createCampagneTableRows from "../../CreateCampagnes/createCampagneTableRows";
-import { CAMPAGNE_TABLE_TYPES } from "../../../constants";
+import { HeaderItem } from "../../styles/shared.style";
+import { TableContainer } from "./campagnesTable.style";
 
 const headers = [
   "",

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Input } from "@codegouvfr/react-dsfr/Input";
-import * as Yup from "yup";
-import { useFormik } from "formik";
 import { fr } from "@codegouvfr/react-dsfr";
-import { _post } from "../utils/httpClient";
+import { Input } from "@codegouvfr/react-dsfr/Input";
+import { useFormik } from "formik";
+import { useState } from "react";
+import * as Yup from "yup";
+
 import { emailWithTLDRegex } from "../constants";
+import { apiPost } from "../utils/api.utils";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -24,10 +25,14 @@ const SupportModal = ({ modal, setIsSupportSubmitted, setSupportError }) => {
     validationSchema: validationSchema,
     onSubmit: async ({ email, message }) => {
       setIsSubmitting(true);
-      const result = await _post(`/api/users/support/public`, {
-        email,
-        message,
+
+      const result = await apiPost("/users/support/public", {
+        body: {
+          email,
+          message,
+        },
       });
+
       if (!result.success) {
         setSupportError(true);
       }
@@ -60,10 +65,7 @@ const SupportModal = ({ modal, setIsSupportSubmitted, setSupportError }) => {
           },
         ]}
       >
-        <p>
-          Saisissez l’adresse électronique associée à votre compte puis votre message. Nous vous
-          répondrons.
-        </p>
+        <p>Saisissez l’adresse électronique associée à votre compte puis votre message. Nous vous répondrons.</p>
         <Input
           label="Email"
           type="email"

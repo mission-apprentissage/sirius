@@ -31,7 +31,7 @@ Le monorepo est composé d'un package back-end situé dans `server` et d'un pack
 L'architecture du `server` est composé de :
 
 - **Routes** passant les requêtes au **Controllers**. Elles s'occupent des valider la requête et de l'autoriser ou non à travers les **Middlewares**.
-- **Controllers**  qui fait l'interface entre **Routes** et **Services**. Ils s'occupent de déstructurer les données de requête, passer la donnée aux **Service** et répondre à la requête.
+- **Controllers** qui fait l'interface entre **Routes** et **Services**. Ils s'occupent de déstructurer les données de requête, passer la donnée aux **Service** et répondre à la requête.
 - **Services** contenant la logique métier, remontant les erreurs et communique avec les DAO.
 - **Data Access Objects** responsables de la récupération et l'ajout de donnée en base de donnée.
 
@@ -43,25 +43,25 @@ L'`ui` est découpé en domaine : `campagnes`, `legal`, `questionnaires`, `temoi
 
 La base de données MongoDB contient **6 collections**.
 
-- **Campagnes** : _id, nomCampagne, startDate, endDate, questionnaireId, deletedAt, seats, createdAt, updatedAt.
-- **Etablissements** : _id, data, formationsIds, deletedAt, createdBy, createdAt, updatedAt. *(le champs data contient les informations récupéré sur le catalogue de formations)*
-- **Formations** : _id, data, campagneId, deletedAt, createdBy, createdAt, updatedAt. *(le champs data contient les informations récupéré sur le catalogue de formations)*
-- **Questionnaires** : _id, nom, questionnaire, questionnaireUI, isValidated, deletedAt, createdBy, createdAt, updatedAt
-- **Temoignages** : _id, campagneId, responses, createdAt, updatedAt
-- **Users** : _id, firstName, lastName, email, role, status, comment, siret, etablissement, authStrategy, refreshToken, salt, hash
+- **Campagnes** : \_id, nomCampagne, startDate, endDate, questionnaireId, deletedAt, seats, createdAt, updatedAt.
+- **Etablissements** : \_id, data, formationsIds, deletedAt, createdBy, createdAt, updatedAt. _(le champs data contient les informations récupéré sur le catalogue de formations)_
+- **Formations** : \_id, data, campagneId, deletedAt, createdBy, createdAt, updatedAt. _(le champs data contient les informations récupéré sur le catalogue de formations)_
+- **Questionnaires** : \_id, nom, questionnaire, questionnaireUI, isValidated, deletedAt, createdBy, createdAt, updatedAt
+- **Temoignages** : \_id, campagneId, responses, createdAt, updatedAt
+- **Users** : \_id, firstName, lastName, email, role, status, comment, siret, etablissement, authStrategy, refreshToken, salt, hash
 
 ### Variable d'environnement
 
 Les variable d'environnement sont activé par défaut dans le fichier `server/src/config.js`. Celles utilisées sont :
 
 ```js
-SIRIUS_ENV
-SIRIUS_MONGODB_URI
-SIRIUS_AUTH_JWT_SECRET
-SIRIUS_AUTH_REFRESH_TOKEN_SECRET
-SIRIUS_AUTH_SESSION_EXPIRY
-SIRIUS_AUTH_REFRESH_TOKEN_EXPIRY
-SIRIUS_AUTH_COOKIE_SECRET
+SIRIUS_ENV;
+SIRIUS_MONGODB_URI;
+AUTH_JWT_SECRET;
+AUTH_REFRESH_TOKEN_SECRET;
+AUTH_SESSION_EXPIRY;
+AUTH_REFRESH_TOKEN_EXPIRY;
+AUTH_COOKIE_SECRET;
 ```
 
 ## Fonctionnement

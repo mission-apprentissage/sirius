@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { Box, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react";
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import { Box, chakra, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import {
-  useReactTable,
+  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  createColumnHelper,
+  useReactTable,
 } from "@tanstack/react-table";
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import { useState } from "react";
 
 const columnHelper = createColumnHelper();
 
@@ -110,9 +110,7 @@ const SuiviEtablissementsTable = ({ etablissements = [] }) => {
                   key={cell.id}
                   px="15px"
                   fontSize="14px"
-                  borderColor={
-                    index === table.getRowModel().rows.length - 1 ? "transparent" : "brand.blue.400"
-                  }
+                  borderColor={index === table.getRowModel().rows.length - 1 ? "transparent" : "brand.blue.400"}
                 >
                   <Box display="flex" maxW="300px">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

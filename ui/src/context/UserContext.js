@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
-import useRefreshTokenUser from "../hooks/useRefreshTokenUser";
-import useFetchMe from "../hooks/useFetchMe";
-import { USER_ROLES } from "../constants";
-import { _get } from "../utils/httpClient";
+import { createContext, useEffect, useState } from "react";
 
-const UserContext = React.createContext();
+import { USER_ROLES } from "../constants";
+import useFetchMe from "../hooks/useFetchMe";
+import useRefreshTokenUser from "../hooks/useRefreshTokenUser";
+import { apiGet } from "../utils/api.utils";
+
+const UserContext = createContext();
 
 const initialState = {
   loading: true,
@@ -17,8 +18,7 @@ const UserProvider = ({ children }) => {
   const [state, setState] = useState(initialState);
   const { refreshTokenUser } = useRefreshTokenUser();
 
-  const shouldHaveEtablissements =
-    state.user?.role === USER_ROLES.ETABLISSEMENT && !state.user?.etablissements?.length;
+  const shouldHaveEtablissements = state.user?.role === USER_ROLES.ETABLISSEMENT && !state.user?.etablissements?.length;
 
   const shouldHaveScope = state.user?.role === USER_ROLES.OBSERVER && !state.user?.scope;
 
@@ -49,7 +49,11 @@ const UserProvider = ({ children }) => {
   useEffect(() => {
     if (state.token && !state.user) {
       const forceLogout = async () => {
-        const result = await _get(`/api/users/logout`, state.token);
+        const result = await apiGet(`/api/users/logout`, {
+          headers: {
+            Authorization: `Bearer ${state.token}`,
+          },
+        });
         if (result.success) {
           setState({ ...initialState, loading: false });
         }

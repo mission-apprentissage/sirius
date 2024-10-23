@@ -1,13 +1,12 @@
-import { _get, _post, _delete } from "../utils/httpClient";
+import { apiDelete, apiGet, apiPost } from "../utils/api.utils";
 
 export const fetchCampagnes = async ({ query = null, page = 1, pageSize = 10, token }) => {
-  let url = `/api/campagnes?page=${page}&pageSize=${pageSize}`;
-
-  if (query) {
-    url += `&${query}`;
-  }
-
-  const response = await _get(url, token);
+  const response = await apiGet("/api/campagnes", {
+    querystring: { page, pageSize, ...(query ? { query } : {}) },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (response.body) {
     return response;
   }
@@ -15,9 +14,12 @@ export const fetchCampagnes = async ({ query = null, page = 1, pageSize = 10, to
 };
 
 export const fetchCampagnesSorted = async ({ type = null, token }) => {
-  let url = `/api/campagnes/sorted?type=${type}`;
-
-  const response = await _get(url, token);
+  const response = await apiGet(`/api/campagnes/sorted`, {
+    querystring: { type },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (response) {
     return response;
   }
@@ -25,9 +27,13 @@ export const fetchCampagnesSorted = async ({ type = null, token }) => {
 };
 
 export const fetchCampagnesStatistics = async ({ campagneIds, token }) => {
-  let url = `/api/campagnes/statistics`;
+  const response = await apiPost("/api/campagnes/statistics", {
+    body: campagneIds,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  const response = await _post(url, campagneIds, token);
   if (response) {
     return response;
   }
@@ -35,9 +41,12 @@ export const fetchCampagnesStatistics = async ({ campagneIds, token }) => {
 };
 
 export const deleteCampagnes = async ({ campagneIds, siret, token }) => {
-  let url = `/api/campagnes?ids=${campagneIds}&siret=${siret}`;
-
-  const response = await _delete(url, token);
+  const response = await apiDelete(`/api/campagne`, {
+    querystring: { ids: campagneIds, siret },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (response) {
     return response;
   }
@@ -45,9 +54,12 @@ export const deleteCampagnes = async ({ campagneIds, siret, token }) => {
 };
 
 export const createCampagnes = async ({ campagnes, token }) => {
-  let url = `/api/campagnes/multi`;
-
-  const response = await _post(url, campagnes, token);
+  const response = await apiPost("/api/campagnes/multi", {
+    body: campagnes,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (response.createdCount) {
     return response;

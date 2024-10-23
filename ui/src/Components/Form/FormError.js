@@ -1,4 +1,4 @@
-import { Box, Alert, AlertIcon, AlertTitle, AlertDescription } from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from "@chakra-ui/react";
 
 const FormError = ({ title, hasError, errorMessages }) => {
   if (!hasError) return null;

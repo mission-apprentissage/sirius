@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import Alert from "@codegouvfr/react-dsfr/Alert";
-import { Select } from "@codegouvfr/react-dsfr/SelectNext";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Input } from "@codegouvfr/react-dsfr/Input";
+import { Select } from "@codegouvfr/react-dsfr/SelectNext";
+import { useEffect, useState } from "react";
+
 import useFetchLocalEtablissements from "../../hooks/useFetchLocalEtablissements";
 import { etablissementLabelGetter } from "../../utils/etablissement";
 
@@ -47,9 +48,7 @@ const ModerationEtablissementPicker = ({ setPickedEtablissement }) => {
         nativeSelectProps={{
           onChange: (event) =>
             setPickedEtablissement(
-              localEtablissements.find(
-                (etablissement) => etablissement.siret === event.target.value
-              )
+              localEtablissements.find((etablissement) => etablissement.siret === event.target.value)
             ),
         }}
         disabled={!isSuccess || !localEtablissements?.length}

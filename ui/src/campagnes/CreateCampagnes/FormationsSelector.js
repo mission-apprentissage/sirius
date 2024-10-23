@@ -1,20 +1,21 @@
-import React, { useState, useContext } from "react";
-import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
+import { useContext, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+
+import { campagnesDisplayMode, USER_ROLES } from "../../constants";
+import { UserContext } from "../../context/UserContext";
+import useFetchAlreadyExistingFormations from "../../hooks/useFetchAlreadyExistingFormation";
+import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
 import SortButtons from "../Shared/SortButtons/SortButtons";
 import { LoaderContainer, TableContainer } from "../styles/shared.style";
-import { USER_ROLES, campagnesDisplayMode } from "../../constants";
-import { UserContext } from "../../context/UserContext";
-import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
+import { isPlural } from "../utils";
+import DisplayByAllCards from "./Accordions/DisplayByAllCards";
 import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
 import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
-import DisplayByAllCards from "./Accordions/DisplayByAllCards";
-import useFetchAlreadyExistingFormations from "../../hooks/useFetchAlreadyExistingFormation";
-import { isPlural } from "../utils";
 
 const AccordionComponentGetter = ({ displayMode, ...props }) => {
   if (displayMode === campagnesDisplayMode[0].value) {
@@ -41,14 +42,10 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   const [page, setPage] = useState(1);
 
   const isAdmin = userContext.user?.role === USER_ROLES.ADMIN;
-  const userSiret =
-    userContext.user?.etablissements?.map((etablissement) => etablissement.siret) || [];
+  const userSiret = userContext.user?.etablissements?.map((etablissement) => etablissement.siret) || [];
 
   const formattedUserSiret = userSiret
-    .map((siret) => [
-      { etablissement_formateur_siret: siret },
-      { etablissement_gestionnaire_siret: siret },
-    ])
+    .map((siret) => [{ etablissement_formateur_siret: siret }, { etablissement_gestionnaire_siret: siret }])
     .flat();
 
   const baseQuery = {
@@ -77,10 +74,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   const userSiretQuery = isAdmin ? {} : { $or: formattedUserSiret }; // formattedUserSiret should be an array of objects
 
   const searchQuery = search
-    ? [
-        { intitule_long: { $regex: search, $options: "i" } },
-        { onisep_intitule: { $regex: search, $options: "i" } },
-      ]
+    ? [{ intitule_long: { $regex: search, $options: "i" } }, { onisep_intitule: { $regex: search, $options: "i" } }]
     : [];
 
   const query = {
@@ -145,11 +139,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
         />
         {(isLoadingFormations || isLoadingExistingFormationIds) && (
           <LoaderContainer>
-            <BeatLoader
-              color="var(--background-action-high-blue-france)"
-              size={20}
-              aria-label="Loading Spinner"
-            />
+            <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
           </LoaderContainer>
         )}
         {isSuccessExistingFormationIds && isSuccessFormations && !remoteFormations?.length ? (
@@ -171,18 +161,14 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
                   label: checkboxLabel,
                   nativeInputProps: {
                     name: `selectAll`,
-                    checked:
-                      selectedFormations.length ===
-                      remoteFormations.length - existingFormationIds.length,
+                    checked: selectedFormations.length === remoteFormations.length - existingFormationIds.length,
                     onChange: (e) => {
                       setSelectedFormations((prevValues) => {
                         if (e.target.checked) {
                           return [
                             ...new Set([
                               ...prevValues,
-                              ...remoteFormations.filter(
-                                (formation) => !existingFormationIds.includes(formation._id)
-                              ),
+                              ...remoteFormations.filter((formation) => !existingFormationIds.includes(formation._id)),
                             ]),
                           ];
                         } else {

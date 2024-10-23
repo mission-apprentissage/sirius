@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
+import styled from "@emotion/styled";
 
 export const ToolTipContainer = styled.div`
   display: flex;

@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import styled from "@emotion/styled";
 
 export const AccordionLabelByDiplomeTypeContainer = styled.div`
   display: flex;

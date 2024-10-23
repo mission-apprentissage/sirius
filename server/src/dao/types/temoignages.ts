@@ -1,4 +1,4 @@
-import { Formation } from "../../types";
+import type { Formation } from "../../types";
 
 export type GetAllWithFormationAndQuestionnaire =
   | {

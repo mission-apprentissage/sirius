@@ -1,6 +1,6 @@
-import React from "react";
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import parse from "html-react-parser";
+
 import { FullWidthContainer } from "../../styles/resultsCampagnes.style";
 
 const colors = ["#F95C5E", "#FCBFB7", "#6A6AEC"];
@@ -70,11 +70,7 @@ const MultiEmojiCard = ({ id, echarts, responses, title, emojiMapping }) => {
     <FullWidthContainer className={`exportCharts-${id} fullSize`}>
       <p>{parse(title.replace(/<br \/>/gi, ""))}</p>
       <div>
-        <ReactEChartsCore
-          echarts={echarts}
-          option={option}
-          style={{ height: "100%", width: "100%" }}
-        />
+        <ReactEChartsCore echarts={echarts} option={option} style={{ height: "100%", width: "100%" }} />
       </div>
     </FullWidthContainer>
   );

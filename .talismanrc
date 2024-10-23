@@ -1,0 +1,38 @@
+fileignoreconfig:
+- filename: .infra/ansible/roles/setup/vars/main/vault.yml
+  checksum: 09990a1239c96bc89535cb2bbd21f2034c6879adf67272fdc8957faf893e2636
+- filename: .infra/ansible/tasks/preview_pr.yml
+  checksum: 80abb1f87649f4751c93053cae6fb0d04419ea910defe3f52163b1a6442ade3f
+- filename: .infra/files/configs/mailpit/auth
+  checksum: 0b0a9c7bad5e1ec13d14c563d22c56c2cbcb2572fa40a4b2c5a11d6ca60eb8d1
+- filename: .infra/files/configs/mongodb/seed.gpg
+  checksum: b1fa159bb2036a835b4138843b48043eca4ea374bcbb710ba4593bd39b1dfec1
+- filename: .infra/vault/vault.yml
+  checksum: 070eeb89b81fff2ff096d662a6b3bf986b59dff2b4f3394ffe0e6663fee893db
+- filename: README.md
+  checksum: 00ac991f0b2746c5a5ffa14e2b3c5427b739c0d952aa3730efe1f234ac1fc3ca
+- filename: ui/src/config.public.ts
+  checksum: b13b0a1f3d9590d335062a88e76609c40ba790129e481f7e5c25fbdab6840617
+- filename: ui/src/utils/generateUri.ts
+  checksum: 505911d86f3b3f4a9337504a691132dba83dec4a950f9ff0e8bf76f5787ab325
+scopeconfig:
+- scope: node
+custom_patterns:
+- (?s)[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}
+allowed_patterns:
+- key
+- Key
+- secret
+- SECRET
+- password
+- Password
+- pass
+- apiKey
+- ApiKey
+- api_key
+- '@mail.com'
+- '@exemple.fr'
+- '@apprentissage.beta.gouv.fr'
+- '@alternance.beta.gouv.fr'
+threshold: medium
+version: "1.0"

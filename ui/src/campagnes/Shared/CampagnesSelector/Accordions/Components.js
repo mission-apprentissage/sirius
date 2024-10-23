@@ -1,22 +1,18 @@
-import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import Tooltip from "react-simple-tooltip";
+
 import { DIPLOME_TYPE_MATCHER } from "../../../../constants";
+import { ToolTipContainer } from "../../../styles/shared.style";
+import { isPlural } from "../../../utils";
 import {
   AccordionLabelByDiplomeTypeContainer,
   AccordionLabelByEtablissementContainer,
   ButtonContainer,
 } from "./accordions.style";
-import { isPlural } from "../../../utils";
-import { ToolTipContainer } from "../../../styles/shared.style";
 
 const CheckboxLabel = ({ count }) => (
-  <b>
-    {count
-      ? `${count} campagne${isPlural(count)} sélectionnée${isPlural(count)}`
-      : "Tout sélectionner"}
-  </b>
+  <b>{count ? `${count} campagne${isPlural(count)} sélectionnée${isPlural(count)}` : "Tout sélectionner"}</b>
 );
 
 export const SelectAllCampagnesCheckbox = ({
@@ -56,12 +52,7 @@ export const SelectAllCampagnesCheckbox = ({
   );
 };
 
-export const AccordionLabel = ({
-  diplome = null,
-  etablissementFormateur = null,
-  departement = null,
-  count,
-}) => {
+export const AccordionLabel = ({ diplome = null, etablissementFormateur = null, departement = null, count }) => {
   if (diplome) {
     return (
       <AccordionLabelByDiplomeTypeContainer>
@@ -100,8 +91,7 @@ export const AccordionLabel = ({
               placement="right"
               content={
                 <ToolTipContainer>
-                  Cet établissement est formateur et dispense des formations pour un établissement
-                  gestionnaire
+                  Cet établissement est formateur et dispense des formations pour un établissement gestionnaire
                 </ToolTipContainer>
               }
             >

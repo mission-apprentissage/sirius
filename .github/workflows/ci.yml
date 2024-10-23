@@ -1,48 +1,48 @@
 name: CI
+
 on:
-  push:
-    branches: [ master, develop ]
-  pull_request:
-    branches: [ master, develop ]
+  workflow_call:
 
 jobs:
-  test:
+  tests:
+    timeout-minutes: 10
+    name: "Tests"
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18.14.0
+          node-version: 20
 
-      - run: yarn --cwd server install
-      - run: yarn --cwd server test
-
-      - name: Send slack notification
-        uses: act10ns/slack@v1
+      - uses: actions/cache@v4
         with:
-          status: ${{ job.status }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: failure()
+          path: |
+            **/node_modules
+            .yarn/install-state.gz
+            .yarn/cache
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: yarn-
 
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout project
-        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn install
 
-      - name: Get current branch name
-        uses: ./.github/actions/branchName
-        id: vars
+      - name: Make sure to use same dependencies version across all packages
+        run: yarn dedupe --check
 
-      - name: Request deployment
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          repository: mission-apprentissage/sirius-infra
-          token: ${{ secrets.DEVOPS_ACCESS_TOKEN }}
-          event-type: deploy
-          client-payload: '{"envName": "recette", "branchName":"develop"}'
-        if: steps.vars.outputs.branchName == 'develop'
+      - name: typecheck
+        run: yarn typecheck:ci
+
+      - name: lint
+        run: yarn lint
+
+      - name: start postgres service
+        run: docker compose up -d --wait postgres
+
+      - name: test
+        run: yarn test:ci
+
+      - name: prettier
+        run: yarn prettier:check

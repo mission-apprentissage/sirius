@@ -1,5 +1,5 @@
-import React from "react";
 import { Box, Flex, Text, useBreakpoint } from "@chakra-ui/react";
+
 import Logo from "../assets/images/logo.svg";
 
 const UnauthNavbar = () => {
@@ -12,8 +12,7 @@ const UnauthNavbar = () => {
         <Flex h={16} alignItems="center" justifyContent={isMobile ? "center" : "flex-start"}>
           <img src={Logo} alt="Logo Sirius" />
           <Text display={isMobile ? "none" : "inherit"} color="brand.blue.700" ml="5">
-            recueillir les témoignages d’apprenti·es pour aider les plus jeunes à choisir une
-            formation en apprentissage
+            recueillir les témoignages d’apprenti·es pour aider les plus jeunes à choisir une formation en apprentissage
           </Text>
         </Flex>
       </Box>

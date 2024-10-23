@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
-import { Flex, Container, Spinner } from "@chakra-ui/react";
+import { Container, Flex, Spinner } from "@chakra-ui/react";
+import { useContext } from "react";
+
+import { UserContext } from "../context/UserContext";
 import Navbar from "./Navbar";
 import UnauthNavbar from "./UnauthNavbar";
-import { UserContext } from "../context/UserContext";
 
 const QuestionnaireLayout = ({ children }) => {
   const [userContext] = useContext(UserContext);

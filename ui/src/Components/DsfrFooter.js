@@ -1,7 +1,6 @@
-import React from "react";
-import styled from "@emotion/styled";
-import { Footer } from "@codegouvfr/react-dsfr/Footer";
 import { fr } from "@codegouvfr/react-dsfr";
+import { Footer } from "@codegouvfr/react-dsfr/Footer";
+import styled from "@emotion/styled";
 
 const TopLink = styled.a`
   margin-right: ${fr.spacing("2w")};
@@ -31,10 +30,7 @@ const DsfrFooter = () => {
           <TopLink target="_blank" href="https://www.onisep.fr/">
             ONISEP
           </TopLink>
-          <TopLink
-            target="_blank"
-            href="https://beta.gouv.fr/startups/?incubateur=mission-inserjeunes"
-          >
+          <TopLink target="_blank" href="https://beta.gouv.fr/startups/?incubateur=mission-inserjeunes">
             InserJeunes
           </TopLink>
         </>

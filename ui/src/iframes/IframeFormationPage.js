@@ -1,17 +1,15 @@
-import { useRef, useEffect } from "react";
+/* eslint-disable no-undef */
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
-import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
-import {
-  DatavisualisationContainer,
-  IframeContainer,
-  TestimonialsCount,
-} from "./IframeFormation.style";
+
 import { LoaderContainer } from "../campagnes/styles/shared.style";
-import GemVerbatim from "./Components/GemVerbatim";
+import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
 import ExperienceEntrepriseRating from "./Components/ExperienceRating";
-import SearchEntrepriseRating from "./Components/FeelingRating";
 import ExperienceEntrepriseVerbatims from "./Components/ExperienceVerbatims";
+import SearchEntrepriseRating from "./Components/FeelingRating";
+import GemVerbatim from "./Components/GemVerbatim";
+import { DatavisualisationContainer, IframeContainer, TestimonialsCount } from "./IframeFormation.style";
 
 const IframeFormationPage = () => {
   const scrollableRef = useRef(null);
@@ -43,11 +41,7 @@ const IframeFormationPage = () => {
   if (isLoading) {
     return (
       <LoaderContainer>
-        <BeatLoader
-          color="var(--background-action-high-blue-france)"
-          size={20}
-          aria-label="Loading Spinner"
-        />
+        <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
       </LoaderContainer>
     );
   }
@@ -61,31 +55,24 @@ const IframeFormationPage = () => {
       <IframeContainer ref={scrollableRef}>
         <h3>Suivre cette formation en apprentissage ?</h3>
         <p>
-          Certains établissement proposent ce CAP en apprentissage. Tu hésites entre la voie
-          scolaire et l’apprentissage ? Grace au questionnaire{" "}
+          Certains établissement proposent ce CAP en apprentissage. Tu hésites entre la voie scolaire et l’apprentissage
+          ? Grace au questionnaire{" "}
           <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
             <b>Sirius</b>
           </a>
-          , les apprenti·es qui se forment à ce CAP en France te partagent leur expérience en
-          entreprise.
+          , les apprenti·es qui se forment à ce CAP en France te partagent leur expérience en entreprise.
         </p>
 
         <DatavisualisationContainer>
           <TestimonialsCount>
             <p>
-              <b>Expérience en entreprise</b> ({datavisualisation.temoignagesCount} apprenti·es
-              interrogé·es)
+              <b>Expérience en entreprise</b> ({datavisualisation.temoignagesCount} apprenti·es interrogé·es)
             </p>
           </TestimonialsCount>
           <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseEntrepriseRates} />
-          <ExperienceEntrepriseVerbatims
-            orderedVerbatims={datavisualisation.commentVisTonEntreprise}
-          />
+          <ExperienceEntrepriseVerbatims orderedVerbatims={datavisualisation.commentVisTonEntreprise} />
           <GemVerbatim verbatim={datavisualisation.displayedGems} />
-          <SearchEntrepriseRating
-            rating={datavisualisation.passeEntrepriseRates}
-            isFormation={true}
-          />
+          <SearchEntrepriseRating rating={datavisualisation.passeEntrepriseRates} isFormation={true} />
         </DatavisualisationContainer>
       </IframeContainer>
     )

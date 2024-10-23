@@ -1,5 +1,6 @@
-import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+
 import { fetchRemoteFormations } from "../queries/formations";
 
 const useFetchRemoteFormations = ({ query, enabled, page = 1, pageSize = 1000 }) => {

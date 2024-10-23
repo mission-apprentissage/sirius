@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
 import { loadDynamicStyle, unloadStyle } from "../utils/style";
 import DsfrFooter from "./DsfrFooter";
 import DsfrNavbar from "./DsfrNavbar";

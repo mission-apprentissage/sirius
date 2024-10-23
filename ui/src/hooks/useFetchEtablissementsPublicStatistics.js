@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { _get } from "../utils/httpClient";
+
+import { apiGet } from "../utils/api.utils";
 
 const useFetchEtablissementsPublicStatistics = () => {
   const [data, setData] = useState(null);
@@ -9,7 +10,7 @@ const useFetchEtablissementsPublicStatistics = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await _get(`/api/etablissements/public/statistics`);
+        const response = await apiGet("/api/etablissements/public/statistics", {});
         setData(response);
         setLoading(false);
       } catch (error) {

@@ -1,13 +1,13 @@
-import React from "react";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import BeatLoader from "react-spinners/BeatLoader";
-import Alert from "@codegouvfr/react-dsfr/Alert";
-import Pagination from "@codegouvfr/react-dsfr/Pagination";
-import { StyledAccordion } from "./accordions.style";
-import { SelectAllCampagnesCheckbox, AccordionLabel } from "./Components";
-import CampagnesTable from "../../CampagnesTable/CampagnesTable";
-import { LoaderContainer, TableContainer } from "../../../styles/shared.style";
+
 import useDisplayCampagnesOptions from "../../../../hooks/useDisplayCampagnesOptions";
 import { REGIONS } from "../../../../regions";
+import { LoaderContainer, TableContainer } from "../../../styles/shared.style";
+import CampagnesTable from "../../CampagnesTable/CampagnesTable";
+import { StyledAccordion } from "./accordions.style";
+import { AccordionLabel, SelectAllCampagnesCheckbox } from "./Components";
 
 const DisplayByDepartementTable = ({
   campagnesSorted,
@@ -21,7 +21,6 @@ const DisplayByDepartementTable = ({
   const {
     page,
     setPage,
-    openedAccordion,
     setOpenedAccordion,
     campagnes,
     isSuccessCampagnes,

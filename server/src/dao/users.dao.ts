@@ -1,18 +1,19 @@
 import { sql } from "kysely";
+
 import { USER_STATUS } from "../constants";
-import { kdb } from "../db/db";
-import { User, UserCreation, UserPublic } from "../types";
+import { getKbdClient } from "../db/db";
+import type { User, UserCreation, UserPublic } from "../types";
 
-export const findOneById = (id: string): Promise<User | undefined> => {
-  return kdb.selectFrom("users").selectAll().where("id", "=", id).executeTakeFirst();
+export const findOneById = async (id: string): Promise<User | undefined> => {
+  return getKbdClient().selectFrom("users").selectAll().where("id", "=", id).executeTakeFirst();
 };
 
-export const findOneByEmail = (email: string): Promise<User | undefined> => {
-  return kdb.selectFrom("users").selectAll().where("email", "=", email).executeTakeFirst();
+export const findOneByEmail = async (email: string): Promise<User | undefined> => {
+  return getKbdClient().selectFrom("users").selectAll().where("email", "=", email).executeTakeFirst();
 };
 
-export const findAll = (): Promise<UserPublic[] | undefined> => {
-  return kdb
+export const findAll = async (): Promise<UserPublic[] | undefined> => {
+  return getKbdClient()
     .selectFrom("users")
     .select([
       "id",
@@ -30,8 +31,8 @@ export const findAll = (): Promise<UserPublic[] | undefined> => {
     .execute();
 };
 
-export const findOneByEmailWithEtablissement = (email: string): Promise<(User & any) | undefined> => {
-  return kdb
+export const findOneByEmailWithEtablissement = async (email: string): Promise<(User & any) | undefined> => {
+  return getKbdClient()
     .selectFrom("users")
     .select([
       "users.id",
@@ -74,8 +75,8 @@ export const findOneByEmailWithEtablissement = (email: string): Promise<(User & 
     .executeTakeFirst();
 };
 
-export const findOneByIdWithEtablissement = (id: string): Promise<(User & any) | undefined> => {
-  return kdb
+export const findOneByIdWithEtablissement = async (id: string): Promise<(User & any) | undefined> => {
+  return getKbdClient()
     .selectFrom("users")
     .select([
       "users.id",
@@ -116,8 +117,8 @@ export const findOneByIdWithEtablissement = (id: string): Promise<(User & any) |
     .executeTakeFirst();
 };
 
-export const findAllWithEtablissement = (): Promise<(UserPublic & any)[] | undefined> => {
-  return kdb
+export const findAllWithEtablissement = async (): Promise<(UserPublic & any)[] | undefined> => {
+  return getKbdClient()
     .selectFrom("users")
     .select([
       "users.id",
@@ -157,8 +158,8 @@ export const findAllWithEtablissement = (): Promise<(UserPublic & any)[] | undef
     .execute();
 };
 
-export const update = async (id: string, user: User): Promise<boolean> => {
-  const result = await kdb.updateTable("users").set(user).where("id", "=", id).executeTakeFirst();
+export const update = async (id: string, user: Partial<User>): Promise<boolean> => {
+  const result = await getKbdClient().updateTable("users").set(user).where("id", "=", id).executeTakeFirst();
 
   return result.numUpdatedRows === BigInt(1);
 };
@@ -187,5 +188,5 @@ export const create = async ({
     email_confirmed: false,
     refresh_token: JSON.stringify([]),
   };
-  return kdb.insertInto("users").values(newUser).returning("id").executeTakeFirst();
+  return getKbdClient().insertInto("users").values(newUser).returning("id").executeTakeFirst();
 };

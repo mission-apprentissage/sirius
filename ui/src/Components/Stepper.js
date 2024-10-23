@@ -1,6 +1,5 @@
-import React from "react";
-import { Progress, useBreakpoint, Box, Text, Button } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { Box, Button, Progress, Text, useBreakpoint } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 export const Stepper = ({
@@ -42,11 +41,7 @@ export const Stepper = ({
 
   return (
     <Box display="flex" flexDirection="column" w="100%">
-      <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent={isMobile ? "space-between" : "inherit"}
-      >
+      <Box display="flex" flexDirection="row" justifyContent={isMobile ? "space-between" : "inherit"}>
         {categories.map((category, index) => {
           const isCurrent = index === currentCategoryIndex;
           const isFinished = index < currentCategoryIndex;

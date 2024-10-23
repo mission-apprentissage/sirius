@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
+import styled from "@emotion/styled";
+
 import EtablissementInput from "./EtablissementInput";
 import EtablissementInputList from "./EtablissementInputList";
 
@@ -21,12 +21,7 @@ const AddSiret = ({ formik, setError, userSiret = null }) => {
           <StyledHint>SIRET ajoutés :</StyledHint>
           <div className={fr.cx("fr-accordions-group")}>
             {etablissements.map((etablissement, index) => (
-              <EtablissementInputList
-                key={index}
-                etablissement={etablissement}
-                index={index}
-                formik={formik}
-              />
+              <EtablissementInputList key={index} etablissement={etablissement} index={index} formik={formik} />
             ))}
           </div>
         </>

@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Input } from "@codegouvfr/react-dsfr/Input";
-import { SortButtonsContainer, SearchContainer } from "./sortButtons.style";
-import {
-  OBSERVER_SCOPES,
-  campagneDisplayModeRegionObserver,
-  campagnesDisplayMode,
-} from "../../../constants";
+import { Select } from "@codegouvfr/react-dsfr/SelectNext";
+import { useEffect, useState } from "react";
+
+import { campagneDisplayModeRegionObserver, campagnesDisplayMode, OBSERVER_SCOPES } from "../../../constants";
 import { isPlural } from "../../utils";
+import { SearchContainer, SortButtonsContainer } from "./sortButtons.style";
 
 const SortButtons = ({
   displayMode,

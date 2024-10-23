@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Kysely, sql } from "kysely";
 
 export const up = async (db: Kysely<unknown>) => {

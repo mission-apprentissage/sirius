@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export const loadDynamicStyle = (url) => {
   const link = document.createElement("link");
   link.href = url;

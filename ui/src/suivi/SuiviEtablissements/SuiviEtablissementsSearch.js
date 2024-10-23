@@ -1,13 +1,7 @@
-import React from "react";
-import { InputGroup, Input, InputRightElement } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
+import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 
-const SuiviEtablissementsSearch = ({
-  etablissements,
-  setDisplayedEtablissements,
-  search,
-  setSearch,
-}) => {
+const SuiviEtablissementsSearch = ({ etablissements, setDisplayedEtablissements, search, setSearch }) => {
   const handleSearch = (event) => {
     const search = event.target.value.toLowerCase();
     setSearch(event.target.value);

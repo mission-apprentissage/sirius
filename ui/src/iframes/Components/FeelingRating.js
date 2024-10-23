@@ -1,15 +1,15 @@
-import {
-  Rating,
-  GoodRating,
-  MediumRating,
-  BadRating,
-  FeelingRatingContainer,
-  RatingWeatherContainer,
-  FeelingRatingLinks,
-} from "../IframeFormation.style";
-import sunFillGreen from "../../assets/icons/sun-fill-green.svg";
 import cloudFillBlue from "../../assets/icons/cloud-fill-blue.svg";
 import stormFillOrange from "../../assets/icons/storm-fill-orange.svg";
+import sunFillGreen from "../../assets/icons/sun-fill-green.svg";
+import {
+  BadRating,
+  FeelingRatingContainer,
+  FeelingRatingLinks,
+  GoodRating,
+  MediumRating,
+  Rating,
+  RatingWeatherContainer,
+} from "../IframeFormation.style";
 
 const FeelingRating = ({ rating, isFormation = false, isEtablissement = false }) => {
   if (!rating) return null;
@@ -46,11 +46,7 @@ const FeelingRating = ({ rating, isFormation = false, isEtablissement = false })
           >
             Conseils d’apprenti·es
           </a>
-          <a
-            href="https://labonnealternance.apprentissage.beta.gouv.fr/"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href="https://labonnealternance.apprentissage.beta.gouv.fr/" target="_blank" rel="noreferrer">
             Trouver mon entreprise
           </a>
         </FeelingRatingLinks>

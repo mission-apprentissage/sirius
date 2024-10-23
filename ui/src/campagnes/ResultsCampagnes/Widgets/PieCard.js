@@ -1,5 +1,6 @@
 import ReactEChartsCore from "echarts-for-react/lib/core";
 import parse from "html-react-parser";
+
 import { HalfWidthContainer } from "../../styles/resultsCampagnes.style";
 
 const pieColorGetter = (length) => {
@@ -59,11 +60,7 @@ export const PieCard = ({ id, echarts, responses, title }) => {
     <HalfWidthContainer className={`exportCharts-${id} halfSize`}>
       <p>{parse(title.replace(/<br \/>/gi, ""))}</p>
       <div>
-        <ReactEChartsCore
-          echarts={echarts}
-          option={pieOption(responses)}
-          style={{ height: "100%", width: "100%" }}
-        />
+        <ReactEChartsCore echarts={echarts} option={pieOption(responses)} style={{ height: "100%", width: "100%" }} />
       </div>
     </HalfWidthContainer>
   );

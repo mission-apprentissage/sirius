@@ -1,32 +1,35 @@
 import { sql } from "kysely";
-import { kdb } from "../db/db";
-import { Etablissement } from "../types";
+
+import { getKbdClient } from "../db/db";
+import type { Etablissement } from "../types";
 
 export const create = async (etablissement: Etablissement, relatedUserId: string): Promise<string | undefined> => {
-  const transaction = await kdb.transaction().execute(async (trx) => {
-    const insertedEtablissement = await trx
-      .insertInto("etablissements")
-      .values(etablissement)
-      .returning("id")
-      .executeTakeFirst();
+  const transaction = await getKbdClient()
+    .transaction()
+    .execute(async (trx) => {
+      const insertedEtablissement = await trx
+        .insertInto("etablissements")
+        .values(etablissement)
+        .returning("id")
+        .executeTakeFirst();
 
-    if (insertedEtablissement?.id) {
-      await trx
-        .insertInto("users_etablissements")
-        .values({
-          user_id: relatedUserId,
-          etablissement_id: insertedEtablissement.id,
-        })
-        .execute();
-    }
+      if (insertedEtablissement?.id) {
+        await trx
+          .insertInto("users_etablissements")
+          .values({
+            user_id: relatedUserId,
+            etablissement_id: insertedEtablissement.id,
+          })
+          .execute();
+      }
 
-    return insertedEtablissement?.id;
-  });
+      return insertedEtablissement?.id;
+    });
   return transaction;
 };
 
 export const createUserRelation = async (etablissementId: string, relatedUserId: string): Promise<any> => {
-  await kdb
+  await getKbdClient()
     .insertInto("users_etablissements")
     .values({
       user_id: relatedUserId,
@@ -39,7 +42,7 @@ export const createUserRelation = async (etablissementId: string, relatedUserId:
 export const findAll = async (
   query: Partial<Etablissement> | { searchText: string }
 ): Promise<Partial<Etablissement>[]> => {
-  let baseQuery = kdb
+  let baseQuery = getKbdClient()
     .selectFrom("etablissements")
     .select([
       "id",
@@ -81,11 +84,11 @@ export const findAll = async (
 };
 
 export const findOne = async (id: string): Promise<Etablissement | undefined> => {
-  return kdb.selectFrom("etablissements").selectAll().where("id", "=", id).executeTakeFirst();
+  return getKbdClient().selectFrom("etablissements").selectAll().where("id", "=", id).executeTakeFirst();
 };
 
 export const deleteOne = async (id: string): Promise<boolean> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .updateTable("etablissements")
     .set({
       deleted_at: new Date(),
@@ -97,7 +100,7 @@ export const deleteOne = async (id: string): Promise<boolean> => {
 };
 
 export const update = async (id: string, updatedEtablissement: Partial<Etablissement>): Promise<boolean> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .updateTable("etablissements")
     .set(updatedEtablissement)
     .where("id", "=", id)
@@ -117,7 +120,7 @@ export const findAllEtablissementWithCounts = async (): Promise<
     verbatimsCount: number;
   })[]
 > => {
-  return kdb
+  return getKbdClient()
     .selectFrom("etablissements")
     .select([
       "etablissements.id",
@@ -145,7 +148,7 @@ export const findAllEtablissementWithCounts = async (): Promise<
 };
 
 export const count = async (): Promise<number> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .selectFrom("etablissements")
     .select(sql`COUNT(*)`.as("count"))
     .where("deleted_at", "is", null)
@@ -170,7 +173,7 @@ export const findAllWithTemoignageCount = async (): Promise<
     temoignagesCount: number;
   })[]
 > => {
-  return kdb
+  return getKbdClient()
     .selectFrom("etablissements")
     .select([
       "etablissements.id",

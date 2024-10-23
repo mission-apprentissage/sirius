@@ -1,13 +1,9 @@
 import { useState } from "react";
-import useFetchCampagnes from "./useFetchCampagnes";
-import { campagneDisplayModeRegionObserver, campagnesDisplayMode } from "../constants";
 
-const useDisplayCampagnesOptions = ({
-  search,
-  campagnesSorted,
-  displayMode,
-  selectedCampagneIds,
-}) => {
+import { campagneDisplayModeRegionObserver, campagnesDisplayMode } from "../constants";
+import useFetchCampagnes from "./useFetchCampagnes";
+
+const useDisplayCampagnesOptions = ({ search, campagnesSorted, displayMode, selectedCampagneIds }) => {
   const [page, setPage] = useState(null);
   const [openedAccordion, setOpenedAccordion] = useState(null);
 

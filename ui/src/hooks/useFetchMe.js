@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { me } from "../queries/users";
 
 const useFetchMe = ({ enabled, token }) => {

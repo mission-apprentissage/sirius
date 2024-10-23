@@ -1,6 +1,7 @@
 import { sql } from "kysely";
-import { kdb } from "../db/db";
-import { ObserverScope } from "../types";
+
+import { getKbdClient } from "../db/db";
+import type { ObserverScope } from "../types";
 
 export const getAllWithTemoignageCountAndTemplateName = async ({
   siret,
@@ -11,7 +12,7 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
   query: { diplome?: string; etablissementFormateurSiret?: string; departement?: string; campagneIds: string[] };
   scope?: ObserverScope;
 }) => {
-  let baseQuery = kdb
+  let baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
       "campagnes.id",
@@ -107,7 +108,7 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
 };
 
 export const getAllOnlyDiplomeTypeAndEtablissements = async (query?: { siret?: string[] }, scope?: ObserverScope) => {
-  let baseQuery = kdb
+  let baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .leftJoin("formations", "campagnes.id", "formations.campagne_id")
     .leftJoin("etablissements", "formations.etablissement_formateur_siret", "etablissements.siret")
@@ -153,23 +154,27 @@ export const getAllOnlyDiplomeTypeAndEtablissements = async (query?: { siret?: s
 };
 
 export const getOne = async (id: string) => {
-  return kdb.selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
+  return getKbdClient().selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
 };
 
 export const create = async (campagne: any): Promise<{ id: string } | undefined> => {
-  const result = await kdb.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+  const result = await getKbdClient().insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
 
   return result;
 };
 
 export const deleteMany = async (ids: string[]): Promise<boolean> => {
-  const result = await kdb.updateTable("campagnes").set({ deleted_at: new Date() }).where("id", "in", ids).execute();
+  const result = await getKbdClient()
+    .updateTable("campagnes")
+    .set({ deleted_at: new Date() })
+    .where("id", "in", ids)
+    .execute();
 
   return result[0].numUpdatedRows === BigInt(ids.length);
 };
 
 export const update = async (id: string, updatedCampagne: any): Promise<boolean> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .updateTable("campagnes")
     .set(updatedCampagne)
     .where("id", "=", id)
@@ -180,7 +185,7 @@ export const update = async (id: string, updatedCampagne: any): Promise<boolean>
 };
 
 export const getAll = async (campagneIds: string[] = []) => {
-  return kdb
+  return getKbdClient()
     .selectFrom("campagnes")
     .selectAll()
     .where("deleted_at", "is", null)
@@ -189,7 +194,7 @@ export const getAll = async (campagneIds: string[] = []) => {
 };
 
 export const count = async () => {
-  const result = await kdb
+  const result = await getKbdClient()
     .selectFrom("campagnes")
     .select(sql<number>`count(*)`.as("count"))
     .where("deleted_at", "is", null)
@@ -199,7 +204,7 @@ export const count = async () => {
 };
 
 export const countWithAtLeastOneTemoignages = async () => {
-  const result = await kdb
+  const result = await getKbdClient()
     .selectFrom("campagnes")
     .innerJoin("temoignages_campagnes", "campagnes.id", "temoignages_campagnes.campagne_id")
     .select(sql<number>`count(distinct campagnes.id)`.as("count"))
@@ -210,7 +215,7 @@ export const countWithAtLeastOneTemoignages = async () => {
 };
 
 export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
-  const baseQuery = kdb
+  const baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
       "campagnes.id",
@@ -275,7 +280,7 @@ export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
 };
 
 export const getAllWithTemoignageCountFormationEtablissement = async (campagneIds: string[]) => {
-  let baseQuery = kdb
+  let baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
       "campagnes.id",

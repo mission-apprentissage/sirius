@@ -1,11 +1,12 @@
-import React, { useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { Header } from "@codegouvfr/react-dsfr/Header";
+import { useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import Logo from "../assets/images/logo.svg";
-import { UserContext } from "../context/UserContext";
 import { useGet } from "../common/hooks/httpHooks";
-import { _get } from "../utils/httpClient";
 import { USER_ROLES } from "../constants";
+import { UserContext } from "../context/UserContext";
+import { apiGet } from "../utils/api.utils";
 
 const DsfrNavbar = () => {
   const location = useLocation();
@@ -18,7 +19,11 @@ const DsfrNavbar = () => {
 
   const handleLogout = async (e) => {
     e.preventDefault();
-    const result = await _get(`/api/users/logout`, userContext.token);
+    const result = await apiGet(`/api/users/logout`, {
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
     if (result.success) {
       navigate(0);
     }
@@ -81,9 +86,7 @@ const DsfrNavbar = () => {
     {
       iconId: "fr-icon-eye-fill",
       linkProps: {
-        to: `/questionnaires/${
-          validatedQuestionnaire?.length && validatedQuestionnaire[0].id
-        }/apercu`,
+        to: `/questionnaires/${validatedQuestionnaire?.length && validatedQuestionnaire[0].id}/apercu`,
       },
       text: "Aperçu du questionnaire Sirius",
     },

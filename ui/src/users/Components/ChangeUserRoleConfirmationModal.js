@@ -1,33 +1,36 @@
-import React, { useContext } from "react";
 import {
+  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
   ModalFooter,
-  Button,
+  ModalHeader,
+  ModalOverlay,
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { _put } from "../../utils/httpClient";
-import { UserContext } from "../../context/UserContext";
+import { useContext } from "react";
 
-const ChangeUserRoleConfirmationModal = ({
-  user,
-  onClose,
-  isOpen,
-  selectedRole,
-  setRefetchData,
-}) => {
+import { UserContext } from "../../context/UserContext";
+import { apiPut } from "../../utils/api.utils";
+
+const ChangeUserRoleConfirmationModal = ({ user, onClose, isOpen, selectedRole, setRefetchData }) => {
   const [userContext] = useContext(UserContext);
   const toast = useToast();
 
   if (!user) return null;
 
   const handleChangeRoleConfirmation = async () => {
-    const result = await _put(`/api/users/${user.id}`, { role: selectedRole }, userContext.token);
+    const result = await apiPut(`/api/users/:id`, {
+      params: { id: user.id },
+      body: {
+        role: selectedRole,
+      },
+      headers: {
+        Authorization: `Bearer ${userContext.token}`,
+      },
+    });
     if (result === true) {
       toast({
         title: "Role modifié",
@@ -67,12 +70,7 @@ const ChangeUserRoleConfirmationModal = ({
           </Text>
         </ModalBody>
         <ModalFooter alignItems="center" justifyContent="center" mt="15">
-          <Button
-            size="lg"
-            variant="solid"
-            colorScheme="brand.blue"
-            onClick={handleChangeRoleConfirmation}
-          >
+          <Button size="lg" variant="solid" colorScheme="brand.blue" onClick={handleChangeRoleConfirmation}>
             Confirmer
           </Button>
         </ModalFooter>

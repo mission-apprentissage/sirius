@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+/* eslint-disable no-undef */
 import { fr } from "@codegouvfr/react-dsfr";
-import { NotEditingContainer, StyledInput } from "./cellInput.style";
+import { useEffect, useRef, useState } from "react";
+
 import { numberRegex } from "../../../constants";
+import { NotEditingContainer, StyledInput } from "./cellInput.style";
 
 const CellInputSeats = ({ id, name, campagne, handleCellUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -52,11 +54,7 @@ const CellInputSeats = ({ id, name, campagne, handleCellUpdate }) => {
 
   const seatsUnlimitedValue = value == "0" || !value ? "Illimité" : value;
 
-  const iconId = isSuccess
-    ? "fr-icon-success-line"
-    : isFail
-    ? "fr-icon-error-line"
-    : "fr-icon-pencil-line";
+  const iconId = isSuccess ? "fr-icon-success-line" : isFail ? "fr-icon-error-line" : "fr-icon-pencil-line";
 
   const state = isSuccess ? "success" : isFail ? "error" : "default";
 
@@ -78,9 +76,7 @@ const CellInputSeats = ({ id, name, campagne, handleCellUpdate }) => {
         max: 150,
         ref: ref,
         onChange: (e) =>
-          e.target?.value === "" || numberRegex.test(e.target?.value)
-            ? setValue(e.target?.value)
-            : null,
+          e.target?.value === "" || numberRegex.test(e.target?.value) ? setValue(e.target?.value) : null,
         onKeyDown: (e) => {
           if (e.key === "Enter") {
             return submitHandler();

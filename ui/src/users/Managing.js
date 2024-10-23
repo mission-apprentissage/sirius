@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+
 import useFetchUsers from "../hooks/useFetchUsers";
 import UsersTable from "./Components/UsersTable/UsersTable";
 

@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
-import { UserContext } from "../context/UserContext";
-import { USER_STATUS } from "../constants";
+
 import Support from "../assets/images/support.svg";
+import { USER_STATUS } from "../constants";
+import { UserContext } from "../context/UserContext";
+import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
 
 const PendingAccountPage = () => {
   const [userContext] = useContext(UserContext);
@@ -19,10 +20,7 @@ const PendingAccountPage = () => {
         <div>
           <h5>Établissement</h5>
           <h2>Compte en attente</h2>
-          <p>
-            Votre compte est en cours de validation, un email vous sera envoyé une fois votre
-            demande confirmée.
-          </p>
+          <p>Votre compte est en cours de validation, un email vous sera envoyé une fois votre demande confirmée.</p>
         </div>
         <img src={Support} alt="" />
       </LoginAndSignupHeader>

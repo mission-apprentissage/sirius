@@ -1,5 +1,6 @@
-import { useContext, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext, useEffect } from "react";
+
 import { UserContext } from "../context/UserContext";
 import { fetchUncompliantTemoignages } from "../queries/temoignages";
 
@@ -16,14 +17,7 @@ const useFetchUncompliantTemoignages = ({
   const [userContext] = useContext(UserContext);
 
   const { data, isSuccess, isError, isLoading } = useQuery({
-    queryKey: [
-      "uncompliantTemoignages",
-      type,
-      page,
-      duration,
-      answeredQuestions,
-      includeUnavailableDuration,
-    ],
+    queryKey: ["uncompliantTemoignages", type, page, duration, answeredQuestions, includeUnavailableDuration],
     queryFn: () =>
       fetchUncompliantTemoignages({
         type,
@@ -39,14 +33,7 @@ const useFetchUncompliantTemoignages = ({
   useEffect(() => {
     if (data?.pagination?.hasMore) {
       queryClient.prefetchQuery({
-        queryKey: [
-          `uncompliantTemoignages`,
-          type,
-          page + 1,
-          duration,
-          answeredQuestions,
-          includeUnavailableDuration,
-        ],
+        queryKey: [`uncompliantTemoignages`, type, page + 1, duration, answeredQuestions, includeUnavailableDuration],
         queryFn: () =>
           fetchUncompliantTemoignages({
             type,

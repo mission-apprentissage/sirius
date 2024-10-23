@@ -1,27 +1,22 @@
-import React, { useState, useEffect } from "react";
-import BeatLoader from "react-spinners/BeatLoader";
 import { fr } from "@codegouvfr/react-dsfr";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
-import Pagination from "@codegouvfr/react-dsfr/Pagination";
-import Alert from "@codegouvfr/react-dsfr/Alert";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import {
-  Container,
-  HeaderItem,
-  ModerationContainer,
-  SelectorsContainer,
-  TableContainer,
-} from "./moderationPage.style";
+import { useEffect, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+
+import { LoaderContainer } from "../campagnes/styles/shared.style";
+import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../constants";
 import useFetchVerbatims from "../hooks/useFetchVerbatims";
+import useFetchVerbatimsCount from "../hooks/useFetchVerbatimsCount";
+import usePatchVerbatims from "../hooks/usePatchVerbatims";
+import ModerationActions from "./Moderation/ModerationActions";
 import ModerationEtablissementPicker from "./Moderation/ModerationEtablissementPicker";
 import ModerationFormationPicker from "./Moderation/ModerationFormationPicker";
-import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../constants";
 import moderationTableRows from "./Moderation/moderationTableRows";
-import { LoaderContainer } from "../campagnes/styles/shared.style";
-import useFetchVerbatimsCount from "../hooks/useFetchVerbatimsCount";
-import ModerationActions from "./Moderation/ModerationActions";
-import usePatchVerbatims from "../hooks/usePatchVerbatims";
+import { Container, HeaderItem, ModerationContainer, SelectorsContainer, TableContainer } from "./moderationPage.style";
 
 const SelectAll = ({ selectedVerbatims, setSelectedVerbatims, verbatims }) => {
   const allVerbatimsSelected = selectedVerbatims.length === verbatims.length;
@@ -77,8 +72,7 @@ const tabs = ({
   Object.keys(VERBATIM_STATUS).map((status) => ({
     label: (
       <>
-        {VERBATIM_STATUS_LABELS[status]} (
-        {verbatimsCount?.find((count) => count.status === status)?.count || 0})
+        {VERBATIM_STATUS_LABELS[status]} ({verbatimsCount?.find((count) => count.status === status)?.count || 0})
       </>
     ),
     content: (
@@ -91,19 +85,13 @@ const tabs = ({
         />
         {isLoading ? (
           <LoaderContainer>
-            <BeatLoader
-              color="var(--background-action-high-blue-france)"
-              size={20}
-              aria-label="Loading Spinner"
-            />
+            <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
           </LoaderContainer>
         ) : verbatims.length ? (
           <>
             <Table
               headers={getHeaders({ selectedVerbatims, setSelectedVerbatims, verbatims })}
-              data={
-                moderationTableRows({ verbatims, selectedVerbatims, setSelectedVerbatims }) || []
-              }
+              data={moderationTableRows({ verbatims, selectedVerbatims, setSelectedVerbatims }) || []}
             />
             {pagination.totalPages > 1 && (
               <Pagination

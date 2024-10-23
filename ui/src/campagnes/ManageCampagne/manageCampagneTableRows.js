@@ -1,25 +1,19 @@
-import React, { useContext } from "react";
-import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { useContext } from "react";
+import Tooltip from "react-simple-tooltip";
+
+import { campagnesDisplayMode, DIPLOME_TYPE_MATCHER } from "../../constants";
+import { UserContext } from "../../context/UserContext";
+import { EtablissementLabelContainer, TemoignagesCount } from "../Shared/CampagnesTable/campagnesTable.style";
+import { FormationContainer, ToolTipContainer } from "../styles/shared.style";
 import { simpleEditionSubmitHandler } from "../submitHandlers";
+import { isPlural } from "../utils";
 import CellInput from "./CellInput/CellInput";
 import CellInputSeats from "./CellInput/CellInputSeats";
-import { isPlural } from "../utils";
-import {
-  TemoignagesCount,
-  EtablissementLabelContainer,
-} from "../Shared/CampagnesTable/campagnesTable.style";
-import { FormationContainer, ToolTipContainer } from "../styles/shared.style";
-import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../constants";
-import { UserContext } from "../../context/UserContext";
 
-const manageCampagneTableRows = ({
-  displayedCampagnes,
-  selectedCampagneIds,
-  setSelectedCampagneIds,
-  displayMode,
-}) => {
+const manageCampagneTableRows = ({ displayedCampagnes, selectedCampagneIds, setSelectedCampagneIds, displayMode }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [userContext] = useContext(UserContext);
 
   const handleCellUpdate = async (campagneId, payload) => {
@@ -64,8 +58,7 @@ const manageCampagneTableRows = ({
             )}
           </div>
         </FormationContainer>
-        {(displayMode === campagnesDisplayMode[0].value ||
-          displayMode === campagnesDisplayMode[2].value) && (
+        {(displayMode === campagnesDisplayMode[0].value || displayMode === campagnesDisplayMode[2].value) && (
           <EtablissementLabelContainer>
             <Tooltip
               background="var(--background-default-grey)"
@@ -79,31 +72,27 @@ const manageCampagneTableRows = ({
                       `${formation.lieuFormationAdresse}, ${formation.codePostal} ${formation.localite}`}
                   </p>
                   <p>N° Siret: {formation.etablissementFormateurSiret}</p>
-                  {formation.etablissementFormateurSiret ===
-                  formation.etablissementGestionnaireSiret ? (
+                  {formation.etablissementFormateurSiret === formation.etablissementGestionnaireSiret ? (
                     <p>
-                      <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
-                      établissement est gestionnaire et rattaché à votre compte Sirius
+                      <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet établissement est
+                      gestionnaire et rattaché à votre compte Sirius
                     </p>
                   ) : (
                     <p>
-                      <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
-                      établissement est formateur et dispense des formations pour un établissement
-                      gestionnaire
+                      <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet établissement est
+                      formateur et dispense des formations pour un établissement gestionnaire
                     </p>
                   )}
                 </ToolTipContainer>
               }
             >
               <p>
-                {formation.etablissementFormateurEntrepriseRaisonSociale ||
-                  formation.etablissementFormateurEnseigne}
+                {formation.etablissementFormateurEntrepriseRaisonSociale || formation.etablissementFormateurEnseigne}
               </p>
             </Tooltip>
           </EtablissementLabelContainer>
         )}
-        {(displayMode === campagnesDisplayMode[1].value ||
-          displayMode === campagnesDisplayMode[2].value) && (
+        {(displayMode === campagnesDisplayMode[1].value || displayMode === campagnesDisplayMode[2].value) && (
           <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>
         )}
       </>,

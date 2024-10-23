@@ -1,24 +1,20 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import {
-  orderFormationsByDiplomeType,
-  getUniqueDiplomeTypesFromFormation,
-  isPlural,
-} from "../../utils";
+import { Link } from "react-router-dom";
+import Tooltip from "react-simple-tooltip";
+
 import { DIPLOME_TYPE_MATCHER } from "../../../constants";
-import {
-  StyledAccordion,
-  AccordionLabelByDiplomeTypeContainer,
-  FormationCardContainer,
-  FormationCardByDiplomeType,
-  StyledBadge,
-  HeaderCardContainer,
-  Duration,
-} from "./accordions.style";
 import { ToolTipContainer } from "../../styles/shared.style";
+import { getUniqueDiplomeTypesFromFormation, isPlural, orderFormationsByDiplomeType } from "../../utils";
+import {
+  AccordionLabelByDiplomeTypeContainer,
+  Duration,
+  FormationCardByDiplomeType,
+  FormationCardContainer,
+  HeaderCardContainer,
+  StyledAccordion,
+  StyledBadge,
+} from "./accordions.style";
 
 const DisplayByDiplomeTypeCards = ({
   displayedFormations,
@@ -69,9 +65,7 @@ const DisplayByDiplomeTypeCards = ({
                 name: `selectAll${diplomeType}`,
                 checked:
                   formationSelectedCountByDiplomeType ===
-                  formationsByDiplomeType.filter(
-                    (formation) => !existingFormationIds.includes(formation._id)
-                  ).length,
+                  formationsByDiplomeType.filter((formation) => !existingFormationIds.includes(formation._id)).length,
                 onChange: (e) => {
                   setSelectedFormations((prevValues) => {
                     if (e.target.checked) {
@@ -97,9 +91,7 @@ const DisplayByDiplomeTypeCards = ({
         <FormationCardContainer>
           {formationsByDiplomeType.map((formation) => {
             const isAlreadyCreated = existingFormationIds?.includes(formation._id);
-            const isSelected = selectedFormations.some(
-              (selectedFormation) => selectedFormation._id === formation._id
-            );
+            const isSelected = selectedFormations.some((selectedFormation) => selectedFormation._id === formation._id);
 
             return (
               <FormationCardByDiplomeType
@@ -127,8 +119,7 @@ const DisplayByDiplomeTypeCards = ({
                       content={
                         <ToolTipContainer>
                           <p>
-                            Une campagne a déjà été créée pour cette formation, vous ne pouvez donc
-                            pas la sélectionner.
+                            Une campagne a déjà été créée pour cette formation, vous ne pouvez donc pas la sélectionner.
                           </p>
                         </ToolTipContainer>
                       }
@@ -147,9 +138,7 @@ const DisplayByDiplomeTypeCards = ({
                             onChange: () => {
                               setSelectedFormations((prevValue) =>
                                 isSelected
-                                  ? prevValue.filter(
-                                      (selectedFormation) => selectedFormation._id !== formation._id
-                                    )
+                                  ? prevValue.filter((selectedFormation) => selectedFormation._id !== formation._id)
                                   : [...prevValue, formation]
                               );
                             },
@@ -162,8 +151,7 @@ const DisplayByDiplomeTypeCards = ({
                 <h6>{formation.intitule_long}</h6>
                 <div>
                   <p>
-                    {formation.etablissement_formateur_siret ===
-                    formation.etablissement_gestionnaire_siret ? (
+                    {formation.etablissement_formateur_siret === formation.etablissement_gestionnaire_siret ? (
                       <Tooltip
                         background="var(--background-default-grey)"
                         border="var(--border-default-grey)"
@@ -185,8 +173,8 @@ const DisplayByDiplomeTypeCards = ({
                         placement="right"
                         content={
                           <ToolTipContainer>
-                            Cet établissement est formateur et dispense des formations pour un
-                            établissement gestionnaire
+                            Cet établissement est formateur et dispense des formations pour un établissement
+                            gestionnaire
                           </ToolTipContainer>
                         }
                       >

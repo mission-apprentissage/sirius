@@ -1,5 +1,5 @@
-import { Stack, Text } from "@chakra-ui/react";
 import { InfoIcon } from "@chakra-ui/icons";
+import { Stack, Text } from "@chakra-ui/react";
 const ErrorTemplate = (props) => {
   const { errors } = props;
   if (!errors || errors?.length === 0) return null;

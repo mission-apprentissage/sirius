@@ -1,7 +1,13 @@
-import { _put } from "../utils/httpClient";
+import { apiPut } from "../utils/api.utils";
 
 export const simpleEditionSubmitHandler = async (campagneId, values, userContext) => {
-  const campagneResult = await _put(`/api/campagnes/${campagneId}`, values, userContext.token);
+  const campagneResult = await apiPut(`/api/campagnes/:id`, {
+    params: { id: campagneId },
+    body: values,
+    headers: {
+      Authorization: `Bearer ${userContext.token}`,
+    },
+  });
 
   return campagneResult
     ? {

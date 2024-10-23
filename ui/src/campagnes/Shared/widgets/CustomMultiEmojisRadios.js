@@ -1,14 +1,7 @@
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  useBreakpoint,
-  FormLabel,
-  Text,
-  useRadioGroup,
-  useRadio,
-  Tag,
-} from "@chakra-ui/react";
+import { Box, FormLabel, Tag, Text, useBreakpoint, useRadio, useRadioGroup } from "@chakra-ui/react";
 import parse from "html-react-parser";
+import { useEffect, useState } from "react";
+
 import DidYouKnow from "../DidYouKnow";
 
 const RadioCard = (props) => {
@@ -67,11 +60,11 @@ const CustomMultiEmojisRadios = (props) => {
           {parse(props.schema.title)}
         </FormLabel>
         <Text fontSize="xs" color="brand.blue.700">
-          Pour chaque proposition, sélectionne la réponse qui se rapproche le plus de ton ressenti
-          😉
+          Pour chaque proposition, sélectionne la réponse qui se rapproche le plus de ton ressenti 😉
         </Text>
         <Box pt={2} pb={isMobile ? 6 : 2} w={isMobile ? "100%" : "90%"} m="auto">
           {props.schema.questions.map((question, index) => {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             const { getRadioProps } = useRadioGroup({
               id: `question-${index}`,
               name: `question-${index}`,
@@ -97,12 +90,7 @@ const CustomMultiEmojisRadios = (props) => {
                 px="16"
                 mt="2"
               >
-                <Box
-                  w={isMobile ? "100%" : "50%"}
-                  color="brand.blue.700"
-                  fontSize="sm"
-                  textAlign="center"
-                >
+                <Box w={isMobile ? "100%" : "50%"} color="brand.blue.700" fontSize="sm" textAlign="center">
                   {parse(question)}
                 </Box>
                 <Box

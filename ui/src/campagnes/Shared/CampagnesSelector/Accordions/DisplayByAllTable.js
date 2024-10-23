@@ -1,20 +1,15 @@
-import React, { useState } from "react";
-import BeatLoader from "react-spinners/BeatLoader";
-import Alert from "@codegouvfr/react-dsfr/Alert";
-import Button from "@codegouvfr/react-dsfr/Button";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
-import CampagnesTable from "../../CampagnesTable/CampagnesTable";
-import { LoaderContainer, TableContainer } from "../../../styles/shared.style";
-import useFetchCampagnes from "../../../../hooks/useFetchCampagnes";
-import { CAMPAGNE_TABLE_TYPES } from "../../../../constants";
+import { useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
 
-const DisplayByAllTable = ({
-  selectedCampagneIds,
-  setSelectedCampagneIds,
-  displayMode,
-  search,
-  setSearch,
-}) => {
+import { CAMPAGNE_TABLE_TYPES } from "../../../../constants";
+import useFetchCampagnes from "../../../../hooks/useFetchCampagnes";
+import { LoaderContainer, TableContainer } from "../../../styles/shared.style";
+import CampagnesTable from "../../CampagnesTable/CampagnesTable";
+
+const DisplayByAllTable = ({ selectedCampagneIds, setSelectedCampagneIds, displayMode, search, setSearch }) => {
   const [page, setPage] = useState(1);
 
   let query = "";

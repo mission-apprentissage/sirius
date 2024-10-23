@@ -1,8 +1,8 @@
-import React from "react";
-import { useToast, Spinner } from "@chakra-ui/react";
+import { Spinner, useToast } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
-import QuestionnaireForm from "./QuestionnaireForm";
+
 import { useGet } from "../common/hooks/httpHooks";
+import QuestionnaireForm from "./QuestionnaireForm";
 
 const EditQuestionnaire = () => {
   const { id } = useParams();

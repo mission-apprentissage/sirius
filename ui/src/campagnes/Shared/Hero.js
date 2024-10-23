@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Stack,
-  Image,
-  Text,
   Button,
+  Image,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
-import shareTemoignage from "../../assets/images/share_temoignage.svg";
+import { useState } from "react";
+
 import mains from "../../assets/images/mains.svg";
+import shareTemoignage from "../../assets/images/share_temoignage.svg";
 import Footer from "../../Components/Footer";
 import CguModal from "../../users/CguModal";
 
@@ -34,10 +35,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
     <>
       <Stack direction="column" w="100%" m="auto">
         <Box w="80%" mx="auto" my="5">
-          <Stack
-            direction={isMobile ? "column-reverse" : "row"}
-            alignItems={isMobile ? "inherit" : "center"}
-          >
+          <Stack direction={isMobile ? "column-reverse" : "row"} alignItems={isMobile ? "inherit" : "center"}>
             <Box w="50%" display={isMobile ? "none" : "inherit"} flexDirection="column">
               <Image src={shareTemoignage} alt="" objectFit="contain" w="80%" m="auto" />
               <Text color="brand.black.500" fontSize="14px" textAlign="center" mt="4">
@@ -51,12 +49,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
             </Box>
             <Box w={isMobile ? "100%" : "50%"}>
               <Box display="flex" flexDirection="column">
-                <Text
-                  fontSize="3xl"
-                  color="brand.red.500"
-                  fontWeight="600"
-                  textAlign={isMobile ? "center" : "inherit"}
-                >
+                <Text fontSize="3xl" color="brand.red.500" fontWeight="600" textAlign={isMobile ? "center" : "inherit"}>
                   Tu es apprenti·e ?
                 </Text>
                 <Text
@@ -67,8 +60,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                   textAlign={isMobile ? "center" : "inherit"}
                   fontWeight="600"
                 >
-                  Partage ton expérience aux plus jeunes pour les aider dans leurs choix
-                  d’orientation !
+                  Partage ton expérience aux plus jeunes pour les aider dans leurs choix d’orientation !
                 </Text>
               </Box>
               <Box w={isMobile ? "100%" : "50%"} display={isMobile ? "inherit" : "none"}>
@@ -82,12 +74,7 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                   </Text>
                 </Text>
               </Box>
-              <Box
-                display="flex"
-                justifyContent={isMobile ? "center" : "inherit"}
-                alignItems="center"
-                mt="5"
-              >
+              <Box display="flex" justifyContent={isMobile ? "center" : "inherit"} alignItems="center" mt="5">
                 <Button
                   size="lg"
                   variant="solid"
@@ -247,8 +234,8 @@ const Hero = ({ setStartedAnswering, isMobile, startDate, endDate, seats, temoig
                 nécessaires.
               </Text>
               <Text color="brand.black.500">
-                Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques ou
-                sur votre vie sexuelle.{" "}
+                Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques ou sur votre vie
+                sexuelle.{" "}
               </Text>
               <Text fontWeight="semibold" color="brand.black.500">
                 Ces données sont trop personnelles !

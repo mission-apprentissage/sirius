@@ -1,19 +1,20 @@
+import { InfoIcon } from "@chakra-ui/icons";
 import {
-  FormControl,
-  Textarea,
   Box,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  PopoverArrow,
-  PopoverCloseButton,
-  Stack,
-  Text,
+  FormControl,
   HStack,
   Image,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
+  Stack,
+  Text,
+  Textarea,
 } from "@chakra-ui/react";
-import { InfoIcon } from "@chakra-ui/icons";
+
 import mains from "../../../assets/images/mains.svg";
 
 const CustomTextareaPrecision = (props) => {
@@ -36,12 +37,7 @@ const CustomTextareaPrecision = (props) => {
           <PopoverTrigger>
             <HStack mt="10px" w="fit-content">
               <InfoIcon color="brand.blue.700" boxSize={4} />
-              <Text
-                color="brand.blue.700"
-                fontSize="sm"
-                sx={{ marginTop: "0px" }}
-                fontStyle="italic"
-              >
+              <Text color="brand.blue.700" fontSize="sm" sx={{ marginTop: "0px" }} fontStyle="italic">
                 Mention d’information – Champs libres
               </Text>
             </HStack>
@@ -69,8 +65,8 @@ const CustomTextareaPrecision = (props) => {
                   nécessaires.
                 </Text>
                 <Text color="brand.black.500">
-                  Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques
-                  ou sur votre vie sexuelle.{" "}
+                  Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques ou sur votre vie
+                  sexuelle.{" "}
                 </Text>
                 <Text fontWeight="semibold" color="brand.black.500">
                   Ces données sont trop personnelles !

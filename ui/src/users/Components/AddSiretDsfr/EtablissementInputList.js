@@ -1,9 +1,9 @@
-import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
-import styled from "@emotion/styled";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
-import { remoteEtablissementLabelGetter } from "../../../utils/etablissement";
+import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
+
+import { remoteEtablissementLabelGetter } from "../../../utils/etablissement";
 
 const IndexBadge = styled.span`
   background-color: var(--background-contrast-purple-glycine);
@@ -39,10 +39,7 @@ const EtablissementInputList = ({ formik, etablissement, index }) => {
     <Accordion
       label={
         <>
-          <span
-            className={fr.cx("fr-icon-delete-line")}
-            onClick={() => handleDeleteEtablissement(index)}
-          />
+          <span className={fr.cx("fr-icon-delete-line")} onClick={() => handleDeleteEtablissement(index)} />
           <IndexBadge>{index + 1}</IndexBadge>
           {remoteEtablissementLabelGetter(etablissement)}
         </>

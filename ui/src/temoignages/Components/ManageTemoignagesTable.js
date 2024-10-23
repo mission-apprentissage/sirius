@@ -1,33 +1,23 @@
-import React, { useState } from "react";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { Button } from "@codegouvfr/react-dsfr/Button";
-import { msToTime } from "../../utils/temoignage";
+import { useState } from "react";
 import Tooltip from "react-simple-tooltip";
-import {
-  ToolTipContainer,
-  ActionsContainer,
-  DeleteButtonContainer,
-} from "../manageTemoignages.style";
-import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import DisplayReponsesModal from "./DisplayReponsesModal";
+
 import { TableContainer } from "../../campagnes/styles/shared.style";
 import { isPlural } from "../../campagnes/utils";
+import { msToTime } from "../../utils/temoignage";
+import { ActionsContainer, DeleteButtonContainer, ToolTipContainer } from "../manageTemoignages.style";
+import DisplayReponsesModal from "./DisplayReponsesModal";
 
 const displayReponsesModal = createModal({
   id: "display-reponses-modal",
   isOpenedByDefault: false,
 });
 
-const headers = [
-  "",
-  "Établissement & formation",
-  "Durée de passation",
-  "Questions répondues",
-  "Bot",
-  "Afficher",
-];
+const headers = ["", "Établissement & formation", "Durée de passation", "Questions répondues", "Bot", "Afficher"];
 
 const ManageTemoignagesTable = ({
   temoignages,
@@ -77,24 +67,16 @@ const ManageTemoignagesTable = ({
         content={
           <ToolTipContainer>
             <span>Le: {new Date(temoignage.createdAt).toLocaleDateString("fr-FR")}</span>
+            <span>Début: {new Date(temoignage.createdAt).toLocaleTimeString("fr-FR") || "N/A"}</span>
             <span>
-              Début: {new Date(temoignage.createdAt).toLocaleTimeString("fr-FR") || "N/A"}
-            </span>
-            <span>
-              Fin:{" "}
-              {temoignage.lastQuestionAt
-                ? new Date(temoignage.lastQuestionAt).toLocaleTimeString("fr-FR")
-                : "N/A"}
+              Fin: {temoignage.lastQuestionAt ? new Date(temoignage.lastQuestionAt).toLocaleTimeString("fr-FR") : "N/A"}
             </span>
           </ToolTipContainer>
         }
       >
         <p>
           {temoignage.lastQuestionAt && temoignage.createdAt
-            ? msToTime(
-                new Date(temoignage.lastQuestionAt).getTime() -
-                  new Date(temoignage.createdAt).getTime()
-              )
+            ? msToTime(new Date(temoignage.lastQuestionAt).getTime() - new Date(temoignage.createdAt).getTime())
             : "N/A"}
         </p>
       </Tooltip>,
@@ -137,9 +119,7 @@ const ManageTemoignagesTable = ({
                   .map((temoignage) => temoignage.id)
                   .every((id) => selectedTemoignagesIds.includes(id)),
                 onChange: (e) => {
-                  setSelectedTemoignagesIds(
-                    e.target.checked ? temoignages.map((temoignage) => temoignage.id) : []
-                  );
+                  setSelectedTemoignagesIds(e.target.checked ? temoignages.map((temoignage) => temoignage.id) : []);
                 },
               },
             },

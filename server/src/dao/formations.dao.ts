@@ -1,9 +1,11 @@
-import { DeleteResult, sql } from "kysely";
-import { kdb } from "../db/db";
-import { Formation } from "../types";
+import type { DeleteResult } from "kysely";
+import { sql } from "kysely";
+
+import { getKbdClient } from "../db/db";
+import type { Formation } from "../types";
 
 export const create = async (formation: Formation): Promise<{ id: string } | undefined> => {
-  return kdb.insertInto("formations").values(formation).returning("id").executeTakeFirst();
+  return getKbdClient().insertInto("formations").values(formation).returning("id").executeTakeFirst();
 };
 
 export const findAll = async (query: {
@@ -12,7 +14,7 @@ export const findAll = async (query: {
   searchText?: string;
   etablissementSiret?: string;
 }): Promise<Partial<Formation>[] | undefined> => {
-  let baseQuery = kdb
+  let baseQuery = getKbdClient()
     .selectFrom("formations")
     .select([
       "id",
@@ -80,7 +82,7 @@ export const findAll = async (query: {
 };
 
 export const findOne = async (id: string): Promise<Partial<Formation> | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("formations")
     .select([
       "id",
@@ -112,7 +114,7 @@ export const findOne = async (id: string): Promise<Partial<Formation> | undefine
 };
 
 export const findOneByCatalogueId = async (catalogueId: string): Promise<Partial<Formation> | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("formations")
     .select([
       "id",
@@ -144,13 +146,13 @@ export const findOneByCatalogueId = async (catalogueId: string): Promise<Partial
 };
 
 export const deleteOne = async (id: string): Promise<DeleteResult> => {
-  return kdb.deleteFrom("formations").where("id", "=", id).executeTakeFirst();
+  return getKbdClient().deleteFrom("formations").where("id", "=", id).executeTakeFirst();
 };
 
 export const deleteManyByCampagneIdAndReturnsTheDeletedFormationId = async (
   campagneIds: string[]
 ): Promise<string[]> => {
-  const results = await kdb
+  const results = await getKbdClient()
     .updateTable("formations")
     .set({
       deleted_at: new Date(),
@@ -163,7 +165,7 @@ export const deleteManyByCampagneIdAndReturnsTheDeletedFormationId = async (
 };
 
 export const update = async (id: string, updatedFormation: Partial<Formation>): Promise<boolean> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .updateTable("formations")
     .set(updatedFormation)
     .where("id", "=", id)
@@ -174,7 +176,7 @@ export const update = async (id: string, updatedFormation: Partial<Formation>): 
 };
 
 export const findDataIdFormationByIds = async (catalogue_ids: string[]): Promise<Partial<Formation>[]> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("formations")
     .select([
       "formations.id",
@@ -206,7 +208,7 @@ export const findDataIdFormationByIds = async (catalogue_ids: string[]): Promise
 };
 
 export const findFormationByIntitule = async (intitule: string): Promise<Partial<Formation>[] | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("formations")
     .select([
       "formations.id",
@@ -238,7 +240,7 @@ export const findFormationByIntitule = async (intitule: string): Promise<Partial
 };
 
 export const findFormationByUai = async (uai: string): Promise<Partial<Formation>[] | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("formations")
     .select([
       "formations.id",
@@ -270,7 +272,7 @@ export const findFormationByUai = async (uai: string): Promise<Partial<Formation
 };
 
 export const findAllWithTemoignageCount = async (): Promise<Partial<Formation>[] | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("formations")
     .select([
       "formations.id",

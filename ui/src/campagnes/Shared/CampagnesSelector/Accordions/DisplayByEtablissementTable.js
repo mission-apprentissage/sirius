@@ -1,12 +1,12 @@
-import React from "react";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import BeatLoader from "react-spinners/BeatLoader";
-import Alert from "@codegouvfr/react-dsfr/Alert";
-import Pagination from "@codegouvfr/react-dsfr/Pagination";
-import { StyledAccordion } from "./accordions.style";
-import { SelectAllCampagnesCheckbox, AccordionLabel } from "./Components";
+
+import useDisplayCampagnesOptions from "../../../../hooks/useDisplayCampagnesOptions";
 import { LoaderContainer, TableContainer } from "../../../styles/shared.style";
 import CampagnesTable from "../../CampagnesTable/CampagnesTable";
-import useDisplayCampagnesOptions from "../../../../hooks/useDisplayCampagnesOptions";
+import { StyledAccordion } from "./accordions.style";
+import { AccordionLabel, SelectAllCampagnesCheckbox } from "./Components";
 
 const DisplayByEtablissementTable = ({
   campagnesSorted,
@@ -36,11 +36,7 @@ const DisplayByEtablissementTable = ({
 
   const uniqueEtablissementFromSearch =
     search && searchedCampagnes.body.length > 0
-      ? [
-          ...new Set(
-            searchedCampagnes.body.map((campagne) => campagne.formation.etablissementFormateurSiret)
-          ),
-        ]
+      ? [...new Set(searchedCampagnes.body.map((campagne) => campagne.formation.etablissementFormateurSiret))]
       : [];
 
   return campagnesSorted.map(({ etablissementFormateur, campagneIds }) => {
@@ -57,12 +53,7 @@ const DisplayByEtablissementTable = ({
       <StyledAccordion
         key={etablissementFormateur.etablissementFormateurSiret}
         onClick={() => setOpenedAccordion(etablissementFormateur.etablissementFormateurSiret)}
-        label={
-          <AccordionLabel
-            etablissementFormateur={etablissementFormateur}
-            count={campagnesSelectedCount}
-          />
-        }
+        label={<AccordionLabel etablissementFormateur={etablissementFormateur} count={campagnesSelectedCount} />}
       >
         {isLoadingCampagnes && (
           <LoaderContainer>

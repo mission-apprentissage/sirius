@@ -1,39 +1,40 @@
-import React, { useState, useContext } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { Navigate, Link } from "react-router-dom";
-import { Input } from "@codegouvfr/react-dsfr/Input";
-import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
-import { _post } from "../utils/httpClient";
+import { useFormik } from "formik";
+import { useContext, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import * as Yup from "yup";
+
+import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
+import Support from "../assets/images/support.svg";
+import NeedHelp from "../Components/NeedHelp";
+import { emailWithTLDRegex, ROLE_TYPE, USER_ROLES } from "../constants";
 import { UserContext } from "../context/UserContext";
-import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
+import { apiPost } from "../utils/api.utils";
 import {
-  Form,
-  UserInfoContainer,
-  PasswordsContainer,
-  StyledPasswordInput,
-  ButtonContainer,
-  SuccessfulSignupHeader,
-} from "./styles/signup.style";
-import {
-  passwordComplexityRegex,
-  eightCharactersRegex,
-  oneUppercase,
-  oneLowercase,
-  oneDigit,
-  oneSpecialCharacter,
   allFieldMessage,
+  eightCharactersRegex,
+  emailFormatMessage,
   notCorrespondingPasswordMessage,
   notCorrespondingRole,
-  emailFormatMessage,
+  oneDigit,
+  oneLowercase,
+  oneSpecialCharacter,
+  oneUppercase,
+  passwordComplexityRegex,
 } from "../utils/validators";
-import Support from "../assets/images/support.svg";
-import { ROLE_TYPE, USER_ROLES, emailWithTLDRegex } from "../constants";
 import AddSiret from "./Components/AddSiretDsfr/AddSiret";
-import NeedHelp from "../Components/NeedHelp";
-import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
+import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
+import {
+  ButtonContainer,
+  Form,
+  PasswordsContainer,
+  StyledPasswordInput,
+  SuccessfulSignupHeader,
+  UserInfoContainer,
+} from "./styles/signup.style";
 
 const etablissement = Yup.object({
   _id: Yup.string().required(),
@@ -88,24 +89,24 @@ const SignupPage = () => {
     validationSchema: validationSchema,
     onSubmit: async ({ email, password, firstName, lastName, comment, etablissements, role }) => {
       setIsSubmitting(true);
-      const etablissementsWitoutEmpty = etablissements.filter(
-        (obj) => Object.keys(obj).length !== 0
-      );
+      const etablissementsWitoutEmpty = etablissements.filter((obj) => Object.keys(obj).length !== 0);
 
-      const resultUser = await _post(`/api/users/`, {
-        firstName: firstName,
-        lastName: lastName,
-        role: role,
-        comment: comment,
-        email: email.toLowerCase(),
-        password,
-        etablissements: etablissementsWitoutEmpty.map((etablissement) => ({
-          _id: etablissement._id,
-          siret: etablissement.siret,
-          onisep_nom: etablissement.onisep_nom,
-          enseigne: etablissement.enseigne,
-          entreprise_raison_sociale: etablissement.entreprise_raison_sociale,
-        })),
+      const resultUser = await apiPost("/users", {
+        body: {
+          firstName: firstName,
+          lastName: lastName,
+          role: role,
+          comment: comment,
+          email: email.toLowerCase(),
+          password,
+          etablissements: etablissementsWitoutEmpty.map((etablissement) => ({
+            _id: etablissement._id,
+            siret: etablissement.siret,
+            onisep_nom: etablissement.onisep_nom,
+            enseigne: etablissement.enseigne,
+            entreprise_raison_sociale: etablissement.entreprise_raison_sociale,
+          })),
+        },
       });
 
       if (resultUser.id) {
@@ -241,8 +242,7 @@ const SignupPage = () => {
                 options={[
                   {
                     label: "Un établissement",
-                    hintText:
-                      "Votre établissement dispense des formations ou gère des établissements en dispensant",
+                    hintText: "Votre établissement dispense des formations ou gère des établissements en dispensant",
                     nativeInputProps: {
                       value: ROLE_TYPE.ETABLISSEMENT,
                     },
@@ -260,9 +260,7 @@ const SignupPage = () => {
                 state={formik.errors.role && formik.submitCount >= 1 ? "error" : "default"}
                 stateRelatedMessage={formik.errors.role}
               />
-              {formik.values.role === ROLE_TYPE.ETABLISSEMENT && (
-                <AddSiret formik={formik} setError={setError} />
-              )}
+              {formik.values.role === ROLE_TYPE.ETABLISSEMENT && <AddSiret formik={formik} setError={setError} />}
               <Input
                 id="comment"
                 label="Commentaire"
@@ -276,12 +274,7 @@ const SignupPage = () => {
                 <Alert severity="error" title="Une erreur s'est produite." description={error} />
               ) : null}
               <ButtonContainer>
-                <Button
-                  iconId="fr-icon-logout-box-r-line"
-                  iconPosition="right"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
+                <Button iconId="fr-icon-logout-box-r-line" iconPosition="right" type="submit" disabled={isSubmitting}>
                   Inscription
                 </Button>
               </ButtonContainer>

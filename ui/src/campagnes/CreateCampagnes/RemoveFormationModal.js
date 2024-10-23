@@ -1,4 +1,3 @@
-import React from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 
 const RemoveFormationModal = ({
@@ -42,8 +41,8 @@ const RemoveFormationModal = ({
       ]}
     >
       <p>
-        Vous vous apprêtez à retirer ces formations de votre sélection. Vous ne souhaitez plus créer
-        de campagnes pour ces formations ?
+        Vous vous apprêtez à retirer ces formations de votre sélection. Vous ne souhaitez plus créer de campagnes pour
+        ces formations ?
       </p>
       <p>
         <b>Pas d’inquiétude vous pourrez toujours les créer plus tard.</b>

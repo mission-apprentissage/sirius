@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, Text, SimpleGrid } from "@chakra-ui/react";
+import { Card, CardBody, CardHeader, SimpleGrid, Text } from "@chakra-ui/react";
 
 const SuiviEtablissementsStatistics = ({ etablissements }) => {
   const createdCampagnesCount = etablissements.reduce(

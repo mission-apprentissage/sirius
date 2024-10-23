@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { Select } from "chakra-react-select";
+import { useState } from "react";
 
 const filterOptions = [
   {
@@ -26,30 +26,21 @@ const SuiviEtablissementsFilters = ({ setDisplayedEtablissements, etablissements
   const handleFilter = (selectedFilters) => {
     let filteredEtablissements = [...etablissements];
 
-    const isFilterSelected = (filterValue) =>
-      selectedFilters.some((filter) => filter.value === filterValue);
+    const isFilterSelected = (filterValue) => selectedFilters.some((filter) => filter.value === filterValue);
 
     if (!isFilterSelected("withCampagnes")) {
-      filteredEtablissements = filteredEtablissements.filter(
-        (etablissement) => etablissement.campagnesCount === 0
-      );
+      filteredEtablissements = filteredEtablissements.filter((etablissement) => etablissement.campagnesCount === 0);
     }
     if (!isFilterSelected("withoutCampagnes")) {
-      filteredEtablissements = filteredEtablissements.filter(
-        (etablissement) => etablissement.campagnesCount !== 0
-      );
+      filteredEtablissements = filteredEtablissements.filter((etablissement) => etablissement.campagnesCount !== 0);
     }
 
     if (!isFilterSelected("withTemoignages")) {
-      filteredEtablissements = filteredEtablissements.filter(
-        (etablissement) => etablissement.temoignagesCount === 0
-      );
+      filteredEtablissements = filteredEtablissements.filter((etablissement) => etablissement.temoignagesCount === 0);
     }
 
     if (!isFilterSelected("withoutTemoignages")) {
-      filteredEtablissements = filteredEtablissements.filter(
-        (etablissement) => etablissement.temoignagesCount !== 0
-      );
+      filteredEtablissements = filteredEtablissements.filter((etablissement) => etablissement.temoignagesCount !== 0);
     }
 
     setSelectedFilters(selectedFilters);

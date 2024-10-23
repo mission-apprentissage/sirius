@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
+import { useEffect, useRef, useState } from "react";
+
 import { formatDate } from "../../utils";
 import { NotEditingContainer, StyledInput } from "./cellInput.style";
 
@@ -45,17 +46,15 @@ const CellInput = ({ id, name, campagne, handleCellUpdate = null, type }) => {
         submitHandler();
       }
     };
+    // eslint-disable-next-line no-undef
     document.addEventListener("click", handleClickOutside, true);
     return () => {
+      // eslint-disable-next-line no-undef
       document.removeEventListener("click", handleClickOutside, true);
     };
   }, [value]);
 
-  const iconId = isSuccess
-    ? "fr-icon-success-line"
-    : isFail
-    ? "fr-icon-error-line"
-    : "fr-icon-pencil-line";
+  const iconId = isSuccess ? "fr-icon-success-line" : isFail ? "fr-icon-error-line" : "fr-icon-pencil-line";
 
   const state = isSuccess ? "success" : isFail ? "error" : "default";
 

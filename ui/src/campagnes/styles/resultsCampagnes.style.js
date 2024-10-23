@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
+import styled from "@emotion/styled";
 
 export const Container = styled.section`
   margin: ${fr.spacing("8w")} auto 0 auto;

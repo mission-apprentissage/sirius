@@ -1,12 +1,12 @@
-import React from "react";
-import Tooltip from "react-simple-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { isPlural } from "../utils";
-import { FormationContainer, ToolTipContainer } from "../styles/shared.style";
-import { DIPLOME_TYPE_MATCHER, campagnesDisplayMode } from "../../constants";
+import Tooltip from "react-simple-tooltip";
+
+import { campagnesDisplayMode, DIPLOME_TYPE_MATCHER } from "../../constants";
 import CellInputConfigure from "../ManageCampagne/CellInput/CellInputConfigure";
 import CellInputSeatsConfigure from "../ManageCampagne/CellInput/CellInputSeatsConfigure";
+import { FormationContainer, ToolTipContainer } from "../styles/shared.style";
+import { isPlural } from "../utils";
 
 const createCampagneTableRows = ({
   selectedFormations,
@@ -60,17 +60,15 @@ const createCampagneTableRows = ({
                     `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
                 </p>
                 <p>N° SIRET : {formation.etablissement_formateur_siret}</p>
-                {formation.etablissement_formateur_siret ===
-                formation.etablissement_gestionnaire_siret ? (
+                {formation.etablissement_formateur_siret === formation.etablissement_gestionnaire_siret ? (
                   <p>
-                    <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
-                    établissement est gestionnaire et rattaché à votre compte Sirius
+                    <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet établissement est
+                    gestionnaire et rattaché à votre compte Sirius
                   </p>
                 ) : (
                   <p>
-                    <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
-                    établissement est formateur et dispense des formations pour un établissement
-                    gestionnaire
+                    <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet établissement est formateur
+                    et dispense des formations pour un établissement gestionnaire
                   </p>
                 )}
               </ToolTipContainer>

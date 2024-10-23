@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Card } from "@codegouvfr/react-dsfr/Card";
+import styled from "@emotion/styled";
 
 export const Container = styled.section`
   margin: ${fr.spacing("8w")} auto 0 auto;
@@ -115,8 +115,7 @@ export const StyledCard = styled(({ notClickable, isClicked, ...props }) => <Car
 
   ${({ notClickable }) => notClickable && `cursor: default !important;`}
 
-  ${({ isClicked }) =>
-    isClicked && `border-bottom: 3px solid var(--border-active-blue-france)!important;`}
+  ${({ isClicked }) => isClicked && `border-bottom: 3px solid var(--border-active-blue-france)!important;`}
 
   ${fr.breakpoints.up("sm")} {
     width: 100%;

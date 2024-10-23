@@ -1,5 +1,6 @@
-import { useEffect, useContext } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useContext, useEffect } from "react";
+
 import { UserContext } from "../context/UserContext";
 import { fetchVerbatims } from "../queries/verbatims";
 
@@ -16,14 +17,7 @@ const useFetchVerbatims = ({
   const [userContext] = useContext(UserContext);
 
   const { data, isSuccess, isError, isLoading } = useQuery({
-    queryKey: [
-      "verbatims",
-      selectedStatus,
-      etablissementSiret,
-      formationId,
-      showOnlyDiscrepancies,
-      page,
-    ],
+    queryKey: ["verbatims", selectedStatus, etablissementSiret, formationId, showOnlyDiscrepancies, page],
     queryFn: () =>
       fetchVerbatims({
         etablissementSiret,
@@ -39,14 +33,7 @@ const useFetchVerbatims = ({
   useEffect(() => {
     if (data?.pagination?.hasMore) {
       queryClient.prefetchQuery({
-        queryKey: [
-          `verbatims`,
-          selectedStatus,
-          etablissementSiret,
-          formationId,
-          showOnlyDiscrepancies,
-          page + 1,
-        ],
+        queryKey: [`verbatims`, selectedStatus, etablissementSiret, formationId, showOnlyDiscrepancies, page + 1],
         queryFn: () =>
           fetchVerbatims({
             etablissementSiret,
