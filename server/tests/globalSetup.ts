@@ -1,12 +1,23 @@
 import { config } from "dotenv";
 
-import { dropdb, getDefaultClient, listDatabases } from "../src/utils/pgtools.utils";
+import { dropdb, getDefaultClient, listDatabases, setPgClientConfig } from "../src/utils/pgtools.utils";
 
 export default async () => {
   return async () => {
-    config({ path: "./server/.env.test" });
+    const { parsed: conf } = config({ path: "./server/.env.test" });
+
+    if (!conf) return;
+
+    setPgClientConfig({
+      host: conf.PSQL_HOST,
+      user: conf.PQSL_USER,
+      password: conf.PSQL_PWD,
+      port: parseInt(conf.PSQL_PORT),
+    });
 
     const pgClient = await getDefaultClient();
+    if (!pgClient) return;
+
     try {
       if (process.env.CI) {
         return;

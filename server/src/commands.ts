@@ -114,7 +114,7 @@ program
   .description("Init db")
   .action(async () => {
     try {
-      await createdb("sirius");
+      await createdb("sirius", config.psql);
     } catch (error) {
       console.error(error);
     }

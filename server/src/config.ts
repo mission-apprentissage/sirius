@@ -13,6 +13,10 @@ const config = {
     level: env.get("LOG_LEVEL").required().asString(),
   },
   psql: {
+    host: env.get("PSQL_HOST").required().asString(),
+    port: env.get("PSQL_PORT").required().asPortNumber(),
+    user: env.get("PQSL_USER").required().asString(),
+    password: env.get("PSQL_PWD").required().asString(),
     uri: env.get("PSQL_URI").required().asString(),
     ca: env
       .get("PSQL_CA")

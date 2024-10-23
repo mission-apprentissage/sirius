@@ -23,13 +23,6 @@ const knownErrors = {
   },
 };
 
-const PG_DEFAULT_CONFIG = {
-  host: "localhost",
-  user: "postgres",
-  password: "password",
-  port: 5432,
-};
-
 class PgtoolsError extends Error {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(error: any) {
@@ -50,8 +43,25 @@ function isPgtoolsError(err: any) {
   return err instanceof Error && "code" in err && "message" in err;
 }
 
+type IClientConfig = {
+  host: string;
+  user: string;
+  password: string;
+  port: number;
+};
+let clientConfig: IClientConfig | null = null;
+export function setPgClientConfig(currentConfig: IClientConfig) {
+  clientConfig = {
+    host: currentConfig.host,
+    user: currentConfig.user,
+    password: currentConfig.password,
+    port: currentConfig.port,
+  };
+}
+
 export async function getDefaultClient() {
-  return new Client(PG_DEFAULT_CONFIG);
+  if (!clientConfig) return null;
+  return new Client(clientConfig);
 }
 
 export async function listDatabases(pgClient: Ipg.Client) {
@@ -74,12 +84,7 @@ function createFunction(action: "CREATE" | "DROP") {
   ) {
     if (!dbName) throw new TypeError("dbName not set");
 
-    const config = {
-      ...PG_DEFAULT_CONFIG,
-      ...opts,
-    };
-
-    const pgClient = openedClient || new Client(config);
+    const pgClient = openedClient || new Client({ ...clientConfig, ...opts });
 
     try {
       if (!openedClient) await pgClient.connect();

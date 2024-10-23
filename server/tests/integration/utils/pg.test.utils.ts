@@ -13,7 +13,7 @@ export const startAndConnectPg = async () => {
   const testDb = `sirius-test-${workerId}`;
 
   try {
-    await createdb(testDb);
+    await createdb(testDb, config.psql);
 
     await connectToPgDb(dbUri);
 
