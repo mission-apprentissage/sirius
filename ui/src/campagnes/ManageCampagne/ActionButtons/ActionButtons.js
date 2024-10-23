@@ -8,6 +8,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 import { USER_ROLES } from "../../../constants";
 import { UserContext } from "../../../context/UserContext";
+import { apiGet } from "../../../utils/api.utils";
 import DeleteCampagneConfirmationModal from "../DeleteCampagneConfirmationModal";
 import { ActionButtonsContainer, ToolTipContainer } from "./actionButtons.style";
 
