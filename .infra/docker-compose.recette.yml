@@ -48,6 +48,7 @@ services:
     volumes:
       - /opt/app/data/postgres:/var/lib/postgresql/data:z
     environment:
+      - POSTGRES_DB=sirius
       - POSTGRES_PASSWORD={{ vault[env_type].PSQL_PWD }}
     logging:
       driver: "fluentd"
