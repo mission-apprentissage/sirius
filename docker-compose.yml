@@ -9,7 +9,7 @@ services:
     volumes:
       - sirius_postgres_data:/var/lib/postgresql/data:z
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d postgres'"]
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d sirius'"]
       interval: 10s
       timeout: 5s
       retries: 12

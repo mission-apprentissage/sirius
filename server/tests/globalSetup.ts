@@ -16,7 +16,7 @@ export default async () => {
       const dbs = await listDatabases(pgClient);
       await Promise.all(
         dbs.map(async (db) => {
-          if (db.startsWith("postgres-test-")) {
+          if (db.startsWith("sirius-test-")) {
             return dropdb(db, {}, pgClient);
           }
           return;

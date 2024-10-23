@@ -8,7 +8,7 @@ fileignoreconfig:
 - filename: .infra/files/configs/mongodb/seed.gpg
   checksum: b1fa159bb2036a835b4138843b48043eca4ea374bcbb710ba4593bd39b1dfec1
 - filename: .infra/vault/vault.yml
-  checksum: 9fc6d589f750fceb192e6a3722d3bcb0bc5358190d7a9d13e59e2ec2a974163b
+  checksum: e9f9df16abf95c45419485d12b4bc6134c2312148e97acbe0c80b77846e0e300
 - filename: README.md
   checksum: 00ac991f0b2746c5a5ffa14e2b3c5427b739c0d952aa3730efe1f234ac1fc3ca
 - filename: ui/src/config.public.ts
