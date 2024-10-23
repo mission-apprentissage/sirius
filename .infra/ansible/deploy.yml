@@ -84,6 +84,11 @@
         chdir: /opt/app
         cmd: "sudo /opt/app/tools/ssl/renew-certificate.sh {{dns_name}}"
 
+    # - name: Init db
+    #   shell:
+    #     chdir: /opt/app
+    #     cmd: "/opt/app/scripts/cli.sh db:init"
+
     - name: "Setup de la Metabase"
       shell:
         chdir: /opt/app
