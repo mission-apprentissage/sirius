@@ -11,8 +11,9 @@
     "test": "react-scripts test",
     "serve": "ws --port 3000 --log.format dev --spa index.html",
     "eject": "react-scripts eject",
-    "prestart": "copy-dsfr-to-public && only-include-used-icons",
-    "prebuild": "copy-dsfr-to-public && only-include-used-icons",
+    "postinstall": "react-dsfr copy-static-assets",
+    "predev": "react-dsfr update-icons",
+    "prebuild": "react-dsfr update-icons",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

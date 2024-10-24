@@ -168,3 +168,5 @@ SEED_PASSPHRASE.txt
 seed.gz
 
 tsconfig.tsbuildinfo
+
+ui/public/dsfr/
