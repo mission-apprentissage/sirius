@@ -2,7 +2,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Footer } from "@codegouvfr/react-dsfr/Footer";
 import styled from "@emotion/styled";
 
-import { publicConfig } from "../config.public";
+// import { publicConfig } from "../config.public";
 
 const TopLink = styled.a`
   margin-right: ${fr.spacing("2w")};
@@ -44,10 +44,9 @@ const DsfrFooter = () => {
         <BottomLink href="/mentions-information-questionnaire" key={1}>
           Mentions d'informations
         </BottomLink>,
-        <span className="fr-footer__bottom-link" key={3}>
-          {" "}
-          v.{publicConfig.version} © République française {new Date().getFullYear()}
-        </span>,
+        // <span className="fr-footer__bottom-link" key={3}>
+        //   v.{publicConfig.version} © République française {new Date().getFullYear()}
+        // </span>,
       ]}
     />
   );
