@@ -45,7 +45,7 @@
     "prettier:check": "prettier --check -u .",
     "release": "semantic-release",
     "release:interactive": ".bin/product release:interactive",
-    "postinstall": "yarn workspace ui dsfr:copy && husky",
+    "postinstall": "husky",
     "talisman:add-exception": "yarn node-talisman --githook pre-commit -i",
     "test": "vitest",
     "test:ci": "yarn test --run",
