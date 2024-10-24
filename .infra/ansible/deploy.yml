@@ -89,6 +89,22 @@
     #     chdir: /opt/app
     #     cmd: "/opt/app/scripts/cli.sh db:init"
 
+    - name: Add cron to classify verbatims
+      ansible.builtin.cron:
+        name: "classify-verbatims"
+        minute: "0"
+        hour: "3"
+        job: "sudo /opt/app/scripts/cli.sh classify-verbatims >> /var/log/cron.log 2>&1; /opt/app/tools/monitoring/export-cron-status-prom.sh -c 'Classify Verbatims Alias' -v $?"
+      when: env_type == "production"
+
+    - name: Add cron to extract themes from verbatims
+      ansible.builtin.cron:
+        name: "extract-themes-verbatims"
+        minute: "0"
+        hour: "5"
+        job: "sudo /opt/app/scripts/cli.sh extract-themes-verbatims >> /var/log/cron.log 2>&1; /opt/app/tools/monitoring/export-cron-status-prom.sh -c 'Extract themes from verbatims Alias' -v $?"
+      when: env_type == "production"
+
     - name: "Setup de la Metabase"
       shell:
         chdir: /opt/app
