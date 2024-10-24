@@ -61,6 +61,7 @@ export default async () => {
     // @ts-expect-error
     tryCatch(async (_req, res) => {
       return res.json({
+        name: config.productName,
         version: config.version,
         env: config.env,
       });
