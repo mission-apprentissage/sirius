@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "yarn dsfr:copy && react-scripts start",
-    "build": "yarn dsfr:copy && dsfr:update && react-scripts build",
+    "build": "yarn dsfr:copy && react-scripts build",
     "test": "react-scripts test",
     "serve": "ws --port 3000 --log.format dev --spa index.html",
     "eject": "react-scripts eject",
