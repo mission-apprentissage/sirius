@@ -6,13 +6,13 @@
     "npm": "please-use-yarn"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "yarn dsfr:copy && yarn dsfr:update && react-scripts start",
+    "build": "yarn dsfr:copy && react-scripts build",
     "test": "react-scripts test",
     "serve": "ws --port 3000 --log.format dev --spa index.html",
     "eject": "react-scripts eject",
-    "predev": "react-dsfr update-icons",
-    "prebuild": "react-dsfr copy-static-assets ; react-dsfr update-icons",
+    "dsfr:copy": "react-dsfr copy-static-assets",
+    "dsfr:update": "react-dsfr update-icons",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
