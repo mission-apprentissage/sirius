@@ -14,7 +14,7 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
   const pageSize = req.body.pageSize || 10;
 
   const diplome = req.body.diplome;
-  const etablissementFormateurSiret = req.body.etablissementFormateurSiret;
+  const etablissementFormateurSiret = req.body.siret;
   const search = req.body.search;
   const departement = req.body.departement;
 
