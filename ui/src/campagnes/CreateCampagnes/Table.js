@@ -1,13 +1,12 @@
-import React from "react";
-import Checkbox from "@codegouvfr/react-dsfr/Checkbox";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import Button from "@codegouvfr/react-dsfr/Button";
+import React from "react";
+
 import { CAMPAGNE_TABLE_TYPES } from "../../constants";
-import { ButtonContainer } from "../styles/shared.style";
-import RemoveFormationModal from "./RemoveFormationModal";
-import { isPlural } from "../utils";
-import CommonEndDateModal from "./CommonEndDateModal";
 import CampagnesTable from "../Shared/CampagnesTable/CampagnesTable";
+import { ButtonContainer } from "../styles/shared.style";
+import CommonEndDateModal from "./CommonEndDateModal";
+import RemoveFormationModal from "./RemoveFormationModal";
 
 const modal = createModal({
   id: "remove-formation-modal",

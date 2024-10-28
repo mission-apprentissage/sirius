@@ -1,25 +1,22 @@
-import React, { useContext, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
-import BeatLoader from "react-spinners/BeatLoader";
-import Alert from "@codegouvfr/react-dsfr/Alert";
 import { fr } from "@codegouvfr/react-dsfr";
-import { createModal } from "@codegouvfr/react-dsfr/Modal";
+import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { useQueryClient } from "@tanstack/react-query";
-import { UserContext } from "../context/UserContext";
-import { formateDateToInputFormat, isPlural } from "./utils";
+import { useFormik } from "formik";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import BeatLoader from "react-spinners/BeatLoader";
+
 import { useGet } from "../common/hooks/httpHooks";
-import {
-  Container,
-  CreateCampagneContainer,
-  ButtonContainer,
-} from "./styles/createCampagnes.style";
-import SupportModal from "./Shared/SupportModal";
-import FormationsSelector from "./CreateCampagnes/FormationsSelector";
-import CampagneConfigurator from "./CreateCampagnes/CampagneConfigurator";
-import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
+import { UserContext } from "../context/UserContext";
 import useCreateCampagnes from "../hooks/useCreateCampagnes";
+import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
+import CampagneConfigurator from "./CreateCampagnes/CampagneConfigurator";
+import FormationsSelector from "./CreateCampagnes/FormationsSelector";
+import SupportModal from "./Shared/SupportModal";
+import { ButtonContainer, Container, CreateCampagneContainer } from "./styles/createCampagnes.style";
+import { formateDateToInputFormat, isPlural } from "./utils";
 
 const supportModal = createModal({
   id: "support-modal-loggedIn",
@@ -118,10 +115,7 @@ const CreateCampagnesPage = () => {
                 <span className={fr.cx("fr-icon-add-line")} aria-hidden={true} />
                 Créer des campagnes (1/2)
               </h1>
-              <p>
-                Dans cette première version de Sirius, seules vos formations infra-bac sont
-                disponibles.
-              </p>
+              <p>Dans cette première version de Sirius, seules vos formations infra-bac sont disponibles.</p>
               <p>
                 Formations extraites du{" "}
                 <Link to="https://catalogue-apprentissage.intercariforef.org/" target="_blank">
@@ -163,22 +157,14 @@ const CreateCampagnesPage = () => {
           )}
           <ButtonContainer>
             {step === 1 && (
-              <Button
-                iconId="fr-icon-add-line"
-                disabled={!selectedFormations.length}
-                onClick={() => setStep(2)}
-              >
+              <Button iconId="fr-icon-add-line" disabled={!selectedFormations.length} onClick={() => setStep(2)}>
                 Sélectionner {selectedFormations.length} formation
                 {isPlural(selectedFormations.length)}
               </Button>
             )}
             {step === 2 && (
               <>
-                <Button
-                  priority="secondary"
-                  iconId="fr-icon-arrow-left-line"
-                  onClick={() => setStep(1)}
-                >
+                <Button priority="secondary" iconId="fr-icon-arrow-left-line" onClick={() => setStep(1)}>
                   Étape précédente
                 </Button>
                 <Button
@@ -193,9 +179,7 @@ const CreateCampagnesPage = () => {
                       aria-label="Loading Spinner"
                     />
                   ) : (
-                    `Créer ${selectedFormations.length} campagne${isPlural(
-                      selectedFormations.length
-                    )}`
+                    `Créer ${selectedFormations.length} campagne${isPlural(selectedFormations.length)}`
                   )}
                 </Button>
               </>

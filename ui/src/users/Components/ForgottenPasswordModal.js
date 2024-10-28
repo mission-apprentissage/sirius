@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Input } from "@codegouvfr/react-dsfr/Input";
-import * as Yup from "yup";
-import { useFormik } from "formik";
 import { fr } from "@codegouvfr/react-dsfr";
-import { _post } from "../../utils/httpClient";
+import { Input } from "@codegouvfr/react-dsfr/Input";
+import { useFormik } from "formik";
+import { useState } from "react";
+import * as Yup from "yup";
+
 import { emailWithTLDRegex } from "../../constants";
+import { apiPost } from "../../utils/api.utils";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -12,11 +13,7 @@ const validationSchema = Yup.object({
     .required("Tous les champs doivent être complétés."),
 });
 
-const ForgottenPasswordModal = ({
-  modal,
-  setIsForgottenPasswordSubmitted,
-  setForgottenPasswordError,
-}) => {
+const ForgottenPasswordModal = ({ modal, setIsForgottenPasswordSubmitted, setForgottenPasswordError }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formik = useFormik({
@@ -26,9 +23,11 @@ const ForgottenPasswordModal = ({
     validationSchema: validationSchema,
     onSubmit: async ({ email }) => {
       setIsSubmitting(true);
-      const result = await _post(`/api/users/forgot-password`, {
-        email: email.toLowerCase(),
+
+      const result = await apiPost("/users/forgot-password", {
+        body: { email: email.toLowerCase() },
       });
+
       if (!result.success) {
         setForgottenPasswordError(true);
       }
@@ -62,8 +61,8 @@ const ForgottenPasswordModal = ({
         ]}
       >
         <p>
-          Saisissez l’adresse électronique associée à votre compte. Nous vous enverrons plus
-          d’informations pour réinitialiser votre mot de passe
+          Saisissez l’adresse électronique associée à votre compte. Nous vous enverrons plus d’informations pour
+          réinitialiser votre mot de passe
         </p>
         <Input
           label="Email"

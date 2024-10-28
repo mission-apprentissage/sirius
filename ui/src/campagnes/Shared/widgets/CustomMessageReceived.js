@@ -1,27 +1,28 @@
-import {
-  FormControl,
-  Box,
-  Textarea,
-  Text,
-  Image,
-  useBreakpoint,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  PopoverArrow,
-  PopoverCloseButton,
-  HStack,
-  Stack,
-} from "@chakra-ui/react";
 import { InfoIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  FormControl,
+  HStack,
+  Image,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
+  Stack,
+  Text,
+  Textarea,
+  useBreakpoint,
+} from "@chakra-ui/react";
 import parse from "html-react-parser";
-import nadia from "../../../assets/images/nadia.svg";
+
 import johan from "../../../assets/images/johan.svg";
-import salomee from "../../../assets/images/salomee.svg";
-import nazir from "../../../assets/images/nazir.svg";
-import samy from "../../../assets/images/samy.svg";
 import mains from "../../../assets/images/mains.svg";
+import nadia from "../../../assets/images/nadia.svg";
+import nazir from "../../../assets/images/nazir.svg";
+import salomee from "../../../assets/images/salomee.svg";
+import samy from "../../../assets/images/samy.svg";
 
 const CustomMessageReceived = (props) => {
   const breakpoint = useBreakpoint({ ssr: false });
@@ -69,20 +70,8 @@ const CustomMessageReceived = (props) => {
         mb="5"
         w="100%"
       >
-        <Box
-          w={isMobile ? "100%" : "50%"}
-          py="5"
-          px="3"
-          borderRadius="0px 20px 20px 20px"
-          bgColor="brand.blue.100"
-        >
-          <Text
-            fontSize="md"
-            color="brand.black.500"
-            textAlign="center"
-            mx={isMobile ? "2" : "12"}
-            lineHeight="24px"
-          >
+        <Box w={isMobile ? "100%" : "50%"} py="5" px="3" borderRadius="0px 20px 20px 20px" bgColor="brand.blue.100">
+          <Text fontSize="md" color="brand.black.500" textAlign="center" mx={isMobile ? "2" : "12"} lineHeight="24px">
             « {parse(props.label)} »
           </Text>
         </Box>
@@ -105,12 +94,7 @@ const CustomMessageReceived = (props) => {
           <PopoverTrigger>
             <HStack mt="10px" w="fit-content">
               <InfoIcon color="brand.blue.700" boxSize={4} />
-              <Text
-                color="brand.blue.700"
-                fontSize="sm"
-                sx={{ marginTop: "0px" }}
-                fontStyle="italic"
-              >
+              <Text color="brand.blue.700" fontSize="sm" sx={{ marginTop: "0px" }} fontStyle="italic">
                 Mention d’information – Champs libres
               </Text>
             </HStack>
@@ -138,8 +122,8 @@ const CustomMessageReceived = (props) => {
                   nécessaires.
                 </Text>
                 <Text color="brand.black.500">
-                  Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques
-                  ou sur votre vie sexuelle.{" "}
+                  Notamment, ne communiquez pas vos opinions philosophiques, syndicales, politiques ou sur votre vie
+                  sexuelle.{" "}
                 </Text>
                 <Text fontWeight="semibold" color="brand.black.500">
                   Ces données sont trop personnelles !

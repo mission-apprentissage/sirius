@@ -1,7 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
+
 import { UserContext } from "../context/UserContext";
 import { fetchLocalFormations } from "../queries/formations";
-import { useQuery } from "@tanstack/react-query";
 
 const useFetchLocalFormations = ({ etablissementSiret, search }) => {
   const [userContext] = useContext(UserContext);

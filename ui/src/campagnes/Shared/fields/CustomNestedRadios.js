@@ -1,17 +1,9 @@
-import { useState, Fragment, useEffect } from "react";
-import {
-  Box,
-  useRadioGroup,
-  useRadio,
-  FormLabel,
-  Text,
-  RadioGroup,
-  Stack,
-  Radio,
-} from "@chakra-ui/react";
+import { Box, FormLabel, Radio, RadioGroup, Stack, Text, useRadio, useRadioGroup } from "@chakra-ui/react";
 import parse from "html-react-parser";
-import { CustomCheckboxes, CustomTextareaPrecision } from "../widgets";
+import { Fragment, useEffect, useState } from "react";
+
 import DidYouKnow from "../DidYouKnow";
+import { CustomCheckboxes, CustomTextareaPrecision } from "../widgets";
 
 function RadioCard(props) {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -21,9 +13,7 @@ function RadioCard(props) {
   return (
     <Box as="label" display="flex">
       <Radio
-        borderColor={
-          props.isFormTouchedAndCurrentElemNotChecked ? "brand.blue.100" : "brand.pink.400"
-        }
+        borderColor={props.isFormTouchedAndCurrentElemNotChecked ? "brand.blue.100" : "brand.pink.400"}
         color="brand.black.500"
         _checked={{
           borderColor: "brand.red.500",
@@ -56,9 +46,7 @@ function RadioCard(props) {
 }
 
 const otherInputGetter = (dependencies, props, value) => {
-  const otherInput = dependencies?.find((dep) =>
-    dep.properties[props.name].contains.enum.includes(value)
-  );
+  const otherInput = dependencies?.find((dep) => dep.properties[props.name].contains.enum.includes(value));
   return otherInput?.properties[props.name + "Autre"];
 };
 
@@ -96,15 +84,11 @@ const CustomNestedRadios = (props) => {
             {options.map((value) => {
               const radio = getRadioProps({ value });
               const otherInput = otherInputGetter(dependencies, props, value);
-              const isFormTouchedAndCurrentElemNotChecked =
-                !!props.formData && props.formData !== value;
+              const isFormTouchedAndCurrentElemNotChecked = !!props.formData && props.formData !== value;
 
               return (
                 <Fragment key={value}>
-                  <RadioCard
-                    {...radio}
-                    isFormTouchedAndCurrentElemNotChecked={isFormTouchedAndCurrentElemNotChecked}
-                  >
+                  <RadioCard {...radio} isFormTouchedAndCurrentElemNotChecked={isFormTouchedAndCurrentElemNotChecked}>
                     {value}
                   </RadioCard>
                   {parentValue === value && otherInput && (

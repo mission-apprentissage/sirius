@@ -1,6 +1,5 @@
-import React from "react";
-import { InputGroup, Input, InputRightElement } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
+import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 
 const UsersTableSearch = ({ users, setDisplayedUsers, search, setSearch }) => {
   const handleSearch = (event) => {

@@ -1,7 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
+
 import { UserContext } from "../context/UserContext";
 import { fetchLocalEtablissements } from "../queries/etablissements";
-import { useQuery } from "@tanstack/react-query";
 
 const useFetchLocalEtablissements = ({ search }) => {
   const [userContext] = useContext(UserContext);

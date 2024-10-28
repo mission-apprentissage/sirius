@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { _post } from "../utils/httpClient";
+
+import { apiPost } from "../utils/api.utils";
 
 const useConfirmUser = (token) => {
   const [data, setData] = useState(null);
@@ -9,7 +10,12 @@ const useConfirmUser = (token) => {
   useEffect(() => {
     const sendData = async () => {
       try {
-        const response = await _post(`/api/users/confirm/`, { token });
+        const response = await apiPost("/users/confirm", {
+          body: {
+            token,
+          },
+        });
+
         setData(response);
         setLoading(false);
       } catch (error) {

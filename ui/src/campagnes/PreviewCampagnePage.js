@@ -1,36 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import validator from "@rjsf/validator-ajv8";
-import Form from "@rjsf/chakra-ui";
-import { Box, Flex, Button, useBreakpoint } from "@chakra-ui/react";
-import { useGet } from "../common/hooks/httpHooks";
-import { Spinner } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
+import { Box, Button, Flex, Spinner, useBreakpoint } from "@chakra-ui/react";
+// eslint-disable-next-line import/no-named-as-default
+import Form from "@rjsf/chakra-ui";
+import validator from "@rjsf/validator-ajv8";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
+import { useGet } from "../common/hooks/httpHooks";
+import { Stepper } from "../Components/Stepper";
+import ErrorTemplate from "./Shared/ErrorTemplate";
+import { CustomNestedRadios } from "./Shared/fields";
+import Hero from "./Shared/Hero";
+import Success from "./Shared/Success";
 import {
   CustomCheckboxes,
+  CustomEmojisRadios,
+  CustomMessageReceived,
+  CustomMultiEmojisRadios,
   CustomMultiRange,
+  CustomMultiRangeSortable,
   CustomRadios,
   CustomRange,
   CustomText,
   CustomTextareaPrecision,
   CustomUpDown,
-  CustomMessageReceived,
-  CustomMultiRangeSortable,
-  CustomEmojisRadios,
-  CustomMultiEmojisRadios,
 } from "./Shared/widgets";
-import { CustomNestedRadios } from "./Shared/fields";
-import { Stepper } from "../Components/Stepper";
-import Hero from "./Shared/Hero";
-import Success from "./Shared/Success";
 import {
+  getCategoriesWithEmojis,
+  getNextButtonLabel,
   multiStepQuestionnaireFormatter,
   multiStepQuestionnaireUIFormatter,
-  getCategoriesWithEmojis,
   transformErrors,
-  getNextButtonLabel,
 } from "./utils";
-import ErrorTemplate from "./Shared/ErrorTemplate";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -73,19 +74,12 @@ const PreviewCampagnePage = () => {
     : false;
 
   useEffect(() => {
-    if (
-      previewedQuestionnaire.questionnaire &&
-      Object.keys(previewedQuestionnaire.questionnaire).length
-    ) {
-      setFormattedQuestionnnaire(
-        multiStepQuestionnaireFormatter(previewedQuestionnaire.questionnaire)
-      );
+    if (previewedQuestionnaire.questionnaire && Object.keys(previewedQuestionnaire.questionnaire).length) {
+      setFormattedQuestionnnaire(multiStepQuestionnaireFormatter(previewedQuestionnaire.questionnaire));
       setCategories(getCategoriesWithEmojis(previewedQuestionnaire.questionnaire));
     }
     if (previewedQuestionnaire.questionnaireUi) {
-      setFormattedQuestionnnaireUI(
-        multiStepQuestionnaireUIFormatter(previewedQuestionnaire.questionnaireUi)
-      );
+      setFormattedQuestionnnaireUI(multiStepQuestionnaireUIFormatter(previewedQuestionnaire.questionnaireUi));
     }
   }, [previewedQuestionnaire]);
 
@@ -129,16 +123,12 @@ const PreviewCampagnePage = () => {
           />
           <>
             <Form
-              schema={
-                formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]
-              }
+              schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
               uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
               validator={validator}
               widgets={widgets}
               fields={fields}
-              onSubmit={(values) =>
-                onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)
-              }
+              onSubmit={(values) => onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)}
               noHtml5Validate
               templates={{ FieldErrorTemplate: ErrorTemplate }}
               transformErrors={transformErrors}

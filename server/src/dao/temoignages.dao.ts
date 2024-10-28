@@ -1,35 +1,38 @@
 import { sql } from "kysely";
-import { kdb } from "../db/db";
-import { Temoignage } from "../types";
 import { executeWithOffsetPagination } from "kysely-paginate";
-import { GetAllWithFormationAndQuestionnaire } from "./types/temoignages";
+
+import { getKbdClient } from "../db/db";
+import type { Temoignage } from "../types";
+import type { GetAllWithFormationAndQuestionnaire } from "./types/temoignages";
 
 export const create = async (
   temoignage: Partial<Temoignage> & { campagneId: string }
 ): Promise<{ id: string } | undefined> => {
   const { campagneId, ...rest } = temoignage;
 
-  const transaction = await kdb.transaction().execute(async (trx) => {
-    const insertedTemoignage = await trx.insertInto("temoignages").values(rest).returning("id").executeTakeFirst();
+  const transaction = await getKbdClient()
+    .transaction()
+    .execute(async (trx) => {
+      const insertedTemoignage = await trx.insertInto("temoignages").values(rest).returning("id").executeTakeFirst();
 
-    if (insertedTemoignage?.id) {
-      await trx
-        .insertInto("temoignages_campagnes")
-        .values({
-          temoignage_id: insertedTemoignage.id,
-          campagne_id: campagneId,
-        })
-        .execute();
-    }
+      if (insertedTemoignage?.id) {
+        await trx
+          .insertInto("temoignages_campagnes")
+          .values({
+            temoignage_id: insertedTemoignage.id,
+            campagne_id: campagneId,
+          })
+          .execute();
+      }
 
-    return insertedTemoignage?.id;
-  });
+      return insertedTemoignage?.id;
+    });
 
   return transaction ? { id: transaction } : undefined;
 };
 
 export const findAll = async (query: { campagneIds: string[] }): Promise<Temoignage[] | undefined> => {
-  let queryBuilder = kdb
+  let queryBuilder = getKbdClient()
     .selectFrom("temoignages")
     .select([
       "temoignages.id",
@@ -52,7 +55,7 @@ export const findAll = async (query: { campagneIds: string[] }): Promise<Temoign
 };
 
 export const findAllWithVerbatims = async (query: { campagneIds: string[] }) => {
-  let queryBuilder = kdb
+  let queryBuilder = getKbdClient()
     .selectFrom("temoignages")
     .select([
       "temoignages.id",
@@ -89,19 +92,19 @@ export const findAllWithVerbatims = async (query: { campagneIds: string[] }) => 
 };
 
 export const deleteOne = async (id: string): Promise<boolean> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .updateTable("temoignages")
     .set({ deleted_at: new Date() })
     .where("id", "=", id)
     .executeTakeFirst();
 
-  await kdb.deleteFrom("temoignages_campagnes").where("temoignage_id", "=", id).execute();
+  await getKbdClient().deleteFrom("temoignages_campagnes").where("temoignage_id", "=", id).execute();
 
   return result.numUpdatedRows === BigInt(1);
 };
 
 export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boolean> => {
-  const idsToUpdate = await kdb
+  const idsToUpdate = await getKbdClient()
     .selectFrom("temoignages")
     .select("temoignages.id")
     .innerJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
@@ -111,9 +114,9 @@ export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boo
   const ids = idsToUpdate.map((row) => row.id);
 
   if (ids.length > 0) {
-    await kdb.deleteFrom("temoignages_campagnes").where("temoignage_id", "in", ids).execute();
+    await getKbdClient().deleteFrom("temoignages_campagnes").where("temoignage_id", "in", ids).execute();
 
-    const result = await kdb
+    const result = await getKbdClient()
       .updateTable("temoignages")
       .set({ deleted_at: new Date() })
       .where("id", "in", ids)
@@ -126,7 +129,7 @@ export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boo
 };
 
 export const update = async (id: string, updatedTemoignage: Partial<Temoignage>): Promise<boolean> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .updateTable("temoignages")
     .set(updatedTemoignage)
     .where("id", "=", id)
@@ -137,7 +140,7 @@ export const update = async (id: string, updatedTemoignage: Partial<Temoignage>)
 };
 
 export const countByCampagne = async (id: string): Promise<number> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .selectFrom("temoignages")
     .select(sql`count(*)`.as("count"))
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
@@ -149,7 +152,7 @@ export const countByCampagne = async (id: string): Promise<number> => {
 };
 
 export const findOne = async (id: string): Promise<Temoignage | undefined> => {
-  return kdb
+  return getKbdClient()
     .selectFrom("temoignages")
     .selectAll()
     .where("id", "=", id)
@@ -158,7 +161,7 @@ export const findOne = async (id: string): Promise<Temoignage | undefined> => {
 };
 
 export const count = async (): Promise<number> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .selectFrom("temoignages")
     .select(sql`COUNT(*)`.as("count"))
     .where("deleted_at", "is", null)
@@ -173,7 +176,7 @@ export const uncompliantsCount = async (query: {
   timeToRespondLimit: number;
   includeUnavailableDuration: boolean;
 }): Promise<{ botCount: number; incompleteCount: number; quickCount: number }> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .selectFrom("temoignages")
     .select([
       sql<number>`COUNT(DISTINCT id) FILTER (WHERE is_bot IS TRUE)`.as("botCount"),
@@ -192,7 +195,7 @@ export const uncompliantsCount = async (query: {
 };
 
 export const getAllTemoignagesWithFormation = async (query: Partial<Temoignage>, page: number, pageSize: number) => {
-  let baseQuery = kdb
+  let baseQuery = getKbdClient()
     .selectFrom("temoignages")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
@@ -257,7 +260,7 @@ export const getAllTemoignagesWithFormation = async (query: Partial<Temoignage>,
 export const getAllWithFormationAndQuestionnaire = async (
   campagneIds: string[]
 ): Promise<GetAllWithFormationAndQuestionnaire[]> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .selectFrom("temoignages")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
@@ -286,7 +289,7 @@ export const getAllWithFormationAndQuestionnaire = async (
 };
 
 export const deleteMultiple = async (ids: string[]): Promise<boolean> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .updateTable("temoignages")
     .set({
       deleted_at: new Date(),

@@ -10,24 +10,21 @@ export const multiStepQuestionnaireFormatter = (questionnaire) => {
     const [key] = property;
 
     // format questions for each categories
-    const nestedProperties = Object.entries(questionnaire.properties[key].properties).map(
-      (property) => {
-        const [nestedKey, nestedValue] = property;
-        return {
-          type: "object",
-          properties: {
-            [nestedKey]: {
-              ...nestedValue,
-            },
+    const nestedProperties = Object.entries(questionnaire.properties[key].properties).map((property) => {
+      const [nestedKey, nestedValue] = property;
+      return {
+        type: "object",
+        properties: {
+          [nestedKey]: {
+            ...nestedValue,
           },
-          dependencies: {
-            [nestedKey]: questionnaire.properties[key].dependencies[nestedKey],
-          },
-          required:
-            questionnaire.properties[key].required.indexOf(nestedKey) !== -1 ? [nestedKey] : [],
-        };
-      }
-    );
+        },
+        dependencies: {
+          [nestedKey]: questionnaire.properties[key].dependencies[nestedKey],
+        },
+        required: questionnaire.properties[key].required.indexOf(nestedKey) !== -1 ? [nestedKey] : [],
+      };
+    });
     // format category and returns them with formatted questions
     return {
       type: "object",
@@ -104,11 +101,7 @@ const padTo2Digits = (num) => {
 
 export const formatDate = (date) => {
   const typedDate = new Date(date);
-  return [
-    padTo2Digits(typedDate.getDate()),
-    padTo2Digits(typedDate.getMonth() + 1),
-    typedDate.getFullYear(),
-  ].join("/");
+  return [padTo2Digits(typedDate.getDate()), padTo2Digits(typedDate.getMonth() + 1), typedDate.getFullYear()].join("/");
 };
 
 export const formateDateToInputFormat = (date, monthsAdded = 0) => {

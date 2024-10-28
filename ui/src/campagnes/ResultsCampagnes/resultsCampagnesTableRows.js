@@ -1,27 +1,19 @@
-import React from "react";
-import { Tooltip } from "react-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { formatDate, isPlural } from "../utils";
-import {
-  TemoignagesCount,
-  EtablissementLabelContainer,
-  DiplomeLabel,
-} from "../Shared/CampagnesTable/campagnesTable.style";
-import {
-  Duration,
-  FormationContainer,
-  IntituleFormation,
-  StyledBadge,
-} from "../styles/shared.style";
-import { DIPLOME_TYPE_MATCHER } from "../../constants";
-import { etablissementLabelGetter } from "../../utils/etablissement";
+import React from "react";
+import { Tooltip } from "react-tooltip";
 
-const resultsCampagneTableRows = ({
-  displayedCampagnes,
-  selectedCampagneIds,
-  setSelectedCampagneIds,
-}) => {
+import { DIPLOME_TYPE_MATCHER } from "../../constants";
+import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
+import {
+  DiplomeLabel,
+  EtablissementLabelContainer,
+  TemoignagesCount,
+} from "../Shared/CampagnesTable/campagnesTable.style";
+import { Duration, FormationContainer, IntituleFormation, StyledBadge } from "../styles/shared.style";
+import { formatDate, isPlural } from "../utils";
+
+const resultsCampagneTableRows = ({ displayedCampagnes, selectedCampagneIds, setSelectedCampagneIds }) => {
   return displayedCampagnes.map((campagne) => {
     const formation = campagne.formation;
     const etablissement = campagne.etablissement;
@@ -59,9 +51,7 @@ const resultsCampagneTableRows = ({
           <IntituleFormation>{formation.intituleLong}</IntituleFormation>
         </FormationContainer>
         <EtablissementLabelContainer>
-          <p data-tooltip-id={`tooltip-results-${formation.id}`}>
-            {etablissementLabelGetter(etablissement)}
-          </p>
+          <p data-tooltip-id={`tooltip-results-${formation.id}`}>{etablissementLabelGetterFromFormation(formation)}</p>
           <Tooltip
             id={`tooltip-results-${formation.id}`}
             variant="light"
@@ -75,14 +65,13 @@ const resultsCampagneTableRows = ({
             <p>N° Siret: {formation.etablissementFormateurSiret}</p>
             {formation.etablissementFormateurSiret === formation.etablissementGestionnaireSiret ? (
               <p>
-                <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
-                établissement est gestionnaire et rattaché à votre compte Sirius
+                <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet établissement est gestionnaire
+                et rattaché à votre compte Sirius
               </p>
             ) : (
               <p>
-                <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
-                établissement est formateur et dispense des formations pour un établissement
-                gestionnaire
+                <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet établissement est formateur et
+                dispense des formations pour un établissement gestionnaire
               </p>
             )}
           </Tooltip>

@@ -1,12 +1,5 @@
-import React from "react";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-} from "@chakra-ui/react";
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from "@chakra-ui/react";
+
 import QuestionnaireForm from "./QuestionnaireForm";
 
 const DuplicateModalQuestionnaire = ({ questionnaire, onClose, isOpen }) => {

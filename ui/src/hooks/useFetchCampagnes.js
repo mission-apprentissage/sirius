@@ -1,16 +1,16 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useContext, useEffect } from "react";
+
 import { UserContext } from "../context/UserContext";
 import { fetchCampagnes } from "../queries/campagnes";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const useFetchCampagnes = ({ search, diplome, siret, enabled, page, pageSize = 10 }) => {
   const queryClient = useQueryClient();
   const [userContext] = useContext(UserContext);
 
-  const { data, isSuccess, isError, isLoading } = useQuery({
+  const { data, isSuccess, isError, error, isLoading } = useQuery({
     queryKey: [`campagnes`, page, search, diplome, siret],
-    queryFn: () =>
-      fetchCampagnes({ search, diplome, siret, page, pageSize, token: userContext.token }),
+    queryFn: () => fetchCampagnes({ search, diplome, siret, page, pageSize, token: userContext.token }),
     enabled: !!enabled,
   });
 

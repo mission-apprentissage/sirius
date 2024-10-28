@@ -1,48 +1,37 @@
-version: "2.4"
 services:
-
-  reverse_proxy:
-    image: sirius_reverse_proxy
-    container_name: sirius_reverse_proxy
-    tty: true
-    build:
-      context: reverse_proxy
-    mem_limit: 256m
+  postgres:
+    image: postgres:15.5
     restart: unless-stopped
-    networks:
-      - sirius_network
-    depends_on:
-      - server
-      - ui
-
-  ui:
-    image: sirius_ui
-    container_name: sirius_ui
-    tty: true
-    build:
-      context: ui
-    mem_limit: 256m
-    restart: unless-stopped
-    networks:
-      - sirius_network
-    depends_on:
-      - server
-
-  server:
-    image: sirius_server
-    container_name: sirius_server
-    tty: true
-    build:
-      context: server
-    mem_limit: 1g
-    restart: unless-stopped
-    networks:
-      - sirius_network
     environment:
-      - NODE_ENV=${NODE_ENV}
-      - SIRIUS_LOG_LEVEL=info
-      - SIRIUS_LOG_TYPE=console
+      - POSTGRES_DB=sirius
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - sirius_postgres_data:/var/lib/postgresql/data:z
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d sirius'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
 
-networks:
-  sirius_network:
-    name: sirius_network
+  smtp:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - 1025:1025
+      - 8025:8025
+    environment:
+      - MP_DATA_FILE=/data/mailpit.db
+      - MP_WEBROOT=smtp
+    volumes:
+      - sirius_smtp_data:/data
+
+volumes:
+  sirius_postgres_data:
+    driver: local
+    name: sirius_postgres_data
+  sirius_smtp_data:
+    driver: local
+    name: sirius_smtp_data

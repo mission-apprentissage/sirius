@@ -1,22 +1,20 @@
-import React, { useState, useContext } from "react";
-import BeatLoader from "react-spinners/BeatLoader";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
-import SortButtons from "../Shared/SortButtons/SortButtons";
-import {
-  LoaderContainer,
-  TableContainer,
-  SelectAllFormationContainer,
-} from "../styles/shared.style";
+import { useContext, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+
 import { DIPLOME_TYPE_MATCHER, USER_ROLES } from "../../constants";
 import { UserContext } from "../../context/UserContext";
-import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
-import Cards from "./Cards";
-import { isPlural } from "../utils";
 import useFetchCampagnes from "../../hooks/useFetchCampagnes";
+import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
 import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
+import SortButtons from "../Shared/SortButtons/SortButtons";
+import { LoaderContainer, SelectAllFormationContainer, TableContainer } from "../styles/shared.style";
+import { isPlural } from "../utils";
+import Cards from "./Cards";
 
 const REMOTE_FORMATION_BASE_QUERY = {
   published: "true",
@@ -43,10 +41,7 @@ const REMOTE_FORMATION_FIELDS = {
 
 const buildSiretQuery = (isAdmin, userSiret) => {
   const formattedUserSiret = userSiret
-    .map((siret) => [
-      { etablissement_formateur_siret: siret },
-      { etablissement_gestionnaire_siret: siret },
-    ])
+    .map((siret) => [{ etablissement_formateur_siret: siret }, { etablissement_gestionnaire_siret: siret }])
     .flat();
   return isAdmin ? {} : { $or: formattedUserSiret };
 };
@@ -74,16 +69,12 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   const [page, setPage] = useState(1);
 
   const isAdmin = userContext.user?.role === USER_ROLES.ADMIN;
-  const userSiret =
-    userContext.user?.etablissements?.map((etablissement) => etablissement.siret) || [];
+  const userSiret = userContext.user?.etablissements?.map((etablissement) => etablissement.siret) || [];
 
   const query = {
     $and: [
       REMOTE_FORMATION_BASE_QUERY,
-      buildSiretQuery(
-        isAdmin,
-        selectedEtablissementsSiret?.length ? selectedEtablissementsSiret : userSiret
-      ),
+      buildSiretQuery(isAdmin, selectedEtablissementsSiret?.length ? selectedEtablissementsSiret : userSiret),
       {
         ...(selectedDiplomesIntitule?.length && {
           ...buildDiplomeQuery(selectedDiplomesIntitule),
@@ -93,9 +84,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     ],
   };
 
-  const stringifiedQuery = `query=${JSON.stringify(query)}&select=${JSON.stringify(
-    REMOTE_FORMATION_FIELDS
-  )}`;
+  const stringifiedQuery = `query=${JSON.stringify(query)}&select=${JSON.stringify(REMOTE_FORMATION_FIELDS)}`;
 
   const {
     remoteFormations,
@@ -138,9 +127,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     const etablissements = remoteFormations
       ?.map((formation) => {
         const uniqueFormations = remoteFormations.filter(
-          (remoteFormation) =>
-            remoteFormation.etablissement_formateur_siret ===
-            formation.etablissement_formateur_siret
+          (remoteFormation) => remoteFormation.etablissement_formateur_siret === formation.etablissement_formateur_siret
         );
 
         return {
@@ -149,9 +136,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
           hintText: `${uniqueFormations.length} formation${isPlural(uniqueFormations.length)}`,
         };
       })
-      .filter(
-        (formation, index, self) => index === self.findIndex((t) => t.value === formation.value)
-      );
+      .filter((formation, index, self) => index === self.findIndex((t) => t.value === formation.value));
 
     const diplome = remoteFormations
       ?.map((formation) => {
@@ -165,9 +150,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
           hintText: `${uniqueFormations.length} formation${isPlural(uniqueFormations.length)}`,
         };
       })
-      .filter(
-        (formation, index, self) => index === self.findIndex((t) => t.value === formation.value)
-      );
+      .filter((formation, index, self) => index === self.findIndex((t) => t.value === formation.value));
 
     setEtablissementsOptions(etablissements);
     setDiplomesOptions(diplome);
@@ -239,11 +222,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
         ) : null}
         {isLoadingFormations || isLoadingCampagnes ? (
           <LoaderContainer>
-            <BeatLoader
-              color="var(--background-action-high-blue-france)"
-              size={20}
-              aria-label="Loading Spinner"
-            />
+            <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
           </LoaderContainer>
         ) : (
           <TableContainer>

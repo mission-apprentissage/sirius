@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
+import styled from "@emotion/styled";
 
 export const Container = styled.main`
   margin: 0 auto;
@@ -132,9 +132,7 @@ export const FormationCardByDiplomeType = styled.div`
   width: calc(25% - 1rem);
 
   border-bottom: ${(props) =>
-    props.isChecked
-      ? "4px solid var(--border-active-blue-france)"
-      : "4px solid var(--border-default-grey)"};
+    props.isChecked ? "4px solid var(--border-active-blue-france)" : "4px solid var(--border-default-grey)"};
 
   &:hover {
     background-color: var(--background-default-grey-hover);

@@ -1,5 +1,6 @@
-import { Box, Wrap, useRadioGroup, useRadio, FormLabel, Text, Tag } from "@chakra-ui/react";
+import { Box, FormLabel, Tag, Text, useRadio, useRadioGroup, Wrap } from "@chakra-ui/react";
 import parse from "html-react-parser";
+
 import DidYouKnow from "../DidYouKnow";
 
 const RadioCard = (props) => {

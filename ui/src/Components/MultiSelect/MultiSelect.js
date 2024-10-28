@@ -1,8 +1,11 @@
-import { useState, useEffect, useRef } from "react";
-import Input from "@codegouvfr/react-dsfr/Input";
-import { MenuContainer, MultSelectContainer, InputContainer } from "./MultiSelect.style";
+/* eslint-disable no-undef */
+
 import Checkbox from "@codegouvfr/react-dsfr/Checkbox";
+import Input from "@codegouvfr/react-dsfr/Input";
+import { useEffect, useRef, useState } from "react";
+
 import { isPlural } from "../../campagnes/utils";
+import { InputContainer, MenuContainer, MultSelectContainer } from "./MultiSelect.style";
 
 const MultiSelect = ({ options, name, placeholder = "", selected, setSelected }) => {
   const [isOpen, setIsOpen] = useState(false);

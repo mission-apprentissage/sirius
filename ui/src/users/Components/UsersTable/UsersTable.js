@@ -1,25 +1,21 @@
-import React, { useState, useContext, useEffect } from "react";
-import jwt from "jwt-decode";
-import { Table, Tbody, Tr, Td, useDisclosure, Box, Stack, useClipboard } from "@chakra-ui/react";
-import {
-  useReactTable,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-} from "@tanstack/react-table";
+import { Box, Stack, Table, Tbody, Td, Tr, useClipboard, useDisclosure } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { UserContext } from "../../../context/UserContext";
-import ChangeUserStatusConfirmationModal from "../ChangeUserStatusConfirmationModal";
-import ChangeUserRoleConfirmationModal from "../ChangeUserRoleConfirmationModal";
-import UsersTableFilters from "./UsersTableFilters";
-import UsersTableSearch from "./UsersTableSearch";
-import UsersTableHead from "./UsersTableHead";
-import usersTableColumns from "./usersTableColumns";
-import AddSiretModal from "../AddSiretModal";
+import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
+import jwt from "jwt-decode";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AddScopeModal from "../AddScopeModal";
-import useSudoUser from "../../../hooks/useSudoUser";
+
 import { USER_ROLES } from "../../../constants";
+import { UserContext } from "../../../context/UserContext";
+import useSudoUser from "../../../hooks/useSudoUser";
+import AddScopeModal from "../AddScopeModal";
+import AddSiretModal from "../AddSiretModal";
+import ChangeUserRoleConfirmationModal from "../ChangeUserRoleConfirmationModal";
+import ChangeUserStatusConfirmationModal from "../ChangeUserStatusConfirmationModal";
+import usersTableColumns from "./usersTableColumns";
+import UsersTableFilters from "./UsersTableFilters";
+import UsersTableHead from "./UsersTableHead";
+import UsersTableSearch from "./UsersTableSearch";
 
 const UsersTable = ({ users, setRefetchData }) => {
   const [userContext, setUserContext] = useContext(UserContext);
@@ -72,17 +68,9 @@ const UsersTable = ({ users, setRefetchData }) => {
     onClose: onCloseRoleConfirmation,
   } = useDisclosure();
 
-  const {
-    isOpen: isOpenAddSiret,
-    onOpen: onOpenAddSiret,
-    onClose: onCloseAddSiret,
-  } = useDisclosure();
+  const { isOpen: isOpenAddSiret, onOpen: onOpenAddSiret, onClose: onCloseAddSiret } = useDisclosure();
 
-  const {
-    isOpen: isOpenAddScope,
-    onOpen: onOpenAddScope,
-    onClose: onCloseAddScope,
-  } = useDisclosure();
+  const { isOpen: isOpenAddScope, onOpen: onOpenAddScope, onClose: onCloseAddScope } = useDisclosure();
 
   const table = useReactTable({
     columns: usersTableColumns(
@@ -110,17 +98,8 @@ const UsersTable = ({ users, setRefetchData }) => {
   return (
     <>
       <Stack direction="row" mt="32px" mb="20px" alignItems="center">
-        <UsersTableSearch
-          users={users}
-          setDisplayedUsers={setDisplayedUsers}
-          search={search}
-          setSearch={setSearch}
-        />
-        <UsersTableFilters
-          users={users}
-          setDisplayedUsers={setDisplayedUsers}
-          setSearch={setSearch}
-        />
+        <UsersTableSearch users={users} setDisplayedUsers={setDisplayedUsers} search={search} setSearch={setSearch} />
+        <UsersTableFilters users={users} setDisplayedUsers={setDisplayedUsers} setSearch={setSearch} />
       </Stack>
       <Box width="100%" overflowX="auto">
         <Table>
@@ -134,11 +113,7 @@ const UsersTable = ({ users, setRefetchData }) => {
                       key={cell.id}
                       px="15px"
                       fontSize="14px"
-                      borderColor={
-                        index === table.getRowModel().rows.length - 1
-                          ? "transparent"
-                          : "brand.blue.400"
-                      }
+                      borderColor={index === table.getRowModel().rows.length - 1 ? "transparent" : "brand.blue.400"}
                     >
                       <Box display="flex" maxW="300px">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

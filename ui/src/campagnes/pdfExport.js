@@ -1,19 +1,15 @@
-import jsPDF from "jspdf";
-import * as htmlToImage from "html-to-image";
-import shareSummaryTemplate from "../assets/images/share_summary_template.jpg";
-import statisticsTemplate from "../assets/images/statistics_template.jpg";
 import "../assets/fonts/Marianne-Bold-encoded";
 import "../assets/fonts/Marianne-Regular-encoded";
 
+import * as htmlToImage from "html-to-image";
+// eslint-disable-next-line import/no-named-as-default
+import jsPDF from "jspdf";
+
+import shareSummaryTemplate from "../assets/images/share_summary_template.jpg";
+import statisticsTemplate from "../assets/images/statistics_template.jpg";
+
 const applyTemplate = (doc) => {
-  doc.addImage(
-    shareSummaryTemplate,
-    "JPEG",
-    0,
-    0,
-    doc.internal.pageSize.width,
-    doc.internal.pageSize.height
-  );
+  doc.addImage(shareSummaryTemplate, "JPEG", 0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height);
   const exportDateAndTime = new Date().toLocaleString("fr-FR", {
     year: "numeric",
     month: "long",
@@ -44,8 +40,7 @@ const addSelectedCampagnesContent = async (doc, selectedCampagnes) => {
 
   selectedCampagnes.forEach((campagne, index) => {
     const campagneName = campagne.campagneName || campagne.formation.intituleLong;
-    const etablissementName =
-      campagne.formation.etablissementFormateurEntrepriseRaisonSociale || "";
+    const etablissementName = campagne.formation.etablissementFormateurEntrepriseRaisonSociale || "";
     const localite =
       campagne.formation.lieuFormationAdresseComputed ||
       `${campagne.formation.lieuFormationAdresse}, ${campagne.formation.codePostal} ${campagne.formation.localite}`;
@@ -110,25 +105,11 @@ const addCategoryTitlePage = async (doc, category, isFirstCategory) => {
 
 export const exportMultipleChartsToPdf = async (categories, selectedCampagnes, statistics) => {
   const doc = new jsPDF("p", "px", "a4");
-  doc.addImage(
-    shareSummaryTemplate,
-    "JPEG",
-    0,
-    0,
-    doc.internal.pageSize.width,
-    doc.internal.pageSize.height
-  );
+  doc.addImage(shareSummaryTemplate, "JPEG", 0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height);
   await addSelectedCampagnesContent(doc, selectedCampagnes);
   doc.addPage();
 
-  doc.addImage(
-    statisticsTemplate,
-    "JPEG",
-    0,
-    0,
-    doc.internal.pageSize.width,
-    doc.internal.pageSize.height
-  );
+  doc.addImage(statisticsTemplate, "JPEG", 0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height);
   await addStatisticsContent(doc, statistics);
   doc.addPage();
 
@@ -138,6 +119,7 @@ export const exportMultipleChartsToPdf = async (categories, selectedCampagnes, s
     let yPosition = await addCategoryTitlePage(doc, category, isFirstCategory); // Initial y position after the title, slightly reduced padding
     isFirstCategory = false; // Reset flag after first category is processed
 
+    // eslint-disable-next-line no-undef
     const elements = document.getElementsByClassName(`exportCharts-${category.id}`);
     let chartCount = 0; // Reset chart count for each category
     for (let el of elements) {

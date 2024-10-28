@@ -1,22 +1,16 @@
-import React from "react";
 import {
+  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
   ModalFooter,
-  Button,
+  ModalHeader,
+  ModalOverlay,
   Text,
 } from "@chakra-ui/react";
 
-const DeleteQuestionnaireConfirmationModal = ({
-  questionnaire,
-  onClose,
-  isOpen,
-  setDeletedQuestionnaireId,
-}) => {
+const DeleteQuestionnaireConfirmationModal = ({ questionnaire, onClose, isOpen, setDeletedQuestionnaireId }) => {
   if (!questionnaire) return null;
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered size="xl">
@@ -25,8 +19,7 @@ const DeleteQuestionnaireConfirmationModal = ({
         <ModalHeader textAlign="center">Confirmation de suppression de questionnaire</ModalHeader>
         <ModalCloseButton />
         <ModalBody textAlign="center" mt="15">
-          Êtes-vous sûr de vouloir supprimer le questionnaire{" "}
-          <Text fontWeight="semibold">{questionnaire.nom}</Text>
+          Êtes-vous sûr de vouloir supprimer le questionnaire <Text fontWeight="semibold">{questionnaire.nom}</Text>
         </ModalBody>
         <ModalFooter alignItems="center" justifyContent="center" mt="15">
           <Button

@@ -1,14 +1,15 @@
 import {
+  Box,
   FormControl,
   FormLabel,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  Box,
 } from "@chakra-ui/react";
 import parse from "html-react-parser";
+
 import DidYouKnow from "../DidYouKnow";
 
 const CustomUpDown = (props) => {

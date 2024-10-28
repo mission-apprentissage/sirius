@@ -1,20 +1,21 @@
-import React from "react";
-import { Link } from "react-router-dom";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import React from "react";
+import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
-import { formatDate, isPlural } from "../utils";
+
+import { DIPLOME_TYPE_MATCHER } from "../../constants";
 import {
-  FormationCardContainer,
-  HeaderCardContainer,
-  FormationCardByDiplomeType,
-  ExistingCampagnesContainer,
   BodyCardContainer,
   EtablissementLabelContainer,
+  ExistingCampagnesContainer,
+  FormationCardByDiplomeType,
+  FormationCardContainer,
+  HeaderCardContainer,
   MiscellaneousInformationContainer,
 } from "../styles/createCampagnes.style";
-import { DIPLOME_TYPE_MATCHER } from "../../constants";
-import { IntituleFormation, StyledBadge, Duration } from "../styles/shared.style";
+import { Duration, IntituleFormation, StyledBadge } from "../styles/shared.style";
+import { formatDate, isPlural } from "../utils";
 
 const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations, campagnes }) => {
   return (
@@ -24,18 +25,11 @@ const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations,
           (campagne) => campagne.formation.catalogueId === formation._id
         );
         const alreadyCreatedCount = alreadyCreatedCampagnes.length;
-        const isSelected = selectedFormations.some(
-          (selectedFormation) => selectedFormation._id === formation._id
-        );
-        const selectedFormationIds = selectedFormations.map(
-          (selectedFormation) => selectedFormation._id
-        );
+        const isSelected = selectedFormations.some((selectedFormation) => selectedFormation._id === formation._id);
+        const selectedFormationIds = selectedFormations.map((selectedFormation) => selectedFormation._id);
 
         return (
-          <FormationCardByDiplomeType
-            key={formation._id}
-            isChecked={selectedFormationIds.includes(formation._id)}
-          >
+          <FormationCardByDiplomeType key={formation._id} isChecked={selectedFormationIds.includes(formation._id)}>
             {!!alreadyCreatedCount && (
               <ExistingCampagnesContainer>
                 <p>
@@ -54,14 +48,13 @@ const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations,
                   style={{ zIndex: 99999, boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)" }}
                 >
                   <p>
-                    Campagne{isPlural(alreadyCreatedCount)} créée{isPlural(alreadyCreatedCount)}{" "}
-                    pour cette formation :
+                    Campagne{isPlural(alreadyCreatedCount)} créée{isPlural(alreadyCreatedCount)} pour cette formation :
                   </p>
                   <ul>
                     {alreadyCreatedCampagnes.map((campagne) => (
                       <li key={campagne.id}>
-                        {formatDate(campagne.startDate)} - {formatDate(campagne.endDate)}{" "}
-                        {campagne.temoignagesCount} répondant{isPlural(campagne.temoignagesCount)}
+                        {formatDate(campagne.startDate)} - {formatDate(campagne.endDate)} {campagne.temoignagesCount}{" "}
+                        répondant{isPlural(campagne.temoignagesCount)}
                       </li>
                     ))}
                   </ul>
@@ -87,9 +80,7 @@ const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations,
                       onChange: () => {
                         setSelectedFormations((prevValue) =>
                           isSelected
-                            ? prevValue.filter(
-                                (selectedFormation) => selectedFormation._id !== formation._id
-                              )
+                            ? prevValue.filter((selectedFormation) => selectedFormation._id !== formation._id)
                             : [...prevValue, formation]
                         );
                       },
@@ -101,8 +92,7 @@ const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations,
             <BodyCardContainer>
               <IntituleFormation>{formation.intitule_long}</IntituleFormation>
               <EtablissementLabelContainer>
-                {formation.etablissement_formateur_siret ===
-                formation.etablissement_gestionnaire_siret ? (
+                {formation.etablissement_formateur_siret === formation.etablissement_gestionnaire_siret ? (
                   <span
                     className={fr.cx("fr-icon-award-fill")}
                     aria-hidden={true}

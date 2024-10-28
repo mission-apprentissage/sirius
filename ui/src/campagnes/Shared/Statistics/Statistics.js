@@ -1,13 +1,14 @@
 import { fr } from "@codegouvfr/react-dsfr";
-import { StatisticsContainer, Content, StatisticsCard } from "./statistics.style";
-import { isPlural } from "../../utils";
-import DocumentAdd from "../../../assets/images/document_add.svg";
+import BeatLoader from "react-spinners/BeatLoader";
+
+import Application from "../../../assets/images/application.svg";
 import Avatar from "../../../assets/images/avatar.svg";
 import Community from "../../../assets/images/community.svg";
+import DocumentAdd from "../../../assets/images/document_add.svg";
 import Success from "../../../assets/images/success_icon.svg";
-import Application from "../../../assets/images/application.svg";
 import { LoaderContainer } from "../../styles/shared.style";
-import BeatLoader from "react-spinners/BeatLoader";
+import { isPlural } from "../../utils";
+import { Content, StatisticsCard, StatisticsContainer } from "./statistics.style";
 
 const Statistics = ({ statistics = {}, title }) => {
   const isCampagnePlural = isPlural(statistics.campagnesCount);
@@ -25,11 +26,7 @@ const Statistics = ({ statistics = {}, title }) => {
         <p>Vos statistiques sont mises à jour en temps réel</p>
         {!Object.keys(statistics).length ? (
           <LoaderContainer>
-            <BeatLoader
-              color="var(--background-action-high-blue-france)"
-              size={20}
-              aria-label="Loading Spinner"
-            />
+            <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
           </LoaderContainer>
         ) : (
           <div>

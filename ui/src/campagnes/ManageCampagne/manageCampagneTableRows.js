@@ -1,31 +1,24 @@
-import React, { useContext } from "react";
-import { Tooltip } from "react-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { simpleEditionSubmitHandler } from "../submitHandlers";
-import CellInput from "./CellInput/CellInput";
-import CellInputSeats from "./CellInput/CellInputSeats";
-import { isPlural } from "../utils";
-import {
-  TemoignagesCount,
-  EtablissementLabelContainer,
-  DiplomeLabel,
-} from "../Shared/CampagnesTable/campagnesTable.style";
-import {
-  FormationContainer,
-  IntituleFormation,
-  Duration,
-  StyledBadge,
-} from "../styles/shared.style";
+import React, { useContext } from "react";
+import { Tooltip } from "react-tooltip";
+
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
 import { UserContext } from "../../context/UserContext";
-import { etablissementLabelGetter } from "../../utils/etablissement";
+import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
+import {
+  DiplomeLabel,
+  EtablissementLabelContainer,
+  TemoignagesCount,
+} from "../Shared/CampagnesTable/campagnesTable.style";
+import { Duration, FormationContainer, IntituleFormation, StyledBadge } from "../styles/shared.style";
+import { simpleEditionSubmitHandler } from "../submitHandlers";
+import { isPlural } from "../utils";
+import CellInput from "./CellInput/CellInput";
+import CellInputSeats from "./CellInput/CellInputSeats";
 
-const manageCampagneTableRows = ({
-  displayedCampagnes,
-  selectedCampagneIds,
-  setSelectedCampagneIds,
-}) => {
+const manageCampagneTableRows = ({ displayedCampagnes, selectedCampagneIds, setSelectedCampagneIds }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [userContext] = useContext(UserContext);
 
   const handleCellUpdate = async (campagneId, payload) => {
@@ -71,7 +64,7 @@ const manageCampagneTableRows = ({
         </FormationContainer>
         <EtablissementLabelContainer>
           <p data-tooltip-id={`tooltip-formateur-gestionnaire-${campagne.id}`}>
-            {etablissementLabelGetter(etablissement)}
+            {etablissementLabelGetterFromFormation(formation)}
           </p>
           <Tooltip
             id={`tooltip-formateur-gestionnaire-${campagne.id}`}
@@ -86,14 +79,13 @@ const manageCampagneTableRows = ({
             <p>N° Siret: {formation.etablissementFormateurSiret}</p>
             {formation.etablissementFormateurSiret === formation.etablissementGestionnaireSiret ? (
               <p>
-                <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
-                établissement est gestionnaire et rattaché à votre compte Sirius
+                <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet établissement est gestionnaire
+                et rattaché à votre compte Sirius
               </p>
             ) : (
               <p>
-                <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
-                établissement est formateur et dispense des formations pour un établissement
-                gestionnaire
+                <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet établissement est formateur et
+                dispense des formations pour un établissement gestionnaire
               </p>
             )}
           </Tooltip>

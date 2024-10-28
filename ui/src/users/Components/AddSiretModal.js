@@ -1,21 +1,22 @@
-import React, { useContext, useState } from "react";
 import {
+  Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
   ModalFooter,
-  Button,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
   Text,
   useToast,
-  Stack,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
+import { useContext, useState } from "react";
 import * as Yup from "yup";
-import { _post, _get } from "../../utils/httpClient";
+
 import { UserContext } from "../../context/UserContext";
+import { apiPost } from "../../utils/api.utils";
 import AddSiret from "./AddSiret/AddSiret";
 
 const etablissement = Yup.object({
@@ -30,17 +31,18 @@ const validationSchema = Yup.object({
 });
 
 const getRemoteEtablissementsToCreate = async (siretList) => {
-  const result = await _get(
+  const res = await fetch(
     `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={"siret": {"$in": ${JSON.stringify(
       siretList
     )}}}&page=1&limit=100`
   );
+  const result = await res.json();
   return result.etablissements;
 };
 
 const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
   const [userContext] = useContext(UserContext);
   const toast = useToast();
 
@@ -51,9 +53,7 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
     validationSchema: validationSchema,
     onSubmit: async ({ etablissements }) => {
       setIsSubmitting(true);
-      const etablissementsWitoutEmpty = etablissements.filter(
-        (obj) => Object.keys(obj).length !== 0
-      );
+      const etablissementsWitoutEmpty = etablissements.filter((obj) => Object.keys(obj).length !== 0);
 
       const filteredEtablissements = etablissementsWitoutEmpty.filter(
         (etablissement) => !user.etablissements.find((e) => e.siret === etablissement.siret)
@@ -63,17 +63,18 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
 
       const remoteEtablissementsToCreate = await getRemoteEtablissementsToCreate(siretList);
 
-      const resultEtablissements = await _post(
-        `/api/etablissements/`,
-        remoteEtablissementsToCreate.map((etablissement) => {
+      const resultEtablissements = await apiPost("/etablissements", {
+        body: remoteEtablissementsToCreate.map((etablissement) => {
           return {
             _id: etablissement._id,
             siret: etablissement.siret,
             userId: user.id,
           };
         }),
-        userContext.token
-      );
+        headers: {
+          Authorization: `Bearer ${userContext.token}`,
+        },
+      });
 
       if (resultEtablissements.length) {
         toast({
@@ -122,13 +123,7 @@ const AddSiretModal = ({ user, onClose, isOpen, setRefetchData }) => {
             </Stack>
           </ModalBody>
           <ModalFooter alignItems="center" justifyContent="center" mt="15">
-            <Button
-              size="lg"
-              variant="solid"
-              colorScheme="brand.blue"
-              type="submit"
-              isLoading={isSubmitting}
-            >
+            <Button size="lg" variant="solid" colorScheme="brand.blue" type="submit" isLoading={isSubmitting}>
               Ajouter
             </Button>
           </ModalFooter>

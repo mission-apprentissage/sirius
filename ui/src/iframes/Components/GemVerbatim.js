@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
-import { GemVerbatimContainer, GemContentContainer, OtherVerbatim } from "../IframeFormation.style";
-import { firstNameList } from "../../constants";
+import { useCallback, useEffect, useState } from "react";
+
 import sittingWoman from "../../assets/images/sitting_woman_bw.svg";
+import { firstNameList } from "../../constants";
+import { GemContentContainer, GemVerbatimContainer, OtherVerbatim } from "../IframeFormation.style";
 
 const labelsMatcher = {
   descriptionMetierConseil: `te raconte sa journée type en entreprise`,
@@ -69,9 +70,7 @@ const GemVerbatim = ({ verbatim }) => {
     ? verbatim[currentQuestionKey].indexOf(displayedVerbatim[currentQuestionKey])
     : null;
   const currentFirstName =
-    currentVerbatimIndex !== null
-      ? verbatimNames[`${currentQuestionKey}_${currentVerbatimIndex}`]
-      : "";
+    currentVerbatimIndex !== null ? verbatimNames[`${currentQuestionKey}_${currentVerbatimIndex}`] : "";
 
   return (
     <GemVerbatimContainer>
@@ -88,8 +87,7 @@ const GemVerbatim = ({ verbatim }) => {
         <img src={sittingWoman} alt="" />
       </GemContentContainer>
       <OtherVerbatim onClick={handleChangeGem}>
-        Autre témoignage{" "}
-        <span className={fr.cx("fr-icon--sm fr-icon-refresh-line")} aria-hidden={true} />
+        Autre témoignage <span className={fr.cx("fr-icon--sm fr-icon-refresh-line")} aria-hidden={true} />
       </OtherVerbatim>
     </GemVerbatimContainer>
   );

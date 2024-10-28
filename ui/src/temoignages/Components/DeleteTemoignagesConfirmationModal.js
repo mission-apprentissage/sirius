@@ -1,15 +1,11 @@
-import React from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
-import useDeleteTemoignages from "../../hooks/useDeleteTemoignages";
-import { isPlural } from "../../campagnes/utils";
+import { useQueryClient } from "@tanstack/react-query";
 
-const DeleteTemoignagesConfirmationModal = ({
-  modal,
-  selectedTemoignagesIds,
-  setSelectedTemoignagesIds,
-}) => {
+import { isPlural } from "../../campagnes/utils";
+import useDeleteTemoignages from "../../hooks/useDeleteTemoignages";
+
+const DeleteTemoignagesConfirmationModal = ({ modal, selectedTemoignagesIds, setSelectedTemoignagesIds }) => {
   const queryClient = useQueryClient();
 
   const { mutate: deleteTemoignages, isPending, isError } = useDeleteTemoignages();
@@ -56,17 +52,8 @@ const DeleteTemoignagesConfirmationModal = ({
         </b>
         .
       </p>
-      <p>
-        Êtes-vous certain·e de vouloir {selectedTemoignagesIds.length > 1 ? "les" : "le"} supprimer
-        ?
-      </p>
-      {isError && (
-        <Alert
-          closable
-          description={isError.message || "Une erreur est survenue."}
-          severity="error"
-        />
-      )}
+      <p>Êtes-vous certain·e de vouloir {selectedTemoignagesIds.length > 1 ? "les" : "le"} supprimer ?</p>
+      {isError && <Alert closable description={isError.message || "Une erreur est survenue."} severity="error" />}
     </modal.Component>
   );
 };

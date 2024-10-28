@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@codegouvfr/react-dsfr/Button";
+import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
-import SortButtons from "../Shared/SortButtons/SortButtons";
-import Table from "./Table";
-import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
-import { isPlural } from "../utils";
+import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { useEffect, useState } from "react";
+
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
+import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
+import SortButtons from "../Shared/SortButtons/SortButtons";
 import { SelectAllFormationContainer } from "../styles/shared.style";
-import Checkbox from "@codegouvfr/react-dsfr/Checkbox";
+import { isPlural } from "../utils";
+import Table from "./Table";
 
 const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formik }) => {
   const [selectedFormationsAction, setSelectedFormationsAction] = useState([]);
@@ -34,9 +36,7 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
           formation.lieu_formation_adresse_computed?.toLowerCase().includes(search.toLowerCase()) ||
           formation.lieu_formation_adresse?.toLowerCase().includes(search.toLowerCase()) ||
           formation.localite?.toLowerCase().includes(search.toLowerCase()) ||
-          formation.etablissement_gestionnaire_enseigne
-            ?.toLowerCase()
-            .includes(search.toLowerCase()) ||
+          formation.etablissement_gestionnaire_enseigne?.toLowerCase().includes(search.toLowerCase()) ||
           formation.etablissement_formateur_adresse?.toLowerCase().includes(search.toLowerCase()) ||
           formation.etablissement_formateur_siret?.toLowerCase().includes(search.toLowerCase()) ||
           formation.tags?.join("-").toLowerCase().includes(search.toLowerCase())
@@ -63,9 +63,7 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
     const etablissements = selectedFormations
       .map((formation) => {
         const uniqueFormations = selectedFormations.filter(
-          (remoteFormation) =>
-            remoteFormation.etablissement_formateur_siret ===
-            formation.etablissement_formateur_siret
+          (remoteFormation) => remoteFormation.etablissement_formateur_siret === formation.etablissement_formateur_siret
         );
         return {
           label: remoteEtablissementLabelGetterFromFormation(formation),
@@ -73,9 +71,7 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
           hintText: `${uniqueFormations.length} formation${isPlural(uniqueFormations.length)}`,
         };
       })
-      .filter(
-        (formation, index, self) => index === self.findIndex((t) => t.value === formation.value)
-      );
+      .filter((formation, index, self) => index === self.findIndex((t) => t.value === formation.value));
 
     const diplomes = selectedFormations
       .map((formation) => {
@@ -88,9 +84,7 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
           hintText: `${uniqueFormations.length} formation${isPlural(uniqueFormations.length)}`,
         };
       })
-      .filter(
-        (formation, index, self) => index === self.findIndex((t) => t.value === formation.value)
-      );
+      .filter((formation, index, self) => index === self.findIndex((t) => t.value === formation.value));
 
     setEtablissementsOptions(etablissements);
     setDiplomesOptions(diplomes);

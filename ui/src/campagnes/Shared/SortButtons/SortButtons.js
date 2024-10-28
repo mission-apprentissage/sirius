@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
 import { Input } from "@codegouvfr/react-dsfr/Input";
-import { SearchContainer } from "./sortButtons.style";
+import React, { useEffect, useState } from "react";
+
 import MultiSelect from "../../../Components/MultiSelect/MultiSelect";
+import { SearchContainer } from "./sortButtons.style";
 
 const SortButtons = ({
   search,

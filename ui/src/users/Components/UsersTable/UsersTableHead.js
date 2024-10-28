@@ -1,5 +1,5 @@
-import { Thead, Tr, Th, Box, chakra } from "@chakra-ui/react";
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import { Box, chakra, Th, Thead, Tr } from "@chakra-ui/react";
 import { flexRender } from "@tanstack/react-table";
 
 const UsersTableHead = ({ table }) => {

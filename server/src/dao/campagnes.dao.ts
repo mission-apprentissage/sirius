@@ -1,19 +1,20 @@
 import { sql } from "kysely";
-import { kdb } from "../db/db";
-import { ObserverScope } from "../types";
+
+import { getKbdClient } from "../db/db";
+import type { ObserverScope } from "../types";
 
 export const getAllWithTemoignageCountAndTemplateName = async ({
-  siret,
+  //siret,
   query,
   scope,
   allowEmptyFilter = false,
 }: {
-  siret?: string[];
+  //siret?: string[];
   query: { diplome?: string; etablissementFormateurSiret?: string; departement?: string; campagneIds: string[] };
   scope?: ObserverScope;
   allowEmptyFilter?: boolean;
 }) => {
-  let baseQuery = kdb
+  let baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
       "campagnes.id",
@@ -76,6 +77,7 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     .leftJoin("formations", "formations.id", "formations_campagnes.formation_id")
     .leftJoin("etablissements", "formations.etablissement_id", "etablissements.id")
     .where("campagnes.deleted_at", "is", null)
+    .where("formations.deleted_at", "is", null)
     .groupBy(["campagnes.id", "questionnaires.id", "formations.id", "etablissements.id"]);
 
   if (scope && scope.field && scope.field !== "sirets" && scope.value) {
@@ -108,20 +110,20 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     baseQuery = baseQuery.where("campagnes.id", "in", query.campagneIds);
   }
 
-  if (siret) {
+  /*if (siret) {
     baseQuery = baseQuery.where((qb) =>
       qb.or([
         qb("formations.etablissement_gestionnaire_siret", "in", siret),
         qb("formations.etablissement_formateur_siret", "in", siret),
       ])
     );
-  }
+  }*/
 
   return baseQuery.execute();
 };
 
 export const getOne = async (id: string) => {
-  return kdb.selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
+  return getKbdClient().selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
 };
 
 export const create = async (campagne: any, formationId: string): Promise<string | undefined> => {
@@ -129,67 +131,77 @@ export const create = async (campagne: any, formationId: string): Promise<string
     return undefined;
   }
 
-  const transaction = await kdb.transaction().execute(async (trx) => {
-    const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
-    if (insertedCampagne?.id) {
-      await trx
-        .insertInto("formations_campagnes")
-        .values({
-          formation_id: formationId,
-          campagne_id: insertedCampagne.id,
-        })
-        .returning("id")
-        .executeTakeFirst();
-    }
-    return insertedCampagne?.id;
-  });
+  const transaction = await getKbdClient()
+    .transaction()
+    .execute(async (trx) => {
+      const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+      if (insertedCampagne?.id) {
+        await trx
+          .insertInto("formations_campagnes")
+          .values({
+            formation_id: formationId,
+            campagne_id: insertedCampagne.id,
+          })
+          .returning("id")
+          .executeTakeFirst();
+      }
+      return insertedCampagne?.id;
+    });
 
   return transaction;
 };
 
 export const createWithFormation = async (campagne: any, formation: any): Promise<string | undefined> => {
-  const transaction = await kdb.transaction().execute(async (trx) => {
-    const insertedFormation = await trx.insertInto("formations").values(formation).returning("id").executeTakeFirst();
+  const transaction = await getKbdClient()
+    .transaction()
+    .execute(async (trx) => {
+      const insertedFormation = await trx.insertInto("formations").values(formation).returning("id").executeTakeFirst();
 
-    if (insertedFormation?.id) {
-      const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
-      await trx
-        .insertInto("formations_campagnes")
-        .values({ formation_id: insertedFormation.id, campagne_id: insertedCampagne?.id })
-        .execute();
-      return insertedCampagne?.id;
-    }
-  });
+      if (insertedFormation?.id) {
+        const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+        await trx
+          .insertInto("formations_campagnes")
+          .values({ formation_id: insertedFormation.id, campagne_id: insertedCampagne?.id })
+          .execute();
+        return insertedCampagne?.id;
+      }
+    });
 
   return transaction;
 };
 
 export const deleteMany = async (ids: string[]): Promise<boolean> => {
-  const transaction = await kdb.transaction().execute(async (trx) => {
-    const result = await trx.updateTable("campagnes").set({ deleted_at: new Date() }).where("id", "in", ids).execute();
-    const formations = (await trx
-      .deleteFrom("formations_campagnes")
-      .where("campagne_id", "in", ids)
-      .returning("formation_id")
-      .execute()) as unknown as { formationId: string }[] | null;
-
-    if (formations?.length) {
-      const formationIdValues = formations.map((formation) => formation.formationId);
-
-      await trx
-        .updateTable("formations")
+  const transaction = await getKbdClient()
+    .transaction()
+    .execute(async (trx) => {
+      const result = await trx
+        .updateTable("campagnes")
         .set({ deleted_at: new Date() })
-        .where("id", "in", formationIdValues)
+        .where("id", "in", ids)
         .execute();
-    }
-    return result[0].numUpdatedRows === BigInt(ids.length);
-  });
+      const formations = (await trx
+        .deleteFrom("formations_campagnes")
+        .where("campagne_id", "in", ids)
+        .returning("formation_id")
+        .execute()) as unknown as { formationId: string }[] | null;
+
+      if (formations?.length) {
+        const formationIdValues = formations.map((formation) => formation.formationId);
+
+        await trx
+          .updateTable("formations")
+          .set({ deleted_at: new Date() })
+          .where("id", "in", formationIdValues)
+          .execute();
+      }
+      return result[0].numUpdatedRows === BigInt(ids.length);
+    });
 
   return transaction;
 };
 
 export const update = async (id: string, updatedCampagne: any): Promise<boolean> => {
-  const result = await kdb
+  const result = await getKbdClient()
     .updateTable("campagnes")
     .set(updatedCampagne)
     .where("id", "=", id)
@@ -200,7 +212,7 @@ export const update = async (id: string, updatedCampagne: any): Promise<boolean>
 };
 
 export const getAll = async (campagneIds: string[] = []) => {
-  return kdb
+  return getKbdClient()
     .selectFrom("campagnes")
     .selectAll()
     .where("deleted_at", "is", null)
@@ -209,7 +221,7 @@ export const getAll = async (campagneIds: string[] = []) => {
 };
 
 export const count = async () => {
-  const result = await kdb
+  const result = await getKbdClient()
     .selectFrom("campagnes")
     .select(sql<number>`count(*)`.as("count"))
     .where("deleted_at", "is", null)
@@ -219,7 +231,7 @@ export const count = async () => {
 };
 
 export const countWithAtLeastOneTemoignages = async () => {
-  const result = await kdb
+  const result = await getKbdClient()
     .selectFrom("campagnes")
     .innerJoin("temoignages_campagnes", "campagnes.id", "temoignages_campagnes.campagne_id")
     .select(sql<number>`count(distinct campagnes.id)`.as("count"))
@@ -230,7 +242,7 @@ export const countWithAtLeastOneTemoignages = async () => {
 };
 
 export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
-  const baseQuery = kdb
+  const baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
       "campagnes.id",
@@ -296,7 +308,7 @@ export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
 };
 
 export const getAllWithTemoignageCountFormationEtablissement = async (campagneIds: string[]) => {
-  let baseQuery = kdb
+  let baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
       "campagnes.id",

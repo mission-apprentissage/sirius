@@ -1,6 +1,17 @@
 export const etablissementLabelGetter = (data) => {
   if (!data || !Object.keys(data)?.length) return "";
-  return data?.onisepNom || data?.enseigne || data?.entrepriseRaisonSociale || "";
+  return data?.entrepriseRaisonSociale || data?.onisepNom || data?.enseigne || "";
+};
+
+export const etablissementLabelGetterFromFormation = (data) => {
+  if (!data || !Object.keys(data)?.length) return "";
+  return (
+    data?.etablissementFormateurEntrepriseRaisonSociale ||
+    data?.etablissementFormateurEnseigne ||
+    data?.etablissementGestionnaireEnseigne ||
+    data?.etablissementGestionnaireEntrepriseRaisonSociale ||
+    ""
+  );
 };
 
 export const remoteEtablissementLabelGetter = (data) => {

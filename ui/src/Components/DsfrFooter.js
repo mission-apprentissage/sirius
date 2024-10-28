@@ -1,7 +1,8 @@
-import React from "react";
-import styled from "@emotion/styled";
-import { Footer } from "@codegouvfr/react-dsfr/Footer";
 import { fr } from "@codegouvfr/react-dsfr";
+import { Footer } from "@codegouvfr/react-dsfr/Footer";
+import styled from "@emotion/styled";
+
+import { publicConfig } from "../config.public";
 
 const TopLink = styled.a`
   margin-right: ${fr.spacing("2w")};
@@ -31,10 +32,7 @@ const DsfrFooter = () => {
           <TopLink target="_blank" href="https://www.onisep.fr/">
             ONISEP
           </TopLink>
-          <TopLink
-            target="_blank"
-            href="https://beta.gouv.fr/startups/?incubateur=mission-inserjeunes"
-          >
+          <TopLink target="_blank" href="https://beta.gouv.fr/startups/?incubateur=mission-inserjeunes">
             InserJeunes
           </TopLink>
         </>
@@ -46,6 +44,9 @@ const DsfrFooter = () => {
         <BottomLink href="/mentions-information-questionnaire" key={1}>
           Mentions d'informations
         </BottomLink>,
+        <span className="fr-footer__bottom-link" key={3}>
+          v.{publicConfig.version} © République française {new Date().getFullYear()}
+        </span>,
       ]}
     />
   );

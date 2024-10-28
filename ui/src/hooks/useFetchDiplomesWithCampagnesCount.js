@@ -1,7 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
+
 import { UserContext } from "../context/UserContext";
 import { fetchDiplomesWithCampagnes } from "../queries/formations";
-import { useQuery } from "@tanstack/react-query";
 
 const useFetchDiplomesWithCampagnes = () => {
   const [userContext] = useContext(UserContext);

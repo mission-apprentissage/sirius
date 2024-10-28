@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
-import BeatLoader from "react-spinners/BeatLoader";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
-import Button from "@codegouvfr/react-dsfr/Button";
-import { ButtonContainer } from "../../styles/resultsCampagnes.style";
-import SortButtons from "../SortButtons/SortButtons";
-import { LoaderContainer, HeaderContainer } from "../../styles/shared.style";
+import React, { useContext, useEffect, useState } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
+
 import {
   CAMPAGNE_TABLE_TYPES,
   DIPLOME_TYPE_MATCHER,
@@ -14,15 +12,18 @@ import {
   OBSERVER_SCOPES_LABELS,
   USER_ROLES,
 } from "../../../constants";
-import { isPlural } from "../../utils";
 import { UserContext } from "../../../context/UserContext";
-import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
 import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
-import CampagnesTable from "../CampagnesTable/CampagnesTable";
-import { TableContainer } from "../CampagnesTable/campagnesTable.style";
+import useFetchDiplomesWithCampagnesCount from "../../../hooks/useFetchDiplomesWithCampagnesCount";
 import useFetchEtablissementsWithCampagnes from "../../../hooks/useFetchEtablissementsWithCampagnesCount";
 import { etablissementLabelGetter } from "../../../utils/etablissement";
-import useFetchDiplomesWithCampagnesCount from "../../../hooks/useFetchDiplomesWithCampagnesCount";
+import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
+import { ButtonContainer } from "../../styles/resultsCampagnes.style";
+import { HeaderContainer, LoaderContainer } from "../../styles/shared.style";
+import { isPlural } from "../../utils";
+import CampagnesTable from "../CampagnesTable/CampagnesTable";
+import { TableContainer } from "../CampagnesTable/campagnesTable.style";
+import SortButtons from "../SortButtons/SortButtons";
 
 const CampagnesSelector = ({
   selectedCampagneIds,
@@ -59,17 +60,14 @@ const CampagnesSelector = ({
   });
   const { etablissementsWithCampagnes, isSuccess: isSuccessEtablissementsWithCampagnes } =
     useFetchEtablissementsWithCampagnes();
-  const { diplomesWithCampagnes, isSuccess: isSuccessDiplomesWithCampagnes } =
-    useFetchDiplomesWithCampagnesCount();
+  const { diplomesWithCampagnes, isSuccess: isSuccessDiplomesWithCampagnes } = useFetchDiplomesWithCampagnesCount();
 
   const currentPageCampagneIds = campagnes?.map((campagne) => campagne.id);
 
   const hasSelectedAllCampagneFromCurrentPage =
-    selectedCampagneIds.length &&
-    currentPageCampagneIds?.every((id) => selectedCampagneIds.includes(id));
+    selectedCampagneIds.length && currentPageCampagneIds?.every((id) => selectedCampagneIds.includes(id));
 
-  const isResultsAndEveryCampagneIsSelected =
-    isResults && selectedCampagneIds.length === campagnesIds?.length;
+  const isResultsAndEveryCampagneIsSelected = isResults && selectedCampagneIds.length === campagnesIds?.length;
 
   useEffect(() => {
     if (isResults && !paramsCampagneIds?.length && campagnesIds?.length) {
@@ -96,11 +94,8 @@ const CampagnesSelector = ({
     <>
       {userContext?.user.scope && (
         <p>
-          Vous avez accès aux campagnes pour{" "}
-          <b>{OBSERVER_SCOPES_LABELS[userContext.user?.scope.field]}</b>{" "}
-          {userContext.user?.scope.field !== OBSERVER_SCOPES.SIRETS && (
-            <b>{userContext.user?.scope.value}</b>
-          )}
+          Vous avez accès aux campagnes pour <b>{OBSERVER_SCOPES_LABELS[userContext.user?.scope.field]}</b>{" "}
+          {userContext.user?.scope.field !== OBSERVER_SCOPES.SIRETS && <b>{userContext.user?.scope.value}</b>}
         </p>
       )}
 
@@ -123,9 +118,7 @@ const CampagnesSelector = ({
           etablissementsOptions={etablissementsWithCampagnes?.map((etablissement) => ({
             label: etablissementLabelGetter(etablissement),
             value: etablissement.siret,
-            hintText: `${etablissement.campagnesCount} campagne${isPlural(
-              etablissement.campagnesCount
-            )}`,
+            hintText: `${etablissement.campagnesCount} campagne${isPlural(etablissement.campagnesCount)}`,
           }))}
           diplomesOptions={diplomesWithCampagnes?.map((diplome) => ({
             label: DIPLOME_TYPE_MATCHER[diplome.intitule] || diplome.intitule,

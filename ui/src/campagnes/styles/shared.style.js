@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
-import Badge from "@codegouvfr/react-dsfr/Badge";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import styled from "@emotion/styled";
 
 export const ToolTipContainer = styled.div`
   display: flex;

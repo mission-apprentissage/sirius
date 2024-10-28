@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
-import { Flex, Box, Spinner, useBreakpoint } from "@chakra-ui/react";
-import Navbar from "./Navbar";
-import UnauthNavbar from "./UnauthNavbar";
+import { Box, Flex, Spinner, useBreakpoint } from "@chakra-ui/react";
+import { useContext } from "react";
+
 import { UserContext } from "../context/UserContext";
 import Footer from "./Footer";
+import Navbar from "./Navbar";
+import UnauthNavbar from "./UnauthNavbar";
 
 const Layout = ({ children }) => {
   const [userContext] = useContext(UserContext);

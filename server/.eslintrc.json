@@ -1,0 +1,64 @@
+{
+  "extends": [
+    "plugin:n/recommended-module",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:node/recommended"
+  ],
+  "plugins": ["zod"],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "rules": {
+    "n/no-missing-import": 0,
+    // "@dword-design/import-alias/prefer-alias": [
+    //   "error",
+    //   {
+    //     "alias": {
+    //       "@": "./server/src",
+    //       "@tests": "./server/tests"
+    //     }
+    //   }
+    // ],
+    // "n/no-extraneous-import": [
+    //   "error",
+    //   {
+    //     "allowModules": ["shared"]
+    //   }
+    // ],
+    "node/no-deprecated-api": "off",
+    "node/no-unsupported-features/es-syntax": [
+      "error",
+      {
+        "ignores": ["modules"]
+      }
+    ],
+    "node/no-missing-import": "off",
+    "node/no-missing-require": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts"],
+      "rules": {
+        "n/no-extraneous-import": ["off"]
+      }
+    },
+    {
+      "files": ["*.js"],
+      "parser": "espree",
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ],
+  "env": {
+    "es2022": true,
+    "node": true
+  },
+  "settings": {
+    "node": {
+      "allowModules": []
+    }
+  }
+}

@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import validator from "@rjsf/validator-ajv8";
-import Form from "@rjsf/chakra-ui";
-import { Box, Flex, Button, useBreakpoint } from "@chakra-ui/react";
+import { ChevronRightIcon } from "@chakra-ui/icons";
+import { Box, Button, Flex, Spinner, useBreakpoint, useToast } from "@chakra-ui/react";
 import { load } from "@fingerprintjs/botd";
+// eslint-disable-next-line import/no-named-as-default
+import Form from "@rjsf/chakra-ui";
+import validator from "@rjsf/validator-ajv8";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { useGet } from "../common/hooks/httpHooks";
-import { Spinner, useToast } from "@chakra-ui/react";
-import { ChevronRightIcon } from "@chakra-ui/icons";
-import { _post, _put } from "../utils/httpClient";
+import { Stepper } from "../Components/Stepper";
+import { VERBATIM_STATUS } from "../constants";
+import { apiPost, apiPut } from "../utils/api.utils";
+import BotDetectedModal from "./AnswerCampagne/BotDetectedModal";
+import ErrorTemplate from "./Shared/ErrorTemplate";
+import { CustomNestedRadios } from "./Shared/fields";
+import Hero from "./Shared/Hero";
+import Success from "./Shared/Success";
 import {
   CustomCheckboxes,
+  CustomEmojisRadios,
+  CustomMessageReceived,
+  CustomMultiEmojisRadios,
   CustomMultiRange,
+  CustomMultiRangeSortable,
   CustomRadios,
   CustomRange,
   CustomText,
   CustomTextareaPrecision,
   CustomUpDown,
-  CustomMessageReceived,
-  CustomMultiRangeSortable,
-  CustomEmojisRadios,
-  CustomMultiEmojisRadios,
 } from "./Shared/widgets";
-import { CustomNestedRadios } from "./Shared/fields";
-import { Stepper } from "../Components/Stepper";
-import Hero from "./Shared/Hero";
-import Success from "./Shared/Success";
 import {
+  getCategoriesWithEmojis,
+  getChampsLibreField,
+  getNextButtonLabel,
   multiStepQuestionnaireFormatter,
   multiStepQuestionnaireUIFormatter,
-  getCategoriesWithEmojis,
   transformErrors,
-  getNextButtonLabel,
-  getChampsLibreField,
 } from "./utils";
-import ErrorTemplate from "./Shared/ErrorTemplate";
-import BotDetectedModal from "./AnswerCampagne/BotDetectedModal";
-import { VERBATIM_STATUS } from "../constants";
 
 const widgets = {
   CheckboxesWidget: CustomCheckboxes,
@@ -101,30 +101,25 @@ const AnswerCampagnePage = () => {
     : false;
 
   useEffect(() => {
-    if (
-      campagne?.questionnaire?.questionnaire &&
-      Object.keys(campagne.questionnaire.questionnaire).length
-    ) {
-      setFormattedQuestionnnaire(
-        multiStepQuestionnaireFormatter(campagne.questionnaire.questionnaire)
-      );
+    if (campagne?.questionnaire?.questionnaire && Object.keys(campagne.questionnaire.questionnaire).length) {
+      setFormattedQuestionnnaire(multiStepQuestionnaireFormatter(campagne.questionnaire.questionnaire));
       setCategories(getCategoriesWithEmojis(campagne.questionnaire.questionnaire));
     }
     if (campagne?.questionnaire?.questionnaireUI) {
-      setFormattedQuestionnnaireUI(
-        multiStepQuestionnaireUIFormatter(campagne.questionnaire.questionnaireUI)
-      );
+      setFormattedQuestionnnaireUI(multiStepQuestionnaireUIFormatter(campagne.questionnaire.questionnaireUI));
       setChampsLibresField(getChampsLibreField(campagne.questionnaire.questionnaireUI));
     }
   }, [campagne]);
 
   const onSubmitHandler = async (formData, isLastQuestion) => {
     if (!temoignageId) {
-      const result = await _post(`/api/temoignages/`, {
-        reponses: { ...answers, ...formData, ...nestedData },
-        campagneId: id,
-        lastQuestionAt: new Date(),
-        isBot,
+      const result = await apiPost("/temoignages", {
+        body: {
+          reponses: { ...answers, ...formData, ...nestedData },
+          campagneId: id,
+          lastQuestionAt: new Date(),
+          isBot,
+        },
       });
 
       if (result) {
@@ -168,11 +163,13 @@ const AnswerCampagnePage = () => {
       const isTrimmedChampsLibreEmpty = isChampsLibre && !formData[questionKey]?.trim();
 
       if (isChampsLibre && !isTrimmedChampsLibreEmpty) {
-        result = await _post(`/api/verbatims/`, {
-          temoignageId,
-          questionKey,
-          content: formData[questionKey],
-          status: VERBATIM_STATUS.PENDING,
+        result = await apiPost("/verbatims", {
+          body: {
+            temoignageId,
+            questionKey,
+            content: formData[questionKey],
+            status: VERBATIM_STATUS.PENDING,
+          },
         });
       } else if (!isChampsLibre) {
         const reponses = { ...answers, ...formData, ...nestedData };
@@ -183,17 +180,17 @@ const AnswerCampagnePage = () => {
           return acc;
         }, {});
 
-        result = await _put(`/api/temoignages/${temoignageId}`, {
-          reponses: reponsesWithoutChampsLibreFields,
-          lastQuestionAt: new Date(),
-          isBot,
+        result = await apiPut(`/api/temoignages/:id`, {
+          params: { id: temoignageId },
+          body: {
+            reponses: reponsesWithoutChampsLibreFields,
+            lastQuestionAt: new Date(),
+            isBot,
+          },
         });
       }
 
-      if (
-        !(isChampsLibre && (result?.id || isTrimmedChampsLibreEmpty)) &&
-        !(!isChampsLibre && result === true)
-      ) {
+      if (!(isChampsLibre && (result?.id || isTrimmedChampsLibreEmpty)) && !(!isChampsLibre && result === true)) {
         if (result.statusCode === 403) {
           toast({
             title: "Une erreur est survenue",
@@ -255,16 +252,12 @@ const AnswerCampagnePage = () => {
             />
             <>
               <Form
-                schema={
-                  formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]
-                }
+                schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
                 uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
                 validator={validator}
                 widgets={widgets}
                 fields={fields}
-                onSubmit={(values) =>
-                  onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)
-                }
+                onSubmit={(values) => onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)}
                 noHtml5Validate
                 templates={{ FieldErrorTemplate: ErrorTemplate }}
                 transformErrors={transformErrors}

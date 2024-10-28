@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { FormControl, FormErrorMessage, Spinner, Text, Box } from "@chakra-ui/react";
+import { Box, FormControl, FormErrorMessage, Spinner, Text } from "@chakra-ui/react";
+import { useState } from "react";
+
 import InputText from "../../../Components/Form/InputText";
-import { _get } from "../../../utils/httpClient";
 import { isValidSIRET } from "../../../utils/etablissement";
 
 const CatalogueUnavailableMessage = () => (
   <>
     <Text>
-      La connexion au catalogue de formation a échouée. L'inscription n'est pas disponible pour le
-      moment. Merci de réessayer plus tard.
+      La connexion au catalogue de formation a échouée. L'inscription n'est pas disponible pour le moment. Merci de
+      réessayer plus tard.
     </Text>
     <Text>
       Pour toute question, nous restons disponibles :{" "}
@@ -55,9 +55,10 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret, userSiret }) => 
     setIsLoadingRemoteEtablissement(true);
 
     try {
-      const result = await _get(
+      const res = await fetch(
         `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siretwithoutSpaces}"}&page=1&limit=1`
       );
+      const result = await res.json();
       if (result.etablissements?.length > 0) {
         const firstEtablissement = result.etablissements[0];
         const addressParts = ["numero_voie", "type_voie", "nom_voie", "code_postal", "localite"]
@@ -78,9 +79,7 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret, userSiret }) => 
         formik.setFieldValue("etablissements", updatedEtablissements);
         setAddNewSiret(false);
       } else {
-        setSiretError(
-          "Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4."
-        );
+        setSiretError("Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4.");
       }
     } catch (error) {
       setError(CatalogueUnavailableMessage);
@@ -89,8 +88,7 @@ const EtablissementInput = ({ formik, setError, setAddNewSiret, userSiret }) => 
     }
   };
 
-  const hasError =
-    (!!formik.errors.etablissements && !!formik.touched.etablissements) || siretError;
+  const hasError = (!!formik.errors.etablissements && !!formik.touched.etablissements) || siretError;
 
   return (
     <FormControl isInvalid={hasError}>

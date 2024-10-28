@@ -1,6 +1,7 @@
-import { useEffect, useState, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+
 import { UserContext } from "../context/UserContext";
-import { _get } from "../utils/httpClient";
+import { apiGet } from "../utils/api.utils";
 
 const useFetchEtablissementsSuivi = () => {
   const [data, setData] = useState(null);
@@ -11,7 +12,11 @@ const useFetchEtablissementsSuivi = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await _get(`/api/etablissements/suivi`, userContext.token);
+        const response = await apiGet(`/api/etablissements/suivi`, {
+          headers: {
+            Authorization: `Bearer ${userContext.token}`,
+          },
+        });
         setData(response);
         setLoading(false);
       } catch (error) {

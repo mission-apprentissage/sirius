@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
-import { Navigate, Outlet } from "react-router-dom";
 import styled from "@emotion/styled";
+import { useContext } from "react";
+import { Navigate, Outlet } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
-import { UserContext } from "./context/UserContext";
+
 import { USER_STATUS } from "./constants";
+import { UserContext } from "./context/UserContext";
 import CguModal from "./users/CguModal";
 
 const LoaderContainer = styled.main`
@@ -24,11 +25,7 @@ const ProtectedRoute = () => {
   if (userContext?.loading) {
     return (
       <LoaderContainer>
-        <BeatLoader
-          color="var(--background-action-high-blue-france)"
-          size={20}
-          aria-label="Loading Spinner"
-        />
+        <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
       </LoaderContainer>
     );
   }

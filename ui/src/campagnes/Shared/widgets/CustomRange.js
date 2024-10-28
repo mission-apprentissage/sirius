@@ -1,16 +1,16 @@
-import React, { useEffect, useRef } from "react";
 import {
-  Slider,
-  SliderTrack,
-  SliderThumb,
-  SliderMark,
-  SliderFilledTrack,
   Box,
-  useBreakpoint,
   FormLabel,
+  Slider,
+  SliderFilledTrack,
+  SliderMark,
+  SliderThumb,
+  SliderTrack,
   Text,
+  useBreakpoint,
 } from "@chakra-ui/react";
 import parse from "html-react-parser";
+import { useEffect, useRef } from "react";
 
 import DidYouKnow from "../DidYouKnow";
 
@@ -34,13 +34,7 @@ const CustomRange = (props) => {
         <Text fontSize="xs" color="brand.blue.700">
           (Déplace le curseur sur l’émoji qui se rapproche le plus de ton ressenti)
         </Text>
-        <Box
-          pt={6}
-          pb={isMobile ? 6 : 12}
-          w={isMobile ? "80%" : "90%"}
-          m="auto"
-          mt={isMobile ? 5 : "auto"}
-        >
+        <Box pt={6} pb={isMobile ? 6 : 12} w={isMobile ? "80%" : "90%"} m="auto" mt={isMobile ? 5 : "auto"}>
           <Slider
             id="slider"
             defaultValue={savedValue}
@@ -64,18 +58,10 @@ const CustomRange = (props) => {
                   maxW={isMobile ? "110px" : 100 / (props.schema.enum.length - 1) + "%"}
                   textAlign={isMobile ? "left" : "center"}
                   bottom={
-                    isMobile
-                      ? index % 2 === 0
-                        ? -markerRef?.current[index]?.offsetHeight - 5 + "px"
-                        : 5
-                      : "inherit"
+                    isMobile ? (index % 2 === 0 ? -markerRef?.current[index]?.offsetHeight - 5 + "px" : 5) : "inherit"
                   }
                   minHeight={isMobile ? "20px" : "inherit"}
-                  bgColor={
-                    index === props.schema.enum.indexOf(props.value)
-                      ? "brand.red.500"
-                      : "brand.pink.400"
-                  }
+                  bgColor={index === props.schema.enum.indexOf(props.value) ? "brand.red.500" : "brand.pink.400"}
                   color={index === props.schema.enum.indexOf(props.value) ? "black" : "black"}
                   borderRadius="md"
                   fontWeight="semibold"

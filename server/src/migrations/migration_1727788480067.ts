@@ -1,4 +1,5 @@
-import { Kysely, sql, Generated } from "kysely";
+import type { Generated, Kysely } from "kysely";
+import { sql } from "kysely";
 
 interface FormationsCampagnes {
   id: Generated<string>;
@@ -49,4 +50,6 @@ export const up = async (db: Kysely<Database>) => {
     .execute();
 };
 
-export const down = async () => {};
+export const down = async () => {
+  return null;
+};

@@ -1,23 +1,24 @@
-import React, { useState, useContext } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { Navigate, useNavigate, useLocation, Link } from "react-router-dom";
-import BeatLoader from "react-spinners/BeatLoader";
-import jwt from "jwt-decode";
-import { Input } from "@codegouvfr/react-dsfr/Input";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
+import { useFormik } from "formik";
+import jwt from "jwt-decode";
+import { useContext, useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import BeatLoader from "react-spinners/BeatLoader";
+import * as Yup from "yup";
+
+import Support from "../assets/images/support.svg";
+import { LoaderContainer } from "../campagnes/styles/shared.style";
+import NeedHelp from "../Components/NeedHelp";
+import { emailWithTLDRegex, USER_ROLES } from "../constants";
 import { UserContext } from "../context/UserContext";
+import useLoginUser from "../hooks/useLoginUser";
+import ChangePasswordModal from "./Components/ChangePasswordModal";
+import ForgottenPasswordModal from "./Components/ForgottenPasswordModal";
 import { Form, StyledPasswordInput } from "./styles/login.style";
 import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
-import Support from "../assets/images/support.svg";
-import ForgottenPasswordModal from "./Components/ForgottenPasswordModal";
-import ChangePasswordModal from "./Components/ChangePasswordModal";
-import { USER_ROLES, emailWithTLDRegex } from "../constants";
-import NeedHelp from "../Components/NeedHelp";
-import useLoginUser from "../hooks/useLoginUser";
-import { LoaderContainer } from "../campagnes/styles/shared.style";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -172,19 +173,10 @@ const LoginPage = () => {
               }
             />
           ) : null}
-          <Button
-            iconId="fr-icon-logout-box-r-line"
-            iconPosition="right"
-            type="submit"
-            disabled={isSubmitting}
-          >
+          <Button iconId="fr-icon-logout-box-r-line" iconPosition="right" type="submit" disabled={isSubmitting}>
             {isLoading ? (
               <LoaderContainer>
-                <BeatLoader
-                  color="var(--background-action-high-blue-france)"
-                  size={20}
-                  aria-label="Loading Spinner"
-                />
+                <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
               </LoaderContainer>
             ) : (
               "Connexion"

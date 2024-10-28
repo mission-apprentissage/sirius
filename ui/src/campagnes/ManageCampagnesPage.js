@@ -1,17 +1,18 @@
-import React, { useContext, useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
 import { fr } from "@codegouvfr/react-dsfr";
-import Button from "@codegouvfr/react-dsfr/Button";
+import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
-import { UserContext } from "../context/UserContext";
-import Statistics from "./Shared/Statistics/Statistics";
+import { useContext, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import NeedHelp from "../Components/NeedHelp";
 import { CAMPAGNE_TABLE_TYPES } from "../constants";
-import SupportModal from "./Shared/SupportModal";
-import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
-import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
+import { UserContext } from "../context/UserContext";
 import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
+import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
 import CampagnesSelector from "./Shared/CampagnesSelector/CampagnesSelector";
+import Statistics from "./Shared/Statistics/Statistics";
+import SupportModal from "./Shared/SupportModal";
+import { Container, ManageCampagneContainer } from "./styles/manageCampagnes.style";
 
 const modal = createModal({
   id: "support-modal-loggedIn",
@@ -55,21 +56,14 @@ const ManageCampagnesPage = () => {
   return (
     <>
       <Container>
-        <Statistics
-          statistics={statistics || emptyStatistics}
-          title="Sirius & vous en quelques chiffres"
-        />
+        <Statistics statistics={statistics || emptyStatistics} title="Sirius & vous en quelques chiffres" />
         <ManageCampagneContainer>
           <div>
             <h1>
               <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
               Diffuser mes campagnes
             </h1>
-            <Button
-              priority="secondary"
-              iconId="fr-icon-add-line"
-              onClick={() => navigate("/campagnes/ajout")}
-            >
+            <Button priority="secondary" iconId="fr-icon-add-line" onClick={() => navigate("/campagnes/ajout")}>
               Créer des campagnes
             </Button>
           </div>

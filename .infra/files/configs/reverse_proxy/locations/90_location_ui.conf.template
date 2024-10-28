@@ -1,0 +1,10 @@
+location / {
+    set $upstream http://ui:3000;
+    include includes/proxy.conf;
+
+    # expires $ui_expires;
+
+    client_max_body_size 0;
+
+    add_header Content-Security-Policy "frame-ancestors 'self' *.onisep.fr *.beta.gouv.fr *.incubateur.net";
+}

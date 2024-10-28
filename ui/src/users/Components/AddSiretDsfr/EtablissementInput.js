@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Input } from "@codegouvfr/react-dsfr/Input";
-import { _get } from "../../../utils/httpClient";
+import styled from "@emotion/styled";
+import { useState } from "react";
+
 import { isValidSIRET } from "../../../utils/etablissement";
 
 const EtablissementInputContainer = styled.div`
@@ -90,9 +90,11 @@ const EtablissementInput = ({ formik, setError, userSiret }) => {
     setIsLoadingRemoteEtablissement(true);
 
     try {
-      const result = await _get(
+      const res = await fetch(
         `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/etablissements?query={ "siret": "${siretwithoutSpaces}"}&page=1&limit=1`
       );
+      const result = await res.json();
+
       if (result.etablissements?.length > 0) {
         const firstEtablissement = result.etablissements[0];
         const addressParts = ["numero_voie", "type_voie", "nom_voie", "code_postal", "localite"]
@@ -113,9 +115,7 @@ const EtablissementInput = ({ formik, setError, userSiret }) => {
         formik.setFieldValue("etablissements", updatedEtablissements);
         setSiretValue("");
       } else {
-        setSiretError(
-          "Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4."
-        );
+        setSiretError("Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4.");
       }
     } catch (error) {
       setError(
@@ -126,16 +126,15 @@ const EtablissementInput = ({ formik, setError, userSiret }) => {
     }
   };
 
-  const hasError =
-    (!!formik.errors.etablissements && !!formik.touched.etablissements) || siretError;
+  const hasError = (!!formik.errors.etablissements && !!formik.touched.etablissements) || siretError;
 
   return (
     <EtablissementInputContainer>
       <label className="fr-label" htmlFor="siret">
         Numéro de SIRET de votre établissement
         <span className="fr-hint-text">
-          Si votre position vous le permet, ajoutez plus d’un SIRET pour suivre les campagnes de
-          plusieurs établissements
+          Si votre position vous le permet, ajoutez plus d’un SIRET pour suivre les campagnes de plusieurs
+          établissements
         </span>
       </label>
       <div>

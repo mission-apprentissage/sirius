@@ -1,4 +1,5 @@
-import { Box, Text, Image, useBreakpoint } from "@chakra-ui/react";
+import { Box, Image, Text, useBreakpoint } from "@chakra-ui/react";
+
 import success from "../../assets/images/success.svg";
 
 const Success = () => {
@@ -19,15 +20,8 @@ const Success = () => {
       <Text fontSize="3xl" color="brand.blue.700" fontWeight="semibold" textAlign="center">
         Merci beaucoup d’avoir participé ! 😌
       </Text>
-      <Text
-        fontSize="lg"
-        color="brand.black.500"
-        w={isMobile ? "100%" : "50%"}
-        textAlign="center"
-        mt="2"
-      >
-        Tes réponses seront partagées aux jeunes qui se posent des questions sur leur orientation
-        vers l’apprentissage
+      <Text fontSize="lg" color="brand.black.500" w={isMobile ? "100%" : "50%"} textAlign="center" mt="2">
+        Tes réponses seront partagées aux jeunes qui se posent des questions sur leur orientation vers l’apprentissage
       </Text>
     </Box>
   );

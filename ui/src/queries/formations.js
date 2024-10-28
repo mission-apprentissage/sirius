@@ -1,4 +1,4 @@
-import { _get } from "../utils/httpClient";
+import { apiGet } from "../utils/api.utils";
 
 export const fetchRemoteFormations = async ({ query = null, page = 1, pageSize = 30 }) => {
   let url = `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?page=${page}&limit=${pageSize}`;
@@ -7,7 +7,9 @@ export const fetchRemoteFormations = async ({ query = null, page = 1, pageSize =
     url += `&${query}`;
   }
 
-  const response = await _get(url);
+  const res = await fetch(url);
+  const response = await res.json();
+
   if (response) {
     return response;
   }
@@ -15,7 +17,7 @@ export const fetchRemoteFormations = async ({ query = null, page = 1, pageSize =
 };
 
 export const fetchLocalFormations = async ({ token, etablissementSiret, search }) => {
-  let url = `/api/formations?`;
+  let url = `/formations?`;
 
   const params = [];
 
@@ -29,7 +31,11 @@ export const fetchLocalFormations = async ({ token, etablissementSiret, search }
 
   url += params.join("&");
 
-  const response = await _get(url, token);
+  const response = await apiGet(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (response.error) {
     throw new Error("Erreur dans le chargement des formations locales");
@@ -41,7 +47,11 @@ export const fetchLocalFormations = async ({ token, etablissementSiret, search }
 export const fetchDiplomesWithCampagnes = async ({ token }) => {
   const url = `/api/formations/diplomes-with-campagnes`;
 
-  const response = await _get(url, token);
+  const response = await apiGet(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (response.error) {
     throw new Error("Erreur dans le chargement des diplômes");

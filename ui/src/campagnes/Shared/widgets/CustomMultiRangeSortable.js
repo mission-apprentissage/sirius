@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from "react";
+import { DragHandleIcon } from "@chakra-ui/icons";
 import {
-  Slider,
-  SliderTrack,
-  SliderThumb,
   Box,
-  useBreakpoint,
   FormLabel,
-  SliderFilledTrack,
   ListItem,
   OrderedList,
+  Slider,
+  SliderFilledTrack,
   SliderMark,
+  SliderThumb,
+  SliderTrack,
+  useBreakpoint,
 } from "@chakra-ui/react";
-import { DragHandleIcon } from "@chakra-ui/icons";
-import { ReactSortable } from "react-sortablejs";
 import parse from "html-react-parser";
+import { useEffect, useState } from "react";
+import { ReactSortable } from "react-sortablejs";
+
 import DidYouKnow from "../DidYouKnow";
 
 const emojiGetter = (value) => {
@@ -61,14 +62,7 @@ const CustomMultiRangeSortable = (props) => {
         <FormLabel as="legend" fontSize="2xl" color="brand.blue.700" requiredIndicator={null}>
           {parse(props.schema.title)}
         </FormLabel>
-        <Box
-          pt={2}
-          pb={isMobile ? 6 : 2}
-          w={isMobile ? "100%" : "90%"}
-          m="auto"
-          display="flex"
-          flexDirection="row"
-        >
+        <Box pt={2} pb={isMobile ? 6 : 2} w={isMobile ? "100%" : "90%"} m="auto" display="flex" flexDirection="row">
           <ReactSortable
             list={list}
             setList={setList}
@@ -102,12 +96,7 @@ const CustomMultiRangeSortable = (props) => {
                     w="calc(100% - 20px)"
                   >
                     <Box display="flex" w={isMobile ? "100%" : "50%"}>
-                      <DragHandleIcon
-                        display={isMobile ? "inherit" : "none"}
-                        width="15px"
-                        mr="15px"
-                        color="gray.300"
-                      />
+                      <DragHandleIcon display={isMobile ? "inherit" : "none"} width="15px" mr="15px" color="gray.300" />
                       <Box w="90%" textAlign="center">
                         {question?.label}
                       </Box>
@@ -149,9 +138,7 @@ const CustomMultiRangeSortable = (props) => {
                         <SliderTrack>
                           <SliderFilledTrack />
                         </SliderTrack>
-                        <SliderThumb fontSize={26}>
-                          {emojiGetter(list[index]?.value || 0)}
-                        </SliderThumb>
+                        <SliderThumb fontSize={26}>{emojiGetter(list[index]?.value || 0)}</SliderThumb>
                       </Slider>
                     </Box>
                   </Box>

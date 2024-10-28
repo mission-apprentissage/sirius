@@ -1,30 +1,18 @@
-import React, { useState } from "react";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
+import { BarChart, PieChart } from "echarts/charts";
+import { GridComponent, LegendComponent, TooltipComponent, VisualMapComponent } from "echarts/components";
 import * as echarts from "echarts/core";
-import { PieChart, BarChart } from "echarts/charts";
-import {
-  GridComponent,
-  TooltipComponent,
-  LegendComponent,
-  VisualMapComponent,
-} from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
-import PieCard from "./Widgets/PieCard";
-import VerbatimCard from "./Widgets/VerbatimCard";
-import MultiEmojiCard from "./Widgets/MultiEmojiCard";
-import { DataVizContainer } from "../styles/resultsCampagnes.style";
-import BarCard from "./Widgets/BarCard";
+import { Fragment, useState } from "react";
 
-echarts.use([
-  TooltipComponent,
-  GridComponent,
-  PieChart,
-  CanvasRenderer,
-  LegendComponent,
-  BarChart,
-  VisualMapComponent,
-]);
+import { DataVizContainer } from "../styles/resultsCampagnes.style";
+import { BarCard } from "./Widgets/BarCard";
+import MultiEmojiCard from "./Widgets/MultiEmojiCard";
+import { PieCard } from "./Widgets/PieCard";
+import VerbatimCard from "./Widgets/VerbatimCard";
+
+echarts.use([TooltipComponent, GridComponent, PieChart, CanvasRenderer, LegendComponent, BarChart, VisualMapComponent]);
 
 const ResultsCampagnesVisualisation = ({ temoignages }) => {
   const [expandedAccordion, setExpandedAccordion] = useState("");
@@ -46,13 +34,9 @@ const ResultsCampagnesVisualisation = ({ temoignages }) => {
             <DataVizContainer>
               {category.questionsList.map((question) => {
                 return (
-                  <React.Fragment key={question.id}>
+                  <Fragment key={question.id}>
                     {question.widget.type === "text" && (
-                      <VerbatimCard
-                        id={category.id}
-                        responses={question.responses}
-                        title={question.label}
-                      />
+                      <VerbatimCard id={category.id} responses={question.responses} title={question.label} />
                     )}
                     {(question.widget.type === "pie" || question.widget.type === "emoji") && (
                       <PieCard
@@ -79,7 +63,7 @@ const ResultsCampagnesVisualisation = ({ temoignages }) => {
                         title={question.label}
                       />
                     )}
-                  </React.Fragment>
+                  </Fragment>
                 );
               })}
             </DataVizContainer>

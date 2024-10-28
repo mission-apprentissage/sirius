@@ -1,19 +1,15 @@
-import React from "react";
-import { Tooltip } from "react-tooltip";
 import { fr } from "@codegouvfr/react-dsfr";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { isPlural } from "../utils";
-import {
-  Duration,
-  FormationContainer,
-  IntituleFormation,
-  StyledBadge,
-} from "../styles/shared.style";
+import React from "react";
+import { Tooltip } from "react-tooltip";
+
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
 import CellInputConfigure from "../ManageCampagne/CellInput/CellInputConfigure";
 import CellInputSeatsConfigure from "../ManageCampagne/CellInput/CellInputSeatsConfigure";
-import { EtablissementLabelContainer } from "../styles/createCampagnes.style";
 import { DiplomeLabel } from "../Shared/CampagnesTable/campagnesTable.style";
+import { EtablissementLabelContainer } from "../styles/createCampagnes.style";
+import { Duration, FormationContainer, IntituleFormation, StyledBadge } from "../styles/shared.style";
+import { isPlural } from "../utils";
 
 const createCampagneTableRows = ({
   selectedFormations,
@@ -55,8 +51,7 @@ const createCampagneTableRows = ({
         </FormationContainer>
         <EtablissementLabelContainer>
           <p data-tooltip-id={`tooltip-already-created-${formation._id}`}>
-            {formation.etablissement_formateur_entreprise_raison_sociale ||
-              formation.etablissement_formateur_enseigne}
+            {formation.etablissement_formateur_entreprise_raison_sociale || formation.etablissement_formateur_enseigne}
           </p>
           <Tooltip
             id={`tooltip-already-created-${formation._id}`}
@@ -69,17 +64,15 @@ const createCampagneTableRows = ({
                 `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
             </p>
             <p>N° Siret: {formation.etablissement_formateur_siret}</p>
-            {formation.etablissement_formateur_siret ===
-            formation.etablissement_gestionnaire_siret ? (
+            {formation.etablissement_formateur_siret === formation.etablissement_gestionnaire_siret ? (
               <p>
-                <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet
-                établissement est gestionnaire et rattaché à votre compte Sirius
+                <span className={fr.cx("fr-icon-award-fill")} aria-hidden={true} /> Cet établissement est gestionnaire
+                et rattaché à votre compte Sirius
               </p>
             ) : (
               <p>
-                <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet
-                établissement est formateur et dispense des formations pour un établissement
-                gestionnaire
+                <span className={fr.cx("fr-icon-award-line")} aria-hidden={true} /> Cet établissement est formateur et
+                dispense des formations pour un établissement gestionnaire
               </p>
             )}
           </Tooltip>

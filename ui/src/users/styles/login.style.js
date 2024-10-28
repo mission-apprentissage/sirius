@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { fr } from "@codegouvfr/react-dsfr";
 import { PasswordInput } from "@codegouvfr/react-dsfr/blocks/PasswordInput";
+import styled from "@emotion/styled";
 
 export const Form = styled.form`
   display: flex;

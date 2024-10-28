@@ -1,9 +1,0 @@
-name: Get branch name
-description: "Permet d'obtenir le nom de la branche"
-outputs:
-  branchName:
-    description: Le nom de la branch
-
-runs:
-  using: docker
-  image: Dockerfile
