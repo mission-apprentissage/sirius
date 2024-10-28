@@ -19,6 +19,7 @@ export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface Campagnes {
   created_at: Generated<Timestamp | null>;
+  created_by: string | null;
   deleted_at: Timestamp | null;
   end_date: Timestamp;
   id: Generated<string>;
@@ -47,7 +48,6 @@ export interface Etablissements {
 }
 
 export interface Formations {
-  campagne_id: string | null;
   catalogue_data: Json;
   catalogue_id: string;
   code_postal: string;
@@ -75,6 +75,12 @@ export interface Formations {
   updated_at: Generated<Timestamp | null>;
 }
 
+export interface FormationsCampagnes {
+  campagne_id: string | null;
+  formation_id: string | null;
+  id: Generated<string>;
+}
+
 export interface Questionnaires {
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
@@ -90,24 +96,24 @@ export interface Temoignages {
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   id: Generated<string>;
-  is_bot: Generated<boolean | null>;
+  is_bot: Generated<boolean>;
   last_question_at: Timestamp | null;
-  reponses: Json | null;
+  reponses: Json;
   updated_at: Generated<Timestamp | null>;
 }
 
 export interface TemoignagesCampagnes {
   campagne_id: string | null;
   id: Generated<string>;
-  temoignage_id: string | null;
+  temoignage_id: string;
 }
 
 export interface Users {
-  accepted_cgu: boolean | null;
+  accepted_cgu: Generated<boolean | null>;
   comment: string | null;
   confirmation_token: string | null;
   email: string;
-  email_confirmed: boolean | null;
+  email_confirmed: Generated<boolean | null>;
   first_name: string;
   hash: string;
   id: Generated<string>;
@@ -126,7 +132,7 @@ export interface UsersEtablissements {
 }
 
 export interface Verbatims {
-  content: string;
+  content: string | null;
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   id: Generated<string>;
@@ -142,6 +148,7 @@ export interface DB {
   campagnes: Campagnes;
   etablissements: Etablissements;
   formations: Formations;
+  formations_campagnes: FormationsCampagnes;
   questionnaires: Questionnaires;
   temoignages: Temoignages;
   temoignages_campagnes: TemoignagesCampagnes;

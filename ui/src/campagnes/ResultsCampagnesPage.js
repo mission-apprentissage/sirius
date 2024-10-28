@@ -63,7 +63,7 @@ const ResultsCampagnesPage = () => {
   } = useFetchTemoignagesXlsExport();
 
   useEffect(() => {
-    if (selectedCampagneIds.length) {
+    if (selectedCampagneIds) {
       mutateCampagnesDatavisualisation(selectedCampagneIds);
       mutateCampagnesStatistics(selectedCampagneIds);
     }
@@ -127,11 +127,10 @@ const ResultsCampagnesPage = () => {
   };
 
   const hasNoTemoignages =
-    (!datavisualisation?.length &&
-      !isErrorCampagnesDatavisualisation &&
-      !isLoadingCampagnesDatavisualisation &&
-      !isIdleCampagnesDatavisualisation) ||
-    !selectedCampagneIds.length;
+    !datavisualisation?.length &&
+    !isErrorCampagnesDatavisualisation &&
+    !isLoadingCampagnesDatavisualisation &&
+    !isIdleCampagnesDatavisualisation;
 
   const emptyStatistics = {
     campagnesCount: 0,
@@ -154,7 +153,10 @@ const ResultsCampagnesPage = () => {
           campagneTableType={CAMPAGNE_TABLE_TYPES.RESULTS}
         />
       </ResultsCampagneContainer>
-      <Statistics statistics={statistics || emptyStatistics} title="Statistiques des campagnes sélectionnées" />
+      <Statistics
+        statistics={selectedCampagneIds.length ? statistics : emptyStatistics}
+        title="Statistiques des campagnes sélectionnées"
+      />
       <ResultsCampagneContainer>
         <TestimonialHeader>
           <h1>

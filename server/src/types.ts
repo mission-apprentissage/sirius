@@ -1,6 +1,16 @@
 import type { Etablissements, Formations, Questionnaires, Temoignages, Users, Verbatims } from "./db/schema";
 
-export type User = Omit<Users, "id"> & { id: string };
+export type User = Omit<Users, "id" | "accepted_cgu" | "email_confirmed"> & {
+  id: string;
+  accepted_cgu: boolean | null;
+  email_confirmed: boolean | null;
+};
+
+export type UserWithEtablissementsSiret = User & {
+  etablissements: {
+    siret: string[];
+  }[];
+};
 
 export type UserCreation = Omit<User, "first_name" | "last_name"> & {
   confirmationToken: string;
@@ -37,7 +47,7 @@ export type Temoignage = Omit<
   "id" | "is_bot" | "last_question_at" | "created_at" | "deleted_at" | "updated_at"
 > & {
   id: string;
-  is_bot: boolean | null;
+  is_bot: boolean | undefined;
   last_question_at: Date | null;
   created_at: Date | null;
   deleted_at: Date | null;

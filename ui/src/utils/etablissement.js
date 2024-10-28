@@ -1,11 +1,33 @@
 export const etablissementLabelGetter = (data) => {
   if (!data || !Object.keys(data)?.length) return "";
-  return data?.onisepNom || data?.enseigne || data?.entrepriseRaisonSociale || "";
+  return data?.entrepriseRaisonSociale || data?.onisepNom || data?.enseigne || "";
+};
+
+export const etablissementLabelGetterFromFormation = (data) => {
+  if (!data || !Object.keys(data)?.length) return "";
+  return (
+    data?.etablissementFormateurEntrepriseRaisonSociale ||
+    data?.etablissementFormateurEnseigne ||
+    data?.etablissementGestionnaireEnseigne ||
+    data?.etablissementGestionnaireEntrepriseRaisonSociale ||
+    ""
+  );
 };
 
 export const remoteEtablissementLabelGetter = (data) => {
   if (!data || !Object.keys(data)?.length) return "";
-  return data?.onisepN_nom || data?.enseigne || data?.entreprise_raison_sociale || "";
+  return data?.onisep_nom || data?.enseigne || data?.entreprise_raison_sociale || "";
+};
+
+export const remoteEtablissementLabelGetterFromFormation = (data) => {
+  if (!data || !Object.keys(data)?.length) return "";
+  return (
+    data?.etablissement_formateur_entreprise_raison_sociale ||
+    data?.etablissement_formateur_enseigne ||
+    data?.etablissement_gestionnaire_enseigne ||
+    data?.etablissement_gestionnaire_entreprise_raison_sociale ||
+    ""
+  );
 };
 
 // Vérifie si le SIRET est valide à travers sa longueur et l'algorythme de Luhn

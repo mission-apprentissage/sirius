@@ -57,6 +57,7 @@
     "react-simple-tooltip": "2.6.3",
     "react-sortablejs": "6.1.4",
     "react-spinners": "0.13.8",
+    "react-tooltip": "5.28.0",
     "sortablejs": "1.15.0",
     "type-fest": "4.26.1",
     "typescript": "5.6.3",

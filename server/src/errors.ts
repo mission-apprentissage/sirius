@@ -30,7 +30,6 @@ export const ErrorMessage = {
   UserAlreadyExistsError: "Un utilisateur avec cet email existe déjà",
   UserNotFound: "Utilisateur inconnu",
   UnconfirmedEmail: "Email non confirmé",
-  SortingTypeNotFound: "Ce type de tri n'existe pas.",
 };
 
 export const CampagneNotFoundError = class NotFoundError extends BasicError {
@@ -157,14 +156,5 @@ export const UnconfirmedEmail = class NotFoundError extends BasicError {
 
   get status() {
     return 403;
-  }
-};
-export const SortingTypeNotFoundError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
-    super(message || ErrorMessage.SortingTypeNotFound, extra);
-  }
-
-  get status() {
-    return 400;
   }
 };

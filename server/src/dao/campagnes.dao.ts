@@ -4,13 +4,15 @@ import { getKbdClient } from "../db/db";
 import type { ObserverScope } from "../types";
 
 export const getAllWithTemoignageCountAndTemplateName = async ({
-  siret,
+  //siret,
   query,
   scope,
+  allowEmptyFilter = false,
 }: {
-  siret?: string[];
+  //siret?: string[];
   query: { diplome?: string; etablissementFormateurSiret?: string; departement?: string; campagneIds: string[] };
   scope?: ObserverScope;
+  allowEmptyFilter?: boolean;
 }) => {
   let baseQuery = getKbdClient()
     .selectFrom("campagnes")
@@ -71,9 +73,11 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
     .leftJoin("temoignages", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("questionnaires", "campagnes.questionnaire_id", "questionnaires.id")
-    .leftJoin("formations", "campagnes.id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "campagnes.id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations.id", "formations_campagnes.formation_id")
     .leftJoin("etablissements", "formations.etablissement_id", "etablissements.id")
     .where("campagnes.deleted_at", "is", null)
+    .where("formations.deleted_at", "is", null)
     .groupBy(["campagnes.id", "questionnaires.id", "formations.id", "etablissements.id"]);
 
   if (scope && scope.field && scope.field !== "sirets" && scope.value) {
@@ -84,12 +88,18 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     baseQuery = baseQuery.where(`formations.etablissement_gestionnaire_siret`, "in", scope.value);
   }
 
-  if (query && query.diplome) {
-    baseQuery = baseQuery.where("formations.diplome", "=", query.diplome);
+  if (query && query.diplome?.length) {
+    baseQuery = baseQuery.where("formations.diplome", "in", query.diplome);
+  } else if (!allowEmptyFilter) {
+    // Force query to return no results by adding a false condition
+    baseQuery = baseQuery.where("formations.diplome", "in", ["INVALID_DIPLOME"]);
   }
 
-  if (query && query.etablissementFormateurSiret) {
-    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "=", query.etablissementFormateurSiret);
+  if (query && query.etablissementFormateurSiret?.length) {
+    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", query.etablissementFormateurSiret);
+  } else if (!allowEmptyFilter) {
+    // Force query to return no results by adding a false condition
+    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", ["INVALID_SIRET"]);
   }
 
   if (query && query.departement) {
@@ -100,55 +110,14 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     baseQuery = baseQuery.where("campagnes.id", "in", query.campagneIds);
   }
 
-  if (siret) {
-    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", siret);
-  }
-
-  return baseQuery.execute();
-};
-
-export const getAllOnlyDiplomeTypeAndEtablissements = async (query?: { siret?: string[] }, scope?: ObserverScope) => {
-  let baseQuery = getKbdClient()
-    .selectFrom("campagnes")
-    .leftJoin("formations", "campagnes.id", "formations.campagne_id")
-    .leftJoin("etablissements", "formations.etablissement_formateur_siret", "etablissements.siret")
-    .select([
-      "campagnes.id",
-      sql`json_build_object(
-        'id', formations.id,
-        'catalogue_id', formations.catalogue_id,
-        'code_postal', formations.code_postal,
-        'num_departement', formations.num_departement,
-        'region', formations.region,
-        'localite', formations.localite,
-        'intitule_long', formations.intitule_long,
-        'diplome', formations.diplome,
-        'duree', formations.duree,
-        'lieu_formation_adresse', formations.lieu_formation_adresse,
-        'lieu_formation_adresse_computed', formations.lieu_formation_adresse_computed,
-        'tags', formations.tags,
-        'etablissement_gestionnaire_siret', formations.etablissement_gestionnaire_siret,
-        'etablissement_gestionnaire_enseigne', formations.etablissement_gestionnaire_enseigne,
-        'etablissement_formateur_siret', formations.etablissement_formateur_siret,
-        'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
-        'etablissment_formateur_adresse', formations.etablissement_formateur_adresse,
-        'etablissement_formateur_localite', formations.etablissement_formateur_localite,
-        'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale
-      )`.as("formation"),
-    ])
-    .where("campagnes.deleted_at", "is", null);
-
-  if (scope && (scope.field === "region" || scope.field === "num_departement")) {
-    baseQuery = baseQuery.where(`formations.${scope.field}`, "=", scope.value);
-  }
-
-  if (scope && scope.field === "sirets" && scope.value) {
-    baseQuery = baseQuery.where("formations.etablissement_gestionnaire_siret", "in", scope.value);
-  }
-
-  if (query?.siret) {
-    baseQuery = baseQuery.where("etablissements.siret", "in", query.siret);
-  }
+  /*if (siret) {
+    baseQuery = baseQuery.where((qb) =>
+      qb.or([
+        qb("formations.etablissement_gestionnaire_siret", "in", siret),
+        qb("formations.etablissement_formateur_siret", "in", siret),
+      ])
+    );
+  }*/
 
   return baseQuery.execute();
 };
@@ -157,20 +126,79 @@ export const getOne = async (id: string) => {
   return getKbdClient().selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
 };
 
-export const create = async (campagne: any): Promise<{ id: string } | undefined> => {
-  const result = await getKbdClient().insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+export const create = async (campagne: any, formationId: string): Promise<string | undefined> => {
+  if (!formationId) {
+    return undefined;
+  }
 
-  return result;
+  const transaction = await getKbdClient()
+    .transaction()
+    .execute(async (trx) => {
+      const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+      if (insertedCampagne?.id) {
+        await trx
+          .insertInto("formations_campagnes")
+          .values({
+            formation_id: formationId,
+            campagne_id: insertedCampagne.id,
+          })
+          .returning("id")
+          .executeTakeFirst();
+      }
+      return insertedCampagne?.id;
+    });
+
+  return transaction;
+};
+
+export const createWithFormation = async (campagne: any, formation: any): Promise<string | undefined> => {
+  const transaction = await getKbdClient()
+    .transaction()
+    .execute(async (trx) => {
+      const insertedFormation = await trx.insertInto("formations").values(formation).returning("id").executeTakeFirst();
+
+      if (insertedFormation?.id) {
+        const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+        await trx
+          .insertInto("formations_campagnes")
+          .values({ formation_id: insertedFormation.id, campagne_id: insertedCampagne?.id })
+          .execute();
+        return insertedCampagne?.id;
+      }
+      return insertedFormation?.id;
+    });
+
+  return transaction;
 };
 
 export const deleteMany = async (ids: string[]): Promise<boolean> => {
-  const result = await getKbdClient()
-    .updateTable("campagnes")
-    .set({ deleted_at: new Date() })
-    .where("id", "in", ids)
-    .execute();
+  const transaction = await getKbdClient()
+    .transaction()
+    .execute(async (trx) => {
+      const result = await trx
+        .updateTable("campagnes")
+        .set({ deleted_at: new Date() })
+        .where("id", "in", ids)
+        .execute();
+      const formations = (await trx
+        .deleteFrom("formations_campagnes")
+        .where("campagne_id", "in", ids)
+        .returning("formation_id")
+        .execute()) as unknown as { formationId: string }[] | null;
 
-  return result[0].numUpdatedRows === BigInt(ids.length);
+      if (formations?.length) {
+        const formationIdValues = formations.map((formation) => formation.formationId);
+
+        await trx
+          .updateTable("formations")
+          .set({ deleted_at: new Date() })
+          .where("id", "in", formationIdValues)
+          .execute();
+      }
+      return result[0].numUpdatedRows === BigInt(ids.length);
+    });
+
+  return transaction;
 };
 
 export const update = async (id: string, updatedCampagne: any): Promise<boolean> => {
@@ -270,7 +298,8 @@ export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
     .leftJoin("temoignages", "temoignages_campagnes.temoignage_id", "temoignages.id")
     .leftJoin("questionnaires", "campagnes.questionnaire_id", "questionnaires.id")
-    .leftJoin("formations", "campagnes.id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "campagnes.id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations.id", "formations_campagnes.formation_id")
     .leftJoin("etablissements", "formations.etablissement_id", "etablissements.id")
     .where("campagnes.deleted_at", "is", null)
     .where("campagnes.id", "=", id)
@@ -309,13 +338,18 @@ export const getAllWithTemoignageCountFormationEtablissement = async (campagneId
         'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
         'etablissment_formateur_adresse', formations.etablissement_formateur_adresse,
         'etablissement_formateur_localite', formations.etablissement_formateur_localite,
-        'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale
+        'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
+        'rncp_code', formations.catalogue_data ->> 'rncp_code',
+        'id_certifinfo', formations.catalogue_data ->> 'id_certifinfo',
+        'cfd', formations.catalogue_data ->> 'cfd',
+        'bcn_mefs_10', formations.catalogue_data ->> 'bcn_mefs_10'
       )`.as("formation"),
       sql`json_build_object(
         'id', etablissements.id,
         'catalogue_id', etablissements.catalogue_id,
         'siret', etablissements.siret,
         'onisep_nom', etablissements.onisep_nom,
+        'onisep_url', etablissements.onisep_url,
         'enseigne', etablissements.enseigne,
         'entreprise_raison_sociale', etablissements.entreprise_raison_sociale,
         'uai', etablissements.uai,
@@ -330,7 +364,8 @@ export const getAllWithTemoignageCountFormationEtablissement = async (campagneId
     ])
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
     .leftJoin("temoignages", "temoignages_campagnes.temoignage_id", "temoignages.id")
-    .leftJoin("formations", "campagnes.id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "campagnes.id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations.id", "formations_campagnes.formation_id")
     .leftJoin("etablissements", "formations.etablissement_id", "etablissements.id")
     .where("campagnes.deleted_at", "is", null)
     .groupBy(["campagnes.id", "formations.id", "etablissements.id"]);

@@ -33,7 +33,6 @@ export const getFormations = async ({ formationIds, etablissementSiret, search }
 
     return { success: true, body: formations };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };
@@ -83,10 +82,30 @@ export const updateFormation = async (id, updatedFormation) => {
   }
 };
 
-export const alreadyExistingFormations = async (ids) => {
+export const getFormationsDiplomesWithCampagnes = async ({ userSiret }) => {
   try {
-    const existingFormations = await formationsDao.findDataIdFormationByIds(ids);
-    return { success: true, body: existingFormations.map((formation) => formation.catalogueId) };
+    const formations = await formationsDao.findAllWithCampagnesCount(userSiret);
+
+    const formattedByDiplome = formations.reduce((acc, formation) => {
+      const diplome = formation.diplome || "N/A";
+
+      if (!acc[diplome]) {
+        acc[diplome] = 0;
+      }
+
+      acc[diplome] += formation.campagnesCount;
+
+      return acc;
+    }, {});
+
+    const result = Object.keys(formattedByDiplome)
+      .map((diplome) => ({
+        intitule: diplome,
+        campagnesCount: formattedByDiplome[diplome],
+      }))
+      .sort((a, b) => b.campagnesCount - a.campagnesCount);
+
+    return { success: true, body: result };
   } catch (error) {
     return { success: false, body: error };
   }

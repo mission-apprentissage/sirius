@@ -13,7 +13,7 @@
   "scripts": {
     "cli": "node dist/index.js",
     "build:dev": "tsup-node",
-    "dev": "tsup-node --env.TSUP_WATCH true",
+    "dev": "DEBUG=* tsup-node --env.TSUP_WATCH true",
     "build": "tsup-node --env.NODE_ENV production",
     "typecheck": "tsc --noEmit",
     "kysely": "npx kysely-codegen --schema public --out-file=./src/db/schema.ts --dialect postgres"
@@ -94,7 +94,7 @@
     "sinon-chai": "3.7.0",
     "supertest": "6.3.3",
     "ts-node": "10.9.2",
-    "tsup": "^8.3.0",
+    "tsup": "8.3.0",
     "typescript": "5.0.2",
     "vitest": "^2.1.3"
   }

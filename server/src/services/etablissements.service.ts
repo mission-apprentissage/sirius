@@ -156,3 +156,13 @@ export const getEtablissementsPublicStatistics = async () => {
     return { success: false, body: error };
   }
 };
+
+export const getEtablissementsWithCampagnesCount = async ({ userSiret }) => {
+  try {
+    const etablissements = await etablissementsDao.findAllEtablissementWithCounts(userSiret);
+
+    return { success: true, body: etablissements };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};

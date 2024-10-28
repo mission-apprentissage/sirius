@@ -1,7 +1,6 @@
 // @ts-nocheck -- TODO
-
-import { CAMPAGNE_SORTING_TYPE, USER_ROLES } from "../constants";
-import { BasicError, CampagneNotFoundError, SortingTypeNotFoundError } from "../errors";
+import { USER_ROLES } from "../constants";
+import { BasicError, CampagneNotFoundError } from "../errors";
 import * as campagnesService from "../services/campagnes.service";
 import tryCatch from "../utils/tryCatch.utils";
 
@@ -11,37 +10,29 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
   const scope = isObserver ? req.user.scope : null;
   const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
 
-  const page = req.query.page || 1;
-  const pageSize = req.query.pageSize || 10;
+  const page = req.body.page || 1;
+  const pageSize = req.body.pageSize || 10;
 
-  const diplome = req.query.diplome;
-  const etablissementFormateurSiret = req.query.etablissementFormateurSiret;
-  const search = req.query.search;
-  const departement = req.query.departement;
+  const diplome = req.body.diplome;
+  const etablissementFormateurSiret = req.body.etablissementFormateurSiret;
+  const search = req.body.search;
+  const departement = req.body.departement;
 
-  let query = {};
+  const query = {};
 
   if (diplome) {
-    query = { diplome };
-  }
-
-  if (diplome && diplome === "N/A") {
-    query = { diplome: { $exists: false } };
+    query.diplome = diplome;
   }
 
   if (etablissementFormateurSiret) {
-    query = { etablissementFormateurSiret };
-  }
-
-  if (etablissementFormateurSiret && etablissementFormateurSiret === "N/A") {
-    query = { etablissementFormateurSiret: { $exists: false } };
+    query.etablissementFormateurSiret = etablissementFormateurSiret;
   }
 
   if (departement) {
-    query = { departement };
+    query.departement = departement;
   }
 
-  const { success, body, pagination } = await campagnesService.getCampagnes({
+  const { success, body, ids, pagination } = await campagnesService.getCampagnes({
     isAdmin,
     isObserver,
     userSiret,
@@ -54,7 +45,7 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
 
   if (!success) throw new BasicError();
 
-  return res.status(200).json({ body, pagination });
+  return res.status(200).json({ body, ids, pagination });
 });
 
 export const getCampagne = tryCatch(async (req: any, res: any) => {
@@ -67,8 +58,8 @@ export const getCampagne = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const createCampagne = tryCatch(async (req: any, res: any) => {
-  const { success, body } = await campagnesService.createCampagne(req.body);
+export const createCampagnes = tryCatch(async (req: any, res: any) => {
+  const { success, body } = await campagnesService.createCampagnes(req.body, req.user.id);
 
   if (!success) throw new BasicError();
 
@@ -91,14 +82,6 @@ export const updateCampagne = tryCatch(async (req: any, res: any) => {
   if (!success) throw new BasicError();
 
   return res.status(200).json(body);
-});
-
-export const createMultiCampagne = tryCatch(async (req: any, res: any) => {
-  const { success, body } = await campagnesService.createMultiCampagne(req.body, req.user.id);
-
-  if (!success) throw new BasicError();
-
-  return res.status(201).json(body);
 });
 
 export const getPdfExport = tryCatch(async (req: any, res: any) => {
@@ -133,28 +116,9 @@ export const getXlsxMultipleExport = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const getSortedCampagnes = tryCatch(async (req: any, res: any) => {
-  const isAdmin = req.user.role === USER_ROLES.ADMIN;
-  const isObserver = req.user.role === USER_ROLES.OBSERVER;
-  const scope = isObserver ? req.user.scope : null;
-
-  const { type } = req.query;
-
-  if (!Object.keys(CAMPAGNE_SORTING_TYPE).includes(type)) {
-    throw new SortingTypeNotFoundError();
-  }
-
-  const userSiret = req.user.etablissements?.map((etablissement) => etablissement.siret);
-
-  const { success, body } = await campagnesService.getSortedCampagnes(isAdmin, isObserver, userSiret, type, scope);
-
-  if (!success) throw new BasicError();
-
-  return res.status(200).json(body);
-});
-
 export const getCampagnesStatistics = tryCatch(async (req: any, res: any) => {
-  const campagneIds = req.body || [];
+  const campagneIds = req.body;
+
   const { success, body } = await campagnesService.getCampagnesStatistics(campagneIds);
 
   if (!success) throw new BasicError();

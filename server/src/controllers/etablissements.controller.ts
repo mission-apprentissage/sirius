@@ -1,3 +1,4 @@
+// @ts-nocheck -- TODO
 import { BasicError, ErrorMessage, EtablissementAlreadyExistingError, EtablissementNotFoundError } from "../errors";
 import * as etablissementsService from "../services/etablissements.service";
 import tryCatch from "../utils/tryCatch.utils";
@@ -66,6 +67,16 @@ export const getEtablissementsSuivi = tryCatch(async (_req: any, res: any) => {
 
 export const getEtablissementsPublicStatistics = tryCatch(async (_req: any, res: any) => {
   const { success, body } = await etablissementsService.getEtablissementsPublicStatistics();
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
+export const getEtablissementsWithCampagnesCount = tryCatch(async (req: any, res: any) => {
+  const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
+
+  const { success, body } = await etablissementsService.getEtablissementsWithCampagnesCount({ userSiret });
 
   if (!success) throw new BasicError();
 

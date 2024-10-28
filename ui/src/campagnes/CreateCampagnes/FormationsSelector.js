@@ -6,82 +6,85 @@ import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import { useContext, useState } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 
-import { campagnesDisplayMode, USER_ROLES } from "../../constants";
+import { DIPLOME_TYPE_MATCHER, USER_ROLES } from "../../constants";
 import { UserContext } from "../../context/UserContext";
-import useFetchAlreadyExistingFormations from "../../hooks/useFetchAlreadyExistingFormation";
+import useFetchCampagnes from "../../hooks/useFetchCampagnes";
 import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
+import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import SortButtons from "../Shared/SortButtons/SortButtons";
-import { LoaderContainer, TableContainer } from "../styles/shared.style";
+import { LoaderContainer, SelectAllFormationContainer, TableContainer } from "../styles/shared.style";
 import { isPlural } from "../utils";
-import DisplayByAllCards from "./Accordions/DisplayByAllCards";
-import DisplayByDiplomeTypeCards from "./Accordions/DisplayByDiplomeTypeCards";
-import DisplayByEtablissementCards from "./Accordions/DisplayByEtablissementCards";
+import Cards from "./Cards";
 
-const AccordionComponentGetter = ({ displayMode, ...props }) => {
-  if (displayMode === campagnesDisplayMode[0].value) {
-    return (
-      <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
-        <DisplayByDiplomeTypeCards {...props} />
-      </div>
-    );
-  } else if (displayMode === campagnesDisplayMode[1].value) {
-    return (
-      <div className={fr.cx("fr-accordions-group")} style={{ width: "100%" }}>
-        <DisplayByEtablissementCards {...props} />
-      </div>
-    );
-  } else if (displayMode === campagnesDisplayMode[2].value) {
-    return <DisplayByAllCards {...props} />;
-  }
+const REMOTE_FORMATION_BASE_QUERY = {
+  published: "true",
+  catalogue_published: "true",
+  niveau: ["3 (CAP...)", "4 (BAC...)"],
+};
+
+const REMOTE_FORMATION_FIELDS = {
+  _id: 1,
+  diplome: 1,
+  tags: 1,
+  duree: 1,
+  intitule_long: 1,
+  etablissement_formateur_siret: 1,
+  etablissement_gestionnaire_siret: 1,
+  etablissement_formateur_adresse: 1,
+  etablissement_formateur_entreprise_raison_sociale: 1,
+  etablissement_formateur_enseigne: 1,
+  lieu_formation_adresse_computed: 1,
+  lieu_formation_adresse: 1,
+  localite: 1,
+  code_postal: 1,
+};
+
+const buildSiretQuery = (isAdmin, userSiret) => {
+  const formattedUserSiret = userSiret
+    .map((siret) => [{ etablissement_formateur_siret: siret }, { etablissement_gestionnaire_siret: siret }])
+    .flat();
+  return isAdmin ? {} : { $or: formattedUserSiret };
+};
+
+const buildSearchQuery = (searchTerm) => {
+  return searchTerm
+    ? [
+        { intitule_long: { $regex: searchTerm, $options: "i" } },
+        { onisep_intitule: { $regex: searchTerm, $options: "i" } },
+      ]
+    : [];
+};
+
+const buildDiplomeQuery = (selectedDiplomesIntitule) => {
+  return selectedDiplomesIntitule ? { $or: [{ diplome: selectedDiplomesIntitule }] } : [];
 };
 
 const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
-  const [displayMode, setDisplayMode] = useState(campagnesDisplayMode[0].value);
   const [search, setSearch] = useState("");
+  const [selectedEtablissementsSiret, setSelectedEtablissementsSiret] = useState(null);
+  const [selectedDiplomesIntitule, setSelectedDiplomesIntitule] = useState(null);
+  const [diplomesOptions, setDiplomesOptions] = useState([]);
+  const [etablissementsOptions, setEtablissementsOptions] = useState([]);
   const [userContext] = useContext(UserContext);
   const [page, setPage] = useState(1);
 
   const isAdmin = userContext.user?.role === USER_ROLES.ADMIN;
   const userSiret = userContext.user?.etablissements?.map((etablissement) => etablissement.siret) || [];
 
-  const formattedUserSiret = userSiret
-    .map((siret) => [{ etablissement_formateur_siret: siret }, { etablissement_gestionnaire_siret: siret }])
-    .flat();
-
-  const baseQuery = {
-    published: "true",
-    catalogue_published: "true",
-    niveau: ["3 (CAP...)", "4 (BAC...)"],
-  };
-
-  const selectFields = {
-    _id: 1,
-    diplome: 1,
-    tags: 1,
-    duree: 1,
-    intitule_long: 1,
-    etablissement_formateur_siret: 1,
-    etablissement_gestionnaire_siret: 1,
-    etablissement_formateur_adresse: 1,
-    etablissement_formateur_entreprise_raison_sociale: 1,
-    etablissement_formateur_enseigne: 1,
-    lieu_formation_adresse_computed: 1,
-    lieu_formation_adresse: 1,
-    localite: 1,
-    code_postal: 1,
-  };
-
-  const userSiretQuery = isAdmin ? {} : { $or: formattedUserSiret }; // formattedUserSiret should be an array of objects
-
-  const searchQuery = search
-    ? [{ intitule_long: { $regex: search, $options: "i" } }, { onisep_intitule: { $regex: search, $options: "i" } }]
-    : [];
-
   const query = {
-    $and: [baseQuery, userSiretQuery, ...(searchQuery.length ? [{ $or: searchQuery }] : [])],
+    $and: [
+      REMOTE_FORMATION_BASE_QUERY,
+      buildSiretQuery(isAdmin, selectedEtablissementsSiret?.length ? selectedEtablissementsSiret : userSiret),
+      {
+        ...(selectedDiplomesIntitule?.length && {
+          ...buildDiplomeQuery(selectedDiplomesIntitule),
+        }),
+      },
+      ...buildSearchQuery(search),
+    ],
   };
 
-  const finalQuery = `query=${JSON.stringify(query)}&select=${JSON.stringify(selectFields)}`;
+  const stringifiedQuery = `query=${JSON.stringify(query)}&select=${JSON.stringify(REMOTE_FORMATION_FIELDS)}`;
 
   const {
     remoteFormations,
@@ -90,39 +93,72 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     isError: isErrorFormations,
     isLoading: isLoadingFormations,
   } = useFetchRemoteFormations({
-    query: finalQuery,
-    enabled: !!formattedUserSiret.length || isAdmin,
+    query: stringifiedQuery,
+    enabled: !!userSiret.length || isAdmin,
     page,
-    pageSize: 250,
+    pageSize: 100,
   });
 
-  const allRemoteFormationsIds = remoteFormations?.length
-    ? [...new Set(remoteFormations?.map((formation) => formation.id).flat())]
-    : [];
-
   const {
-    existingFormationIds,
-    isSuccess: isSuccessExistingFormationIds,
-    isError: isErrorExistingFormationIds,
-    isLoading: isLoadingExistingFormationIds,
-  } = useFetchAlreadyExistingFormations({
-    campagneIds: allRemoteFormationsIds,
-    enabled: !!allRemoteFormationsIds.length,
+    campagnes: campagnes,
+    isSuccess: isSuccessCampagnes,
+    isError: isErrorCampagnes,
+    isLoading: isLoadingCampagnes,
+  } = useFetchCampagnes({
+    key: search,
+    enabled: !!remoteFormations?.length,
+    pageSize: 1000,
   });
 
   const checkboxLabel = (
     <b>
-      {selectedFormations.length
-        ? `${selectedFormations.length} formation${isPlural(
-            selectedFormations.length
-          )} sélectionnée${isPlural(selectedFormations.length)}`
-        : "Tout sélectionner"}
+      {selectedFormations.length === remoteFormations?.length
+        ? "Désélectionner toutes les formations"
+        : "Sélectionner toutes les formations"}
     </b>
   );
 
+  if (
+    remoteFormationsPagination?.nombre_de_page < 2 &&
+    remoteFormations?.length &&
+    !etablissementsOptions.length &&
+    !diplomesOptions.length
+  ) {
+    const etablissements = remoteFormations
+      ?.map((formation) => {
+        const uniqueFormations = remoteFormations.filter(
+          (remoteFormation) => remoteFormation.etablissement_formateur_siret === formation.etablissement_formateur_siret
+        );
+
+        return {
+          value: formation.etablissement_formateur_siret,
+          label: remoteEtablissementLabelGetterFromFormation(formation),
+          hintText: `${uniqueFormations.length} formation${isPlural(uniqueFormations.length)}`,
+        };
+      })
+      .filter((formation, index, self) => index === self.findIndex((t) => t.value === formation.value));
+
+    const diplome = remoteFormations
+      ?.map((formation) => {
+        const uniqueFormations = remoteFormations.filter(
+          (remoteFormation) => remoteFormation.diplome === formation.diplome
+        );
+
+        return {
+          value: formation.diplome,
+          label: DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome,
+          hintText: `${uniqueFormations.length} formation${isPlural(uniqueFormations.length)}`,
+        };
+      })
+      .filter((formation, index, self) => index === self.findIndex((t) => t.value === formation.value));
+
+    setEtablissementsOptions(etablissements);
+    setDiplomesOptions(diplome);
+  }
+
   return (
     <>
-      {(isErrorFormations || isErrorExistingFormationIds) && (
+      {(isErrorFormations || isErrorCampagnes) && (
         <Alert
           title="Une erreur s'est produite dans le chargement des formations"
           description="Merci de réessayer ultérieurement"
@@ -130,19 +166,50 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
         />
       )}
       <>
-        <SortButtons
-          displayMode={displayMode}
-          setDisplayMode={setDisplayMode}
-          search={search}
-          setSearch={setSearch}
-          organizeLabel="Organiser mes formations par"
-        />
-        {(isLoadingFormations || isLoadingExistingFormationIds) && (
-          <LoaderContainer>
-            <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
-          </LoaderContainer>
+        {isSuccessFormations && (
+          <>
+            <SortButtons
+              search={search}
+              setSearch={setSearch}
+              selectedEtablissementsSiret={selectedEtablissementsSiret}
+              setSelectedEtablissementsSiret={setSelectedEtablissementsSiret}
+              selectedDiplomesIntitule={selectedDiplomesIntitule}
+              setSelectedDiplomesIntitule={setSelectedDiplomesIntitule}
+              etablissementsOptions={etablissementsOptions}
+              diplomesOptions={diplomesOptions}
+              showSelect={!!remoteFormationsPagination?.nombre_de_page < 2}
+            />
+            <SelectAllFormationContainer>
+              <Checkbox
+                disabled={!remoteFormations?.length}
+                options={[
+                  {
+                    label: checkboxLabel,
+                    hintText: remoteFormationsPagination?.total
+                      ? `${selectedFormations.length}/${
+                          remoteFormationsPagination?.total
+                        } formation${isPlural(selectedFormations.length)} sélectionnée${isPlural(
+                          selectedFormations.length
+                        )}`
+                      : "",
+                    nativeInputProps: {
+                      name: `selectAll`,
+                      checked: selectedFormations?.length === remoteFormations?.length,
+                      onChange: () => {
+                        if (selectedFormations.length === remoteFormations.length) {
+                          setSelectedFormations([]);
+                        } else {
+                          setSelectedFormations(remoteFormations);
+                        }
+                      },
+                    },
+                  },
+                ]}
+              />
+            </SelectAllFormationContainer>
+          </>
         )}
-        {isSuccessExistingFormationIds && isSuccessFormations && !remoteFormations?.length ? (
+        {isSuccessCampagnes && isSuccessFormations && search && !remoteFormations?.length ? (
           <Alert
             title={`Aucun résultats pour votre recherche « ${search} »`}
             description={
@@ -153,57 +220,33 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
             severity="info"
           />
         ) : null}
-        {isSuccessFormations && isSuccessExistingFormationIds && remoteFormations.length ? (
-          <>
-            <Checkbox
-              options={[
-                {
-                  label: checkboxLabel,
-                  nativeInputProps: {
-                    name: `selectAll`,
-                    checked: selectedFormations.length === remoteFormations.length - existingFormationIds.length,
-                    onChange: (e) => {
-                      setSelectedFormations((prevValues) => {
-                        if (e.target.checked) {
-                          return [
-                            ...new Set([
-                              ...prevValues,
-                              ...remoteFormations.filter((formation) => !existingFormationIds.includes(formation._id)),
-                            ]),
-                          ];
-                        } else {
-                          return [];
-                        }
-                      });
-                    },
-                  },
-                },
-              ]}
+        {isLoadingFormations || isLoadingCampagnes ? (
+          <LoaderContainer>
+            <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
+          </LoaderContainer>
+        ) : (
+          <TableContainer>
+            <Cards
+              displayedFormations={remoteFormations}
+              selectedFormations={selectedFormations}
+              setSelectedFormations={setSelectedFormations}
+              campagnes={campagnes || []}
             />
-            <TableContainer>
-              <AccordionComponentGetter
-                displayedFormations={remoteFormations}
-                selectedFormations={selectedFormations}
-                setSelectedFormations={setSelectedFormations}
-                displayMode={displayMode}
-                existingFormationIds={existingFormationIds}
+            {remoteFormationsPagination?.nombre_de_page > 1 && (
+              <Pagination
+                count={remoteFormationsPagination.nombre_de_page}
+                defaultPage={page}
+                getPageLinkProps={(pageNumber) => ({
+                  onClick: (event) => {
+                    event.preventDefault();
+                    setPage(pageNumber);
+                  },
+                  key: `pagination-link-${pageNumber}`,
+                })}
               />
-              {remoteFormationsPagination.nombre_de_page > 1 && (
-                <Pagination
-                  count={remoteFormationsPagination.nombre_de_page}
-                  defaultPage={page}
-                  getPageLinkProps={(pageNumber) => ({
-                    onClick: (event) => {
-                      event.preventDefault();
-                      setPage(pageNumber);
-                    },
-                    key: `pagination-link-${pageNumber}`,
-                  })}
-                />
-              )}
-            </TableContainer>
-          </>
-        ) : null}
+            )}
+          </TableContainer>
+        )}
       </>
     </>
   );

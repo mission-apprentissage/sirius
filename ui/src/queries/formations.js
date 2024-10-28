@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "../utils/api.utils";
+import { apiGet } from "../utils/api.utils";
 
 export const fetchRemoteFormations = async ({ query = null, page = 1, pageSize = 30 }) => {
   let url = `https://catalogue-apprentissage.intercariforef.org/api/v1/entity/formations?page=${page}&limit=${pageSize}`;
@@ -14,19 +14,6 @@ export const fetchRemoteFormations = async ({ query = null, page = 1, pageSize =
     return response;
   }
   throw new Error("Erreur dans le chargement des formations du catalogue");
-};
-
-export const fetchAlreadyExistingFormations = async ({ campagneIds, token }) => {
-  const response = await apiPost("/formations/already-existing", {
-    body: campagneIds,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (response) {
-    return response;
-  }
-  throw new Error("Erreur dans le chargement des formations déjà créées");
 };
 
 export const fetchLocalFormations = async ({ token, etablissementSiret, search }) => {
@@ -52,6 +39,22 @@ export const fetchLocalFormations = async ({ token, etablissementSiret, search }
 
   if (response.error) {
     throw new Error("Erreur dans le chargement des formations locales");
+  }
+
+  return response;
+};
+
+export const fetchDiplomesWithCampagnes = async ({ token }) => {
+  const url = `/api/formations/diplomes-with-campagnes`;
+
+  const response = await apiGet(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.error) {
+    throw new Error("Erreur dans le chargement des diplômes");
   }
 
   return response;

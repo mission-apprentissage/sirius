@@ -6,7 +6,6 @@ import createCampagneTableRows from "../../CreateCampagnes/createCampagneTableRo
 import manageCampagneTableRows from "../../ManageCampagne/manageCampagneTableRows";
 import resultsCampagneTableRows from "../../ResultsCampagnes/resultsCampagnesTableRows";
 import { HeaderItem } from "../../styles/shared.style";
-import { TableContainer } from "./campagnesTable.style";
 
 const headers = [
   "",
@@ -52,7 +51,6 @@ const CampagnesTable = ({
   displayedCampagnes = [],
   selectedCampagneIds,
   setSelectedCampagneIds,
-  displayMode,
   campagneTableType,
   formik = {},
   selectedFormations = [],
@@ -61,48 +59,39 @@ const CampagnesTable = ({
 }) => {
   if (campagneTableType === CAMPAGNE_TABLE_TYPES.MANAGE) {
     return (
-      <TableContainer>
-        <Table
-          headers={headers}
-          data={manageCampagneTableRows({
-            displayedCampagnes,
-            selectedCampagneIds,
-            setSelectedCampagneIds,
-            displayMode,
-          })}
-        />
-      </TableContainer>
+      <Table
+        headers={headers}
+        data={manageCampagneTableRows({
+          displayedCampagnes,
+          selectedCampagneIds,
+          setSelectedCampagneIds,
+        })}
+      />
     );
   }
   if (campagneTableType === CAMPAGNE_TABLE_TYPES.RESULTS) {
     return (
-      <TableContainer>
-        <Table
-          headers={headers}
-          data={resultsCampagneTableRows({
-            displayedCampagnes,
-            selectedCampagneIds,
-            setSelectedCampagneIds,
-            displayMode,
-          })}
-        />
-      </TableContainer>
+      <Table
+        headers={headers}
+        data={resultsCampagneTableRows({
+          displayedCampagnes,
+          selectedCampagneIds,
+          setSelectedCampagneIds,
+        })}
+      />
     );
   }
   if (campagneTableType === CAMPAGNE_TABLE_TYPES.CREATE) {
     return (
-      <TableContainer>
-        <Table
-          headers={createHeaders}
-          data={createCampagneTableRows({
-            selectedFormations,
-            selectedFormationsAction,
-            setSelectedFormationsAction,
-            formik,
-            displayMode,
-          })}
-        />
-      </TableContainer>
+      <Table
+        headers={createHeaders}
+        data={createCampagneTableRows({
+          selectedFormations,
+          selectedFormationsAction,
+          setSelectedFormationsAction,
+          formik,
+        })}
+      />
     );
   }
 };

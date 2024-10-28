@@ -1,17 +1,14 @@
 // @ts-nocheck -- TODO
-
 import express from "express";
 
 import {
-  createCampagne,
-  createMultiCampagne,
+  createCampagnes,
   deleteCampagnes,
   getCampagne,
   getCampagnes,
   getCampagnesStatistics,
   getPdfExport,
   getPdfMultipleExport,
-  getSortedCampagnes,
   getXlsxMultipleExport,
   updateCampagne,
 } from "../controllers/campagnes.controller";
@@ -24,31 +21,23 @@ import { createCampagneSchema, createMultiCampagneSchema } from "../validators/c
 export const campagnes = () => {
   const router = express.Router();
 
-  router.get("/api/campagnes/", verifyUser, (req, res, next) => {
-    getCampagnes(req, res, next);
-  });
+  router.post(
+    "/api/campagnes/create",
+    verifyUser,
+    async (req, _res, next) => isAdminOrAllowed(req, next, TYPES.ETABLISSEMENT_FORMATEUR_SIRET),
+    validator(createMultiCampagneSchema),
+    (req, res, next) => {
+      createCampagnes(req, res, next);
+    }
+  );
 
-  router.get("/api/campagnes/sorted", verifyUser, (req, res, next) => {
-    getSortedCampagnes(req, res, next);
+  router.post("/api/campagnes/", verifyUser, (req, res, next) => {
+    getCampagnes(req, res, next);
   });
 
   router.post("/api/campagnes/statistics", verifyUser, (req, res, next) => {
     getCampagnesStatistics(req, res, next);
   });
-
-  router.post("/api/campagnes/", verifyUser, validator(createCampagneSchema), (req, res, next) => {
-    createCampagne(req, res, next);
-  });
-
-  router.post(
-    "/api/campagnes/multi",
-    verifyUser,
-    async (req, _res, next) => isAdminOrAllowed(req, next, TYPES.ETABLISSEMENT_FORMATEUR_SIRET),
-    validator(createMultiCampagneSchema),
-    (req, res, next) => {
-      createMultiCampagne(req, res, next);
-    }
-  );
 
   router.delete(
     "/api/campagnes",

@@ -108,7 +108,7 @@ export const updateTemoignage = async (id, updatedTemoignage) => {
   }
 };
 
-export const getDatavisualisation = async (campagneIds) => {
+export const getDatavisualisation = async (campagneIds = []) => {
   try {
     const query = { campagneIds };
     const temoignages = await temoignagesDao.findAllWithVerbatims(query);

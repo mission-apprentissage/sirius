@@ -3,21 +3,17 @@
 import express from "express";
 
 import {
-  alreadyExistingFormations,
   createFormation,
   deleteFormation,
   getFormations,
+  getFormationsDiplomesWithCampagnes,
   getFormationsWithTemoignageCount,
   updateFormation,
 } from "../controllers/formations.controller";
 import { isAdminOrAllowed, TYPES } from "../middlewares/isAdminOrAllowed";
 import { validator } from "../middlewares/validatorMiddleware";
 import { verifyUser } from "../middlewares/verifyUserMiddleware";
-import {
-  alreadyExistingFormationSchema,
-  createFormationSchema,
-  updateFormationSchema,
-} from "../validators/formations.validators";
+import { createFormationSchema, updateFormationSchema } from "../validators/formations.validators";
 
 export const formations = () => {
   const router = express.Router();
@@ -45,11 +41,6 @@ export const formations = () => {
     getFormationsWithTemoignageCount(req, res, next);
   });
 
-  // unused at the moment
-  /*router.get("/api/formations/:id", verifyUser, (req, res, next) => {
-    getFormation(req, res, next);
-  });*/
-
   router.delete(
     "/api/formations/:id",
     verifyUser,
@@ -69,14 +60,9 @@ export const formations = () => {
     }
   );
 
-  router.post(
-    "/api/formations/already-existing",
-    verifyUser,
-    validator(alreadyExistingFormationSchema),
-    (req, res, next) => {
-      alreadyExistingFormations(req, res, next);
-    }
-  );
+  router.get("/api/formations/diplomes-with-campagnes", verifyUser, (req, res, next) => {
+    getFormationsDiplomesWithCampagnes(req, res, next);
+  });
 
   return router;
 };

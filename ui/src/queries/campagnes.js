@@ -1,29 +1,18 @@
 import { apiDelete, apiGet, apiPost } from "../utils/api.utils";
 
-export const fetchCampagnes = async ({ query = null, page = 1, pageSize = 10, token }) => {
-  const response = await apiGet("/api/campagnes", {
-    querystring: { page, pageSize, ...(query ? { query } : {}) },
+export const fetchCampagnes = async ({ search, diplome, siret, page = 1, pageSize = 10, token }) => {
+  const response = await apiPost("/api/campagnes", {
+    body: { page, pageSize, search, diplome, siret },
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (response.body) {
-    return response;
-  }
-  throw new Error("Erreur dans le chargement des campagnes");
-};
 
-export const fetchCampagnesSorted = async ({ type = null, token }) => {
-  const response = await apiGet(`/api/campagnes/sorted`, {
-    querystring: { type },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
   if (response) {
     return response;
   }
-  throw new Error("Erreur dans le chargement des campagnes triées");
+
+  throw new Error("Erreur dans le chargement des campagnes");
 };
 
 export const fetchCampagnesStatistics = async ({ campagneIds, token }) => {
@@ -54,7 +43,7 @@ export const deleteCampagnes = async ({ campagneIds, siret, token }) => {
 };
 
 export const createCampagnes = async ({ campagnes, token }) => {
-  const response = await apiPost("/api/campagnes/multi", {
+  const response = await apiPost("/api/campagnes/create", {
     body: campagnes,
     headers: {
       Authorization: `Bearer ${token}`,

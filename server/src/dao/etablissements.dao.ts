@@ -110,7 +110,9 @@ export const update = async (id: string, updatedEtablissement: Partial<Etablisse
   return result.numUpdatedRows === BigInt(1);
 };
 
-export const findAllEtablissementWithCounts = async (): Promise<
+export const findAllEtablissementWithCounts = async (
+  siret: string[]
+): Promise<
   (Pick<
     Etablissement,
     "id" | "created_at" | "enseigne" | "entreprise_raison_sociale" | "onisep_nom" | "region_implantation_nom" | "siret"
@@ -120,7 +122,7 @@ export const findAllEtablissementWithCounts = async (): Promise<
     verbatimsCount: number;
   })[]
 > => {
-  return getKbdClient()
+  let baseQuery = getKbdClient()
     .selectFrom("etablissements")
     .select([
       "etablissements.id",
@@ -130,21 +132,34 @@ export const findAllEtablissementWithCounts = async (): Promise<
       "etablissements.entreprise_raison_sociale",
       "etablissements.region_implantation_nom",
       "etablissements.created_at",
-      sql<number>`COUNT(DISTINCT formations.campagne_id) FILTER (WHERE formations.id IS NOT NULL)`.as("campagnesCount"),
+      sql<number>`COUNT(DISTINCT formations_campagnes.campagne_id) FILTER (WHERE formations.id IS NOT NULL)`.as(
+        "campagnesCount"
+      ),
       sql<number>`COUNT(DISTINCT temoignages_campagnes.temoignage_id) FILTER (WHERE temoignages_campagnes.temoignage_id IS NOT NULL)`.as(
         "temoignagesCount"
       ),
       sql<number>`COUNT(DISTINCT verbatims.id) FILTER (WHERE verbatims.id IS NOT NULL)`.as("verbatimsCount"),
     ])
     .leftJoin("formations", "formations.etablissement_id", "etablissements.id")
-    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
+    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
     .leftJoin("verbatims", "verbatims.temoignage_id", "temoignages_campagnes.temoignage_id")
     .where("etablissements.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
     .where("verbatims.deleted_at", "is", null)
     .groupBy("etablissements.id")
-    .orderBy("verbatimsCount", "desc")
-    .execute();
+    .orderBy("campagnesCount", "desc");
+
+  if (siret?.length) {
+    baseQuery = baseQuery.where((qb) =>
+      qb.or([
+        qb("formations.etablissement_gestionnaire_siret", "in", siret),
+        qb("formations.etablissement_formateur_siret", "in", siret),
+      ])
+    );
+  }
+
+  return baseQuery.execute();
 };
 
 export const count = async (): Promise<number> => {
@@ -190,7 +205,8 @@ export const findAllWithTemoignageCount = async (): Promise<
       ),
     ])
     .leftJoin("formations", "formations.etablissement_id", "etablissements.id")
-    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
+    .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
     .where("etablissements.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
     .groupBy("etablissements.id")

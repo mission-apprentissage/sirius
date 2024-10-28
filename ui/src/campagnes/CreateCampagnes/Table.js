@@ -1,13 +1,12 @@
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
+import React from "react";
 
-import { CAMPAGNE_TABLE_TYPES, campagnesDisplayMode } from "../../../constants";
-import CampagnesTable from "../../Shared/CampagnesTable/CampagnesTable";
-import { isPlural } from "../../utils";
-import CommonEndDateModal from "../CommonEndDateModal";
-import RemoveFormationModal from "../RemoveFormationModal";
-import { ButtonContainer } from "./accordions.style";
+import { CAMPAGNE_TABLE_TYPES } from "../../constants";
+import CampagnesTable from "../Shared/CampagnesTable/CampagnesTable";
+import { ButtonContainer } from "../styles/shared.style";
+import CommonEndDateModal from "./CommonEndDateModal";
+import RemoveFormationModal from "./RemoveFormationModal";
 
 const modal = createModal({
   id: "remove-formation-modal",
@@ -19,7 +18,7 @@ const commonEndDateModal = createModal({
   isOpenedByDefault: false,
 });
 
-const DisplayByAllTable = ({
+const Table = ({
   selectedFormations,
   setSelectedFormations,
   setSearchedDiplayedFormations,
@@ -27,38 +26,9 @@ const DisplayByAllTable = ({
   setSelectedFormationsAction,
   formik,
 }) => {
-  const selectedFormationsActionCount = selectedFormationsAction.length;
-
-  const checkboxLabel = (
-    <b>
-      {selectedFormationsActionCount
-        ? `${selectedFormationsActionCount} formation${isPlural(
-            selectedFormationsActionCount
-          )} sélectionnée${isPlural(selectedFormationsActionCount)}`
-        : "Tout sélectionner"}
-    </b>
-  );
-
   return (
     <>
       <ButtonContainer>
-        <Checkbox
-          options={[
-            {
-              label: checkboxLabel,
-              nativeInputProps: {
-                name: `selectAll`,
-                checked:
-                  selectedFormationsAction.length > 0 &&
-                  selectedFormationsActionCount === selectedFormationsAction.length,
-                onChange: (e) =>
-                  setSelectedFormationsAction(
-                    e.target.checked ? [...selectedFormations.map((formation) => formation._id)] : []
-                  ),
-              },
-            },
-          ]}
-        />
         <Button
           priority="secondary"
           iconId="fr-icon-delete-line"
@@ -81,7 +51,6 @@ const DisplayByAllTable = ({
         selectedFormationsAction={selectedFormationsAction}
         setSelectedFormationsAction={setSelectedFormationsAction}
         formik={formik}
-        displayMode={campagnesDisplayMode[2].value}
         campagneTableType={CAMPAGNE_TABLE_TYPES.CREATE}
       />
       <RemoveFormationModal
@@ -101,4 +70,4 @@ const DisplayByAllTable = ({
   );
 };
 
-export default DisplayByAllTable;
+export default Table;

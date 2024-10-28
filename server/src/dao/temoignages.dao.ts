@@ -83,7 +83,7 @@ export const findAllWithVerbatims = async (query: { campagneIds: string[] }) => 
     .where("verbatims.deleted_at", "is", null)
     .groupBy(["temoignages.id", "temoignages_campagnes.campagne_id"]);
 
-  if ("campagneIds" in query && query.campagneIds) {
+  if ("campagneIds" in query && query.campagneIds.length) {
     queryBuilder = queryBuilder.where("temoignages_campagnes.campagne_id", "in", query.campagneIds);
   }
 
@@ -97,6 +97,8 @@ export const deleteOne = async (id: string): Promise<boolean> => {
     .set({ deleted_at: new Date() })
     .where("id", "=", id)
     .executeTakeFirst();
+
+  await getKbdClient().deleteFrom("temoignages_campagnes").where("temoignage_id", "=", id).execute();
 
   return result.numUpdatedRows === BigInt(1);
 };
@@ -112,6 +114,8 @@ export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boo
   const ids = idsToUpdate.map((row) => row.id);
 
   if (ids.length > 0) {
+    await getKbdClient().deleteFrom("temoignages_campagnes").where("temoignage_id", "in", ids).execute();
+
     const result = await getKbdClient()
       .updateTable("temoignages")
       .set({ deleted_at: new Date() })
@@ -194,7 +198,8 @@ export const getAllTemoignagesWithFormation = async (query: Partial<Temoignage>,
   let baseQuery = getKbdClient()
     .selectFrom("temoignages")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
-    .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .select([
       "temoignages.id",
       "temoignages.reponses",
@@ -259,7 +264,8 @@ export const getAllWithFormationAndQuestionnaire = async (
     .selectFrom("temoignages")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
-    .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .select([
       "temoignages.id",
       "temoignages.reponses",

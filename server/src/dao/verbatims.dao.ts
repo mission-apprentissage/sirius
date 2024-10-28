@@ -1,3 +1,4 @@
+import type { UpdateResult } from "kysely";
 import { sql } from "kysely";
 import { executeWithOffsetPagination } from "kysely-paginate";
 
@@ -35,7 +36,8 @@ export const count = async (
     .selectFrom("verbatims")
     .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
-    .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .where("verbatims.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
     .where("temoignages.deleted_at", "is", null);
@@ -90,7 +92,8 @@ export const getAllWithFormation = async (query: any = {}, onlyDiscrepancies: bo
     ])
     .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
-    .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .where("verbatims.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
     .where("temoignages.deleted_at", "is", null)
@@ -143,7 +146,8 @@ export const getAllWithFormationAndCampagne = async (temoignagesIds: string[], s
     .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
-    .leftJoin("formations", "temoignages_campagnes.campagne_id", "formations.campagne_id")
+    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .select([
       "verbatims.id",
       "verbatims.question_key",
@@ -195,4 +199,20 @@ export const getOne = async (query: { temoignageId: string; questionKey: string 
     .where("temoignage_id", "=", query.temoignageId)
     .where("question_key", "=", query.questionKey)
     .executeTakeFirst();
+};
+
+export const deleteManyByCampagneIds = async (campagneIds: string[]): Promise<UpdateResult[]> => {
+  const temoignages = await getKbdClient()
+    .selectFrom("temoignages_campagnes")
+    .select("temoignage_id")
+    .where("campagne_id", "in", campagneIds)
+    .execute();
+
+  const temoignagesIds = temoignages.map((t) => t.temoignage_id);
+
+  return getKbdClient()
+    .updateTable("verbatims")
+    .set({ deleted_at: new Date() })
+    .where("temoignage_id", "in", temoignagesIds)
+    .execute();
 };

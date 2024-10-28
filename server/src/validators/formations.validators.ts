@@ -9,5 +9,3 @@ export const createFormationSchema = Joi.object({
 export const updateFormationSchema = Joi.object({
   campagneId: Joi.string().required(),
 });
-
-export const alreadyExistingFormationSchema = Joi.array().items(Joi.string());
