@@ -82,6 +82,10 @@ ENV REACT_APP_VERSION=$PUBLIC_VERSION
 ARG PUBLIC_ENV
 ENV REACT_APP_ENV=$PUBLIC_ENV
 
+RUN yarn workspace ui dsfr:copy
+RUN yarn workspace ui dsfr:update
+RUN yarn workspace ui build
+
 RUN yarn workspace ui build
 
 # Production image, copy all the files and run next
