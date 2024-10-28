@@ -50,6 +50,11 @@ export const up = async (db: Kysely<Database>) => {
     .execute();
 };
 
-export const down = async () => {
-  return null;
+export const down = async (db: Kysely<Database>) => {
+  await db.schema.dropIndex("idx_formations_campagnes_formation_id").execute();
+  await db.schema.dropIndex("idx_formations_campagnes_campagne_id").execute();
+
+  await db.schema.alterTable("formations").addColumn("campagne_id", "uuid").execute();
+
+  await db.schema.dropTable("formations_campagnes").execute();
 };

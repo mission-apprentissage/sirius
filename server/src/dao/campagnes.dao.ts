@@ -165,6 +165,7 @@ export const createWithFormation = async (campagne: any, formation: any): Promis
           .execute();
         return insertedCampagne?.id;
       }
+      return insertedFormation?.id;
     });
 
   return transaction;
