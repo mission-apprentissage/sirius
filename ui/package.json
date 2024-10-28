@@ -12,7 +12,6 @@
     "serve": "ws --port 3000 --log.format dev --spa index.html",
     "eject": "react-scripts eject",
     "predev": "react-dsfr update-icons",
-    "prebuild": "react-dsfr update-icons",
     "dsfr:copy": "react-dsfr copy-static-assets",
     "dsfr:update": "react-dsfr update-icons",
     "typecheck": "tsc --noEmit"
