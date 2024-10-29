@@ -5,16 +5,14 @@ import * as campagnesService from "../services/campagnes.service";
 import tryCatch from "../utils/tryCatch.utils";
 
 export const getCampagnes = tryCatch(async (req: any, res: any) => {
-  const isAdmin = req.user.role === USER_ROLES.ADMIN;
   const isObserver = req.user.role === USER_ROLES.OBSERVER;
   const scope = isObserver ? req.user.scope : null;
-  const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
 
   const page = req.body.page || 1;
   const pageSize = req.body.pageSize || 10;
 
   const diplome = req.body.diplome;
-  const etablissementFormateurSiret = req.body.siret;
+  const siret = req.body.siret;
   const search = req.body.search;
   const departement = req.body.departement;
 
@@ -24,8 +22,8 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
     query.diplome = diplome;
   }
 
-  if (etablissementFormateurSiret) {
-    query.etablissementFormateurSiret = etablissementFormateurSiret;
+  if (siret) {
+    query.siret = siret;
   }
 
   if (departement) {
@@ -33,9 +31,7 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
   }
 
   const { success, body, ids, pagination } = await campagnesService.getCampagnes({
-    isAdmin,
     isObserver,
-    userSiret,
     scope,
     page,
     pageSize,

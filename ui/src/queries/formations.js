@@ -44,8 +44,8 @@ export const fetchLocalFormations = async ({ token, etablissementSiret, search }
   return response;
 };
 
-export const fetchDiplomesWithCampagnes = async ({ token }) => {
-  const url = `/api/formations/diplomes-with-campagnes`;
+export const fetchDiplomesAndEtablissementsFilter = async ({ token }) => {
+  const url = `/api/formations/diplomes-and-etablissements-filters`;
 
   const response = await apiGet(url, {
     headers: {
@@ -54,7 +54,7 @@ export const fetchDiplomesWithCampagnes = async ({ token }) => {
   });
 
   if (response.error) {
-    throw new Error("Erreur dans le chargement des diplômes");
+    throw new Error("Erreur dans le chargement des diplômes et établissements");
   }
 
   return response;

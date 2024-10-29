@@ -15,15 +15,14 @@ import {
 import { UserContext } from "../../../context/UserContext";
 import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
 import useFetchDiplomesWithCampagnesCount from "../../../hooks/useFetchDiplomesWithCampagnesCount";
-import useFetchEtablissementsWithCampagnes from "../../../hooks/useFetchEtablissementsWithCampagnesCount";
-import { etablissementLabelGetter } from "../../../utils/etablissement";
+import { etablissementLabelGetterFromFormation } from "../../../utils/etablissement";
 import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
 import { ButtonContainer } from "../../styles/resultsCampagnes.style";
 import { HeaderContainer, LoaderContainer } from "../../styles/shared.style";
 import { isPlural } from "../../utils";
 import CampagnesTable from "../CampagnesTable/CampagnesTable";
 import { TableContainer } from "../CampagnesTable/campagnesTable.style";
-import SortButtons from "../SortButtons/SortButtons";
+import FilterButtons from "../FilterButtons/FilterButtons";
 
 const CampagnesSelector = ({
   selectedCampagneIds,
@@ -58,9 +57,12 @@ const CampagnesSelector = ({
     page: page,
     pageSize: 20,
   });
-  const { etablissementsWithCampagnes, isSuccess: isSuccessEtablissementsWithCampagnes } =
-    useFetchEtablissementsWithCampagnes();
-  const { diplomesWithCampagnes, isSuccess: isSuccessDiplomesWithCampagnes } = useFetchDiplomesWithCampagnesCount();
+
+  const {
+    diplomesFilter,
+    etablissementsFilter,
+    isSuccess: isSuccessDiplomesAndEtablissementsFilter,
+  } = useFetchDiplomesWithCampagnesCount();
 
   const currentPageCampagneIds = campagnes?.map((campagne) => campagne.id);
 
@@ -106,8 +108,8 @@ const CampagnesSelector = ({
           severity="error"
         />
       ) : null}
-      {isSuccessDiplomesWithCampagnes && isSuccessEtablissementsWithCampagnes && (
-        <SortButtons
+      {isSuccessDiplomesAndEtablissementsFilter && (
+        <FilterButtons
           search={search}
           setSearch={setSearch}
           setIsOpened={setIsOpened}
@@ -115,12 +117,12 @@ const CampagnesSelector = ({
           setSelectedEtablissementsSiret={setSelectedEtablissementsSiret}
           selectedDiplomesIntitule={selectedDiplomesIntitule}
           setSelectedDiplomesIntitule={setSelectedDiplomesIntitule}
-          etablissementsOptions={etablissementsWithCampagnes?.map((etablissement) => ({
-            label: etablissementLabelGetter(etablissement),
-            value: etablissement.siret,
+          etablissementsOptions={etablissementsFilter?.map((etablissement) => ({
+            label: etablissementLabelGetterFromFormation(etablissement),
+            value: etablissement.etablissementFormateurSiret,
             hintText: `${etablissement.campagnesCount} campagne${isPlural(etablissement.campagnesCount)}`,
           }))}
-          diplomesOptions={diplomesWithCampagnes?.map((diplome) => ({
+          diplomesOptions={diplomesFilter?.map((diplome) => ({
             label: DIPLOME_TYPE_MATCHER[diplome.intitule] || diplome.intitule,
             value: diplome.intitule,
             hintText: `${diplome.campagnesCount} campagne${isPlural(diplome.campagnesCount)}`,

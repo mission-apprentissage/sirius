@@ -82,9 +82,9 @@ export const updateFormation = async (id, updatedFormation) => {
   }
 };
 
-export const getFormationsDiplomesWithCampagnes = async ({ userSiret }) => {
+export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({ userSiret, scope }) => {
   try {
-    const formations = await formationsDao.findAllWithCampagnesCount(userSiret);
+    const formations = await formationsDao.findAllWithCampagnesCount(userSiret, scope);
 
     const formattedByDiplome = formations.reduce((acc, formation) => {
       const diplome = formation.diplome || "N/A";
@@ -98,14 +98,41 @@ export const getFormationsDiplomesWithCampagnes = async ({ userSiret }) => {
       return acc;
     }, {});
 
-    const result = Object.keys(formattedByDiplome)
+    const formattedByEtablissement = formations.reduce((acc, formation) => {
+      const etablissementFormateurSiret = formation.etablissementFormateurSiret || "N/A";
+
+      if (!acc[etablissementFormateurSiret]) {
+        acc[etablissementFormateurSiret] = {
+          campagnesCount: 0,
+          etablissementFormateurEnseigne: formation.etablissementFormateurEnseigne,
+          etablissementFormateurEntrepriseRaisonSociale: formation.etablissementFormateurEntrepriseRaisonSociale,
+          etablissementFormateurSiret: formation.etablissementFormateurSiret,
+        };
+      }
+
+      acc[etablissementFormateurSiret].campagnesCount += formation.campagnesCount;
+
+      return acc;
+    }, {});
+
+    const diplomes = Object.keys(formattedByDiplome)
       .map((diplome) => ({
         intitule: diplome,
         campagnesCount: formattedByDiplome[diplome],
       }))
       .sort((a, b) => b.campagnesCount - a.campagnesCount);
 
-    return { success: true, body: result };
+    const etablissements = Object.keys(formattedByEtablissement)
+      .map((etablissement) => ({
+        etablissementFormateurSiret: etablissement,
+        etablissementFormateurEnseigne: formattedByEtablissement[etablissement].etablissementFormateurEnseigne,
+        etablissementFormateurEntrepriseRaisonSociale:
+          formattedByEtablissement[etablissement].etablissementFormateurEntrepriseRaisonSociale,
+        campagnesCount: formattedByEtablissement[etablissement].campagnesCount,
+      }))
+      .sort((a, b) => b.campagnesCount - a.campagnesCount);
+
+    return { success: true, body: { diplomes, etablissements } };
   } catch (error) {
     return { success: false, body: error };
   }

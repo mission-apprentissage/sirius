@@ -85,8 +85,8 @@ export const ButtonContainer = styled.div`
 export const IntituleFormation = styled.h6`
   color: var(--text-action-high-blue-france);
   font-weight: 700;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 14px;
+  line-height: 20px;
   margin: 10px 0;
 `;
 

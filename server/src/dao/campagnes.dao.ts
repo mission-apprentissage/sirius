@@ -4,13 +4,11 @@ import { getKbdClient } from "../db/db";
 import type { ObserverScope } from "../types";
 
 export const getAllWithTemoignageCountAndTemplateName = async ({
-  //siret,
   query,
   scope,
   allowEmptyFilter = false,
 }: {
-  //siret?: string[];
-  query: { diplome?: string; etablissementFormateurSiret?: string; departement?: string; campagneIds: string[] };
+  query: { diplome?: string[]; siret?: string[]; departement?: string; campagneIds: string[] };
   scope?: ObserverScope;
   allowEmptyFilter?: boolean;
 }) => {
@@ -78,7 +76,10 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     .leftJoin("etablissements", "formations.etablissement_id", "etablissements.id")
     .where("campagnes.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
-    .groupBy(["campagnes.id", "questionnaires.id", "formations.id", "etablissements.id"]);
+    .where("etablissements.deleted_at", "is", null)
+    .where("temoignages.deleted_at", "is", null)
+    .groupBy(["campagnes.id", "questionnaires.id", "formations.id", "etablissements.id"])
+    .orderBy("campagnes.created_at", "desc");
 
   if (scope && scope.field && scope.field !== "sirets" && scope.value) {
     baseQuery = baseQuery.where(`formations.${scope.field}`, "=", scope.value);
@@ -95,29 +96,17 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     baseQuery = baseQuery.where("formations.diplome", "in", ["INVALID_DIPLOME"]);
   }
 
-  if (query && query.etablissementFormateurSiret?.length) {
-    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", query.etablissementFormateurSiret);
-  } else if (!allowEmptyFilter) {
-    // Force query to return no results by adding a false condition
-    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", ["INVALID_SIRET"]);
+  if (query && query.campagneIds?.length) {
+    baseQuery = baseQuery.where("campagnes.id", "in", query.campagneIds);
   }
 
   if (query && query.departement) {
     baseQuery = baseQuery.where("formations.num_departement", "=", query.departement);
   }
 
-  if (query && query.campagneIds?.length) {
-    baseQuery = baseQuery.where("campagnes.id", "in", query.campagneIds);
+  if (query && query?.siret?.length) {
+    baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", query.siret);
   }
-
-  /*if (siret) {
-    baseQuery = baseQuery.where((qb) =>
-      qb.or([
-        qb("formations.etablissement_gestionnaire_siret", "in", siret),
-        qb("formations.etablissement_formateur_siret", "in", siret),
-      ])
-    );
-  }*/
 
   return baseQuery.execute();
 };

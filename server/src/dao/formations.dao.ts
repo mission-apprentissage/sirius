@@ -2,7 +2,7 @@ import type { DeleteResult } from "kysely";
 import { sql } from "kysely";
 
 import { getKbdClient } from "../db/db";
-import type { Formation } from "../types";
+import type { Formation, ObserverScope } from "../types";
 
 export const create = async (formation: Formation): Promise<{ id: string } | undefined> => {
   return getKbdClient().insertInto("formations").values(formation).returning("id").executeTakeFirst();
@@ -293,7 +293,10 @@ export const findAllWithTemoignageCount = async (): Promise<Partial<Formation>[]
     .execute();
 };
 
-export const findAllWithCampagnesCount = async (siret: string[]): Promise<Partial<Formation>[] | undefined> => {
+export const findAllWithCampagnesCount = async (
+  siret: string[],
+  scope?: ObserverScope
+): Promise<Partial<Formation>[] | undefined> => {
   let baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
@@ -332,6 +335,14 @@ export const findAllWithCampagnesCount = async (siret: string[]): Promise<Partia
         qb("formations.etablissement_formateur_siret", "in", siret),
       ])
     );
+  }
+
+  if (scope && scope.field && scope.field !== "sirets" && scope.value) {
+    baseQuery = baseQuery.where(`formations.${scope.field}`, "=", scope.value);
+  }
+
+  if (scope && scope.field && scope.field === "sirets" && scope.value.length) {
+    baseQuery = baseQuery.where(`formations.etablissement_gestionnaire_siret`, "in", scope.value);
   }
 
   return baseQuery.execute();

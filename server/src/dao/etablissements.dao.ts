@@ -110,9 +110,7 @@ export const update = async (id: string, updatedEtablissement: Partial<Etablisse
   return result.numUpdatedRows === BigInt(1);
 };
 
-export const findAllEtablissementWithCounts = async (
-  siret: string[]
-): Promise<
+export const findAllEtablissementWithCounts = async (): Promise<
   (Pick<
     Etablissement,
     "id" | "created_at" | "enseigne" | "entreprise_raison_sociale" | "onisep_nom" | "region_implantation_nom" | "siret"
@@ -122,7 +120,7 @@ export const findAllEtablissementWithCounts = async (
     verbatimsCount: number;
   })[]
 > => {
-  let baseQuery = getKbdClient()
+  const baseQuery = getKbdClient()
     .selectFrom("etablissements")
     .select([
       "etablissements.id",
@@ -149,15 +147,6 @@ export const findAllEtablissementWithCounts = async (
     .where("verbatims.deleted_at", "is", null)
     .groupBy("etablissements.id")
     .orderBy("campagnesCount", "desc");
-
-  if (siret?.length) {
-    baseQuery = baseQuery.where((qb) =>
-      qb.or([
-        qb("formations.etablissement_gestionnaire_siret", "in", siret),
-        qb("formations.etablissement_formateur_siret", "in", siret),
-      ])
-    );
-  }
 
   return baseQuery.execute();
 };

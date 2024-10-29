@@ -6,7 +6,7 @@ import {
   createFormation,
   deleteFormation,
   getFormations,
-  getFormationsDiplomesWithCampagnes,
+  getFormationsEtablissementsDiplomesWithCampagnesCount,
   getFormationsWithTemoignageCount,
   updateFormation,
 } from "../controllers/formations.controller";
@@ -60,8 +60,8 @@ export const formations = () => {
     }
   );
 
-  router.get("/api/formations/diplomes-with-campagnes", verifyUser, (req, res, next) => {
-    getFormationsDiplomesWithCampagnes(req, res, next);
+  router.get("/api/formations/diplomes-and-etablissements-filters", verifyUser, (req, res, next) => {
+    getFormationsEtablissementsDiplomesWithCampagnesCount(req, res, next);
   });
 
   return router;

@@ -1,5 +1,6 @@
 // @ts-nocheck -- TODO
 
+import { USER_ROLES } from "../constants";
 import { BasicError, ErrorMessage, FormationAlreadyExistingError, FormationNotFoundError } from "../errors";
 import * as formationsService from "../services/formations.service";
 import tryCatch from "../utils/tryCatch.utils";
@@ -60,10 +61,15 @@ export const updateFormation = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const getFormationsDiplomesWithCampagnes = tryCatch(async (req: any, res: any) => {
+export const getFormationsEtablissementsDiplomesWithCampagnesCount = tryCatch(async (req: any, res: any) => {
+  const isObserver = req.user?.role === USER_ROLES.OBSERVER;
+  const scope = isObserver ? req.user?.scope : null;
   const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
 
-  const { success, body } = await formationsService.getFormationsDiplomesWithCampagnes({ userSiret });
+  const { success, body } = await formationsService.getFormationsEtablissementsDiplomesWithCampagnesCount({
+    userSiret,
+    scope,
+  });
 
   if (!success) throw new BasicError();
 

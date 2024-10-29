@@ -2,9 +2,9 @@ import { Input } from "@codegouvfr/react-dsfr/Input";
 import React, { useEffect, useState } from "react";
 
 import MultiSelect from "../../../Components/MultiSelect/MultiSelect";
-import { SearchContainer } from "./sortButtons.style";
+import { SearchContainer } from "./FilterButtons.style";
 
-const SortButtons = ({
+const FilterButtons = ({
   search,
   setSearch,
   selectedEtablissementsSiret,
@@ -59,6 +59,7 @@ const SortButtons = ({
       {showSelect ? (
         <>
           <MultiSelect
+            label="Établissements"
             name="etablissements"
             options={etablissementsOptions}
             placeholder="Sélectionner un établissement"
@@ -66,6 +67,7 @@ const SortButtons = ({
             setSelected={setSelectedEtablissementsSiret}
           />
           <MultiSelect
+            label="Diplômes"
             name="diplomes"
             options={diplomesOptions}
             placeholder="Sélectionner un diplôme"
@@ -78,4 +80,4 @@ const SortButtons = ({
   );
 };
 
-export default SortButtons;
+export default FilterButtons;
