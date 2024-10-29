@@ -155,6 +155,8 @@ const CreateCampagnesPage = () => {
               severity="error"
             />
           )}
+        </CreateCampagneContainer>
+        {selectedFormations.length && (
           <ButtonContainer>
             {step === 1 && (
               <Button iconId="fr-icon-add-line" disabled={!selectedFormations.length} onClick={() => setStep(2)}>
@@ -185,7 +187,7 @@ const CreateCampagnesPage = () => {
               </>
             )}
           </ButtonContainer>
-        </CreateCampagneContainer>
+        )}
       </Container>
       <SupportModal modal={supportModal} token={userContext.token} />
     </>
