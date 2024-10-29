@@ -9,6 +9,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 import { DIPLOME_TYPE_MATCHER, USER_ROLES } from "../../constants";
 import { UserContext } from "../../context/UserContext";
 import useFetchCampagnes from "../../hooks/useFetchCampagnes";
+import useFetchDiplomesWithCampagnesCount from "../../hooks/useFetchDiplomesWithCampagnesCount";
 import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
 import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import FilterButtons from "../Shared/FilterButtons/FilterButtons";
@@ -100,13 +101,21 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   });
 
   const {
+    diplomesFilter,
+    etablissementsFilter,
+    isSuccess: isSuccessDiplomesAndEtablissementsFilter,
+  } = useFetchDiplomesWithCampagnesCount();
+
+  const {
     campagnes: campagnes,
     isSuccess: isSuccessCampagnes,
     isError: isErrorCampagnes,
     isLoading: isLoadingCampagnes,
   } = useFetchCampagnes({
     key: search,
-    enabled: !!remoteFormations?.length,
+    diplome: diplomesFilter?.map((diplome) => diplome.intitule),
+    siret: etablissementsFilter?.map((etablissement) => etablissement.etablissementFormateurSiret),
+    enabled: !!remoteFormations?.length && isSuccessDiplomesAndEtablissementsFilter,
     pageSize: 1000,
   });
 
