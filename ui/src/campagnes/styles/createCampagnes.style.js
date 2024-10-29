@@ -163,3 +163,9 @@ export const FormationCardByDiplomeType = styled.div`
     width: 100%;
   }
 `;
+
+export const CampagnesCreatedCount = styled.p`
+  text-align: center;
+  font-size: 14px;
+}
+`;

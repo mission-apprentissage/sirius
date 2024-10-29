@@ -3,19 +3,28 @@ import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
+import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
+import { Table } from "@codegouvfr/react-dsfr/Table";
 import { useContext, useState } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 
-import { DIPLOME_TYPE_MATCHER, USER_ROLES } from "../../constants";
+import { DIPLOME_TYPE_MATCHER, USER_ROLES, VIEW_TYPES } from "../../constants";
 import { UserContext } from "../../context/UserContext";
 import useFetchCampagnes from "../../hooks/useFetchCampagnes";
 import useFetchDiplomesWithCampagnesCount from "../../hooks/useFetchDiplomesWithCampagnesCount";
 import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
 import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import FilterButtons from "../Shared/FilterButtons/FilterButtons";
-import { LoaderContainer, SelectAllFormationContainer, TableContainer } from "../styles/shared.style";
+import {
+  ActionContainer,
+  HeaderItem,
+  LoaderContainer,
+  SelectAllFormationContainer,
+  TableContainer,
+} from "../styles/shared.style";
 import { isPlural } from "../utils";
-import Cards from "./Cards";
+import FormationsGrid from "./FormationsGrid";
+import pickFormationTableRows from "./pickFormationTableRows";
 
 const REMOTE_FORMATION_BASE_QUERY = {
   published: "true",
@@ -68,6 +77,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
   const [etablissementsOptions, setEtablissementsOptions] = useState([]);
   const [userContext] = useContext(UserContext);
   const [page, setPage] = useState(1);
+  const [viewType, setViewType] = useState(VIEW_TYPES.GRID);
 
   const isAdmin = userContext.user?.role === USER_ROLES.ADMIN;
   const userSiret = userContext.user?.etablissements?.map((etablissement) => etablissement.siret) || [];
@@ -189,32 +199,57 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
               showSelect={!!remoteFormationsPagination?.nombre_de_page < 2}
             />
             <SelectAllFormationContainer>
-              <Checkbox
-                disabled={!remoteFormations?.length}
-                options={[
-                  {
-                    label: checkboxLabel,
-                    hintText: remoteFormationsPagination?.total
-                      ? `${selectedFormations.length}/${
-                          remoteFormationsPagination?.total
-                        } formation${isPlural(selectedFormations.length)} sélectionnée${isPlural(
-                          selectedFormations.length
-                        )}`
-                      : "",
-                    nativeInputProps: {
-                      name: `selectAll`,
-                      checked: selectedFormations?.length === remoteFormations?.length,
-                      onChange: () => {
-                        if (selectedFormations.length === remoteFormations.length) {
-                          setSelectedFormations([]);
-                        } else {
-                          setSelectedFormations(remoteFormations);
-                        }
+              <ActionContainer>
+                <Checkbox
+                  disabled={!remoteFormations?.length}
+                  options={[
+                    {
+                      label: checkboxLabel,
+                      hintText: remoteFormationsPagination?.total
+                        ? `${selectedFormations.length}/${
+                            remoteFormationsPagination?.total
+                          } formation${isPlural(selectedFormations.length)} sélectionnée${isPlural(
+                            selectedFormations.length
+                          )}`
+                        : "",
+                      nativeInputProps: {
+                        name: `selectAll`,
+                        checked: selectedFormations?.length === remoteFormations?.length,
+                        onChange: () => {
+                          if (selectedFormations.length === remoteFormations.length) {
+                            setSelectedFormations([]);
+                          } else {
+                            setSelectedFormations(remoteFormations);
+                          }
+                        },
                       },
                     },
-                  },
-                ]}
-              />
+                  ]}
+                />
+                <SegmentedControl
+                  small
+                  segments={[
+                    {
+                      iconId: "fr-icon-layout-grid-line",
+                      label: "Grille",
+                      nativeInputProps: {
+                        checked: viewType === VIEW_TYPES.GRID,
+                        onClick: () => setViewType(VIEW_TYPES.GRID),
+                        readOnly: true,
+                      },
+                    },
+                    {
+                      iconId: "fr-icon-menu-fill",
+                      label: "Tableau",
+                      nativeInputProps: {
+                        checked: viewType === VIEW_TYPES.TABLE,
+                        onClick: () => setViewType(VIEW_TYPES.TABLE),
+                        readOnly: true,
+                      },
+                    },
+                  ]}
+                />
+              </ActionContainer>
             </SelectAllFormationContainer>
           </>
         )}
@@ -235,13 +270,26 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
           </LoaderContainer>
         ) : (
           <TableContainer>
-            <Cards
-              displayedFormations={remoteFormations}
-              selectedFormations={selectedFormations}
-              setSelectedFormations={setSelectedFormations}
-              campagnes={campagnes || []}
-            />
-            {remoteFormationsPagination?.nombre_de_page > 1 && (
+            {viewType === VIEW_TYPES.GRID ? (
+              <FormationsGrid
+                displayedFormations={remoteFormations}
+                selectedFormations={selectedFormations}
+                setSelectedFormations={setSelectedFormations}
+                campagnes={campagnes || []}
+              />
+            ) : null}
+            {viewType === VIEW_TYPES.TABLE ? (
+              <Table
+                headers={["", "Formation", <HeaderItem key="createdCampagne">Campagnes créées</HeaderItem>]}
+                data={pickFormationTableRows({
+                  remoteFormations,
+                  selectedFormations,
+                  setSelectedFormations,
+                  campagnes: campagnes || [],
+                })}
+              />
+            ) : null}
+            {remoteFormationsPagination?.nombre_de_page > 1 ? (
               <Pagination
                 count={remoteFormationsPagination.nombre_de_page}
                 defaultPage={page}
@@ -253,7 +301,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
                   key: `pagination-link-${pageNumber}`,
                 })}
               />
-            )}
+            ) : null}
           </TableContainer>
         )}
       </>

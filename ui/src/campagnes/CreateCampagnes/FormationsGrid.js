@@ -17,7 +17,7 @@ import {
 import { Duration, IntituleFormation, StyledBadge } from "../styles/shared.style";
 import { formatDate, isPlural } from "../utils";
 
-const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations, campagnes }) => {
+const FormationsGrid = ({ displayedFormations, selectedFormations, setSelectedFormations, campagnes }) => {
   return (
     <FormationCardContainer>
       {displayedFormations?.map((formation) => {
@@ -146,4 +146,4 @@ const Cards = ({ displayedFormations, selectedFormations, setSelectedFormations,
   );
 };
 
-export default Cards;
+export default FormationsGrid;
