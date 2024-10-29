@@ -1,6 +1,6 @@
 // @ts-nocheck -- TODO
 
-import { DIPLOME_TYPE_MATCHER, ETABLISSEMENT_NATURE, ETABLISSEMENT_RELATION_TYPE } from "../constants";
+import { DIPLOME_TYPE_MATCHER } from "../constants";
 import * as campagnesDao from "../dao/campagnes.dao";
 import * as etablissementsDao from "../dao/etablissements.dao";
 import * as formationsDao from "../dao/formations.dao";
@@ -9,53 +9,18 @@ import * as temoignagesDao from "../dao/temoignages.dao";
 import * as verbatimsDao from "../dao/verbatims.dao";
 import * as catalogue from "../modules/catalogue";
 import * as pdfExport from "../modules/pdfExport";
-import * as referentiel from "../modules/referentiel";
 import * as xlsxExport from "../modules/xlsxExport";
 import { appendDataWhenEmpty, getMedianDuration, getStatistics } from "../utils/campagnes.utils";
 import { getChampsLibreField } from "../utils/verbatims.utils";
 
-export const getCampagnes = async ({
-  isAdmin,
-  isObserver,
-  userSiret,
-  scope,
-  page = 1,
-  pageSize = 10,
-  query,
-  search,
-}) => {
+export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10, query, search }) => {
   try {
     let campagnes = [];
 
-    if (isAdmin) {
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
-    } else if (isObserver) {
+    if (isObserver) {
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ scope, query });
     } else {
-      const etablissementsFromReferentiel = await referentiel.getEtablissements(userSiret);
-
-      const allSirets = [];
-      for (const siret of userSiret) {
-        const etablissement = etablissementsFromReferentiel.find((etablissement) => etablissement.siret === siret);
-        if (!etablissement) continue;
-
-        const relatedSirets = [siret];
-        if (
-          [ETABLISSEMENT_NATURE.GESTIONNAIRE, ETABLISSEMENT_NATURE.GESTIONNAIRE_FORMATEUR].includes(
-            etablissement.nature
-          )
-        ) {
-          relatedSirets.push(
-            ...etablissement.relations
-              .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
-              .map((etablissement) => etablissement.siret)
-          );
-        }
-        allSirets.push(...relatedSirets);
-      }
-
-      query.etablissementFormateurSiret = allSirets;
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ siret: allSirets, query });
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
     }
 
     const unpaginatedCampagnesIds = campagnes.map((campagne) => campagne.id);
