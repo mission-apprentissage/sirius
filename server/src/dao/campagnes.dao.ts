@@ -96,6 +96,10 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     baseQuery = baseQuery.where("formations.diplome", "in", ["INVALID_DIPLOME"]);
   }
 
+  if (query && query.campagneIds?.length) {
+    baseQuery = baseQuery.where("campagnes.id", "in", query.campagneIds);
+  }
+
   if (query && query.departement) {
     baseQuery = baseQuery.where("formations.num_departement", "=", query.departement);
   }

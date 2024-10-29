@@ -82,9 +82,9 @@ export const updateFormation = async (id, updatedFormation) => {
   }
 };
 
-export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({ userSiret }) => {
+export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({ userSiret, scope }) => {
   try {
-    const formations = await formationsDao.findAllWithCampagnesCount(userSiret);
+    const formations = await formationsDao.findAllWithCampagnesCount(userSiret, scope);
 
     const formattedByDiplome = formations.reduce((acc, formation) => {
       const diplome = formation.diplome || "N/A";
