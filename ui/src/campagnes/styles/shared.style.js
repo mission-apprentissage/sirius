@@ -100,3 +100,11 @@ export const Duration = styled.p`
   color: var(--text-disabled-grey);
   margin-bottom: 0;
 `;
+
+export const ActionContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+`;

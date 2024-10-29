@@ -1,4 +1,3 @@
-import type { UpdateResult } from "kysely";
 import { sql } from "kysely";
 import { executeWithOffsetPagination } from "kysely-paginate";
 
@@ -201,18 +200,20 @@ export const getOne = async (query: { temoignageId: string; questionKey: string 
     .executeTakeFirst();
 };
 
-export const deleteManyByCampagneIds = async (campagneIds: string[]): Promise<UpdateResult[]> => {
-  const temoignages = await getKbdClient()
+export const deleteManyByCampagneIds = async (campagneIds: string[]): Promise<boolean> => {
+  const temoignages = (await getKbdClient()
     .selectFrom("temoignages_campagnes")
     .select("temoignage_id")
     .where("campagne_id", "in", campagneIds)
-    .execute();
+    .execute()) as unknown as { temoignageId: string }[];
 
-  const temoignagesIds = temoignages.map((t) => t.temoignage_id);
+  const temoignagesIds = temoignages.map((t) => t.temoignageId as string);
 
-  return getKbdClient()
+  return (await getKbdClient()
     .updateTable("verbatims")
     .set({ deleted_at: new Date() })
     .where("temoignage_id", "in", temoignagesIds)
-    .execute();
+    .execute())
+    ? true
+    : false;
 };

@@ -30,7 +30,7 @@ export const fetchCampagnesStatistics = async ({ campagneIds, token }) => {
 };
 
 export const deleteCampagnes = async ({ campagneIds, siret, token }) => {
-  const response = await apiDelete(`/api/campagne`, {
+  const response = await apiDelete(`/api/campagnes`, {
     querystring: { ids: campagneIds, siret },
     headers: {
       Authorization: `Bearer ${token}`,

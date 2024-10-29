@@ -156,3 +156,8 @@ export const firstNameList = [
   "Risvan",
   "Wejdene",
 ];
+
+export const VIEW_TYPES = {
+  TABLE: "TABLE",
+  GRID: "GRID",
+};

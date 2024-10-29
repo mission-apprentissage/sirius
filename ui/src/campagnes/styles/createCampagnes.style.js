@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 
 export const Container = styled.main`
   margin: 0 auto;
+  position: relative;
 
   & h2 {
     text-align: center;
@@ -41,10 +42,22 @@ export const CreateCampagneContainer = styled.section`
 `;
 
 export const ButtonContainer = styled.div`
+  position: sticky;
+  z-index: 9999;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
-  gap: ${fr.spacing("2w")};
-  margin-top: 1rem;
+  padding: 1rem 0;
+
+  width: 100%;
+  background-color: white;
+  box-shadow: 0px -12px 12px 0px #9b8c601a;
+
+  & > button {
+    margin: 0 0.5rem;
+  }
 `;
 
 export const FormationCardContainer = styled.div`
@@ -149,4 +162,10 @@ export const FormationCardByDiplomeType = styled.div`
   ${fr.breakpoints.down("sm")} {
     width: 100%;
   }
+`;
+
+export const CampagnesCreatedCount = styled.p`
+  text-align: center;
+  font-size: 14px;
+}
 `;

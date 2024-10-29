@@ -63,8 +63,9 @@ export const updateFormation = tryCatch(async (req: any, res: any) => {
 
 export const getFormationsEtablissementsDiplomesWithCampagnesCount = tryCatch(async (req: any, res: any) => {
   const isObserver = req.user?.role === USER_ROLES.OBSERVER;
+  const isAdmin = req.user?.role === USER_ROLES.ADMIN;
   const scope = isObserver ? req.user?.scope : null;
-  const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
+  const userSiret = isAdmin ? [] : req.user?.etablissements?.map((etablissement) => etablissement.siret);
 
   const { success, body } = await formationsService.getFormationsEtablissementsDiplomesWithCampagnesCount({
     userSiret,
