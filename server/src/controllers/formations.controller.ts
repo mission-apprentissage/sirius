@@ -60,10 +60,12 @@ export const updateFormation = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const getFormationsDiplomesWithCampagnes = tryCatch(async (req: any, res: any) => {
+export const getFormationsEtablissementsDiplomesWithCampagnesCount = tryCatch(async (req: any, res: any) => {
   const userSiret = req.user?.etablissements?.map((etablissement) => etablissement.siret);
 
-  const { success, body } = await formationsService.getFormationsDiplomesWithCampagnes({ userSiret });
+  const { success, body } = await formationsService.getFormationsEtablissementsDiplomesWithCampagnesCount({
+    userSiret,
+  });
 
   if (!success) throw new BasicError();
 

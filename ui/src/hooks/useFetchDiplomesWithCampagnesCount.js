@@ -2,18 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 
 import { UserContext } from "../context/UserContext";
-import { fetchDiplomesWithCampagnes } from "../queries/formations";
+import { fetchDiplomesAndEtablissementsFilter } from "../queries/formations";
 
-const useFetchDiplomesWithCampagnes = () => {
+const useFetchDiplomesAndEtablissementsFilter = () => {
   const [userContext] = useContext(UserContext);
 
   const { data, isSuccess, isError, isLoading } = useQuery({
-    queryKey: ["diplomes-with-campagnes"],
-    queryFn: () => fetchDiplomesWithCampagnes({ token: userContext.token }),
+    queryKey: ["diplomes-and-etablissements-filters"],
+    queryFn: () => fetchDiplomesAndEtablissementsFilter({ token: userContext.token }),
     enabled: !!userContext.token,
   });
 
-  return { diplomesWithCampagnes: data, isSuccess, isError, isLoading };
+  return { diplomesFilter: data?.diplomes, etablissementsFilter: data?.etablissements, isSuccess, isError, isLoading };
 };
 
-export default useFetchDiplomesWithCampagnes;
+export default useFetchDiplomesAndEtablissementsFilter;

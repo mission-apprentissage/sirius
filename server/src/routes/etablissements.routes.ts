@@ -9,7 +9,6 @@ import {
   getEtablissements,
   getEtablissementsPublicStatistics,
   getEtablissementsSuivi,
-  getEtablissementsWithCampagnesCount,
   getEtablissementsWithTemoignageCount,
   updateEtablissement,
 } from "../controllers/etablissements.controller";
@@ -34,10 +33,6 @@ export const etablissements = () => {
       getEtablissements(req, res, next);
     }
   );
-
-  router.get("/api/etablissements/with-campagnes-count", verifyUser, (req, res, next) => {
-    getEtablissementsWithCampagnesCount(req, res, next);
-  });
 
   router.get("/api/etablissements/temoignage-count", (req, res, next) => {
     getEtablissementsWithTemoignageCount(req, res, next);
