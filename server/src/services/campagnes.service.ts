@@ -22,7 +22,7 @@ export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10,
 
     if (isObserver) {
       // Nécessaire pour ne pas stocker la liste de code RNCP dans le scope d'un user et réconcilier les labels/valeurs
-      if (scope.field === OBSERVER_SCOPES.OPCO) {
+      if (scope?.field === OBSERVER_SCOPES.OPCO) {
         const SCOPE_LIST = getStaticFilePath("./opco.json");
         const opcos = JSON.parse(fs.readFileSync(SCOPE_LIST, "utf8"));
         const rncpCodes = opcos.find((opco) => opco.label === scope.value).value;
