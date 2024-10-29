@@ -1,6 +1,10 @@
 // @ts-nocheck -- TODO
 
+import fs from "fs";
+
+import { OBSERVER_SCOPES } from "../constants";
 import * as formationsDao from "../dao/formations.dao";
+import { getStaticFilePath } from "../utils/getStaticFilePath";
 
 export const createFormation = async (formation) => {
   try {
@@ -84,6 +88,15 @@ export const updateFormation = async (id, updatedFormation) => {
 
 export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({ userSiret, scope }) => {
   try {
+    // Nécessaire pour ne pas stocker la liste de code RNCP dans le scope d'un user et réconcilier les labels/valeurs
+    if (scope.field === OBSERVER_SCOPES.OPCO) {
+      const SCOPE_LIST = getStaticFilePath("./opco.json");
+      const opcos = JSON.parse(fs.readFileSync(SCOPE_LIST, "utf8"));
+      const rncpCodes = opcos.find((opco) => opco.label === scope.value).value;
+
+      scope.value = rncpCodes;
+    }
+
     const formations = await formationsDao.findAllWithCampagnesCount(userSiret, scope);
 
     const formattedByDiplome = formations.reduce((acc, formation) => {

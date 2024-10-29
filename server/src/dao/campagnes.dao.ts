@@ -1,5 +1,6 @@
 import { sql } from "kysely";
 
+import { OBSERVER_SCOPES } from "../constants";
 import { getKbdClient } from "../db/db";
 import type { ObserverScope } from "../types";
 
@@ -81,11 +82,15 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     .groupBy(["campagnes.id", "questionnaires.id", "formations.id", "etablissements.id"])
     .orderBy("campagnes.created_at", "desc");
 
-  if (scope && scope.field && scope.field !== "sirets" && scope.value) {
+  if (scope && scope.field && scope.field !== "sirets" && scope.field !== OBSERVER_SCOPES.OPCO && scope.value) {
     baseQuery = baseQuery.where(`formations.${scope.field}`, "=", scope.value);
   }
 
-  if (scope && scope.field && scope.field === "sirets" && scope.value.length) {
+  if (scope && scope.field && scope.field === OBSERVER_SCOPES.OPCO && scope.value.length) {
+    baseQuery = baseQuery.where(sql`formations.catalogue_data ->> 'rncp_code'`, "in", scope.value);
+  }
+
+  if (scope && scope.field && scope.field === OBSERVER_SCOPES.SIRETS && scope.value.length) {
     baseQuery = baseQuery.where(`formations.etablissement_gestionnaire_siret`, "in", scope.value);
   }
 
