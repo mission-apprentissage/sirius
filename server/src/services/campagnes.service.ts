@@ -1,6 +1,6 @@
 // @ts-nocheck -- TODO
 
-import { DIPLOME_TYPE_MATCHER } from "../constants";
+import { DIPLOME_TYPE_MATCHER, OBSERVER_SCOPES } from "../constants";
 import * as campagnesDao from "../dao/campagnes.dao";
 import * as etablissementsDao from "../dao/etablissements.dao";
 import * as formationsDao from "../dao/formations.dao";
@@ -18,6 +18,14 @@ export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10,
     let campagnes = [];
 
     if (isObserver) {
+      // Nécessaire pour ne pas stocker la liste de code RNCP dans le scope d'un user et réconcilier les labels/valeurs
+      if (scope.field === OBSERVER_SCOPES.OPCO) {
+        const SCOPE_LIST = path.join(__dirname, "../modules/opco.json");
+        const opcos = JSON.parse(fs.readFileSync(SCOPE_LIST, "utf8"));
+        const rncpCodes = opcos.find((opco) => opco.label === scope.value).value;
+
+        scope.value = rncpCodes;
+      }
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ scope, query });
     } else {
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
