@@ -11,7 +11,7 @@ import { UserContext } from "../../context/UserContext";
 import useFetchCampagnes from "../../hooks/useFetchCampagnes";
 import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
 import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
-import SortButtons from "../Shared/SortButtons/SortButtons";
+import FilterButtons from "../Shared/FilterButtons/FilterButtons";
 import { LoaderContainer, SelectAllFormationContainer, TableContainer } from "../styles/shared.style";
 import { isPlural } from "../utils";
 import Cards from "./Cards";
@@ -168,7 +168,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
       <>
         {isSuccessFormations && (
           <>
-            <SortButtons
+            <FilterButtons
               search={search}
               setSearch={setSearch}
               selectedEtablissementsSiret={selectedEtablissementsSiret}

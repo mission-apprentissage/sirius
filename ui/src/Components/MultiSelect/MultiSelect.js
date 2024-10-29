@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { isPlural } from "../../campagnes/utils";
 import { InputContainer, MenuContainer, MultSelectContainer } from "./MultiSelect.style";
 
-const MultiSelect = ({ options, name, placeholder = "", selected, setSelected }) => {
+const MultiSelect = ({ options, name, placeholder = "", label, selected, setSelected }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [values, setValues] = useState(selected || []);
   const [search, setSearch] = useState("");
@@ -83,6 +83,7 @@ const MultiSelect = ({ options, name, placeholder = "", selected, setSelected })
         <Input
           data-tooltip-id={`multiselect-menu-${name}`}
           iconId="fr-icon-arrow-down-s-line"
+          label={label}
           hintText={values?.length ? `${values.length} sélectionné${isPlural(values.length)}` : ""}
           disabled={!options?.length}
           nativeInputProps={{

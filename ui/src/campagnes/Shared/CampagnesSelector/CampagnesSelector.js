@@ -22,7 +22,7 @@ import { HeaderContainer, LoaderContainer } from "../../styles/shared.style";
 import { isPlural } from "../../utils";
 import CampagnesTable from "../CampagnesTable/CampagnesTable";
 import { TableContainer } from "../CampagnesTable/campagnesTable.style";
-import SortButtons from "../SortButtons/SortButtons";
+import FilterButtons from "../FilterButtons/FilterButtons";
 
 const CampagnesSelector = ({
   selectedCampagneIds,
@@ -109,7 +109,7 @@ const CampagnesSelector = ({
         />
       ) : null}
       {isSuccessDiplomesAndEtablissementsFilter && (
-        <SortButtons
+        <FilterButtons
           search={search}
           setSearch={setSearch}
           setIsOpened={setIsOpened}

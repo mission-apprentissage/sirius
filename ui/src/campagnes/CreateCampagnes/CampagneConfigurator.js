@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import { DIPLOME_TYPE_MATCHER } from "../../constants";
 import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
-import SortButtons from "../Shared/SortButtons/SortButtons";
+import FilterButtons from "../Shared/FilterButtons/FilterButtons";
 import { SelectAllFormationContainer } from "../styles/shared.style";
 import { isPlural } from "../utils";
 import Table from "./Table";
@@ -101,7 +101,7 @@ const CampagneConfigurator = ({ selectedFormations, setSelectedFormations, formi
   return (
     <>
       <>
-        <SortButtons
+        <FilterButtons
           search={search}
           setSearch={setSearch}
           selectedEtablissementsSiret={selectedEtablissementsSiret}
