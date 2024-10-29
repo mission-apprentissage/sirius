@@ -1,5 +1,7 @@
 // @ts-nocheck -- TODO
 
+import fs from "fs";
+
 import { DIPLOME_TYPE_MATCHER, OBSERVER_SCOPES } from "../constants";
 import * as campagnesDao from "../dao/campagnes.dao";
 import * as etablissementsDao from "../dao/etablissements.dao";
@@ -11,6 +13,7 @@ import * as catalogue from "../modules/catalogue";
 import * as pdfExport from "../modules/pdfExport";
 import * as xlsxExport from "../modules/xlsxExport";
 import { appendDataWhenEmpty, getMedianDuration, getStatistics } from "../utils/campagnes.utils";
+import { getStaticFilePath } from "../utils/getStaticFilePath";
 import { getChampsLibreField } from "../utils/verbatims.utils";
 
 export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10, query, search }) => {
@@ -20,7 +23,7 @@ export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10,
     if (isObserver) {
       // Nécessaire pour ne pas stocker la liste de code RNCP dans le scope d'un user et réconcilier les labels/valeurs
       if (scope.field === OBSERVER_SCOPES.OPCO) {
-        const SCOPE_LIST = path.join(__dirname, "../modules/opco.json");
+        const SCOPE_LIST = getStaticFilePath("./opco.json");
         const opcos = JSON.parse(fs.readFileSync(SCOPE_LIST, "utf8"));
         const rncpCodes = opcos.find((opco) => opco.label === scope.value).value;
 
