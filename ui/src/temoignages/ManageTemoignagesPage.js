@@ -5,6 +5,7 @@ import { Range } from "@codegouvfr/react-dsfr/Range";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
@@ -112,6 +113,9 @@ const ManageTemoignagesPage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Gérer les témoignages - Sirius</title>
+      </Helmet>
       <Container>
         <ManageTemoignagesContainer>
           <h1>

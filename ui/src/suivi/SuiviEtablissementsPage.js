@@ -1,5 +1,6 @@
 import { Box, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 
 import useFetchEtablissementsSuivi from "../hooks/useFetchEtablissementsSuivi";
 import SuiviEtablissementsFilters from "./SuiviEtablissements/SuiviEtablissementsFilters";
@@ -20,28 +21,33 @@ const SuiviEtablissementsPage = () => {
   if (!displayedEtablissements || etablissementsSuiviLoading || etablissementsSuiviError) return <Spinner />;
 
   return (
-    <VStack my="5" w="100%">
-      <Box w="100%" my="5">
-        <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">
-          Statistiques des établissements
-        </Text>
-      </Box>
-      <SuiviEtablissementsStatistics etablissements={displayedEtablissements} />
-      <HStack w="100%" my="5">
-        <SuiviEtablissementsSearch
-          etablissements={etablissementsSuivi}
-          setDisplayedEtablissements={setDisplayedEtablissements}
-          search={search}
-          setSearch={setSearch}
-        />
-        <SuiviEtablissementsFilters
-          etablissements={etablissementsSuivi}
-          setDisplayedEtablissements={setDisplayedEtablissements}
-          setSearch={setSearch}
-        />
-      </HStack>
-      <SuiviEtablissementsTable etablissements={displayedEtablissements} />
-    </VStack>
+    <>
+      <Helmet>
+        <title>Suivi des établissements - Sirius</title>
+      </Helmet>
+      <VStack my="5" w="100%">
+        <Box w="100%" my="5">
+          <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">
+            Statistiques des établissements
+          </Text>
+        </Box>
+        <SuiviEtablissementsStatistics etablissements={displayedEtablissements} />
+        <HStack w="100%" my="5">
+          <SuiviEtablissementsSearch
+            etablissements={etablissementsSuivi}
+            setDisplayedEtablissements={setDisplayedEtablissements}
+            search={search}
+            setSearch={setSearch}
+          />
+          <SuiviEtablissementsFilters
+            etablissements={etablissementsSuivi}
+            setDisplayedEtablissements={setDisplayedEtablissements}
+            setSearch={setSearch}
+          />
+        </HStack>
+        <SuiviEtablissementsTable etablissements={displayedEtablissements} />
+      </VStack>
+    </>
   );
 };
 

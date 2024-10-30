@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import { useEffect, useRef } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
@@ -52,29 +53,34 @@ const IframeFormationPage = () => {
 
   return (
     isSuccess && (
-      <IframeContainer ref={scrollableRef}>
-        <h3>Suivre cette formation en apprentissage ?</h3>
-        <p>
-          Certains établissement proposent ce CAP en apprentissage. Tu hésites entre la voie scolaire et l’apprentissage
-          ? Grace au questionnaire{" "}
-          <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
-            <b>Sirius</b>
-          </a>
-          , les apprenti·es qui se forment à ce CAP en France te partagent leur expérience en entreprise.
-        </p>
+      <>
+        <Helmet>
+          <title>{`Statistiques pour la formation ${intituleFormation} - Sirius`}</title>
+        </Helmet>
+        <IframeContainer ref={scrollableRef}>
+          <h3>Suivre cette formation en apprentissage ?</h3>
+          <p>
+            Certains établissement proposent ce CAP en apprentissage. Tu hésites entre la voie scolaire et
+            l’apprentissage ? Grace au questionnaire{" "}
+            <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
+              <b>Sirius</b>
+            </a>
+            , les apprenti·es qui se forment à ce CAP en France te partagent leur expérience en entreprise.
+          </p>
 
-        <DatavisualisationContainer>
-          <TestimonialsCount>
-            <p>
-              <b>Expérience en entreprise</b> ({datavisualisation.temoignagesCount} apprenti·es interrogé·es)
-            </p>
-          </TestimonialsCount>
-          <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseEntrepriseRates} />
-          <ExperienceEntrepriseVerbatims orderedVerbatims={datavisualisation.commentVisTonEntreprise} />
-          <GemVerbatim verbatim={datavisualisation.displayedGems} />
-          <SearchEntrepriseRating rating={datavisualisation.passeEntrepriseRates} isFormation={true} />
-        </DatavisualisationContainer>
-      </IframeContainer>
+          <DatavisualisationContainer>
+            <TestimonialsCount>
+              <p>
+                <b>Expérience en entreprise</b> ({datavisualisation.temoignagesCount} apprenti·es interrogé·es)
+              </p>
+            </TestimonialsCount>
+            <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseEntrepriseRates} />
+            <ExperienceEntrepriseVerbatims orderedVerbatims={datavisualisation.commentVisTonEntreprise} />
+            <GemVerbatim verbatim={datavisualisation.displayedGems} />
+            <SearchEntrepriseRating rating={datavisualisation.passeEntrepriseRates} isFormation={true} />
+          </DatavisualisationContainer>
+        </IframeContainer>
+      </>
     )
   );
 };

@@ -1,5 +1,6 @@
 import { Flex, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 
 import useFetchUsers from "../hooks/useFetchUsers";
 import UsersTable from "./Components/UsersTable/UsersTable";
@@ -17,11 +18,16 @@ const Managing = () => {
   if (usersLoading || usersError) return <Spinner />;
 
   return (
-    <Flex direction="column" w="100%" m="auto">
+    <>
+      <Helmet>
+        <title>Gérer les utilisateurs - Sirius</title>
+      </Helmet>
       <Flex direction="column" w="100%" m="auto">
-        {users.length > 0 && <UsersTable users={users} setRefetchData={setRefetchData} />}
+        <Flex direction="column" w="100%" m="auto">
+          {users.length > 0 && <UsersTable users={users} setRefetchData={setRefetchData} />}
+        </Flex>
       </Flex>
-    </Flex>
+    </>
   );
 };
 

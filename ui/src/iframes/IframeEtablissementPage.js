@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import { useEffect, useRef } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
@@ -52,28 +53,33 @@ const IframeEtablissementPage = () => {
 
   return (
     isSuccess && (
-      <IframeContainer ref={scrollableRef}>
-        <h3>Suivre une formation en apprentissage ?</h3>
-        <p>
-          Cet établissement propose de suivre certaines de ses formations en apprentissage. Grace au questionnaire{" "}
-          <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
-            <b>Sirius</b>
-          </a>
-          , les apprenti·es qui se forment dans cet établissement te partagent leur expérience.
-        </p>
+      <>
+        <Helmet>
+          <title>{`Statistiques pour l'établissement ${uai} - Sirius`}</title>
+        </Helmet>
+        <IframeContainer ref={scrollableRef}>
+          <h3>Suivre une formation en apprentissage ?</h3>
+          <p>
+            Cet établissement propose de suivre certaines de ses formations en apprentissage. Grace au questionnaire{" "}
+            <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
+              <b>Sirius</b>
+            </a>
+            , les apprenti·es qui se forment dans cet établissement te partagent leur expérience.
+          </p>
 
-        <DatavisualisationContainer>
-          <TestimonialsCount>
-            <p>
-              <b>Expérience dans cet établissement</b> ({datavisualisation.temoignagesCount} apprenti·es interrogé·es)
-            </p>
-          </TestimonialsCount>
-          <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseCfaRates} />
-          <ExperienceEntrepriseVerbatims orderedVerbatims={datavisualisation.commentVisTonCfa} />
-          <GemVerbatim verbatim={datavisualisation.displayedGems} />
-          <SearchEntrepriseRating rating={datavisualisation.accompagneCfaRates} isEtablissement={true} />
-        </DatavisualisationContainer>
-      </IframeContainer>
+          <DatavisualisationContainer>
+            <TestimonialsCount>
+              <p>
+                <b>Expérience dans cet établissement</b> ({datavisualisation.temoignagesCount} apprenti·es interrogé·es)
+              </p>
+            </TestimonialsCount>
+            <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseCfaRates} />
+            <ExperienceEntrepriseVerbatims orderedVerbatims={datavisualisation.commentVisTonCfa} />
+            <GemVerbatim verbatim={datavisualisation.displayedGems} />
+            <SearchEntrepriseRating rating={datavisualisation.accompagneCfaRates} isEtablissement={true} />
+          </DatavisualisationContainer>
+        </IframeContainer>
+      </>
     )
   );
 };

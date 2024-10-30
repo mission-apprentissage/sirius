@@ -4,6 +4,7 @@ import { Input } from "@codegouvfr/react-dsfr/Input";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { useFormik } from "formik";
 import { useContext, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, Navigate } from "react-router-dom";
 import * as Yup from "yup";
 
@@ -166,6 +167,9 @@ const SignupPage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Inscription - Sirius</title>
+      </Helmet>
       <LoginAndSignupContainer>
         {!isSuccessful ? (
           <>
