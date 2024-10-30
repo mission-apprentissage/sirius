@@ -18,38 +18,38 @@
         cmd: docker stack ls --format json
       register: stack_status
 
-    - name: Récupération du status des migrations
-      shell:
-        chdir: /opt/app
-        cmd: "sudo /opt/app/scripts/migrations-status.sh"
-      register: migration_status_output
-      when: stack_status.stdout != ""
+    # - name: Récupération du status des migrations
+    #   shell:
+    #     chdir: /opt/app
+    #     cmd: "sudo /opt/app/scripts/migrations-status.sh"
+    #   register: migration_status_output
+    #   when: stack_status.stdout != ""
 
-    - name: "Activation du mode maintenance pour effectuer la migration"
-      shell:
-        chdir: /opt/app
-        cmd: "sudo /opt/app/tools/maintenance/maintenance-on.sh"
-      when:
-        - stack_status.stdout != ""
-        - '"migrations-status=synced" not in migration_status_output.stdout_lines'
+    # - name: "Activation du mode maintenance pour effectuer la migration"
+    #   shell:
+    #     chdir: /opt/app
+    #     cmd: "sudo /opt/app/tools/maintenance/maintenance-on.sh"
+    #   when:
+    #     - stack_status.stdout != ""
+    #     - '"migrations-status=synced" not in migration_status_output.stdout_lines'
 
-    - name: "Shutdown server"
-      shell:
-        chdir: /opt/app
-        cmd: "sudo docker service scale {{product_name}}_server=0"
-      when:
-        - stack_status.stdout != ""
-        - '"migrations-status=synced" not in migration_status_output.stdout_lines'
+    # - name: "Shutdown server"
+    #   shell:
+    #     chdir: /opt/app
+    #     cmd: "sudo docker service scale {{product_name}}_server=0"
+    #   when:
+    #     - stack_status.stdout != ""
+    #     - '"migrations-status=synced" not in migration_status_output.stdout_lines'
 
-    - name: Lancement des migrations
-      shell:
-        chdir: /opt/app
-        cmd: "sudo /opt/app/scripts/migrations-up.sh"
-      when:
-        - stack_status.stdout != ""
-        - '"migrations-status=synced" not in migration_status_output.stdout_lines'
-      async: 18000
-      poll: 10
+    # - name: Lancement des migrations
+    #   shell:
+    #     chdir: /opt/app
+    #     cmd: "sudo /opt/app/scripts/migrations-up.sh"
+    #   when:
+    #     - stack_status.stdout != ""
+    #     - '"migrations-status=synced" not in migration_status_output.stdout_lines'
+    #   async: 18000
+    #   poll: 10
 
     - name: Lancement de l'application {{env_type}}
       shell:
