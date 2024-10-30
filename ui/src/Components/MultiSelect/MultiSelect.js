@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
-import Checkbox from "@codegouvfr/react-dsfr/Checkbox";
-import Input from "@codegouvfr/react-dsfr/Input";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
+import { Input } from "@codegouvfr/react-dsfr/Input";
 import { useEffect, useRef, useState } from "react";
 
 import { isPlural } from "../../campagnes/utils";
@@ -11,7 +11,7 @@ const MultiSelect = ({ options, name, placeholder = "", label, selected, setSele
   const [isOpen, setIsOpen] = useState(false);
   const [values, setValues] = useState(selected || []);
   const [search, setSearch] = useState("");
-
+  const [isAllSelected, setIsAllSelected] = useState(false);
   const dropdownRef = useRef(null);
 
   const displayedValues = values
@@ -31,13 +31,26 @@ const MultiSelect = ({ options, name, placeholder = "", label, selected, setSele
     }
     setValues(updatedValues);
     setSelected(updatedValues);
+    setIsAllSelected(updatedValues.length === options.length);
   };
 
   useEffect(() => {
     if (!values?.length && selected?.length) {
       setValues(selected);
     }
+    setIsAllSelected(selected?.length === options?.length);
   }, [selected]);
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setValues(options.map((option) => option.value));
+      setSelected(options.map((option) => option.value));
+      setIsAllSelected(true);
+    } else {
+      setValues([]);
+      setIsAllSelected(false);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -98,6 +111,19 @@ const MultiSelect = ({ options, name, placeholder = "", label, selected, setSele
       </InputContainer>
       {isOpen && (
         <MenuContainer>
+          <Checkbox
+            options={[
+              {
+                label: isAllSelected ? "Tout désélectionner" : "Tout sélectionner",
+                nativeInputProps: {
+                  name: `multiselect-${name}-select-all`,
+                  checked: isAllSelected,
+                  onChange: handleSelectAll,
+                },
+              },
+            ]}
+            small
+          />
           {(search && formattedSearchedOptions.length) || (!search && formattedOptions.length) ? (
             <Checkbox options={search ? formattedSearchedOptions : formattedOptions} small />
           ) : (
