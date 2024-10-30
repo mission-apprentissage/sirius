@@ -15,7 +15,7 @@ export interface PublicConfig {
 }
 
 function getProductionPublicConfig(): PublicConfig {
-  const host = "https://sirius.inserjeunes.beta.gouv.fr";
+  const host = "sirius.inserjeunes.beta.gouv.fr";
 
   return {
     sentry: {
@@ -31,7 +31,7 @@ function getProductionPublicConfig(): PublicConfig {
 }
 
 function getNextPublicConfig(): PublicConfig {
-  const host = "https://sirius-next.inserjeunes.beta.gouv.fr";
+  const host = "sirius-next.inserjeunes.beta.gouv.fr";
 
   return {
     sentry: {
