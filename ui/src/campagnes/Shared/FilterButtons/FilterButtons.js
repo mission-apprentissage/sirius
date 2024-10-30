@@ -36,13 +36,13 @@ const FilterButtons = ({
   }, [inputValue, setSearch, setIsOpened]);
 
   useEffect(() => {
-    if (!selectedEtablissementsSiret) {
+    if (!selectedEtablissementsSiret?.length) {
       setSelectedEtablissementsSiret(etablissementsOptions.map((option) => option.value));
     }
   }, [selectedEtablissementsSiret, etablissementsOptions]);
 
   useEffect(() => {
-    if (!selectedDiplomesIntitule) {
+    if (!selectedDiplomesIntitule?.length) {
       setSelectedDiplomesIntitule(diplomesOptions.map((option) => option.value));
     }
   }, [diplomesOptions]);

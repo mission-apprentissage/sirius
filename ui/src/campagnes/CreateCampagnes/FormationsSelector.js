@@ -11,7 +11,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 import { DIPLOME_TYPE_MATCHER, USER_ROLES, VIEW_TYPES } from "../../constants";
 import { UserContext } from "../../context/UserContext";
 import useFetchCampagnes from "../../hooks/useFetchCampagnes";
-import useFetchDiplomesWithCampagnesCount from "../../hooks/useFetchDiplomesWithCampagnesCount";
+import useFetchDiplomesAndEtablissementsFilter from "../../hooks/useFetchDiplomesAndEtablissementsFilter";
 import useFetchRemoteFormations from "../../hooks/useFetchRemoteFormations";
 import { remoteEtablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import FilterButtons from "../Shared/FilterButtons/FilterButtons";
@@ -114,7 +114,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     diplomesFilter,
     etablissementsFilter,
     isSuccess: isSuccessDiplomesAndEtablissementsFilter,
-  } = useFetchDiplomesWithCampagnesCount();
+  } = useFetchDiplomesAndEtablissementsFilter();
 
   const {
     campagnes: campagnes,
@@ -185,7 +185,7 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
         />
       )}
       <>
-        {isSuccessFormations && (
+        {isSuccessDiplomesAndEtablissementsFilter && (
           <>
             <FilterButtons
               search={search}
