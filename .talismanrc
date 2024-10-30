@@ -8,7 +8,7 @@ fileignoreconfig:
 - filename: .infra/files/configs/mongodb/seed.gpg
   checksum: b1fa159bb2036a835b4138843b48043eca4ea374bcbb710ba4593bd39b1dfec1
 - filename: .infra/vault/vault.yml
-  checksum: 47d3de722cc6653fb7052b1c069f354b1a53707f255f39bae8a0beb58f07c147
+  checksum: 791ffeb08e5d38b4774fa8f51efbd0eafa34f646378fda81c442816e577f22a3
 - filename: README.md
   checksum: 00ac991f0b2746c5a5ffa14e2b3c5427b739c0d952aa3730efe1f234ac1fc3ca
 - filename: server/tests/test_origin/controllers/campagnes.controller.test.js_old
@@ -36,7 +36,7 @@ fileignoreconfig:
 - filename: server/tests/test_origin/services/users.service.test.js_old
   checksum: aa5435b4faf485b49d3e9362d7550432cc4a431b863e8248f5b95b18b3d3e931
 - filename: ui/src/config.public.ts
-  checksum: b13b0a1f3d9590d335062a88e76609c40ba790129e481f7e5c25fbdab6840617
+  checksum: b7c748519d06791c08cd35fd84a38d2ff414a7600c6f51d4c38954187524d0d8
 - filename: ui/src/utils/generateUri.ts
   checksum: 505911d86f3b3f4a9337504a691132dba83dec4a950f9ff0e8bf76f5787ab325
 scopeconfig:
