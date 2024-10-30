@@ -152,23 +152,14 @@ const CampagnesSelector = ({
                       name: `selectAll`,
                       checked: hasSelectedAllCampagneFromCurrentPage,
                       onChange: () => {
-                        if (isResults) {
-                          if (hasSelectedAllCampagneFromCurrentPage) {
-                            setSelectedCampagneIds([]);
-                          } else {
-                            setSelectedCampagneIds(campagnesIds);
-                          }
-                        }
-                        if (isManage) {
-                          if (hasSelectedAllCampagneFromCurrentPage) {
-                            setSelectedCampagneIds((prevValues) => [
-                              ...prevValues.filter((id) => !currentPageCampagneIds.includes(id)),
-                            ]);
-                          } else {
-                            setSelectedCampagneIds((prevValues) => [
-                              ...new Set([...prevValues, ...currentPageCampagneIds]),
-                            ]);
-                          }
+                        if (hasSelectedAllCampagneFromCurrentPage) {
+                          setSelectedCampagneIds((prevValues) => [
+                            ...prevValues.filter((id) => !currentPageCampagneIds.includes(id)),
+                          ]);
+                        } else {
+                          setSelectedCampagneIds((prevValues) => [
+                            ...new Set([...prevValues, ...currentPageCampagneIds]),
+                          ]);
                         }
                       },
                     },

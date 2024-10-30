@@ -49,11 +49,19 @@ const REMOTE_FORMATION_FIELDS = {
   code_postal: 1,
 };
 
-const buildSiretQuery = (isAdmin, userSiret) => {
-  const formattedUserSiret = userSiret
-    .map((siret) => [{ etablissement_formateur_siret: siret }, { etablissement_gestionnaire_siret: siret }])
-    .flat();
-  return isAdmin ? {} : { $or: formattedUserSiret };
+const buildSiretQuery = (isAdmin, userSiret, hasAlreadyFetch) => {
+  let formattedUserSiret = [];
+
+  if (!hasAlreadyFetch) {
+    formattedUserSiret = userSiret.map((siret) => [
+      { etablissement_formateur_siret: siret },
+      { etablissement_gestionnaire_siret: siret },
+    ]);
+  } else {
+    formattedUserSiret = userSiret.map((siret) => [{ etablissement_formateur_siret: siret }]);
+  }
+
+  return isAdmin ? {} : { $or: formattedUserSiret.flat() };
 };
 
 const buildSearchQuery = (searchTerm) => {
@@ -81,11 +89,16 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
 
   const isAdmin = userContext.user?.role === USER_ROLES.ADMIN;
   const userSiret = userContext.user?.etablissements?.map((etablissement) => etablissement.siret) || [];
+  const hasAlreadyFetch = etablissementsOptions.length && diplomesOptions.length;
 
   const query = {
     $and: [
       REMOTE_FORMATION_BASE_QUERY,
-      buildSiretQuery(isAdmin, selectedEtablissementsSiret?.length ? selectedEtablissementsSiret : userSiret),
+      buildSiretQuery(
+        isAdmin,
+        selectedEtablissementsSiret?.length ? selectedEtablissementsSiret : userSiret,
+        hasAlreadyFetch
+      ),
       {
         ...(selectedDiplomesIntitule?.length && {
           ...buildDiplomeQuery(selectedDiplomesIntitule),
