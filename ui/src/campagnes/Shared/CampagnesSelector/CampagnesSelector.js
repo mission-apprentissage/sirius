@@ -14,7 +14,7 @@ import {
 } from "../../../constants";
 import { UserContext } from "../../../context/UserContext";
 import useFetchCampagnes from "../../../hooks/useFetchCampagnes";
-import useFetchDiplomesWithCampagnesCount from "../../../hooks/useFetchDiplomesWithCampagnesCount";
+import useFetchDiplomesAndEtablissementsFilter from "../../../hooks/useFetchDiplomesAndEtablissementsFilter";
 import { etablissementLabelGetterFromFormation } from "../../../utils/etablissement";
 import ActionButtons from "../../ManageCampagne/ActionButtons/ActionButtons";
 import { ButtonContainer } from "../../styles/resultsCampagnes.style";
@@ -62,7 +62,7 @@ const CampagnesSelector = ({
     diplomesFilter,
     etablissementsFilter,
     isSuccess: isSuccessDiplomesAndEtablissementsFilter,
-  } = useFetchDiplomesWithCampagnesCount();
+  } = useFetchDiplomesAndEtablissementsFilter();
 
   const currentPageCampagneIds = campagnes?.map((campagne) => campagne.id);
 
