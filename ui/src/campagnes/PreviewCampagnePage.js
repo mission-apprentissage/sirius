@@ -4,6 +4,7 @@ import { Box, Button, Flex, Spinner, useBreakpoint } from "@chakra-ui/react";
 import Form from "@rjsf/chakra-ui";
 import validator from "@rjsf/validator-ajv8";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 
 import { useGet } from "../common/hooks/httpHooks";
@@ -102,68 +103,78 @@ const PreviewCampagnePage = () => {
 
   if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
   return startedAnswering ? (
-    <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto" pt={["0", "5"]}>
-      {isTemoignageSent && <Success />}
-      {!isTemoignageSent && (
-        <Box
-          bg="white"
-          p={6}
-          rounded="md"
-          w={isMobile ? "100%" : "80%"}
-          m="auto"
-          minHeight={isMobile ? "100vh" : "inherit"}
-        >
-          <Stepper
-            categories={categories}
-            currentCategoryIndex={currentCategoryIndex}
-            setCurrentCategoryIndex={setCurrentCategoryIndex}
-            setCurrentQuestionIndex={setCurrentQuestionIndex}
-            isTemoignageSent={isTemoignageSent}
-            currentQuestionIndex={currentQuestionIndex}
-          />
-          <>
-            <Form
-              schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
-              uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
-              validator={validator}
-              widgets={widgets}
-              fields={fields}
-              onSubmit={(values) => onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)}
-              noHtml5Validate
-              templates={{ FieldErrorTemplate: ErrorTemplate }}
-              transformErrors={transformErrors}
-              formData={answers}
-              showErrorList={false}
-              formContext={{ handleNested }}
-            >
-              <Box display="flex" justifyContent="flex-end">
-                <Button
-                  borderRadius="md"
-                  type="submit"
-                  variant="solid"
-                  bgColor="brand.blue.700"
-                  color="white"
-                  colorScheme="brand.blue"
-                  rightIcon={<ChevronRightIcon />}
-                  mt="25px"
-                >
-                  {getNextButtonLabel(isLastCategory, isLastQuestionInCategory)}
-                </Button>
-              </Box>
-            </Form>
-          </>
-        </Box>
-      )}
-    </Flex>
+    <>
+      <Helmet>
+        <title>Aperçu du questionnaire - Sirius</title>
+      </Helmet>
+      <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto" pt={["0", "5"]}>
+        {isTemoignageSent && <Success />}
+        {!isTemoignageSent && (
+          <Box
+            bg="white"
+            p={6}
+            rounded="md"
+            w={isMobile ? "100%" : "80%"}
+            m="auto"
+            minHeight={isMobile ? "100vh" : "inherit"}
+          >
+            <Stepper
+              categories={categories}
+              currentCategoryIndex={currentCategoryIndex}
+              setCurrentCategoryIndex={setCurrentCategoryIndex}
+              setCurrentQuestionIndex={setCurrentQuestionIndex}
+              isTemoignageSent={isTemoignageSent}
+              currentQuestionIndex={currentQuestionIndex}
+            />
+            <>
+              <Form
+                schema={formattedQuestionnnaire[currentCategoryIndex].properties[currentQuestionIndex]}
+                uiSchema={formattedQuestionnnaireUI[currentCategoryIndex]}
+                validator={validator}
+                widgets={widgets}
+                fields={fields}
+                onSubmit={(values) => onSubmitHandler(values.formData, isLastCategory && isLastQuestionInCategory)}
+                noHtml5Validate
+                templates={{ FieldErrorTemplate: ErrorTemplate }}
+                transformErrors={transformErrors}
+                formData={answers}
+                showErrorList={false}
+                formContext={{ handleNested }}
+              >
+                <Box display="flex" justifyContent="flex-end">
+                  <Button
+                    borderRadius="md"
+                    type="submit"
+                    variant="solid"
+                    bgColor="brand.blue.700"
+                    color="white"
+                    colorScheme="brand.blue"
+                    rightIcon={<ChevronRightIcon />}
+                    mt="25px"
+                  >
+                    {getNextButtonLabel(isLastCategory, isLastQuestionInCategory)}
+                  </Button>
+                </Box>
+              </Form>
+            </>
+          </Box>
+        )}
+      </Flex>
+    </>
   ) : (
-    <Hero
-      setStartedAnswering={setStartedAnswering}
-      isMobile={isMobile}
-      startDate={new Date(0)}
-      endDate={new Date("2030-09-13T00:00:00Z")}
-      seats={previewedQuestionnaire.seats}
-      temoignageCount={previewedQuestionnaire.temoignagesCount}
-    />
+    <>
+      <Helmet>
+        <title>Aperçu accueil du questionnaire - Sirius</title>
+      </Helmet>
+      <Hero
+        setStartedAnswering={setStartedAnswering}
+        isMobile={isMobile}
+        startDate={new Date(0)}
+        endDate={new Date("2030-09-13T00:00:00Z")}
+        seats={previewedQuestionnaire.seats}
+        temoignageCount={previewedQuestionnaire.temoignagesCount}
+      />
+    </>
   );
 };
 

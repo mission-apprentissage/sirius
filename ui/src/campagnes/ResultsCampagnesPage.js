@@ -4,6 +4,7 @@ import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useSearchParams } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
@@ -140,110 +141,123 @@ const ResultsCampagnesPage = () => {
   };
 
   return (
-    <Container>
-      <ResultsCampagneContainer>
-        <h1>
-          <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
-          Sélectionner les campagnes à visualiser
-        </h1>
-        <CampagnesSelector
-          selectedCampagneIds={selectedCampagneIds}
-          setSelectedCampagneIds={setSelectedCampagneIds}
-          paramsCampagneIds={paramsCampagneIds}
-          campagneTableType={CAMPAGNE_TABLE_TYPES.RESULTS}
-        />
-      </ResultsCampagneContainer>
-      <Statistics
-        statistics={selectedCampagneIds.length ? statistics : emptyStatistics}
-        title="Statistiques des campagnes sélectionnées"
-      />
-      <ResultsCampagneContainer>
-        <TestimonialHeader>
+    <>
+      <Helmet>
+        <title>Voir les témoignages - Sirius</title>
+      </Helmet>
+      <Container>
+        <ResultsCampagneContainer>
           <h1>
-            <span className={fr.cx("fr-icon-quote-fill")} aria-hidden={true} />
-            Témoignages des campagnes sélectionnées
+            <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
+            Sélectionner les campagnes à visualiser
           </h1>
-          <div>
-            <Button
-              priority="secondary"
-              iconId="fr-icon-file-download-fill"
-              onClick={handlePdfExport}
-              disabled={
-                pdfExportLoading ||
-                xlsExportLoading ||
-                isLoadingCampagnesBatch ||
-                isLoadingCampagnesDatavisualisation ||
-                !selectedCampagneIds.length ||
-                hasNoTemoignages
-              }
-            >
-              {pdfExportLoading ? (
-                <BeatLoader color="var(--background-action-high-blue-france)" size={10} aria-label="Loading Spinner" />
-              ) : (
-                "Exporter en PDF"
+          <CampagnesSelector
+            selectedCampagneIds={selectedCampagneIds}
+            setSelectedCampagneIds={setSelectedCampagneIds}
+            paramsCampagneIds={paramsCampagneIds}
+            campagneTableType={CAMPAGNE_TABLE_TYPES.RESULTS}
+          />
+        </ResultsCampagneContainer>
+        <Statistics
+          statistics={selectedCampagneIds.length ? statistics : emptyStatistics}
+          title="Statistiques des campagnes sélectionnées"
+        />
+        <ResultsCampagneContainer>
+          <TestimonialHeader>
+            <h1>
+              <span className={fr.cx("fr-icon-quote-fill")} aria-hidden={true} />
+              Témoignages des campagnes sélectionnées
+            </h1>
+            <div>
+              <Button
+                priority="secondary"
+                iconId="fr-icon-file-download-fill"
+                onClick={handlePdfExport}
+                disabled={
+                  pdfExportLoading ||
+                  xlsExportLoading ||
+                  isLoadingCampagnesBatch ||
+                  isLoadingCampagnesDatavisualisation ||
+                  !selectedCampagneIds.length ||
+                  hasNoTemoignages
+                }
+              >
+                {pdfExportLoading ? (
+                  <BeatLoader
+                    color="var(--background-action-high-blue-france)"
+                    size={10}
+                    aria-label="Loading Spinner"
+                  />
+                ) : (
+                  "Exporter en PDF"
+                )}
+              </Button>
+              <Button
+                priority="secondary"
+                iconId="fr-icon-file-download-fill"
+                onClick={() => {
+                  setXlsExportLoading(true);
+                  mutateFetchTemoignagesXlsExport(selectedCampagneIds);
+                }}
+                disabled={
+                  pdfExportLoading ||
+                  xlsExportLoading ||
+                  isLoadingCampagnesBatch ||
+                  isLoadingCampagnesDatavisualisation ||
+                  !selectedCampagneIds.length ||
+                  hasNoTemoignages
+                }
+              >
+                {xlsExportLoading ? (
+                  <BeatLoader
+                    color="var(--background-action-high-blue-france)"
+                    size={10}
+                    aria-label="Loading Spinner"
+                  />
+                ) : (
+                  "Exporter en XLS"
+                )}
+              </Button>
+            </div>
+          </TestimonialHeader>
+          {isLoadingCampagnesDatavisualisation && (
+            <LoaderContainer>
+              <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
+            </LoaderContainer>
+          )}
+          {isErrorCampagnesDatavisualisation ? (
+            <Alert
+              title="Une erreur s'est produite dans le chargement des témoignages"
+              description="Merci de réessayer ultérieurement"
+              severity="error"
+            />
+          ) : null}
+          {hasNoTemoignages && (
+            <Alert
+              title="Aucun témoignage n'est disponible pour les campagnes sélectionnées"
+              description="Merci de sélectionner d'autres campagnes"
+              severity="info"
+            />
+          )}
+          {shouldDisplayTabbedResults && !pdfExportLoading ? (
+            <MultipleQuestionnairesTabs
+              temoignages={datavisualisation}
+              setCurrentDatavisualisationQuestionnaireId={setCurrentDatavisualisationQuestionnaireId}
+            />
+          ) : null}
+          {shouldDisplayResults && !pdfExportLoading && !hasNoTemoignages ? (
+            <ResultsCampagnesVisualisation temoignages={datavisualisation[0]} />
+          ) : null}
+          {pdfExportLoading ? (
+            <ExportResultsCampagnesVisualisation
+              temoignages={datavisualisation.find(
+                (questionnaire) => questionnaire.questionnaireId === currentDatavisualisationQuestionnaireId
               )}
-            </Button>
-            <Button
-              priority="secondary"
-              iconId="fr-icon-file-download-fill"
-              onClick={() => {
-                setXlsExportLoading(true);
-                mutateFetchTemoignagesXlsExport(selectedCampagneIds);
-              }}
-              disabled={
-                pdfExportLoading ||
-                xlsExportLoading ||
-                isLoadingCampagnesBatch ||
-                isLoadingCampagnesDatavisualisation ||
-                !selectedCampagneIds.length ||
-                hasNoTemoignages
-              }
-            >
-              {xlsExportLoading ? (
-                <BeatLoader color="var(--background-action-high-blue-france)" size={10} aria-label="Loading Spinner" />
-              ) : (
-                "Exporter en XLS"
-              )}
-            </Button>
-          </div>
-        </TestimonialHeader>
-        {isLoadingCampagnesDatavisualisation && (
-          <LoaderContainer>
-            <BeatLoader color="var(--background-action-high-blue-france)" size={20} aria-label="Loading Spinner" />
-          </LoaderContainer>
-        )}
-        {isErrorCampagnesDatavisualisation ? (
-          <Alert
-            title="Une erreur s'est produite dans le chargement des témoignages"
-            description="Merci de réessayer ultérieurement"
-            severity="error"
-          />
-        ) : null}
-        {hasNoTemoignages && (
-          <Alert
-            title="Aucun témoignage n'est disponible pour les campagnes sélectionnées"
-            description="Merci de sélectionner d'autres campagnes"
-            severity="info"
-          />
-        )}
-        {shouldDisplayTabbedResults && !pdfExportLoading ? (
-          <MultipleQuestionnairesTabs
-            temoignages={datavisualisation}
-            setCurrentDatavisualisationQuestionnaireId={setCurrentDatavisualisationQuestionnaireId}
-          />
-        ) : null}
-        {shouldDisplayResults && !pdfExportLoading && !hasNoTemoignages ? (
-          <ResultsCampagnesVisualisation temoignages={datavisualisation[0]} />
-        ) : null}
-        {pdfExportLoading ? (
-          <ExportResultsCampagnesVisualisation
-            temoignages={datavisualisation.find(
-              (questionnaire) => questionnaire.questionnaireId === currentDatavisualisationQuestionnaireId
-            )}
-          />
-        ) : null}
-      </ResultsCampagneContainer>
-    </Container>
+            />
+          ) : null}
+        </ResultsCampagneContainer>
+      </Container>
+    </>
   );
 };
 

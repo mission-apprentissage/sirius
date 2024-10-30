@@ -5,6 +5,7 @@ import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { useFormik } from "formik";
 import jwt from "jwt-decode";
 import { useContext, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 import * as Yup from "yup";
@@ -100,6 +101,9 @@ const LoginPage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{`${token ? "Changement de mot de passe" : "Connexion"} - Sirius`}</title>
+      </Helmet>
       <LoginAndSignupContainer>
         <LoginAndSignupHeader>
           <div>

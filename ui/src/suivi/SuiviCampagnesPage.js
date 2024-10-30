@@ -2,6 +2,7 @@
 import { DownloadIcon } from "@chakra-ui/icons";
 import { Box } from "@chakra-ui/react";
 import { useContext, useState } from "react";
+import { Helmet } from "react-helmet-async";
 
 import Button from "../Components/Form/Button";
 import { UserContext } from "../context/UserContext";
@@ -32,21 +33,26 @@ const SuiviCampagnesPage = () => {
   };
 
   return (
-    <Box display="flex" w="100%" mt="50px" justifyContent="center">
-      <Button
-        onClick={handleDownload}
-        leftIcon={<DownloadIcon />}
-        variant="filled"
-        ml="15px"
-        size="md"
-        isLoading={isLoadingDownload}
-        _hover={{
-          backgroundColor: "brand.blue.700",
-        }}
-      >
-        Télécharger les données de suivi des campagnes
-      </Button>
-    </Box>
+    <>
+      <Helmet>
+        <title>Suivi des campagnes - Sirius</title>
+      </Helmet>
+      <Box display="flex" w="100%" mt="50px" justifyContent="center">
+        <Button
+          onClick={handleDownload}
+          leftIcon={<DownloadIcon />}
+          variant="filled"
+          ml="15px"
+          size="md"
+          isLoading={isLoadingDownload}
+          _hover={{
+            backgroundColor: "brand.blue.700",
+          }}
+        >
+          Télécharger les données de suivi des campagnes
+        </Button>
+      </Box>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
@@ -160,53 +161,58 @@ const ModerationPage = () => {
   }, [patchedVerbatims]);
 
   return (
-    <Container>
-      <ModerationContainer>
-        <h1>
-          <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
-          Modération des verbatims
-        </h1>
-        <SelectorsContainer>
-          <ModerationEtablissementPicker setPickedEtablissement={setPickedEtablissement} />
-          <ModerationFormationPicker
-            pickedEtablissementSiret={pickedEtablissement?.siret}
-            setPickedFormationId={setPickedFormationId}
+    <>
+      <Helmet>
+        <title>Modérer les verbatims - Sirius</title>
+      </Helmet>
+      <Container>
+        <ModerationContainer>
+          <h1>
+            <span className={fr.cx("fr-icon-settings-5-fill")} aria-hidden={true} />
+            Modération des verbatims
+          </h1>
+          <SelectorsContainer>
+            <ModerationEtablissementPicker setPickedEtablissement={setPickedEtablissement} />
+            <ModerationFormationPicker
+              pickedEtablissementSiret={pickedEtablissement?.siret}
+              setPickedFormationId={setPickedFormationId}
+            />
+          </SelectorsContainer>
+          {isPatchSuccessful && patchedVerbatimCount && (
+            <Alert
+              severity="success"
+              title="Le status des verbatims a été mis à jour avec succès"
+              description={`${patchedVerbatimCount} verbatims impactés`}
+              closable
+            />
+          )}
+          {isPatchSuccessful === false && (
+            <Alert
+              severity="error"
+              title="Une erreur s'est produite lors de la mise à jour des status"
+              description="Merci de réessayer plus tard"
+              closable
+            />
+          )}
+          <Tabs
+            tabs={tabs({
+              verbatims,
+              selectedVerbatims,
+              setSelectedVerbatims,
+              pagination,
+              page,
+              setPage,
+              verbatimsCount,
+              showOnlyDiscrepancies,
+              setShowOnlyDiscrepancies,
+              isLoading,
+              patchVerbatims,
+            })}
+            onTabChange={(tabId) => setSelectedTab(tabId.tab.tabId)}
           />
-        </SelectorsContainer>
-        {isPatchSuccessful && patchedVerbatimCount && (
-          <Alert
-            severity="success"
-            title="Le status des verbatims a été mis à jour avec succès"
-            description={`${patchedVerbatimCount} verbatims impactés`}
-            closable
-          />
-        )}
-        {isPatchSuccessful === false && (
-          <Alert
-            severity="error"
-            title="Une erreur s'est produite lors de la mise à jour des status"
-            description="Merci de réessayer plus tard"
-            closable
-          />
-        )}
-        <Tabs
-          tabs={tabs({
-            verbatims,
-            selectedVerbatims,
-            setSelectedVerbatims,
-            pagination,
-            page,
-            setPage,
-            verbatimsCount,
-            showOnlyDiscrepancies,
-            setShowOnlyDiscrepancies,
-            isLoading,
-            patchVerbatims,
-          })}
-          onTabChange={(tabId) => setSelectedTab(tabId.tab.tabId)}
-        />
-      </ModerationContainer>
-    </Container>
+        </ModerationContainer>
+      </Container>
+    </>
   );
 };
 

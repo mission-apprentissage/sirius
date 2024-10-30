@@ -16,6 +16,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 
 import { useGet } from "../common/hooks/httpHooks";
@@ -220,35 +221,40 @@ const Managing = () => {
   if (loading || error) return <Spinner size="xl" />;
 
   return (
-    <Box display="flex" flexDirection="column" width="80%" m="auto">
-      {displayedQuestionnaires.length ? (
-        <>
-          <QuestionnaireTable
-            questionnaires={displayedQuestionnaires}
-            navigate={navigate}
-            onOpenDuplication={onOpenDuplication}
-            setDeletedQuestionnaireId={setDeletedQuestionnaireId}
-            setQuestionnaireToDuplicate={setQuestionnaireToDuplicate}
-            setQuestionnaireToDelete={setQuestionnaireToDelete}
-            onOpenDeletion={onOpenDeletion}
-            token={userContext.token}
-          />
-          <DuplicateQuestionnaireModal
-            isOpen={isOpenDuplication}
-            onOpen={onOpenDuplication}
-            onClose={onCloseDuplication}
-            questionnaire={questionnaireToDuplicate}
-          />
-          <DeleteQuestionnaireConfirmationModal
-            isOpen={isOpenDeletion}
-            onOpen={onOpenDeletion}
-            onClose={onCloseDeletion}
-            questionnaire={questionnaireToDelete}
-            setDeletedQuestionnaireId={setDeletedQuestionnaireId}
-          />
-        </>
-      ) : null}
-    </Box>
+    <>
+      <Helmet>
+        <title>Gérer les questionnaires - Sirius</title>
+      </Helmet>
+      <Box display="flex" flexDirection="column" width="80%" m="auto">
+        {displayedQuestionnaires.length ? (
+          <>
+            <QuestionnaireTable
+              questionnaires={displayedQuestionnaires}
+              navigate={navigate}
+              onOpenDuplication={onOpenDuplication}
+              setDeletedQuestionnaireId={setDeletedQuestionnaireId}
+              setQuestionnaireToDuplicate={setQuestionnaireToDuplicate}
+              setQuestionnaireToDelete={setQuestionnaireToDelete}
+              onOpenDeletion={onOpenDeletion}
+              token={userContext.token}
+            />
+            <DuplicateQuestionnaireModal
+              isOpen={isOpenDuplication}
+              onOpen={onOpenDuplication}
+              onClose={onCloseDuplication}
+              questionnaire={questionnaireToDuplicate}
+            />
+            <DeleteQuestionnaireConfirmationModal
+              isOpen={isOpenDeletion}
+              onOpen={onOpenDeletion}
+              onClose={onCloseDeletion}
+              questionnaire={questionnaireToDelete}
+              setDeletedQuestionnaireId={setDeletedQuestionnaireId}
+            />
+          </>
+        ) : null}
+      </Box>
+    </>
   );
 };
 

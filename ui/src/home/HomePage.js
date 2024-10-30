@@ -1,6 +1,7 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
+import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 
 import Avatar from "../assets/images/avatar.svg";
@@ -41,6 +42,9 @@ const HomePage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Accueil - Sirius</title>
+      </Helmet>
       <Container>
         <h2>
           Avec Sirius recueillez les témoignages de vos apprenti·es{" "}

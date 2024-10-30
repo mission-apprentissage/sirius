@@ -2,6 +2,7 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { useContext, useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import NeedHelp from "../Components/NeedHelp";
@@ -55,6 +56,9 @@ const ManageCampagnesPage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Diffuser mes campagnes - Sirius</title>
+      </Helmet>
       <Container>
         <Statistics statistics={statistics || emptyStatistics} title="Sirius & vous en quelques chiffres" />
         <ManageCampagneContainer>

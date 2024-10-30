@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter as Router, Link } from "react-router-dom";
 
 import App from "./App";
@@ -134,7 +135,9 @@ root.render(
       <ChakraProvider theme={theme}>
         <UserProvider>
           <Router>
-            <App />
+            <HelmetProvider>
+              <App />
+            </HelmetProvider>
           </Router>
         </UserProvider>
       </ChakraProvider>

@@ -58,5 +58,6 @@ allowed_patterns:
 - '@exemple.fr'
 - '@apprentissage.beta.gouv.fr'
 - '@alternance.beta.gouv.fr'
+- '@onisep.fr'
 threshold: medium
 version: "1.0"

@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 
 import Support from "../assets/images/support.svg";
@@ -15,16 +16,21 @@ const PendingAccountPage = () => {
   }
 
   return (
-    <LoginAndSignupContainer>
-      <LoginAndSignupHeader>
-        <div>
-          <h5>Établissement</h5>
-          <h2>Compte en attente</h2>
-          <p>Votre compte est en cours de validation, un email vous sera envoyé une fois votre demande confirmée.</p>
-        </div>
-        <img src={Support} alt="" />
-      </LoginAndSignupHeader>
-    </LoginAndSignupContainer>
+    <>
+      <Helmet>
+        <title>Compte en attente - Sirius</title>
+      </Helmet>
+      <LoginAndSignupContainer>
+        <LoginAndSignupHeader>
+          <div>
+            <h5>Établissement</h5>
+            <h2>Compte en attente</h2>
+            <p>Votre compte est en cours de validation, un email vous sera envoyé une fois votre demande confirmée.</p>
+          </div>
+          <img src={Support} alt="" />
+        </LoginAndSignupHeader>
+      </LoginAndSignupContainer>
+    </>
   );
 };
 
