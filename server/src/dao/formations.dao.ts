@@ -219,6 +219,7 @@ export const findFormationByIntitule = async (intitule: string): Promise<Partial
       "formations.etablissement_gestionnaire_enseigne",
       "formations.etablissement_gestionnaire_siret",
       "formations.etablissement_id",
+      "formations_campagnes.campagne_id",
     ])
     .where(sql<string>`catalogue_data->>'onisep_intitule'`, "ilike", `%${intitule}%`)
     .where("formations.deleted_at", "is", null)
@@ -251,6 +252,7 @@ export const findFormationByUai = async (uai: string): Promise<Partial<Formation
       "formations.etablissement_gestionnaire_enseigne",
       "formations.etablissement_gestionnaire_siret",
       "formations.etablissement_id",
+      "formations_campagnes.campagne_id",
     ])
     .where(sql<string>`catalogue_data->>'etablissement_formateur_uai'`, "ilike", `%${uai}%`)
     .where("formations.deleted_at", "is", null)
