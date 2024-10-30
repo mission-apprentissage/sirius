@@ -5,7 +5,7 @@ export interface PublicConfig {
   host: string;
   baseUrl: string;
   apiEndpoint: string;
-  env: "local" | "recette" | "production" | "next";
+  env: "local" | "recette" | "production";
   version: string;
   productMeta: {
     brandName: "sirius";
@@ -16,22 +16,6 @@ export interface PublicConfig {
 
 function getProductionPublicConfig(): PublicConfig {
   const host = "sirius.inserjeunes.beta.gouv.fr";
-
-  return {
-    sentry: {
-      dsn: "https://f97984280f4e4a4e8075e8b353b9234a@sentry.incubateur.net/153",
-    },
-    host,
-    baseUrl: `https://${host}`,
-    env: "production",
-    apiEndpoint: `https://${host}/api`,
-    version: getVersion(),
-    productMeta: getProductMeta(),
-  };
-}
-
-function getNextPublicConfig(): PublicConfig {
-  const host = "sirius-next.inserjeunes.beta.gouv.fr";
 
   return {
     sentry: {
@@ -108,7 +92,6 @@ function getEnv(): PublicConfig["env"] {
   switch (env) {
     case "production":
     case "recette":
-    case "next":
     case "local":
       return env;
     default:
@@ -122,8 +105,6 @@ function getPublicConfig(): PublicConfig {
       return getProductionPublicConfig();
     case "recette":
       return getRecettePublicConfig();
-    case "next":
-      return getNextPublicConfig();
     case "local":
       return getLocalPublicConfig();
   }

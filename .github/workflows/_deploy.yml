@@ -9,7 +9,6 @@ on:
         options:
           - production
           - recette
-          - next
       app_version:
         description: app version
         type: string
