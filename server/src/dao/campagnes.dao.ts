@@ -174,21 +174,30 @@ export const deleteMany = async (ids: string[]): Promise<boolean> => {
         .set({ deleted_at: new Date() })
         .where("id", "in", ids)
         .execute();
-      const formations = (await trx
+
+      const deletedFormationsCampagnes = (await trx
         .deleteFrom("formations_campagnes")
         .where("campagne_id", "in", ids)
         .returning("formation_id")
         .execute()) as unknown as { formationId: string }[] | null;
 
-      if (formations?.length) {
-        const formationIdValues = formations.map((formation) => formation.formationId);
+      deletedFormationsCampagnes?.forEach(async (deletedFormationCampagne) => {
+        const formationsCampagnesCount = (
+          await trx
+            .selectFrom("formations_campagnes")
+            .select("id")
+            .where("formation_id", "=", deletedFormationCampagne.formationId)
+            .execute()
+        ).length;
 
-        await trx
-          .updateTable("formations")
-          .set({ deleted_at: new Date() })
-          .where("id", "in", formationIdValues)
-          .execute();
-      }
+        if (!formationsCampagnesCount) {
+          await trx
+            .updateTable("formations")
+            .set({ deleted_at: new Date() })
+            .where("id", "=", deletedFormationCampagne.formationId)
+            .execute();
+        }
+      });
       return result[0].numUpdatedRows === BigInt(ids.length);
     });
 
