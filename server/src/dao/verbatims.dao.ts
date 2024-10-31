@@ -209,6 +209,10 @@ export const deleteManyByCampagneIds = async (campagneIds: string[]): Promise<bo
 
   const temoignagesIds = temoignages.map((t) => t.temoignageId as string);
 
+  if (temoignagesIds.length === 0) {
+    return true;
+  }
+
   return (await getKbdClient()
     .updateTable("verbatims")
     .set({ deleted_at: new Date() })

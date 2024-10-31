@@ -11,6 +11,7 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
   const page = req.body.page || 1;
   const pageSize = req.body.pageSize || 10;
 
+  const campagneIds = req.body.campagneIds;
   const diplome = req.body.diplome;
   const siret = req.body.siret;
   const search = req.body.search;
@@ -28,6 +29,10 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
 
   if (departement) {
     query.departement = departement;
+  }
+
+  if (campagneIds) {
+    query.campagneIds = campagneIds;
   }
 
   const { success, body, ids, pagination } = await campagnesService.getCampagnes({

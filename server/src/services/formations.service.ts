@@ -147,7 +147,6 @@ export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({ us
 
     return { success: true, body: { diplomes, etablissements } };
   } catch (error) {
-    console.log({ error });
     return { success: false, body: error };
   }
 };

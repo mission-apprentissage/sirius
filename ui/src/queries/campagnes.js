@@ -1,8 +1,8 @@
 import { apiDelete, apiGet, apiPost } from "../utils/api.utils";
 
-export const fetchCampagnes = async ({ search, diplome, siret, page = 1, pageSize = 10, token }) => {
+export const fetchCampagnes = async ({ search, diplome, siret, campagneIds, page = 1, pageSize = 10, token }) => {
   const response = await apiPost("/api/campagnes", {
-    body: { page, pageSize, search, diplome, siret },
+    body: { page, pageSize, search, diplome, siret, campagneIds },
     headers: {
       Authorization: `Bearer ${token}`,
     },

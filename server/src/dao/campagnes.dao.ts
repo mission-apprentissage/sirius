@@ -181,7 +181,7 @@ export const deleteMany = async (ids: string[]): Promise<boolean> => {
         .returning("formation_id")
         .execute()) as unknown as { formationId: string }[] | null;
 
-      deletedFormationsCampagnes?.forEach(async (deletedFormationCampagne) => {
+      for (const deletedFormationCampagne of deletedFormationsCampagnes || []) {
         const formationsCampagnesCount = (
           await trx
             .selectFrom("formations_campagnes")
@@ -197,7 +197,8 @@ export const deleteMany = async (ids: string[]): Promise<boolean> => {
             .where("id", "=", deletedFormationCampagne.formationId)
             .execute();
         }
-      });
+      }
+
       return result[0].numUpdatedRows === BigInt(ids.length);
     });
 

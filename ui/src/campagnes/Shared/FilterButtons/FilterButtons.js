@@ -42,7 +42,7 @@ const FilterButtons = ({
   }, [selectedEtablissementsSiret, etablissementsOptions]);
 
   useEffect(() => {
-    if (!selectedDiplomesIntitule?.length) {
+    if (!selectedDiplomesIntitule?.length && diplomesOptions.length) {
       setSelectedDiplomesIntitule(diplomesOptions.map((option) => option.value));
     }
   }, [diplomesOptions]);

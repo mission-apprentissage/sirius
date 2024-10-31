@@ -5,7 +5,7 @@ import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 
 import { DIPLOME_TYPE_MATCHER, USER_ROLES, VIEW_TYPES } from "../../constants";
@@ -141,6 +141,15 @@ const FormationsSelector = ({ selectedFormations, setSelectedFormations }) => {
     enabled: !!remoteFormations?.length && isSuccessDiplomesAndEtablissementsFilter,
     pageSize: 1000,
   });
+
+  const remoteFormationIds = remoteFormations?.map((formation) => formation._id);
+
+  useEffect(() => {
+    const hasUnknownCampagne = selectedFormations.some((formation) => !remoteFormationIds?.includes(formation._id));
+    if (hasUnknownCampagne && remoteFormationIds?.length) {
+      setSelectedFormations(selectedFormations.filter((formation) => remoteFormationIds?.includes(formation._id)));
+    }
+  }, [selectedEtablissementsSiret, selectedDiplomesIntitule, remoteFormationIds]);
 
   const checkboxLabel = (
     <b>
