@@ -12,7 +12,7 @@ import * as verbatimsDao from "../dao/verbatims.dao";
 import * as catalogue from "../modules/catalogue";
 import * as pdfExport from "../modules/pdfExport";
 import * as xlsxExport from "../modules/xlsxExport";
-import { appendDataWhenEmpty, getMedianDuration, getStatistics } from "../utils/campagnes.utils";
+import { appendDataWhenEmpty, getMedianDuration, getStatistics, normalizeString } from "../utils/campagnes.utils";
 import { getStaticFilePath } from "../utils/getStaticFilePath";
 import { getChampsLibreField } from "../utils/verbatims.utils";
 
@@ -31,20 +31,21 @@ export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10,
       }
       campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ scope, query });
     } else {
-      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query });
+      campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query, allowEmptyFilter: true });
     }
 
     const unpaginatedCampagnesIds = campagnes.map((campagne) => campagne.id);
 
     const searchedCampagnes = search
       ? campagnes.filter((campagne) => {
+          const normalizedSearch = normalizeString(search).toLowerCase();
           return (
-            campagne.nomCampagne.toLowerCase()?.includes(search.toLowerCase()) ||
-            campagne.formation?.intituleLong?.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.localite?.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.lieuFormationAdresseComputed?.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.lieuFormationAdresse?.toLowerCase().includes(search.toLowerCase()) ||
-            campagne.formation?.tags?.join("-").toLowerCase().includes(search.toLowerCase())
+            campagne.nomCampagne.toLowerCase()?.includes(normalizedSearch) ||
+            campagne.formation?.intituleLong?.toLowerCase().includes(normalizedSearch) ||
+            campagne.formation?.localite?.toLowerCase().includes(normalizedSearch) ||
+            campagne.formation?.lieuFormationAdresseComputed?.toLowerCase().includes(normalizedSearch) ||
+            campagne.formation?.lieuFormationAdresse?.toLowerCase().includes(normalizedSearch) ||
+            campagne.formation?.tags?.join("-").toLowerCase().includes(normalizedSearch)
           );
         })
       : campagnes;

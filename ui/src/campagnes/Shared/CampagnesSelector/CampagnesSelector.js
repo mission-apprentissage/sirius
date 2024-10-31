@@ -53,7 +53,7 @@ const CampagnesSelector = ({
     diplome: selectedDiplomesIntitule,
     siret: selectedEtablissementsSiret,
     key: search,
-    enabled: true,
+    enabled: selectedDiplomesIntitule?.length || selectedEtablissementsSiret?.length,
     page: page,
     pageSize: 20,
   });
@@ -64,10 +64,7 @@ const CampagnesSelector = ({
     isSuccess: isSuccessDiplomesAndEtablissementsFilter,
   } = useFetchDiplomesAndEtablissementsFilter();
 
-  const currentPageCampagneIds = campagnes?.map((campagne) => campagne.id);
-
-  const hasSelectedAllCampagneFromCurrentPage =
-    selectedCampagneIds.length && currentPageCampagneIds?.every((id) => selectedCampagneIds.includes(id));
+  const hasSelectedAllCampagne = selectedCampagneIds.length === campagnesIds?.length;
 
   useEffect(() => {
     if (isResults && !paramsCampagneIds?.length && campagnesIds?.length && !selectedCampagneIds.length) {
@@ -78,12 +75,15 @@ const CampagnesSelector = ({
     }
   }, [campagnesIds]);
 
+  useEffect(() => {
+    const hasUnknownCampagne = selectedCampagneIds.some((id) => !campagnesIds?.includes(id));
+    if (hasUnknownCampagne && campagnesIds?.length) {
+      setSelectedCampagneIds(selectedCampagneIds.filter((id) => campagnesIds?.includes(id)));
+    }
+  }, [selectedEtablissementsSiret, selectedDiplomesIntitule, campagnesIds]);
+
   const checkboxLabel = (
-    <b>
-      {hasSelectedAllCampagneFromCurrentPage
-        ? "Désélectionner toutes les campagnes"
-        : "Sélectionner toutes les campagnes"}
-    </b>
+    <b>{hasSelectedAllCampagne ? "Désélectionner toutes les campagnes" : "Sélectionner toutes les campagnes"}</b>
   );
 
   const checkboxHintText = `${selectedCampagneIds.length}/${
@@ -147,16 +147,12 @@ const CampagnesSelector = ({
                     hintText: checkboxHintText,
                     nativeInputProps: {
                       name: `selectAll`,
-                      checked: hasSelectedAllCampagneFromCurrentPage,
+                      checked: hasSelectedAllCampagne,
                       onChange: () => {
-                        if (hasSelectedAllCampagneFromCurrentPage) {
-                          setSelectedCampagneIds((prevValues) => [
-                            ...prevValues.filter((id) => !currentPageCampagneIds.includes(id)),
-                          ]);
+                        if (selectedCampagneIds.length === campagnesIds?.length) {
+                          setSelectedCampagneIds([]);
                         } else {
-                          setSelectedCampagneIds((prevValues) => [
-                            ...new Set([...prevValues, ...currentPageCampagneIds]),
-                          ]);
+                          setSelectedCampagneIds(campagnesIds);
                         }
                       },
                     },
@@ -180,7 +176,7 @@ const CampagnesSelector = ({
                 }
                 severity="info"
               />
-            ) : isSuccessCampagnes && !campagnes?.length ? (
+            ) : !campagnes || (isSuccessCampagnes && !campagnes?.length) ? (
               <Alert
                 title="Aucune campagne trouvée"
                 description={

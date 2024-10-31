@@ -12,10 +12,10 @@ const useFetchCampagnesByBatch = ({ campagneIds, enabled }) => {
 
   const queryResults = useQueries({
     queries: batches.map((batch, index) => ({
-      queryKey: [`campagnes-batches-${index}`],
+      queryKey: ["campagnes-batches", index, campagneIds],
       queryFn: () =>
         fetchCampagnes({
-          query: `campagneIds=${batch.join(",")}`,
+          campagneIds,
           pageSize: batch.length,
           page: index + 1,
           token: userContext.token,

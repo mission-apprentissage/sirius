@@ -100,3 +100,12 @@ export const getStatistics = (campagnes, verbatimsCount) => ({
   champsLibreRate: campagnes?.length ? getChampsLibreRate(campagnes, verbatimsCount) : "N/A",
   medianDuration: campagnes?.length ? getMedianDuration(campagnes) : "N/A",
 });
+
+export const normalizeString = (str) => {
+  return str
+    ? str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+    : "";
+};
