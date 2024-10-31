@@ -143,6 +143,8 @@ const ManageTemoignagesTable = ({
             onClick: (event) => {
               event.preventDefault();
               setPage(pageNumber);
+              // eslint-disable-next-line no-undef
+              window.scrollTo(0, 0);
             },
             key: `pagination-link-${pageNumber}`,
           })}
