@@ -69,10 +69,8 @@ const CampagnesSelector = ({
   const hasSelectedAllCampagneFromCurrentPage =
     selectedCampagneIds.length && currentPageCampagneIds?.every((id) => selectedCampagneIds.includes(id));
 
-  const isResultsAndEveryCampagneIsSelected = isResults && selectedCampagneIds.length === campagnesIds?.length;
-
   useEffect(() => {
-    if (isResults && !paramsCampagneIds?.length && campagnesIds?.length) {
+    if (isResults && !paramsCampagneIds?.length && campagnesIds?.length && !selectedCampagneIds.length) {
       setSelectedCampagneIds(campagnesIds);
     }
     if (isManage) {
@@ -82,7 +80,7 @@ const CampagnesSelector = ({
 
   const checkboxLabel = (
     <b>
-      {(hasSelectedAllCampagneFromCurrentPage && isManage) || isResultsAndEveryCampagneIsSelected
+      {hasSelectedAllCampagneFromCurrentPage
         ? "Désélectionner toutes les campagnes"
         : "Sélectionner toutes les campagnes"}
     </b>
@@ -100,7 +98,6 @@ const CampagnesSelector = ({
           {userContext.user?.scope.field !== OBSERVER_SCOPES.SIRETS && <b>{userContext.user?.scope.value}</b>}
         </p>
       )}
-
       {isErrorCampagnes ? (
         <Alert
           title="Une erreur s'est produite dans le chargement des campagnes"
@@ -210,6 +207,8 @@ const CampagnesSelector = ({
                         onClick: (event) => {
                           event.preventDefault();
                           setPage(pageNumber);
+                          // eslint-disable-next-line no-undef
+                          window.scrollTo(0, 0);
                         },
                         key: `pagination-link-${pageNumber}`,
                       })}
