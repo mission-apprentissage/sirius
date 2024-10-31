@@ -38,7 +38,9 @@ const MultiSelect = ({ options, name, placeholder = "", label, selected, setSele
     if (!values?.length && selected?.length) {
       setValues(selected);
     }
-    setIsAllSelected(selected?.length === options?.length);
+    if (selected?.length === options?.length && !isAllSelected) {
+      setIsAllSelected(true);
+    }
   }, [selected]);
 
   const handleSelectAll = (e) => {

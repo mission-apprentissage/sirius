@@ -36,7 +36,7 @@ const FilterButtons = ({
   }, [inputValue, setSearch, setIsOpened]);
 
   useEffect(() => {
-    if (!selectedEtablissementsSiret?.length) {
+    if (!selectedEtablissementsSiret?.length && etablissementsOptions.length) {
       setSelectedEtablissementsSiret(etablissementsOptions.map((option) => option.value));
     }
   }, [selectedEtablissementsSiret, etablissementsOptions]);
