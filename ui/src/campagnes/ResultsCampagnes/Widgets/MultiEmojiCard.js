@@ -11,7 +11,10 @@ const multiEmojiOption = (responses, emojiMapping) => {
     return param.data;
   };
 
-  const series = responses.data.map((response, index) => {
+  const series = emojiMapping.map((_, index) => {
+    // eslint-disable-next-line no-prototype-builtins
+    const responsesByKey = responses.data.find((elem) => elem.hasOwnProperty(index));
+
     return {
       name: `${emojiMapping[index].emoji} ${emojiMapping[index].value}`,
       type: "bar",
@@ -23,13 +26,12 @@ const multiEmojiOption = (responses, emojiMapping) => {
       emphasis: {
         focus: "series",
       },
-      data: response[index],
+      data: responsesByKey ? responsesByKey[index] : [],
       color: colors[index],
     };
   });
 
   const removeHTMLTagRegex = /(<([^>]+)>)/gi;
-
   return {
     tooltip: {
       trigger: "axis",
