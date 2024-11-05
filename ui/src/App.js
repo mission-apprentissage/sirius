@@ -1,7 +1,9 @@
+/* eslint-disable no-undef */
 import "./assets/fonts/fonts.css";
 
 import { useIsDark } from "@codegouvfr/react-dsfr/useIsDark";
-import { Outlet, Route, Routes } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { Outlet, Route, Routes, useLocation } from "react-router-dom";
 
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import AnswerCampagnePage from "./campagnes/AnswerCampagnePage";
@@ -13,6 +15,8 @@ import DsfrIframeLayout from "./Components/DsfrIframeLayout";
 import DsfrLayout from "./Components/DsfrLayout";
 import Layout from "./Components/Layout";
 import QuestionnaireLayout from "./Components/QuestionnaireLayout";
+import { USER_ROLES } from "./constants";
+import { UserContext } from "./context/UserContext";
 import EtablissementOrAdminProtectedRoute from "./EtablissementOrAdminProtectedRoute";
 import DiffusionGuidePage from "./guide/DiffusionGuidePage";
 import HomePage from "./home/HomePage";
@@ -38,7 +42,47 @@ import ModerationPage from "./verbatims/ModerationPage";
 
 function App() {
   const { setIsDark } = useIsDark();
+  const [userContext] = useContext(UserContext);
+  const location = useLocation();
   setIsDark(false);
+
+  const isProd = process.env.REACT_APP_SIRIUS_ENV === "production";
+  const isAdmin = userContext?.user?.role === USER_ROLES.ADMIN;
+  const isSudo = userContext?.user?.isSudo;
+  const isLoading = userContext?.loading;
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const noTrackingParam = urlParams.get("notracking");
+
+    const handleTrackingParams = () => {
+      if (noTrackingParam === "true") {
+        localStorage.setItem("disableTracking", "true");
+        console.info("Tracking disabled");
+      } else if (noTrackingParam === "reset") {
+        localStorage.removeItem("disableTracking");
+      }
+    };
+
+    const loadTrackingScript = () => {
+      var _mtm = (window._mtm = window._mtm || []);
+      _mtm.push({ "mtm.startTime": new Date().getTime(), event: "mtm.Start" });
+      var d = document,
+        g = d.createElement("script"),
+        s = d.getElementsByTagName("script")[0];
+      g.async = true;
+      g.src = "https://stats.beta.gouv.fr/js/container_5SxH8ZeG.js";
+      s.parentNode.insertBefore(g, s);
+    };
+
+    handleTrackingParams();
+
+    const disableTracking = localStorage.getItem("disableTracking") === "true";
+
+    if (!isLoading && !isAdmin && !disableTracking && isProd && !isSudo) {
+      loadTrackingScript();
+    }
+  }, [isLoading, isAdmin]);
 
   return (
     <Routes>
