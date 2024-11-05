@@ -18,11 +18,11 @@ import * as serviceWorker from "./serviceWorker";
 
 Sentry.init({
   dsn: "https://f97984280f4e4a4e8075e8b353b9234a@sentry.incubateur.net/153",
-  enabled: process.env.REACT_APP_SIRIUS_ENV !== "dev",
+  enabled: process.env.REACT_APP_ENV !== "local",
   tracePropagationTargets: [/^https:\/\/[^/]*\.inserjeunes\.beta\.gouv\.fr/],
   integrations: [new BrowserTracing()],
-  tracesSampleRate: process.env.REACT_APP_SIRIUS_ENV === "production" ? 0.3 : 1.0,
-  environment: process.env.REACT_APP_SIRIUS_ENV,
+  tracesSampleRate: process.env.REACT_APP_ENV === "production" ? 0.3 : 1.0,
+  environment: process.env.REACT_APP_ENV,
 });
 
 const QUERY_CLIENT_RETRY_DELAY = 3000;
