@@ -40,7 +40,7 @@ const UsersTable = ({ users, setRefetchData }) => {
         return {
           loading: false,
           token: sudoUser.token,
-          user: decodedToken.user,
+          user: { ...decodedToken.user, isSudo: true },
         };
       });
 
