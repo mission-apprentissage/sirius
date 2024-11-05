@@ -77,16 +77,16 @@ const LoginPage = () => {
             }
           },
           onError: (error) => {
-            if (error.statusCode === 400) {
+            if (error.context.statusCode === 400) {
               setError("Erreur de validation");
-            } else if (error.statusCode === 401) {
+            } else if (error.context.statusCode === 401) {
               setError("L'adresse email ou le mot de passe est incorrect.");
-            } else if (error.statusCode === 500) {
+            } else if (error.context.statusCode === 500) {
               setError("Merci de réessayer.");
-            } else if (error.statusCode === 403) {
+            } else if (error.context.statusCode === 403) {
               setError("Votre adresse email n'est pas confirmée.");
-            } else if (error.statusCode === 429) {
-              setError(error.message);
+            } else if (error.context.statusCode === 429) {
+              setError(error.context.message);
             }
           },
         }
