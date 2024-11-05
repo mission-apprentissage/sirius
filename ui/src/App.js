@@ -46,7 +46,7 @@ function App() {
   const location = useLocation();
   setIsDark(false);
 
-  const isProd = process.env.REACT_APP_SIRIUS_ENV === "production";
+  const isProd = process.env.REACT_APP_ENV === "production";
   const isAdmin = userContext?.user?.role === USER_ROLES.ADMIN;
   const isSudo = userContext?.user?.isSudo;
   const isLoading = userContext?.loading;
