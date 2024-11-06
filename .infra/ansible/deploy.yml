@@ -94,7 +94,7 @@
         name: "classify-verbatims"
         minute: "0"
         hour: "3"
-        job: "sudo /opt/app/scripts/cli.sh classify-verbatims >> /var/log/cron.log 2>&1; /opt/app/tools/monitoring/export-cron-status-prom.sh -c 'Classify Verbatims Alias' -v $?"
+        job: "sudo docker exec -i $(sudo docker ps --filter 'name=^sirius_server' --format '{{.ID}}' | head -n 1) yarn cli classify-verbatims >> /var/log/cron.log 2>&1; /opt/app/tools/monitoring/export-cron-status-prom.sh -c 'Classify Verbatims Alias' -v $?"
       when: env_type == "production"
 
     - name: Add cron to extract themes from verbatims
@@ -102,7 +102,7 @@
         name: "extract-themes-verbatims"
         minute: "0"
         hour: "5"
-        job: "sudo /opt/app/scripts/cli.sh extract-themes-verbatims >> /var/log/cron.log 2>&1; /opt/app/tools/monitoring/export-cron-status-prom.sh -c 'Extract themes from verbatims Alias' -v $?"
+        job: "sudo docker exec -i $(sudo docker ps --filter 'name=^sirius_server' --format '{{.ID}}' | head -n 1) yarn cli extract-themes-verbatims >> /var/log/cron.log 2>&1; /opt/app/tools/monitoring/export-cron-status-prom.sh -c 'Extract themes from verbatims Alias' -v $?"
       when: env_type == "production"
 
     - name: "Setup de la Metabase"
