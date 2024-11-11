@@ -240,12 +240,23 @@ export const getDatavisualisationFormation = async (intituleFormation) => {
         "peurChangementConseil",
         "choseMarquanteConseil",
         "trouverEntrepriseConseil",
+        "differenceCollegeCfaConseil",
       ],
     };
 
     const verbatimsResults = await verbatimsDao.getAll(verbatimsQuery);
 
-    const displayedGems = getGemVerbatimsByWantedQuestionKey(verbatimsResults);
+    const verbatimsWithEtablissement = verbatimsResults.map((verbatim) => {
+      const relatedTemoignage = temoignages.find((temoignage) => temoignage.id === verbatim.temoignageId);
+      return {
+        ...verbatim,
+        etablissementFormateurEntrepriseRaisonSociale: relatedTemoignage.etablissementFormateurEntrepriseRaisonSociale,
+        etablissementFormateurEnseigne: relatedTemoignage.etablissementFormateurEnseigne,
+        etablissementGestionnaireEnseigne: relatedTemoignage.etablissementGestionnaireEnseigne,
+      };
+    });
+
+    const displayedGems = getGemVerbatimsByWantedQuestionKey(verbatimsWithEtablissement);
 
     const result = {
       temoignagesCount: temoignages.length,

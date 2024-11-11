@@ -31,7 +31,7 @@ export const create = async (
   return transaction ? { id: transaction } : undefined;
 };
 
-export const findAll = async (query: { campagneIds: string[] }): Promise<Temoignage[] | undefined> => {
+export const findAll = async (query: { campagneIds: string[] }) => {
   let queryBuilder = getKbdClient()
     .selectFrom("temoignages")
     .select([
@@ -42,8 +42,13 @@ export const findAll = async (query: { campagneIds: string[] }): Promise<Temoign
       "temoignages.deleted_at",
       "temoignages.created_at",
       "temoignages.updated_at",
+      "formations.etablissement_formateur_entreprise_raison_sociale" as any,
+      "formations.etablissement_formateur_enseigne" as any,
+      "formations.etablissement_gestionnaire_enseigne" as any,
     ])
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
+    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .where("temoignages.deleted_at", "is", null);
 
   if ("campagneIds" in query && query.campagneIds) {

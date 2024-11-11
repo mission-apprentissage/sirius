@@ -330,13 +330,28 @@ export const getGemVerbatimsByWantedQuestionKey = (verbatims) => {
     "peurChangementConseil",
     "choseMarquanteConseil",
     "trouverEntrepriseConseil",
+    "differenceCollegeCfaConseil",
   ];
 
   const groupedVerbatims = verbatims.reduce((acc, verbatim) => {
-    const { questionKey, content } = verbatim;
+    const {
+      questionKey,
+      content,
+      createdAt,
+      etablissementFormateurEntrepriseRaisonSociale,
+      etablissementFormateurEnseigne,
+      etablissementGestionnaireEnseigne,
+    } = verbatim;
+
     if (questionKeyOrder.includes(questionKey)) {
       acc[questionKey] = acc[questionKey] || [];
-      acc[questionKey].push(content);
+      acc[questionKey].push({
+        content,
+        createdAt,
+        etablissementFormateurEntrepriseRaisonSociale,
+        etablissementFormateurEnseigne,
+        etablissementGestionnaireEnseigne,
+      });
     }
     return acc;
   }, {});
