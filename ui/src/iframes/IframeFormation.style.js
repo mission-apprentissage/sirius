@@ -4,6 +4,12 @@ import styled from "@emotion/styled";
 export const IframeContainer = styled.main`
   width: 100%;
   padding: 0 5px;
+
+  & > p {
+    font-size: 16px;
+    line-heihgt: 24px;
+    margin-bottom: 16px;
+  }
 `;
 
 export const DatavisualisationContainer = styled.div`
@@ -214,5 +220,40 @@ export const FeelingRatingLinks = styled.div`
 
   & a {
     color: var(--text-action-high-blue-france);
+  }
+`;
+
+export const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding: 16px 0;
+
+  & h3 {
+    margin: 0;
+  }
+`;
+
+export const ConstructionNotice = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background-color: var(--background-action-low-blue-france);
+  padding: 12px;
+  gap: 8px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+
+  & span {
+    color: var(--background-flat-blue-france);
+  }
+
+  & p {
+    margin: 0;
+    line-height: 24px;
+    font-size: 14px;
   }
 `;

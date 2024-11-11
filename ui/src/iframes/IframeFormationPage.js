@@ -1,4 +1,7 @@
 /* eslint-disable no-undef */
+
+import { fr } from "@codegouvfr/react-dsfr";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
@@ -6,11 +9,8 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
-import ExperienceEntrepriseRating from "./Components/ExperienceRating";
-import ExperienceEntrepriseVerbatims from "./Components/ExperienceVerbatims";
-import SearchEntrepriseRating from "./Components/FeelingRating";
-import GemVerbatim from "./Components/GemVerbatim";
-import { DatavisualisationContainer, IframeContainer, TestimonialsCount } from "./IframeFormation.style";
+import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
+import { ConstructionNotice, IframeContainer, TitleContainer } from "./IframeFormation.style";
 
 const IframeFormationPage = () => {
   const scrollableRef = useRef(null);
@@ -58,27 +58,27 @@ const IframeFormationPage = () => {
           <title>{`Statistiques pour la formation ${intituleFormation} - Sirius`}</title>
         </Helmet>
         <IframeContainer ref={scrollableRef}>
-          <h3>Suivre cette formation en apprentissage ?</h3>
+          <TitleContainer>
+            <h3>Témoignages d'apprentis</h3>
+            <Badge as="span" noIcon severity="success">
+              Beta
+            </Badge>
+          </TitleContainer>
           <p>
-            Certains établissement proposent ce CAP en apprentissage. Tu hésites entre la voie scolaire et
-            l’apprentissage ? Grace au questionnaire{" "}
+            Tu hésites entre la voie scolaire et l'apprentissage ? Grace au questionnaire{" "}
             <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
               <b>Sirius</b>
             </a>
-            , les apprenti·es qui se forment à ce CAP en France te partagent leur expérience en entreprise.
+            , les apprentis qui se forment en France te partagent leur expérience.
           </p>
-
-          <DatavisualisationContainer>
-            <TestimonialsCount>
-              <p>
-                <b>Expérience en entreprise</b> ({datavisualisation.temoignagesCount} apprenti·es interrogé·es)
-              </p>
-            </TestimonialsCount>
-            <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseEntrepriseRates} />
-            <ExperienceEntrepriseVerbatims orderedVerbatims={datavisualisation.commentVisTonEntreprise} />
-            <GemVerbatim verbatim={datavisualisation.displayedGems} />
-            <SearchEntrepriseRating rating={datavisualisation.passeEntrepriseRates} isFormation={true} />
-          </DatavisualisationContainer>
+          <ConstructionNotice>
+            <span className={fr.cx("fr-icon-information-line")} aria-hidden={true} />
+            <p>
+              Ce service est en cours de construction. Les résultats ne sont pas encore représentatifs de l'ensemble des
+              établissements et formations.
+            </p>
+          </ConstructionNotice>
+          <VerbatimsCarousel testimonials={Object.values(datavisualisation?.displayedGems).flat()} />
         </IframeContainer>
       </>
     )
