@@ -1,6 +1,6 @@
 // @ts-nocheck -- TODO
 
-import { App } from "@slack/bolt";
+import Slack from "@slack/bolt";
 
 import config from "../config";
 
@@ -8,7 +8,7 @@ export const sendToSlack = async (main, thread_ts = null) => {
   if (!config.slack.token) return;
   if (!config.slack.channel) return;
 
-  const slack = new App({
+  const slack = new Slack.App({
     token: config.slack.token,
     signingSecret: config.slack.signingSecret ?? "",
   });
