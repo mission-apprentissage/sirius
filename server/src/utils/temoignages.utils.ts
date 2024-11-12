@@ -1,6 +1,10 @@
 // @ts-nocheck -- TODO
 
-import { VERBATIM_STATUS } from "../constants";
+import {
+  ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES,
+  NEW_ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES,
+  VERBATIM_STATUS,
+} from "../constants";
 
 export const matchIdAndQuestions = (questionnaire) => {
   if (!questionnaire || !questionnaire.properties) {
@@ -341,6 +345,8 @@ export const getGemVerbatimsByWantedQuestionKey = (verbatims) => {
       etablissementFormateurEntrepriseRaisonSociale,
       etablissementFormateurEnseigne,
       etablissementGestionnaireEnseigne,
+      status,
+      scores,
     } = verbatim;
 
     if (questionKeyOrder.includes(questionKey)) {
@@ -348,6 +354,7 @@ export const getGemVerbatimsByWantedQuestionKey = (verbatims) => {
       acc[questionKey].push({
         content,
         createdAt,
+        status: scores.GEM.avis === "Oui" ? VERBATIM_STATUS.GEM : status,
         etablissementFormateurEntrepriseRaisonSociale,
         etablissementFormateurEnseigne,
         etablissementGestionnaireEnseigne,
@@ -359,9 +366,9 @@ export const getGemVerbatimsByWantedQuestionKey = (verbatims) => {
   return groupedVerbatims;
 };
 
-export const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAnswers, matchedThemesAndLabels) => {
+export const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAnswers) => {
   const result = orderedThemeAnswers.map((item) => {
-    const theme = matchedThemesAndLabels[item.label];
+    const theme = ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES[item.label];
 
     if (theme === undefined) {
       return { ...item, verbatims: [] };
@@ -389,6 +396,10 @@ export const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAns
       .map((verbatim) => ({
         content: verbatim.content,
         status: verbatim.status,
+        createdAt: verbatim.createdAt,
+        etablissementFormateurEntrepriseRaisonSociale: verbatim.etablissementFormateurEntrepriseRaisonSociale,
+        etablissementFormateurEnseigne: verbatim.etablissementFormateurEnseigne,
+        etablissementGestionnaireEnseigne: verbatim.etablissementGestionnaireEnseigne,
       }))
       .sort((a, b) => {
         if (a.status.includes(VERBATIM_STATUS.GEM) && !b.status.includes(VERBATIM_STATUS.GEM)) {
@@ -397,10 +408,9 @@ export const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAns
           return 1;
         }
         return 0;
-      })
-      .splice(0, 10);
+      });
 
-    return { ...item, verbatims: verbatimsForTheme };
+    return { ...item, label: NEW_ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES[item.label], verbatims: verbatimsForTheme };
   });
 
   return result;

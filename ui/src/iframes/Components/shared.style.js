@@ -22,7 +22,8 @@ export const VerbatimContainer = styled.div`
   justify-content: flex-start;
   gap: 1rem;
   width: ${(props) => (props.isDesktop ? "70%" : "100%")};
-  margin: 16px auto;
+  margin: 16px auto 32px auto;
+  padding: 0 16px;
 
   & p {
     margin-bottom: 0;
@@ -61,5 +62,17 @@ export const PaginationContainer = styled.div`
 
   & p {
     margin: 0 1rem;
+  }
+`;
+
+export const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  & h6 {
+    margin-bottom: 0;
   }
 `;

@@ -157,6 +157,14 @@ export const ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES = {
   "D’avoir moins de <strong>vacances</strong>": VERBATIM_THEMES.MOINS_VACANCES,
 };
 
+export const NEW_ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES = {
+  "<strong>Ton intégration et l’ambiance</strong> dans ton entreprise": "L'intégration et l’ambiance en entreprise",
+  "<strong>Le rythme</strong> entreprise <-> école": "Le rythme entreprise - établissement scolaire",
+  "<strong>Ce que tu apprends de ce métier</strong> dans ton entreprise": "L'apprentissage du métier",
+  "<strong>Les horaires</strong> en entreprise": "Les horaires en entreprise",
+  "D’avoir moins de <strong>vacances</strong>": "Avoir moins de vacances",
+};
+
 export const ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES = {
   "<strong>L'ambiance</strong>": VERBATIM_THEMES.AMBIANCE_ETABLISSEMENT,
   "<strong>Le niveau de difficulté des cours</strong>": VERBATIM_THEMES.DIFFICULTES_COURS,

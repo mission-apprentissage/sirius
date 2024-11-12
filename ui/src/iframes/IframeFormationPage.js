@@ -2,17 +2,20 @@
 
 import { fr } from "@codegouvfr/react-dsfr";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
+import { VERBATIM_STATUS } from "../constants";
 import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
 import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
+import VerbatimsThematics from "./Components/VerbatimsThematics";
 import { ConstructionNotice, IframeContainer, TitleContainer } from "./IframeFormation.style";
 
 const IframeFormationPage = () => {
+  const [verbatimsStep, setVerbatimsStep] = useState(1);
   const scrollableRef = useRef(null);
   const { search } = useLocation();
   const intituleFormation = new URLSearchParams(search).get("intitule");
@@ -78,7 +81,18 @@ const IframeFormationPage = () => {
               établissements et formations.
             </p>
           </ConstructionNotice>
-          <VerbatimsCarousel testimonials={Object.values(datavisualisation?.displayedGems).flat()} />
+          {verbatimsStep === 1 && (
+            <VerbatimsCarousel
+              verbatims={Object.values(datavisualisation?.gems).flat()}
+              setVerbatimsStep={setVerbatimsStep}
+            />
+          )}
+          {verbatimsStep === 2 && (
+            <VerbatimsThematics
+              verbatimsByThemes={datavisualisation?.verbatimsByThemes}
+              setVerbatimsStep={setVerbatimsStep}
+            />
+          )}
         </IframeContainer>
       </>
     )

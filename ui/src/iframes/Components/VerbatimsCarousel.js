@@ -17,13 +17,13 @@ import {
   VerbatimContent,
 } from "./shared.style";
 
-export const VerbatimsCarousel = ({ testimonials }) => {
+export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
   const [swiperControl, setSwiperControl] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const { isMobile, isDesktop } = useBreakpoints();
 
-  if (!testimonials.length) return null;
+  if (!verbatims.length) return null;
 
   const toggleExpand = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
@@ -47,7 +47,7 @@ export const VerbatimsCarousel = ({ testimonials }) => {
       }}
     >
       <CarouselContainer>
-        {testimonials.map((testimonial, index) => (
+        {verbatims.map((verbatim, index) => (
           <SwiperSlide
             key={index}
             onClick={() =>
@@ -62,9 +62,9 @@ export const VerbatimsCarousel = ({ testimonials }) => {
               <img src={Quote} aria-hidden={true} />
               <VerbatimContent>
                 {expandedIndex === index
-                  ? `« ${testimonial.content} »`
-                  : `« ${testimonial.content.substring(0, 230)}${testimonial.content.length > 230 ? "..." : ""} »`}
-                {testimonial.content.length > 230 && (
+                  ? `« ${verbatim.content} »`
+                  : `« ${verbatim.content.substring(0, 230)}${verbatim.content.length > 230 ? "..." : ""} »`}
+                {verbatim.content.length > 230 && (
                   <>
                     <br />
                     <span onClick={() => toggleExpand(index)}>
@@ -74,8 +74,8 @@ export const VerbatimsCarousel = ({ testimonials }) => {
                 )}
               </VerbatimContent>
               <ApprentiInfo>
-                Apprenti·e du {etablissementLabelGetterFromFormation(testimonial)} -{" "}
-                {new Date(testimonial.createdAt).toLocaleDateString("fr", { month: "long", year: "numeric" })}
+                Apprenti·e du {etablissementLabelGetterFromFormation(verbatim)} -{" "}
+                {new Date(verbatim.createdAt).toLocaleDateString("fr", { month: "long", year: "numeric" })}
               </ApprentiInfo>
             </VerbatimContainer>
           </SwiperSlide>
@@ -90,7 +90,7 @@ export const VerbatimsCarousel = ({ testimonials }) => {
             onClick={() => swiperControl.slidePrev()}
           />
           <p>
-            {activeIndex + 1} sur {testimonials.length}
+            {activeIndex + 1} sur {verbatims.length}
           </p>
           <Button
             aria-label="Suivant"
@@ -99,7 +99,9 @@ export const VerbatimsCarousel = ({ testimonials }) => {
             onClick={() => swiperControl.slideNext()}
           />
         </PaginationContainer>
-        <Button priority="secondary">Voir plus de témoignages</Button>
+        <Button priority="secondary" onClick={() => setVerbatimsStep(2)}>
+          Voir plus de témoignages
+        </Button>
       </NavigationContainer>
     </Swiper>
   );
