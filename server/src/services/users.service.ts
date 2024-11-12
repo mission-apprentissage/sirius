@@ -225,6 +225,7 @@ export const confirmUser = async (token) => {
 
     const user = await usersDao.findOneByEmail(decryptedToken.email);
 
+    user.refreshToken = JSON.stringify(user.refreshToken);
     user.emailConfirmed = true;
 
     const updatedUser = await usersDao.update(user.id, user);
