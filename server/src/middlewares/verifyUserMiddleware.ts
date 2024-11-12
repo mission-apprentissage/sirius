@@ -12,7 +12,7 @@ export const STRATEGIES = {
 
 export const passportCallback = (req, _res, next) => {
   return (error, user) => {
-    if (user && user.emailConfirmed === false) {
+    if (user && user.emailConfirmed === false && req.url !== "/api/users/logout") {
       return next(new UnconfirmedEmail());
     }
     if (error || !user || (req.url !== "/api/users/login" && user.status === USER_STATUS.INACTIVE)) {
