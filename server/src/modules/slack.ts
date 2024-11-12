@@ -1,6 +1,6 @@
 // @ts-nocheck -- TODO
 
-import App from "@slack/bolt";
+import { App } from "@slack/bolt";
 
 import config from "../config";
 

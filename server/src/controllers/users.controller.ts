@@ -304,7 +304,7 @@ export const supportUser = tryCatch(async (req: any, res: any) => {
     },
   ]);
 
-  return res.status(200).json({ success: slackResponse.ok });
+  return res.status(200).json({ success: slackResponse?.ok });
 });
 
 export const supportUserPublic = tryCatch(async (req: any, res: any) => {
@@ -351,5 +351,5 @@ export const supportUserPublic = tryCatch(async (req: any, res: any) => {
     },
   ]);
 
-  return res.status(200).json({ success: slackResponse.ok });
+  return res.status(200).json({ success: slackResponse?.ok });
 });
