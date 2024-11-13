@@ -65,9 +65,17 @@ export const getDatavisualisation = tryCatch(async (req: any, res: any) => {
 });
 
 export const getDatavisualisationFormation = tryCatch(async (req: any, res: any) => {
-  const intituleFormation = req.query.intituleFormation;
+  const intituleFormation = req.query.intituleFormation || null;
+  const cfd = req.query.cfd || null;
+  const idCertifInfo = req.query.idCertifinfo || null;
+  const slug = req.query.slug || null;
 
-  const { success, body } = await temoignagesService.getDatavisualisationFormation(intituleFormation);
+  const { success, body } = await temoignagesService.getDatavisualisationFormation(
+    intituleFormation,
+    cfd,
+    idCertifInfo,
+    slug
+  );
 
   if (!success) throw new BasicError();
 

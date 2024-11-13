@@ -188,12 +188,18 @@ export const getDatavisualisation = async (campagneIds = []) => {
   }
 };
 
-export const getDatavisualisationFormation = async (intituleFormation) => {
+export const getDatavisualisationFormation = async (intituleFormation, cfd, idCertifinfo, slug) => {
   try {
-    const formattedIntituleFormation = intituleFormationFormatter(intituleFormation);
-    const campagneIds = (await formationsDao.findFormationByIntitule(formattedIntituleFormation)).map(
-      (formation) => formation.campagneId
-    );
+    const formattedIntituleFormation = intituleFormation ? intituleFormationFormatter(intituleFormation) : null;
+
+    const campagneIds = (
+      await formationsDao.findFormationByIntituleCfdIdCertifInfoOrSlug(
+        formattedIntituleFormation,
+        cfd,
+        idCertifinfo,
+        slug
+      )
+    ).map((formation) => formation.campagneId);
 
     if (!campagneIds.length) {
       return { success: true, body: { temoignagesCount: 0 } };
