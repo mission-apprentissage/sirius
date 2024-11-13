@@ -2,10 +2,11 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 
+import BlueArrowRight from "../../assets/icons/blue-arrow-right.svg";
 import Quote from "../../assets/icons/quote.svg";
 import useBreakpoints from "../../hooks/useBreakpoints";
 import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
-import { ApprentiInfo, TitleContainer, VerbatimContainer, VerbatimContent } from "./shared.style";
+import { AccordionTitle, ApprentiInfo, TitleContainer, VerbatimContainer, VerbatimContent } from "./shared.style";
 
 const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep }) => {
   const { isMobile, isDesktop } = useBreakpoints();
@@ -30,7 +31,15 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep }) => {
         {verbatimsByThemes.map(
           (verbatimsByTheme) =>
             verbatimsByTheme.verbatims.length && (
-              <Accordion key={verbatimsByTheme.label} label={verbatimsByTheme.label}>
+              <Accordion
+                key={verbatimsByTheme.label}
+                label={
+                  <AccordionTitle>
+                    <img src={BlueArrowRight} aria-hidden={true} />
+                    {verbatimsByTheme.label}
+                  </AccordionTitle>
+                }
+              >
                 {verbatimsByTheme.verbatims.map((verbatim, index) => (
                   <VerbatimContainer key={index} isDesktop={isDesktop}>
                     <img src={Quote} aria-hidden={true} />

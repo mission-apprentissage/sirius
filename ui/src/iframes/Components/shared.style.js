@@ -76,3 +76,11 @@ export const TitleContainer = styled.div`
     margin-bottom: 0;
   }
 `;
+
+export const AccordionTitle = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+`;

@@ -67,13 +67,15 @@ const IframeFormationPage = () => {
               Beta
             </Badge>
           </TitleContainer>
-          <p>
-            Tu hésites entre la voie scolaire et l'apprentissage ? Grace au questionnaire{" "}
-            <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
-              <b>Sirius</b>
-            </a>
-            , les apprentis qui se forment en France te partagent leur expérience.
-          </p>
+          {verbatimsStep === 1 && (
+            <p>
+              Tu hésites entre la voie scolaire et l'apprentissage ? Grace au questionnaire{" "}
+              <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
+                <b>Sirius</b>
+              </a>
+              , les apprentis qui se forment en France te partagent leur expérience.
+            </p>
+          )}
           <ConstructionNotice>
             <span className={fr.cx("fr-icon-information-line")} aria-hidden={true} />
             <p>
