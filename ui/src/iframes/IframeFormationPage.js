@@ -8,7 +8,6 @@ import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
-import { VERBATIM_STATUS } from "../constants";
 import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
 import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
 import VerbatimsThematics from "./Components/VerbatimsThematics";
@@ -18,10 +17,17 @@ const IframeFormationPage = () => {
   const [verbatimsStep, setVerbatimsStep] = useState(1);
   const scrollableRef = useRef(null);
   const { search } = useLocation();
+
   const intituleFormation = new URLSearchParams(search).get("intitule");
+  const cfd = new URLSearchParams(search).get("cfd");
+  const idCertifinfo = new URLSearchParams(search).get("id_certifinfo");
+  const slug = new URLSearchParams(search).get("slug");
 
   const { datavisualisation, isSuccess, isError, isLoading } = useFetchDatavisualisationFormation({
     intituleFormation,
+    cfd,
+    idCertifinfo,
+    slug,
   });
 
   useEffect(() => {
@@ -41,6 +47,14 @@ const IframeFormationPage = () => {
       document.removeEventListener("click", handleResize);
     };
   }, []);
+
+  const hasGems = datavisualisation && Object.values(datavisualisation?.gems).flat().length !== 0;
+
+  useEffect(() => {
+    if (!hasGems) {
+      setVerbatimsStep(2);
+    }
+  }, [datavisualisation]);
 
   if (isLoading) {
     return (
@@ -67,7 +81,7 @@ const IframeFormationPage = () => {
               Beta
             </Badge>
           </TitleContainer>
-          {verbatimsStep === 1 && (
+          {verbatimsStep === 1 || !hasGems ? (
             <p>
               Tu hésites entre la voie scolaire et l'apprentissage ? Grace au questionnaire{" "}
               <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
@@ -75,7 +89,7 @@ const IframeFormationPage = () => {
               </a>
               , les apprentis qui se forment en France te partagent leur expérience.
             </p>
-          )}
+          ) : null}
           <ConstructionNotice>
             <span className={fr.cx("fr-icon-information-line")} aria-hidden={true} />
             <p>
@@ -83,18 +97,19 @@ const IframeFormationPage = () => {
               établissements et formations.
             </p>
           </ConstructionNotice>
-          {verbatimsStep === 1 && (
+          {verbatimsStep === 1 ? (
             <VerbatimsCarousel
               verbatims={Object.values(datavisualisation?.gems).flat()}
               setVerbatimsStep={setVerbatimsStep}
             />
-          )}
-          {verbatimsStep === 2 && (
+          ) : null}
+          {verbatimsStep === 2 ? (
             <VerbatimsThematics
+              hasGems={hasGems}
               verbatimsByThemes={datavisualisation?.verbatimsByThemes}
               setVerbatimsStep={setVerbatimsStep}
             />
-          )}
+          ) : null}
         </IframeContainer>
       </>
     )

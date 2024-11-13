@@ -13,11 +13,36 @@ export const fetchTemoignagesDatavisualisation = async ({ campagneIds, token }) 
   throw new Error("Erreur dans le chargement de la datavisualisation des campagnes");
 };
 
-export const fetchDatavisualisationFormation = async ({ intituleFormation }) => {
-  const response = await apiGet(`/temoignages/datavisualisation/formation?intituleFormation=${intituleFormation}`, {});
+export const fetchDatavisualisationFormation = async ({ intituleFormation, cfd, idCertifinfo, slug }) => {
+  let url = `/temoignages/datavisualisation/formation`;
+  const params = new URLSearchParams();
+
+  if (intituleFormation) {
+    params.append("intituleFormation", intituleFormation);
+  }
+
+  if (cfd) {
+    params.append("cfd", cfd);
+  }
+
+  if (idCertifinfo) {
+    params.append("idCertifinfo", idCertifinfo);
+  }
+
+  if (slug) {
+    params.append("slug", slug);
+  }
+
+  if (params.toString()) {
+    url += `?${params.toString()}`;
+  }
+
+  const response = await apiGet(url, {});
+
   if (response) {
     return response;
   }
+
   throw new Error("Erreur dans le chargement de la datavisualisation des campagnes");
 };
 
