@@ -225,7 +225,7 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
 
     const commentVisTonEntrepriseVerbatimsQuery = {
       temoignageIds: temoignages.map((temoignage) => temoignage.id),
-      status: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED],
+      status: [VERBATIM_STATUS.GEM],
     };
     const verbatimsByThemesResults = await verbatimsDao.getAll(commentVisTonEntrepriseVerbatimsQuery);
 
@@ -262,7 +262,7 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
 
     const gemsResults = await verbatimsDao.getAll(gemsQuery);
 
-    const gemWithEtablissement = gemsResults.map((verbatim) => {
+    const gemWithEtablissement = gemsResults.splice(0, 10).map((verbatim) => {
       const relatedTemoignage = temoignages.find((temoignage) => temoignage.id === verbatim.temoignageId);
       return {
         ...verbatim,

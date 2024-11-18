@@ -48,14 +48,6 @@ const IframeFormationPage = () => {
     };
   }, []);
 
-  const hasGems = datavisualisation && Object.values(datavisualisation?.gems).flat().length !== 0;
-
-  useEffect(() => {
-    if (!hasGems) {
-      setVerbatimsStep(2);
-    }
-  }, [datavisualisation]);
-
   if (isLoading) {
     return (
       <LoaderContainer>
@@ -81,7 +73,7 @@ const IframeFormationPage = () => {
               Beta
             </Badge>
           </TitleContainer>
-          {verbatimsStep === 1 || !hasGems ? (
+          {verbatimsStep === 1 ? (
             <p>
               Tu hésites entre la voie scolaire et l'apprentissage ? Grace au questionnaire{" "}
               <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
@@ -99,13 +91,12 @@ const IframeFormationPage = () => {
           </ConstructionNotice>
           {verbatimsStep === 1 ? (
             <VerbatimsCarousel
-              verbatims={Object.values(datavisualisation?.gems).flat()}
+              verbatims={Object.values(datavisualisation?.gems || {}).flat()}
               setVerbatimsStep={setVerbatimsStep}
             />
           ) : null}
           {verbatimsStep === 2 ? (
             <VerbatimsThematics
-              hasGems={hasGems}
               verbatimsByThemes={datavisualisation?.verbatimsByThemes}
               setVerbatimsStep={setVerbatimsStep}
             />
