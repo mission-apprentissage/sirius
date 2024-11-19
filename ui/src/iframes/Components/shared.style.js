@@ -123,3 +123,14 @@ export const ExperienceEnEntrepriseRatingChartsContainer = styled.div`
   align-items: center;
   width: 100%;
 `;
+
+export const FeedbackContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 12px;
+  color: var(--text-title-blue-france);
+  cursor: pointer;
+`;

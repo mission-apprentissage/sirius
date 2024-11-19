@@ -1,16 +1,21 @@
+/* eslint-disable no-undef */
 import "swiper/css";
 
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, Keyboard } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import Quote from "../../assets/icons/quote.svg";
+import ThumbsUpFill from "../../assets/icons/thumbs-up-fill.svg";
+import ThumbsUpLine from "../../assets/icons/thumbs-up-line.svg";
 import useBreakpoints from "../../hooks/useBreakpoints";
+import usePatchVerbatimFeedback from "../../hooks/usePatchVerbatimFeedback";
 import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import {
   ApprentiInfo,
   CarouselContainer,
+  FeedbackContainer,
   NavigationContainer,
   PaginationContainer,
   VerbatimContainer,
@@ -21,7 +26,17 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
   const [swiperControl, setSwiperControl] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [expandedIndex, setExpandedIndex] = useState(null);
+  const [usefullFeedback, setUsefullFeedback] = useState(() => {
+    const savedFeedback = localStorage.getItem("usefullFeedback");
+    return savedFeedback ? JSON.parse(savedFeedback) : [];
+  });
   const { isMobile, isDesktop } = useBreakpoints();
+
+  const { mutate: patchVerbatimFeedback, patchedVerbatimFeedback } = usePatchVerbatimFeedback();
+
+  useEffect(() => {
+    localStorage.setItem("usefullFeedback", JSON.stringify(usefullFeedback));
+  }, [usefullFeedback]);
 
   if (!verbatims.length) return null;
 
@@ -29,6 +44,15 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
+  const handleUsefullFeedback = (id) => {
+    if (usefullFeedback.includes(id)) {
+      patchVerbatimFeedback({ verbatimId: id, isUseful: false });
+      setUsefullFeedback(usefullFeedback.filter((item) => item !== id));
+    } else {
+      patchVerbatimFeedback({ verbatimId: id, isUseful: true });
+      setUsefullFeedback([...usefullFeedback, id]);
+    }
+  };
   return (
     <Swiper
       rewind={true}
@@ -77,6 +101,13 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
                 Apprenti·e du {etablissementLabelGetterFromFormation(verbatim)} -{" "}
                 {new Date(verbatim.createdAt).toLocaleDateString("fr", { month: "long", year: "numeric" })}
               </ApprentiInfo>
+              <FeedbackContainer onClick={() => handleUsefullFeedback(verbatim.id)}>
+                Cet avis est utile ?{" "}
+                <img
+                  src={usefullFeedback.includes(verbatim.id) ? ThumbsUpFill : ThumbsUpLine}
+                  alt="feedback avis utile"
+                />
+              </FeedbackContainer>
             </VerbatimContainer>
           </SwiperSlide>
         ))}
