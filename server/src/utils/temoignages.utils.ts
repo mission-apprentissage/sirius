@@ -339,6 +339,7 @@ export const getGemVerbatimsByWantedQuestionKey = (verbatims) => {
 
   const groupedVerbatims = verbatims.reduce((acc, verbatim) => {
     const {
+      id,
       questionKey,
       content,
       createdAt,
@@ -352,6 +353,7 @@ export const getGemVerbatimsByWantedQuestionKey = (verbatims) => {
     if (questionKeyOrder.includes(questionKey)) {
       acc[questionKey] = acc[questionKey] || [];
       acc[questionKey].push({
+        id,
         content,
         createdAt,
         status: scores.GEM.avis === "Oui" ? VERBATIM_STATUS.GEM : status,
@@ -394,6 +396,7 @@ export const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAns
     const verbatimsForTheme = verbatims
       .filter((verbatim) => verbatim && verbatim.themes && verbatim.themes[theme] === true)
       .map((verbatim) => ({
+        id: verbatim.id,
         content: verbatim.content,
         status: verbatim.status,
         createdAt: verbatim.createdAt,

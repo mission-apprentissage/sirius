@@ -80,7 +80,7 @@ export const patchVerbatims = async (verbatims) => {
 
 export const createVerbatim = async (verbatim) => {
   try {
-    const existingVerbatim = await verbatimsDao.getOne({
+    const existingVerbatim = await verbatimsDao.getOneByTemoignageIdAndQuestionKey({
       temoignageId: verbatim.temoignageId,
       questionKey: verbatim.questionKey,
     });
@@ -92,6 +92,24 @@ export const createVerbatim = async (verbatim) => {
     } else {
       result = await verbatimsDao.create(verbatim);
     }
+
+    return { success: true, body: result };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
+export const feedbackVerbatim = async (id, isUseful) => {
+  try {
+    const currentVerbatim = await verbatimsDao.getOneById(id);
+
+    if (!currentVerbatim) {
+      return { success: false, body: "Verbatim not found" };
+    }
+
+    const newFeedbackValue = isUseful ? currentVerbatim.feedbackCount + 1 : currentVerbatim.feedbackCount - 1;
+
+    const result = await verbatimsDao.updateOne(id, { feedback_count: newFeedbackValue });
 
     return { success: true, body: result };
   } catch (error) {

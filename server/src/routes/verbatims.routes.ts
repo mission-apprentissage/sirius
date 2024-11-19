@@ -1,10 +1,16 @@
 import express from "express";
 
-import { createVerbatim, getVerbatims, getVerbatimsCount, patchVerbatims } from "../controllers/verbatims.controller";
+import {
+  createVerbatim,
+  feedbackVerbatim,
+  getVerbatims,
+  getVerbatimsCount,
+  patchVerbatims,
+} from "../controllers/verbatims.controller";
 import { isAdmin } from "../middlewares/isAdmin";
 import { validator } from "../middlewares/validatorMiddleware";
 import { verifyUser } from "../middlewares/verifyUserMiddleware";
-import { patchMultiVerbatims } from "../validators/verbatims.validators";
+import { feedbackVerbatimValidator, patchMultiVerbatims } from "../validators/verbatims.validators";
 
 export const verbatims = () => {
   const router = express.Router();
@@ -23,6 +29,10 @@ export const verbatims = () => {
 
   router.patch("/api/verbatims/", verifyUser, isAdmin, validator(patchMultiVerbatims), (req, res, next) => {
     patchVerbatims(req, res, next);
+  });
+
+  router.patch("/api/verbatims/:id/feedback", validator(feedbackVerbatimValidator), (req, res, next) => {
+    feedbackVerbatim(req, res, next);
   });
 
   return router;
