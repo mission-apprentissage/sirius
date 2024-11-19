@@ -14,20 +14,23 @@ interface Database {
 }
 
 export const up = async (db: any) => {
-  await db.schema.alterTable("formations").addColumn("onisep_slug", "varchar(10)").execute();
+  await db.schema
+    .alterTable("formations")
+    .addColumn("onisep_slug", "varchar(10)", (col: any) => col.nullable())
+    .execute();
 
   const formations = await db
     .selectFrom("formations")
     .select(["formations.id", sql<string>`catalogue_data->>'onisep_url'`.as("onisep_url")])
     .execute();
 
-  formations.forEach(async (formation: any) => {
+  for (const formation of formations) {
     const onisep_slug = formation?.onisepUrl?.match(/FOR\.\d+/);
 
     if (onisep_slug) {
       await db.updateTable("formations").set({ onisep_slug: onisep_slug[0] }).where("id", "=", formation.id).execute();
     }
-  });
+  }
 };
 
 export const down = async (db: Kysely<Database>) => {
