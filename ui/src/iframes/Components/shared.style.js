@@ -1,3 +1,4 @@
+import { fr } from "@codegouvfr/react-dsfr";
 import styled from "@emotion/styled";
 
 export const CarouselContainer = styled.div`
@@ -87,12 +88,23 @@ export const AccordionTitle = styled.div`
 
 export const ExperienceEnEntrepriseRatingContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: 0.5rem;
-  margin: 32px auto 32px auto;
+  margin: 32px auto 016px auto;
   width: 100%;
+
+  ${fr.breakpoints.down("sm")} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  & > div:first-of-type {
+    display: flex;
+    flex-direction: column;
+  }
 
   & h4 {
     margin-bottom: 0;
@@ -102,4 +114,12 @@ export const ExperienceEnEntrepriseRatingContainer = styled.div`
     margin-bottom: 0;
     font-size: 14px;
   }
+`;
+
+export const ExperienceEnEntrepriseRatingChartsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 `;

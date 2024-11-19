@@ -161,3 +161,8 @@ export const VIEW_TYPES = {
   TABLE: "TABLE",
   GRID: "GRID",
 };
+
+export const DATAVIZ_VIEW_TYPES = {
+  TABLE: "TABLE",
+  GRAPHIC: "GRAPHIC",
+};

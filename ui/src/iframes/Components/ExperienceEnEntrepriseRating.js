@@ -1,8 +1,11 @@
+import { SegmentedControl } from "@codegouvfr/react-dsfr/SegmentedControl";
+import { Table } from "@codegouvfr/react-dsfr/Table";
 import ReactECharts from "echarts-for-react";
-import React from "react";
+import React, { useState } from "react";
 
 import { isPlural } from "../../campagnes/utils";
-import { ExperienceEnEntrepriseRatingContainer } from "./shared.style";
+import { DATAVIZ_VIEW_TYPES } from "../../constants";
+import { ExperienceEnEntrepriseRatingChartsContainer, ExperienceEnEntrepriseRatingContainer } from "./shared.style";
 
 const processData = (data) => {
   const labels = [];
@@ -159,8 +162,26 @@ const chartOptions = (data) => {
   };
 };
 
+const headers = ["Thématique", "Bien", "Moyen", "Mal"];
+
 const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThematic }) => {
+  const [viewType, setViewType] = useState(DATAVIZ_VIEW_TYPES.GRAPHIC);
   const temoignagesCount = Object.values(data[0].results).reduce((acc, item) => acc + item.count, 0);
+
+  const tableData = data.map((item) => [
+    <span style={{ cursor: "pointer" }} onClick={() => setGoToThematic(item.label)} key={item.label}>
+      {item.label}
+    </span>,
+    <>
+      <b>{item.results.Bien.percentage}%</b> ({item.results.Bien.count})
+    </>,
+    <>
+      <b>{item.results.Moyen.percentage}%</b> ({item.results.Moyen.count})
+    </>,
+    <>
+      <b>{item.results["Pas ok"].percentage}%</b> ({item.results["Pas ok"].count})
+    </>,
+  ]);
 
   const onChartClick = (params) => {
     if (params.componentType === "yAxis") {
@@ -169,19 +190,54 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
   };
 
   return (
-    <ExperienceEnEntrepriseRatingContainer>
-      <h4>L'expérience en entreprise</h4>
-      <p>
-        {temoignagesCount} apprentis interrogés dans {etablissementsCount} établissement{isPlural(etablissementsCount)}
-      </p>
-      <ReactECharts
-        option={chartOptions(data)}
-        style={{ height: "300px", width: "100%" }}
-        onEvents={{
-          click: onChartClick,
-        }}
-      />
-    </ExperienceEnEntrepriseRatingContainer>
+    <>
+      <ExperienceEnEntrepriseRatingContainer>
+        <div>
+          <h4>L'expérience en entreprise</h4>
+          <p>
+            {temoignagesCount} apprentis interrogés dans {etablissementsCount} établissement
+            {isPlural(etablissementsCount)}
+          </p>
+        </div>
+        <SegmentedControl
+          small
+          segments={[
+            {
+              iconId: "fr-icon-bar-chart-box-line",
+              label: "Graphique",
+              nativeInputProps: {
+                checked: viewType === DATAVIZ_VIEW_TYPES.GRAPHIC,
+                onClick: () => setViewType(DATAVIZ_VIEW_TYPES.GRAPHIC),
+                readOnly: true,
+              },
+            },
+            {
+              iconId: "fr-icon-menu-fill",
+              label: "Tableau",
+              nativeInputProps: {
+                checked: viewType === DATAVIZ_VIEW_TYPES.TABLE,
+                onClick: () => setViewType(DATAVIZ_VIEW_TYPES.TABLE),
+                readOnly: true,
+              },
+            },
+          ]}
+        />
+      </ExperienceEnEntrepriseRatingContainer>
+      <ExperienceEnEntrepriseRatingChartsContainer>
+        {viewType === DATAVIZ_VIEW_TYPES.GRAPHIC ? (
+          <ReactECharts
+            option={chartOptions(data)}
+            style={{ height: "300px", width: "100%" }}
+            onEvents={{
+              click: onChartClick,
+            }}
+          />
+        ) : null}
+        {viewType === DATAVIZ_VIEW_TYPES.TABLE ? (
+          <Table containerWidth="100%" headers={headers} data={tableData} />
+        ) : null}
+      </ExperienceEnEntrepriseRatingChartsContainer>
+    </>
   );
 };
 

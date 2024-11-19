@@ -17,8 +17,10 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
 
   useEffect(() => {
     if (goToThematics) {
-      setExpandedAccordion(goToThematics);
-      setGoToThematics(null);
+      setTimeout(() => {
+        setExpandedAccordion(goToThematics);
+        setGoToThematics(null);
+      }, 200);
     }
   }, [goToThematics]);
 
