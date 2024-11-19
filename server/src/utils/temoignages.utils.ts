@@ -511,3 +511,44 @@ export const getFormattedReponsesByVerbatims = (verbatims, questionnaires) => {
     })
     .filter(Boolean);
 };
+
+export const getCommentVisTonExperienceEntrepriseRating = (commentVisTonExperienceEntrepriseResults) => {
+  const flattened = commentVisTonExperienceEntrepriseResults.flat().map((item) => ({
+    ...item,
+    label: commentVisTonExperienceEntrepriseLabelReconciler(item.label),
+  }));
+
+  const labels = [...new Set(flattened.map((item) => item.label))];
+  const values = ["Bien", "Moyen", "Pas ok"];
+
+  const result = labels.map((label) => {
+    const totalResponses = flattened.filter((item) => item.label === label).length;
+    const rawCounts = values.map(
+      (value) => flattened.filter((item) => item.label === label && item.value === value).length
+    );
+
+    const percentages = rawCounts.map((count) => (count / totalResponses) * 100);
+
+    const roundedPercentages = percentages.map((p) => Math.round(p));
+    const totalRounded = roundedPercentages.reduce((sum, p) => sum + p, 0);
+
+    if (totalRounded !== 100) {
+      const diff = 100 - totalRounded;
+      const indexToAdjust = roundedPercentages.indexOf(Math.max(...roundedPercentages));
+      roundedPercentages[indexToAdjust] += diff;
+    }
+
+    return {
+      label: NEW_ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES[label],
+      results: values.reduce((acc, value, index) => {
+        acc[value] = {
+          count: rawCounts[index],
+          percentage: roundedPercentages[index],
+        };
+        return acc;
+      }, {}),
+    };
+  });
+
+  return result;
+};

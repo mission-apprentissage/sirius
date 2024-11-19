@@ -16,6 +16,7 @@ import { intituleFormationFormatter } from "../utils/formations.utils";
 import {
   getCategoriesWithEmojis,
   getCommentVisTonExperienceEntrepriseOrder,
+  getCommentVisTonExperienceEntrepriseRating,
   getFormattedReponsesByTemoignages,
   getFormattedReponsesByVerbatims,
   getFormattedResponses,
@@ -212,13 +213,12 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
       return { success: true, body: { temoignagesCount: 0 } };
     }
 
-    const commentCaSePasseEntreprise = temoignages.map(
-      (temoignage) => temoignage.reponses["commentCaSePasseEntreprise"]
-    );
-    const commentCaSePasseEntrepriseRates = getReponseRating(commentCaSePasseEntreprise);
+    const commentVisTonExperienceEntreprise = temoignages
+      .map((temoignage) => temoignage.reponses["commentVisTonExperienceEntreprise"])
+      .filter(Boolean);
 
-    const commentVisTonExperienceEntreprise = temoignages.map(
-      (temoignage) => temoignage.reponses["commentVisTonExperienceEntreprise"]
+    const commentVisTonExperienceEntrepriseRating = getCommentVisTonExperienceEntrepriseRating(
+      commentVisTonExperienceEntreprise
     );
 
     const commentVisTonEntrepriseOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceEntreprise);
@@ -243,10 +243,6 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
       verbatimsByThemesWithEtablissement,
       commentVisTonEntrepriseOrder
     );
-
-    const passeEntreprise = temoignages.map((temoignage) => temoignage.reponses["passeEntreprise"]);
-
-    const passeEntrepriseRates = getReponseRating(passeEntreprise);
 
     const gemsQuery = {
       temoignageIds: temoignages.map((temoignage) => temoignage.id),
@@ -274,12 +270,22 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
 
     const gems = getGemVerbatimsByWantedQuestionKey(gemWithEtablissement);
 
+    const etablissementsCount = temoignages.reduce((acc, temoignage) => {
+      if (temoignage.etablissementFormateurEntrepriseRaisonSociale) {
+        acc[temoignage.etablissementFormateurEntrepriseRaisonSociale] =
+          (acc[temoignage.etablissementFormateurEntrepriseRaisonSociale] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
+    const countOfDifferentEtablissements = Object.keys(etablissementsCount).length;
+
     const result = {
+      etablissementsCount: countOfDifferentEtablissements,
       temoignagesCount: temoignages.length,
-      commentCaSePasseEntrepriseRates,
       verbatimsByThemes: matchedVerbatimAndThemes,
       gems,
-      passeEntrepriseRates,
+      commentVisTonExperienceEntrepriseRating,
     };
 
     return { success: true, body: result };
