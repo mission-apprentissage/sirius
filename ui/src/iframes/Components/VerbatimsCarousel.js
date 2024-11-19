@@ -53,6 +53,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
       setUsefullFeedback([...usefullFeedback, id]);
     }
   };
+
   return (
     <Swiper
       rewind={true}

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { fr } from "@codegouvfr/react-dsfr";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { Button } from "@codegouvfr/react-dsfr/Button";
@@ -5,15 +6,35 @@ import { useEffect, useState } from "react";
 
 import BlueArrowRight from "../../assets/icons/blue-arrow-right.svg";
 import Quote from "../../assets/icons/quote.svg";
+import ThumbsUpFill from "../../assets/icons/thumbs-up-fill.svg";
+import ThumbsUpLine from "../../assets/icons/thumbs-up-line.svg";
 import useBreakpoints from "../../hooks/useBreakpoints";
+import usePatchVerbatimFeedback from "../../hooks/usePatchVerbatimFeedback";
 import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
-import { AccordionTitle, ApprentiInfo, TitleContainer, VerbatimContainer, VerbatimContent } from "./shared.style";
+import {
+  AccordionTitle,
+  ApprentiInfo,
+  FeedbackContainer,
+  TitleContainer,
+  VerbatimContainer,
+  VerbatimContent,
+} from "./shared.style";
 
 const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics, setGoToThematics }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [expandedAccordion, setExpandedAccordion] = useState(null);
+  const [usefullFeedback, setUsefullFeedback] = useState(() => {
+    const savedFeedback = localStorage.getItem("usefullFeedback");
+    return savedFeedback ? JSON.parse(savedFeedback) : [];
+  });
 
   const { isMobile, isDesktop } = useBreakpoints();
+
+  const { mutate: patchVerbatimFeedback, patchedVerbatimFeedback } = usePatchVerbatimFeedback();
+
+  useEffect(() => {
+    localStorage.setItem("usefullFeedback", JSON.stringify(usefullFeedback));
+  }, [usefullFeedback]);
 
   useEffect(() => {
     if (goToThematics) {
@@ -28,6 +49,16 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
 
   const toggleExpand = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
+  };
+
+  const handleUsefullFeedback = (id) => {
+    if (usefullFeedback.includes(id)) {
+      patchVerbatimFeedback({ verbatimId: id, isUseful: false });
+      setUsefullFeedback(usefullFeedback.filter((item) => item !== id));
+    } else {
+      patchVerbatimFeedback({ verbatimId: id, isUseful: true });
+      setUsefullFeedback([...usefullFeedback, id]);
+    }
   };
 
   return (
@@ -79,6 +110,13 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                     Apprenti·e du {etablissementLabelGetterFromFormation(verbatim)} -{" "}
                     {new Date(verbatim.createdAt).toLocaleDateString("fr", { month: "long", year: "numeric" })}
                   </ApprentiInfo>
+                  <FeedbackContainer onClick={() => handleUsefullFeedback(verbatim.id)}>
+                    Cet avis est utile ?{" "}
+                    <img
+                      src={usefullFeedback.includes(verbatim.id) ? ThumbsUpFill : ThumbsUpLine}
+                      alt="feedback avis utile"
+                    />
+                  </FeedbackContainer>
                 </VerbatimContainer>
               ))}
             </Accordion>
