@@ -12117,13 +12117,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"echarts@npm:5.4.2":
-  version: 5.4.2
-  resolution: "echarts@npm:5.4.2"
+"echarts@npm:5.5.1":
+  version: 5.5.1
+  resolution: "echarts@npm:5.5.1"
   dependencies:
     tslib: 2.3.0
-    zrender: 5.4.3
-  checksum: 933c28dada362314f7c7a5fd4243b44b24f75adb233f7c87541ac9a81734cb380a9683c3f56c8e559dacfddd363879e95a96f0047e33820123cd8f5b95b60f8f
+    zrender: 5.6.0
+  checksum: 1b8e00a9492157d6faa58483add07bac7560e273e8716bd62d6e75777809dbe43106cd5bceb7e0deebf36ae100356395e2be07ce3a21442496241e25a219482f
   languageName: node
   linkType: hard
 
@@ -25963,6 +25963,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"swiper@npm:^11.1.14":
+  version: 11.1.14
+  resolution: "swiper@npm:11.1.14"
+  checksum: 87bf4c42d893c76d3545d42ad664b78b032f7768c99f3d90d8340c035d661e10e7805c3270df704f8da99508304e8ca87cab61d3c863586d9d231c9f718ae785
+  languageName: node
+  linkType: hard
+
 "symbol-tree@npm:^3.2.4":
   version: 3.2.4
   resolution: "symbol-tree@npm:3.2.4"
@@ -26941,7 +26948,7 @@ __metadata:
     "@types/react": 18.3.11
     "@types/react-dom": 18.3.1
     chakra-react-select: 4.6.0
-    echarts: 5.4.2
+    echarts: 5.5.1
     echarts-for-react: 3.0.2
     formik: 2.2.9
     framer-motion: 10.3.2
@@ -26962,6 +26969,7 @@ __metadata:
     react-spinners: 0.13.8
     react-tooltip: 5.28.0
     sortablejs: 1.15.0
+    swiper: ^11.1.14
     type-fest: 4.26.1
     typescript: 5.6.3
     yup: 1.0.2
@@ -28650,12 +28658,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zrender@npm:5.4.3":
-  version: 5.4.3
-  resolution: "zrender@npm:5.4.3"
+"zrender@npm:5.6.0":
+  version: 5.6.0
+  resolution: "zrender@npm:5.6.0"
   dependencies:
     tslib: 2.3.0
-  checksum: ae89584fbe4256217e500a74183fd5870a2bed7e7b3234cd78fcbc0a1a82da8449596b2019105927069531b567ecf94425fb171abd6cedcbf517e52fdf438722
+  checksum: 58875a8ed8b813c739f6b6e727eb5eead39b66278143ff231cdd270349a5743af034f7f20567c7895eecb1cadbdae499e17708d96f1faae958ad3acdb3d46687
   languageName: node
   linkType: hard
 

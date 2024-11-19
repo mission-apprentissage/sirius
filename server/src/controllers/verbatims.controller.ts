@@ -57,3 +57,13 @@ export const createVerbatim = tryCatch(async (req: any, res: any) => {
 
   return res.status(201).json(body);
 });
+
+export const feedbackVerbatim = tryCatch(async (req: any, res: any) => {
+  const id = req.params.id;
+  const { isUseful } = req.body;
+  const { success, body } = await verbatimsService.feedbackVerbatim(id, isUseful);
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});

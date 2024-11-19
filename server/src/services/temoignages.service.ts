@@ -2,7 +2,6 @@
 
 import {
   ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES,
-  ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES,
   UNCOMPLIANT_TEMOIGNAGE_TYPE,
   VERBATIM_STATUS,
 } from "../constants";
@@ -17,6 +16,7 @@ import { intituleFormationFormatter } from "../utils/formations.utils";
 import {
   getCategoriesWithEmojis,
   getCommentVisTonExperienceEntrepriseOrder,
+  getCommentVisTonExperienceEntrepriseRating,
   getFormattedReponsesByTemoignages,
   getFormattedReponsesByVerbatims,
   getFormattedResponses,
@@ -189,12 +189,18 @@ export const getDatavisualisation = async (campagneIds = []) => {
   }
 };
 
-export const getDatavisualisationFormation = async (intituleFormation) => {
+export const getDatavisualisationFormation = async (intituleFormation, cfd, idCertifinfo, slug) => {
   try {
-    const formattedIntituleFormation = intituleFormationFormatter(intituleFormation);
-    const campagneIds = (await formationsDao.findFormationByIntitule(formattedIntituleFormation)).map(
-      (formation) => formation.campagneId
-    );
+    const formattedIntituleFormation = intituleFormation ? intituleFormationFormatter(intituleFormation) : null;
+
+    const campagneIds = (
+      await formationsDao.findFormationByIntituleCfdIdCertifInfoOrSlug(
+        formattedIntituleFormation,
+        cfd,
+        idCertifinfo,
+        slug
+      )
+    ).map((formation) => formation.campagneId);
 
     if (!campagneIds.length) {
       return { success: true, body: { temoignagesCount: 0 } };
@@ -207,32 +213,38 @@ export const getDatavisualisationFormation = async (intituleFormation) => {
       return { success: true, body: { temoignagesCount: 0 } };
     }
 
-    const commentCaSePasseEntreprise = temoignages.map(
-      (temoignage) => temoignage.reponses["commentCaSePasseEntreprise"]
-    );
-    const commentCaSePasseEntrepriseRates = getReponseRating(commentCaSePasseEntreprise);
+    const commentVisTonExperienceEntreprise = temoignages
+      .map((temoignage) => temoignage.reponses["commentVisTonExperienceEntreprise"])
+      .filter(Boolean);
 
-    const commentVisTonExperienceEntreprise = temoignages.map(
-      (temoignage) => temoignage.reponses["commentVisTonExperienceEntreprise"]
+    const commentVisTonExperienceEntrepriseRating = getCommentVisTonExperienceEntrepriseRating(
+      commentVisTonExperienceEntreprise
     );
 
     const commentVisTonEntrepriseOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceEntreprise);
+
     const commentVisTonEntrepriseVerbatimsQuery = {
       temoignageIds: temoignages.map((temoignage) => temoignage.id),
-      status: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED],
+      status: [VERBATIM_STATUS.GEM],
     };
-    const commentVisTonEntrepriseVerbatimsResults = await verbatimsDao.getAll(commentVisTonEntrepriseVerbatimsQuery);
-    const matchedVerbatimAndcommentVisTonEntreprise = verbatimsAnOrderedThemeAnswersMatcher(
-      commentVisTonEntrepriseVerbatimsResults,
-      commentVisTonEntrepriseOrder,
-      ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES
+    const verbatimsByThemesResults = await verbatimsDao.getAll(commentVisTonEntrepriseVerbatimsQuery);
+
+    const verbatimsByThemesWithEtablissement = verbatimsByThemesResults.map((verbatim) => {
+      const relatedTemoignage = temoignages.find((temoignage) => temoignage.id === verbatim.temoignageId);
+      return {
+        ...verbatim,
+        etablissementFormateurEntrepriseRaisonSociale: relatedTemoignage.etablissementFormateurEntrepriseRaisonSociale,
+        etablissementFormateurEnseigne: relatedTemoignage.etablissementFormateurEnseigne,
+        etablissementGestionnaireEnseigne: relatedTemoignage.etablissementGestionnaireEnseigne,
+      };
+    });
+
+    const matchedVerbatimAndThemes = verbatimsAnOrderedThemeAnswersMatcher(
+      verbatimsByThemesWithEtablissement,
+      commentVisTonEntrepriseOrder
     );
 
-    const passeEntreprise = temoignages.map((temoignage) => temoignage.reponses["passeEntreprise"]);
-
-    const passeEntrepriseRates = getReponseRating(passeEntreprise);
-
-    const verbatimsQuery = {
+    const gemsQuery = {
       temoignageIds: temoignages.map((temoignage) => temoignage.id),
       status: [VERBATIM_STATUS.GEM],
       questionKey: [
@@ -240,19 +252,40 @@ export const getDatavisualisationFormation = async (intituleFormation) => {
         "peurChangementConseil",
         "choseMarquanteConseil",
         "trouverEntrepriseConseil",
+        "differenceCollegeCfaConseil",
       ],
     };
 
-    const verbatimsResults = await verbatimsDao.getAll(verbatimsQuery);
+    const gemsResults = await verbatimsDao.getAll(gemsQuery);
 
-    const displayedGems = getGemVerbatimsByWantedQuestionKey(verbatimsResults);
+    const gemWithEtablissement = gemsResults.splice(0, 10).map((verbatim) => {
+      const relatedTemoignage = temoignages.find((temoignage) => temoignage.id === verbatim.temoignageId);
+      return {
+        ...verbatim,
+        etablissementFormateurEntrepriseRaisonSociale: relatedTemoignage.etablissementFormateurEntrepriseRaisonSociale,
+        etablissementFormateurEnseigne: relatedTemoignage.etablissementFormateurEnseigne,
+        etablissementGestionnaireEnseigne: relatedTemoignage.etablissementGestionnaireEnseigne,
+      };
+    });
+
+    const gems = getGemVerbatimsByWantedQuestionKey(gemWithEtablissement);
+
+    const etablissementsCount = temoignages.reduce((acc, temoignage) => {
+      if (temoignage.etablissementFormateurEntrepriseRaisonSociale) {
+        acc[temoignage.etablissementFormateurEntrepriseRaisonSociale] =
+          (acc[temoignage.etablissementFormateurEntrepriseRaisonSociale] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
+    const countOfDifferentEtablissements = Object.keys(etablissementsCount).length;
 
     const result = {
+      etablissementsCount: countOfDifferentEtablissements,
       temoignagesCount: temoignages.length,
-      commentCaSePasseEntrepriseRates,
-      commentVisTonEntreprise: matchedVerbatimAndcommentVisTonEntreprise,
-      displayedGems,
-      passeEntrepriseRates,
+      verbatimsByThemes: matchedVerbatimAndThemes,
+      gems,
+      commentVisTonExperienceEntrepriseRating,
     };
 
     return { success: true, body: result };

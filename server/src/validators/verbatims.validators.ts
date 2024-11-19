@@ -10,3 +10,7 @@ export const patchVerbatim = Joi.object({
 });
 
 export const patchMultiVerbatims = Joi.array().items(patchVerbatim).required().min(1);
+
+export const feedbackVerbatimValidator = Joi.object({
+  isUseful: Joi.boolean().required(),
+});

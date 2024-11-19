@@ -191,13 +191,20 @@ export const create = async (verbatim: Verbatim): Promise<{ id: string } | undef
   return getKbdClient().insertInto("verbatims").values(verbatim).returning("id").executeTakeFirst();
 };
 
-export const getOne = async (query: { temoignageId: string; questionKey: string }): Promise<Verbatim | undefined> => {
+export const getOneByTemoignageIdAndQuestionKey = async (query: {
+  temoignageId: string;
+  questionKey: string;
+}): Promise<Verbatim | undefined> => {
   return getKbdClient()
     .selectFrom("verbatims")
     .selectAll()
     .where("temoignage_id", "=", query.temoignageId)
     .where("question_key", "=", query.questionKey)
     .executeTakeFirst();
+};
+
+export const getOneById = async (id: string): Promise<Verbatim | undefined> => {
+  return getKbdClient().selectFrom("verbatims").selectAll().where("id", "=", id).executeTakeFirst();
 };
 
 export const deleteManyByCampagneIds = async (campagneIds: string[]): Promise<boolean> => {

@@ -1,24 +1,35 @@
 /* eslint-disable no-undef */
-import { useEffect, useRef } from "react";
+
+import { fr } from "@codegouvfr/react-dsfr";
+import { Badge } from "@codegouvfr/react-dsfr/Badge";
+import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
-import ExperienceEntrepriseRating from "./Components/ExperienceRating";
-import ExperienceEntrepriseVerbatims from "./Components/ExperienceVerbatims";
-import SearchEntrepriseRating from "./Components/FeelingRating";
-import GemVerbatim from "./Components/GemVerbatim";
-import { DatavisualisationContainer, IframeContainer, TestimonialsCount } from "./IframeFormation.style";
+import ExperienceEnEntrepriseRating from "./Components/ExperienceEnEntrepriseRating";
+import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
+import VerbatimsThematics from "./Components/VerbatimsThematics";
+import { ConstructionNotice, IframeContainer, TitleContainer } from "./IframeFormation.style";
 
 const IframeFormationPage = () => {
+  const [verbatimsStep, setVerbatimsStep] = useState(1);
+  const [goToThematic, setGoToThematic] = useState(null);
   const scrollableRef = useRef(null);
   const { search } = useLocation();
+
   const intituleFormation = new URLSearchParams(search).get("intitule");
+  const cfd = new URLSearchParams(search).get("cfd");
+  const idCertifinfo = new URLSearchParams(search).get("id_certifinfo");
+  const slug = new URLSearchParams(search).get("slug");
 
   const { datavisualisation, isSuccess, isError, isLoading } = useFetchDatavisualisationFormation({
     intituleFormation,
+    cfd,
+    idCertifinfo,
+    slug,
   });
 
   useEffect(() => {
@@ -39,6 +50,13 @@ const IframeFormationPage = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (goToThematic) {
+      scrollableRef.current.scrollIntoView({ behavior: "smooth" });
+      setVerbatimsStep(2);
+    }
+  }, [goToThematic]);
+
   if (isLoading) {
     return (
       <LoaderContainer>
@@ -58,27 +76,47 @@ const IframeFormationPage = () => {
           <title>{`Statistiques pour la formation ${intituleFormation} - Sirius`}</title>
         </Helmet>
         <IframeContainer ref={scrollableRef}>
-          <h3>Suivre cette formation en apprentissage ?</h3>
-          <p>
-            Certains établissement proposent ce CAP en apprentissage. Tu hésites entre la voie scolaire et
-            l’apprentissage ? Grace au questionnaire{" "}
-            <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
-              <b>Sirius</b>
-            </a>
-            , les apprenti·es qui se forment à ce CAP en France te partagent leur expérience en entreprise.
-          </p>
-
-          <DatavisualisationContainer>
-            <TestimonialsCount>
-              <p>
-                <b>Expérience en entreprise</b> ({datavisualisation.temoignagesCount} apprenti·es interrogé·es)
-              </p>
-            </TestimonialsCount>
-            <ExperienceEntrepriseRating rating={datavisualisation.commentCaSePasseEntrepriseRates} />
-            <ExperienceEntrepriseVerbatims orderedVerbatims={datavisualisation.commentVisTonEntreprise} />
-            <GemVerbatim verbatim={datavisualisation.displayedGems} />
-            <SearchEntrepriseRating rating={datavisualisation.passeEntrepriseRates} isFormation={true} />
-          </DatavisualisationContainer>
+          <TitleContainer>
+            <h3>Témoignages d'apprentis</h3>
+            <Badge as="span" noIcon severity="success">
+              Beta
+            </Badge>
+          </TitleContainer>
+          {verbatimsStep === 1 ? (
+            <p>
+              Tu hésites entre la voie scolaire et l'apprentissage ? Grace au questionnaire{" "}
+              <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
+                <b>Sirius</b>
+              </a>
+              , les apprentis qui se forment en France te partagent leur expérience.
+            </p>
+          ) : null}
+          <ConstructionNotice>
+            <span className={fr.cx("fr-icon-information-line")} aria-hidden={true} />
+            <p>
+              Ce service est en cours de construction. Les résultats ne sont pas encore représentatifs de l'ensemble des
+              établissements et formations.
+            </p>
+          </ConstructionNotice>
+          {verbatimsStep === 1 ? (
+            <VerbatimsCarousel
+              verbatims={Object.values(datavisualisation?.gems || {}).flat()}
+              setVerbatimsStep={setVerbatimsStep}
+            />
+          ) : null}
+          {verbatimsStep === 2 ? (
+            <VerbatimsThematics
+              verbatimsByThemes={datavisualisation?.verbatimsByThemes}
+              setVerbatimsStep={setVerbatimsStep}
+              goToThematics={goToThematic}
+              setGoToThematics={setGoToThematic}
+            />
+          ) : null}
+          <ExperienceEnEntrepriseRating
+            data={datavisualisation?.commentVisTonExperienceEntrepriseRating}
+            etablissementsCount={datavisualisation?.etablissementsCount}
+            setGoToThematic={setGoToThematic}
+          />
         </IframeContainer>
       </>
     )

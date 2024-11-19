@@ -193,8 +193,13 @@ export const update = async (id: string, updatedFormation: Partial<Formation>): 
   return result.numUpdatedRows === BigInt(1);
 };
 
-export const findFormationByIntitule = async (intitule: string): Promise<Partial<Formation>[] | undefined> => {
-  return getKbdClient()
+export const findFormationByIntituleCfdIdCertifInfoOrSlug = async (
+  intitule: string | null,
+  cfd: string | null,
+  idCertifInfo: string | null,
+  slug: string | null
+): Promise<Partial<Formation>[] | undefined> => {
+  let baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
     .select([
@@ -221,9 +226,25 @@ export const findFormationByIntitule = async (intitule: string): Promise<Partial
       "formations.etablissement_id",
       "formations_campagnes.campagne_id",
     ])
-    .where(sql<string>`catalogue_data->>'onisep_intitule'`, "ilike", `%${intitule}%`)
-    .where("formations.deleted_at", "is", null)
-    .execute();
+    .where("formations.deleted_at", "is", null);
+
+  if (intitule) {
+    baseQuery = baseQuery.where(sql<string>`catalogue_data->>'onisep_intitule'`, "ilike", `%${intitule}%`);
+  }
+
+  if (cfd) {
+    baseQuery = baseQuery.where(sql`catalogue_data ->> 'cfd'`, "=", cfd);
+  }
+
+  if (idCertifInfo) {
+    baseQuery = baseQuery.where(sql`catalogue_data ->> 'id_certifinfo'`, "=", idCertifInfo);
+  }
+
+  if (slug) {
+    baseQuery = baseQuery.where(sql`catalogue_data ->> 'slug'`, "=", slug);
+  }
+
+  return baseQuery.execute();
 };
 
 export const findFormationByUai = async (uai: string): Promise<Partial<Formation>[] | undefined> => {
