@@ -13,7 +13,6 @@ export const NavigationContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin-top: 1rem;
 `;
 
 export const VerbatimContainer = styled.div`
@@ -23,7 +22,7 @@ export const VerbatimContainer = styled.div`
   justify-content: flex-start;
   gap: 1rem;
   width: ${(props) => (props.isDesktop ? "70%" : "100%")};
-  margin: 16px auto 32px auto;
+  margin: 16px auto 0px auto;
   padding: 0 16px;
 
   & p {

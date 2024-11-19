@@ -32,6 +32,8 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
   });
   const { isMobile, isDesktop } = useBreakpoints();
 
+  const MAX_CHAR = isMobile ? 150 : 300;
+
   const { mutate: patchVerbatimFeedback, patchedVerbatimFeedback } = usePatchVerbatimFeedback();
 
   useEffect(() => {
@@ -88,8 +90,8 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
               <VerbatimContent>
                 {expandedIndex === index
                   ? `« ${verbatim.content} »`
-                  : `« ${verbatim.content.substring(0, 230)}${verbatim.content.length > 230 ? "..." : ""} »`}
-                {verbatim.content.length > 230 && (
+                  : `« ${verbatim.content.substring(0, MAX_CHAR)}${verbatim.content.length > MAX_CHAR ? "..." : ""} »`}
+                {verbatim.content.length > MAX_CHAR && (
                   <>
                     <br />
                     <span onClick={() => toggleExpand(index)}>

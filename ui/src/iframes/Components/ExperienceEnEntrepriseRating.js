@@ -5,6 +5,7 @@ import React, { useState } from "react";
 
 import { isPlural } from "../../campagnes/utils";
 import { DATAVIZ_VIEW_TYPES } from "../../constants";
+import useBreakpoints from "../../hooks/useBreakpoints";
 import { ExperienceEnEntrepriseRatingChartsContainer, ExperienceEnEntrepriseRatingContainer } from "./shared.style";
 
 const processData = (data) => {
@@ -47,7 +48,7 @@ const tooltipFormatter = (params, data) => {
   </div>`;
 };
 
-const chartOptions = (data) => {
+const chartOptions = (data, isMobile) => {
   const { labels, bienData, moyenData, malData } = processData(data);
 
   return {
@@ -59,7 +60,7 @@ const chartOptions = (data) => {
         shadowStyle: {
           color: "rgba(0, 0, 0, 0.1)",
           shadowBlur: 0,
-          width: "10",
+          width: 10,
         },
       },
     },
@@ -68,7 +69,7 @@ const chartOptions = (data) => {
       orient: "horizontal",
       right: "2%",
       top: "0%",
-      itemGap: 40,
+      itemGap: isMobile ? 60 : 40,
       textStyle: {
         fontFamily: "Marianne",
         fontSize: "14px",
@@ -77,8 +78,8 @@ const chartOptions = (data) => {
       },
     },
     grid: {
-      left: -300,
-      right: 0,
+      left: isMobile ? 5 : 5,
+      right: isMobile ? 10 : 5,
       top: 32,
       bottom: 0,
       containLabel: true,
@@ -92,10 +93,11 @@ const chartOptions = (data) => {
       data: labels,
       triggerEvent: true,
       axisLabel: {
-        align: "left",
-        margin: 320,
+        margin: isMobile ? 10 : 20,
+        width: isMobile ? 100 : 200,
+        overflow: "break",
         fontFamily: "Marianne",
-        fontSize: "14px",
+        fontSize: isMobile ? "12px" : "14px",
         fontWeight: "400",
         color: "#161616",
       },
@@ -166,6 +168,8 @@ const headers = ["Thématique", "Bien", "Moyen", "Mal"];
 
 const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThematic }) => {
   const [viewType, setViewType] = useState(DATAVIZ_VIEW_TYPES.GRAPHIC);
+  const { isMobile } = useBreakpoints();
+
   const temoignagesCount = Object.values(data[0].results).reduce((acc, item) => acc + item.count, 0);
 
   const tableData = data.map((item) => [
@@ -226,8 +230,8 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
       <ExperienceEnEntrepriseRatingChartsContainer>
         {viewType === DATAVIZ_VIEW_TYPES.GRAPHIC ? (
           <ReactECharts
-            option={chartOptions(data)}
-            style={{ height: "300px", width: "100%" }}
+            option={chartOptions(data, isMobile)}
+            style={{ height: "400px", width: "100%" }}
             onEvents={{
               click: onChartClick,
             }}
