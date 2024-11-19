@@ -84,3 +84,22 @@ export const AccordionTitle = styled.div`
   align-items: center;
   gap: 0.5rem;
 `;
+
+export const ExperienceEnEntrepriseRatingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 32px auto 32px auto;
+  width: 100%;
+
+  & h4 {
+    margin-bottom: 0;
+  }
+
+  & p {
+    margin-bottom: 0;
+    font-size: 14px;
+  }
+`;

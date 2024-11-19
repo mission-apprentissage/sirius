@@ -9,12 +9,14 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
+import ExperienceEnEntrepriseRating from "./Components/ExperienceEnEntrepriseRating";
 import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
 import VerbatimsThematics from "./Components/VerbatimsThematics";
 import { ConstructionNotice, IframeContainer, TitleContainer } from "./IframeFormation.style";
 
 const IframeFormationPage = () => {
   const [verbatimsStep, setVerbatimsStep] = useState(1);
+  const [goToThematic, setGoToThematic] = useState(null);
   const scrollableRef = useRef(null);
   const { search } = useLocation();
 
@@ -47,6 +49,13 @@ const IframeFormationPage = () => {
       document.removeEventListener("click", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    if (goToThematic) {
+      scrollableRef.current.scrollIntoView({ behavior: "smooth" });
+      setVerbatimsStep(2);
+    }
+  }, [goToThematic]);
 
   if (isLoading) {
     return (
@@ -99,8 +108,15 @@ const IframeFormationPage = () => {
             <VerbatimsThematics
               verbatimsByThemes={datavisualisation?.verbatimsByThemes}
               setVerbatimsStep={setVerbatimsStep}
+              goToThematics={goToThematic}
+              setGoToThematics={setGoToThematic}
             />
           ) : null}
+          <ExperienceEnEntrepriseRating
+            data={datavisualisation?.commentVisTonExperienceEntrepriseRating}
+            etablissementsCount={datavisualisation?.etablissementsCount}
+            setGoToThematic={setGoToThematic}
+          />
         </IframeContainer>
       </>
     )

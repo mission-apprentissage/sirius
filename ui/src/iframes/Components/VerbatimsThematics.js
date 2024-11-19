@@ -1,7 +1,7 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Accordion } from "@codegouvfr/react-dsfr/Accordion";
 import { Button } from "@codegouvfr/react-dsfr/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import BlueArrowRight from "../../assets/icons/blue-arrow-right.svg";
 import Quote from "../../assets/icons/quote.svg";
@@ -9,9 +9,18 @@ import useBreakpoints from "../../hooks/useBreakpoints";
 import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import { AccordionTitle, ApprentiInfo, TitleContainer, VerbatimContainer, VerbatimContent } from "./shared.style";
 
-const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep }) => {
+const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics, setGoToThematics }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
+  const [expandedAccordion, setExpandedAccordion] = useState(null);
+
   const { isMobile, isDesktop } = useBreakpoints();
+
+  useEffect(() => {
+    if (goToThematics) {
+      setExpandedAccordion(goToThematics);
+      setGoToThematics(null);
+    }
+  }, [goToThematics]);
 
   if (!Object.values(verbatimsByThemes).flat().length) return null;
 
@@ -34,9 +43,12 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep }) => {
         </Button>
       </TitleContainer>
       <div className={fr.cx("fr-accordions-group")}>
-        {verbatimsByThemes.map((verbatimsByTheme) =>
+        {verbatimsByThemes.map((verbatimsByTheme, index) =>
           verbatimsByTheme.verbatims.length ? (
             <Accordion
+              expanded={!!(expandedAccordion === verbatimsByTheme.label)}
+              defaultExpanded={!!(expandedAccordion === verbatimsByTheme.label)}
+              onExpandedChange={(expanded) => setExpandedAccordion(expanded ? verbatimsByTheme.label : null)}
               key={verbatimsByTheme.label}
               label={
                 <AccordionTitle>
