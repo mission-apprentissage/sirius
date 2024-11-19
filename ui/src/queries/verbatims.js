@@ -92,3 +92,15 @@ export const patchVerbatims = async ({ verbatims, token }) => {
   }
   return response;
 };
+
+export const patchVerbatimFeedback = async ({ verbatimId, isUseful }) => {
+  console.log({ verbatimId, isUseful });
+  const response = await apiPatch(`/verbatims/${verbatimId}/feedback`, {
+    body: { isUseful },
+  });
+
+  if (response.error) {
+    throw new Error("Erreur dans la mise à jour du feedback");
+  }
+  return response;
+};
