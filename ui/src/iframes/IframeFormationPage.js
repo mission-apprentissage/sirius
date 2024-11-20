@@ -73,7 +73,7 @@ const IframeFormationPage = () => {
     isSuccess && (
       <>
         <Helmet>
-          <title>{`Statistiques pour la formation ${intituleFormation} - Sirius`}</title>
+          <title>{`Statistiques pour la formation ${datavisualisation?.intituleFormation} - Sirius`}</title>
         </Helmet>
         <IframeContainer ref={scrollableRef}>
           <TitleContainer>
