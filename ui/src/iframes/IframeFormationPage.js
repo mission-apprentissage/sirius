@@ -9,6 +9,8 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
+import useMatomoEvent from "../hooks/useMatomoEvent";
+import { MATOMO_ACTION, MATOMO_CATEGORY } from "../matomo";
 import ExperienceEnEntrepriseRating from "./Components/ExperienceEnEntrepriseRating";
 import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
 import VerbatimsThematics from "./Components/VerbatimsThematics";
@@ -19,6 +21,7 @@ const IframeFormationPage = () => {
   const [goToThematic, setGoToThematic] = useState(null);
   const scrollableRef = useRef(null);
   const { search } = useLocation();
+  const trackEvent = useMatomoEvent();
 
   const intituleFormation = new URLSearchParams(search).get("intitule");
   const cfd = new URLSearchParams(search).get("cfd");
@@ -85,7 +88,12 @@ const IframeFormationPage = () => {
           {verbatimsStep === 1 ? (
             <p>
               Tu hésites entre la voie scolaire et l'apprentissage ? Grace au questionnaire{" "}
-              <a href="https://sirius.inserjeunes.beta.gouv.fr" target="_blank" rel="noreferrer">
+              <a
+                href="https://sirius.inserjeunes.beta.gouv.fr"
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_SIRIUS_LINK)}
+              >
                 <b>Sirius</b>
               </a>
               , les apprentis qui se forment en France te partagent leur expérience.

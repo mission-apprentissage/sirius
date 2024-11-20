@@ -11,7 +11,9 @@ import Quote from "../../assets/icons/quote.svg";
 import ThumbsUpFill from "../../assets/icons/thumbs-up-fill.svg";
 import ThumbsUpLine from "../../assets/icons/thumbs-up-line.svg";
 import useBreakpoints from "../../hooks/useBreakpoints";
+import useMatomoEvent from "../../hooks/useMatomoEvent";
 import usePatchVerbatimFeedback from "../../hooks/usePatchVerbatimFeedback";
+import { MATOMO_ACTION, MATOMO_CATEGORY } from "../../matomo";
 import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import {
   ApprentiInfo,
@@ -32,6 +34,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
     return savedFeedback ? JSON.parse(savedFeedback) : [];
   });
   const { isMobile, isDesktop } = useBreakpoints();
+  const trackEvent = useMatomoEvent();
 
   const MAX_CHAR = isMobile ? 150 : 300;
 
@@ -69,7 +72,12 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
         enabled: true,
       }}
       onSwiper={(swiper) => setSwiperControl(swiper)}
-      onSlideChange={() => {
+      onSlideChange={(swiper) => {
+        if (swiper.activeIndex > activeIndex) {
+          trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_NEXT);
+        } else if (swiper.activeIndex < activeIndex) {
+          trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_PREVIOUS);
+        }
         setActiveIndex(swiperControl.activeIndex);
         setExpandedIndex(null);
       }}
@@ -95,7 +103,12 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
                 {verbatim.content.length > MAX_CHAR && (
                   <>
                     <br />
-                    <span onClick={() => toggleExpand(index)}>
+                    <span
+                      onClick={() => {
+                        toggleExpand(index);
+                        trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE);
+                      }}
+                    >
                       {expandedIndex === index ? " Voir moins" : " Voir plus"}
                     </span>
                   </>
@@ -105,7 +118,12 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
                 Apprenti·e du {etablissementLabelGetterFromFormation(verbatim)} -{" "}
                 {new Date(verbatim.createdAt).toLocaleDateString("fr", { month: "long", year: "numeric" })}
               </ApprentiInfo>
-              <FeedbackContainer onClick={() => handleUsefullFeedback(verbatim.id)}>
+              <FeedbackContainer
+                onClick={() => {
+                  handleUsefullFeedback(verbatim.id);
+                  trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_USEFUL_VERBATIM);
+                }}
+              >
                 Cet avis est utile ?{" "}
                 <img
                   src={usefullFeedback.includes(verbatim.id) ? ThumbsUpFill : ThumbsUpLine}
@@ -134,7 +152,13 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
             onClick={() => swiperControl.slideNext()}
           />
         </PaginationContainer>
-        <Button priority="secondary" onClick={() => setVerbatimsStep(2)}>
+        <Button
+          priority="secondary"
+          onClick={() => {
+            setVerbatimsStep(2);
+            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_SEE_MORE);
+          }}
+        >
           Voir plus de témoignages
         </Button>
       </NavigationContainer>
