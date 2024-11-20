@@ -519,6 +519,7 @@ export const getCommentVisTonExperienceEntrepriseRating = (commentVisTonExperien
   const flattened = commentVisTonExperienceEntrepriseResults.flat().map((item) => ({
     ...item,
     label: commentVisTonExperienceEntrepriseLabelReconciler(item.label),
+    value: oldQuestionnaireValueMapping(item.value),
   }));
 
   const labels = [...new Set(flattened.map((item) => item.label))];

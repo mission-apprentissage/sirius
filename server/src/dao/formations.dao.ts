@@ -241,7 +241,7 @@ export const findFormationByIntituleCfdIdCertifInfoOrSlug = async (
   }
 
   if (slug) {
-    baseQuery = baseQuery.where(sql`catalogue_data ->> 'slug'`, "=", slug);
+    baseQuery = baseQuery.where("onisep_slug", "=", slug);
   }
 
   return baseQuery.execute();

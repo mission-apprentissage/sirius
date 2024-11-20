@@ -73,6 +73,7 @@ export interface Formations {
   region: string;
   tags: Json | null;
   updated_at: Generated<Timestamp | null>;
+  onisep_slug: string | null;
 }
 
 export interface FormationsCampagnes {

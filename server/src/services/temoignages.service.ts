@@ -193,14 +193,14 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
   try {
     const formattedIntituleFormation = intituleFormation ? intituleFormationFormatter(intituleFormation) : null;
 
-    const campagneIds = (
-      await formationsDao.findFormationByIntituleCfdIdCertifInfoOrSlug(
-        formattedIntituleFormation,
-        cfd,
-        idCertifinfo,
-        slug
-      )
-    ).map((formation) => formation.campagneId);
+    const formationsWithCampagnes = await formationsDao.findFormationByIntituleCfdIdCertifInfoOrSlug(
+      formattedIntituleFormation,
+      cfd,
+      idCertifinfo,
+      slug
+    );
+
+    const campagneIds = formationsWithCampagnes.map((formation) => formation.campagneId);
 
     if (!campagneIds.length) {
       return { success: true, body: { temoignagesCount: 0 } };
@@ -283,6 +283,7 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
     const result = {
       etablissementsCount: countOfDifferentEtablissements,
       temoignagesCount: temoignages.length,
+      intituleFormation: formationsWithCampagnes[0].intituleLong,
       verbatimsByThemes: matchedVerbatimAndThemes,
       gems,
       commentVisTonExperienceEntrepriseRating,
