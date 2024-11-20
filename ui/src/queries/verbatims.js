@@ -94,7 +94,6 @@ export const patchVerbatims = async ({ verbatims, token }) => {
 };
 
 export const patchVerbatimFeedback = async ({ verbatimId, isUseful }) => {
-  console.log({ verbatimId, isUseful });
   const response = await apiPatch(`/verbatims/${verbatimId}/feedback`, {
     body: { isUseful },
   });

@@ -6,6 +6,8 @@ import React, { useState } from "react";
 import { isPlural } from "../../campagnes/utils";
 import { DATAVIZ_VIEW_TYPES } from "../../constants";
 import useBreakpoints from "../../hooks/useBreakpoints";
+import useMatomoEvent from "../../hooks/useMatomoEvent";
+import { MATOMO_ACTION, MATOMO_CATEGORY } from "../../matomo";
 import { ExperienceEnEntrepriseRatingChartsContainer, ExperienceEnEntrepriseRatingContainer } from "./shared.style";
 
 const processData = (data) => {
@@ -169,6 +171,7 @@ const headers = ["Thématique", "Bien", "Moyen", "Mal"];
 const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThematic }) => {
   const [viewType, setViewType] = useState(DATAVIZ_VIEW_TYPES.GRAPHIC);
   const { isMobile } = useBreakpoints();
+  const trackEvent = useMatomoEvent();
 
   const temoignagesCount = Object.values(data[0].results).reduce((acc, item) => acc + item.count, 0);
 
@@ -190,6 +193,7 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
   const onChartClick = (params) => {
     if (params.componentType === "yAxis") {
       setGoToThematic(params.value);
+      trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC_FROM_GRAPH, params.value);
     }
   };
 
@@ -211,7 +215,10 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
               label: "Graphique",
               nativeInputProps: {
                 checked: viewType === DATAVIZ_VIEW_TYPES.GRAPHIC,
-                onClick: () => setViewType(DATAVIZ_VIEW_TYPES.GRAPHIC),
+                onClick: () => {
+                  setViewType(DATAVIZ_VIEW_TYPES.GRAPHIC);
+                  trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GRAPHIC_VIEW);
+                },
                 readOnly: true,
               },
             },
@@ -220,7 +227,10 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
               label: "Tableau",
               nativeInputProps: {
                 checked: viewType === DATAVIZ_VIEW_TYPES.TABLE,
-                onClick: () => setViewType(DATAVIZ_VIEW_TYPES.TABLE),
+                onClick: () => {
+                  setViewType(DATAVIZ_VIEW_TYPES.TABLE);
+                  trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_TABLE_VIEW);
+                },
                 readOnly: true,
               },
             },

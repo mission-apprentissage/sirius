@@ -9,7 +9,9 @@ import Quote from "../../assets/icons/quote.svg";
 import ThumbsUpFill from "../../assets/icons/thumbs-up-fill.svg";
 import ThumbsUpLine from "../../assets/icons/thumbs-up-line.svg";
 import useBreakpoints from "../../hooks/useBreakpoints";
+import useMatomoEvent from "../../hooks/useMatomoEvent";
 import usePatchVerbatimFeedback from "../../hooks/usePatchVerbatimFeedback";
+import { MATOMO_ACTION, MATOMO_CATEGORY } from "../../matomo";
 import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import {
   AccordionTitle,
@@ -27,6 +29,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
     const savedFeedback = localStorage.getItem("usefullFeedback");
     return savedFeedback ? JSON.parse(savedFeedback) : [];
   });
+  const trackEvent = useMatomoEvent();
 
   const { isMobile, isDesktop } = useBreakpoints();
 
@@ -70,7 +73,10 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
           iconId="fr-icon-arrow-go-back-fill"
           iconPosition="right"
           priority="tertiary no outline"
-          onClick={() => setVerbatimsStep(1)}
+          onClick={() => {
+            setVerbatimsStep(1);
+            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK);
+          }}
         >
           {!isMobile && "Revenir en arrière"}
         </Button>
@@ -81,7 +87,10 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
             <Accordion
               expanded={!!(expandedAccordion === verbatimsByTheme.label)}
               defaultExpanded={!!(expandedAccordion === verbatimsByTheme.label)}
-              onExpandedChange={(expanded) => setExpandedAccordion(expanded ? verbatimsByTheme.label : null)}
+              onExpandedChange={(expanded) => {
+                setExpandedAccordion(expanded ? verbatimsByTheme.label : null);
+                trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC, verbatimsByTheme.label);
+              }}
               key={verbatimsByTheme.label}
               label={
                 <AccordionTitle>
@@ -100,7 +109,12 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                     {verbatim.content.length > 230 && (
                       <>
                         <br />
-                        <span onClick={() => toggleExpand(index)}>
+                        <span
+                          onClick={() => {
+                            toggleExpand(index);
+                            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE);
+                          }}
+                        >
                           {expandedIndex === index ? " Voir moins" : " Voir plus"}
                         </span>
                       </>
@@ -110,7 +124,12 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                     Apprenti·e du {etablissementLabelGetterFromFormation(verbatim)} -{" "}
                     {new Date(verbatim.createdAt).toLocaleDateString("fr", { month: "long", year: "numeric" })}
                   </ApprentiInfo>
-                  <FeedbackContainer onClick={() => handleUsefullFeedback(verbatim.id)}>
+                  <FeedbackContainer
+                    onClick={() => {
+                      handleUsefullFeedback(verbatim.id);
+                      trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_USEFUL_VERBATIM);
+                    }}
+                  >
                     Cet avis est utile ?{" "}
                     <img
                       src={usefullFeedback.includes(verbatim.id) ? ThumbsUpFill : ThumbsUpLine}
