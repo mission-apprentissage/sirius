@@ -4,10 +4,10 @@ import "swiper/css";
 
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useEffect, useState } from "react";
-import { Controller, Keyboard, Navigation, Pagination } from "swiper/modules";
+import { Controller, Keyboard } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import Quote from "../../assets/icons/quote.svg";
+import Quote from "../../assets/icons/quote-blue.svg";
 import ThumbsUpFill from "../../assets/icons/thumbs-up-fill.svg";
 import ThumbsUpLine from "../../assets/icons/thumbs-up-line.svg";
 import useBreakpoints from "../../hooks/useBreakpoints";
@@ -79,8 +79,10 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
         } else if (swiper.activeIndex < activeIndex) {
           trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_PREVIOUS);
         }
-        setActiveIndex(swiperControl?.realIndex || 0);
-        setExpandedIndex(null);
+        setActiveIndex(swiperControl?.realIndex);
+        if (swiperControl?.realIndex !== activeIndex) {
+          setExpandedIndex(null);
+        }
       }}
     >
       <CarouselContainer>
@@ -98,7 +100,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
             <VerbatimContainer>
               <ThemeLabel>
                 <img src={Quote} aria-hidden={true} />
-                {verbatim.questionLabel}
+                <i>{verbatim.questionLabel}</i>
               </ThemeLabel>
               <VerbatimContent>
                 {expandedIndex === index

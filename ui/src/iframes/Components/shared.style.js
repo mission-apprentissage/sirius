@@ -50,6 +50,7 @@ export const ApprentiInfo = styled.p`
   font-size: 12px;
   line-height: 20px;
   color: #666666;
+  width: 100%;
 `;
 
 export const PaginationContainer = styled.div`
@@ -126,9 +127,10 @@ export const ExperienceEnEntrepriseRatingChartsContainer = styled.div`
 export const FeedbackContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
+  width: 100%;
   font-size: 12px;
   color: var(--text-title-blue-france);
   cursor: pointer;
@@ -140,7 +142,7 @@ export const ThemeLabel = styled.p`
   justify-content: flex-start;
   align-items: center;
   gap: 0.5rem;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
-  color: #161616;
+  color: var(--text-title-blue-france);
 `;

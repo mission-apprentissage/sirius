@@ -5,7 +5,7 @@ import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useEffect, useState } from "react";
 
 import BlueArrowRight from "../../assets/icons/blue-arrow-right.svg";
-import Quote from "../../assets/icons/quote.svg";
+import Quote from "../../assets/icons/quote-blue.svg";
 import ThumbsUpFill from "../../assets/icons/thumbs-up-fill.svg";
 import ThumbsUpLine from "../../assets/icons/thumbs-up-line.svg";
 import useBreakpoints from "../../hooks/useBreakpoints";
