@@ -2,12 +2,12 @@ import { fr } from "@codegouvfr/react-dsfr";
 import styled from "@emotion/styled";
 
 export const IframeContainer = styled.main`
-  width: 100%;
-  padding: 0 5px;
+  max-width: 800px;
+  padding: 0;
 
   & > p {
     font-size: 16px;
-    line-heihgt: 24px;
+    line-height: 24px;
     margin-bottom: 16px;
   }
 `;
@@ -230,6 +230,13 @@ export const TitleContainer = styled.div`
   justify-content: flex-start;
   gap: 1rem;
   padding: 16px 0;
+  width: 100%;
+
+  ${fr.breakpoints.down("sm")} {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 
   & h3 {
     margin: 0;
@@ -239,13 +246,14 @@ export const TitleContainer = styled.div`
 export const ConstructionNotice = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
   background-color: var(--background-action-low-blue-france);
   padding: 12px;
   gap: 8px;
   border-radius: 4px;
   margin-bottom: 16px;
+  width: 100%;
 
   & span {
     color: var(--background-flat-blue-france);

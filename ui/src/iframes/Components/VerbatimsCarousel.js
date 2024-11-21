@@ -33,7 +33,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
     const savedFeedback = localStorage.getItem("usefullFeedback");
     return savedFeedback ? JSON.parse(savedFeedback) : [];
   });
-  const { isMobile, isDesktop } = useBreakpoints();
+  const { isMobile } = useBreakpoints();
   const trackEvent = useMatomoEvent();
 
   const MAX_CHAR = isMobile ? 150 : 300;
@@ -63,8 +63,8 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
   return (
     <Swiper
       rewind={true}
-      spaceBetween={isMobile ? 20 : 15}
-      slidesPerView={isMobile ? 1.3 : 1.3}
+      spaceBetween={isMobile ? 30 : 20}
+      slidesPerView="1.5"
       centeredSlides={true}
       modules={[Controller, Keyboard]}
       controller={{ control: swiperControl }}
@@ -94,7 +94,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
                 : null
             }
           >
-            <VerbatimContainer isDesktop={isDesktop}>
+            <VerbatimContainer>
               <img src={Quote} aria-hidden={true} />
               <VerbatimContent>
                 {expandedIndex === index

@@ -21,7 +21,7 @@ export const VerbatimContainer = styled.div`
   align-items: flex-start;
   justify-content: flex-start;
   gap: 1rem;
-  width: ${(props) => (props.isDesktop ? "70%" : "100%")};
+  width: 100%;
   margin: 16px auto 0px auto;
   padding: 0 16px;
 
