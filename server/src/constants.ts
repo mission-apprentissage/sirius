@@ -182,3 +182,11 @@ export const OBSERVER_SCOPES = {
   NATIONAL: "national",
   OPCO: "opco",
 };
+
+export const QUESTION_LABELS_BY_QUESTION_KEY = {
+  descriptionMetierConseil: "Le métier, la formation",
+  peurChangementConseil: "Pourquoi l’apprentissage",
+  choseMarquanteConseil: "Mon expérience au travail",
+  trouverEntrepriseConseil: "Trouver mon entreprise",
+  differenceCollegeCfaConseil: "Mon expérience au CFA",
+};

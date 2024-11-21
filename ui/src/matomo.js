@@ -13,5 +13,7 @@ export const MATOMO_ACTION = {
   CLICK_VERBATIM_SEE_MORE: "Click voir plus",
   CLICK_USEFUL_VERBATIM: "Click cet avis est utile",
   CLICK_THEMATIC: "Click thématique",
-  CLICK_GO_BACK: "Click revenir en arrière",
+  CLICK_QUESTION: "Click question",
+  CLICK_GO_BACK_THEMATICS: "Click revenir en arrière thématiques",
+  CLICK_GO_BACK_QUESTIONS: "Click revenir en arrière questions",
 };
