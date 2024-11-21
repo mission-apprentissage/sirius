@@ -184,9 +184,9 @@ export const OBSERVER_SCOPES = {
 };
 
 export const QUESTION_LABELS_BY_QUESTION_KEY = {
-  descriptionMetierConseil: "Le métier, la formation",
-  peurChangementConseil: "Pourquoi l’apprentissage",
-  choseMarquanteConseil: "Mon expérience au travail",
-  trouverEntrepriseConseil: "Trouver mon entreprise",
-  differenceCollegeCfaConseil: "Mon expérience au CFA",
+  descriptionMetierConseil: "À quoi ressemble une journée dans ton travail d’apprenti ?",
+  peurChangementConseil: "Qu’est ce qui a changé pour toi avec l’apprentissage ?",
+  choseMarquanteConseil: "Qu’aurais-tu aimé savoir avant de faire de l’apprentissage ?",
+  trouverEntrepriseConseil: "Comment as-tu vécu ta recherche d’entreprise ? As-tu des conseils ?",
+  differenceCollegeCfaConseil: "À quoi ressemble une journée dans ton CFA ?",
 };
