@@ -93,6 +93,7 @@ const chartOptions = (data, isMobile) => {
     yAxis: {
       type: "category",
       data: labels,
+      inverse: true,
       triggerEvent: true,
       axisLabel: {
         margin: isMobile ? 10 : 20,
@@ -118,7 +119,7 @@ const chartOptions = (data, isMobile) => {
         label: {
           show: true,
           position: "inside",
-          formatter: (params) => (params.value === 8 ? "" : params.value + "%"),
+          formatter: (params) => (params.value < 8 ? "" : params.value + "%"),
           fontFamily: "Marianne",
           fontSize: 12,
           color: "#161616",
@@ -135,7 +136,7 @@ const chartOptions = (data, isMobile) => {
         label: {
           show: true,
           position: "inside",
-          formatter: (params) => (params.value === 8 ? "" : params.value + "%"),
+          formatter: (params) => (params.value < 8 ? "" : params.value + "%"),
           fontFamily: "Marianne",
           fontSize: 12,
           color: "#161616",
