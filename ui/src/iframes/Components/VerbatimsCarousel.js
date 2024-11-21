@@ -4,7 +4,7 @@ import "swiper/css";
 
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useEffect, useState } from "react";
-import { Controller, Keyboard } from "swiper/modules";
+import { Controller, Keyboard, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import Quote from "../../assets/icons/quote.svg";
@@ -63,7 +63,6 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
 
   return (
     <Swiper
-      rewind={true}
       spaceBetween={isMobile ? 30 : 20}
       slidesPerView="1.5"
       centeredSlides={true}
@@ -72,6 +71,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
       keyboard={{
         enabled: true,
       }}
+      loop={true}
       onSwiper={(swiper) => setSwiperControl(swiper)}
       onSlideChange={(swiper) => {
         if (swiper.activeIndex > activeIndex) {
@@ -79,7 +79,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
         } else if (swiper.activeIndex < activeIndex) {
           trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_PREVIOUS);
         }
-        setActiveIndex(swiperControl.activeIndex);
+        setActiveIndex(swiperControl?.realIndex || 0);
         setExpandedIndex(null);
       }}
     >
