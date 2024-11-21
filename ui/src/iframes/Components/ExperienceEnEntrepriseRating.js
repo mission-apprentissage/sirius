@@ -50,13 +50,29 @@ const tooltipFormatter = (params, data) => {
   </div>`;
 };
 
-const chartOptions = (data, isMobile) => {
+const getTopLabelPosition = (index, isMobile) => {
+  switch (index) {
+    case 0:
+      return isMobile ? "100px" : "140px";
+    case 1:
+      return isMobile ? "180px" : "210px";
+    case 2:
+      return isMobile ? "260px" : "270px";
+    case 3:
+      return isMobile ? "335px" : "335px";
+    case 4:
+      return isMobile ? "415px" : "395px";
+  }
+};
+
+const chartOptions = (data, isMobile, onChartClick) => {
   const { labels, bienData, moyenData, malData } = processData(data);
 
   return {
     tooltip: {
       trigger: "axis",
       formatter: (params) => tooltipFormatter(params, data),
+      show: isMobile ? false : true,
       axisPointer: {
         type: "none",
         shadowStyle: {
@@ -69,9 +85,9 @@ const chartOptions = (data, isMobile) => {
     legend: {
       data: ["Bien", "Moyen", "Mal"],
       orient: "horizontal",
-      right: "2%",
-      top: "0%",
-      itemGap: isMobile ? 60 : 40,
+      right: "0%",
+      top: "2%",
+      itemGap: isMobile ? 30 : 40,
       textStyle: {
         fontFamily: "Marianne",
         fontSize: "14px",
@@ -80,11 +96,11 @@ const chartOptions = (data, isMobile) => {
       },
     },
     grid: {
-      left: isMobile ? 5 : 5,
-      right: isMobile ? 10 : 5,
-      top: 32,
+      left: isMobile ? 0 : "34%",
+      right: 0,
+      top: 60,
       bottom: 0,
-      containLabel: true,
+      containLabel: isMobile ? false : true,
     },
     xAxis: {
       type: "value",
@@ -96,13 +112,7 @@ const chartOptions = (data, isMobile) => {
       inverse: true,
       triggerEvent: true,
       axisLabel: {
-        margin: isMobile ? 10 : 20,
-        width: isMobile ? 100 : 200,
-        overflow: "break",
-        fontFamily: "Marianne",
-        fontSize: isMobile ? "12px" : "14px",
-        fontWeight: "400",
-        color: "#161616",
+        show: false,
       },
       axisLine: {
         show: false,
@@ -111,11 +121,35 @@ const chartOptions = (data, isMobile) => {
         show: false,
       },
     },
+    graphic: [
+      {
+        type: "group",
+        left: 0,
+        top: isMobile ? 60 : 80,
+        children: labels.map((label, index) => ({
+          type: "text",
+          top: getTopLabelPosition(index, isMobile),
+          onclick: () => onChartClick(label),
+          style: {
+            text: label,
+            fontSize: 16,
+            fontFamily: "Marianne",
+            fontWeight: isMobile ? "500" : "400",
+            fill: "#161616",
+            width: isMobile ? 350 : 230,
+            textAlign: "left",
+            cursor: "pointer",
+            overflow: "break",
+          },
+        })),
+      },
+    ],
     series: [
       {
         name: "Bien",
         type: "bar",
         stack: "total",
+        barCategoryGap: isMobile ? "40px" : "20px",
         label: {
           show: true,
           position: "inside",
@@ -133,6 +167,7 @@ const chartOptions = (data, isMobile) => {
         name: "Moyen",
         type: "bar",
         stack: "total",
+        barCategoryGap: isMobile ? "40px" : "20px",
         label: {
           show: true,
           position: "inside",
@@ -150,6 +185,7 @@ const chartOptions = (data, isMobile) => {
         name: "Mal",
         type: "bar",
         stack: "total",
+        barCategoryGap: isMobile ? "40px" : "20px",
         label: {
           show: true,
           position: "inside",
@@ -191,11 +227,9 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
     </>,
   ]);
 
-  const onChartClick = (params) => {
-    if (params.componentType === "yAxis") {
-      setGoToThematic(params.value);
-      trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC_FROM_GRAPH, params.value);
-    }
+  const onChartClick = (value) => {
+    setGoToThematic(value);
+    trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC_FROM_GRAPH, value);
   };
 
   return (
@@ -241,11 +275,8 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
       <ExperienceEnEntrepriseRatingChartsContainer>
         {viewType === DATAVIZ_VIEW_TYPES.GRAPHIC ? (
           <ReactECharts
-            option={chartOptions(data, isMobile)}
-            style={{ height: "400px", width: "100%" }}
-            onEvents={{
-              click: onChartClick,
-            }}
+            option={chartOptions(data, isMobile, onChartClick)}
+            style={{ height: isMobile ? "450px" : "400px", width: "100%" }}
           />
         ) : null}
         {viewType === DATAVIZ_VIEW_TYPES.TABLE ? (
