@@ -91,7 +91,7 @@ export const ExperienceEnEntrepriseRatingContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
-  margin: 32px auto 016px auto;
+  margin: 32px auto 16px auto;
   width: 100%;
 
   ${fr.breakpoints.down("sm")} {
@@ -132,4 +132,15 @@ export const FeedbackContainer = styled.div`
   font-size: 12px;
   color: var(--text-title-blue-france);
   cursor: pointer;
+`;
+
+export const ThemeLabel = styled.p`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 16px;
+  font-weight: 700;
+  color: #161616;
 `;

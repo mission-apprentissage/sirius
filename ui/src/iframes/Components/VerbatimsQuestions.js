@@ -22,7 +22,7 @@ import {
   VerbatimContent,
 } from "./shared.style";
 
-const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics, setGoToThematics }) => {
+const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [expandedAccordion, setExpandedAccordion] = useState(null);
   const [usefullFeedback, setUsefullFeedback] = useState(() => {
@@ -39,16 +39,23 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
     localStorage.setItem("usefullFeedback", JSON.stringify(usefullFeedback));
   }, [usefullFeedback]);
 
-  useEffect(() => {
-    if (goToThematics) {
-      setTimeout(() => {
-        setExpandedAccordion(goToThematics);
-        setGoToThematics(null);
-      }, 200);
-    }
-  }, [goToThematics]);
+  if (!Object.values(verbatimsByQuestions).flat().length) return null;
 
-  if (!Object.values(verbatimsByThemes).flat().length) return null;
+  const verbatimsGroupedByQuestionLabel = Object.values(verbatimsByQuestions)
+    .flat()
+    .reduce((acc, item) => {
+      const { questionLabel, ...rest } = item;
+
+      let group = acc.find((group) => group.questionLabel === questionLabel);
+      if (!group) {
+        group = { questionLabel, verbatims: [] };
+        acc.push(group);
+      }
+
+      group.verbatims.push(rest);
+
+      return acc;
+    }, []);
 
   const toggleExpand = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
@@ -67,7 +74,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
   return (
     <>
       <TitleContainer>
-        <h6>Par thématique</h6>
+        <h6>Plus de témoignages</h6>
         <Button
           aria-label="Revenir en arrière"
           iconId="fr-icon-arrow-go-back-fill"
@@ -75,31 +82,35 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
           priority="tertiary no outline"
           onClick={() => {
             setVerbatimsStep(1);
-            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_THEMATICS);
+            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_QUESTIONS);
           }}
         >
           {!isMobile && "Revenir en arrière"}
         </Button>
       </TitleContainer>
       <div className={fr.cx("fr-accordions-group")}>
-        {verbatimsByThemes.map((verbatimsByTheme, index) =>
-          verbatimsByTheme.verbatims.length ? (
+        {verbatimsGroupedByQuestionLabel.map((verbatimsByQuestion, index) =>
+          verbatimsByQuestion.verbatims.length ? (
             <Accordion
-              expanded={!!(expandedAccordion === verbatimsByTheme.label)}
-              defaultExpanded={!!(expandedAccordion === verbatimsByTheme.label)}
+              expanded={!!(expandedAccordion === verbatimsByQuestion.questionLabel)}
+              defaultExpanded={!!(expandedAccordion === verbatimsByQuestion.questionLabel)}
               onExpandedChange={(expanded) => {
-                setExpandedAccordion(expanded ? verbatimsByTheme.label : null);
-                trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC, verbatimsByTheme.label);
+                setExpandedAccordion(expanded ? verbatimsByQuestion.questionLabel : null);
+                trackEvent(
+                  MATOMO_CATEGORY.IFRAME_FORMATION,
+                  MATOMO_ACTION.CLICK_QUESTION,
+                  verbatimsByQuestion.questionLabel
+                );
               }}
-              key={verbatimsByTheme.label}
+              key={verbatimsByQuestion.questionLabel}
               label={
                 <AccordionTitle>
                   <img src={BlueArrowRight} aria-hidden={true} />
-                  {verbatimsByTheme.label}
+                  {verbatimsByQuestion.questionLabel}
                 </AccordionTitle>
               }
             >
-              {verbatimsByTheme.verbatims.map((verbatim, index) => (
+              {verbatimsByQuestion.verbatims.map((verbatim, index) => (
                 <VerbatimContainer key={index} isDesktop={isDesktop}>
                   <img src={Quote} aria-hidden={true} />
                   <VerbatimContent>
@@ -146,4 +157,4 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
   );
 };
 
-export default VerbatimsThematics;
+export default VerbatimsQuestions;

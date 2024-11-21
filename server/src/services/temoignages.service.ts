@@ -223,28 +223,7 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
 
     const commentVisTonEntrepriseOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceEntreprise);
 
-    const commentVisTonEntrepriseVerbatimsQuery = {
-      temoignageIds: temoignages.map((temoignage) => temoignage.id),
-      status: [VERBATIM_STATUS.GEM],
-    };
-    const verbatimsByThemesResults = await verbatimsDao.getAll(commentVisTonEntrepriseVerbatimsQuery);
-
-    const verbatimsByThemesWithEtablissement = verbatimsByThemesResults.map((verbatim) => {
-      const relatedTemoignage = temoignages.find((temoignage) => temoignage.id === verbatim.temoignageId);
-      return {
-        ...verbatim,
-        etablissementFormateurEntrepriseRaisonSociale: relatedTemoignage.etablissementFormateurEntrepriseRaisonSociale,
-        etablissementFormateurEnseigne: relatedTemoignage.etablissementFormateurEnseigne,
-        etablissementGestionnaireEnseigne: relatedTemoignage.etablissementGestionnaireEnseigne,
-      };
-    });
-
-    const matchedVerbatimAndThemes = verbatimsAnOrderedThemeAnswersMatcher(
-      verbatimsByThemesWithEtablissement,
-      commentVisTonEntrepriseOrder
-    );
-
-    const gemsQuery = {
+    const verbatimsQuery = {
       temoignageIds: temoignages.map((temoignage) => temoignage.id),
       status: [VERBATIM_STATUS.GEM],
       questionKey: [
@@ -256,9 +235,9 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
       ],
     };
 
-    const gemsResults = await verbatimsDao.getAll(gemsQuery);
+    const verbatimsResults = await verbatimsDao.getAll(verbatimsQuery);
 
-    const gemWithEtablissement = gemsResults.splice(0, 10).map((verbatim) => {
+    const verbatimsWithEtablissement = verbatimsResults.map((verbatim) => {
       const relatedTemoignage = temoignages.find((temoignage) => temoignage.id === verbatim.temoignageId);
       return {
         ...verbatim,
@@ -268,7 +247,13 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
       };
     });
 
-    const gems = getGemVerbatimsByWantedQuestionKey(gemWithEtablissement);
+    const matchedVerbatimAndThemes = verbatimsAnOrderedThemeAnswersMatcher(
+      verbatimsWithEtablissement,
+      commentVisTonEntrepriseOrder
+    );
+
+    const allGems = getGemVerbatimsByWantedQuestionKey(verbatimsWithEtablissement);
+    const gems = getGemVerbatimsByWantedQuestionKey(verbatimsWithEtablissement.splice(0, 10));
 
     const etablissementsCount = temoignages.reduce((acc, temoignage) => {
       if (temoignage.etablissementFormateurEntrepriseRaisonSociale) {
@@ -286,6 +271,7 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
       intituleFormation: formationsWithCampagnes[0].intituleLong,
       verbatimsByThemes: matchedVerbatimAndThemes,
       gems,
+      verbatimsByQuestions: allGems,
       commentVisTonExperienceEntrepriseRating,
     };
 

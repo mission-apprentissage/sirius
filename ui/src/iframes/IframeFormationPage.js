@@ -13,6 +13,7 @@ import useMatomoEvent from "../hooks/useMatomoEvent";
 import { MATOMO_ACTION, MATOMO_CATEGORY } from "../matomo";
 import ExperienceEnEntrepriseRating from "./Components/ExperienceEnEntrepriseRating";
 import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
+import VerbatimsQuestions from "./Components/VerbatimsQuestions";
 import VerbatimsThematics from "./Components/VerbatimsThematics";
 import { ConstructionNotice, IframeContainer, TitleContainer } from "./IframeFormation.style";
 
@@ -118,6 +119,12 @@ const IframeFormationPage = () => {
               setVerbatimsStep={setVerbatimsStep}
               goToThematics={goToThematic}
               setGoToThematics={setGoToThematic}
+            />
+          ) : null}
+          {verbatimsStep === 3 ? (
+            <VerbatimsQuestions
+              verbatimsByQuestions={datavisualisation?.verbatimsByQuestions}
+              setVerbatimsStep={setVerbatimsStep}
             />
           ) : null}
           <ExperienceEnEntrepriseRating

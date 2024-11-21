@@ -21,6 +21,7 @@ import {
   FeedbackContainer,
   NavigationContainer,
   PaginationContainer,
+  ThemeLabel,
   VerbatimContainer,
   VerbatimContent,
 } from "./shared.style";
@@ -95,7 +96,10 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
             }
           >
             <VerbatimContainer>
-              <img src={Quote} aria-hidden={true} />
+              <ThemeLabel>
+                <img src={Quote} aria-hidden={true} />
+                {verbatim.questionLabel}
+              </ThemeLabel>
               <VerbatimContent>
                 {expandedIndex === index
                   ? `« ${verbatim.content} »`
@@ -109,7 +113,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
                         trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE);
                       }}
                     >
-                      {expandedIndex === index ? " Voir moins" : " Voir plus"}
+                      {expandedIndex === index ? "Voir moins" : "Voir plus"}
                     </span>
                   </>
                 )}
@@ -155,7 +159,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
         <Button
           priority="secondary"
           onClick={() => {
-            setVerbatimsStep(2);
+            setVerbatimsStep(3);
             trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_SEE_MORE);
           }}
         >

@@ -3,6 +3,8 @@
 import {
   ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES,
   NEW_ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES,
+  QUESTION_LABELS_BY_QUESTION_KEY,
+  QUESTION_LABELS_BY_QUESTION_KEY,
   VERBATIM_STATUS,
 } from "../constants";
 
@@ -356,6 +358,7 @@ export const getGemVerbatimsByWantedQuestionKey = (verbatims) => {
         id,
         content,
         createdAt,
+        questionLabel: QUESTION_LABELS_BY_QUESTION_KEY[questionKey],
         status: scores.GEM.avis === "Oui" ? VERBATIM_STATUS.GEM : status,
         etablissementFormateurEntrepriseRaisonSociale,
         etablissementFormateurEnseigne,
@@ -398,6 +401,7 @@ export const verbatimsAnOrderedThemeAnswersMatcher = (verbatims, orderedThemeAns
       .map((verbatim) => ({
         id: verbatim.id,
         content: verbatim.content,
+        questionLabel: QUESTION_LABELS_BY_QUESTION_KEY[item.questionKey],
         status: verbatim.status,
         createdAt: verbatim.createdAt,
         etablissementFormateurEntrepriseRaisonSociale: verbatim.etablissementFormateurEntrepriseRaisonSociale,
