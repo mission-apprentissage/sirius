@@ -81,27 +81,19 @@ const IframeFormationPage = () => {
         </Helmet>
         <IframeContainer ref={scrollableRef}>
           <TitleContainer>
-            <h3>Témoignages d'apprentis</h3>
+            <h2>Témoignages d'apprentis</h2>
             <Badge as="span" noIcon severity="success">
               Beta
             </Badge>
           </TitleContainer>
           {verbatimsStep === 1 ? (
             <p>
-              Tu hésites entre la voie scolaire et l'apprentissage ? Grace au questionnaire{" "}
-              <a
-                href="https://sirius.inserjeunes.beta.gouv.fr"
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_SIRIUS_LINK)}
-              >
-                <b>Sirius</b>
-              </a>
-              , les apprentis qui se forment en France te partagent leur expérience.
+              Tu hésites entre la voie scolaire et l'apprentissage ? Les apprentis qui se forment en France te partagent
+              leur expérience authentique.
             </p>
           ) : null}
           <ConstructionNotice>
-            <span className={fr.cx("fr-icon-information-line")} aria-hidden={true} />
+            <span className={fr.cx("fr-icon-info-fill")} aria-hidden={true} />
             <p>
               Ce service est en cours de construction. Les résultats ne sont pas encore représentatifs de l'ensemble des
               établissements et formations.
