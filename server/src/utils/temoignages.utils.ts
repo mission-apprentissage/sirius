@@ -5,6 +5,7 @@ import {
   NEW_ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES,
   QUESTION_LABELS_BY_QUESTION_KEY,
   QUESTION_LABELS_BY_QUESTION_KEY,
+  TROUVER_ENTREPRISE_LABEL_MATCHER,
   VERBATIM_STATUS,
 } from "../constants";
 
@@ -557,6 +558,44 @@ export const getCommentVisTonExperienceEntrepriseRating = (commentVisTonExperien
       }, {}),
     };
   });
+
+  return result;
+};
+
+export const getTrouverEntrepriseRating = (cfaAideTrouverEntreprise, commentTrouverEntreprise) => {
+  const helpedFromCfa = cfaAideTrouverEntreprise.filter(
+    (response) => response === "Oui j’ai eu besoin de lui et il m’a aidé"
+  );
+
+  const mergedAndFlattenReponses = [...helpedFromCfa, ...commentTrouverEntreprise].flat();
+
+  const occurrences = mergedAndFlattenReponses.reduce((acc, str) => {
+    acc[str] = (acc[str] || 0) + 1;
+    return acc;
+  }, {});
+
+  const total = mergedAndFlattenReponses.length;
+
+  let result = Object.entries(occurrences).map(([key, count]) => ({
+    label: TROUVER_ENTREPRISE_LABEL_MATCHER[key] || key,
+    count,
+    percentage: (count / total) * 100,
+  }));
+
+  result = result
+    .sort((a, b) => b.percentage - a.percentage)
+    .map((item) => {
+      item.percentage = Math.round(item.percentage);
+      return item;
+    });
+
+  const roundedTotal = result.reduce((sum, item) => sum + item.percentage, 0);
+  let diff = 100 - roundedTotal;
+
+  for (let i = 0; diff !== 0; i++) {
+    result[i % result.length].percentage += diff > 0 ? 1 : -1;
+    diff += diff > 0 ? -1 : 1;
+  }
 
   return result;
 };
