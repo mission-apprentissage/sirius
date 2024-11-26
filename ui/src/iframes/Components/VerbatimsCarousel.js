@@ -2,6 +2,7 @@
 /* eslint-disable import/no-unresolved */
 import "swiper/css";
 
+import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { useEffect, useState } from "react";
 import { Controller, Keyboard } from "swiper/modules";
@@ -21,6 +22,7 @@ import {
   FeedbackContainer,
   NavigationContainer,
   PaginationContainer,
+  SeeMoreContainer,
   ThemeLabel,
   VerbatimContainer,
   VerbatimContent,
@@ -39,7 +41,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
 
   const MAX_CHAR = isMobile ? 150 : 300;
 
-  const { mutate: patchVerbatimFeedback, patchedVerbatimFeedback } = usePatchVerbatimFeedback();
+  const { mutate: patchVerbatimFeedback } = usePatchVerbatimFeedback();
 
   useEffect(() => {
     localStorage.setItem("usefullFeedback", JSON.stringify(usefullFeedback));
@@ -63,32 +65,30 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
 
   return (
     <Swiper
-      spaceBetween={isMobile ? 30 : 20}
-      slidesPerView="1.5"
-      centeredSlides={true}
+      spaceBetween={isMobile ? 50 : 60}
+      slidesPerView={"auto"}
       modules={[Controller, Keyboard]}
       controller={{ control: swiperControl }}
       keyboard={{
         enabled: true,
       }}
-      loop={true}
       onSwiper={(swiper) => setSwiperControl(swiper)}
       onSlideChange={(swiper) => {
-        if (swiper.activeIndex > activeIndex) {
-          trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_NEXT);
-        } else if (swiper.activeIndex < activeIndex) {
-          trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_PREVIOUS);
-        }
-        setActiveIndex(swiperControl?.realIndex);
-        if (swiperControl?.realIndex !== activeIndex) {
+        const realIndex = swiper.realIndex;
+        setActiveIndex(realIndex);
+        trackEvent(
+          MATOMO_CATEGORY.IFRAME_FORMATION,
+          realIndex > activeIndex ? MATOMO_ACTION.CLICK_CAROUSEL_NEXT : MATOMO_ACTION.CLICK_CAROUSEL_PREVIOUS
+        );
+        if (realIndex !== activeIndex) {
           setExpandedIndex(null);
         }
       }}
     >
-      <CarouselContainer>
+      <CarouselContainer isMobile={isMobile}>
         {verbatims.map((verbatim, index) => (
           <SwiperSlide
-            key={index}
+            key={`verbatim-${index}`}
             onClick={() =>
               index !== activeIndex
                 ? index > activeIndex
@@ -96,13 +96,14 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
                   : swiperControl.slidePrev()
                 : null
             }
+            style={{ width: "80%" }}
           >
-            <VerbatimContainer>
-              <ThemeLabel>
-                <img src={Quote} aria-hidden={true} />
+            <VerbatimContainer isMobile={isMobile}>
+              <ThemeLabel isMobile={isMobile}>
+                <img src={Quote} aria-hidden="true" />
                 <i>{verbatim.questionLabel}</i>
               </ThemeLabel>
-              <VerbatimContent>
+              <VerbatimContent isMobile={isMobile}>
                 {expandedIndex === index
                   ? `« ${verbatim.content} »`
                   : `« ${verbatim.content.substring(0, MAX_CHAR)}${verbatim.content.length > MAX_CHAR ? "..." : ""} »`}
@@ -122,7 +123,10 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
               </VerbatimContent>
               <ApprentiInfo>
                 Apprenti·e du {etablissementLabelGetterFromFormation(verbatim)} -{" "}
-                {new Date(verbatim.createdAt).toLocaleDateString("fr", { month: "long", year: "numeric" })}
+                {new Date(verbatim.createdAt).toLocaleDateString("fr", {
+                  month: "long",
+                  year: "numeric",
+                })}
               </ApprentiInfo>
               <FeedbackContainer
                 onClick={() => {
@@ -139,6 +143,22 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
             </VerbatimContainer>
           </SwiperSlide>
         ))}
+        <SwiperSlide style={{ width: "70%" }}>
+          <SeeMoreContainer
+            isMobile={isMobile}
+            onClick={() => {
+              setVerbatimsStep(3);
+              trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_SEE_MORE);
+            }}
+          >
+            <img src={Quote} aria-hidden="true" />
+            <h6>Envie d'en lire davantage ?</h6>
+            <p>Explorez les témoignages des apprentis classés selon différentes thématiques.</p>
+            <div>
+              <span className={fr.cx("fr-icon-arrow-right-line")} />
+            </div>
+          </SeeMoreContainer>
+        </SwiperSlide>
       </CarouselContainer>
       <NavigationContainer>
         <PaginationContainer>
@@ -147,26 +167,19 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
             iconId="fr-icon-arrow-left-s-line"
             priority="tertiary no outline"
             onClick={() => swiperControl.slidePrev()}
+            disabled={activeIndex === 0}
           />
           <p>
-            {activeIndex + 1} sur {verbatims.length}
+            {activeIndex + 1} sur {verbatims.length + 1}
           </p>
           <Button
             aria-label="Suivant"
             iconId="fr-icon-arrow-right-s-line"
             priority="tertiary no outline"
             onClick={() => swiperControl.slideNext()}
+            disabled={activeIndex === verbatims.length}
           />
         </PaginationContainer>
-        <Button
-          priority="secondary"
-          onClick={() => {
-            setVerbatimsStep(3);
-            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_SEE_MORE);
-          }}
-        >
-          Voir plus de témoignages
-        </Button>
       </NavigationContainer>
     </Swiper>
   );
