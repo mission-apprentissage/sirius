@@ -10,6 +10,14 @@ export const IframeContainer = styled.main`
     line-height: 24px;
     margin-bottom: 16px;
   }
+
+  & > p:last-child {
+    margin: 22px 0;
+    font-size: 12px;
+    color: var(--text-mention-grey);
+    width: 100%;
+    text-align: right;
+  }
 `;
 
 export const DatavisualisationContainer = styled.div`

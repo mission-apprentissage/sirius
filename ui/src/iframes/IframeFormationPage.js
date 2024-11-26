@@ -10,8 +10,8 @@ import BeatLoader from "react-spinners/BeatLoader";
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
 import useMatomoEvent from "../hooks/useMatomoEvent";
-import { MATOMO_ACTION, MATOMO_CATEGORY } from "../matomo";
 import ExperienceEnEntrepriseRating from "./Components/ExperienceEnEntrepriseRating";
+import TrouverUneEntrepriseRating from "./Components/TrouverUneEntrepriseRating";
 import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
 import VerbatimsQuestions from "./Components/VerbatimsQuestions";
 import VerbatimsThematics from "./Components/VerbatimsThematics";
@@ -22,7 +22,6 @@ const IframeFormationPage = () => {
   const [goToThematic, setGoToThematic] = useState(null);
   const scrollableRef = useRef(null);
   const { search } = useLocation();
-  const trackEvent = useMatomoEvent();
 
   const intituleFormation = new URLSearchParams(search).get("intitule");
   const cfd = new URLSearchParams(search).get("cfd");
@@ -119,11 +118,21 @@ const IframeFormationPage = () => {
               setVerbatimsStep={setVerbatimsStep}
             />
           ) : null}
+          <TrouverUneEntrepriseRating
+            data={datavisualisation?.trouverEntrepriseRating}
+            etablissementsCount={datavisualisation?.etablissementsCount}
+          />
           <ExperienceEnEntrepriseRating
             data={datavisualisation?.commentVisTonExperienceEntrepriseRating}
             etablissementsCount={datavisualisation?.etablissementsCount}
             setGoToThematic={setGoToThematic}
           />
+          <p>
+            Données collectées avec le questionnaire{" "}
+            <a href="https://sirius.inserjeunes.beta.gouv.fr/" target="_blank" rel="noreferrer">
+              Sirius
+            </a>
+          </p>
         </IframeContainer>
       </>
     )

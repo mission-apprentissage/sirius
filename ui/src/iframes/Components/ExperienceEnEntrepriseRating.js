@@ -85,6 +85,9 @@ const chartOptions = (data, isMobile, onChartClick) => {
       trigger: "axis",
       formatter: (params) => tooltipFormatter(params, data),
       show: isMobile ? false : true,
+      textStyle: {
+        fontFamily: "Marianne",
+      },
       axisPointer: {
         type: "none",
         shadowStyle: {
