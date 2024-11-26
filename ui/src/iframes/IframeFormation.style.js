@@ -10,6 +10,14 @@ export const IframeContainer = styled.main`
     line-height: 24px;
     margin-bottom: 16px;
   }
+
+  & > p:last-child {
+    margin: 22px 0;
+    font-size: 12px;
+    color: var(--text-mention-grey);
+    width: 100%;
+    text-align: right;
+  }
 `;
 
 export const DatavisualisationContainer = styled.div`
@@ -238,7 +246,7 @@ export const TitleContainer = styled.div`
     gap: 1rem;
   }
 
-  & h3 {
+  & h2 {
     margin: 0;
   }
 `;
@@ -246,9 +254,9 @@ export const TitleContainer = styled.div`
 export const ConstructionNotice = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
-  background-color: var(--background-action-low-blue-france);
+  background-color: var(--background-alt-grey);
   padding: 12px;
   gap: 8px;
   border-radius: 4px;
@@ -263,5 +271,6 @@ export const ConstructionNotice = styled.div`
     margin: 0;
     line-height: 24px;
     font-size: 14px;
+    color: var(--text-default-grey);
   }
 `;

@@ -10,8 +10,8 @@ import BeatLoader from "react-spinners/BeatLoader";
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
 import useMatomoEvent from "../hooks/useMatomoEvent";
-import { MATOMO_ACTION, MATOMO_CATEGORY } from "../matomo";
 import ExperienceEnEntrepriseRating from "./Components/ExperienceEnEntrepriseRating";
+import TrouverUneEntrepriseRating from "./Components/TrouverUneEntrepriseRating";
 import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
 import VerbatimsQuestions from "./Components/VerbatimsQuestions";
 import VerbatimsThematics from "./Components/VerbatimsThematics";
@@ -22,7 +22,6 @@ const IframeFormationPage = () => {
   const [goToThematic, setGoToThematic] = useState(null);
   const scrollableRef = useRef(null);
   const { search } = useLocation();
-  const trackEvent = useMatomoEvent();
 
   const intituleFormation = new URLSearchParams(search).get("intitule");
   const cfd = new URLSearchParams(search).get("cfd");
@@ -81,27 +80,19 @@ const IframeFormationPage = () => {
         </Helmet>
         <IframeContainer ref={scrollableRef}>
           <TitleContainer>
-            <h3>Témoignages d'apprentis</h3>
+            <h2>Témoignages d'apprentis</h2>
             <Badge as="span" noIcon severity="success">
               Beta
             </Badge>
           </TitleContainer>
           {verbatimsStep === 1 ? (
             <p>
-              Tu hésites entre la voie scolaire et l'apprentissage ? Grace au questionnaire{" "}
-              <a
-                href="https://sirius.inserjeunes.beta.gouv.fr"
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_SIRIUS_LINK)}
-              >
-                <b>Sirius</b>
-              </a>
-              , les apprentis qui se forment en France te partagent leur expérience.
+              Tu hésites entre la voie scolaire et l'apprentissage ? Les apprentis qui se forment en France te partagent
+              leur expérience authentique.
             </p>
           ) : null}
           <ConstructionNotice>
-            <span className={fr.cx("fr-icon-information-line")} aria-hidden={true} />
+            <span className={fr.cx("fr-icon-info-fill")} aria-hidden={true} />
             <p>
               Ce service est en cours de construction. Les résultats ne sont pas encore représentatifs de l'ensemble des
               établissements et formations.
@@ -127,11 +118,21 @@ const IframeFormationPage = () => {
               setVerbatimsStep={setVerbatimsStep}
             />
           ) : null}
+          <TrouverUneEntrepriseRating
+            data={datavisualisation?.trouverEntrepriseRating}
+            etablissementsCount={datavisualisation?.etablissementsCount}
+          />
           <ExperienceEnEntrepriseRating
             data={datavisualisation?.commentVisTonExperienceEntrepriseRating}
             etablissementsCount={datavisualisation?.etablissementsCount}
             setGoToThematic={setGoToThematic}
           />
+          <p>
+            Données collectées avec le questionnaire{" "}
+            <a href="https://sirius.inserjeunes.beta.gouv.fr/" target="_blank" rel="noreferrer">
+              Sirius
+            </a>
+          </p>
         </IframeContainer>
       </>
     )

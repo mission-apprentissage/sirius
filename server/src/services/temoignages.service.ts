@@ -22,6 +22,7 @@ import {
   getFormattedResponses,
   getGemVerbatimsByWantedQuestionKey,
   getReponseRating,
+  getTrouverEntrepriseRating,
   matchCardTypeAndQuestions,
   matchIdAndQuestions,
   verbatimsAnOrderedThemeAnswersMatcher,
@@ -209,13 +210,23 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
     const query = { campagneIds };
     const temoignages = await temoignagesDao.findAll(query);
 
-    if (!temoignages.length) {
+    if (!temoignages.length || temoignages.length === 1) {
       return { success: true, body: { temoignagesCount: 0 } };
     }
 
     const commentVisTonExperienceEntreprise = temoignages
       .map((temoignage) => temoignage.reponses["commentVisTonExperienceEntreprise"])
       .filter(Boolean);
+
+    const cfaAideTrouverEntreprise = temoignages
+      .map((temoignage) => temoignage.reponses["cfaAideTrouverEntreprise"])
+      .filter(Boolean);
+
+    const commentTrouverEntreprise = temoignages
+      .map((temoignage) => temoignage.reponses["commentTrouverEntreprise"])
+      .filter(Boolean);
+
+    const trouverEntrepriseRating = getTrouverEntrepriseRating(cfaAideTrouverEntreprise, commentTrouverEntreprise);
 
     const commentVisTonExperienceEntrepriseRating = getCommentVisTonExperienceEntrepriseRating(
       commentVisTonExperienceEntreprise
@@ -253,7 +264,7 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
     );
 
     const allGems = getGemVerbatimsByWantedQuestionKey(verbatimsWithEtablissement);
-    const gems = getGemVerbatimsByWantedQuestionKey(verbatimsWithEtablissement.splice(0, 10));
+    const gems = getGemVerbatimsByWantedQuestionKey(verbatimsWithEtablissement.splice(0, 5));
 
     const etablissementsCount = temoignages.reduce((acc, temoignage) => {
       if (temoignage.etablissementFormateurEntrepriseRaisonSociale) {
@@ -273,6 +284,7 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
       gems,
       verbatimsByQuestions: allGems,
       commentVisTonExperienceEntrepriseRating,
+      trouverEntrepriseRating,
     };
 
     return { success: true, body: result };

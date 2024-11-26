@@ -190,3 +190,13 @@ export const QUESTION_LABELS_BY_QUESTION_KEY = {
   trouverEntrepriseConseil: "Comment as-tu vécu ta recherche d’entreprise ? As-tu des conseils ?",
   differenceCollegeCfaConseil: "À quoi ressemble une journée dans ton CFA ?",
 };
+
+export const TROUVER_ENTREPRISE_LABEL_MATCHER = {
+  "En me débrouillant tout·e seul·e": "En toute autonomie",
+  "Une personne de ma famille ou de mon entourage m'a aidé·e": "Avec l’aide de l’entourage (famille, amis, etc)",
+  "Oui j’ai eu besoin de lui et il m’a aidé": "Avec l’aide du CFA",
+  Autrement: "Autrement (non précisé)",
+  "Un·e éducateur·ice ou une association m’a aidé·e": "Avec l’aide d’un éducateur ou d’une association",
+  "Lors d'un événement sur l’orientation": "Lors d'un événement sur l’orientation",
+  "Un·e membre de l’équipe pédagogique de mon ancien établissement m’a aidé·e": "Avec l’aide de l’ancien établissement",
+};
