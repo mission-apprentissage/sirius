@@ -53,15 +53,15 @@ const tooltipFormatter = (params, data) => {
 const getTopLabelPosition = (index, isMobile) => {
   switch (index) {
     case 0:
-      return isMobile ? "100px" : "140px";
+      return isMobile ? "100px" : "100px";
     case 1:
-      return isMobile ? "180px" : "210px";
+      return isMobile ? "175px" : "160px";
     case 2:
-      return isMobile ? "260px" : "270px";
+      return isMobile ? "250px" : "215px";
     case 3:
-      return isMobile ? "335px" : "335px";
+      return isMobile ? "325px" : "270px";
     case 4:
-      return isMobile ? "415px" : "395px";
+      return isMobile ? "400px" : "320px";
   }
 };
 
@@ -69,6 +69,18 @@ const chartOptions = (data, isMobile, onChartClick) => {
   const { labels, bienData, moyenData, malData } = processData(data);
 
   return {
+    title: {
+      text: "Thématiques",
+      padding: 0,
+      top: 0,
+      textStyle: {
+        fontFamily: "Marianne",
+        fontSize: "14px",
+        fontWeight: "700",
+        color: "#161616",
+        textAlign: "left",
+      },
+    },
     tooltip: {
       trigger: "axis",
       formatter: (params) => tooltipFormatter(params, data),
@@ -85,8 +97,8 @@ const chartOptions = (data, isMobile, onChartClick) => {
     legend: {
       data: ["Bien", "Moyen", "Mal"],
       orient: "horizontal",
-      right: "0%",
-      top: "2%",
+      ...(isMobile ? { left: "0%" } : { right: "0%" }),
+      top: isMobile ? 30 : 0,
       itemGap: isMobile ? 30 : 40,
       textStyle: {
         fontFamily: "Marianne",
@@ -98,9 +110,9 @@ const chartOptions = (data, isMobile, onChartClick) => {
     grid: {
       left: isMobile ? 0 : "34%",
       right: 0,
-      top: 60,
+      top: isMobile ? 80 : 25,
       bottom: 0,
-      containLabel: isMobile ? false : true,
+      containLabel: false,
     },
     xAxis: {
       type: "value",
@@ -125,18 +137,18 @@ const chartOptions = (data, isMobile, onChartClick) => {
       {
         type: "group",
         left: 0,
-        top: isMobile ? 60 : 80,
+        top: isMobile ? 80 : 40,
         children: labels.map((label, index) => ({
           type: "text",
           top: getTopLabelPosition(index, isMobile),
           onclick: () => onChartClick(label),
           style: {
             text: label,
-            fontSize: 16,
+            fontSize: 14,
             fontFamily: "Marianne",
-            fontWeight: isMobile ? "500" : "400",
+            fontWeight: "400",
             fill: "#161616",
-            width: isMobile ? 350 : 230,
+            width: isMobile ? "100%" : 230,
             textAlign: "left",
             cursor: "pointer",
             overflow: "break",
@@ -149,7 +161,8 @@ const chartOptions = (data, isMobile, onChartClick) => {
         name: "Bien",
         type: "bar",
         stack: "total",
-        barCategoryGap: isMobile ? "40px" : "20px",
+        barCategoryGap: isMobile ? "40px" : 0,
+        barWidth: "40px",
         label: {
           show: true,
           position: "inside",
@@ -157,9 +170,13 @@ const chartOptions = (data, isMobile, onChartClick) => {
           fontFamily: "Marianne",
           fontSize: 12,
           color: "#161616",
+          fontWeight: "700",
         },
         itemStyle: {
           color: "#6FE49D",
+          borderRadius: [8, 8, 8, 8],
+          borderWidth: 6,
+          borderColor: "transparent",
         },
         data: bienData,
       },
@@ -167,17 +184,22 @@ const chartOptions = (data, isMobile, onChartClick) => {
         name: "Moyen",
         type: "bar",
         stack: "total",
-        barCategoryGap: isMobile ? "40px" : "20px",
+        barCategoryGap: isMobile ? "40px" : 0,
+        barWidth: "40px",
         label: {
           show: true,
           position: "inside",
           formatter: (params) => (params.value < 8 ? "" : params.value + "%"),
           fontFamily: "Marianne",
           fontSize: 12,
-          color: "#161616",
+          color: "#FFFFFF",
+          fontWeight: "700",
         },
         itemStyle: {
-          color: "#EFCB3A",
+          color: "#6A6AEC",
+          borderRadius: [8, 8, 8, 8],
+          borderWidth: 6,
+          borderColor: "transparent",
         },
         data: moyenData,
       },
@@ -185,7 +207,8 @@ const chartOptions = (data, isMobile, onChartClick) => {
         name: "Mal",
         type: "bar",
         stack: "total",
-        barCategoryGap: isMobile ? "40px" : "20px",
+        barCategoryGap: isMobile ? "40px" : 0,
+        barWidth: "40px",
         label: {
           show: true,
           position: "inside",
@@ -193,9 +216,13 @@ const chartOptions = (data, isMobile, onChartClick) => {
           fontFamily: "Marianne",
           fontSize: 12,
           color: "#161616",
+          fontWeight: "700",
         },
         itemStyle: {
           color: "#FCC0B4",
+          borderRadius: [8, 8, 8, 8],
+          borderWidth: 6,
+          borderColor: "transparent",
         },
         data: malData,
       },
@@ -213,9 +240,9 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
   const temoignagesCount = Object.values(data[0].results).reduce((acc, item) => acc + item.count, 0);
 
   const tableData = data.map((item) => [
-    <span style={{ cursor: "pointer" }} onClick={() => setGoToThematic(item.label)} key={item.label}>
+    <a href="#" style={{ cursor: "pointer" }} onClick={() => setGoToThematic(item.label)} key={item.label}>
       {item.label}
-    </span>,
+    </a>,
     <>
       <b>{item.results.Bien.percentage}%</b> ({item.results.Bien.count})
     </>,
@@ -276,7 +303,7 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
         {viewType === DATAVIZ_VIEW_TYPES.GRAPHIC ? (
           <ReactECharts
             option={chartOptions(data, isMobile, onChartClick)}
-            style={{ height: isMobile ? "450px" : "400px", width: "100%" }}
+            style={{ height: isMobile ? "450px" : "300px", width: "100%" }}
           />
         ) : null}
         {viewType === DATAVIZ_VIEW_TYPES.TABLE ? (

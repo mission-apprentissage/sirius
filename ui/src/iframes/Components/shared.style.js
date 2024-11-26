@@ -102,6 +102,7 @@ export const ExperienceEnEntrepriseRatingContainer = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    margin: 32px auto 32px auto;
   }
 
   & > div:first-of-type {
