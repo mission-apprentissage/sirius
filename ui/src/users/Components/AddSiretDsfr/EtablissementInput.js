@@ -114,6 +114,7 @@ const EtablissementInput = ({ formik, setError, userSiret }) => {
 
         formik.setFieldValue("etablissements", updatedEtablissements);
         setSiretValue("");
+        setSiretError(null);
       } else {
         setSiretError("Le SIRET ne correspond pas à un établissement dispensant des formations de niveau 3 ou 4.");
       }
