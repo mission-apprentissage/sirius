@@ -21,10 +21,10 @@ export const VerbatimContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
   margin: 16px auto 0px auto;
-  padding: 24px 16px;
+  padding: 24px 16px 16px 16px;
   border: 1px solid var(--border-default-grey);
   min-height: ${({ isMobile }) => (isMobile ? "400px;" : "260px")};
 
@@ -34,7 +34,7 @@ export const VerbatimContainer = styled.div`
 `;
 
 export const VerbatimContent = styled.p`
-  font-weight: 400;
+  font-weight: 600;
   font-size: ${({ isMobile }) => (isMobile ? "14px" : "16px")};
   line-height: 24px;
   color: #161616;
@@ -110,7 +110,7 @@ export const ExperienceEnEntrepriseRatingContainer = styled.div`
     flex-direction: column;
   }
 
-  & h4 {
+  & h3 {
     margin-bottom: 0;
   }
 
@@ -147,7 +147,7 @@ export const ThemeLabel = styled.p`
   align-items: ${({ isMobile }) => (isMobile ? "flex-start" : "center")};
   gap: 0.5rem;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--text-title-blue-france);
 `;
 
@@ -161,7 +161,7 @@ export const SeeMoreContainer = styled.div`
   border: 1px solid var(--border-default-grey);
   cursor: pointer;
   background-color: var(--background-alt-blue-france);
-  min-height: ${({ isMobile }) => (isMobile ? "calc(400px + 16px)" : "calc(260px + 16px)")};
+  min-height: ${({ isMobile }) => (isMobile ? "calc(400px + 16px)" : "calc(260px + 8px)")};
   color: #161616;
 
   & span {
@@ -170,7 +170,7 @@ export const SeeMoreContainer = styled.div`
   }
 
   & h6 {
-    margin: 8px 0 4px 0;
+    margin: 12px 0 4px 0;
   }
 
   & div {
@@ -277,7 +277,7 @@ export const TrouverEntrepriseCardContainer = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   margin: 0;
-  width: ${({ isMobile }) => (isMobile ? "100%" : "calc(33% - 8px)")};
+  width: ${({ isMobile }) => (isMobile ? "100%" : "calc(33% - 10px)")};
   border: 1px solid var(--border-default-grey);
   height: ${({ isMobile }) => (isMobile ? "100%" : "160px")};
   padding: 16px;

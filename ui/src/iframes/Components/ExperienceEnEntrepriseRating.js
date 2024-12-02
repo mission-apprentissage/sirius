@@ -155,6 +155,7 @@ const chartOptions = (data, isMobile, onChartClick) => {
             textAlign: "left",
             cursor: "pointer",
             overflow: "break",
+            lineHeight: 18,
           },
         })),
       },
@@ -266,7 +267,7 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
     <>
       <ExperienceEnEntrepriseRatingContainer>
         <div>
-          <h4>L'expérience en entreprise</h4>
+          <h3>L'expérience en entreprise</h3>
           <p>
             {temoignagesCount} apprentis interrogés dans {etablissementsCount} établissement
             {isPlural(etablissementsCount)}
