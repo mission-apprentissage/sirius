@@ -57,7 +57,7 @@ const TrouverUneEntrepriseRating = ({ data, etablissementsCount }) => {
   return (
     <TrouverUneEntrepriseRatingContainer>
       <div>
-        <h4>Pour trouver une entreprise</h4>
+        <h3>Pour trouver une entreprise</h3>
         <DidYouKnowContainer>
           <img src={didYouKnow} alt="" />
           <div>
