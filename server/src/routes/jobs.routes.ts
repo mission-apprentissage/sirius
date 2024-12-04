@@ -2,7 +2,9 @@ import express from "express";
 
 import { getAllJobs, getJob, startJob, stopJob } from "../controllers/jobs.controller";
 import { isAdmin } from "../middlewares/isAdmin";
+import { validator } from "../middlewares/validatorMiddleware";
 import { verifyUser } from "../middlewares/verifyUserMiddleware";
+import { startJobSchema } from "../validators/jobs.validators";
 
 export const jobs = () => {
   const router = express.Router();
@@ -11,7 +13,7 @@ export const jobs = () => {
     stopJob(req, res, next);
   });
 
-  router.post("/api/jobs/start", verifyUser, isAdmin, (req, res, next) => {
+  router.post("/api/jobs/start", verifyUser, isAdmin, validator(startJobSchema), (req, res, next) => {
     startJob(req, res, next);
   });
 
