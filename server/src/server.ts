@@ -14,6 +14,7 @@ import { localStrategy } from "./modules/authStrategies/localStrategy";
 import { campagnes } from "./routes/campagnes.routes";
 import { etablissements } from "./routes/etablissements.routes";
 import { formations } from "./routes/formations.routes";
+import { jobs } from "./routes/jobs.routes";
 import { questionnaires } from "./routes/questionnaires.routes";
 import { temoignages } from "./routes/temoignages.routes";
 import { users } from "./routes/users.routes";
@@ -48,6 +49,7 @@ export default async () => {
   app.use(etablissements());
   app.use(formations());
   app.use(verbatims());
+  app.use(jobs());
   app.use(passport.initialize());
 
   app.disable("x-powered-by");

@@ -183,6 +183,19 @@ export const OBSERVER_SCOPES = {
   OPCO: "opco",
 };
 
+export const JOB_TYPES = {
+  VERBATIMS_CLASSIFICATION: "VERBATIMS_CLASSIFICATION",
+};
+
+export const JOB_STATUS = {
+  PENDING: "PENDING",
+  IN_PROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  ERROR: "ERROR",
+  CANCELLED: "CANCELLED",
+  FAILED: "FAILED",
+};
+
 export const QUESTION_LABELS_BY_QUESTION_KEY = {
   descriptionMetierConseil: "À quoi ressemble une journée dans ton travail d’apprenti ?",
   peurChangementConseil: "Qu’est ce qui a changé pour toi avec l’apprentissage ?",
