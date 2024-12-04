@@ -5,14 +5,25 @@ import { JOB_STATUS, JOB_TYPES } from "../constants";
 import * as jobsService from "../services/jobs.service";
 import tryCatch from "../utils/tryCatch.utils";
 
-export const startJob = tryCatch(async (_req: any, res: any) => {
+export const startJob = tryCatch(async (req: any, res: any) => {
   const jobId = uuidv4();
-  const jobType = JOB_TYPES.VERBATIMS_CLASSIFICATION;
+  const jobType = req.body.jobType;
   const status = JOB_STATUS.IN_PROGRESS;
+  let worker;
 
-  const worker = new Worker("./dist/workers/classifyVerbatims.js", {
-    workerData: { jobId, processAll: true },
-  });
+  if (jobType === JOB_TYPES.VERBATIMS_CLASSIFICATION) {
+    worker = new Worker("./dist/workers/classifyVerbatims.js", {
+      workerData: { jobId, processAll: true },
+    });
+  } else if (jobType === JOB_TYPES.VERBATIMS_THEMES_EXTRACTION) {
+    worker = new Worker("./dist/workers/extractThemesVerbatims.js", {
+      workerData: { jobId, processAll: true },
+    });
+  }
+
+  if (!worker) {
+    return res.status(400).json({ success: false, error: "Invalid job type" });
+  }
 
   const { success, body } = await jobsService.startJob({
     id: jobId,
