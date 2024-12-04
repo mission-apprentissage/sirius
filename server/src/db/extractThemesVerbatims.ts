@@ -1,3 +1,5 @@
+/* eslint-disable n/no-process-exit */
+/* eslint-disable no-process-exit */
 // @ts-nocheck -- TODO
 
 import { VERBATIM_THEMES, VERBATIM_THEMES_EMOJIS, VERBATIM_THEMES_LABELS } from "../constants";
@@ -151,7 +153,9 @@ export default async () => {
     }
 
     logger.info("Theme extraction completed successfully.");
+    process.exit(0);
   } catch (err) {
     logger.error("Theme extraction failed:", err);
+    process.exit(1);
   }
 };

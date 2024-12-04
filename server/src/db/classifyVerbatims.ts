@@ -1,3 +1,5 @@
+/* eslint-disable n/no-process-exit */
+/* eslint-disable no-process-exit */
 // @ts-nocheck -- TODO
 
 import { VERBATIM_STATUS, VERBATIM_STATUS_EMOJIS, VERBATIM_STATUS_LABELS } from "../constants";
@@ -174,7 +176,9 @@ export default async () => {
     }
 
     logger.info("Classification completed successfully.");
+    process.exit(0);
   } catch (err) {
     logger.error("Classification failed:", err);
+    process.exit(1);
   }
 };
