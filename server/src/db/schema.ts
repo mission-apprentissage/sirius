@@ -145,6 +145,17 @@ export interface Verbatims {
   updated_at: Generated<Timestamp | null>;
 }
 
+export interface Jobs {
+  created_at: Generated<Timestamp | null>;
+  id: Generated<string>;
+  type: string;
+  status: string;
+  progress: number;
+  total: number;
+  error: string | null;
+  updated_at: Generated<Timestamp | null>;
+}
+
 export interface DB {
   campagnes: Campagnes;
   etablissements: Etablissements;
@@ -156,4 +167,5 @@ export interface DB {
   users: Users;
   users_etablissements: UsersEtablissements;
   verbatims: Verbatims;
+  jobs: Jobs;
 }

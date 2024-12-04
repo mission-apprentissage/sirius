@@ -11,6 +11,8 @@ export default defineConfig((options) => {
 
   const entry: Record<string, string> = {
     index: "src/index.ts",
+    "workers/classifyVerbatims": "src/workers/classifyVerbatims.ts",
+    "workers/extractThemesVerbatims": "src/workers/extractThemesVerbatims.ts",
   };
 
   for (const file of migrationFiles) {
@@ -21,7 +23,6 @@ export default defineConfig((options) => {
     entry,
     watch: isWatched ? ["./src"] : false,
     onSuccess: isWatched ? "yarn cli start" : "",
-    // In watch mode doesn't exit cleanly as it causes EADDRINUSE error
     killSignal: "SIGKILL",
     target: "es2022",
     platform: "node",

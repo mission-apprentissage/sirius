@@ -168,6 +168,12 @@ const DsfrNavbar = () => {
           },
           text: "Modération des verbatims",
         },
+        {
+          linkProps: {
+            to: "/jobs/gestion",
+          },
+          text: "Gérer les jobs",
+        },
       ],
     },
     {

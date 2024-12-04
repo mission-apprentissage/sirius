@@ -22,6 +22,7 @@ import DiffusionGuidePage from "./guide/DiffusionGuidePage";
 import HomePage from "./home/HomePage";
 import IframeEtablissementPage from "./iframes/IframeEtablissementPage";
 import IframeFormationPage from "./iframes/IframeFormationPage";
+import ManageJobsPage from "./jobs/ManageJobsPage";
 import CguPage from "./legal/CguPage";
 import MentionsInformationBackOfficePage from "./legal/MentionsInformationBackOfficePage";
 import MentionsInformationQuestionnairePage from "./legal/MentionsInformationQuestionnairePage";
@@ -114,6 +115,7 @@ function App() {
       >
         <Route exact path="/temoignages/gestion" element={<ManageTemoignagesPage />} />
         <Route exact path="/verbatims/moderation" element={<ModerationPage />} />
+        <Route exact path="/jobs/gestion" element={<ManageJobsPage />} />
       </Route>
       <Route
         element={
