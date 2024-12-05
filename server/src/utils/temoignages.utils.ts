@@ -6,6 +6,7 @@ import {
   QUESTION_LABELS_BY_QUESTION_KEY,
   QUESTION_LABELS_BY_QUESTION_KEY,
   TROUVER_ENTREPRISE_LABEL_MATCHER,
+  TROUVER_ENTREPRISE_OLD_TO_NEW_LABEL_MATCHER,
   VERBATIM_STATUS,
 } from "../constants";
 
@@ -569,7 +570,13 @@ export const getTrouverEntrepriseRating = (cfaAideTrouverEntreprise, commentTrou
 
   const mergedAndFlattenReponses = [...helpedFromCfa, ...commentTrouverEntreprise].flat();
 
-  const occurrences = mergedAndFlattenReponses.reduce((acc, str) => {
+  //reconcile old and new questionnaire values
+  const reconciledValues = mergedAndFlattenReponses.map((value) => {
+    value = TROUVER_ENTREPRISE_OLD_TO_NEW_LABEL_MATCHER[value] || value;
+    return value;
+  });
+
+  const occurrences = reconciledValues.reduce((acc, str) => {
     acc[str] = (acc[str] || 0) + 1;
     return acc;
   }, {});
