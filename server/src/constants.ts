@@ -205,6 +205,16 @@ export const QUESTION_LABELS_BY_QUESTION_KEY = {
   differenceCollegeCfaConseil: "À quoi ressemble une journée dans ton CFA ?",
 };
 
+export const TROUVER_ENTREPRISE_OLD_TO_NEW_LABEL_MATCHER = {
+  "En me débrouillant seul·e": "En me débrouillant tout·e seul·e",
+  "Une personne de ma famille ou de mon entourage m'a aidé":
+    "Une personne de ma famille ou de mon entourage m'a aidé·e",
+  "Mon CFA m’a aidé": "Oui j’ai eu besoin de lui et il m’a aidé",
+  "Un·e prof ou membre de l’équipe pédagogique de mon collège m’a aidé":
+    "Un·e membre de l’équipe pédagogique de mon ancien établissement m’a aidé·e",
+  Autre: "Autrement",
+};
+
 export const TROUVER_ENTREPRISE_LABEL_MATCHER = {
   "En me débrouillant tout·e seul·e": "En toute autonomie",
   "Une personne de ma famille ou de mon entourage m'a aidé·e": "Avec l’aide de l’entourage (famille, amis, etc)",
