@@ -124,8 +124,8 @@ const FormationsGrid = ({ displayedFormations, selectedFormations, setSelectedFo
               </EtablissementLabelContainer>
               <MiscellaneousInformationContainer>
                 <p>
-                  {formation.lieu_formation_adresse_computed ||
-                    `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
+                  {`${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}` ||
+                    formation.lieu_formation_adresse_computed}
                 </p>
                 <p>N° SIRET : {formation.etablissement_formateur_siret}</p>
                 <p>{DIPLOME_TYPE_MATCHER[formation.diplome] || formation.diplome}</p>

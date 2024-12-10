@@ -60,8 +60,8 @@ const createCampagneTableRows = ({
             style={{ zIndex: 99999, boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", maxWidth: "500px" }}
           >
             <p>
-              {formation.lieu_formation_adresse_computed ||
-                `${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}`}
+              {`${formation.lieu_formation_adresse}, ${formation.code_postal} ${formation.localite}` ||
+                formation.lieu_formation_adresse_computed}
             </p>
             <p>N° Siret: {formation.etablissement_formateur_siret}</p>
             {formation.etablissement_formateur_siret === formation.etablissement_gestionnaire_siret ? (
