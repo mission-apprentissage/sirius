@@ -228,20 +228,15 @@ export const findFormationByIntituleCfdIdCertifInfoOrSlug = async (
     ])
     .where("formations.deleted_at", "is", null);
 
-  if (intitule) {
-    baseQuery = baseQuery.where(sql<string>`catalogue_data->>'onisep_intitule'`, "ilike", `%${intitule}%`);
-  }
+  const conditions = [
+    intitule ? sql<string>`catalogue_data->>'onisep_intitule' ilike ${`%${intitule}%`}` : null,
+    cfd ? sql`catalogue_data ->> 'cfd' = ${cfd}` : null,
+    idCertifInfo ? sql`catalogue_data ->> 'id_certifinfo' = ${idCertifInfo}` : null,
+    slug ? sql`onisep_slug = ${slug}` : null,
+  ].filter(Boolean);
 
-  if (cfd) {
-    baseQuery = baseQuery.where(sql`catalogue_data ->> 'cfd'`, "=", cfd);
-  }
-
-  if (idCertifInfo) {
-    baseQuery = baseQuery.where(sql`catalogue_data ->> 'id_certifinfo'`, "=", idCertifInfo);
-  }
-
-  if (slug) {
-    baseQuery = baseQuery.where("onisep_slug", "=", slug);
+  if (conditions.length > 0) {
+    baseQuery = baseQuery.where((qb) => qb.or(conditions as any));
   }
 
   return baseQuery.execute();
