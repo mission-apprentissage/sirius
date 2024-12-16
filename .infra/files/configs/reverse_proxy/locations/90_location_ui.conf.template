@@ -6,5 +6,5 @@ location / {
 
     client_max_body_size 0;
 
-    add_header Content-Security-Policy "frame-ancestors 'self' *.onisep.fr *.onisep.fr:8000 *.beta.gouv.fr *.incubateur.net";
+    add_header Content-Security-Policy "frame-ancestors 'self' *.onisep.fr *.onisep.fr:8000 *.onisep-preprod.fr *.beta.gouv.fr *.incubateur.net";
 }

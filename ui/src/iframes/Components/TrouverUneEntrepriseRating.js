@@ -9,6 +9,8 @@ import school from "../../assets/images/school-small.svg";
 import search from "../../assets/images/search.svg";
 import selfTraining from "../../assets/images/self-training.svg";
 import useBreakpoints from "../../hooks/useBreakpoints";
+import useMatomoEvent from "../../hooks/useMatomoEvent";
+import { MATOMO_ACTION, MATOMO_CATEGORY } from "../../matomo";
 import {
   CardsContainer,
   DidYouKnowContainer,
@@ -53,6 +55,7 @@ const TrouverEntrepriseCard = ({ percentage, count, label, position, seeMore }) 
 
 const TrouverUneEntrepriseRating = ({ data, etablissementsCount }) => {
   const [seeMore, setSeeMore] = useState(false);
+  const trackEvent = useMatomoEvent();
 
   return (
     <TrouverUneEntrepriseRatingContainer>
@@ -81,7 +84,15 @@ const TrouverUneEntrepriseRating = ({ data, etablissementsCount }) => {
           <TrouverEntrepriseCard key={item.label} {...item} position={index + 1} seeMore={seeMore} />
         ))}
       </CardsContainer>
-      <p onClick={() => setSeeMore((prevValue) => !prevValue)}>
+      <p
+        onClick={() => {
+          trackEvent(
+            MATOMO_CATEGORY.IFRAME_FORMATION,
+            seeMore ? MATOMO_ACTION.CLICK_TROUVER_ENTREPRISE_SEE_LESS : MATOMO_ACTION.CLICK_TROUVER_ENTREPRISE_SEE_MORE
+          );
+          setSeeMore((prevValue) => !prevValue);
+        }}
+      >
         {seeMore ? "Voir moins" : "Voir plus"}{" "}
         <span className={fr.cx(seeMore ? "fr-icon-arrow-up-s-line" : "fr-icon-arrow-down-s-line")} />
       </p>
