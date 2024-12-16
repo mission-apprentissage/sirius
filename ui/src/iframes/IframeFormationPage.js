@@ -37,13 +37,27 @@ const IframeFormationPage = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      window.parent.postMessage({ siriusHeight: document.body.scrollHeight + 50 }, "*");
+      window.parent.postMessage(
+        {
+          src: window.location.href,
+          height: document.body.scrollHeight,
+          siriusHeight: document.body.scrollHeight + 50,
+        },
+        "*"
+      );
     }
   }, [isSuccess]);
 
   useEffect(() => {
     const handleResize = () => {
-      window.parent.postMessage({ siriusHeight: document.body.scrollHeight + 50 }, "*");
+      window.parent.postMessage(
+        {
+          src: window.location.href,
+          height: document.body.scrollHeight,
+          siriusHeight: document.body.scrollHeight + 50,
+        },
+        "*"
+      );
     };
 
     document.addEventListener("click", handleResize);
