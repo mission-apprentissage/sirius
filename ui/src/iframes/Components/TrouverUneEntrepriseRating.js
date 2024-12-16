@@ -72,7 +72,7 @@ const TrouverUneEntrepriseRating = ({ data, etablissementsCount }) => {
             <p>
               Les entreprises qui recrutent sont aussi sur{" "}
               <a href="https://labonnealternance.apprentissage.beta.gouv.fr/" target="_blank" rel="noreferrer">
-                La Bonne Alternance
+                La bonne alternance
               </a>
             </p>
           </div>
