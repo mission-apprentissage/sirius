@@ -52,6 +52,8 @@ const moderationTableRows = ({ verbatims, selectedVerbatims, setSelectedVerbatim
           : [...prevValue, verbatim]
       );
     };
+
+    console.log({ verbatim });
     return [
       <Checkbox
         key={`${verbatims.id}-id`}
@@ -65,8 +67,16 @@ const moderationTableRows = ({ verbatims, selectedVerbatims, setSelectedVerbatim
           },
         ]}
       />,
-      <p key={`${verbatims.id}-content`}>{verbatim.content}</p>,
+      <p key={`${verbatims.id}-content`}>
+        {verbatim.contentCorrectedAnonymized || verbatim.contentCorrected || verbatim.content}
+      </p>,
       <ScoresContainer key={`${verbatims.id}-scores`}>{formatScores(verbatim, index)}</ScoresContainer>,
+      <p key={`${verbatims.id}-ia`}>
+        <span>Ortho : {verbatim.isCorrected ? "oui" : "non"}</span>
+        <br />
+        <span>Anon : {verbatim.isAnonymized ? "oui" : "non"}</span>
+        <br />
+      </p>,
       <FormationContainer key={`${verbatims.id}-formation-etablissement`}>
         <Tooltip
           background="var(--background-default-grey)"

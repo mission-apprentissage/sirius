@@ -174,7 +174,7 @@ export const JOB_TYPES = {
 
 export const JOB_TYPES_LABELS = {
   [JOB_TYPES.VERBATIMS_CLASSIFICATION]: "Classification des verbatims",
-  [JOB_TYPES.VERBATIMS_THEMES_EXTRACTION]: "Extraction des thèmes des verbatims",
+  [JOB_TYPES.VERBATIMS_THEMES_EXTRACTION]: "Extraction des thèmes, correction et anonymisation des verbatims",
 };
 
 export const JOB_STATUS = {

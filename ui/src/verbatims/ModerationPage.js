@@ -50,8 +50,9 @@ const getHeaders = ({ selectedVerbatims, setSelectedVerbatims, verbatims }) => [
     setSelectedVerbatims={setSelectedVerbatims}
     verbatims={verbatims}
   />,
-  <HeaderItem key="verbatim">Verbatim</HeaderItem>,
+  <HeaderItem key="verbatim">Verbatim Exposé</HeaderItem>,
   <HeaderItem key="createdAt">Scores</HeaderItem>,
+  <HeaderItem key="ia">IA</HeaderItem>,
   <HeaderItem key="formation">Formation</HeaderItem>,
   <HeaderItem key="questionKey">Question</HeaderItem>,
   <HeaderItem key="createdAt">Créé le</HeaderItem>,
