@@ -27,7 +27,6 @@ import {
   matchIdAndQuestions,
   verbatimsAnOrderedThemeAnswersMatcher,
 } from "../utils/temoignages.utils";
-import { getChampsLibreField } from "../utils/verbatims.utils";
 
 export const createTemoignage = async (temoignage) => {
   try {
@@ -50,41 +49,6 @@ export const createTemoignage = async (temoignage) => {
     const createdTemoignage = await temoignagesDao.create(temoignage);
 
     return { success: true, body: createdTemoignage };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const getTemoignages = async (campagneIds) => {
-  try {
-    const query = { campagneIds };
-    const temoignages = await temoignagesDao.findAllWithVerbatims(query);
-    for (const temoignage of temoignages) {
-      const campagne = await campagnesDao.getOne(temoignage.campagneId);
-
-      if (!campagne) {
-        return { success: false, body: ErrorMessage.CampagneNotFoundError };
-      }
-      const questionnaire = await questionnairesDao.getOne(campagne.questionnaireId);
-
-      if (!questionnaire) {
-        return { success: false, body: ErrorMessage.QuestionnaireNotFoundError };
-      }
-      const verbatimsFields = getChampsLibreField(questionnaire.questionnaireUI);
-
-      for (const key of verbatimsFields) {
-        if (
-          temoignage.reponses[key] &&
-          temoignage.reponses[key].status !== VERBATIM_STATUS.VALIDATED &&
-          temoignage.reponses[key].status !== VERBATIM_STATUS.TO_FIX &&
-          temoignage.reponses[key].status !== VERBATIM_STATUS.GEM
-        ) {
-          delete temoignage.reponses[key];
-        }
-      }
-    }
-
-    return { success: true, body: temoignages };
   } catch (error) {
     return { success: false, body: error };
   }

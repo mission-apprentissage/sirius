@@ -22,15 +22,6 @@ export const createTemoignage = tryCatch(async (req: any, res: any) => {
   return res.status(201).json(body);
 });
 
-export const getTemoignages = tryCatch(async (req: any, res: any) => {
-  const { campagneId } = req.query;
-  const { success, body } = await temoignagesService.getTemoignages([campagneId]);
-
-  if (!success) throw new BasicError();
-
-  return res.status(200).json(body);
-});
-
 export const deleteTemoignage = tryCatch(async (req: any, res: any) => {
   const { success, body } = await temoignagesService.deleteTemoignage(req.params.id);
 
