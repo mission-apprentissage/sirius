@@ -8,7 +8,7 @@ import HttpTerminator from "lil-http-terminator";
 import config from "./config";
 import classifyVerbatims from "./db/classifyVerbatims";
 import { closePgDbConnection } from "./db/db";
-import extractThemesVerbatims from "./db/extractThemesVerbatims";
+import verbatimsExpositionPreparation from "./db/verbatimsExpositionPreparation";
 import { migrateDownDB, migrateToLatest, statusMigration } from "./migrations/migrate";
 import logger from "./modules/logger";
 import { closeSentry } from "./modules/sentry";
@@ -173,8 +173,8 @@ program
 
 program
   .command("extract-themes-verbatims")
-  .description("Extrait les thèmes des verbatims exitants")
-  .action(async () => await extractThemesVerbatims());
+  .description("Extrait les thèmes, corrige et anonymise les verbatims exitants")
+  .action(async () => await verbatimsExpositionPreparation());
 
 export async function startCLI() {
   await program.parseAsync(process.argv);

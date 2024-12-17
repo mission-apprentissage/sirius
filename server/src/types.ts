@@ -68,3 +68,26 @@ export type Verbatim = Omit<
 };
 
 export type ObserverScope = { field: "region" | "num_departement" | "sirets"; value: string };
+
+export interface FetchOptions {
+  method: string;
+  headers: Record<string, string>;
+  body: string;
+}
+
+type YesNoType = "oui" | "non";
+
+export interface ExpositionApiResponse {
+  text: string;
+  exposition: Record<string, YesNoType>;
+  correction: {
+    correction: string;
+    modification: YesNoType;
+    justification: string;
+  };
+  anonymisation: {
+    anonymisation: string;
+    modification: YesNoType;
+    justification: string;
+  };
+}

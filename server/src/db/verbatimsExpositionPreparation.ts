@@ -1,20 +1,26 @@
 /* eslint-disable n/no-process-exit */
 /* eslint-disable no-process-exit */
-// @ts-nocheck -- TODO
 
 import { VERBATIM_THEMES, VERBATIM_THEMES_EMOJIS, VERBATIM_THEMES_LABELS } from "../constants";
 import logger from "../modules/logger";
 import { sendToSlack } from "../modules/slack";
+import type { ExpositionApiResponse, FetchOptions, Verbatim } from "../types";
 import { sleep } from "../utils/asyncUtils";
 import { getKbdClient } from "./db";
 
-const THEME_EXTRACTION_API = "https://2b1d0760-a1f7-485d-8b69-2ecdf299615a.app.gra.ai.cloud.ovh.net/expose";
+const VERBATIMS_EXPOSITION_PREPARATION_API =
+  "https://8e9588b0-49d3-489e-a3ee-d67e5a9c1d02.app.gra.ai.cloud.ovh.net/expose";
 
-const extractThemesVerbatims = async (verbatim, themeCount) => {
+const verbatimsExpositionPreparation = async (verbatim: Verbatim, themeCount: Record<string, number>) => {
   const MAX_RETRIES = 5;
   const INITIAL_DELAY = 500;
 
-  const fetchWithRetry = async (url, options, retries = MAX_RETRIES, delay = INITIAL_DELAY) => {
+  const fetchWithRetry = async (
+    url: string,
+    options: FetchOptions,
+    retries: number = MAX_RETRIES,
+    delay: number = INITIAL_DELAY
+  ) => {
     try {
       const response = await fetch(url, options);
 
@@ -22,7 +28,7 @@ const extractThemesVerbatims = async (verbatim, themeCount) => {
         throw new Error(`Error: ${response.statusText}`);
       }
 
-      return response.json();
+      return response.json() as Promise<ExpositionApiResponse>;
     } catch (error) {
       if (retries === 0) {
         throw error;
@@ -35,7 +41,7 @@ const extractThemesVerbatims = async (verbatim, themeCount) => {
   };
 
   try {
-    const data = await fetchWithRetry(THEME_EXTRACTION_API, {
+    const data = await fetchWithRetry(VERBATIMS_EXPOSITION_PREPARATION_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: verbatim.content }),
@@ -60,7 +66,10 @@ const extractThemesVerbatims = async (verbatim, themeCount) => {
         }
       });
 
-      await updateVerbatimThemes(verbatim, formattedThemes);
+      await updateVerbatimThemes(verbatim, formattedThemes, {
+        correction: data.correction,
+        anonymisation: data.anonymisation,
+      });
     }
     console.log("----------------");
     await sleep(500);
@@ -69,22 +78,36 @@ const extractThemesVerbatims = async (verbatim, themeCount) => {
   }
 };
 
-const updateVerbatimThemes = async (verbatim, formattedThemes) => {
-  const updateResult = await getKbdClient()
+const updateVerbatimThemes = async (
+  verbatim: Verbatim,
+  formattedThemes: { [key: string]: boolean },
+  correctionAndAnonymizationData: Pick<ExpositionApiResponse, "correction" | "anonymisation">
+): Promise<void> => {
+  const updateResult:
+    | {
+        id: string;
+      }
+    | undefined = await getKbdClient()
     .updateTable("verbatims")
     .set("themes", formattedThemes)
+    .set("correction_justification", correctionAndAnonymizationData.correction.justification)
+    .set("content_corrected", correctionAndAnonymizationData.correction.correction)
+    .set("is_corrected", correctionAndAnonymizationData.correction.modification === "oui")
+    .set("anonymization_justification", correctionAndAnonymizationData.anonymisation.justification)
+    .set("content_corrected_anonymized", correctionAndAnonymizationData.anonymisation.anonymisation)
+    .set("is_anonymized", correctionAndAnonymizationData.anonymisation.modification === "oui")
     .where("id", "=", verbatim.id)
     .returning("id")
     .executeTakeFirst();
 
-  if (updateResult.id) {
+  if (updateResult?.id) {
     console.log("Verbatim updated successfully:", verbatim.id);
   } else {
     console.error("Failed to update verbatim:", verbatim.id);
   }
 };
 
-const sendSummaryToSlack = async (totalVerbatims, themeCount) => {
+const sendSummaryToSlack = async (totalVerbatims: number, themeCount: Record<string, number>) => {
   const themesMessages = Object.entries(themeCount).map(([theme, count]) => ({
     type: "section",
     text: {
@@ -137,15 +160,18 @@ export default async () => {
       .where("themes", "is", null)
       .execute();
 
-    const themeCount = Object.keys(VERBATIM_THEMES_LABELS).reduce((acc, theme) => {
-      acc[theme] = 0;
-      return acc;
-    }, {});
+    const themeCount: Record<string, number> = Object.keys(VERBATIM_THEMES_LABELS).reduce(
+      (acc: Record<string, number>, theme: string) => {
+        acc[theme] = 0;
+        return acc;
+      },
+      {}
+    );
 
     logger.info(`Found ${unthemedVerbatims.length} unthemed verbatims`);
 
     for (const verbatim of unthemedVerbatims) {
-      await extractThemesVerbatims(verbatim, themeCount);
+      await verbatimsExpositionPreparation(verbatim, themeCount);
     }
 
     if (unthemedVerbatims.length) {
