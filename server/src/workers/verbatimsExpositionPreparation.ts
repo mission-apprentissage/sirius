@@ -21,7 +21,7 @@ const verbatimsExpositionPreparation = async (verbatim: Verbatim) => {
     options: FetchOptions,
     retries: number = MAX_RETRIES,
     delay: number = INITIAL_DELAY
-  ) => {
+  ): Promise<ExpositionApiResponse> => {
     try {
       const response = await fetch(url, options);
 
