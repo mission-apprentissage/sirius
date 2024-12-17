@@ -16,7 +16,7 @@ export const startJob = tryCatch(async (req: any, res: any) => {
       workerData: { jobId, processAll: true },
     });
   } else if (jobType === JOB_TYPES.VERBATIMS_THEMES_EXTRACTION) {
-    worker = new Worker("./dist/workers/extractThemesVerbatims.js", {
+    worker = new Worker("./dist/workers/verbatimsExpositionPreparation.js", {
       workerData: { jobId, processAll: true },
     });
   }

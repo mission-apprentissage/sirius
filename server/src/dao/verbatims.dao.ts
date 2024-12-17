@@ -8,10 +8,34 @@ export const getAll = async (query: {
   temoignageIds: string[];
   status: string[];
   questionKey?: string;
-}): Promise<Verbatim[]> => {
+}): Promise<
+  Omit<
+    Verbatim,
+    | "content_corrected"
+    | "content_corrected_anonymized"
+    | "is_corrected"
+    | "is_anonymized"
+    | "anonymization_justification"
+    | "correction_justification"
+  >[]
+> => {
   let dbQuery = getKbdClient()
     .selectFrom("verbatims")
-    .selectAll()
+    .select([
+      "verbatims.id",
+      "verbatims.temoignage_id",
+      "verbatims.status",
+      "verbatims.question_key",
+      sql<string>`COALESCE(verbatims.content_corrected, verbatims.content_corrected_anonymized, verbatims.content)`.as(
+        "content"
+      ),
+      "verbatims.scores",
+      "verbatims.themes",
+      "verbatims.feedback_count",
+      "verbatims.deleted_at",
+      "verbatims.created_at",
+      "verbatims.updated_at",
+    ])
     .where("temoignage_id", "in", query.temoignageIds)
     .where("status", "in", query.status);
 
@@ -79,6 +103,12 @@ export const getAllWithFormation = async (query: any = {}, onlyDiscrepancies: bo
       "verbatims.id",
       "verbatims.question_key",
       "verbatims.content",
+      "verbatims.content_corrected",
+      "verbatims.content_corrected_anonymized",
+      "verbatims.is_corrected",
+      "verbatims.is_anonymized",
+      "verbatims.correction_justification",
+      "verbatims.anonymization_justification",
       "verbatims.status",
       "verbatims.created_at",
       "verbatims.scores",
@@ -150,7 +180,9 @@ export const getAllWithFormationAndCampagne = async (temoignagesIds: string[], s
     .select([
       "verbatims.id",
       "verbatims.question_key",
-      "verbatims.content",
+      sql`COALESCE(verbatims.content_corrected_anonymized, verbatims.content_corrected, verbatims.content)`.as(
+        "content"
+      ),
       "verbatims.status",
       "campagnes.nom_campagne",
       "campagnes.questionnaire_id",

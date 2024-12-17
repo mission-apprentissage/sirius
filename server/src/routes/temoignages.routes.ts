@@ -9,7 +9,6 @@ import {
   getDatavisualisation,
   getDatavisualisationEtablissement,
   getDatavisualisationFormation,
-  getTemoignages,
   getUncompliantTemoignages,
   getXlsExport,
   updateTemoignage,
@@ -28,10 +27,6 @@ export const temoignages = () => {
 
   router.post("/api/temoignages/", validator(createTemoignageSchema), (req, res, next) => {
     createTemoignage(req, res, next);
-  });
-
-  router.get("/api/temoignages/", verifyUser, (req, res, next) => {
-    getTemoignages(req, res, next);
   });
 
   router.delete("/api/temoignages/:id", verifyUser, isAdmin, (req, res, next) => {

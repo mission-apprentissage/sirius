@@ -19,7 +19,6 @@ export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface Campagnes {
   created_at: Generated<Timestamp | null>;
-  created_by: string | null;
   deleted_at: Timestamp | null;
   end_date: Timestamp;
   id: Generated<string>;
@@ -70,16 +69,27 @@ export interface Formations {
   lieu_formation_adresse_computed: string | null;
   localite: string;
   num_departement: string;
+  onisep_slug: string | null;
   region: string;
   tags: Json | null;
   updated_at: Generated<Timestamp | null>;
-  onisep_slug: string | null;
 }
 
 export interface FormationsCampagnes {
   campagne_id: string | null;
   formation_id: string | null;
   id: Generated<string>;
+}
+
+export interface Jobs {
+  created_at: Generated<Timestamp | null>;
+  error: string | null;
+  id: Generated<string>;
+  progress: Generated<number | null>;
+  status: string;
+  total: Generated<number | null>;
+  type: string;
+  updated_at: Generated<Timestamp | null>;
 }
 
 export interface Questionnaires {
@@ -133,10 +143,17 @@ export interface UsersEtablissements {
 }
 
 export interface Verbatims {
+  anonymization_justification: string | null;
   content: string | null;
+  content_corrected: string | null;
+  content_corrected_anonymized: string | null;
+  correction_justification: string | null;
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
+  feedback_count: Generated<number | null>;
   id: Generated<string>;
+  is_anonymized: Generated<boolean>;
+  is_corrected: Generated<boolean>;
   question_key: string;
   scores: Json | null;
   status: string;
@@ -145,27 +162,16 @@ export interface Verbatims {
   updated_at: Generated<Timestamp | null>;
 }
 
-export interface Jobs {
-  created_at: Generated<Timestamp | null>;
-  id: Generated<string>;
-  type: string;
-  status: string;
-  progress: number;
-  total: number;
-  error: string | null;
-  updated_at: Generated<Timestamp | null>;
-}
-
 export interface DB {
   campagnes: Campagnes;
   etablissements: Etablissements;
   formations: Formations;
   formations_campagnes: FormationsCampagnes;
+  jobs: Jobs;
   questionnaires: Questionnaires;
   temoignages: Temoignages;
   temoignages_campagnes: TemoignagesCampagnes;
   users: Users;
   users_etablissements: UsersEtablissements;
   verbatims: Verbatims;
-  jobs: Jobs;
 }

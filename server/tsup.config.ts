@@ -12,7 +12,7 @@ export default defineConfig((options) => {
   const entry: Record<string, string> = {
     index: "src/index.ts",
     "workers/classifyVerbatims": "src/workers/classifyVerbatims.ts",
-    "workers/extractThemesVerbatims": "src/workers/extractThemesVerbatims.ts",
+    "workers/verbatimsExpositionPreparation": "src/workers/verbatimsExpositionPreparation.ts",
   };
 
   for (const file of migrationFiles) {

@@ -54,11 +54,40 @@ export type Temoignage = Omit<
   updated_at: Date | null;
 };
 
-export type Verbatim = Omit<Verbatims, "id" | "created_at" | "deleted_at" | "updated_at"> & {
+export type Verbatim = Omit<
+  Verbatims,
+  "id" | "feedback_count" | "is_anonymized" | "is_corrected" | "created_at" | "deleted_at" | "updated_at"
+> & {
   id: string;
+  feedback_count: number | null;
+  is_anonymized: boolean;
+  is_corrected: boolean;
   created_at: Date | null;
   deleted_at: Date | null;
   updated_at: Date | null;
 };
 
 export type ObserverScope = { field: "region" | "num_departement" | "sirets"; value: string };
+
+export interface FetchOptions {
+  method: string;
+  headers: Record<string, string>;
+  body: string;
+}
+
+type YesNoType = "oui" | "non";
+
+export interface ExpositionApiResponse {
+  text: string;
+  exposition: Record<string, YesNoType>;
+  correction: {
+    correction: string;
+    modification: YesNoType;
+    justification: string;
+  };
+  anonymisation: {
+    anonymisation: string;
+    modification: YesNoType;
+    justification: string;
+  };
+}
