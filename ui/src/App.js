@@ -24,6 +24,7 @@ import IframeEtablissementPage from "./iframes/IframeEtablissementPage";
 import IframeFormationPage from "./iframes/IframeFormationPage";
 import ManageJobsPage from "./jobs/ManageJobsPage";
 import CguPage from "./legal/CguPage";
+import DeclarationAccessibilitePage from "./legal/DeclarationAccessibilitePage";
 import MentionsInformationBackOfficePage from "./legal/MentionsInformationBackOfficePage";
 import MentionsInformationQuestionnairePage from "./legal/MentionsInformationQuestionnairePage";
 import ProtectedRoute from "./ProtectedRoute";
@@ -149,6 +150,7 @@ function App() {
         <Route exact path="/mentions-information-questionnaire" element={<MentionsInformationQuestionnairePage />} />
         <Route exact path="/mentions-information-backoffice" element={<MentionsInformationBackOfficePage />} />
         <Route exact path="/confirmer-utilisateur" element={<EmailConfirmationPage />} />
+        <Route exact path="/declaration-accessibilite" element={<DeclarationAccessibilitePage />} />
       </Route>
       <Route
         element={

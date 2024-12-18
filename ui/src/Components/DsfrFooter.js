@@ -22,6 +22,9 @@ const DsfrFooter = () => {
   return (
     <Footer
       accessibility="non compliant"
+      accessibilityLinkProps={{
+        to: "/declaration-accessibilite",
+      }}
       contentDescription={
         <>
           <span>Sirius est un produit porté par :</span>
