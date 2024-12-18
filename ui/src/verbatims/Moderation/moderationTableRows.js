@@ -1,8 +1,9 @@
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import Tooltip from "react-simple-tooltip";
+import { Tooltip } from "react-tooltip";
 
 import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../../constants";
-import { FormationContainer, QuestionKeyContainer, ScoresContainer, TooltipContainer } from "../moderationPage.style";
+import { QuestionKeyContainer, ScoresContainer, TooltipContainer } from "../moderationPage.style";
+import { AICell, FormationCell } from "./Components";
 
 const formatScores = (verbatim, index) => {
   const scores = verbatim.scores;
@@ -53,7 +54,6 @@ const moderationTableRows = ({ verbatims, selectedVerbatims, setSelectedVerbatim
       );
     };
 
-    console.log({ verbatim });
     return [
       <Checkbox
         key={`${verbatims.id}-id`}
@@ -71,32 +71,8 @@ const moderationTableRows = ({ verbatims, selectedVerbatims, setSelectedVerbatim
         {verbatim.contentCorrectedAnonymized || verbatim.contentCorrected || verbatim.content}
       </p>,
       <ScoresContainer key={`${verbatims.id}-scores`}>{formatScores(verbatim, index)}</ScoresContainer>,
-      <p key={`${verbatims.id}-ia`}>
-        <span>Ortho : {verbatim.isCorrected ? "oui" : "non"}</span>
-        <br />
-        <span>Anon : {verbatim.isAnonymized ? "oui" : "non"}</span>
-        <br />
-      </p>,
-      <FormationContainer key={`${verbatims.id}-formation-etablissement`}>
-        <Tooltip
-          background="var(--background-default-grey)"
-          border="var(--border-default-grey)"
-          color="var(--text-default-grey)"
-          placement="top"
-          content={<p>{verbatim.formation?.etablissementFormateurEntrepriseRaisonSociale}</p>}
-        >
-          <p>{verbatim.formation?.etablissementFormateurEntrepriseRaisonSociale}</p>
-        </Tooltip>
-        <Tooltip
-          background="var(--background-default-grey)"
-          border="var(--border-default-grey)"
-          color="var(--text-default-grey)"
-          placement="top"
-          content={<p>{verbatim.formation?.intituleLong}</p>}
-        >
-          <p>{verbatim.formation?.intituleLong}</p>
-        </Tooltip>
-      </FormationContainer>,
+      <AICell key={`${verbatims.id}-ai`} verbatim={verbatim} />,
+      <FormationCell key={`${verbatims.id}-formation`} verbatim={verbatim} />,
       <QuestionKeyContainer key={`${verbatims.id}-question`}>{verbatim.questionKey}</QuestionKeyContainer>,
       <p key={`${verbatims.id}-created-at`}>{new Date(verbatim.createdAt).toLocaleDateString("fr-FR")}</p>,
     ];
