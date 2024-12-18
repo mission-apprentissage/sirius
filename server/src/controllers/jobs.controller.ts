@@ -8,6 +8,7 @@ import tryCatch from "../utils/tryCatch.utils";
 export const startJob = tryCatch(async (req: any, res: any) => {
   const jobId = uuidv4();
   const jobType = req.body.jobType;
+  const jobOnlyAnonymized = req.body.onlyAnonymized;
   const status = JOB_STATUS.IN_PROGRESS;
   let worker;
 
@@ -17,7 +18,11 @@ export const startJob = tryCatch(async (req: any, res: any) => {
     });
   } else if (jobType === JOB_TYPES.VERBATIMS_THEMES_EXTRACTION) {
     worker = new Worker("./dist/workers/verbatimsExpositionPreparation.js", {
-      workerData: { jobId, processAll: true },
+      workerData: {
+        jobId,
+        processAll: jobOnlyAnonymized ? false : true,
+        type: jobOnlyAnonymized ? "onlyAnonymized" : null,
+      },
     });
   }
 

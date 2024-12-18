@@ -117,17 +117,19 @@ const cancellationMonitor = async (jobId: string) => {
 };
 
 (async () => {
-  const { jobId, processAll } = workerData;
+  const { jobId, processAll, type } = workerData;
 
   try {
     await connectToPgDb(config.psql.uri);
 
     cancellationMonitor(jobId);
 
-    const verbatimsQuery = getKbdClient().selectFrom("verbatims").selectAll();
+    let verbatimsQuery = getKbdClient().selectFrom("verbatims").selectAll();
 
-    if (!processAll) {
-      verbatimsQuery.where("deleted_at", "is", null).where("themes", "is", null);
+    if (!processAll && !type) {
+      verbatimsQuery = verbatimsQuery.where("deleted_at", "is", null).where("themes", "is", null);
+    } else if (!processAll && type === "onlyAnonymized") {
+      verbatimsQuery = verbatimsQuery.where("deleted_at", "is", null).where("is_anonymized", "=", true);
     }
 
     const verbatims = await verbatimsQuery.execute();
