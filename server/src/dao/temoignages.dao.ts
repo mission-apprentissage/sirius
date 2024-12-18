@@ -74,7 +74,7 @@ export const findAllWithVerbatims = async (query: { campagneIds: string[] }) => 
         'id', verbatims.id,
         'temoignage_id', verbatims.temoignage_id,
         'question_key', verbatims.question_key,
-        'content', COALESCE(verbatims.content_corrected_anonymized, verbatims.content_corrected, verbatims.content)
+        'content', COALESCE(verbatims.content_corrected_anonymized, verbatims.content_corrected, verbatims.content),
         'status', verbatims.status,
         'scores', verbatims.scores,
         'themes', verbatims.themes,
