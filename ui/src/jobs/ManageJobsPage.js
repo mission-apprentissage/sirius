@@ -1,6 +1,7 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
+import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
 import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { useQueryClient } from "@tanstack/react-query";
@@ -57,6 +58,7 @@ const ManageJobsPage = () => {
 
   const [selectedJob, setSelectedJob] = useState(null);
   const [runningJob, setRunningJob] = useState(null);
+  const [onlyAlreadyAnonymizedVerbatims, setOnlyAlreadyAnonymizedVerbatims] = useState(false);
   const { jobs, isError, isLoading, isSuccess } = useFetchJobs();
   const { mutate: startJob, startedJob } = useStartJob();
   const { mutate: stopJob, stoppedJob } = useStopJob();
@@ -65,7 +67,7 @@ const ManageJobsPage = () => {
 
   const handleRunningJob = () => {
     if (!selectedJob) return;
-    startJob(selectedJob);
+    startJob({ jobType: selectedJob, onlyAnonymized: onlyAlreadyAnonymizedVerbatims });
   };
 
   const handleJobCancelation = () => {
@@ -129,6 +131,20 @@ const ManageJobsPage = () => {
               options={jobsOption}
               onChange={(event) => setSelectedJob(event.target.value)}
             />
+            {selectedJob === JOB_TYPES.VERBATIMS_THEMES_EXTRACTION && (
+              <Checkbox
+                options={[
+                  {
+                    label: "Uniquement sur les verbatims déjà anonymisés",
+                    nativeInputProps: {
+                      name: `selectOnlyAlreadyAnonymized`,
+                      checked: onlyAlreadyAnonymizedVerbatims,
+                      onChange: () => setOnlyAlreadyAnonymizedVerbatims(!onlyAlreadyAnonymizedVerbatims),
+                    },
+                  },
+                ]}
+              />
+            )}
             <Button disabled={!selectedJob || !!runningJob} onClick={handleRunningJob}>
               Lancer le job
             </Button>

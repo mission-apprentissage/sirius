@@ -6,4 +6,5 @@ export const startJobSchema = Joi.object({
   jobType: Joi.string()
     .valid(...Object.values(JOB_TYPES))
     .required(),
+  onlyAnonymized: Joi.boolean(),
 });
