@@ -40,7 +40,7 @@ const IframeFormationPage = () => {
       window.parent.postMessage(
         {
           src: window.location.href,
-          height: document.body.scrollHeight,
+          height: document.body.scrollHeight + 25,
           siriusHeight: document.body.scrollHeight + 50,
         },
         "*"
@@ -53,7 +53,7 @@ const IframeFormationPage = () => {
       window.parent.postMessage(
         {
           src: window.location.href,
-          height: document.body.scrollHeight,
+          height: document.body.scrollHeight + 25,
           siriusHeight: document.body.scrollHeight + 50,
         },
         "*"
