@@ -257,6 +257,36 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
   }
 };
 
+export const getDatavisualisationFormationExists = async (intituleFormation, cfd, idCertifinfo, slug) => {
+  try {
+    const formattedIntituleFormation = intituleFormation ? intituleFormationFormatter(intituleFormation) : null;
+
+    const formationsWithCampagnes = await formationsDao.findFormationByIntituleCfdIdCertifInfoOrSlug(
+      formattedIntituleFormation,
+      cfd,
+      idCertifinfo,
+      slug
+    );
+
+    const campagneIds = formationsWithCampagnes.map((formation) => formation.campagneId);
+
+    if (!campagneIds.length) {
+      return { success: true, body: { hasData: false } };
+    }
+
+    const query = { campagneIds };
+    const temoignages = await temoignagesDao.findAll(query);
+
+    if (!temoignages.length || temoignages.length === 1) {
+      return { success: true, body: { hasData: false } };
+    }
+
+    return { success: true, body: { hasData: true } };
+  } catch (error) {
+    return { success: false, body: error };
+  }
+};
+
 export const getDatavisualisationEtablissement = async (uai) => {
   try {
     const campagneIds = (await formationsDao.findFormationByUai(uai)).map((formation) => formation.campagneId);

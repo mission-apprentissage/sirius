@@ -9,6 +9,7 @@ import {
   getDatavisualisation,
   getDatavisualisationEtablissement,
   getDatavisualisationFormation,
+  getDatavisualisationFormationExists,
   getUncompliantTemoignages,
   getXlsExport,
   updateTemoignage,
@@ -39,6 +40,10 @@ export const temoignages = () => {
 
   router.get("/api/temoignages/datavisualisation/formation", (req, res, next) => {
     getDatavisualisationFormation(req, res, next);
+  });
+
+  router.get("/api/temoignages/formation/exists", (req, res, next) => {
+    getDatavisualisationFormationExists(req, res, next);
   });
 
   router.get("/api/temoignages/datavisualisation/etablissement", (req, res, next) => {
