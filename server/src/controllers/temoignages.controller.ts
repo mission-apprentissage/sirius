@@ -73,6 +73,27 @@ export const getDatavisualisationFormation = tryCatch(async (req: any, res: any)
   return res.status(200).json(body);
 });
 
+export const getDatavisualisationFormationExists = tryCatch(async (req: any, res: any) => {
+  const intituleFormation = req.query.intituleFormation || null;
+  const cfd = req.query.cfd || null;
+  const idCertifInfo = req.query.idCertifinfo || null;
+  const slug = req.query.slug || null;
+
+  if (!intituleFormation && !cfd && !idCertifInfo && !slug)
+    return res.status(400).json({ hasData: false, message: "Missing parameters" });
+
+  const { success, body } = await temoignagesService.getDatavisualisationFormationExists(
+    intituleFormation,
+    cfd,
+    idCertifInfo,
+    slug
+  );
+
+  if (!success) throw new BasicError();
+
+  return res.status(200).json(body);
+});
+
 export const getDatavisualisationEtablissement = tryCatch(async (req: any, res: any) => {
   const uai = req.query.uai;
 
