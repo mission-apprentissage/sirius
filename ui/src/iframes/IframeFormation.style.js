@@ -249,6 +249,19 @@ export const TitleContainer = styled.div`
   & h2 {
     margin: 0;
   }
+
+  & > span {
+    margin-bottom: ${({ isOnisep }) => (isOnisep ? "16px" : "0px")};
+  }
+
+  & h2::after {
+    content: "";
+    display: ${({ isOnisep }) => (isOnisep ? "block" : "none")};
+    width: 100px;
+    height: 3px;
+    background-color: #e1000f;
+    margin-top: 16px;
+  }
 `;
 
 export const ConstructionNotice = styled.div`

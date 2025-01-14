@@ -27,6 +27,7 @@ const IframeFormationPage = () => {
   const cfd = new URLSearchParams(search).get("cfd");
   const idCertifinfo = new URLSearchParams(search).get("id_certifinfo");
   const slug = new URLSearchParams(search).get("slug");
+  const isOnisep = new URLSearchParams(search).get("isOnisep");
 
   const { datavisualisation, isSuccess, isError, isLoading } = useFetchDatavisualisationFormation({
     intituleFormation,
@@ -93,7 +94,7 @@ const IframeFormationPage = () => {
           <title>{`Statistiques pour la formation ${datavisualisation?.intituleFormation} - Sirius`}</title>
         </Helmet>
         <IframeContainer ref={scrollableRef}>
-          <TitleContainer>
+          <TitleContainer isOnisep={isOnisep}>
             <h2>Témoignages d'apprentis</h2>
             <Badge as="span" noIcon severity="success">
               Beta
