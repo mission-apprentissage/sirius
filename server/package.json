@@ -19,6 +19,7 @@
     "kysely": "npx kysely-codegen --schema public --out-file=./src/db/schema.ts --dialect postgres"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^2.2.0",
     "@hapi/boom": "10.0.0",
     "@sentry/node": "7.112.2",
     "@sentry/profiling-node": "^8.34.0",
