@@ -39,6 +39,7 @@ const config = {
       pass: env.get("SMTP_AUTH_PASS").asString(),
     },
     email_from: env.get("EMAIL_FROM").required().asString(),
+    apiKey: env.get("SMTP_API_KEY").required().asString(),
   },
   slack: {
     token: env
