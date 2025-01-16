@@ -28,7 +28,6 @@ export const sendBrevoEmail = async (options: SendBrevoEmailOptions): Promise<{ 
     sendSmtpEmail.templateId = templateId;
     sendSmtpEmail.params = params;
 
-    // Send the email
     const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
     console.log("Email sent successfully:", response);
     return response;

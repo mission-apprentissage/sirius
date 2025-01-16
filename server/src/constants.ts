@@ -224,3 +224,9 @@ export const TROUVER_ENTREPRISE_LABEL_MATCHER = {
   "Lors d'un événement sur l’orientation": "Lors d'un événement sur l’orientation",
   "Un·e membre de l’équipe pédagogique de mon ancien établissement m’a aidé·e": "Avec l’aide de l’ancien établissement",
 };
+
+export const EMAIL_BREVO_TEMPLATES = {
+  CONFIRM_EMAIL: 59,
+  RESET_PASSWORD: 54,
+  ACCOUNT_ACTIVATED: 60,
+};

@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
 
 import config from "../config";
-import { USER_ROLES, USER_STATUS } from "../constants";
+import { EMAIL_BREVO_TEMPLATES, USER_ROLES, USER_STATUS } from "../constants";
 import { BasicError, ErrorMessage, UnauthorizedError } from "../errors";
-import * as mailer from "../modules/mailer";
+import { sendBrevoEmail } from "../modules/brevo";
 import { sendToSlack } from "../modules/slack";
 import * as etablissementsService from "../services/etablissements.service";
 import * as usersService from "../services/users.service";
@@ -23,17 +23,13 @@ export const createUser = tryCatch(async (req: any, res: any) => {
 
   if (!successUser && !successEtablissements) throw new BasicError();
 
-  await mailer.shootTemplate({
-    template: "confirm_user",
-    subject: "Sirius : activation de votre compte",
-    to: req.body.email,
-    data: {
-      confirmationToken,
-      recipient: {
-        email: req.body.email,
-        firstname: req.body.firstName,
-        lastname: req.body.lastName,
-      },
+  await sendBrevoEmail({
+    templateId: EMAIL_BREVO_TEMPLATES.CONFIRM_EMAIL,
+    recipients: [{ email: req.body.email, name: `${req.body.firstName} ${req.body.lastName}` }],
+    params: {
+      activationLink: `${config.publicUrl}/confirmer-utilisateur?token=${confirmationToken}`,
+      firstname: req.body.firstName,
+      lastname: req.body.lastName,
     },
   });
 
@@ -188,16 +184,12 @@ export const updateUser = tryCatch(async (req: any, res: any) => {
     oldUser.status !== USER_STATUS.ACTIVE &&
     req.body.status === USER_STATUS.ACTIVE
   ) {
-    await mailer.shootTemplate({
-      template: "account_activated",
-      subject: "Sirius : votre inscription est validée",
-      to: oldUser.email,
-      data: {
-        recipient: {
-          email: oldUser.email,
-          firstname: oldUser.firstName,
-          lastname: oldUser.lastName,
-        },
+    await sendBrevoEmail({
+      templateId: EMAIL_BREVO_TEMPLATES.ACCOUNT_ACTIVATED,
+      recipients: [{ email: oldUser.email, name: `${oldUser.firstName} ${oldUser.lastName}` }],
+      params: {
+        firstname: oldUser.firstName,
+        lastname: oldUser.lastName,
       },
     });
   }
@@ -217,17 +209,13 @@ export const forgotPassword = tryCatch(async (req: any, res: any) => {
     expiresIn: "24h",
   });
 
-  await mailer.shootTemplate({
-    template: "reset_password",
-    subject: "Sirius : réinitialisation du mot de passe",
-    to: body.email,
-    data: {
-      resetPasswordToken,
-      recipient: {
-        email: body.email,
-        firstname: body.firstName,
-        lastname: body.lastName,
-      },
+  await sendBrevoEmail({
+    templateId: EMAIL_BREVO_TEMPLATES.RESET_PASSWORD,
+    recipients: [{ email: body.email, name: `${body.firstName} ${body.lastName}` }],
+    params: {
+      resetPasswordLink: `${config.publicUrl}/modification-mot-de-passe?token=${resetPasswordToken}`,
+      firstname: body.firstName,
+      lastname: body.lastName,
     },
   });
 
