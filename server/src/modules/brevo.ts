@@ -15,6 +15,11 @@ export interface SendBrevoEmailOptions {
 }
 
 export const sendBrevoEmail = async (options: SendBrevoEmailOptions): Promise<{ response: IncomingMessage }> => {
+  if (config.env !== "production") {
+    console.log("Email not sent because the environment is not production.");
+    return { response: {} as IncomingMessage };
+  }
+
   const BREVO_API_KEY = config.smtp.apiKey || "";
   const { templateId, recipients, params } = options;
 
