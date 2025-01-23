@@ -171,7 +171,7 @@ export const createCampagnes = async (campagnes, currentUserId) => {
           etablissement_formateur_adresse: campagne.formation.etablissement_formateur_adresse,
           etablissement_formateur_localite: campagne.formation.etablissement_formateur_localite,
           catalogue_data: JSON.stringify(campagne.formation),
-          etablissement_id: etablissement.id,
+          etablissement_id: etablissement.id || etablissement[0].id,
           onisep_slug: onisep_slug?.length ? onisep_slug[0] : null,
         };
 
