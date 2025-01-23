@@ -107,24 +107,25 @@ export interface Temoignages {
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
   id: Generated<string>;
-  is_bot: Generated<boolean>;
+  is_bot: Generated<boolean | null>;
   last_question_at: Timestamp | null;
-  reponses: Json;
+  reponses: Json | null;
   updated_at: Generated<Timestamp | null>;
 }
 
 export interface TemoignagesCampagnes {
   campagne_id: string | null;
   id: Generated<string>;
-  temoignage_id: string;
+  temoignage_id: string | null;
 }
 
 export interface Users {
-  accepted_cgu: Generated<boolean | null>;
+  accepted_cgu: boolean | null;
   comment: string | null;
   confirmation_token: string | null;
+  created_at: Generated<Timestamp | null>;
   email: string;
-  email_confirmed: Generated<boolean | null>;
+  email_confirmed: boolean | null;
   first_name: string;
   hash: string;
   id: Generated<string>;
@@ -134,6 +135,7 @@ export interface Users {
   salt: string;
   scope: Json | null;
   status: string;
+  updated_at: Generated<Timestamp | null>;
 }
 
 export interface UsersEtablissements {

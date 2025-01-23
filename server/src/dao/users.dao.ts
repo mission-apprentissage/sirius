@@ -27,6 +27,8 @@ export const findAll = async (): Promise<UserPublic[] | undefined> => {
       "comment",
       "accepted_cgu",
       "confirmation_token",
+      "created_at",
+      "updated_at",
     ])
     .execute();
 };
@@ -48,6 +50,8 @@ export const findOneByEmailWithEtablissement = async (email: string): Promise<(U
       "users.confirmation_token",
       "users.salt",
       "users.hash",
+      "users.created_at",
+      "users.updated_at",
       sql`
         CASE 
           WHEN COUNT(etablissements.id) = 0 THEN NULL
@@ -90,6 +94,8 @@ export const findOneByIdWithEtablissement = async (id: string): Promise<(User & 
       "users.comment",
       "users.accepted_cgu",
       "users.confirmation_token",
+      "users.created_at",
+      "users.updated_at",
       sql`
         CASE 
           WHEN COUNT(etablissements.id) = 0 THEN NULL
@@ -132,6 +138,8 @@ export const findAllWithEtablissement = async (): Promise<(UserPublic & any)[] |
       "users.comment",
       "users.accepted_cgu",
       "users.confirmation_token",
+      "users.created_at",
+      "users.updated_at",
       sql`
         CASE 
           WHEN COUNT(etablissements.id) = 0 THEN NULL
