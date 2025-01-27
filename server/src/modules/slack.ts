@@ -1,10 +1,17 @@
-// @ts-nocheck -- TODO
-
 import Slack from "@slack/bolt";
 
 import config from "../config";
 
-export const sendToSlack = async (main, thread_ts = null) => {
+interface SlackBlock {
+  type: string;
+  text?: {
+    type: string;
+    text: string;
+    emoji?: boolean;
+  };
+}
+
+export const sendToSlack = async (main: SlackBlock[], thread_ts: string | undefined = undefined) => {
   if (!config.slack.token) return;
   if (!config.slack.channel) return;
 
@@ -17,11 +24,8 @@ export const sendToSlack = async (main, thread_ts = null) => {
     text: "",
     blocks: main,
     channel: config.slack.channel,
+    thread_ts: thread_ts,
   };
-
-  if (thread_ts) {
-    messagePayload.thread_ts = thread_ts;
-  }
 
   const sent = await slack.client.chat.postMessage(messagePayload);
 
