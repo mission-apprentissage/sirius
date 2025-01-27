@@ -109,6 +109,14 @@
         job: "sudo docker exec -i $(sudo docker ps --filter 'name=^sirius_server' --format '{{'{{.ID}}'}}' | head -n 1) yarn cli extract-themes-verbatims >> /var/log/cron.log 2>&1; /opt/app/tools/monitoring/export-cron-status-prom.sh -c 'Extract themes from verbatims Alias' -v $?"
       when: env_type == "production"
 
+    - name: Add cron to send email notifications
+      ansible.builtin.cron:
+        name: "send-email-notifications"
+        minute: "0"
+        hour: "9"
+        job: "sudo docker exec -i $(sudo docker ps --filter 'name=^sirius_server' --format '{{'{{.ID}}'}}' | head -n 1) yarn cli send-email-notifications >> /var/log/cron.log 2>&1; /opt/app/tools/monitoring/export-cron-status-prom.sh -c 'Send email notifications Alias' -v $?"
+      when: env_type == "production"
+
     - name: "Setup de la Metabase"
       shell:
         chdir: /opt/app
