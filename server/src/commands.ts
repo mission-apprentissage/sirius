@@ -8,6 +8,7 @@ import HttpTerminator from "lil-http-terminator";
 import config from "./config";
 import classifyVerbatims from "./db/classifyVerbatims";
 import { closePgDbConnection } from "./db/db";
+import { emailNotifications } from "./db/emailNotifications";
 import verbatimsExpositionPreparation from "./db/verbatimsExpositionPreparation";
 import { migrateDownDB, migrateToLatest, statusMigration } from "./migrations/migrate";
 import logger from "./modules/logger";
@@ -175,6 +176,12 @@ program
   .command("extract-themes-verbatims")
   .description("Extrait les thèmes, corrige et anonymise les verbatims exitants")
   .action(async () => await verbatimsExpositionPreparation());
+
+program
+  .command("send-email-notifications")
+  .description("Envoi les notifications par email")
+  .option("--dry-run", "Simulate sending notifications without actually sending them")
+  .action(async (options) => await emailNotifications(options.dryRun));
 
 export async function startCLI() {
   await program.parseAsync(process.argv);
