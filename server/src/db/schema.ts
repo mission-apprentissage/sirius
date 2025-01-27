@@ -130,6 +130,7 @@ export interface Users {
   hash: string;
   id: Generated<string>;
   last_name: string;
+  notifications_email: Json | null;
   refresh_token: Json | null;
   role: string;
   salt: string;
