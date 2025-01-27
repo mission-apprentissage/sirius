@@ -49,7 +49,7 @@ export type Temoignage = Omit<
   "id" | "is_bot" | "last_question_at" | "created_at" | "deleted_at" | "updated_at"
 > & {
   id: string;
-  is_bot: boolean | undefined;
+  is_bot: boolean | null;
   last_question_at: Date | null;
   created_at: Date | null;
   deleted_at: Date | null;

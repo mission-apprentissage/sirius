@@ -27,6 +27,7 @@ export const findAll = async (): Promise<UserPublic[] | undefined> => {
       "comment",
       "accepted_cgu",
       "confirmation_token",
+      "notifications_email",
       "created_at",
       "updated_at",
     ])
