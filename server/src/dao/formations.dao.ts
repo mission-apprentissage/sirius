@@ -229,8 +229,8 @@ export const findFormationByIntituleCfdIdCertifInfoOrSlug = async (
     .where("formations.deleted_at", "is", null);
 
   const conditions = [
-    intitule ? sql<string>`catalogue_data->>'onisep_intitule' ilike ${`%${intitule}%`}` : null,
-    cfd ? sql`catalogue_data ->> 'cfd' = ${cfd}` : null,
+    intitule ? sql<string>`catalogue_data->>'onisep_intitule' ILIKE ${`%${intitule}%`}` : null,
+    cfd ? sql`${cfd} = ANY("formations"."cfd")` : null,
     idCertifInfo ? sql`catalogue_data ->> 'id_certifinfo' = ${idCertifInfo}` : null,
     slug ? sql`onisep_slug = ${slug}` : null,
   ].filter(Boolean);

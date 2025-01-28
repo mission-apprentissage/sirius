@@ -253,7 +253,7 @@ export const getXlsxMultipleExport = async (campagneIds = []) => {
       onisepUrl: campagne.etablissement?.onisepUrl,
       rncpCode: campagne.formation?.rncpCode,
       certifInfo: campagne.formation?.idCertifinfo,
-      cfd: campagne.formation?.cfd,
+      cfd: campagne?.formation.cfd?.length ? campagne.formation.cfd.join(", ") : "",
       mef: campagnes.formation?.bcnMefs10?.length ? campagnes.formation.bcnMefs10[0]?.mef10 : "",
     }));
 
