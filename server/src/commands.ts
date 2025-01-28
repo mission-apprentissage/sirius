@@ -9,6 +9,7 @@ import config from "./config";
 import classifyVerbatims from "./db/classifyVerbatims";
 import { closePgDbConnection } from "./db/db";
 import { emailNotifications } from "./db/emailNotifications";
+import { updateFormationsCfd } from "./db/updateFormationsCfd";
 import verbatimsExpositionPreparation from "./db/verbatimsExpositionPreparation";
 import { migrateDownDB, migrateToLatest, statusMigration } from "./migrations/migrate";
 import logger from "./modules/logger";
@@ -182,6 +183,11 @@ program
   .description("Envoi les notifications par email")
   .option("--dry-run", "Simulate sending notifications without actually sending them")
   .action(async (options) => await emailNotifications(options.dryRun));
+
+program
+  .command("update-formation-cfd")
+  .description("Ajoute les nouveaux CFD des formations")
+  .action(async () => await updateFormationsCfd());
 
 export async function startCLI() {
   await program.parseAsync(process.argv);
