@@ -49,6 +49,7 @@ export interface Etablissements {
 export interface Formations {
   catalogue_data: Json;
   catalogue_id: string;
+  cfd: string[] | null;
   code_postal: string;
   created_at: Generated<Timestamp | null>;
   deleted_at: Timestamp | null;
