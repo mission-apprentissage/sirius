@@ -151,7 +151,7 @@ const chartOptions = (data, isMobile, onChartClick) => {
             fontFamily: "Marianne",
             fontWeight: "400",
             fill: "#161616",
-            width: isMobile ? "100%" : 230,
+            width: isMobile ? "100%" : 210,
             textAlign: "left",
             cursor: "pointer",
             overflow: "break",
@@ -308,6 +308,9 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
           <ReactECharts
             option={chartOptions(data, isMobile, onChartClick)}
             style={{ height: isMobile ? "450px" : "300px", width: "100%" }}
+            onChartReady={(chart) => {
+              chart.resize();
+            }}
           />
         ) : null}
         {viewType === DATAVIZ_VIEW_TYPES.TABLE ? (

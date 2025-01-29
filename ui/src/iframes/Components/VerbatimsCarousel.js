@@ -15,7 +15,7 @@ import useBreakpoints from "../../hooks/useBreakpoints";
 import useMatomoEvent from "../../hooks/useMatomoEvent";
 import usePatchVerbatimFeedback from "../../hooks/usePatchVerbatimFeedback";
 import { MATOMO_ACTION, MATOMO_CATEGORY } from "../../matomo";
-import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
+import { capitalizeWords, etablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import {
   ApprentiInfo,
   CarouselContainer,
@@ -39,7 +39,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
   const { isMobile } = useBreakpoints();
   const trackEvent = useMatomoEvent();
 
-  const MAX_CHAR = isMobile ? 150 : 300;
+  const MAX_CHAR = isMobile ? 150 : 150;
 
   const { mutate: patchVerbatimFeedback } = usePatchVerbatimFeedback();
 
@@ -101,7 +101,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
             <VerbatimContainer isMobile={isMobile}>
               <ThemeLabel isMobile={isMobile}>
                 <img src={Quote} aria-hidden="true" />
-                <i>{verbatim.questionLabel}</i>
+                {verbatim.questionLabel}
               </ThemeLabel>
               <VerbatimContent isMobile={isMobile}>
                 {expandedIndex === index
@@ -122,7 +122,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
                 )}
               </VerbatimContent>
               <ApprentiInfo>
-                Apprenti·e du {etablissementLabelGetterFromFormation(verbatim)} -{" "}
+                Apprenti·e du {capitalizeWords(etablissementLabelGetterFromFormation(verbatim).toLowerCase())} -{" "}
                 {new Date(verbatim.createdAt).toLocaleDateString("fr", {
                   month: "long",
                   year: "numeric",

@@ -14,9 +14,12 @@ export const IframeContainer = styled.main`
   & > p:last-child {
     margin: 22px 0;
     font-size: 12px;
-    color: var(--text-mention-grey);
+    color: rgb(22, 22, 22);
     width: 100%;
-    text-align: right;
+
+    & a {
+      color: var(--text-action-high-blue-france);
+    }
   }
 `;
 
