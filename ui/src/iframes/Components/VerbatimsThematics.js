@@ -12,7 +12,7 @@ import useBreakpoints from "../../hooks/useBreakpoints";
 import useMatomoEvent from "../../hooks/useMatomoEvent";
 import usePatchVerbatimFeedback from "../../hooks/usePatchVerbatimFeedback";
 import { MATOMO_ACTION, MATOMO_CATEGORY } from "../../matomo";
-import { etablissementLabelGetterFromFormation } from "../../utils/etablissement";
+import { capitalizeFirstWord, etablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import {
   AccordionTitle,
   ApprentiInfo,
@@ -121,8 +121,8 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                     )}
                   </VerbatimContent>{" "}
                   <ApprentiInfo>
-                    Apprenti·e du {etablissementLabelGetterFromFormation(verbatim)} -{" "}
-                    {new Date(verbatim.createdAt).toLocaleDateString("fr", { month: "long", year: "numeric" })}
+                    Établissement : {capitalizeFirstWord(etablissementLabelGetterFromFormation(verbatim).toLowerCase())}{" "}
+                    - {new Date(verbatim.createdAt).toLocaleDateString("fr", { month: "long", year: "numeric" })}
                   </ApprentiInfo>
                   <FeedbackContainer
                     onClick={() => {

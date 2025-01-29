@@ -15,7 +15,7 @@ import useBreakpoints from "../../hooks/useBreakpoints";
 import useMatomoEvent from "../../hooks/useMatomoEvent";
 import usePatchVerbatimFeedback from "../../hooks/usePatchVerbatimFeedback";
 import { MATOMO_ACTION, MATOMO_CATEGORY } from "../../matomo";
-import { capitalizeWords, etablissementLabelGetterFromFormation } from "../../utils/etablissement";
+import { capitalizeFirstWord, etablissementLabelGetterFromFormation } from "../../utils/etablissement";
 import {
   ApprentiInfo,
   CarouselContainer,
@@ -122,7 +122,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
                 )}
               </VerbatimContent>
               <ApprentiInfo>
-                Apprenti·e du {capitalizeWords(etablissementLabelGetterFromFormation(verbatim).toLowerCase())} -{" "}
+                Établissement : {capitalizeFirstWord(etablissementLabelGetterFromFormation(verbatim).toLowerCase())} -{" "}
                 {new Date(verbatim.createdAt).toLocaleDateString("fr", {
                   month: "long",
                   year: "numeric",
