@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 export const IframeContainer = styled.main`
   max-width: 800px;
   padding: 0;
+  overflow: hidden;
 
   & > p {
     font-size: 16px;
