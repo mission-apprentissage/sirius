@@ -50,7 +50,8 @@ const IframeFormationPage = () => {
   }, [isSuccess]);
 
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
       window.parent.postMessage(
         {
           src: window.location.href,
