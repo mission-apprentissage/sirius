@@ -47,10 +47,11 @@ const IframeFormationPage = () => {
         "*"
       );
     }
-  }, [isSuccess]);
+  }, [isSuccess, verbatimsStep, goToThematic]);
 
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
       window.parent.postMessage(
         {
           src: window.location.href,
@@ -62,9 +63,11 @@ const IframeFormationPage = () => {
     };
 
     document.addEventListener("click", handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       document.removeEventListener("click", handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
