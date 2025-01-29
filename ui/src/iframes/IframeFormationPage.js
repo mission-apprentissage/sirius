@@ -47,7 +47,7 @@ const IframeFormationPage = () => {
         "*"
       );
     }
-  }, [isSuccess]);
+  }, [isSuccess, verbatimsStep, goToThematic]);
 
   useEffect(() => {
     const handleResize = async () => {
@@ -63,9 +63,11 @@ const IframeFormationPage = () => {
     };
 
     document.addEventListener("click", handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       document.removeEventListener("click", handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
