@@ -17,10 +17,12 @@ const processData = (data) => {
   const malData = [];
 
   data.forEach((item) => {
-    labels.push(item.label.replace(/<[^>]*>/g, ""));
-    bienData.push(item.results.Bien.percentage);
-    moyenData.push(item.results.Moyen.percentage);
-    malData.push(item.results["Pas ok"].percentage);
+    if (item?.label) {
+      labels.push(item.label?.replace(/<[^>]*>/g, ""));
+      bienData.push(item.results.Bien.percentage);
+      moyenData.push(item.results.Moyen.percentage);
+      malData.push(item.results["Pas ok"].percentage);
+    }
   });
 
   return { labels, bienData, moyenData, malData };
