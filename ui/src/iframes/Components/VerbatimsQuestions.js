@@ -22,7 +22,7 @@ import {
   VerbatimContent,
 } from "./shared.style";
 
-const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFormation }) => {
+const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [expandedAccordion, setExpandedAccordion] = useState(null);
   const [usefullFeedback, setUsefullFeedback] = useState(() => {
@@ -82,12 +82,7 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFo
           priority="tertiary no outline"
           onClick={() => {
             setVerbatimsStep(1);
-            trackEvent(
-              MATOMO_CATEGORY.IFRAME_FORMATION,
-              MATOMO_ACTION.CLICK_GO_BACK_QUESTIONS,
-              null,
-              intituleFormation
-            );
+            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_QUESTIONS);
           }}
         >
           {!isMobile && "Revenir en arrière"}
@@ -104,9 +99,7 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFo
                 trackEvent(
                   MATOMO_CATEGORY.IFRAME_FORMATION,
                   MATOMO_ACTION.CLICK_QUESTION,
-                  verbatimsByQuestion.questionLabel,
-                  null,
-                  intituleFormation
+                  verbatimsByQuestion.questionLabel
                 );
               }}
               key={verbatimsByQuestion.questionLabel}
@@ -130,12 +123,7 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFo
                         <span
                           onClick={() => {
                             toggleExpand(index);
-                            trackEvent(
-                              MATOMO_CATEGORY.IFRAME_FORMATION,
-                              MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE,
-                              null,
-                              intituleFormation
-                            );
+                            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE);
                           }}
                         >
                           {expandedIndex === index ? " Voir moins" : " Voir plus"}
@@ -150,12 +138,7 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFo
                   <FeedbackContainer
                     onClick={() => {
                       handleUsefullFeedback(verbatim.id);
-                      trackEvent(
-                        MATOMO_CATEGORY.IFRAME_FORMATION,
-                        MATOMO_ACTION.CLICK_USEFUL_VERBATIM,
-                        null,
-                        intituleFormation
-                      );
+                      trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_USEFUL_VERBATIM);
                     }}
                   >
                     Cet avis est utile ?{" "}

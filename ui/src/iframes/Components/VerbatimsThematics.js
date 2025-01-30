@@ -75,12 +75,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
           priority="tertiary no outline"
           onClick={() => {
             setVerbatimsStep(1);
-            trackEvent(
-              MATOMO_CATEGORY.IFRAME_FORMATION,
-              MATOMO_ACTION.CLICK_GO_BACK_THEMATICS,
-              null,
-              intituleFormation
-            );
+            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_THEMATICS);
           }}
         >
           {!isMobile && "Revenir en arrière"}
@@ -94,12 +89,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
               defaultExpanded={!!(expandedAccordion === verbatimsByTheme.label)}
               onExpandedChange={(expanded) => {
                 setExpandedAccordion(expanded ? verbatimsByTheme.label : null);
-                trackEvent(
-                  MATOMO_CATEGORY.IFRAME_FORMATION,
-                  MATOMO_ACTION.CLICK_THEMATIC,
-                  verbatimsByTheme.label,
-                  intituleFormation
-                );
+                trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC, verbatimsByTheme.label);
               }}
               key={verbatimsByTheme.label}
               label={
@@ -122,12 +112,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                         <span
                           onClick={() => {
                             toggleExpand(index);
-                            trackEvent(
-                              MATOMO_CATEGORY.IFRAME_FORMATION,
-                              MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE,
-                              null,
-                              intituleFormation
-                            );
+                            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE, null);
                           }}
                         >
                           {expandedIndex === index ? " Voir moins" : " Voir plus"}
@@ -142,12 +127,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                   <FeedbackContainer
                     onClick={() => {
                       handleUsefullFeedback(verbatim.id);
-                      trackEvent(
-                        MATOMO_CATEGORY.IFRAME_FORMATION,
-                        MATOMO_ACTION.CLICK_USEFUL_VERBATIM,
-                        null,
-                        intituleFormation
-                      );
+                      trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_USEFUL_VERBATIM, null);
                     }}
                   >
                     Cet avis est utile ?{" "}
