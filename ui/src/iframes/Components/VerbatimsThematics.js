@@ -75,12 +75,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
           priority="tertiary no outline"
           onClick={() => {
             setVerbatimsStep(1);
-            trackEvent(
-              MATOMO_CATEGORY.IFRAME_FORMATION,
-              MATOMO_ACTION.CLICK_GO_BACK_THEMATICS,
-              null,
-              intituleFormation
-            );
+            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_THEMATICS, `${intituleFormation}`);
           }}
         >
           {!isMobile && "Revenir en arrière"}
@@ -96,9 +91,8 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                 setExpandedAccordion(expanded ? verbatimsByTheme.label : null);
                 trackEvent(
                   MATOMO_CATEGORY.IFRAME_FORMATION,
-                  MATOMO_ACTION.CLICK_THEMATIC,
-                  verbatimsByTheme.label,
-                  intituleFormation
+                  `${MATOMO_ACTION.CLICK_THEMATIC} - ${verbatimsByTheme.label}`,
+                  `${intituleFormation}`
                 );
               }}
               key={verbatimsByTheme.label}
@@ -125,8 +119,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                             trackEvent(
                               MATOMO_CATEGORY.IFRAME_FORMATION,
                               MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE,
-                              null,
-                              intituleFormation
+                              `${intituleFormation}`
                             );
                           }}
                         >
@@ -145,8 +138,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                       trackEvent(
                         MATOMO_CATEGORY.IFRAME_FORMATION,
                         MATOMO_ACTION.CLICK_USEFUL_VERBATIM,
-                        null,
-                        intituleFormation
+                        `${intituleFormation}`
                       );
                     }}
                   >

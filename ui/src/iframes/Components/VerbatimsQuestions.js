@@ -82,12 +82,7 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFo
           priority="tertiary no outline"
           onClick={() => {
             setVerbatimsStep(1);
-            trackEvent(
-              MATOMO_CATEGORY.IFRAME_FORMATION,
-              MATOMO_ACTION.CLICK_GO_BACK_QUESTIONS,
-              null,
-              intituleFormation
-            );
+            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_QUESTIONS, `${intituleFormation}`);
           }}
         >
           {!isMobile && "Revenir en arrière"}
@@ -103,10 +98,8 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFo
                 setExpandedAccordion(expanded ? verbatimsByQuestion.questionLabel : null);
                 trackEvent(
                   MATOMO_CATEGORY.IFRAME_FORMATION,
-                  MATOMO_ACTION.CLICK_QUESTION,
-                  verbatimsByQuestion.questionLabel,
-                  null,
-                  intituleFormation
+                  `${MATOMO_ACTION.CLICK_QUESTION} - ${verbatimsByQuestion.questionLabel}`,
+                  `${intituleFormation}`
                 );
               }}
               key={verbatimsByQuestion.questionLabel}
@@ -133,8 +126,7 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFo
                             trackEvent(
                               MATOMO_CATEGORY.IFRAME_FORMATION,
                               MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE,
-                              null,
-                              intituleFormation
+                              `${intituleFormation}`
                             );
                           }}
                         >
@@ -153,8 +145,7 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFo
                       trackEvent(
                         MATOMO_CATEGORY.IFRAME_FORMATION,
                         MATOMO_ACTION.CLICK_USEFUL_VERBATIM,
-                        null,
-                        intituleFormation
+                        `${intituleFormation}`
                       );
                     }}
                   >

@@ -262,7 +262,11 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
 
   const onChartClick = (value) => {
     setGoToThematic(value);
-    trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC_FROM_GRAPH, value, intituleFormation);
+    trackEvent(
+      MATOMO_CATEGORY.IFRAME_FORMATION,
+      `${MATOMO_ACTION.CLICK_THEMATIC_FROM_GRAPH} - ${value}`,
+      `${intituleFormation}`
+    );
   };
 
   return (
@@ -288,8 +292,7 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
                   trackEvent(
                     MATOMO_CATEGORY.IFRAME_FORMATION,
                     MATOMO_ACTION.CLICK_GRAPHIC_VIEW,
-                    null,
-                    intituleFormation
+                    `${intituleFormation}`
                   );
                 },
                 readOnly: true,
@@ -302,7 +305,7 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
                 checked: viewType === DATAVIZ_VIEW_TYPES.TABLE,
                 onClick: () => {
                   setViewType(DATAVIZ_VIEW_TYPES.TABLE);
-                  trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_TABLE_VIEW, null, intituleFormation);
+                  trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_TABLE_VIEW, `${intituleFormation}`);
                 },
                 readOnly: true,
               },

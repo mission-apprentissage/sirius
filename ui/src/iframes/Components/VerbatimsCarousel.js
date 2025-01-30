@@ -79,8 +79,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep, intituleFormati
         trackEvent(
           MATOMO_CATEGORY.IFRAME_FORMATION,
           realIndex > activeIndex ? MATOMO_ACTION.CLICK_CAROUSEL_NEXT : MATOMO_ACTION.CLICK_CAROUSEL_PREVIOUS,
-          null,
-          intituleFormation
+          `${intituleFormation}`
         );
         if (realIndex !== activeIndex) {
           setExpandedIndex(null);
@@ -118,8 +117,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep, intituleFormati
                         trackEvent(
                           MATOMO_CATEGORY.IFRAME_FORMATION,
                           MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE,
-                          null,
-                          intituleFormation
+                          `${intituleFormation}`
                         );
                       }}
                     >
@@ -141,8 +139,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep, intituleFormati
                   trackEvent(
                     MATOMO_CATEGORY.IFRAME_FORMATION,
                     MATOMO_ACTION.CLICK_USEFUL_VERBATIM,
-                    null,
-                    intituleFormation
+                    `${intituleFormation}`
                   );
                 }}
               >
@@ -163,8 +160,7 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep, intituleFormati
               trackEvent(
                 MATOMO_CATEGORY.IFRAME_FORMATION,
                 MATOMO_ACTION.CLICK_CAROUSEL_SEE_MORE,
-                null,
-                intituleFormation
+                `${intituleFormation}`
               );
             }}
           >
