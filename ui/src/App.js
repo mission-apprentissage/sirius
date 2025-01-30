@@ -89,9 +89,9 @@ function App() {
 
     const disableTracking = localStorage.getItem("disableTracking") === "true";
 
-    //if (!isLoading && !isAdmin && !disableTracking && isProd && !isSudo) {
-    loadTrackingScript();
-    //}
+    if (!isLoading && !isAdmin && !disableTracking && isProd && !isSudo) {
+      loadTrackingScript();
+    }
   }, [isLoading, isAdmin]);
 
   return (
