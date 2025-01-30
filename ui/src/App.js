@@ -73,7 +73,7 @@ function App() {
 
   useEffect(() => {
     const pushPageView = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       window._paq.push(["setDocumentTitle", document.title || location.pathname]);
       window._paq.push(["setCustomUrl", window.location.href]);
       window._paq.push(["trackPageView"]);
