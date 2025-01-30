@@ -20,6 +20,7 @@ import { UserContext } from "./context/UserContext";
 import EtablissementOrAdminProtectedRoute from "./EtablissementOrAdminProtectedRoute";
 import DiffusionGuidePage from "./guide/DiffusionGuidePage";
 import HomePage from "./home/HomePage";
+import useMatomo from "./hooks/useMatomo";
 import IframeEtablissementPage from "./iframes/IframeEtablissementPage";
 import IframeFormationPage from "./iframes/IframeFormationPage";
 import ManageJobsPage from "./jobs/ManageJobsPage";
@@ -53,46 +54,34 @@ function App() {
   const isSudo = userContext?.user?.isSudo;
   const isLoading = userContext?.loading;
 
+  const disableTracking = localStorage.getItem("disableTracking") === "true";
+  const enableMatomo = !isLoading && !isAdmin && !disableTracking && !isProd && !isSudo;
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const noTrackingParam = urlParams.get("notracking");
 
-    const handleTrackingParams = () => {
-      if (noTrackingParam === "true") {
-        localStorage.setItem("disableTracking", "true");
-        console.info("Tracking disabled");
-      } else if (noTrackingParam === "reset") {
-        localStorage.removeItem("disableTracking");
-      }
-    };
-
-    const loadTrackingScript = () => {
-      var _paq = (window._paq = window._paq || []);
-      _paq.push(["trackPageView"]);
-      _paq.push(["enableLinkTracking"]);
-
-      (function () {
-        var u = "https://stats.beta.gouv.fr/";
-        _paq.push(["setTrackerUrl", u + "matomo.php"]);
-        _paq.push(["setSiteId", "121"]);
-
-        var d = document;
-        var g = d.createElement("script");
-        var s = d.getElementsByTagName("script")[0];
-        g.async = true;
-        g.src = u + "matomo.js";
-        s.parentNode.insertBefore(g, s);
-      })();
-    };
-
-    handleTrackingParams();
-
-    const disableTracking = localStorage.getItem("disableTracking") === "true";
-
-    if (!isLoading && !isAdmin && !disableTracking && isProd && !isSudo) {
-      loadTrackingScript();
+    if (noTrackingParam === "true") {
+      localStorage.setItem("disableTracking", "true");
+      console.info("Tracking disabled");
+    } else if (noTrackingParam === "reset") {
+      localStorage.removeItem("disableTracking");
     }
-  }, [isLoading, isAdmin]);
+  }, [location.search]);
+
+  useMatomo(enableMatomo);
+
+  useEffect(() => {
+    const pushPageView = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      window._paq.push(["setDocumentTitle", document.title || location.pathname]);
+      window._paq.push(["setCustomUrl", window.location.href]);
+      window._paq.push(["trackPageView"]);
+    };
+    if (enableMatomo && window._paq) {
+      pushPageView();
+    }
+  }, [location, enableMatomo]);
 
   return (
     <Routes>
