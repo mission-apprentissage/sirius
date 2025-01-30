@@ -75,7 +75,7 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
           priority="tertiary no outline"
           onClick={() => {
             setVerbatimsStep(1);
-            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_THEMATICS);
+            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_THEMATICS, `${intituleFormation}`);
           }}
         >
           {!isMobile && "Revenir en arrière"}
@@ -89,7 +89,11 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
               defaultExpanded={!!(expandedAccordion === verbatimsByTheme.label)}
               onExpandedChange={(expanded) => {
                 setExpandedAccordion(expanded ? verbatimsByTheme.label : null);
-                trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC, verbatimsByTheme.label);
+                trackEvent(
+                  MATOMO_CATEGORY.IFRAME_FORMATION,
+                  `${MATOMO_ACTION.CLICK_THEMATIC} - ${verbatimsByTheme.label}`,
+                  `${intituleFormation}`
+                );
               }}
               key={verbatimsByTheme.label}
               label={
@@ -112,7 +116,11 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                         <span
                           onClick={() => {
                             toggleExpand(index);
-                            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE, null);
+                            trackEvent(
+                              MATOMO_CATEGORY.IFRAME_FORMATION,
+                              MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE,
+                              `${intituleFormation}`
+                            );
                           }}
                         >
                           {expandedIndex === index ? " Voir moins" : " Voir plus"}
@@ -127,7 +135,11 @@ const VerbatimsThematics = ({ verbatimsByThemes, setVerbatimsStep, goToThematics
                   <FeedbackContainer
                     onClick={() => {
                       handleUsefullFeedback(verbatim.id);
-                      trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_USEFUL_VERBATIM, null);
+                      trackEvent(
+                        MATOMO_CATEGORY.IFRAME_FORMATION,
+                        MATOMO_ACTION.CLICK_USEFUL_VERBATIM,
+                        `${intituleFormation}`
+                      );
                     }}
                   >
                     Cet avis est utile ?{" "}

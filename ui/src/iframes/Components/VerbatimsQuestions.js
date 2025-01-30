@@ -22,7 +22,7 @@ import {
   VerbatimContent,
 } from "./shared.style";
 
-const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep }) => {
+const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep, intituleFormation }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [expandedAccordion, setExpandedAccordion] = useState(null);
   const [usefullFeedback, setUsefullFeedback] = useState(() => {
@@ -82,7 +82,7 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep }) => {
           priority="tertiary no outline"
           onClick={() => {
             setVerbatimsStep(1);
-            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_QUESTIONS);
+            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GO_BACK_QUESTIONS, `${intituleFormation}`);
           }}
         >
           {!isMobile && "Revenir en arrière"}
@@ -98,8 +98,8 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep }) => {
                 setExpandedAccordion(expanded ? verbatimsByQuestion.questionLabel : null);
                 trackEvent(
                   MATOMO_CATEGORY.IFRAME_FORMATION,
-                  MATOMO_ACTION.CLICK_QUESTION,
-                  verbatimsByQuestion.questionLabel
+                  `${MATOMO_ACTION.CLICK_QUESTION} - ${verbatimsByQuestion.questionLabel}`,
+                  `${intituleFormation}`
                 );
               }}
               key={verbatimsByQuestion.questionLabel}
@@ -123,7 +123,11 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep }) => {
                         <span
                           onClick={() => {
                             toggleExpand(index);
-                            trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE);
+                            trackEvent(
+                              MATOMO_CATEGORY.IFRAME_FORMATION,
+                              MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE,
+                              `${intituleFormation}`
+                            );
                           }}
                         >
                           {expandedIndex === index ? " Voir moins" : " Voir plus"}
@@ -138,7 +142,11 @@ const VerbatimsQuestions = ({ verbatimsByQuestions, setVerbatimsStep }) => {
                   <FeedbackContainer
                     onClick={() => {
                       handleUsefullFeedback(verbatim.id);
-                      trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_USEFUL_VERBATIM);
+                      trackEvent(
+                        MATOMO_CATEGORY.IFRAME_FORMATION,
+                        MATOMO_ACTION.CLICK_USEFUL_VERBATIM,
+                        `${intituleFormation}`
+                      );
                     }}
                   >
                     Cet avis est utile ?{" "}

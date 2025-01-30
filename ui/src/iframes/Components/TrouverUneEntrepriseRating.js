@@ -53,7 +53,7 @@ const TrouverEntrepriseCard = ({ percentage, count, label, position, seeMore }) 
   );
 };
 
-const TrouverUneEntrepriseRating = ({ data }) => {
+const TrouverUneEntrepriseRating = ({ data, intituleFormation }) => {
   const [seeMore, setSeeMore] = useState(false);
   const trackEvent = useMatomoEvent();
 
@@ -88,7 +88,8 @@ const TrouverUneEntrepriseRating = ({ data }) => {
         onClick={() => {
           trackEvent(
             MATOMO_CATEGORY.IFRAME_FORMATION,
-            seeMore ? MATOMO_ACTION.CLICK_TROUVER_ENTREPRISE_SEE_LESS : MATOMO_ACTION.CLICK_TROUVER_ENTREPRISE_SEE_MORE
+            seeMore ? MATOMO_ACTION.CLICK_TROUVER_ENTREPRISE_SEE_LESS : MATOMO_ACTION.CLICK_TROUVER_ENTREPRISE_SEE_MORE,
+            `${intituleFormation}`
           );
           setSeeMore((prevValue) => !prevValue);
         }}
