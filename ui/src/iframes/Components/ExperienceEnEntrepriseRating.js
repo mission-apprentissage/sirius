@@ -238,7 +238,7 @@ const chartOptions = (data, isMobile, onChartClick) => {
 
 const headers = ["Thématique", "Bien", "Moyen", "Mal"];
 
-const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThematic }) => {
+const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThematic, intituleFormation }) => {
   const [viewType, setViewType] = useState(DATAVIZ_VIEW_TYPES.GRAPHIC);
   const { isMobile } = useBreakpoints();
   const trackEvent = useMatomoEvent();
@@ -262,7 +262,7 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
 
   const onChartClick = (value) => {
     setGoToThematic(value);
-    trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC_FROM_GRAPH, value);
+    trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_THEMATIC_FROM_GRAPH, value, intituleFormation);
   };
 
   return (
@@ -285,7 +285,12 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
                 checked: viewType === DATAVIZ_VIEW_TYPES.GRAPHIC,
                 onClick: () => {
                   setViewType(DATAVIZ_VIEW_TYPES.GRAPHIC);
-                  trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_GRAPHIC_VIEW);
+                  trackEvent(
+                    MATOMO_CATEGORY.IFRAME_FORMATION,
+                    MATOMO_ACTION.CLICK_GRAPHIC_VIEW,
+                    null,
+                    intituleFormation
+                  );
                 },
                 readOnly: true,
               },
@@ -297,7 +302,7 @@ const ExperienceEnEntrepriseRating = ({ data, etablissementsCount, setGoToThemat
                 checked: viewType === DATAVIZ_VIEW_TYPES.TABLE,
                 onClick: () => {
                   setViewType(DATAVIZ_VIEW_TYPES.TABLE);
-                  trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_TABLE_VIEW);
+                  trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_TABLE_VIEW, null, intituleFormation);
                 },
                 readOnly: true,
               },

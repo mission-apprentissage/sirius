@@ -23,14 +23,14 @@ const IframeFormationPage = () => {
   const scrollableRef = useRef(null);
   const { search } = useLocation();
 
-  const intituleFormation = new URLSearchParams(search).get("intitule");
+  const intituleFormationFromUrl = new URLSearchParams(search).get("intitule");
   const cfd = new URLSearchParams(search).get("cfd");
   const idCertifinfo = new URLSearchParams(search).get("id_certifinfo");
   const slug = new URLSearchParams(search).get("slug");
   const isOnisep = new URLSearchParams(search).get("isOnisep");
 
   const { datavisualisation, isSuccess, isError, isLoading } = useFetchDatavisualisationFormation({
-    intituleFormation,
+    intituleFormationFromUrl,
     cfd,
     idCertifinfo,
     slug,
@@ -90,11 +90,13 @@ const IframeFormationPage = () => {
     return null;
   }
 
+  const intituleFormation = datavisualisation?.intituleFormation;
+
   return (
     isSuccess && (
       <>
         <Helmet>
-          <title>{`Statistiques pour la formation ${datavisualisation?.intituleFormation} - Sirius`}</title>
+          <title>{`Statistiques pour la formation ${intituleFormation} - Sirius`}</title>
         </Helmet>
         <IframeContainer ref={scrollableRef}>
           <TitleContainer isOnisep={isOnisep}>
@@ -120,6 +122,7 @@ const IframeFormationPage = () => {
             <VerbatimsCarousel
               verbatims={Object.values(datavisualisation?.gems || {}).flat()}
               setVerbatimsStep={setVerbatimsStep}
+              intituleFormation={intituleFormation}
             />
           ) : null}
           {verbatimsStep === 2 ? (
@@ -128,22 +131,26 @@ const IframeFormationPage = () => {
               setVerbatimsStep={setVerbatimsStep}
               goToThematics={goToThematic}
               setGoToThematics={setGoToThematic}
+              intituleFormation={intituleFormation}
             />
           ) : null}
           {verbatimsStep === 3 ? (
             <VerbatimsQuestions
               verbatimsByQuestions={datavisualisation?.verbatimsByQuestions}
               setVerbatimsStep={setVerbatimsStep}
+              intituleFormation={intituleFormation}
             />
           ) : null}
           <TrouverUneEntrepriseRating
             data={datavisualisation?.trouverEntrepriseRating}
             etablissementsCount={datavisualisation?.etablissementsCount}
+            intituleFormation={intituleFormation}
           />
           <ExperienceEnEntrepriseRating
             data={datavisualisation?.commentVisTonExperienceEntrepriseRating}
             etablissementsCount={datavisualisation?.etablissementsCount}
             setGoToThematic={setGoToThematic}
+            intituleFormation={intituleFormation}
           />
           <p>
             Données collectées avec le questionnaire{" "}

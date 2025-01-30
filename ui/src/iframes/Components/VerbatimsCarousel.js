@@ -28,7 +28,7 @@ import {
   VerbatimContent,
 } from "./shared.style";
 
-export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
+export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep, intituleFormation }) => {
   const [swiperControl, setSwiperControl] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [expandedIndex, setExpandedIndex] = useState(null);
@@ -78,7 +78,9 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
         setActiveIndex(realIndex);
         trackEvent(
           MATOMO_CATEGORY.IFRAME_FORMATION,
-          realIndex > activeIndex ? MATOMO_ACTION.CLICK_CAROUSEL_NEXT : MATOMO_ACTION.CLICK_CAROUSEL_PREVIOUS
+          realIndex > activeIndex ? MATOMO_ACTION.CLICK_CAROUSEL_NEXT : MATOMO_ACTION.CLICK_CAROUSEL_PREVIOUS,
+          null,
+          intituleFormation
         );
         if (realIndex !== activeIndex) {
           setExpandedIndex(null);
@@ -113,7 +115,12 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
                     <span
                       onClick={() => {
                         toggleExpand(index);
-                        trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE);
+                        trackEvent(
+                          MATOMO_CATEGORY.IFRAME_FORMATION,
+                          MATOMO_ACTION.CLICK_VERBATIM_SEE_MORE,
+                          null,
+                          intituleFormation
+                        );
                       }}
                     >
                       {expandedIndex === index ? "Voir moins" : "Voir plus"}
@@ -131,7 +138,12 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
               <FeedbackContainer
                 onClick={() => {
                   handleUsefullFeedback(verbatim.id);
-                  trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_USEFUL_VERBATIM);
+                  trackEvent(
+                    MATOMO_CATEGORY.IFRAME_FORMATION,
+                    MATOMO_ACTION.CLICK_USEFUL_VERBATIM,
+                    null,
+                    intituleFormation
+                  );
                 }}
               >
                 Cet avis est utile ?{" "}
@@ -148,7 +160,12 @@ export const VerbatimsCarousel = ({ verbatims, setVerbatimsStep }) => {
             isMobile={isMobile}
             onClick={() => {
               setVerbatimsStep(3);
-              trackEvent(MATOMO_CATEGORY.IFRAME_FORMATION, MATOMO_ACTION.CLICK_CAROUSEL_SEE_MORE);
+              trackEvent(
+                MATOMO_CATEGORY.IFRAME_FORMATION,
+                MATOMO_ACTION.CLICK_CAROUSEL_SEE_MORE,
+                null,
+                intituleFormation
+              );
             }}
           >
             <img src={Quote} aria-hidden="true" />
