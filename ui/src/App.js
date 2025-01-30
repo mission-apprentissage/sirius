@@ -55,7 +55,7 @@ function App() {
   const isLoading = userContext?.loading;
 
   const disableTracking = localStorage.getItem("disableTracking") === "true";
-  const enableMatomo = !isLoading && !isAdmin && !disableTracking && !isProd && !isSudo;
+  const enableMatomo = !isLoading && !isAdmin && !disableTracking && isProd && !isSudo;
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
