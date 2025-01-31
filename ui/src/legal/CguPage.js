@@ -1,13 +1,12 @@
-import { Helmet } from "react-helmet-async";
-
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { Container } from "./shared.style";
 
 const CguPage = () => {
+  const helmet = useSetAndTrackPageTitle({ title: "Conditions générales d'utilisation - Sirius" });
+
   return (
     <>
-      <Helmet>
-        <title>Conditions générales d'utilisation - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <h1>CONDITIONS GÉNÉRALES D’UTILISATION DE SIRIUS</h1>
         <p>

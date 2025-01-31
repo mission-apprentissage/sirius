@@ -1,7 +1,6 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import ReactPlayer from "react-player/file";
 
 import IlluCFA from "../assets/images/illu_cfa.svg";
@@ -14,6 +13,7 @@ import video1Questionnaire from "../assets/videos/video1_questionnaire.mp4";
 import video2Creation from "../assets/videos/video2_creation.mp4";
 import video3Diffusion from "../assets/videos/video3_diffusion.mp4";
 import video4Resultats from "../assets/videos/video4_resultats.mp4";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import {
   CardContainer,
   CFAContainer,
@@ -30,12 +30,11 @@ import {
 
 const DiffusionGuidePage = () => {
   const [video, setVideo] = useState("questionnaire");
+  const helmet = useSetAndTrackPageTitle({ title: "Guide de diffusion - Sirius" });
 
   return (
     <>
-      <Helmet>
-        <title>Guide de diffusion - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <h2>
           Avec Sirius recueillez les témoignages de vos apprenti·es{" "}

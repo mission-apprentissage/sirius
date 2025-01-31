@@ -4,11 +4,11 @@ import { Box, Button, Flex, Spinner, useBreakpoint } from "@chakra-ui/react";
 import Form from "@rjsf/chakra-ui";
 import validator from "@rjsf/validator-ajv8";
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 
 import { useGet } from "../common/hooks/httpHooks";
 import { Stepper } from "../Components/Stepper";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import ErrorTemplate from "./Shared/ErrorTemplate";
 import { CustomNestedRadios } from "./Shared/fields";
 import Hero from "./Shared/Hero";
@@ -66,6 +66,10 @@ const PreviewCampagnePage = () => {
   const breakpoint = useBreakpoint({ ssr: false });
   const isMobile = breakpoint === "base";
 
+  const helmet = useSetAndTrackPageTitle({
+    title: startedAnswering ? "Aperçu du questionnaire - Sirius" : "Aperçu accueil du questionnaire - Sirius",
+  });
+
   const isLastCategory = formattedQuestionnnaire.length
     ? currentCategoryIndex === formattedQuestionnnaire.length - 1
     : false;
@@ -104,9 +108,7 @@ const PreviewCampagnePage = () => {
   if (loading || !formattedQuestionnnaire.length) return <Spinner size="xl" />;
   return startedAnswering ? (
     <>
-      <Helmet>
-        <title>Aperçu du questionnaire - Sirius</title>
-      </Helmet>
+      {helmet}
       <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto" pt={["0", "5"]}>
         {isTemoignageSent && <Success />}
         {!isTemoignageSent && (
@@ -163,9 +165,7 @@ const PreviewCampagnePage = () => {
     </>
   ) : (
     <>
-      <Helmet>
-        <title>Aperçu accueil du questionnaire - Sirius</title>
-      </Helmet>
+      {helmet}
       <Hero
         setStartedAnswering={setStartedAnswering}
         isMobile={isMobile}

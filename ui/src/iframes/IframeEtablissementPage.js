@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import { useEffect, useRef } from "react";
-import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
@@ -16,6 +15,8 @@ const IframeEtablissementPage = () => {
   const scrollableRef = useRef(null);
   const { search } = useLocation();
   const uai = new URLSearchParams(search).get("uai");
+
+  const helmet = useSetAndTrackPageTitle({ title: `Statistiques pour l'établissement ${uai} - Sirius` });
 
   const { datavisualisation, isSuccess, isError, isLoading } = useFetchDatavisualisationEtablissement({
     uai,
@@ -54,9 +55,7 @@ const IframeEtablissementPage = () => {
   return (
     isSuccess && (
       <>
-        <Helmet>
-          <title>{`Statistiques pour l'établissement ${uai} - Sirius`}</title>
-        </Helmet>
+        {helmet}
         <IframeContainer ref={scrollableRef}>
           <h3>Suivre une formation en apprentissage ?</h3>
           <p>

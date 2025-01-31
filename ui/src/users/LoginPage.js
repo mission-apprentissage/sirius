@@ -5,7 +5,6 @@ import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { useFormik } from "formik";
 import jwt from "jwt-decode";
 import { useContext, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 import * as Yup from "yup";
@@ -16,6 +15,7 @@ import NeedHelp from "../Components/NeedHelp";
 import { emailWithTLDRegex, USER_ROLES } from "../constants";
 import { UserContext } from "../context/UserContext";
 import useLoginUser from "../hooks/useLoginUser";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import ChangePasswordModal from "./Components/ChangePasswordModal";
 import ForgottenPasswordModal from "./Components/ForgottenPasswordModal";
 import { Form, StyledPasswordInput } from "./styles/login.style";
@@ -48,6 +48,8 @@ const LoginPage = () => {
   const { search } = useLocation();
 
   const token = new URLSearchParams(search).get("token");
+
+  const helmet = useSetAndTrackPageTitle({ title: `${token ? "Changement de mot de passe" : "Connexion"} - Sirius` });
 
   const formik = useFormik({
     initialValues: {
@@ -101,9 +103,7 @@ const LoginPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{`${token ? "Changement de mot de passe" : "Connexion"} - Sirius`}</title>
-      </Helmet>
+      {helmet}
       <LoginAndSignupContainer>
         <LoginAndSignupHeader>
           <div>

@@ -3,13 +3,13 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Badge } from "@codegouvfr/react-dsfr/Badge";
 import { useEffect, useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchDatavisualisationFormation from "../hooks/useFetchDatavisualisationFormation";
 import useMatomoEvent from "../hooks/useMatomoEvent";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import ExperienceEnEntrepriseRating from "./Components/ExperienceEnEntrepriseRating";
 import TrouverUneEntrepriseRating from "./Components/TrouverUneEntrepriseRating";
 import { VerbatimsCarousel } from "./Components/VerbatimsCarousel";
@@ -34,6 +34,12 @@ const IframeFormationPage = () => {
     cfd,
     idCertifinfo,
     slug,
+  });
+
+  const helmet = useSetAndTrackPageTitle({
+    title: datavisualisation?.intituleFormation
+      ? `Statistiques pour la formation ${datavisualisation?.intituleFormation} - Sirius`
+      : null,
   });
 
   useEffect(() => {
@@ -95,9 +101,7 @@ const IframeFormationPage = () => {
   return (
     isSuccess && (
       <>
-        <Helmet>
-          <title>{`Statistiques pour la formation ${intituleFormation} - Sirius`}</title>
-        </Helmet>
+        {helmet}
         <IframeContainer ref={scrollableRef}>
           <TitleContainer isOnisep={isOnisep}>
             <h2>Témoignages d'apprentis</h2>

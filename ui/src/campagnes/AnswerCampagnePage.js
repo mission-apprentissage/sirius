@@ -5,12 +5,12 @@ import { load } from "@fingerprintjs/botd";
 import Form from "@rjsf/chakra-ui";
 import validator from "@rjsf/validator-ajv8";
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 
 import { useGet } from "../common/hooks/httpHooks";
 import { Stepper } from "../Components/Stepper";
 import { VERBATIM_STATUS } from "../constants";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { apiPost, apiPut } from "../utils/api.utils";
 import BotDetectedModal from "./AnswerCampagne/BotDetectedModal";
 import ErrorTemplate from "./Shared/ErrorTemplate";
@@ -76,6 +76,10 @@ const AnswerCampagnePage = () => {
   const isMobile = breakpoint === "base";
 
   const [campagne, loading] = useGet(`/api/campagnes/${id}`);
+
+  const helmet = useSetAndTrackPageTitle({
+    title: startedAnswering ? "Questionnaire - Sirius" : "Accueil du questionnaire - Sirius",
+  });
 
   useEffect(() => {
     async function getBotdResult() {
@@ -232,9 +236,7 @@ const AnswerCampagnePage = () => {
 
   return startedAnswering ? (
     <>
-      <Helmet>
-        <title>Questionnaire - Sirius</title>
-      </Helmet>
+      {helmet}
       <Flex my="20px" w={isMobile ? "100%" : "80%"} m="auto" pt={["0", "5"]}>
         {isTemoignageSent && <Success />}
         {!isTemoignageSent && (
@@ -294,9 +296,7 @@ const AnswerCampagnePage = () => {
     </>
   ) : (
     <>
-      <Helmet>
-        <title>Accueil du questionnaire - Sirius</title>
-      </Helmet>
+      {helmet}
       <Hero
         setStartedAnswering={setStartedAnswering}
         isMobile={isMobile}

@@ -1,15 +1,15 @@
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { Container } from "./shared.style";
 
 const MentionsInformationQuestionnairePage = () => {
+  const helmet = useSetAndTrackPageTitle({ title: "Mention d'information sur le questionnaire - Sirius" });
+
   return (
     <>
-      <Helmet>
-        <title>Mention d'information sur le questionnaire - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <h1>Mention d’information sur le questionnaire “Sirius”</h1>
         <h3>Qui est responsable de Sirius ?</h3>

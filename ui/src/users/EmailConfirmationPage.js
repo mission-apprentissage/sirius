@@ -1,9 +1,9 @@
 import { Alert } from "@codegouvfr/react-dsfr/Alert";
-import { Helmet } from "react-helmet-async";
 import { Navigate, useLocation } from "react-router-dom";
 
 import SiriusInTheSky from "../assets/images/sirius_in_the_sky.svg";
 import useConfirmUser from "../hooks/useConfirmUser";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
 
 const EmailConfirmationPage = () => {
@@ -11,15 +11,15 @@ const EmailConfirmationPage = () => {
   const token = new URLSearchParams(search).get("token");
   const [data, loading, error] = useConfirmUser(token);
 
+  const helmet = useSetAndTrackPageTitle({ title: `Confirmation d'adresse email - Sirius` });
+
   if (!token) return <Navigate to="/campagnes/gestion" />;
 
   if (loading) return null;
 
   return (
     <>
-      <Helmet>
-        <title>Confirmation d'adresse email - Sirius</title>
-      </Helmet>
+      {helmet}
       <LoginAndSignupContainer>
         <LoginAndSignupHeader>
           <div>

@@ -1,7 +1,6 @@
 import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Tag } from "@codegouvfr/react-dsfr/Tag";
-import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 
 import Avatar from "../assets/images/avatar.svg";
@@ -17,6 +16,7 @@ import School from "../assets/images/school.svg";
 import { useGet } from "../common/hooks/httpHooks";
 import NeedHelp from "../Components/NeedHelp";
 import useFetchEtablissementsPublicStatistics from "../hooks/useFetchEtablissementsPublicStatistics";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import {
   CardContainer,
   CFAButtonContainer,
@@ -33,6 +33,7 @@ import {
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const helmet = useSetAndTrackPageTitle({ title: "Accueil - Sirius" });
 
   const [questionnaires] = useGet(`/api/questionnaires/`);
   const [etablissementsSuiviPublic] = useFetchEtablissementsPublicStatistics();
@@ -42,9 +43,7 @@ const HomePage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Accueil - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <h2>
           Avec Sirius recueillez les témoignages de vos apprenti·es{" "}

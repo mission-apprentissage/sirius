@@ -2,15 +2,18 @@
 import { DownloadIcon } from "@chakra-ui/icons";
 import { Box } from "@chakra-ui/react";
 import { useContext, useState } from "react";
-import { Helmet } from "react-helmet-async";
 
 import Button from "../Components/Form/Button";
 import { UserContext } from "../context/UserContext";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { apiGet } from "../utils/api.utils";
 
 const SuiviCampagnesPage = () => {
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
   const [userContext] = useContext(UserContext);
+
+  const helmet = useSetAndTrackPageTitle({ title: `Suivi des campagnes - Sirius` });
+
   const handleDownload = async (e) => {
     e.stopPropagation();
     setIsLoadingDownload(true);
@@ -34,9 +37,7 @@ const SuiviCampagnesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Suivi des campagnes - Sirius</title>
-      </Helmet>
+      {helmet}
       <Box display="flex" w="100%" mt="50px" justifyContent="center">
         <Button
           onClick={handleDownload}

@@ -1,21 +1,20 @@
 import { fr } from "@codegouvfr/react-dsfr";
-import { Helmet } from "react-helmet-async";
 
 import Avatar from "../assets/images/avatar.svg";
 import Community from "../assets/images/community.svg";
 import DocumentAdd from "../assets/images/document_add.svg";
 import School from "../assets/images/school.svg";
 import useFetchEtablissementsPublicStatistics from "../hooks/useFetchEtablissementsPublicStatistics";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { Container, ExperimentationAndTestimonyContainer, StatisticsContainer } from "./statistics.style";
 
 const StatisticsPage = () => {
   const [etablissementsSuiviPublic] = useFetchEtablissementsPublicStatistics();
+  const helmet = useSetAndTrackPageTitle({ title: `Statistiques - Sirius` });
 
   return (
     <>
-      <Helmet>
-        <title>Statistiques - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <div>
           <h1>Statistiques</h1>

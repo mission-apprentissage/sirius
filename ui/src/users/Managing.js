@@ -1,13 +1,15 @@
 import { Flex, Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 
 import useFetchUsers from "../hooks/useFetchUsers";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import UsersTable from "./Components/UsersTable/UsersTable";
 
 const Managing = () => {
   const [refetchData, setRefetchData] = useState(false);
   const [users, usersLoading, usersError] = useFetchUsers(refetchData);
+
+  const helmet = useSetAndTrackPageTitle({ title: `Gérer les utilisateurs - Sirius` });
 
   useEffect(() => {
     if (refetchData) {
@@ -19,9 +21,7 @@ const Managing = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Gérer les utilisateurs - Sirius</title>
-      </Helmet>
+      {helmet}
       <Flex direction="column" w="100%" m="auto">
         <Flex direction="column" w="100%" m="auto">
           {users.length > 0 && <UsersTable users={users} setRefetchData={setRefetchData} />}

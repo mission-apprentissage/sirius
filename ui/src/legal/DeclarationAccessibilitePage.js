@@ -1,15 +1,15 @@
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { Container } from "./shared.style";
 
 const DeclarationAccessibilitePage = () => {
+  const helmet = useSetAndTrackPageTitle({ title: "Déclaration d'accessibilité - Sirius" });
+
   return (
     <>
-      <Helmet>
-        <title>Déclaration d'accessibilité - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <h1>Déclaration d’accessibilité</h1>
         <p>Établie le 25 novembre 2024.</p>

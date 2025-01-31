@@ -16,11 +16,11 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 
 import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { apiDelete, apiPut } from "../utils/api.utils";
 import DeleteQuestionnaireConfirmationModal from "./DeleteQuestionnaireConfirmationModal";
 import DuplicateQuestionnaireModal from "./DuplicateQuestionnaireModal";
@@ -169,6 +169,8 @@ const Managing = () => {
   const [questionnaireToDuplicate, setQuestionnaireToDuplicate] = useState(null);
   const [questionnaireToDelete, setQuestionnaireToDelete] = useState(null);
 
+  const helmet = useSetAndTrackPageTitle({ title: "Gérer les questionnaires - Sirius" });
+
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -222,9 +224,7 @@ const Managing = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Gérer les questionnaires - Sirius</title>
-      </Helmet>
+      {helmet}
       <Box display="flex" flexDirection="column" width="80%" m="auto">
         {displayedQuestionnaires.length ? (
           <>
