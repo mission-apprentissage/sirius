@@ -20,11 +20,11 @@ import {
 import MonacoEditor from "@monaco-editor/react";
 import { useFormik } from "formik";
 import { useContext, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 import { UserContext } from "../context/UserContext";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { apiPost, apiPut } from "../utils/api.utils";
 
 const submitHandler = async (values, editedQuestionnaireId, userContext) => {
@@ -96,6 +96,10 @@ const QuestionnaireForm = ({ editedQuestionnaire = null, duplicatedQuestionnaire
   const [questionnaireUI, setQuestionnaireUI] = useState(null);
   const [userContext] = useContext(UserContext);
 
+  const helmet = useSetAndTrackPageTitle({
+    title: `${editedQuestionnaire ? "Éditer" : "Ajouter"} un questionnaire - Sirius`,
+  });
+
   const currentQuestionnaire = duplicatedQuestionnaire ? duplicatedQuestionnaire : editedQuestionnaire;
 
   const isDuplicating = !!duplicatedQuestionnaire;
@@ -139,9 +143,7 @@ const QuestionnaireForm = ({ editedQuestionnaire = null, duplicatedQuestionnaire
 
   return (
     <>
-      <Helmet>
-        <title>{`${editedQuestionnaire ? "Éditer" : "Ajouter"} un questionnaire - Sirius`}</title>
-      </Helmet>
+      {helmet}
       <Flex
         align="center"
         justify="center"

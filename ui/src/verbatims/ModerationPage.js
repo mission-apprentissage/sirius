@@ -5,7 +5,6 @@ import { Pagination } from "@codegouvfr/react-dsfr/Pagination";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
@@ -13,6 +12,7 @@ import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../constants";
 import useFetchVerbatims from "../hooks/useFetchVerbatims";
 import useFetchVerbatimsCount from "../hooks/useFetchVerbatimsCount";
 import usePatchVerbatims from "../hooks/usePatchVerbatims";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import ModerationActions from "./Moderation/ModerationActions";
 import ModerationEtablissementPicker from "./Moderation/ModerationEtablissementPicker";
 import ModerationFormationPicker from "./Moderation/ModerationFormationPicker";
@@ -130,6 +130,8 @@ const ModerationPage = () => {
   const [selectedTab, setSelectedTab] = useState(VERBATIM_STATUS.PENDING);
   const [showOnlyDiscrepancies, setShowOnlyDiscrepancies] = useState(false);
 
+  const helmet = useSetAndTrackPageTitle({ title: `Modérer les verbatims - Sirius` });
+
   const { verbatimsCount } = useFetchVerbatimsCount({
     etablissementSiret: pickedEtablissement?.siret,
     formationId: pickedFormationId,
@@ -165,9 +167,7 @@ const ModerationPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Modérer les verbatims - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <ModerationContainer>
           <h1>

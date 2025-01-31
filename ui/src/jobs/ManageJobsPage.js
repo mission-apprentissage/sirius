@@ -6,12 +6,12 @@ import { Select } from "@codegouvfr/react-dsfr/SelectNext";
 import { Table } from "@codegouvfr/react-dsfr/Table";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { BeatLoader } from "react-spinners";
 
 import { JOB_STATUS, JOB_STATUS_LABELS, JOB_TYPES, JOB_TYPES_LABELS } from "../constants";
 import useFetchJob from "../hooks/useFetchJob";
 import useFetchJobs from "../hooks/useFetchJobs";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import useStartJob from "../hooks/useStartJob";
 import useStopJob from "../hooks/useStopJob";
 import { Container, ManageJobsContainer, TriggerJobContainer } from "./manageJobs.style";
@@ -63,6 +63,8 @@ const ManageJobsPage = () => {
   const { mutate: startJob, startedJob } = useStartJob();
   const { mutate: stopJob, stoppedJob } = useStopJob();
 
+  const helmet = useSetAndTrackPageTitle({ title: "Gérer les jobs - Sirius" });
+
   const { job } = useFetchJob(runningJob?.id);
 
   const handleRunningJob = () => {
@@ -93,9 +95,7 @@ const ManageJobsPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Gérer les jobs - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <ManageJobsContainer>
           <h1>

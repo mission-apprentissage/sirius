@@ -1,15 +1,17 @@
 import { useContext } from "react";
-import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 
 import Support from "../assets/images/support.svg";
 import { USER_STATUS } from "../constants";
 import { UserContext } from "../context/UserContext";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { LoginAndSignupContainer, LoginAndSignupHeader } from "./styles/shared.style";
 
 const PendingAccountPage = () => {
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
+
+  const helmet = useSetAndTrackPageTitle({ title: `Compte en attente - Sirius` });
 
   if (userContext.user?.status === USER_STATUS.ACTIVE) {
     navigate("/");
@@ -17,9 +19,7 @@ const PendingAccountPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Compte en attente - Sirius</title>
-      </Helmet>
+      {helmet}
       <LoginAndSignupContainer>
         <LoginAndSignupHeader>
           <div>

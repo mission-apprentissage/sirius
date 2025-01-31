@@ -5,11 +5,11 @@ import { Range } from "@codegouvfr/react-dsfr/Range";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { ToggleSwitch } from "@codegouvfr/react-dsfr/ToggleSwitch";
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchUncompliantTemoignages from "../hooks/useFetchUncompliantTemoignages";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import DeleteTemoignagesConfirmationModal from "./Components/DeleteTemoignagesConfirmationModal";
 import ManageTemoignagesTable from "./Components/ManageTemoignagesTable";
 import { Container, FiltersContainer, ManageTemoignagesContainer } from "./manageTemoignages.style";
@@ -78,6 +78,8 @@ const ManageTemoignagesPage = () => {
   const [answeredQuestions, setAnsweredQuestions] = useState(12);
   const [selectedTemoignagesIds, setSelectedTemoignagesIds] = useState([]);
 
+  const helmet = useSetAndTrackPageTitle({ title: `Gérer les témoignages - Sirius` });
+
   const { uncompliantTemoignages, isSuccess, isError, isLoading } = useFetchUncompliantTemoignages({
     type: selectedTab,
     duration,
@@ -113,9 +115,7 @@ const ManageTemoignagesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Gérer les témoignages - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <ManageTemoignagesContainer>
           <h1>

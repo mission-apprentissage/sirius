@@ -4,7 +4,6 @@ import { Input } from "@codegouvfr/react-dsfr/Input";
 import { RadioButtons } from "@codegouvfr/react-dsfr/RadioButtons";
 import { useFormik } from "formik";
 import { useContext, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link, Navigate } from "react-router-dom";
 import * as Yup from "yup";
 
@@ -13,6 +12,7 @@ import Support from "../assets/images/support.svg";
 import NeedHelp from "../Components/NeedHelp";
 import { emailWithTLDRegex, ROLE_TYPE, USER_ROLES } from "../constants";
 import { UserContext } from "../context/UserContext";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { apiPost } from "../utils/api.utils";
 import {
   allFieldMessage,
@@ -76,6 +76,8 @@ const SignupPage = () => {
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [error, setError] = useState(null);
   const [userContext] = useContext(UserContext);
+
+  const helmet = useSetAndTrackPageTitle({ title: `Inscription - Sirius` });
 
   const formik = useFormik({
     initialValues: {
@@ -167,9 +169,7 @@ const SignupPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Inscription - Sirius</title>
-      </Helmet>
+      {helmet}
       <LoginAndSignupContainer>
         {!isSuccessful ? (
           <>

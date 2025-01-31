@@ -1,15 +1,15 @@
 import { Table } from "@codegouvfr/react-dsfr/Table";
-import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { Container } from "./shared.style";
 
 const MentionsInformationBackOfficePage = () => {
+  const helmet = useSetAndTrackPageTitle({ title: "Mention d'information - Sirius" });
+
   return (
     <>
-      <Helmet>
-        <title>Mention d'information - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <h1>Mentions d'information</h1>
         <h3>Traitement de données à caractère personnel</h3>

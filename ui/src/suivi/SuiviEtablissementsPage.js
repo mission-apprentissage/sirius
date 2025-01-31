@@ -1,8 +1,8 @@
 import { Box, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 
 import useFetchEtablissementsSuivi from "../hooks/useFetchEtablissementsSuivi";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import SuiviEtablissementsFilters from "./SuiviEtablissements/SuiviEtablissementsFilters";
 import SuiviEtablissementsSearch from "./SuiviEtablissements/SuiviEtablissementsSearch";
 import SuiviEtablissementsStatistics from "./SuiviEtablissements/SuiviEtablissementsStatistics";
@@ -11,6 +11,8 @@ import SuiviEtablissementsTable from "./SuiviEtablissements/SuiviEtablissementsT
 const SuiviEtablissementsPage = () => {
   const [displayedEtablissements, setDisplayedEtablissements] = useState([]);
   const [search, setSearch] = useState([]);
+
+  const helmet = useSetAndTrackPageTitle({ title: `Suivi des établissements - Sirius` });
 
   const [etablissementsSuivi, etablissementsSuiviLoading, etablissementsSuiviError] = useFetchEtablissementsSuivi();
 
@@ -22,9 +24,7 @@ const SuiviEtablissementsPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Suivi des établissements - Sirius</title>
-      </Helmet>
+      {helmet}
       <VStack my="5" w="100%">
         <Box w="100%" my="5">
           <Text fontSize="5xl" fontWeight="600" color="brand.blue.700">

@@ -5,7 +5,6 @@ import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useContext, useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
@@ -13,6 +12,7 @@ import { useGet } from "../common/hooks/httpHooks";
 import { UserContext } from "../context/UserContext";
 import useCreateCampagnes from "../hooks/useCreateCampagnes";
 import useFetchRemoteFormations from "../hooks/useFetchRemoteFormations";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import CampagneConfigurator from "./CreateCampagnes/CampagneConfigurator";
 import FormationsSelector from "./CreateCampagnes/FormationsSelector";
 import SupportModal from "./Shared/SupportModal";
@@ -33,6 +33,8 @@ const CreateCampagnesPage = () => {
   const [userContext] = useContext(UserContext);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const helmet = useSetAndTrackPageTitle({ title: `Étape ${step} - Créer des campagnes - Sirius` });
 
   const [questionnaires] = useGet(`/api/questionnaires/`);
 
@@ -108,9 +110,8 @@ const CreateCampagnesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{`Étape ${step} - Créer des campagnes - Sirius`}</title>
-      </Helmet>
+      {helmet}
+
       <Container>
         <CreateCampagneContainer>
           {step === 1 && (

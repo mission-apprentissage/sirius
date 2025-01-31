@@ -4,7 +4,6 @@ import { Alert } from "@codegouvfr/react-dsfr/Alert";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { Tabs } from "@codegouvfr/react-dsfr/Tabs";
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { useSearchParams } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
 
@@ -13,6 +12,7 @@ import useFetchCampagnesByBatch from "../hooks/useFetchCampagnesByBatch";
 import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
 import useFetchTemoignagesDatavisualisation from "../hooks/useFetchTemoignagesDatavisualisation";
 import useFetchTemoignagesXlsExport from "../hooks/useFetchTemoignagesXlsExport";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import { exportMultipleChartsToPdf } from "./pdfExport";
 import ExportResultsCampagnesVisualisation from "./ResultsCampagnes/ExportResultsCampagnesVisualisation";
 import ResultsCampagnesVisualisation from "./ResultsCampagnes/ResultsCampagnesVisualisation";
@@ -43,6 +43,8 @@ const ResultsCampagnesPage = () => {
 
   const [currentDatavisualisationQuestionnaireId, setCurrentDatavisualisationQuestionnaireId] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const helmet = useSetAndTrackPageTitle({ title: "Voir les témoignages - Sirius" });
 
   const paramsCampagneIds = searchParams.has("campagneIds") ? searchParams.get("campagneIds").split(",") : [];
 
@@ -142,9 +144,7 @@ const ResultsCampagnesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Voir les témoignages - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <ResultsCampagneContainer>
           <h1>

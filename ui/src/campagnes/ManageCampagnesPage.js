@@ -2,13 +2,13 @@ import { fr } from "@codegouvfr/react-dsfr";
 import { Button } from "@codegouvfr/react-dsfr/Button";
 import { createModal } from "@codegouvfr/react-dsfr/Modal";
 import { useContext, useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import NeedHelp from "../Components/NeedHelp";
 import { CAMPAGNE_TABLE_TYPES } from "../constants";
 import { UserContext } from "../context/UserContext";
 import useFetchCampagnesStatistics from "../hooks/useFetchCampagnesStatistics";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import SuccessCreationModal from "./ManageCampagne/SuccessCreationModal";
 import CampagnesSelector from "./Shared/CampagnesSelector/CampagnesSelector";
 import Statistics from "./Shared/Statistics/Statistics";
@@ -31,6 +31,7 @@ const ManageCampagnesPage = () => {
   const [userContext] = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const helmet = useSetAndTrackPageTitle({ title: "Diffuser mes campagnes - Sirius" });
 
   useEffect(() => {
     if (location.state?.successCreation) {
@@ -56,9 +57,7 @@ const ManageCampagnesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Diffuser mes campagnes - Sirius</title>
-      </Helmet>
+      {helmet}
       <Container>
         <Statistics statistics={statistics || emptyStatistics} title="Sirius & vous en quelques chiffres" />
         <ManageCampagneContainer>
