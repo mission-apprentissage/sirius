@@ -1,11 +1,10 @@
 import { Checkbox } from "@codegouvfr/react-dsfr/Checkbox";
-import { Tooltip } from "react-tooltip";
 
 import { VERBATIM_STATUS, VERBATIM_STATUS_LABELS } from "../../constants";
-import { QuestionKeyContainer, ScoresContainer, TooltipContainer } from "../moderationPage.style";
+import { QuestionKeyContainer, ScoresContainer } from "../moderationPage.style";
 import { AICell, FormationCell } from "./Components";
 
-const formatScores = (verbatim, index) => {
+const formatScores = (verbatim) => {
   const scores = verbatim.scores;
   if (!scores) return null;
 
@@ -22,15 +21,7 @@ const formatScores = (verbatim, index) => {
   return sortedEntries.map(([key, score]) =>
     key === VERBATIM_STATUS.GEM && score?.avis === "oui" ? (
       <p key={key}>
-        <Tooltip
-          background="var(--background-default-grey)"
-          border="var(--border-default-grey)"
-          color="var(--text-default-grey)"
-          placement={index < 5 ? "bottom" : "top"}
-          content={<TooltipContainer>{score.justification}</TooltipContainer>}
-        >
-          {VERBATIM_STATUS_LABELS[key]}: {score.avis}
-        </Tooltip>
+        {VERBATIM_STATUS_LABELS[key]}: {score.avis}
       </p>
     ) : key !== VERBATIM_STATUS.GEM ? (
       <p key={key}>

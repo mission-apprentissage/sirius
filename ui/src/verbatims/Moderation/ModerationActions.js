@@ -17,12 +17,13 @@ const ModerationActions = ({ selectedVerbatims, showOnlyDiscrepancies, setShowOn
     const updatedVerbatims = selectedVerbatims
       .map((verbatim) => {
         if (!verbatim.scores) return;
-        const highestScore = Object.entries(verbatim.scores)
+        const highestScoreWithoutGem = Object.entries(verbatim.scores)
           .filter(([key]) => key !== "NOT_VALIDATED")
+          .filter(([key]) => key !== VERBATIM_STATUS.GEM)
           .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)[0];
 
         const isGem = verbatim.scores.GEM.avis === "oui";
-        const status = isGem ? VERBATIM_STATUS.GEM : highestScore[0];
+        const status = isGem ? VERBATIM_STATUS.GEM : highestScoreWithoutGem[0];
 
         return {
           id: verbatim.id,
