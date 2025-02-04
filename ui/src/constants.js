@@ -109,6 +109,7 @@ export const OPCO_LIST = [
   { label: "mobilites", value: "mobilites" },
   { label: "ep", value: "ep" },
   { label: "sante", value: "sante" },
+  { label: "opcommerce", value: "opcommerce" },
 ];
 
 export const CAMPAGNE_TABLE_TYPES = {
