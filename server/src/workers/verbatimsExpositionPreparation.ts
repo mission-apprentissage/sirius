@@ -1,7 +1,7 @@
 import { parentPort, workerData } from "worker_threads";
 
 import config from "../config";
-import { JOB_STATUS, VERBATIM_THEMES, VERBATIM_THEMES_LABELS } from "../constants";
+import { JOB_STATUS, VERBATIM_STATUS, VERBATIM_THEMES, VERBATIM_THEMES_LABELS } from "../constants";
 import { connectToPgDb, getKbdClient } from "../db/db";
 import logger from "../modules/logger";
 import type { ExpositionApiResponse, FetchOptions, Verbatim } from "../types";
@@ -130,6 +130,8 @@ const cancellationMonitor = async (jobId: string) => {
       verbatimsQuery = verbatimsQuery.where("deleted_at", "is", null).where("themes", "is", null);
     } else if (!processAll && type === "onlyAnonymized") {
       verbatimsQuery = verbatimsQuery.where("deleted_at", "is", null).where("is_anonymized", "=", true);
+    } else if (!processAll && type === "forceGem") {
+      verbatimsQuery = verbatimsQuery.where("deleted_at", "is", null).where("status", "=", VERBATIM_STATUS.GEM);
     }
 
     const verbatims = await verbatimsQuery.execute();

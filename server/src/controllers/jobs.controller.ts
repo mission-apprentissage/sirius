@@ -5,10 +5,21 @@ import { JOB_STATUS, JOB_TYPES } from "../constants";
 import * as jobsService from "../services/jobs.service";
 import tryCatch from "../utils/tryCatch.utils";
 
+const getType = (jobOnlyAnonymized: boolean, jobForceGem: boolean): string | null => {
+  if (jobOnlyAnonymized) {
+    return "onlyAnonymized";
+  } else if (jobForceGem) {
+    return "forceGem";
+  } else {
+    return null;
+  }
+};
+
 export const startJob = tryCatch(async (req: any, res: any) => {
   const jobId = uuidv4();
   const jobType = req.body.jobType;
   const jobOnlyAnonymized = req.body.onlyAnonymized;
+  const jobForceGem = req.body.forceGem;
   const status = JOB_STATUS.IN_PROGRESS;
   let worker;
 
@@ -20,8 +31,8 @@ export const startJob = tryCatch(async (req: any, res: any) => {
     worker = new Worker("./dist/workers/verbatimsExpositionPreparation.js", {
       workerData: {
         jobId,
-        processAll: jobOnlyAnonymized ? false : true,
-        type: jobOnlyAnonymized ? "onlyAnonymized" : null,
+        processAll: jobOnlyAnonymized || jobForceGem ? false : true,
+        type: getType(jobOnlyAnonymized, jobForceGem),
       },
     });
   }
