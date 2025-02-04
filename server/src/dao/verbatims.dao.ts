@@ -141,24 +141,36 @@ export const getAllWithFormation = async (query: any = {}, onlyDiscrepancies: bo
   }
 
   if (onlyDiscrepancies) {
-    baseQuery = baseQuery
-      .select(
-        sql`
-        CASE
-          WHEN verifications.scores->'GEM'->>'avis' = 'oui' THEN jsonb_build_object('k', 'GEM', 'v', verifications.scores->'GEM'->>'justification')
-          ELSE (
-            SELECT jsonb_build_object('k', item.key, 'v', item.value)
-            FROM jsonb_each(verbatims.scores) as item
-            WHERE item.value = (
-              SELECT MAX(value)
-              FROM jsonb_each(verbatims.scores) as max_item
-            )
-            LIMIT 1
-          )
-        END as maxScoreKey
-      `.as("maxScoreKey") as unknown as any
+    const maxScoreKeySQL = sql`
+      CASE 
+        WHEN verbatims.scores IS NOT NULL 
+        THEN (
+            jsonb_build_object(
+                'GEM', 
+                CASE 
+                    WHEN verbatims.scores->'GEM'->>'avis' = 'oui' THEN 1
+                    WHEN verbatims.scores->'GEM'->>'avis' = 'non' THEN 0
+                    ELSE NULL
+                END
+            ) || (verbatims.scores - 'GEM')
+        )
+      END
+    `;
+
+    const highestScoreKeySQL = sql`
+      (SELECT key
+       FROM jsonb_each(
+            ${maxScoreKeySQL}
+       )
+       ORDER BY value::numeric DESC 
+       LIMIT 1
       )
-      .having(sql`maxScoreKey->>'k'`, "!=", sql`verbatims.status`);
+    `;
+
+    baseQuery = baseQuery
+      .select(maxScoreKeySQL.as("maxScoreKey"))
+      .select(highestScoreKeySQL.as("highestScoreKey"))
+      .where(highestScoreKeySQL, sql`IS DISTINCT FROM`, query.status);
   }
 
   const paginatedQuery = await executeWithOffsetPagination(baseQuery, {
