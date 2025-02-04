@@ -26,7 +26,7 @@ export const getAll = async (query: {
       "verbatims.temoignage_id",
       "verbatims.status",
       "verbatims.question_key",
-      sql<string>`COALESCE(verbatims.content_corrected, verbatims.content_corrected_anonymized, verbatims.content)`.as(
+      sql<string>`COALESCE(verbatims.content_corrected_anonymized, verbatims.content_corrected, verbatims.content)`.as(
         "content"
       ),
       "verbatims.scores",
