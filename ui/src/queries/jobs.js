@@ -16,11 +16,11 @@ export const fetchJobs = async ({ token }) => {
   return response;
 };
 
-export const startJob = async ({ jobType, onlyAnonymized, forceGem, token }) => {
+export const startJob = async ({ jobType, onlyAnonymized, forceGem, notCorrectedAndNotAnonymized, token }) => {
   const url = `/jobs/start`;
 
   const response = await apiPost(url, {
-    body: { jobType, onlyAnonymized, forceGem },
+    body: { jobType, onlyAnonymized, forceGem, notCorrectedAndNotAnonymized },
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -1,3 +1,4 @@
+import { sql } from "kysely";
 import { parentPort, workerData } from "worker_threads";
 
 import config from "../config";
@@ -35,7 +36,7 @@ const verbatimsExpositionPreparation = async (verbatim: Verbatim) => {
         throw error;
       }
 
-      logger.info(`Retrying in ${delay}ms... (${MAX_RETRIES - retries + 1}/${MAX_RETRIES})`);
+      console.info(`Retrying in ${delay}ms... (${MAX_RETRIES - retries + 1}/${MAX_RETRIES})`);
       await sleep(delay);
       return fetchWithRetry(url, options, retries - 1, delay * 2);
     }
@@ -48,7 +49,7 @@ const verbatimsExpositionPreparation = async (verbatim: Verbatim) => {
       body: JSON.stringify({ text: verbatim.content }),
     });
 
-    logger.info("Themes API response:", data);
+    console.info("Themes API response:", data);
     if (data?.exposition) {
       const booleanizedThemes = Object.keys(VERBATIM_THEMES).map((theme) => ({
         [theme]: data?.exposition[VERBATIM_THEMES_LABELS[theme]] === "oui",
@@ -67,7 +68,7 @@ const verbatimsExpositionPreparation = async (verbatim: Verbatim) => {
     }
     console.log("----------------");
   } catch (err) {
-    logger.error("Failed to classify verbatim:", verbatim.id, err);
+    console.error("Failed to classify verbatim:", verbatim.id, err);
   }
 };
 
@@ -132,12 +133,18 @@ const cancellationMonitor = async (jobId: string) => {
       verbatimsQuery = verbatimsQuery.where("deleted_at", "is", null).where("is_anonymized", "=", true);
     } else if (!processAll && type === "forceGem") {
       verbatimsQuery = verbatimsQuery.where("deleted_at", "is", null).where("status", "=", VERBATIM_STATUS.GEM);
+    } else if (!processAll && type === "notCorrectedAndNotAnonymized") {
+      verbatimsQuery = verbatimsQuery
+        .where("deleted_at", "is", null)
+        .where((qb) => qb.or([qb("content_corrected", "is", null), qb("content_corrected_anonymized", "is", null)]))
+        .orderBy(sql`CASE WHEN "status" = 'GEM' THEN 0 ELSE 1 END`, "asc")
+        .orderBy("status", "asc");
     }
 
     const verbatims = await verbatimsQuery.execute();
     const totalVerbatims = verbatims.length;
 
-    logger.info(`Found ${verbatims.length} unthemed verbatims`);
+    console.info(`Found ${verbatims.length} unthemed verbatims`);
 
     let processed = 0;
 
