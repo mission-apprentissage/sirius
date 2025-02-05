@@ -117,12 +117,6 @@
         job: "sudo docker exec -i $(sudo docker ps --filter 'name=^sirius_server' --format '{{'{{.ID}}'}}' | head -n 1) yarn cli send-email-notifications >> /var/log/cron.log 2>&1; /opt/app/tools/monitoring/export-cron-status-prom.sh -c 'Send email notifications Alias' -v $?"
       when: env_type == "production"
 
-    - name: "Setup de la Metabase"
-      shell:
-        chdir: /opt/app
-        cmd: "sudo bash /opt/app/configs/metabase/setup-metabase.sh"
-      timeout: 86400 # 1 day
-
     - name: "Prune Docker"
       shell:
         chdir: /opt/app
