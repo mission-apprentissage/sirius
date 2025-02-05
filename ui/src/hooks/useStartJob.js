@@ -9,8 +9,8 @@ const useStartJob = () => {
   const [userContext] = useContext(UserContext);
 
   const { mutate, data, isSuccess, isError, isLoading } = useMutation({
-    mutationFn: ({ jobType, onlyAnonymized, forceGem }) =>
-      startJob({ jobType, onlyAnonymized, forceGem, token: userContext.token }),
+    mutationFn: ({ jobType, onlyAnonymized, forceGem, notCorrectedAndNotAnonymized }) =>
+      startJob({ jobType, onlyAnonymized, forceGem, notCorrectedAndNotAnonymized, token: userContext.token }),
     mutationKey: "start-job",
     onSuccess: () => {
       queryClient.invalidateQueries(["jobs"]);

@@ -60,6 +60,7 @@ const ManageJobsPage = () => {
   const [runningJob, setRunningJob] = useState(null);
   const [onlyAlreadyAnonymizedVerbatims, setOnlyAlreadyAnonymizedVerbatims] = useState(false);
   const [onlyForceGemVerbatims, setOnlyForceGemVerbatims] = useState(false);
+  const [notCorrectedAndNotAnonymized, setNotCorrectedAndNotAnonymized] = useState(false);
   const { jobs, isError, isLoading, isSuccess } = useFetchJobs();
   const { mutate: startJob, startedJob } = useStartJob();
   const { mutate: stopJob, stoppedJob } = useStopJob();
@@ -70,7 +71,12 @@ const ManageJobsPage = () => {
 
   const handleRunningJob = () => {
     if (!selectedJob) return;
-    startJob({ jobType: selectedJob, onlyAnonymized: onlyAlreadyAnonymizedVerbatims, forceGem: onlyForceGemVerbatims });
+    startJob({
+      jobType: selectedJob,
+      onlyAnonymized: onlyAlreadyAnonymizedVerbatims,
+      forceGem: onlyForceGemVerbatims,
+      notCorrectedAndNotAnonymized,
+    });
   };
 
   const handleJobCancelation = () => {
@@ -140,10 +146,12 @@ const ManageJobsPage = () => {
                       label: "Uniquement sur les verbatims déjà anonymisés",
                       nativeInputProps: {
                         name: `selectOnlyAlreadyAnonymized`,
-                        checked: onlyAlreadyAnonymizedVerbatims,
+                        checked:
+                          onlyAlreadyAnonymizedVerbatims && !onlyForceGemVerbatims && !notCorrectedAndNotAnonymized,
                         onChange: () => {
                           setOnlyAlreadyAnonymizedVerbatims(!onlyAlreadyAnonymizedVerbatims);
                           setOnlyForceGemVerbatims(false);
+                          setNotCorrectedAndNotAnonymized(false);
                         },
                       },
                     },
@@ -155,9 +163,28 @@ const ManageJobsPage = () => {
                       label: "Repasser sur toutes les pépites",
                       nativeInputProps: {
                         name: `selectForceGem`,
-                        checked: onlyForceGemVerbatims && !onlyAlreadyAnonymizedVerbatims,
+                        checked:
+                          onlyForceGemVerbatims && !onlyAlreadyAnonymizedVerbatims && !notCorrectedAndNotAnonymized,
                         onChange: () => {
                           setOnlyForceGemVerbatims(!onlyForceGemVerbatims);
+                          setOnlyAlreadyAnonymizedVerbatims(false);
+                          setNotCorrectedAndNotAnonymized(false);
+                        },
+                      },
+                    },
+                  ]}
+                />
+                <Checkbox
+                  options={[
+                    {
+                      label: "Verbatims non corrigé et non anonymisé",
+                      nativeInputProps: {
+                        name: `selectAllNotCorrectedAndNotAnonymized`,
+                        checked:
+                          notCorrectedAndNotAnonymized && !onlyForceGemVerbatims && !onlyAlreadyAnonymizedVerbatims,
+                        onChange: () => {
+                          setNotCorrectedAndNotAnonymized(!notCorrectedAndNotAnonymized);
+                          setOnlyForceGemVerbatims(false);
                           setOnlyAlreadyAnonymizedVerbatims(false);
                         },
                       },

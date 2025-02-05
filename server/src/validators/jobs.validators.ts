@@ -8,4 +8,5 @@ export const startJobSchema = Joi.object({
     .required(),
   onlyAnonymized: Joi.boolean(),
   forceGem: Joi.boolean(),
+  notCorrectedAndNotAnonymized: Joi.boolean(),
 });
