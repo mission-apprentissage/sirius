@@ -90,6 +90,8 @@ services:
       MB_EMAIL_SMTP_USERNAME: "{{vault[env_type].SMTP_AUTH_USER}}"
       MB_EMAIL_SMTP_PASSWORD: "{{vault[env_type].SMTP_AUTH_PASS}}"
       MB_EMAIL_SMTP_SECURITY: tls
+    volumes:
+      - /opt/app/metabase/plugins:/plugins
     healthcheck:
       test: curl --fail -I http://localhost:3000/api/health || exit 1
       interval: 15s

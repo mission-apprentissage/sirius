@@ -72,3 +72,15 @@
     src: "{{inventory_dir}}/docker-compose.preview-system.yml"
     dest: "/opt/app/docker-compose.preview-system.yml"
   when: env_type == 'preview'
+
+- name: Ensure Metabase plugin directory exists
+  file:
+    path: "/opt/app/metabase/plugins"
+    state: directory
+    mode: "0755"
+
+- name: Download csv-metabase-driver plugin
+  get_url:
+    url: "https://github.com/Markenson/csv-metabase-driver/releases/download/v1.3.1/csv.metabase-driver.jar"
+    dest: "/opt/app/metabase/plugins/csv.metabase-driver.jar"
+    mode: "0644"
