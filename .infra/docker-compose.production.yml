@@ -90,6 +90,8 @@ services:
       MB_EMAIL_SMTP_USERNAME: "{{vault[env_type].SMTP_AUTH_USER}}"
       MB_EMAIL_SMTP_PASSWORD: "{{vault[env_type].SMTP_AUTH_PASS}}"
       MB_EMAIL_SMTP_SECURITY: tls
+      MB_MAX_FORM_CONTENT_SIZE: "104857600"
+      MB_MAX_MULTIPART_FILE_SIZE: "104857600"
     volumes:
       - /opt/app/metabase/plugins:/plugins
     healthcheck:
