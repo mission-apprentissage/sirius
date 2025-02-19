@@ -1,19 +1,30 @@
+import camelcaseKeys from "camelcase-keys";
+import decamelizeKeys from "decamelize-keys";
 import { sql } from "kysely";
 import { executeWithOffsetPagination } from "kysely-paginate";
 
 import { getKbdClient } from "../db/db";
-import type { Temoignage } from "../types";
-import type { GetAllWithFormationAndQuestionnaire } from "./types/temoignages";
+import type { Temoignage, TemoignageCreation } from "../types";
+import type {
+  FindAllResults,
+  FindAllWithVerbatimsResults,
+  GetAllTemoignagesWithFormationResults,
+  GetAllWithFormationAndQuestionnaireResults,
+} from "./types/temoignages.types";
 
 export const create = async (
-  temoignage: Partial<Temoignage> & { campagneId: string }
+  temoignage: TemoignageCreation & { campagneId: string }
 ): Promise<{ id: string } | undefined> => {
   const { campagneId, ...rest } = temoignage;
 
   const transaction = await getKbdClient()
     .transaction()
     .execute(async (trx) => {
-      const insertedTemoignage = await trx.insertInto("temoignages").values(rest).returning("id").executeTakeFirst();
+      const insertedTemoignage = await trx
+        .insertInto("temoignages")
+        .values(decamelizeKeys(rest))
+        .returning("id")
+        .executeTakeFirst();
 
       if (insertedTemoignage?.id) {
         await trx
@@ -31,9 +42,12 @@ export const create = async (
   return transaction ? { id: transaction } : undefined;
 };
 
-export const findAll = async (query: { campagneIds: string[] }) => {
+export const findAll = async (query: { campagneIds: string[] }): FindAllResults => {
   let queryBuilder = getKbdClient()
     .selectFrom("temoignages")
+    .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
+    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
+    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .select([
       "temoignages.id",
       "temoignages.reponses",
@@ -42,13 +56,10 @@ export const findAll = async (query: { campagneIds: string[] }) => {
       "temoignages.deleted_at",
       "temoignages.created_at",
       "temoignages.updated_at",
-      "formations.etablissement_formateur_entreprise_raison_sociale" as any,
-      "formations.etablissement_formateur_enseigne" as any,
-      "formations.etablissement_gestionnaire_enseigne" as any,
+      "formations.etablissement_formateur_entreprise_raison_sociale",
+      "formations.etablissement_formateur_enseigne",
+      "formations.etablissement_gestionnaire_enseigne",
     ])
-    .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
-    .leftJoin("formations_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
-    .leftJoin("formations", "formations_campagnes.formation_id", "formations.id")
     .where("temoignages.deleted_at", "is", null);
 
   if ("campagneIds" in query && query.campagneIds) {
@@ -56,10 +67,11 @@ export const findAll = async (query: { campagneIds: string[] }) => {
   }
 
   const results = await queryBuilder.execute();
-  return results;
+
+  return camelcaseKeys(results);
 };
 
-export const findAllWithVerbatims = async (query: { campagneIds: string[] }) => {
+export const findAllWithVerbatims = async (query: { campagneIds: string[] }): FindAllWithVerbatimsResults => {
   let queryBuilder = getKbdClient()
     .selectFrom("temoignages")
     .select([
@@ -70,7 +82,7 @@ export const findAllWithVerbatims = async (query: { campagneIds: string[] }) => 
       "temoignages.deleted_at",
       "temoignages.created_at",
       "temoignages.updated_at",
-      sql`COALESCE(json_agg(json_build_object(
+      sql<any>`COALESCE(json_agg(json_build_object(
         'id', verbatims.id,
         'temoignage_id', verbatims.temoignage_id,
         'question_key', verbatims.question_key,
@@ -80,7 +92,7 @@ export const findAllWithVerbatims = async (query: { campagneIds: string[] }) => 
         'themes', verbatims.themes,
         'deleted_at', verbatims.deleted_at
     )))`.as("verbatims"),
-      sql`temoignages_campagnes.campagne_id`.as("campagne_id"),
+      sql<string>`temoignages_campagnes.campagne_id`.as("campagne_id"),
     ])
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("verbatims", "temoignages.id", "verbatims.temoignage_id")
@@ -93,7 +105,8 @@ export const findAllWithVerbatims = async (query: { campagneIds: string[] }) => 
   }
 
   const results = await queryBuilder.execute();
-  return results;
+
+  return camelcaseKeys(results, { deep: true });
 };
 
 export const deleteOne = async (id: string): Promise<boolean> => {
@@ -133,10 +146,13 @@ export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boo
   return true;
 };
 
-export const update = async (id: string, updatedTemoignage: Partial<Temoignage>): Promise<boolean> => {
+export const update = async (
+  id: string,
+  updatedTemoignage: Pick<Temoignage, "isBot" | "reponses" | "lastQuestionAt">
+): Promise<boolean> => {
   const result = await getKbdClient()
     .updateTable("temoignages")
-    .set(updatedTemoignage)
+    .set(decamelizeKeys(updatedTemoignage))
     .where("id", "=", id)
     .where("deleted_at", "is", null)
     .executeTakeFirst();
@@ -157,12 +173,15 @@ export const countByCampagne = async (id: string): Promise<number> => {
 };
 
 export const findOne = async (id: string): Promise<Temoignage | undefined> => {
-  return getKbdClient()
+  const baseQuery = getKbdClient()
     .selectFrom("temoignages")
     .selectAll()
     .where("id", "=", id)
-    .where("deleted_at", "is", null)
-    .executeTakeFirst();
+    .where("deleted_at", "is", null);
+
+  const result = await baseQuery.executeTakeFirst();
+
+  return result ? camelcaseKeys(result) : undefined;
 };
 
 export const count = async (): Promise<number> => {
@@ -172,7 +191,7 @@ export const count = async (): Promise<number> => {
     .where("deleted_at", "is", null)
     .executeTakeFirstOrThrow();
 
-  return result.count as number;
+  return result ? Number(result.count) : 0;
 };
 
 export const uncompliantsCount = async (query: {
@@ -199,7 +218,11 @@ export const uncompliantsCount = async (query: {
   return result;
 };
 
-export const getAllTemoignagesWithFormation = async (query: Partial<Temoignage>, page: number, pageSize: number) => {
+export const getAllTemoignagesWithFormation = async (
+  query: Partial<Temoignage>,
+  page: number,
+  pageSize: number
+): GetAllTemoignagesWithFormationResults => {
   let baseQuery = getKbdClient()
     .selectFrom("temoignages")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
@@ -213,7 +236,7 @@ export const getAllTemoignagesWithFormation = async (query: Partial<Temoignage>,
       "temoignages.last_question_at",
       "temoignages.is_bot",
       "temoignages.deleted_at",
-      sql`json_build_object(
+      sql<any>`json_build_object(
       'id', formations.catalogue_id,
       'intitule_long', formations.intitule_long,
       'diplome', formations.diplome,
@@ -259,13 +282,13 @@ export const getAllTemoignagesWithFormation = async (query: Partial<Temoignage>,
 
   const result = await executeWithOffsetPagination(baseQuery, { page: Number(page), perPage: Number(pageSize) });
 
-  return result;
+  return camelcaseKeys(result, { deep: true });
 };
 
 export const getAllWithFormationAndQuestionnaire = async (
   campagneIds: string[]
-): Promise<GetAllWithFormationAndQuestionnaire[]> => {
-  const result = await getKbdClient()
+): GetAllWithFormationAndQuestionnaireResults => {
+  const baseQuery = getKbdClient()
     .selectFrom("temoignages")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
     .leftJoin("campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
@@ -276,21 +299,22 @@ export const getAllWithFormationAndQuestionnaire = async (
       "temoignages.reponses",
       "campagnes.nom_campagne",
       "campagnes.questionnaire_id",
-      sql`json_build_object(
-      'intitule_long', formations.intitule_long,
-      'localite', formations.localite,
-      'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
-      'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
-      'etablissement_formateur_siret', formations.etablissement_formateur_siret
-    )`.as("formation"),
+      sql<any>`json_build_object(
+        'intitule_long', formations.intitule_long,
+        'localite', formations.localite,
+        'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
+        'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
+        'etablissement_formateur_siret', formations.etablissement_formateur_siret
+      )`.as("formation"),
     ])
     .where("temoignages.deleted_at", "is", null)
     .where("campagnes.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
-    .where("temoignages_campagnes.campagne_id", "in", campagneIds)
-    .execute();
+    .where("temoignages_campagnes.campagne_id", "in", campagneIds);
 
-  return result as GetAllWithFormationAndQuestionnaire[];
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };
 
 export const deleteMultiple = async (ids: string[]): Promise<boolean> => {

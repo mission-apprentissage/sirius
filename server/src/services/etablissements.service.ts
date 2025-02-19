@@ -22,16 +22,16 @@ export const createEtablissements = async (etablissementsArray, relatedUserId) =
       if (!existingEtablissement.length) {
         const etablissementFromCatalogue = await catalogue.getEtablissement(etablissement.siret);
         const formattedEtablissement = {
-          catalogue_id: etablissementFromCatalogue._id,
+          catalogueId: etablissementFromCatalogue._id,
           siret: etablissementFromCatalogue.siret,
-          onisep_nom: etablissementFromCatalogue.onisep_nom,
-          onisep_url: etablissementFromCatalogue.onisep_url,
+          onisepNom: etablissementFromCatalogue.onisep_nom,
+          onisepUrl: etablissementFromCatalogue.onisep_url,
           enseigne: etablissementFromCatalogue.enseigne,
-          entreprise_raison_sociale: etablissementFromCatalogue.entreprise_raison_sociale,
+          entrepriseRaisonSociale: etablissementFromCatalogue.entreprise_raison_sociale,
           uai: etablissementFromCatalogue.uai,
           localite: etablissementFromCatalogue.localite,
-          region_implantation_nom: etablissementFromCatalogue.region_implantation_nom,
-          catalogue_data: JSON.stringify(etablissementFromCatalogue),
+          regionImplantationNom: etablissementFromCatalogue.region_implantation_nom,
+          catalogueData: JSON.stringify(etablissementFromCatalogue),
         };
         const createdEtablissement = await etablissementsDao.create(formattedEtablissement, relatedUserId);
         createdEtablissements.push(createdEtablissement);

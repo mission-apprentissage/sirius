@@ -1,18 +1,22 @@
+import camelcaseKeys from "camelcase-keys";
+import decamelizeKeys from "decamelize-keys";
 import { sql } from "kysely";
 
 import { OBSERVER_SCOPES } from "../constants";
 import { getKbdClient } from "../db/db";
-import type { ObserverScope } from "../types";
+import type { CampagneCreation, FormationCreation } from "../types";
+import type {
+  GetAllWithTemoignageCountAndTemplateNameArgs,
+  GetAllWithTemoignageCountAndTemplateNameResults,
+  GetAllWithTemoignageCountFormationEtablissementResults,
+  GetOneWithTemoignagneCountAndTemplateNameResults,
+} from "./types/campagnes.types";
 
 export const getAllWithTemoignageCountAndTemplateName = async ({
   query,
   scope,
   allowEmptyFilter = false,
-}: {
-  query: { diplome?: string[]; siret?: string[]; departement?: string; campagneIds: string[] };
-  scope?: ObserverScope;
-  allowEmptyFilter?: boolean;
-}) => {
+}: GetAllWithTemoignageCountAndTemplateNameArgs): GetAllWithTemoignageCountAndTemplateNameResults => {
   let baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
@@ -24,11 +28,11 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
       "campagnes.questionnaire_id",
       "campagnes.created_at",
       "campagnes.updated_at",
-      sql`json_build_object(
+      sql<{ questionnaireId: string; questionnaireTemplateName: string }>`json_build_object(
         'questionnaireId', questionnaires.id,
         'questionnaireTemplateName', questionnaires.nom
       )`.as("questionnaire"),
-      sql`json_build_object(
+      sql<any>`json_build_object(
         'id', formations.id,
         'catalogue_id', formations.catalogue_id,
         'code_postal', formations.code_postal,
@@ -47,7 +51,7 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
         'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
         'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale
       )`.as("formation"),
-      sql`json_build_object(
+      sql<any>`json_build_object(
         'id', etablissements.id,
         'catalogue_id', etablissements.catalogue_id,
         'siret', etablissements.siret,
@@ -62,8 +66,8 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
         'nom_voie', etablissements.catalogue_data ->> 'nom_voie',
         'code_postal', etablissements.catalogue_data ->> 'code_postal'
       )`.as("etablissement"),
-      sql`COUNT(temoignages.id)`.as("temoignagesCount"),
-      sql`COALESCE(json_agg(json_build_object(
+      sql<number>`COUNT(temoignages.id)`.as("temoignagesCount"),
+      sql<any>`COALESCE(json_agg(json_build_object(
         'id', temoignages.id,
         'last_question_at', temoignages.last_question_at,
         'created_at', temoignages.created_at
@@ -113,14 +117,18 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
     baseQuery = baseQuery.where("formations.etablissement_formateur_siret", "in", query.siret);
   }
 
-  return baseQuery.execute();
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };
 
 export const getOne = async (id: string) => {
-  return getKbdClient().selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
+  const result = await getKbdClient().selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
+
+  return result ? camelcaseKeys(result) : undefined;
 };
 
-export const create = async (campagne: any, formationId: string): Promise<string | undefined> => {
+export const create = async (campagne: CampagneCreation, formationId: string): Promise<string | undefined> => {
   if (!formationId) {
     return undefined;
   }
@@ -128,7 +136,11 @@ export const create = async (campagne: any, formationId: string): Promise<string
   const transaction = await getKbdClient()
     .transaction()
     .execute(async (trx) => {
-      const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+      const insertedCampagne = await trx
+        .insertInto("campagnes")
+        .values(decamelizeKeys(campagne))
+        .returning("id")
+        .executeTakeFirst();
       if (insertedCampagne?.id) {
         await trx
           .insertInto("formations_campagnes")
@@ -145,14 +157,25 @@ export const create = async (campagne: any, formationId: string): Promise<string
   return transaction;
 };
 
-export const createWithFormation = async (campagne: any, formation: any): Promise<string | undefined> => {
+export const createWithFormation = async (
+  campagne: CampagneCreation,
+  formation: FormationCreation
+): Promise<string | undefined> => {
   const transaction = await getKbdClient()
     .transaction()
     .execute(async (trx) => {
-      const insertedFormation = await trx.insertInto("formations").values(formation).returning("id").executeTakeFirst();
+      const insertedFormation = await trx
+        .insertInto("formations")
+        .values(decamelizeKeys(formation))
+        .returning("id")
+        .executeTakeFirst();
 
       if (insertedFormation?.id) {
-        const insertedCampagne = await trx.insertInto("campagnes").values(campagne).returning("id").executeTakeFirst();
+        const insertedCampagne = await trx
+          .insertInto("campagnes")
+          .values(decamelizeKeys(campagne))
+          .returning("id")
+          .executeTakeFirst();
         await trx
           .insertInto("formations_campagnes")
           .values({ formation_id: insertedFormation.id, campagne_id: insertedCampagne?.id })
@@ -175,18 +198,18 @@ export const deleteMany = async (ids: string[]): Promise<boolean> => {
         .where("id", "in", ids)
         .execute();
 
-      const deletedFormationsCampagnes = (await trx
+      const deletedFormationsCampagnes = await trx
         .deleteFrom("formations_campagnes")
         .where("campagne_id", "in", ids)
         .returning("formation_id")
-        .execute()) as unknown as { formationId: string }[] | null;
+        .execute();
 
       for (const deletedFormationCampagne of deletedFormationsCampagnes || []) {
         const formationsCampagnesCount = (
           await trx
             .selectFrom("formations_campagnes")
             .select("id")
-            .where("formation_id", "=", deletedFormationCampagne.formationId)
+            .where("formation_id", "=", deletedFormationCampagne.formation_id)
             .execute()
         ).length;
 
@@ -194,7 +217,7 @@ export const deleteMany = async (ids: string[]): Promise<boolean> => {
           await trx
             .updateTable("formations")
             .set({ deleted_at: new Date() })
-            .where("id", "=", deletedFormationCampagne.formationId)
+            .where("id", "=", deletedFormationCampagne.formation_id)
             .execute();
         }
       }
@@ -205,10 +228,10 @@ export const deleteMany = async (ids: string[]): Promise<boolean> => {
   return transaction;
 };
 
-export const update = async (id: string, updatedCampagne: any): Promise<boolean> => {
+export const update = async (id: string, updatedCampagne: CampagneCreation): Promise<boolean> => {
   const result = await getKbdClient()
     .updateTable("campagnes")
-    .set(updatedCampagne)
+    .set(decamelizeKeys(updatedCampagne))
     .where("id", "=", id)
     .where("deleted_at", "is", null)
     .executeTakeFirst();
@@ -217,12 +240,15 @@ export const update = async (id: string, updatedCampagne: any): Promise<boolean>
 };
 
 export const getAll = async (campagneIds: string[] = []) => {
-  return getKbdClient()
+  const baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .selectAll()
     .where("deleted_at", "is", null)
-    .where("id", "in", campagneIds)
-    .execute();
+    .where("id", "in", campagneIds);
+
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };
 
 export const count = async () => {
@@ -246,7 +272,9 @@ export const countWithAtLeastOneTemoignages = async () => {
   return result?.count || 0;
 };
 
-export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
+export const getOneWithTemoignagneCountAndTemplateName = async (
+  id: string
+): GetOneWithTemoignagneCountAndTemplateNameResults => {
   const baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
@@ -257,13 +285,13 @@ export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
       "campagnes.seats",
       "campagnes.created_at",
       "campagnes.updated_at",
-      sql`json_build_object(
+      sql<any>`json_build_object(
         'questionnaireId', questionnaires.id,
         'questionnaireTemplateName', questionnaires.nom,
         'questionnaire', questionnaires.questionnaire,
         'questionnaireUI', questionnaires.questionnaire_ui
       )`.as("questionnaire"),
-      sql`json_build_object(
+      sql<any>`json_build_object(
         'id', formations.id,
         'catalogue_id', formations.catalogue_id,
         'code_postal', formations.code_postal,
@@ -282,7 +310,7 @@ export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
         'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
         'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale
       )`.as("formation"),
-      sql`json_build_object(
+      sql<any>`json_build_object(
         'id', etablissements.id,
         'catalogue_id', etablissements.catalogue_id,
         'siret', etablissements.siret,
@@ -297,7 +325,7 @@ export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
         'nom_voie', etablissements.catalogue_data ->> 'nom_voie',
         'code_postal', etablissements.catalogue_data ->> 'code_postal'
       )`.as("etablissement"),
-      sql`COUNT(temoignages.id)`.as("temoignagesCount"),
+      sql<number>`COUNT(temoignages.id)`.as("temoignagesCount"),
     ])
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
     .leftJoin("temoignages", "temoignages_campagnes.temoignage_id", "temoignages.id")
@@ -309,10 +337,14 @@ export const getOneWithTemoignagneCountAndTemplateName = async (id: string) => {
     .where("campagnes.id", "=", id)
     .groupBy(["campagnes.id", "questionnaires.id", "formations.id", "etablissements.id"]);
 
-  return baseQuery.executeTakeFirst();
+  const result = await baseQuery.executeTakeFirst();
+
+  return result ? camelcaseKeys(result) : null;
 };
 
-export const getAllWithTemoignageCountFormationEtablissement = async (campagneIds: string[]) => {
+export const getAllWithTemoignageCountFormationEtablissement = async (
+  campagneIds: string[]
+): GetAllWithTemoignageCountFormationEtablissementResults => {
   let baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
@@ -323,32 +355,33 @@ export const getAllWithTemoignageCountFormationEtablissement = async (campagneId
       "campagnes.seats",
       "campagnes.created_at",
       "campagnes.updated_at",
-      sql`json_build_object(
+      sql<any>`json_build_object(
         'id', formations.id,
         'catalogue_id', formations.catalogue_id,
+        'cfd', formations.cfd,
         'code_postal', formations.code_postal,
-        'num_departement', formations.num_departement,
-        'region', formations.region,
-        'localite', formations.localite,
-        'intitule_long', formations.intitule_long,
         'diplome', formations.diplome,
         'duree', formations.duree,
+        'etablissment_formateur_adresse', formations.etablissement_formateur_adresse,
+        'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
+        'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
+        'etablissement_formateur_localite', formations.etablissement_formateur_localite,
+        'etablissement_formateur_siret', formations.etablissement_formateur_siret,
+        'etablissement_gestionnaire_enseigne', formations.etablissement_gestionnaire_enseigne,
+        'etablissement_gestionnaire_siret', formations.etablissement_gestionnaire_siret,
+        'intitule_court', formations.intitule_court,
+        'intitule_long', formations.intitule_long,
         'lieu_formation_adresse', formations.lieu_formation_adresse,
         'lieu_formation_adresse_computed', formations.lieu_formation_adresse_computed,
+        'localite', formations.localite,
+        'num_departement', formations.num_departement,
+        'region', formations.region,
         'tags', formations.tags,
-        'cfd', formations.cfd,
-        'etablissement_gestionnaire_siret', formations.etablissement_gestionnaire_siret,
-        'etablissement_gestionnaire_enseigne', formations.etablissement_gestionnaire_enseigne,
-        'etablissement_formateur_siret', formations.etablissement_formateur_siret,
-        'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
-        'etablissment_formateur_adresse', formations.etablissement_formateur_adresse,
-        'etablissement_formateur_localite', formations.etablissement_formateur_localite,
-        'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
         'rncp_code', formations.catalogue_data ->> 'rncp_code',
         'id_certifinfo', formations.catalogue_data ->> 'id_certifinfo',
         'bcn_mefs_10', formations.catalogue_data ->> 'bcn_mefs_10'
       )`.as("formation"),
-      sql`json_build_object(
+      sql<any>`json_build_object(
         'id', etablissements.id,
         'catalogue_id', etablissements.catalogue_id,
         'siret', etablissements.siret,
@@ -364,7 +397,7 @@ export const getAllWithTemoignageCountFormationEtablissement = async (campagneId
         'nom_voie', etablissements.catalogue_data ->> 'nom_voie',
         'code_postal', etablissements.catalogue_data ->> 'code_postal'
       )`.as("etablissement"),
-      sql`COUNT(temoignages.id)`.as("temoignagesCount"),
+      sql<number>`COUNT(temoignages.id)`.as("temoignagesCount"),
     ])
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "campagnes.id")
     .leftJoin("temoignages", "temoignages_campagnes.temoignage_id", "temoignages.id")
@@ -378,5 +411,7 @@ export const getAllWithTemoignageCountFormationEtablissement = async (campagneId
     baseQuery = baseQuery.where("campagnes.id", "in", campagneIds);
   }
 
-  return baseQuery.execute();
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };

@@ -1,15 +1,24 @@
+import camelcaseKeys from "camelcase-keys";
+import decamelizeKeys from "decamelize-keys";
 import { sql } from "kysely";
 
 import { getKbdClient } from "../db/db";
-import type { Etablissement } from "../types";
+import type { Etablissement, EtablissementCreation } from "../types";
+import type {
+  FindAllEtablissementWithCountsResults,
+  FindAllWithTemoignageCountResults,
+} from "./types/etablissements.types";
 
-export const create = async (etablissement: Etablissement, relatedUserId: string): Promise<string | undefined> => {
+export const create = async (
+  etablissement: EtablissementCreation,
+  relatedUserId: string
+): Promise<string | undefined> => {
   const transaction = await getKbdClient()
     .transaction()
     .execute(async (trx) => {
       const insertedEtablissement = await trx
         .insertInto("etablissements")
-        .values(etablissement)
+        .values(decamelizeKeys(etablissement))
         .returning("id")
         .executeTakeFirst();
 
@@ -28,8 +37,11 @@ export const create = async (etablissement: Etablissement, relatedUserId: string
   return transaction;
 };
 
-export const createUserRelation = async (etablissementId: string, relatedUserId: string): Promise<any> => {
-  await getKbdClient()
+export const createUserRelation = async (
+  etablissementId: string,
+  relatedUserId: string
+): Promise<{ id: string } | undefined> => {
+  return getKbdClient()
     .insertInto("users_etablissements")
     .values({
       user_id: relatedUserId,
@@ -39,9 +51,11 @@ export const createUserRelation = async (etablissementId: string, relatedUserId:
     .executeTakeFirst();
 };
 
-export const findAll = async (
-  query: Partial<Etablissement> | { searchText: string }
-): Promise<Partial<Etablissement>[]> => {
+export const findAll = async (query: {
+  searchText?: string;
+  siret?: string;
+  catalogue_id?: string;
+}): Promise<Omit<Etablissement, "catalogueData">[]> => {
   let baseQuery = getKbdClient()
     .selectFrom("etablissements")
     .select([
@@ -80,11 +94,15 @@ export const findAll = async (
     );
   }
 
-  return baseQuery.execute();
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };
 
-export const findOne = async (id: string): Promise<Etablissement | undefined> => {
-  return getKbdClient().selectFrom("etablissements").selectAll().where("id", "=", id).executeTakeFirst();
+export const findOne = async (id: string): Promise<Omit<Etablissement, "catalogueData"> | undefined> => {
+  const result = await getKbdClient().selectFrom("etablissements").selectAll().where("id", "=", id).executeTakeFirst();
+
+  return result ? camelcaseKeys(result) : undefined;
 };
 
 export const deleteOne = async (id: string): Promise<boolean> => {
@@ -110,16 +128,7 @@ export const update = async (id: string, updatedEtablissement: Partial<Etablisse
   return result.numUpdatedRows === BigInt(1);
 };
 
-export const findAllEtablissementWithCounts = async (): Promise<
-  (Pick<
-    Etablissement,
-    "id" | "created_at" | "enseigne" | "entreprise_raison_sociale" | "onisep_nom" | "region_implantation_nom" | "siret"
-  > & {
-    campagnesCount: number;
-    temoignagesCount: number;
-    verbatimsCount: number;
-  })[]
-> => {
+export const findAllEtablissementWithCounts = async (): FindAllEtablissementWithCountsResults => {
   const baseQuery = getKbdClient()
     .selectFrom("etablissements")
     .select([
@@ -148,7 +157,8 @@ export const findAllEtablissementWithCounts = async (): Promise<
     .groupBy("etablissements.id")
     .orderBy("campagnesCount", "desc");
 
-  return baseQuery.execute();
+  const result = await baseQuery.execute();
+  return camelcaseKeys(result);
 };
 
 export const count = async (): Promise<number> => {
@@ -161,23 +171,8 @@ export const count = async (): Promise<number> => {
   return result.count as number;
 };
 
-export const findAllWithTemoignageCount = async (): Promise<
-  (Pick<
-    Etablissement,
-    | "id"
-    | "siret"
-    | "onisep_nom"
-    | "onisep_url"
-    | "enseigne"
-    | "entreprise_raison_sociale"
-    | "uai"
-    | "localite"
-    | "created_at"
-  > & {
-    temoignagesCount: number;
-  })[]
-> => {
-  return getKbdClient()
+export const findAllWithTemoignageCount = async (): FindAllWithTemoignageCountResults => {
+  const result = await getKbdClient()
     .selectFrom("etablissements")
     .select([
       "etablissements.id",
@@ -201,4 +196,6 @@ export const findAllWithTemoignageCount = async (): Promise<
     .groupBy("etablissements.id")
     .orderBy("temoignagesCount", "desc")
     .execute();
+
+  return camelcaseKeys(result);
 };

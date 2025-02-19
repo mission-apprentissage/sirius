@@ -1,24 +1,28 @@
+import camelcaseKeys from "camelcase-keys";
+import decamelizeKeys from "decamelize-keys";
 import { sql } from "kysely";
 import { executeWithOffsetPagination } from "kysely-paginate";
 
 import { getKbdClient } from "../db/db";
-import type { Verbatim } from "../types";
+import type { Verbatim, VerbatimScore, VerbatimStatus, VerbatimThemes } from "../types";
+import type {
+  CountArgs,
+  GetAllArgs,
+  GetAllResults,
+  GetAllWithFormationAndCampagneResult,
+  GetAllWithFormationResults,
+} from "./types/verbatims.types";
 
-export const getAll = async (query: {
-  temoignageIds: string[];
-  status: string[];
-  questionKey?: string;
-}): Promise<
-  Omit<
-    Verbatim,
-    | "content_corrected"
-    | "content_corrected_anonymized"
-    | "is_corrected"
-    | "is_anonymized"
-    | "anonymization_justification"
-    | "correction_justification"
-  >[]
-> => {
+const transformRow = (row: any) => {
+  const { scores, themes, ...otherProps } = row;
+  return {
+    ...camelcaseKeys(otherProps, { deep: true }),
+    scores,
+    themes,
+  };
+};
+
+export const getAll = async (query: GetAllArgs): GetAllResults => {
   let dbQuery = getKbdClient()
     .selectFrom("verbatims")
     .select([
@@ -29,8 +33,8 @@ export const getAll = async (query: {
       sql<string>`COALESCE(verbatims.content_corrected_anonymized, verbatims.content_corrected, verbatims.content)`.as(
         "content"
       ),
-      "verbatims.scores",
-      "verbatims.themes",
+      sql<VerbatimScore | null>`verbatims.scores`.as("scores"),
+      sql<VerbatimThemes | null>`verbatims.themes`.as("themes"),
       "verbatims.feedback_count",
       "verbatims.deleted_at",
       "verbatims.created_at",
@@ -43,18 +47,12 @@ export const getAll = async (query: {
     dbQuery = dbQuery.where("question_key", "in", query.questionKey);
   }
 
-  return dbQuery.execute();
+  const results = await dbQuery.execute();
+
+  return camelcaseKeys(results);
 };
 
-export const count = async (
-  query: Partial<{
-    temoignageIds: string[];
-    questionKey: string[];
-    etablissementSiret: string;
-    formationId: string;
-    status: string;
-  }>
-) => {
+export const count = async (query: CountArgs): Promise<{ status: VerbatimStatus; count: number }[]> => {
   let baseQuery = getKbdClient()
     .selectFrom("verbatims")
     .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
@@ -86,7 +84,7 @@ export const count = async (
   }
 
   const result = await baseQuery
-    .select(["verbatims.status", sql`count(*)`.as("count")])
+    .select(["verbatims.status", sql<number>`count(*)`.as("count")])
     .groupBy("verbatims.status")
     .execute();
 
@@ -96,7 +94,16 @@ export const count = async (
   }));
 };
 
-export const getAllWithFormation = async (query: any = {}, onlyDiscrepancies: boolean, page = 1, pageSize = 100) => {
+export const getAllWithFormation = async (
+  query: {
+    etablissementSiret?: string;
+    formationId?: string;
+    status?: VerbatimStatus;
+  } = {},
+  onlyDiscrepancies: boolean,
+  page = 1,
+  pageSize = 100
+): GetAllWithFormationResults => {
   let baseQuery = getKbdClient()
     .selectFrom("verbatims")
     .select([
@@ -111,8 +118,8 @@ export const getAllWithFormation = async (query: any = {}, onlyDiscrepancies: bo
       "verbatims.anonymization_justification",
       "verbatims.status",
       "verbatims.created_at",
-      "verbatims.scores",
-      sql`json_build_object(
+      sql<VerbatimScore | null>`verbatims.scores`.as("scores"),
+      sql<any>`json_build_object(
         'intitule_long', formations.intitule_long,
         'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
         'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
@@ -173,16 +180,24 @@ export const getAllWithFormation = async (query: any = {}, onlyDiscrepancies: bo
       .where(highestScoreKeySQL, sql`IS DISTINCT FROM`, query.status);
   }
 
-  const paginatedQuery = await executeWithOffsetPagination(baseQuery, {
+  const result = await executeWithOffsetPagination(baseQuery, {
     page: Number(page),
     perPage: Number(pageSize),
   });
 
-  return paginatedQuery;
+  const transformedResult = {
+    ...result,
+    rows: result.rows.map(transformRow),
+  };
+
+  return transformedResult;
 };
 
-export const getAllWithFormationAndCampagne = async (temoignagesIds: string[], status: string[]) => {
-  return getKbdClient()
+export const getAllWithFormationAndCampagne = async (
+  temoignagesIds: string[],
+  status: VerbatimStatus[]
+): GetAllWithFormationAndCampagneResult => {
+  const baseQuery = getKbdClient()
     .selectFrom("verbatims")
     .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
@@ -192,13 +207,13 @@ export const getAllWithFormationAndCampagne = async (temoignagesIds: string[], s
     .select([
       "verbatims.id",
       "verbatims.question_key",
-      sql`COALESCE(verbatims.content_corrected_anonymized, verbatims.content_corrected, verbatims.content)`.as(
+      sql<string>`COALESCE(verbatims.content_corrected_anonymized, verbatims.content_corrected, verbatims.content)`.as(
         "content"
       ),
       "verbatims.status",
       "campagnes.nom_campagne",
       "campagnes.questionnaire_id",
-      sql`json_build_object(
+      sql<any>`json_build_object(
         'intitule_long', formations.intitule_long,
         'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
         'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
@@ -209,19 +224,27 @@ export const getAllWithFormationAndCampagne = async (temoignagesIds: string[], s
     .where("verbatims.status", "in", status)
     .where("verbatims.deleted_at", "is", null)
     .where("formations.deleted_at", "is", null)
-    .where("temoignages.deleted_at", "is", null)
-    .execute();
+    .where("temoignages.deleted_at", "is", null);
+
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };
 
 export const updateOne = async (id: string, update: Partial<Verbatim>): Promise<{ id: string } | undefined> => {
-  return getKbdClient().updateTable("verbatims").set(update).where("id", "=", id).returning("id").executeTakeFirst();
+  return getKbdClient()
+    .updateTable("verbatims")
+    .set(decamelizeKeys(update))
+    .where("id", "=", id)
+    .returning("id")
+    .executeTakeFirst();
 };
 
 export const updateMany = async (verbatims: Partial<Verbatim>[]): Promise<boolean[]> => {
   const promises = verbatims.map(async ({ id, ...update }) => {
     const result = await getKbdClient()
       .updateTable("verbatims")
-      .set(update)
+      .set(decamelizeKeys(update))
       .where("id", "=", id as string)
       .executeTakeFirst();
 
@@ -231,34 +254,82 @@ export const updateMany = async (verbatims: Partial<Verbatim>[]): Promise<boolea
   return Promise.all(promises);
 };
 
-export const create = async (verbatim: Verbatim): Promise<{ id: string } | undefined> => {
-  return getKbdClient().insertInto("verbatims").values(verbatim).returning("id").executeTakeFirst();
+export const create = async (
+  verbatim: Omit<Verbatim, "id" | "createdAt" | "updatedAt" | "deletedAt">
+): Promise<{ id: string } | undefined> => {
+  return getKbdClient().insertInto("verbatims").values(decamelizeKeys(verbatim)).returning("id").executeTakeFirst();
 };
 
 export const getOneByTemoignageIdAndQuestionKey = async (query: {
   temoignageId: string;
   questionKey: string;
 }): Promise<Verbatim | undefined> => {
-  return getKbdClient()
+  const baseQuery = getKbdClient()
     .selectFrom("verbatims")
-    .selectAll()
+    .select([
+      "verbatims.id",
+      "verbatims.temoignage_id",
+      "verbatims.question_key",
+      "verbatims.content",
+      "verbatims.content_corrected",
+      "verbatims.correction_justification",
+      "verbatims.anonymization_justification",
+      "verbatims.content_corrected_anonymized",
+      "verbatims.status",
+      sql<VerbatimScore | null>`verbatims.scores`.as("scores"),
+      sql<VerbatimThemes | null>`verbatims.themes`.as("themes"),
+      "verbatims.feedback_count",
+      "verbatims.is_corrected",
+      "verbatims.is_anonymized",
+      "verbatims.created_at",
+      "verbatims.updated_at",
+      "verbatims.deleted_at",
+    ])
     .where("temoignage_id", "=", query.temoignageId)
-    .where("question_key", "=", query.questionKey)
-    .executeTakeFirst();
+    .where("question_key", "=", query.questionKey);
+
+  const result = await baseQuery.executeTakeFirst();
+
+  return result ? camelcaseKeys(result) : undefined;
 };
 
 export const getOneById = async (id: string): Promise<Verbatim | undefined> => {
-  return getKbdClient().selectFrom("verbatims").selectAll().where("id", "=", id).executeTakeFirst();
+  const baseQuery = getKbdClient()
+    .selectFrom("verbatims")
+    .select([
+      "verbatims.id",
+      "verbatims.temoignage_id",
+      "verbatims.question_key",
+      "verbatims.content",
+      "verbatims.content_corrected",
+      "verbatims.correction_justification",
+      "verbatims.anonymization_justification",
+      "verbatims.content_corrected_anonymized",
+      "verbatims.status",
+      sql<VerbatimScore | null>`verbatims.scores`.as("scores"),
+      sql<VerbatimThemes | null>`verbatims.themes`.as("themes"),
+      "verbatims.feedback_count",
+      "verbatims.is_corrected",
+      "verbatims.is_anonymized",
+      "verbatims.created_at",
+      "verbatims.updated_at",
+      "verbatims.deleted_at",
+    ])
+    .where("id", "=", id);
+
+  const result = await baseQuery.executeTakeFirst();
+
+  return result ? camelcaseKeys(result) : undefined;
 };
 
 export const deleteManyByCampagneIds = async (campagneIds: string[]): Promise<boolean> => {
-  const temoignages = (await getKbdClient()
+  const temoignages = await getKbdClient()
     .selectFrom("temoignages_campagnes")
     .select("temoignage_id")
     .where("campagne_id", "in", campagneIds)
-    .execute()) as unknown as { temoignageId: string }[];
+    .execute();
 
-  const temoignagesIds = temoignages.map((t) => t.temoignageId as string);
+  const temoignagesIds = temoignages.map((t) => t.temoignage_id);
 
   if (temoignagesIds.length === 0) {
     return true;
