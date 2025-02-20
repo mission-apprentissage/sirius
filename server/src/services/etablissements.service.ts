@@ -1,5 +1,3 @@
-// @ts-nocheck -- TODO
-
 import { ETABLISSEMENT_RELATION_TYPE } from "../constants";
 import * as campagnesDao from "../dao/campagnes.dao";
 import * as etablissementsDao from "../dao/etablissements.dao";
@@ -10,7 +8,10 @@ import * as catalogue from "../modules/catalogue";
 import * as referentiel from "../modules/referentiel";
 import { getChampsLibreField } from "../utils/verbatims.utils";
 
-export const createEtablissements = async (etablissementsArray, relatedUserId) => {
+export const createEtablissements = async (
+  etablissementsArray: { id: string; siret: string; userId: string }[],
+  relatedUserId: string
+) => {
   try {
     const createdEtablissements = [];
 
@@ -22,16 +23,16 @@ export const createEtablissements = async (etablissementsArray, relatedUserId) =
       if (!existingEtablissement.length) {
         const etablissementFromCatalogue = await catalogue.getEtablissement(etablissement.siret);
         const formattedEtablissement = {
-          catalogue_id: etablissementFromCatalogue._id,
+          catalogueId: etablissementFromCatalogue._id,
           siret: etablissementFromCatalogue.siret,
-          onisep_nom: etablissementFromCatalogue.onisep_nom,
-          onisep_url: etablissementFromCatalogue.onisep_url,
+          onisepNom: etablissementFromCatalogue.onisep_nom,
+          onisepUrl: etablissementFromCatalogue.onisep_url,
           enseigne: etablissementFromCatalogue.enseigne,
-          entreprise_raison_sociale: etablissementFromCatalogue.entreprise_raison_sociale,
+          entrepriseRaisonSociale: etablissementFromCatalogue.entreprise_raison_sociale,
           uai: etablissementFromCatalogue.uai,
           localite: etablissementFromCatalogue.localite,
-          region_implantation_nom: etablissementFromCatalogue.region_implantation_nom,
-          catalogue_data: JSON.stringify(etablissementFromCatalogue),
+          regionImplantationNom: etablissementFromCatalogue.region_implantation_nom,
+          catalogueData: JSON.stringify(etablissementFromCatalogue),
         };
         const createdEtablissement = await etablissementsDao.create(formattedEtablissement, relatedUserId);
         createdEtablissements.push(createdEtablissement);
@@ -47,7 +48,7 @@ export const createEtablissements = async (etablissementsArray, relatedUserId) =
   }
 };
 
-export const getEtablissements = async ({ search }) => {
+export const getEtablissements = async ({ search }: { search: string }) => {
   try {
     const query = search ? { searchText: search } : {};
     const etablissements = await etablissementsDao.findAll(query);
@@ -68,36 +69,6 @@ export const getEtablissementsWithTemoignageCount = async () => {
       entreprise_raison_sociale: etablissement.entrepriseRaisonSociale,
     }));
     return { success: true, body: reformatForExtension };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const getEtablissement = async (id) => {
-  try {
-    const etablissement = await etablissementsDao.findOne(id);
-    return { success: true, body: etablissement };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const deleteEtablissement = async (id) => {
-  try {
-    const etablissement = await etablissementsDao.deleteOne(id);
-    return { success: true, body: etablissement };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const updateEtablissement = async (id, updatedEtablissement) => {
-  try {
-    const etablissement = await etablissementsDao.update(id, updatedEtablissement);
-
-    if (!etablissement) throw new Error("Etablissement not found");
-
-    return { success: true, body: etablissement };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -125,22 +96,23 @@ export const getEtablissementsPublicStatistics = async () => {
         if (etablissement?.relations?.length) {
           return etablissement.relations;
         }
+        return null;
       })
       .filter(Boolean)
       .flat()
-      .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
-      .filter((relation) => !etablissementsSiret.includes(relation.siret)).length;
+      .filter((relation) => relation?.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
+      .filter((relation) => relation && !etablissementsSiret.includes(relation.siret)).length;
 
     const createdCampagnesCount = await campagnesDao.countWithAtLeastOneTemoignages();
     const temoignagesCount = await temoignagesDao.count();
 
     const onlyQpenQuestionKeyList = [];
     const questionnaires = await questionnairesDao.findAll();
-    questionnaires.forEach((questionnaire) => [
-      onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUI, true)),
+    questionnaires?.forEach((questionnaire) => [
+      onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUi, true)),
     ]);
 
-    const verbatimsCountByStatus = await verbatimsDao.count();
+    const verbatimsCountByStatus = await verbatimsDao.count({});
     const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
 
     return {

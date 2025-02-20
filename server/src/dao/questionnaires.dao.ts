@@ -1,14 +1,20 @@
+import camelcaseKeys from "camelcase-keys";
+import decamelizeKeys from "decamelize-keys";
 import type { InsertResult, UpdateResult } from "kysely";
 
 import { getKbdClient } from "../db/db";
-import type { Questionnaire } from "../types";
+import type { Questionnaire, QuestionnaireCreation, QuestionnaireUpdate } from "../types";
 
-export const create = async (questionnaire: Questionnaire): Promise<InsertResult> => {
+export const create = async (questionnaire: QuestionnaireCreation): Promise<InsertResult> => {
   return getKbdClient().insertInto("questionnaires").values(questionnaire).executeTakeFirst();
 };
 
 export const findAll = async (): Promise<Questionnaire[] | undefined> => {
-  return getKbdClient().selectFrom("questionnaires").selectAll().execute();
+  const baseQuery = getKbdClient().selectFrom("questionnaires").selectAll();
+
+  const results = await baseQuery.execute();
+
+  return camelcaseKeys(results);
 };
 
 export const deleteOne = async (id: string): Promise<UpdateResult | undefined> => {
@@ -21,16 +27,20 @@ export const deleteOne = async (id: string): Promise<UpdateResult | undefined> =
 
 export const update = async (
   id: string,
-  updatedQuestionnaire: Partial<Questionnaire>
+  updatedQuestionnaire: QuestionnaireUpdate
 ): Promise<UpdateResult | undefined> => {
   return getKbdClient()
     .updateTable("questionnaires")
-    .set(updatedQuestionnaire)
+    .set(decamelizeKeys(updatedQuestionnaire))
     .where("id", "=", id)
     .where("deleted_at", "is", null)
     .executeTakeFirst();
 };
 
 export const getOne = async (id: string): Promise<Questionnaire | undefined> => {
-  return await getKbdClient().selectFrom("questionnaires").selectAll().where("id", "=", id).executeTakeFirst();
+  const baseQuery = getKbdClient().selectFrom("questionnaires").selectAll().where("id", "=", id);
+
+  const result = await baseQuery.executeTakeFirst();
+
+  return result ? camelcaseKeys(result) : undefined;
 };

@@ -1,5 +1,7 @@
 // @ts-nocheck -- TODO
 
+import { getChampsLibreField } from "./verbatims.utils";
+
 const msToTime = (duration) => {
   let seconds = Math.floor((duration / 1000) % 60);
   let minutes = Math.floor((duration / (1000 * 60)) % 60);
@@ -51,18 +53,28 @@ const getTemoignagesCount = (campagnes) => {
   return campagnes.reduce((acc, campagne) => acc + campagne.temoignagesCount, 0);
 };
 
-const getChampsLibreRate = (campagnes, verbatimsCount) => {
+const getChampsLibreRate = (campagnes, questionnaires, verbatimsCount) => {
   const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
+  const filteredCampagnesWithPossibleChampsLibreCount = filteredCampagnes.map((campagne) => {
+    const questionnaireUI = questionnaires.find(
+      (questionnaire) => questionnaire.id === campagne.questionnaire.questionnaireId
+    )?.questionnaireUi;
 
-  if (!filteredCampagnes.length) {
+    return {
+      ...campagne,
+      possibleChampsLibreCount: getChampsLibreField(questionnaireUI, true).length,
+    };
+  });
+
+  if (!filteredCampagnesWithPossibleChampsLibreCount.length) {
     return "N/A";
   }
 
-  filteredCampagnes.forEach(
+  filteredCampagnesWithPossibleChampsLibreCount.forEach(
     (campagne) => (campagne.possibleChampsLibreCount = campagne.possibleChampsLibreCount * campagne.temoignagesCount)
   );
 
-  const totalPossibleChampsLibreCount = filteredCampagnes.reduce(
+  const totalPossibleChampsLibreCount = filteredCampagnesWithPossibleChampsLibreCount.reduce(
     (acc, campagne) => acc + campagne.possibleChampsLibreCount,
     0
   );
@@ -93,11 +105,11 @@ export const getMedianDuration = (campagnes) => {
   return msToTime(Math.round(sum / filteredCampagnes.length));
 };
 
-export const getStatistics = (campagnes, verbatimsCount) => ({
+export const getStatistics = (campagnes, questionnaires, verbatimsCount) => ({
   campagnesCount: campagnes?.length || 0,
   finishedCampagnesCount: campagnes?.length ? getFinishedCampagnes(campagnes).length : 0,
   temoignagesCount: campagnes?.length ? getTemoignagesCount(campagnes) : 0,
-  champsLibreRate: campagnes?.length ? getChampsLibreRate(campagnes, verbatimsCount) : "N/A",
+  champsLibreRate: campagnes?.length ? getChampsLibreRate(campagnes, questionnaires, verbatimsCount) : "N/A",
   medianDuration: campagnes?.length ? getMedianDuration(campagnes) : "N/A",
 });
 

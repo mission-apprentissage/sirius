@@ -1,4 +1,4 @@
-// @ts-nocheck -- TODO
+import type { ReferentielOrganisme } from "../referentiel.types";
 
 const REFERENTIEL_API = "https://referentiel.apprentissage.onisep.fr/api/v1/organismes";
 
@@ -17,7 +17,7 @@ export const getEtablissements = async (siretArray: string[]) => {
         items_par_page: 1000,
       }),
     });
-    const data = await response.json();
+    const data = (await response.json()) as ReferentielOrganisme;
     return data.organismes?.length ? data.organismes : [];
   } catch (e) {
     console.error(e);
@@ -30,7 +30,7 @@ export const getEtablissementNature = async (siret: string) => {
   const response = await fetch(`${REFERENTIEL_API}/${siret}`, {
     method: "GET",
   });
-  const data = await response.json();
+  const data = (await response.json()) as any;
 
   return data.nature;
 };
@@ -42,11 +42,11 @@ export const getEtablissementSIRETFromRelationType = async (siret: string, wante
     const response = await fetch(`${REFERENTIEL_API}/${siret}`, {
       method: "GET",
     });
-    const data = await response.json();
+    const data = (await response.json()) as any;
 
     const filteredRelationsSiret = data.relations
-      .filter((relation) => relation.type === wantedRelation)
-      .map((etablissementFormateur) => etablissementFormateur.siret);
+      .filter((relation: any) => relation.type === wantedRelation)
+      .map((etablissementFormateur: any) => etablissementFormateur.siret);
 
     return filteredRelationsSiret;
   } catch (e) {

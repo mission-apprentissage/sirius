@@ -1,4 +1,4 @@
-import { CamelCasePlugin, DeduplicateJoinsPlugin, Kysely, PostgresDialect } from "kysely";
+import { DeduplicateJoinsPlugin, Kysely, PostgresDialect } from "kysely";
 import pg from "pg";
 const { Pool, types } = pg;
 
@@ -35,7 +35,7 @@ export const connectToPgDb = async (uri: string) => {
 
   kdb = new Kysely<DB>({
     dialect: new PostgresDialect({ pool }),
-    plugins: [new CamelCasePlugin(), new DeduplicateJoinsPlugin()],
+    plugins: [new DeduplicateJoinsPlugin()],
     log: (event) => {
       if (event.level === config.psql.logLevel) {
         console.log(`\n====================================\n`);

@@ -24,9 +24,7 @@ export const ErrorMessage = {
   CampagneEnded: "La campagne est terminée",
   NoSeatsAvailable: "La campagne n'a plus de places disponibles",
   EtablissementNotFoundError: "Etablissement inconnu",
-  FormationNotFoundError: "Formation inconnue",
   EtablissementAlreadyExistingError: "Etablissement déjà existant",
-  FormationAlreadyExistingError: "Formation déjà existante",
   UserAlreadyExistsError: "Un utilisateur avec cet email existe déjà",
   UserNotFound: "Utilisateur inconnu",
   UnconfirmedEmail: "Email non confirmé",
@@ -104,15 +102,6 @@ export const EtablissementNotFoundError = class NotFoundError extends BasicError
     return 404;
   }
 };
-export const FormationNotFoundError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
-    super(message || ErrorMessage.FormationNotFoundError, extra);
-  }
-
-  get status() {
-    return 404;
-  }
-};
 export const EtablissementAlreadyExistingError = class NotFoundError extends BasicError {
   constructor(message?: any, extra?: any) {
     super(message || ErrorMessage.EtablissementAlreadyExistingError, extra);
@@ -122,15 +111,7 @@ export const EtablissementAlreadyExistingError = class NotFoundError extends Bas
     return 400;
   }
 };
-export const FormationAlreadyExistingError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
-    super(message || ErrorMessage.FormationAlreadyExistingError, extra);
-  }
 
-  get status() {
-    return 400;
-  }
-};
 export const UserAlreadyExistsError = class NotFoundError extends BasicError {
   constructor(message?: any, extra?: any) {
     super(message || ErrorMessage.UserAlreadyExistsError, extra);

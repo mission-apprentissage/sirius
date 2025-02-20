@@ -62,6 +62,7 @@ export const ETABLISSEMENT_NATURE = {
 export const ETABLISSEMENT_RELATION_TYPE = {
   RESPONSABLE_FORMATEUR: "responsable->formateur",
   FORMATEUR_RESPONSABLE: "formateur->responsable",
+  ENTREPRISE: "entreprise",
 };
 
 export const VERBATIM_STATUS = {

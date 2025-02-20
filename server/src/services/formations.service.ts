@@ -6,21 +6,6 @@ import { OBSERVER_SCOPES } from "../constants";
 import * as formationsDao from "../dao/formations.dao";
 import { getStaticFilePath } from "../utils/getStaticFilePath";
 
-export const createFormation = async (formation) => {
-  try {
-    const existingFormation = await formationsDao.findOneByCatalogueId(formation.data._id);
-    if (existingFormation.length) {
-      throw new Error("Formation déjà existante");
-    }
-
-    const createdFormation = await formationsDao.create(formation);
-
-    return { success: true, body: createdFormation };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
 export const getFormations = async ({ formationIds, etablissementSiret, search }) => {
   try {
     const query = search ? { searchText: search } : {};
@@ -51,36 +36,6 @@ export const getFormationsWithTemoignageCount = async () => {
     }));
 
     return { success: true, body: reformatForExtension };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const getFormation = async (id) => {
-  try {
-    const formation = await formationsDao.findOne(id);
-    return { success: true, body: formation };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const deleteFormation = async (id) => {
-  try {
-    const formation = await formationsDao.deleteOne(id);
-    return { success: true, body: formation };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const updateFormation = async (id, updatedFormation) => {
-  try {
-    const formation = await formationsDao.update(id, updatedFormation);
-
-    if (!formation) throw new Error("Formation not found");
-
-    return { success: true, body: formation };
   } catch (error) {
     return { success: false, body: error };
   }
