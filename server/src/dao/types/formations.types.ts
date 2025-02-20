@@ -12,20 +12,6 @@ export type FindAllResults = Promise<
   Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt">[] | undefined
 >;
 
-export type FindOneResults = Promise<
-  | (Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt"> & {
-      campagneId: string | null;
-    })
-  | null
->;
-
-export type FindOneByCatalogueIdResults = Promise<
-  | (Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt"> & {
-      campagneId: string | null;
-    })
-  | null
->;
-
 export type FindFormationByIntituleCfdIdCertifInfoOrSlugResults = Promise<
   | (Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt"> & {
       campagneId: string | null;

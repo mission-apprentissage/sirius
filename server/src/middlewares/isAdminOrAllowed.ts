@@ -9,9 +9,7 @@ import * as formationsService from "../services/formations.service";
 export const TYPES = {
   CAMPAGNE_ID: "campagneId",
   CAMPAGNE_IDS: "campagneIds",
-  FORMATION_ID: "formationId",
   FORMATION_IDS: "formationIds",
-  SIRET_IN_FORMATION: "siretInFormation",
   SIRET: "siret",
   ETABLISSEMENT_FORMATEUR_SIRET: "etablissementFormateurSiret",
 };
@@ -107,36 +105,6 @@ export const isAdminOrAllowed = async (req, next, type) => {
       const hasEveryResponsableSiret = responsableSiret.flat().every((siret) => multipleSiret.includes(siret));
 
       if (hasEveryResponsableSiret) return next();
-    }
-
-    //check formation related to etablissement siret
-    if (type === TYPES.SIRET_IN_FORMATION) {
-      const siretGestionnaire = req.body.etablissementGestionnaireSiret;
-      const siretFormateur = req.body.etablissementFormateurSiret;
-
-      if (
-        siret === siretGestionnaire ||
-        siret === siretFormateur ||
-        multipleSiret.includes(siretGestionnaire) ||
-        multipleSiret.includes(siretFormateur)
-      )
-        return next();
-    }
-
-    //check formationId
-    if (type === TYPES.FORMATION_ID) {
-      const formationId = req.params.id;
-      const { body } = await formationsService.getFormation(formationId);
-      const siretGestionnaire = body.etablissementGestionnaireSiret;
-      const siretFormateur = body.etablissementFormateurSiret;
-
-      if (
-        siret === siretGestionnaire ||
-        siret === siretFormateur ||
-        multipleSiret.includes(siretGestionnaire) ||
-        multipleSiret.includes(siretFormateur)
-      )
-        return next();
     }
 
     //check formationIds
