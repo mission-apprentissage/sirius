@@ -1,5 +1,3 @@
-// @ts-nocheck -- TODO
-
 import { ETABLISSEMENT_RELATION_TYPE } from "../constants";
 import * as campagnesDao from "../dao/campagnes.dao";
 import * as etablissementsDao from "../dao/etablissements.dao";
@@ -10,7 +8,10 @@ import * as catalogue from "../modules/catalogue";
 import * as referentiel from "../modules/referentiel";
 import { getChampsLibreField } from "../utils/verbatims.utils";
 
-export const createEtablissements = async (etablissementsArray, relatedUserId) => {
+export const createEtablissements = async (
+  etablissementsArray: { id: string; siret: string; userId: string }[],
+  relatedUserId: string
+) => {
   try {
     const createdEtablissements = [];
 
@@ -47,7 +48,7 @@ export const createEtablissements = async (etablissementsArray, relatedUserId) =
   }
 };
 
-export const getEtablissements = async ({ search }) => {
+export const getEtablissements = async ({ search }: { search: string }) => {
   try {
     const query = search ? { searchText: search } : {};
     const etablissements = await etablissementsDao.findAll(query);
@@ -95,22 +96,23 @@ export const getEtablissementsPublicStatistics = async () => {
         if (etablissement?.relations?.length) {
           return etablissement.relations;
         }
+        return null;
       })
       .filter(Boolean)
       .flat()
-      .filter((relation) => relation.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
-      .filter((relation) => !etablissementsSiret.includes(relation.siret)).length;
+      .filter((relation) => relation?.type === ETABLISSEMENT_RELATION_TYPE.RESPONSABLE_FORMATEUR)
+      .filter((relation) => relation && !etablissementsSiret.includes(relation.siret)).length;
 
     const createdCampagnesCount = await campagnesDao.countWithAtLeastOneTemoignages();
     const temoignagesCount = await temoignagesDao.count();
 
     const onlyQpenQuestionKeyList = [];
     const questionnaires = await questionnairesDao.findAll();
-    questionnaires.forEach((questionnaire) => [
-      onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUI, true)),
+    questionnaires?.forEach((questionnaire) => [
+      onlyQpenQuestionKeyList.push(getChampsLibreField(questionnaire.questionnaireUi, true)),
     ]);
 
-    const verbatimsCountByStatus = await verbatimsDao.count();
+    const verbatimsCountByStatus = await verbatimsDao.count({});
     const totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
 
     return {
