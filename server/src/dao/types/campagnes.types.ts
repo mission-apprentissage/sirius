@@ -82,7 +82,13 @@ export type GetAllWithTemoignageCountFormationEtablissementResults = Promise<
       > & {
         rncpCode: string;
         idCertifinfo: string;
-        bcnMefs10: string;
+        bcnMefs10: {
+          mef10: string;
+          modalite: {
+            annee: string;
+            duree: string;
+          };
+        }[];
       };
       etablissement: Omit<Etablissement, "catalogueData" | "deletedAt" | "createdAt" | "updatedAt"> & {
         numeroVoie: string;

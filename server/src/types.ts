@@ -31,6 +31,40 @@ export type CampagneUpdate = {
   seats: number | null;
 };
 
+export type CampagneWithStatistics = Pick<
+  Campagne,
+  "id" | "nomCampagne" | "startDate" | "endDate" | "seats" | "createdAt" | "updatedAt"
+> & {
+  questionnaire: {
+    questionnaireId: string;
+    questionnaireTemplateName: string;
+  };
+} & {
+  formation: Omit<
+    Formation,
+    | "catalogueData"
+    | "cfd"
+    | "onisepSlug"
+    | "intituleCourt"
+    | "etablissementId"
+    | "etablissementFormateurLocalite"
+    | "etablissementFormateurAdresse"
+    | "deletedAt"
+    | "createdAt"
+    | "updatedAt"
+  >;
+  etablissement: Omit<Etablissement, "catalogueData" | "onisepUrl" | "deletedAt" | "createdAt" | "updatedAt"> & {
+    numeroVoie: string;
+    typeVoie: string;
+    nomVoie: string;
+    codePostal: string;
+  };
+  temoignagesCount: number;
+  temoignages?: Array<{ id: string; lastQuestionAt: string; createdAt: string }>;
+  possibleChampsLibreCount: number;
+  medianDurationInMs: string;
+};
+
 export type Etablissement = {
   id: string;
   catalogueId: string;

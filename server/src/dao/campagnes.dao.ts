@@ -119,7 +119,7 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
 
   const result = await baseQuery.execute();
 
-  return camelcaseKeys(result);
+  return camelcaseKeys(result, { deep: true });
 };
 
 export const getOne = async (id: string) => {

@@ -132,7 +132,7 @@ const drawPageNumber = (page, pageNumber, font, x, y) => {
   });
 };
 
-const addUserInfo = (page, etablissementLabel, user, font) => {
+const addUserInfo = (page, etablissementLabel, displayedUser, font) => {
   page.drawText(etablissementLabel, {
     x: 285,
     y: 719,
@@ -141,7 +141,7 @@ const addUserInfo = (page, etablissementLabel, user, font) => {
     color: rgb(0, 0, 145 / 255),
   });
 
-  page.drawText(`${user.label} - ${user.email}`, {
+  page.drawText(`${displayedUser.label} - ${displayedUser.email}`, {
     x: 285,
     y: 694,
     size: 12,
@@ -198,7 +198,7 @@ const addQRCodesAndLinks = async (finalPdfDoc, shareDoc, campagnes, font) => {
   }
 };
 
-export const generateMultiplePdf = async (campagnes, diplome, etablissementLabel, user) => {
+export const generateMultiplePdf = async (campagnes, diplome, etablissementLabel, displayedUser) => {
   if (campagnes.length === 0) {
     throw new Error("No campagnes provided");
   }
@@ -219,7 +219,7 @@ export const generateMultiplePdf = async (campagnes, diplome, etablissementLabel
   const currentDateTime = new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" }).replace(/\u202F/g, " ");
 
   addDateTime(importedSummaryPage, fonts.regular, currentDateTime);
-  addUserInfo(importedSummaryPage, etablissementLabel, user, fonts.regular);
+  addUserInfo(importedSummaryPage, etablissementLabel, displayedUser, fonts.regular);
   addSummaryEntries(importedSummaryPage, campagnes, fonts, diplome);
   await addQRCodesAndLinks(finalPdfDoc, shareDoc, campagnes, fonts.regular);
 

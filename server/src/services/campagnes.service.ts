@@ -1,7 +1,6 @@
-// @ts-nocheck -- TODO
-
 import fs from "fs";
 
+import type { CatalogueFormation } from "../catalogue.types";
 import { DIPLOME_TYPE_MATCHER, OBSERVER_SCOPES } from "../constants";
 import * as campagnesDao from "../dao/campagnes.dao";
 import * as etablissementsDao from "../dao/etablissements.dao";
@@ -12,11 +11,25 @@ import * as verbatimsDao from "../dao/verbatims.dao";
 import * as catalogue from "../modules/catalogue";
 import * as pdfExport from "../modules/pdfExport";
 import * as xlsxExport from "../modules/xlsxExport";
-import { appendDataWhenEmpty, getMedianDuration, getStatistics, normalizeString } from "../utils/campagnes.utils";
+import type { CampagneCreation, CampagneUpdate, ObserverScope, Opco } from "../types";
+import { appendDataWhenEmpty, getStatistics, normalizeString } from "../utils/campagnes.utils";
 import { getStaticFilePath } from "../utils/getStaticFilePath";
-import { getChampsLibreField } from "../utils/verbatims.utils";
 
-export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10, query, search }) => {
+export const getCampagnes = async ({
+  isObserver,
+  scope,
+  page = 1,
+  pageSize = 10,
+  query,
+  search,
+}: {
+  isObserver: boolean;
+  scope: ObserverScope | null;
+  page: number;
+  pageSize: number;
+  query: { diplome?: string[]; siret?: string[]; departement?: string; campagneIds?: string[] };
+  search: string;
+}) => {
   try {
     let campagnes = [];
 
@@ -25,7 +38,7 @@ export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10,
       if (scope?.field === OBSERVER_SCOPES.OPCO) {
         const SCOPE_LIST = getStaticFilePath("./opco.json");
         const opcos = JSON.parse(fs.readFileSync(SCOPE_LIST, "utf8"));
-        const rncpCodes = opcos.find((opco) => opco.label === scope.value).value;
+        const rncpCodes = opcos.find((opco: Opco) => opco.label === scope.value).value;
 
         scope.value = rncpCodes;
       }
@@ -40,7 +53,7 @@ export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10,
       ? campagnes.filter((campagne) => {
           const normalizedSearch = normalizeString(search).toLowerCase();
           return (
-            campagne.nomCampagne.toLowerCase()?.includes(normalizedSearch) ||
+            campagne.nomCampagne?.toLowerCase().includes(normalizedSearch) ||
             campagne.formation?.intituleLong?.toLowerCase().includes(normalizedSearch) ||
             campagne.formation?.localite?.toLowerCase().includes(normalizedSearch) ||
             campagne.formation?.lieuFormationAdresseComputed?.toLowerCase().includes(normalizedSearch) ||
@@ -53,8 +66,6 @@ export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10,
     const paginatedCampagnes = searchedCampagnes.slice((page - 1) * pageSize, page * pageSize);
 
     paginatedCampagnes.map((campagne) => {
-      delete campagne.questionnaireUI;
-      delete campagne.questionnaire;
       delete campagne.temoignages;
       appendDataWhenEmpty(campagne);
     });
@@ -65,7 +76,7 @@ export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10,
       ids: unpaginatedCampagnesIds,
       pagination: {
         totalItems: searchedCampagnes.length,
-        currentPage: parseInt(page),
+        currentPage: page,
         pageSize: pageSize,
         totalPages: Math.ceil(searchedCampagnes.length / pageSize),
         hasMore: searchedCampagnes.length > page * pageSize,
@@ -76,7 +87,7 @@ export const getCampagnes = async ({ isObserver, scope, page = 1, pageSize = 10,
   }
 };
 
-export const getOneCampagne = async (campagneId) => {
+export const getOneCampagne = async (campagneId: string) => {
   try {
     const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(campagneId);
     return { success: true, body: campagne };
@@ -85,7 +96,7 @@ export const getOneCampagne = async (campagneId) => {
   }
 };
 
-export const deleteCampagnes = async (ids) => {
+export const deleteCampagnes = async (ids: string[]) => {
   try {
     const deletedCampagnes = await campagnesDao.deleteMany(ids);
     const deletedVerbatims = await verbatimsDao.deleteManyByCampagneIds(ids);
@@ -100,7 +111,7 @@ export const deleteCampagnes = async (ids) => {
   }
 };
 
-export const updateCampagne = async (id, updatedCampagne) => {
+export const updateCampagne = async (id: string, updatedCampagne: CampagneUpdate) => {
   try {
     const campagne = await campagnesDao.update(id, updatedCampagne);
     return { success: true, body: campagne };
@@ -109,40 +120,44 @@ export const updateCampagne = async (id, updatedCampagne) => {
   }
 };
 
-export const createCampagnes = async (campagnes, currentUserId) => {
+export const createCampagnes = async (
+  campagnes: (CampagneCreation & { etablissementFormateurSiret: string; formation: CatalogueFormation })[],
+  currentUserId: string
+) => {
   try {
     const createdCampagneIds = [];
 
     for (const campagne of campagnes) {
       const { formation, etablissementFormateurSiret, ...rest } = campagne;
 
-      let etablissement;
+      let etablissementId;
 
-      etablissement = await etablissementsDao.findAll({ siret: etablissementFormateurSiret });
+      const etablissement = await etablissementsDao.findAll({ siret: etablissementFormateurSiret });
+      etablissementId = etablissement[0]?.id;
 
       const foundFormation = await formationsDao.findAll({ catalogueId: formation._id });
 
       // La formation existe déjà et donc l'établissement aussi
-      if (foundFormation.length) {
+      if (foundFormation?.length) {
         const createdCampagne = await campagnesDao.create(rest, foundFormation[0].id);
         createdCampagneIds.push(createdCampagne);
 
         // La formation n'existe pas
       } else {
-        if (!etablissement.length) {
+        if (!etablissementId) {
           const foundEtablissement = await catalogue.getEtablissement(etablissementFormateurSiret);
-          etablissement = await etablissementsDao.create(
+          etablissementId = await etablissementsDao.create(
             {
-              catalogue_id: foundEtablissement._id,
+              catalogueId: foundEtablissement._id,
               siret: foundEtablissement.siret,
-              onisep_nom: foundEtablissement.onisep_nom,
-              onisep_url: foundEtablissement.onisep_url,
+              onisepNom: foundEtablissement.onisep_nom,
+              onisepUrl: foundEtablissement.onisep_url,
               enseigne: foundEtablissement.enseigne,
-              entreprise_raison_sociale: foundEtablissement.entreprise_raison_sociale,
+              entrepriseRaisonSociale: foundEtablissement.entreprise_raison_sociale,
               uai: foundEtablissement.uai,
               localite: foundEtablissement.localite,
-              region_implantation_nom: foundEtablissement.region_implantation_nom,
-              catalogue_data: JSON.stringify(foundEtablissement),
+              regionImplantationNom: foundEtablissement.region_implantation_nom,
+              catalogueData: JSON.stringify(foundEtablissement),
             },
             currentUserId
           );
@@ -164,7 +179,7 @@ export const createCampagnes = async (campagnes, currentUserId) => {
           etablissementFormateurSiret: campagne.formation.etablissement_formateur_siret,
           etablissementGestionnaireEnseigne: campagne.formation.etablissement_gestionnaire_enseigne,
           etablissementGestionnaireSiret: campagne.formation.etablissement_gestionnaire_siret,
-          etablissementId: etablissement.id || etablissement[0].id,
+          etablissementId: etablissementId,
           intituleCourt: campagne.formation.intitule_court,
           intituleLong: campagne.formation.intitule_long,
           lieuFormationAdresse: campagne.formation.lieu_formation_adresse,
@@ -188,11 +203,12 @@ export const createCampagnes = async (campagnes, currentUserId) => {
   }
 };
 
-export const getPdfExport = async (id) => {
+//unsued
+export const getPdfExport = async (id: string) => {
   try {
     const campagne = await campagnesDao.getOne(id);
 
-    const formation = await formationsDao.findAll({ campagneid: id });
+    const formation = await formationsDao.findAll({ campagneId: id });
 
     const campagneName = campagne.nomCampagne || formation[0].intituleLong || formation[0].intitule_court;
 
@@ -204,13 +220,16 @@ export const getPdfExport = async (id) => {
   }
 };
 
-export const getPdfMultipleExport = async (campagneIds = [], user) => {
+export const getPdfMultipleExport = async (
+  campagneIds: string[] = [],
+  displayedUser: { label: string; email: string }
+) => {
   try {
     const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(campagneIds);
 
     const formattedCampagnes = campagnes.map((campagne) => ({
       campagneId: campagne.id,
-      campagneName: campagne.nomCampagne || campagne.formation.intituleLong || campagne.formation.intitule_court,
+      campagneName: campagne.nomCampagne || campagne.formation.intituleLong || campagne.formation.intituleCourt,
       localite: campagne.formation.localite,
       adresse: campagne.formation.lieuFormationAdresseComputed,
       tags: campagne.formation.tags,
@@ -223,9 +242,16 @@ export const getPdfMultipleExport = async (campagneIds = [], user) => {
       campagnes[0].etablissement.entrepriseRaisonSociale ||
       "";
 
-    const diplome = DIPLOME_TYPE_MATCHER[campagnes[0].formation.diplome] || campagnes[0].formation.diplome;
+    const diplome =
+      DIPLOME_TYPE_MATCHER[campagnes[0].formation.diplome as keyof typeof DIPLOME_TYPE_MATCHER] ||
+      campagnes[0].formation.diplome;
 
-    const generatedPdf = await pdfExport.generateMultiplePdf(formattedCampagnes, diplome, etablissementLabel, user);
+    const generatedPdf = await pdfExport.generateMultiplePdf(
+      formattedCampagnes,
+      diplome,
+      etablissementLabel,
+      displayedUser
+    );
 
     const fileName = `campagnes Sirius.pdf`;
 
@@ -238,7 +264,7 @@ export const getPdfMultipleExport = async (campagneIds = [], user) => {
   }
 };
 
-export const getXlsxMultipleExport = async (campagneIds = []) => {
+export const getXlsxMultipleExport = async (campagneIds: string[] = []) => {
   try {
     const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(campagneIds);
 
@@ -255,7 +281,7 @@ export const getXlsxMultipleExport = async (campagneIds = []) => {
       rncpCode: campagne.formation?.rncpCode,
       certifInfo: campagne.formation?.idCertifinfo,
       cfd: campagne?.formation.cfd?.length ? campagne.formation.cfd.join(", ") : "",
-      mef: campagnes.formation?.bcnMefs10?.length ? campagnes.formation.bcnMefs10[0]?.mef10 : "",
+      mef: campagne.formation?.bcnMefs10?.length ? campagne.formation.bcnMefs10[0]?.mef10 : "",
     }));
 
     const generatedXlsx = await xlsxExport.generateMultipleCampagnes(formattedCampagnes);
@@ -277,19 +303,19 @@ export const getCampagnesStatistics = async (campagneIds = []) => {
     const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query, allowEmptyFilter: true });
 
     const questionnaires = await questionnairesDao.findAll();
-    const temoignages = campagnes.map((campagne) => campagne.temoignages).flat();
-    const temoignageIds = temoignages.map((temoignagne) => temoignagne.id);
 
-    campagnes.forEach((campagne) => {
-      const questionnaireUI = questionnaires.find(
-        (questionnaire) => questionnaire.id === campagne.questionnaireId
-      ).questionnaireUi;
-      campagne.possibleChampsLibreCount = getChampsLibreField(questionnaireUI, true).length;
-      campagne.medianDurationInMs = getMedianDuration(campagne.temoignages);
-    });
+    if (!questionnaires?.length) {
+      return { success: false, body: "No questionnaires found" };
+    }
+
+    const temoignages = campagnes
+      .map((campagne) => campagne.temoignages)
+      .flat()
+      .filter((item) => item !== undefined);
+    const temoignageIds = temoignages.map((temoignage) => temoignage?.id);
 
     let totalVerbatimCount = 0;
-    if (temoignageIds.length) {
+    if (temoignageIds?.length) {
       const verbatimsQuery = {
         temoignageIds: temoignageIds,
       };
@@ -299,7 +325,7 @@ export const getCampagnesStatistics = async (campagneIds = []) => {
       totalVerbatimCount = verbatimsCountByStatus.reduce((acc, verbatim) => acc + verbatim.count, 0);
     }
 
-    const statistics = getStatistics(campagnes, totalVerbatimCount);
+    const statistics = getStatistics(campagnes, questionnaires, totalVerbatimCount);
 
     return { success: true, body: { ...statistics, verbatimsCount: totalVerbatimCount } };
   } catch (error) {
