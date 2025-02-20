@@ -93,14 +93,6 @@ export const updateCampagne = tryCatch(async (req: AuthedRequest, res: Response)
   return res.status(200).json(body);
 });
 
-export const getPdfExport = tryCatch(async (req: AuthedRequest, res: Response) => {
-  const { success, body } = await campagnesService.getPdfExport(req.params.id);
-
-  if (!success) throw new BasicError();
-
-  return res.status(200).json(body);
-});
-
 export const getPdfMultipleExport = tryCatch(async (req: AuthedRequest, res: Response) => {
   const ids = typeof req.query.ids === "string" ? req.query.ids.split(",") : [];
 

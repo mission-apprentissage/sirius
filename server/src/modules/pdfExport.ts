@@ -225,22 +225,3 @@ export const generateMultiplePdf = async (campagnes, diplome, etablissementLabel
 
   return await finalPdfDoc.saveAsBase64();
 };
-
-export const generatePdf = async (campagneId, campagneName) => {
-  const campagne = [{ campagneId, campagneName }];
-
-  const shareDoc = await getPdfDocument(pdfFSharePath);
-
-  const explanationPdfDoc = await getPdfDocument(pdfExplanationFilePath);
-
-  const finalPdfDoc = await PDFDocument.create();
-  const fonts = await embedFonts(finalPdfDoc);
-
-  const [importedExplanationPdfDoc] = await finalPdfDoc.copyPages(explanationPdfDoc, [0]);
-
-  finalPdfDoc.addPage(importedExplanationPdfDoc);
-
-  await addQRCodesAndLinks(finalPdfDoc, shareDoc, campagne, fonts.regular);
-
-  return await finalPdfDoc.saveAsBase64();
-};

@@ -203,23 +203,6 @@ export const createCampagnes = async (
   }
 };
 
-//unsued
-export const getPdfExport = async (id: string) => {
-  try {
-    const campagne = await campagnesDao.getOne(id);
-
-    const formation = await formationsDao.findAll({ campagneId: id });
-
-    const campagneName = campagne.nomCampagne || formation[0].intituleLong || formation[0].intitule_court;
-
-    const generatedPdf = await pdfExport.generatePdf(campagne.id, campagneName);
-
-    return { success: true, body: { data: generatedPdf, fileName: campagneName + ".pdf" } };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
 export const getPdfMultipleExport = async (
   campagneIds: string[] = [],
   displayedUser: { label: string; email: string }

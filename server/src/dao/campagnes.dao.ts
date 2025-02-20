@@ -122,12 +122,6 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
   return camelcaseKeys(result, { deep: true });
 };
 
-export const getOne = async (id: string) => {
-  const result = await getKbdClient().selectFrom("campagnes").selectAll().where("id", "=", id).executeTakeFirst();
-
-  return result ? camelcaseKeys(result) : undefined;
-};
-
 export const create = async (campagne: CampagneCreation, formationId: string): Promise<string | undefined> => {
   if (!formationId) {
     return undefined;
