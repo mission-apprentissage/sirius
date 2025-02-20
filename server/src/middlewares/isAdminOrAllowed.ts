@@ -4,13 +4,11 @@ import { ETABLISSEMENT_RELATION_TYPE, USER_ROLES, USER_STATUS } from "../constan
 import { UnauthorizedError } from "../errors";
 import * as referentiel from "../modules/referentiel";
 import * as campagnesService from "../services/campagnes.service";
-import * as etablissementsService from "../services/etablissements.service";
 import * as formationsService from "../services/formations.service";
 
 export const TYPES = {
   CAMPAGNE_ID: "campagneId",
   CAMPAGNE_IDS: "campagneIds",
-  ETABLISSEMENT_ID: "etablissementId",
   FORMATION_ID: "formationId",
   FORMATION_IDS: "formationIds",
   SIRET_IN_FORMATION: "siretInFormation",
@@ -109,12 +107,6 @@ export const isAdminOrAllowed = async (req, next, type) => {
       const hasEveryResponsableSiret = responsableSiret.flat().every((siret) => multipleSiret.includes(siret));
 
       if (hasEveryResponsableSiret) return next();
-    }
-
-    //check etablissementId
-    if (type === TYPES.ETABLISSEMENT_ID) {
-      const { body } = await etablissementsService.getEtablissement(req.params.id);
-      if ((body && body.siret === siret) || multipleSiret.includes(body.siret)) return next();
     }
 
     //check formation related to etablissement siret

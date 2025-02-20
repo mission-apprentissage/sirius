@@ -99,35 +99,6 @@ export const findAll = async (query: {
   return camelcaseKeys(result);
 };
 
-export const findOne = async (id: string): Promise<Omit<Etablissement, "catalogueData"> | undefined> => {
-  const result = await getKbdClient().selectFrom("etablissements").selectAll().where("id", "=", id).executeTakeFirst();
-
-  return result ? camelcaseKeys(result) : undefined;
-};
-
-export const deleteOne = async (id: string): Promise<boolean> => {
-  const result = await getKbdClient()
-    .updateTable("etablissements")
-    .set({
-      deleted_at: new Date(),
-    })
-    .where("id", "=", id)
-    .executeTakeFirst();
-
-  return result.numUpdatedRows === BigInt(1);
-};
-
-export const update = async (id: string, updatedEtablissement: Partial<Etablissement>): Promise<boolean> => {
-  const result = await getKbdClient()
-    .updateTable("etablissements")
-    .set(updatedEtablissement)
-    .where("id", "=", id)
-    .where("deleted_at", "is", null)
-    .executeTakeFirst();
-
-  return result.numUpdatedRows === BigInt(1);
-};
-
 export const findAllEtablissementWithCounts = async (): FindAllEtablissementWithCountsResults => {
   const baseQuery = getKbdClient()
     .selectFrom("etablissements")

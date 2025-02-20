@@ -73,36 +73,6 @@ export const getEtablissementsWithTemoignageCount = async () => {
   }
 };
 
-export const getEtablissement = async (id) => {
-  try {
-    const etablissement = await etablissementsDao.findOne(id);
-    return { success: true, body: etablissement };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const deleteEtablissement = async (id) => {
-  try {
-    const etablissement = await etablissementsDao.deleteOne(id);
-    return { success: true, body: etablissement };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const updateEtablissement = async (id, updatedEtablissement) => {
-  try {
-    const etablissement = await etablissementsDao.update(id, updatedEtablissement);
-
-    if (!etablissement) throw new Error("Etablissement not found");
-
-    return { success: true, body: etablissement };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
 export const getEtablissementsSuivi = async () => {
   try {
     const etablissements = await etablissementsDao.findAllEtablissementWithCounts();
