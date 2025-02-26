@@ -1,12 +1,5 @@
 import { UNCOMPLIANT_TEMOIGNAGE_TYPE } from "../constants";
-import {
-  BasicError,
-  CampagneEnded,
-  CampagneNotStarted,
-  ErrorMessage,
-  NoSeatsAvailable,
-  TemoignageNotFoundError,
-} from "../errors";
+import { BasicError, CampagneEnded, CampagneNotStarted, ErrorMessage, NoSeatsAvailable } from "../errors";
 import * as temoignagesService from "../services/temoignages.service";
 import tryCatch from "../utils/tryCatch.utils";
 
@@ -20,15 +13,6 @@ export const createTemoignage = tryCatch(async (req: any, res: any) => {
   if (!success) throw new BasicError();
 
   return res.status(201).json(body);
-});
-
-export const deleteTemoignage = tryCatch(async (req: any, res: any) => {
-  const { success, body } = await temoignagesService.deleteTemoignage(req.params.id);
-
-  if (!success) throw new BasicError();
-  if (!body.modifiedCount) throw new TemoignageNotFoundError();
-
-  return res.status(200).json(body);
 });
 
 export const updateTemoignage = tryCatch(async (req: any, res: any) => {

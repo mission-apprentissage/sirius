@@ -54,15 +54,6 @@ export const createTemoignage = async (temoignage) => {
   }
 };
 
-export const deleteTemoignage = async (id) => {
-  try {
-    const temoignage = await temoignagesDao.deleteOne(id);
-    return { success: true, body: temoignage };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
 export const updateTemoignage = async (id, updatedTemoignage) => {
   try {
     const temoignage = await temoignagesDao.update(id, updatedTemoignage);
