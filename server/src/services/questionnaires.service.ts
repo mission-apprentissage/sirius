@@ -1,8 +1,7 @@
-// @ts-nocheck -- TODO
-
 import * as questionnairesDao from "../dao/questionnaires.dao";
+import type { QuestionnaireCreation, QuestionnaireUpdate } from "../types";
 
-export const createQuestionnaire = async (questionnaire) => {
+export const createQuestionnaire = async (questionnaire: QuestionnaireCreation) => {
   try {
     const createdQuestionnaire = await questionnairesDao.create(questionnaire);
 
@@ -21,7 +20,7 @@ export const getQuestionnaires = async () => {
   }
 };
 
-export const getOneQuestionnaire = async (id) => {
+export const getOneQuestionnaire = async (id: string) => {
   try {
     const questionnaire = await questionnairesDao.getOne(id);
     return { success: true, body: questionnaire };
@@ -30,7 +29,7 @@ export const getOneQuestionnaire = async (id) => {
   }
 };
 
-export const deleteQuestionnaire = async (id) => {
+export const deleteQuestionnaire = async (id: string) => {
   try {
     const questionnaire = await questionnairesDao.deleteOne(id);
     return { success: true, body: questionnaire };
@@ -39,7 +38,7 @@ export const deleteQuestionnaire = async (id) => {
   }
 };
 
-export const updateQuestionnaire = async (id, updatedQuestionnaire) => {
+export const updateQuestionnaire = async (id: string, updatedQuestionnaire: QuestionnaireUpdate) => {
   try {
     const questionnaire = await questionnairesDao.update(id, updatedQuestionnaire);
 
