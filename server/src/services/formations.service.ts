@@ -1,17 +1,23 @@
-// @ts-nocheck -- TODO
-
 import fs from "fs";
 
 import { OBSERVER_SCOPES } from "../constants";
 import * as formationsDao from "../dao/formations.dao";
+import type { FindAllArgs } from "../dao/types/formations.types";
+import type { ObserverScope, Opco } from "../types";
 import { getStaticFilePath } from "../utils/getStaticFilePath";
 
-export const getFormations = async ({ formationIds, etablissementSiret, search }) => {
+export const getFormations = async ({
+  etablissementSiret,
+  search,
+}: {
+  etablissementSiret?: string;
+  search?: string;
+}) => {
   try {
-    const query = search ? { searchText: search } : {};
+    const query = {} as FindAllArgs;
 
-    if (formationIds?.length) {
-      query.formationIds = formationIds;
+    if (search) {
+      query.searchText = search;
     }
 
     if (etablissementSiret) {
@@ -30,6 +36,10 @@ export const getFormationsWithTemoignageCount = async () => {
   try {
     const formations = await formationsDao.findAllWithTemoignageCount();
 
+    if (!formations?.length) {
+      return { success: false, body: "No formations found" };
+    }
+
     const reformatForExtension = formations.map((formation) => ({
       ...formation,
       onisep_intitule: formation.onisepIntitule,
@@ -41,20 +51,30 @@ export const getFormationsWithTemoignageCount = async () => {
   }
 };
 
-export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({ userSiret, scope }) => {
+export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({
+  userSiret,
+  scope,
+}: {
+  userSiret?: string[];
+  scope: ObserverScope | undefined;
+}) => {
   try {
     // Nécessaire pour ne pas stocker la liste de code RNCP dans le scope d'un user et réconcilier les labels/valeurs
     if (scope?.field === OBSERVER_SCOPES.OPCO) {
       const SCOPE_LIST = getStaticFilePath("./opco.json");
       const opcos = JSON.parse(fs.readFileSync(SCOPE_LIST, "utf8"));
-      const rncpCodes = opcos.find((opco) => opco.label === scope.value).value;
+      const rncpCodes = opcos.find((opco: Opco) => opco.label === scope.value).value;
 
       scope.value = rncpCodes;
     }
 
     const formations = await formationsDao.findAllWithCampagnesCount(userSiret, scope);
 
-    const formattedByDiplome = formations.reduce((acc, formation) => {
+    if (!formations?.length) {
+      return { success: false, body: "No formations found" };
+    }
+
+    const formattedByDiplome = formations.reduce<Record<string, number>>((acc, formation) => {
       const diplome = formation.diplome || "N/A";
 
       if (!acc[diplome]) {
@@ -66,7 +86,17 @@ export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({ us
       return acc;
     }, {});
 
-    const formattedByEtablissement = formations.reduce((acc, formation) => {
+    const formattedByEtablissement = formations.reduce<
+      Record<
+        string,
+        {
+          campagnesCount: number;
+          etablissementFormateurEnseigne: string | null;
+          etablissementFormateurEntrepriseRaisonSociale: string | null;
+          etablissementFormateurSiret: string;
+        }
+      >
+    >((acc, formation) => {
       const etablissementFormateurSiret = formation.etablissementFormateurSiret || "N/A";
 
       if (!acc[etablissementFormateurSiret]) {

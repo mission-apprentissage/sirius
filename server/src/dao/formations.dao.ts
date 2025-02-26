@@ -240,7 +240,7 @@ export const findAllWithTemoignageCount = async (): FindAllWithTemoignageCountRe
 };
 
 export const findAllWithCampagnesCount = async (
-  siret: string[],
+  siret?: string[],
   scope?: ObserverScope
 ): FindAllWithCampagnesCountResults => {
   let baseQuery = getKbdClient()
@@ -274,7 +274,7 @@ export const findAllWithCampagnesCount = async (
     .orderBy("campagnesCount", "desc")
     .where("formations.deleted_at", "is", null);
 
-  if (siret?.length > 0) {
+  if (siret?.length) {
     baseQuery = baseQuery.where((qb) =>
       qb.or([
         qb("formations.etablissement_gestionnaire_siret", "in", siret),
