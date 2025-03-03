@@ -241,7 +241,7 @@ export const findAllWithEtablissement = async (): FindAllWithEtablissementResult
   return camelcaseKeys(result);
 };
 
-export const update = async (id: string, user: Omit<User, "id" | "email" | "createdAt">): Promise<boolean> => {
+export const update = async (id: string, user: Partial<Omit<User, "id" | "email" | "createdAt">>): Promise<boolean> => {
   const result = await getKbdClient()
     .updateTable("users")
     .set(decamelizeKeys(user))
@@ -260,7 +260,7 @@ export const create = async ({
   confirmationToken,
   salt,
   hash,
-}: UserCreation): Promise<{ id: string } | undefined> => {
+}: UserCreation & { salt: string; hash: string }): Promise<{ id: string } | undefined> => {
   const newUser = {
     email: email.toLowerCase(),
     first_name: firstName,

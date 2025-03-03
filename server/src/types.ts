@@ -295,8 +295,7 @@ export type UserCreation = {
   confirmationToken: string;
   firstName: string;
   lastName: string;
-  salt: string;
-  hash: string;
+  password: string;
 };
 
 export type ObserverScope = { field: "region" | "num_departement" | "sirets"; value: string };

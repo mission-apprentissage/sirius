@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import config from "../config";
@@ -7,10 +8,11 @@ import { sendBrevoEmail } from "../modules/brevo";
 import { sendToSlack } from "../modules/slack";
 import * as etablissementsService from "../services/etablissements.service";
 import * as usersService from "../services/users.service";
+import type { AuthedRequest } from "../types";
 import { COOKIE_OPTIONS } from "../utils/authenticate.utils";
 import tryCatch from "../utils/tryCatch.utils";
 
-export const createUser = tryCatch(async (req: any, res: any) => {
+export const createUser = tryCatch(async (req: Request, res: Response) => {
   const confirmationToken = jwt.sign({ email: req.body.email }, config.auth.jwtSecret, {
     expiresIn: "1y",
   });
@@ -34,11 +36,19 @@ export const createUser = tryCatch(async (req: any, res: any) => {
   });
 
   const etablissementsDisplay = req.body.etablissements
-    .map((etablissement: any) => {
-      return `• ${etablissement.siret} - ${
-        etablissement.onisep_nom || etablissement.enseigne || etablissement.entreprise_raison_sociale
-      }`;
-    })
+    .map(
+      (etablissement: {
+        _id: string;
+        siret: string;
+        onisep_nom: string;
+        enseigne: string;
+        entreprise_raison_sociale: string;
+      }) => {
+        return `• ${etablissement.siret} - ${
+          etablissement.onisep_nom || etablissement.enseigne || etablissement.entreprise_raison_sociale
+        }`;
+      }
+    )
     .join("\n");
 
   await sendToSlack([
@@ -89,7 +99,7 @@ export const createUser = tryCatch(async (req: any, res: any) => {
   res.status(201).json(bodyUser);
 });
 
-export const loginUser = tryCatch(async (req: any, res: any) => {
+export const loginUser = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { success, body } = await usersService.loginUser(req.user.id);
 
   if (!success) throw new BasicError();
@@ -98,7 +108,7 @@ export const loginUser = tryCatch(async (req: any, res: any) => {
   res.status(200).json({ success: true, token: body.token });
 });
 
-export const sudo = tryCatch(async (req: any, res: any) => {
+export const sudo = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { id } = req.params;
   const { success, body } = await usersService.sudo(id);
 
@@ -108,7 +118,7 @@ export const sudo = tryCatch(async (req: any, res: any) => {
   res.status(200).json({ success: true, token: body.token });
 });
 
-export const refreshTokenUser = tryCatch(async (req: any, res: any) => {
+export const refreshTokenUser = tryCatch(async (req: Request, res: Response) => {
   const { signedCookies = {} } = req;
   const { refreshToken } = signedCookies;
 
@@ -124,11 +134,11 @@ export const refreshTokenUser = tryCatch(async (req: any, res: any) => {
   res.status(200).json({ success: true, token: body.token });
 });
 
-export const getCurrentUser = tryCatch(async (req: any, res: any) => {
+export const getCurrentUser = tryCatch(async (req: AuthedRequest, res: Response) => {
   res.status(200).json(req.user);
 });
 
-export const logoutUser = tryCatch(async (req: any, res: any) => {
+export const logoutUser = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { signedCookies = {} } = req;
   const { refreshToken } = signedCookies;
 
@@ -144,7 +154,7 @@ export const logoutUser = tryCatch(async (req: any, res: any) => {
   res.status(200).json({ success: true });
 });
 
-export const getUsers = tryCatch(async (_req: any, res: any) => {
+export const getUsers = tryCatch(async (_req: AuthedRequest, res: Response) => {
   const { success, body } = await usersService.getUsers();
 
   if (!success) throw new BasicError();
@@ -152,7 +162,7 @@ export const getUsers = tryCatch(async (_req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const updateUser = tryCatch(async (req: any, res: any) => {
+export const updateUser = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { id } = req.params;
 
   const { success: successOldUser, body: oldUser } = await usersService.getUserById(id);
@@ -199,7 +209,7 @@ export const updateUser = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(updatedUser);
 });
 
-export const forgotPassword = tryCatch(async (req: any, res: any) => {
+export const forgotPassword = tryCatch(async (req: Request, res: Response) => {
   const { success, body } = await usersService.forgotPassword(req.body.email);
 
   if (!success && body === ErrorMessage.UserNotFound) return res.status(200).json({ success: true });
@@ -222,7 +232,7 @@ export const forgotPassword = tryCatch(async (req: any, res: any) => {
   return res.status(200).json({ success: true });
 });
 
-export const resetPassword = tryCatch(async (req: any, res: any) => {
+export const resetPassword = tryCatch(async (req: Request, res: Response) => {
   const { success, body } = await usersService.resetPassword(req.body.token, req.body.password);
 
   if (!success && body === ErrorMessage.UserNotFound) throw new UnauthorizedError();
@@ -231,7 +241,7 @@ export const resetPassword = tryCatch(async (req: any, res: any) => {
   return res.status(200).json({ success: true });
 });
 
-export const confirmUser = tryCatch(async (req: any, res: any) => {
+export const confirmUser = tryCatch(async (req: Request, res: Response) => {
   const { success, body } = await usersService.confirmUser(req.body.token);
 
   if (!success && body === ErrorMessage.UserNotFound) throw new UnauthorizedError();
@@ -240,7 +250,7 @@ export const confirmUser = tryCatch(async (req: any, res: any) => {
   return res.status(200).json({ success: true });
 });
 
-export const supportUser = tryCatch(async (req: any, res: any) => {
+export const supportUser = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { title, message } = req.body;
   const { email, firstName, lastName } = req.user;
 
@@ -295,7 +305,7 @@ export const supportUser = tryCatch(async (req: any, res: any) => {
   return res.status(200).json({ success: slackResponse?.ok });
 });
 
-export const supportUserPublic = tryCatch(async (req: any, res: any) => {
+export const supportUserPublic = tryCatch(async (req: Request, res: Response) => {
   const { email, message } = req.body;
 
   const slackResponse = await sendToSlack([
