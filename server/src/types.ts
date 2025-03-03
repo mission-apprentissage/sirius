@@ -2,7 +2,6 @@ import type { Request } from "express";
 
 import type { USER_ROLES, USER_STATUS, VERBATIM_STATUS, VERBATIM_THEMES } from "./constants";
 import type { JsonValue } from "./db/schema";
-
 export type Campagne = {
   id: string;
   nomCampagne: string | null;
@@ -98,8 +97,8 @@ export type EtablissementCreation = {
 export type Questionnaire = {
   id: string;
   nom: string;
-  questionnaire: JsonValue;
-  questionnaireUi: JsonValue;
+  questionnaire: any;
+  questionnaireUi: any;
   isValidated: boolean;
   deletedAt: Date | null;
   createdAt: Date | null;
@@ -109,15 +108,15 @@ export type Questionnaire = {
 export type QuestionnaireCreation = {
   id: string;
   nom: string;
-  questionnaire: JsonValue;
-  questionnaireUi: JsonValue;
+  questionnaire: any;
+  questionnaireUi: any;
   isValidated: boolean;
 };
 
 export type QuestionnaireUpdate = {
   nom: string;
-  questionnaire: JsonValue;
-  questionnaireUi: JsonValue;
+  questionnaire: any;
+  questionnaireUi: any;
   isValidated: boolean;
 };
 
@@ -209,6 +208,13 @@ export type Temoignage = {
 };
 
 export type TemoignageCreation = {
+  reponses: JsonValue | null;
+  isBot: boolean | null;
+  lastQuestionAt: Date | null;
+  campagneId: string;
+};
+
+export type TemoignageUpdate = {
   reponses: JsonValue | null;
   isBot: boolean | null;
   lastQuestionAt: Date | null;

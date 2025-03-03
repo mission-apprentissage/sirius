@@ -1,17 +1,15 @@
-// @ts-nocheck -- TODO
+import type { Response } from "express";
 
-import {
-  ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES,
-  UNCOMPLIANT_TEMOIGNAGE_TYPE,
-  VERBATIM_STATUS,
-} from "../constants";
+import { UNCOMPLIANT_TEMOIGNAGE_TYPE, VERBATIM_STATUS } from "../constants";
 import * as campagnesDao from "../dao/campagnes.dao";
 import * as formationsDao from "../dao/formations.dao";
 import * as questionnairesDao from "../dao/questionnaires.dao";
 import * as temoignagesDao from "../dao/temoignages.dao";
 import * as verbatimsDao from "../dao/verbatims.dao";
+import type { JsonValue } from "../db/schema";
 import { ErrorMessage } from "../errors";
 import * as xlsxExport from "../modules/xlsxExport";
+import type { Temoignage, TemoignageCreation, TemoignageUpdate } from "../types";
 import { intituleFormationFormatter } from "../utils/formations.utils";
 import {
   getCategoriesWithEmojis,
@@ -28,7 +26,7 @@ import {
   verbatimsAnOrderedThemeAnswersMatcher,
 } from "../utils/temoignages.utils";
 
-export const createTemoignage = async (temoignage) => {
+export const createTemoignage = async (temoignage: TemoignageCreation) => {
   try {
     const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(temoignage.campagneId);
 
@@ -54,7 +52,7 @@ export const createTemoignage = async (temoignage) => {
   }
 };
 
-export const updateTemoignage = async (id, updatedTemoignage) => {
+export const updateTemoignage = async (id: string, updatedTemoignage: TemoignageUpdate) => {
   try {
     const temoignage = await temoignagesDao.update(id, updatedTemoignage);
 
@@ -64,22 +62,42 @@ export const updateTemoignage = async (id, updatedTemoignage) => {
   }
 };
 
-export const getDatavisualisation = async (campagneIds = []) => {
+export const getDatavisualisation = async (campagneIds: string[] = []) => {
   try {
     const query = { campagneIds };
     const temoignages = await temoignagesDao.findAllWithVerbatims(query);
+
+    if (!temoignages.length) {
+      return { success: true, body: [] };
+    }
+
     const allQuestionnaires = await questionnairesDao.findAll();
+
+    if (!allQuestionnaires?.length) {
+      return { success: false, body: ErrorMessage.QuestionnaireNotFoundError };
+    }
 
     const campagnes = await campagnesDao.getAll(campagneIds);
 
-    const questionnaireTemoignagesMap = {};
+    if (!campagnes.length) {
+      return { success: false, body: ErrorMessage.CampagneNotFoundError };
+    }
+
+    const questionnaireTemoignagesMap: Record<string, Temoignage[]> = {};
 
     // ajoute les témoignages à leur questionnaire respectif
     for (const temoignage of temoignages) {
-      temoignage.verbatims.forEach(
-        (verbatim) =>
-          (temoignage.reponses[verbatim.questionKey] = { content: verbatim.content, status: verbatim.status })
-      );
+      if (!temoignage.reponses) {
+        temoignage.reponses = {};
+      }
+      temoignage.verbatims.forEach((verbatim) => {
+        if (temoignage.reponses && typeof temoignage.reponses === "object") {
+          (temoignage.reponses as Record<string, JsonValue | null>)[verbatim.questionKey] = {
+            content: verbatim.content,
+            status: verbatim.status,
+          };
+        }
+      });
 
       const campagne = campagnes.filter((campagne) => campagne.id === temoignage.campagneId)[0];
       if (!campagne) {
@@ -87,26 +105,31 @@ export const getDatavisualisation = async (campagneIds = []) => {
       }
 
       const questionnaireId = campagne.questionnaireId;
-      if (!questionnaireTemoignagesMap[questionnaireId]) {
-        questionnaireTemoignagesMap[questionnaireId] = [];
-      }
 
-      questionnaireTemoignagesMap[questionnaireId].push(temoignage);
+      if (questionnaireId) {
+        if (!questionnaireTemoignagesMap[questionnaireId]) {
+          questionnaireTemoignagesMap[questionnaireId] = [];
+        }
+        questionnaireTemoignagesMap[questionnaireId].push(temoignage);
+      }
     }
 
     // crée un objet avec les catégories et les questions pour chaque questionnaire
     const result = Object.keys(questionnaireTemoignagesMap).map((questionnaireId) => {
       const questionnaireById = allQuestionnaires.find((questionnaire) => questionnaire.id === questionnaireId);
 
+      if (!questionnaireById) {
+        return null;
+      }
+
       const matchedIdAndQuestions = matchIdAndQuestions(questionnaireById.questionnaire);
       const matchedCardTypeAndQuestions = matchCardTypeAndQuestions(
         questionnaireById.questionnaire,
         questionnaireById.questionnaireUi
       );
-      const categories = getCategoriesWithEmojis(questionnaireById.questionnaire);
-
-      categories.forEach((category) => {
-        category.questionsList = Object.keys(questionnaireById.questionnaire.properties[category.id].properties).map(
+      const categories = getCategoriesWithEmojis(questionnaireById.questionnaire).map((category) => ({
+        ...category,
+        questionsList: Object.keys(questionnaireById.questionnaire.properties[category.id].properties).map(
           (questionId) => {
             const label = matchedIdAndQuestions[questionId];
             const widget =
@@ -115,7 +138,9 @@ export const getDatavisualisation = async (campagneIds = []) => {
                 : matchedCardTypeAndQuestions[questionId];
 
             const responses = questionnaireTemoignagesMap[questionnaireById.id]
-              .map((temoignage) => temoignage.reponses[questionId])
+              .map((temoignage) =>
+                temoignage.reponses ? (temoignage.reponses as Record<string, JsonValue | null>)[questionId] : null
+              )
               .flat()
               .filter(Boolean);
 
@@ -128,8 +153,8 @@ export const getDatavisualisation = async (campagneIds = []) => {
               responses: formattedResponses,
             };
           }
-        );
-      });
+        ),
+      }));
 
       return {
         questionnaireId: questionnaireById.id,
@@ -145,7 +170,12 @@ export const getDatavisualisation = async (campagneIds = []) => {
   }
 };
 
-export const getDatavisualisationFormation = async (intituleFormation, cfd, idCertifinfo, slug) => {
+export const getDatavisualisationFormation = async (
+  intituleFormation: string | null,
+  cfd: string | null,
+  idCertifinfo: string | null,
+  slug: string | null
+) => {
   try {
     const formattedIntituleFormation = intituleFormation ? intituleFormationFormatter(intituleFormation) : null;
 
@@ -156,13 +186,17 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
       slug
     );
 
+    if (!formationsWithCampagnes?.length) {
+      return { success: false, body: "Formation not found" };
+    }
+
     const campagneIds = formationsWithCampagnes.map((formation) => formation.campagneId);
 
     if (!campagneIds.length) {
       return { success: true, body: { temoignagesCount: 0 } };
     }
 
-    const query = { campagneIds };
+    const query = { campagneIds: campagneIds.filter((id) => id !== null) };
     const temoignages = await temoignagesDao.findAll(query);
 
     if (!temoignages.length || temoignages.length === 1) {
@@ -170,15 +204,43 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
     }
 
     const commentVisTonExperienceEntreprise = temoignages
-      .map((temoignage) => temoignage.reponses["commentVisTonExperienceEntreprise"])
+      .map((temoignage) => {
+        if (
+          temoignage.reponses &&
+          typeof temoignage.reponses === "object" &&
+          "commentVisTonExperienceEntreprise" in temoignage.reponses
+        ) {
+          return temoignage.reponses["commentVisTonExperienceEntreprise"];
+        }
+        return null;
+      })
+      .filter(Boolean)
       .filter(Boolean);
 
     const cfaAideTrouverEntreprise = temoignages
-      .map((temoignage) => temoignage.reponses["cfaAideTrouverEntreprise"])
+      .map((temoignage) => {
+        if (
+          temoignage.reponses &&
+          typeof temoignage.reponses === "object" &&
+          "cfaAideTrouverEntreprise" in temoignage.reponses
+        ) {
+          return temoignage.reponses["cfaAideTrouverEntreprise"];
+        }
+        return null;
+      })
       .filter(Boolean);
 
     const commentTrouverEntreprise = temoignages
-      .map((temoignage) => temoignage.reponses["commentTrouverEntreprise"])
+      .map((temoignage) => {
+        if (
+          temoignage.reponses &&
+          typeof temoignage.reponses === "object" &&
+          "commentTrouverEntreprise" in temoignage.reponses
+        ) {
+          return temoignage.reponses["commentTrouverEntreprise"];
+        }
+        return null;
+      })
       .filter(Boolean);
 
     const trouverEntrepriseRating = getTrouverEntrepriseRating(cfaAideTrouverEntreprise, commentTrouverEntreprise);
@@ -205,6 +267,11 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
 
     const verbatimsWithEtablissement = verbatimsResults.map((verbatim) => {
       const relatedTemoignage = temoignages.find((temoignage) => temoignage.id === verbatim.temoignageId);
+
+      if (!relatedTemoignage) {
+        return verbatim;
+      }
+
       return {
         ...verbatim,
         etablissementFormateurEntrepriseRaisonSociale: relatedTemoignage.etablissementFormateurEntrepriseRaisonSociale,
@@ -221,7 +288,7 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
     const allGems = getGemVerbatimsByWantedQuestionKey(verbatimsWithEtablissement);
     const gems = getGemVerbatimsByWantedQuestionKey(verbatimsWithEtablissement.splice(0, 5));
 
-    const etablissementsCount = temoignages.reduce((acc, temoignage) => {
+    const etablissementsCount = temoignages.reduce((acc: Record<string, number>, temoignage) => {
       if (temoignage.etablissementFormateurEntrepriseRaisonSociale) {
         acc[temoignage.etablissementFormateurEntrepriseRaisonSociale] =
           (acc[temoignage.etablissementFormateurEntrepriseRaisonSociale] || 0) + 1;
@@ -248,7 +315,12 @@ export const getDatavisualisationFormation = async (intituleFormation, cfd, idCe
   }
 };
 
-export const getDatavisualisationFormationExists = async (intituleFormation, cfd, idCertifinfo, slug) => {
+export const getDatavisualisationFormationExists = async (
+  intituleFormation: string | null,
+  cfd: string | null,
+  idCertifinfo: string | null,
+  slug: string | null
+) => {
   try {
     const formattedIntituleFormation = intituleFormation ? intituleFormationFormatter(intituleFormation) : null;
 
@@ -259,13 +331,17 @@ export const getDatavisualisationFormationExists = async (intituleFormation, cfd
       slug
     );
 
+    if (!formationsWithCampagnes?.length) {
+      return { success: true, body: { hasData: false } };
+    }
+
     const campagneIds = formationsWithCampagnes.map((formation) => formation.campagneId);
 
     if (!campagneIds.length) {
       return { success: true, body: { hasData: false } };
     }
 
-    const query = { campagneIds };
+    const query = { campagneIds: campagneIds.filter((id) => id !== null) };
     const temoignages = await temoignagesDao.findAll(query);
 
     if (!temoignages.length || temoignages.length === 1) {
@@ -278,27 +354,49 @@ export const getDatavisualisationFormationExists = async (intituleFormation, cfd
   }
 };
 
-export const getDatavisualisationEtablissement = async (uai) => {
+export const getDatavisualisationEtablissement = async (uai: string) => {
   try {
-    const campagneIds = (await formationsDao.findFormationByUai(uai)).map((formation) => formation.campagneId);
+    const formations = await formationsDao.findFormationByUai(uai);
+
+    if (!formations?.length) {
+      return { success: true, body: { temoignagesCount: 0 } };
+    }
+
+    const campagneIds = formations.map((formation) => formation.campagneId);
 
     if (!campagneIds.length) {
       return { success: true, body: { temoignagesCount: 0 } };
     }
 
-    const query = { campagneIds };
+    const query = { campagneIds: campagneIds.filter((id) => id !== null) };
     const temoignages = await temoignagesDao.findAll(query);
 
     if (!temoignages.length) {
       return { success: true, body: { temoignagesCount: 0 } };
     }
 
-    const commentCaSePasseCfa = temoignages.map((temoignage) => temoignage.reponses["commentCaSePasseCfa"]);
+    const commentCaSePasseCfa = temoignages.map((temoignage) => {
+      if (
+        temoignage.reponses &&
+        typeof temoignage.reponses === "object" &&
+        "commentCaSePasseCfa" in temoignage.reponses
+      ) {
+        return temoignage.reponses["commentCaSePasseCfa"];
+      }
+      return null;
+    });
     const commentCaSePasseCfaRates = getReponseRating(commentCaSePasseCfa);
 
-    const commentVisTonExperienceCfa = temoignages.map(
-      (temoignage) => temoignage.reponses["commentVisTonExperienceCfa"]
-    );
+    const commentVisTonExperienceCfa = temoignages.map((temoignage) => {
+      if (
+        temoignage.reponses &&
+        typeof temoignage.reponses === "object" &&
+        "commentVisTonExperienceCfa" in temoignage.reponses
+      ) {
+        return temoignage.reponses["commentVisTonExperienceCfa"];
+      }
+      return null;
+    });
 
     const commentVisTonExperienceCfaOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceCfa); // change name if working for CFA
     const commentVisTonCfaVerbatimsQuery = {
@@ -307,14 +405,22 @@ export const getDatavisualisationEtablissement = async (uai) => {
     };
     const commentVisTonCfaVerbatimsResults = await verbatimsDao.getAll(commentVisTonCfaVerbatimsQuery);
 
-    // check if working for cfa
     const matchedVerbatimAndcommentVisTonCfa = verbatimsAnOrderedThemeAnswersMatcher(
       commentVisTonCfaVerbatimsResults,
-      commentVisTonExperienceCfaOrder,
-      ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES
+      commentVisTonExperienceCfaOrder
     );
 
-    const accompagneCfa = temoignages.map((temoignage) => temoignage.reponses["sensTuAccompagneAuCfa"]);
+    const accompagneCfa = temoignages.map((temoignage) => {
+      if (
+        temoignage.reponses &&
+        typeof temoignage.reponses === "object" &&
+        "sensTuAccompagneAuCfa" in temoignage.reponses
+      ) {
+        return temoignage.reponses["sensTuAccompagneAuCfa"];
+      }
+      return null;
+    });
+
     const formattedAccompagneCfa = accompagneCfa.map((answer) => {
       if (answer === "Oui, ils sont disponibles tout en nous laissant beaucoup en autonomie") {
         return "Bien";
@@ -366,6 +472,13 @@ export const getUncompliantTemoignages = async ({
   includeUnavailableDuration,
   page,
   pageSize,
+}: {
+  type: (typeof UNCOMPLIANT_TEMOIGNAGE_TYPE)[keyof typeof UNCOMPLIANT_TEMOIGNAGE_TYPE];
+  duration: number;
+  answeredQuestions: number;
+  includeUnavailableDuration: boolean;
+  page: number;
+  pageSize: number;
 }) => {
   const uncompliantsQuery = {
     isBot: true,
@@ -374,7 +487,7 @@ export const getUncompliantTemoignages = async ({
     includeUnavailableDuration,
   };
 
-  let temoignages = [];
+  let temoignages;
   try {
     const uncompliantsCount = await temoignagesDao.uncompliantsCount(uncompliantsQuery);
     let totalItemsCountPerType = 0;
@@ -407,17 +520,17 @@ export const getUncompliantTemoignages = async ({
 
     return {
       success: true,
-      body: temoignages.rows,
+      body: temoignages?.rows,
       count: {
         total: uncompliantsCount.botCount + uncompliantsCount.incompleteCount + uncompliantsCount.quickCount,
         ...uncompliantsCount,
       },
       pagination: {
         totalItemsCountPerType,
-        currentPage: parseInt(page),
+        currentPage: page,
         pageSize: pageSize,
         totalPages: Math.ceil(totalItemsCountPerType / pageSize),
-        hasMore: temoignages.hasNextPage || false,
+        hasMore: temoignages?.hasNextPage || false,
       },
     };
   } catch (error) {
@@ -425,7 +538,7 @@ export const getUncompliantTemoignages = async ({
   }
 };
 
-export const deleteMultipleTemoignages = async (temoignagesIds) => {
+export const deleteMultipleTemoignages = async (temoignagesIds: string[]) => {
   try {
     const temoignages = await temoignagesDao.deleteMultiple(temoignagesIds);
     return { success: true, body: temoignages };
@@ -434,7 +547,7 @@ export const deleteMultipleTemoignages = async (temoignagesIds) => {
   }
 };
 
-export const exportTemoignagesToXlsx = async (campagneIds, res) => {
+export const exportTemoignagesToXlsx = async (campagneIds: string[], res: Response) => {
   try {
     const questionnaires = await questionnairesDao.findAll();
     const temoignages = await temoignagesDao.getAllWithFormationAndQuestionnaire(campagneIds);

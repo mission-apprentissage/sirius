@@ -4,7 +4,7 @@ import { sql } from "kysely";
 import { executeWithOffsetPagination } from "kysely-paginate";
 
 import { getKbdClient } from "../db/db";
-import type { Temoignage, TemoignageCreation } from "../types";
+import type { Temoignage, TemoignageCreation, TemoignageUpdate } from "../types";
 import type {
   FindAllResults,
   FindAllWithVerbatimsResults,
@@ -12,9 +12,7 @@ import type {
   GetAllWithFormationAndQuestionnaireResults,
 } from "./types/temoignages.types";
 
-export const create = async (
-  temoignage: TemoignageCreation & { campagneId: string }
-): Promise<{ id: string } | undefined> => {
+export const create = async (temoignage: TemoignageCreation): Promise<{ id: string } | undefined> => {
   const { campagneId, ...rest } = temoignage;
 
   const transaction = await getKbdClient()
@@ -146,10 +144,7 @@ export const deleteManyByCampagneId = async (campagneIds: string[]): Promise<boo
   return true;
 };
 
-export const update = async (
-  id: string,
-  updatedTemoignage: Pick<Temoignage, "isBot" | "reponses" | "lastQuestionAt">
-): Promise<boolean> => {
+export const update = async (id: string, updatedTemoignage: TemoignageUpdate): Promise<boolean> => {
   const result = await getKbdClient()
     .updateTable("temoignages")
     .set(decamelizeKeys(updatedTemoignage))
@@ -219,7 +214,14 @@ export const uncompliantsCount = async (query: {
 };
 
 export const getAllTemoignagesWithFormation = async (
-  query: Partial<Temoignage>,
+  query: Partial<
+    Temoignage & {
+      isBot: boolean;
+      incompleteNumber: number;
+      timeToRespondLimit: number;
+      includeUnavailableDuration: boolean;
+    }
+  >,
   page: number,
   pageSize: number
 ): GetAllTemoignagesWithFormationResults => {

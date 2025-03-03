@@ -1,9 +1,12 @@
+import type { Request, Response } from "express";
+
 import { UNCOMPLIANT_TEMOIGNAGE_TYPE } from "../constants";
 import { BasicError, CampagneEnded, CampagneNotStarted, ErrorMessage, NoSeatsAvailable } from "../errors";
 import * as temoignagesService from "../services/temoignages.service";
+import type { AuthedRequest } from "../types";
 import tryCatch from "../utils/tryCatch.utils";
 
-export const createTemoignage = tryCatch(async (req: any, res: any) => {
+export const createTemoignage = tryCatch(async (req: Request, res: Response) => {
   const { success, body } = await temoignagesService.createTemoignage(req.body);
 
   if (!success && body === ErrorMessage.CampagneNotStarted) throw new CampagneNotStarted();
@@ -15,7 +18,7 @@ export const createTemoignage = tryCatch(async (req: any, res: any) => {
   return res.status(201).json(body);
 });
 
-export const updateTemoignage = tryCatch(async (req: any, res: any) => {
+export const updateTemoignage = tryCatch(async (req: Request, res: Response) => {
   const { success, body } = await temoignagesService.updateTemoignage(req.params.id, req.body);
 
   if (!success && body === ErrorMessage.CampagneNotStarted) throw new CampagneNotStarted();
@@ -27,7 +30,7 @@ export const updateTemoignage = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const getDatavisualisation = tryCatch(async (req: any, res: any) => {
+export const getDatavisualisation = tryCatch(async (req: AuthedRequest, res: Response) => {
   const campagneIds = req.body;
 
   if (!campagneIds.length) return res.status(200).json([]);
@@ -39,11 +42,11 @@ export const getDatavisualisation = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const getDatavisualisationFormation = tryCatch(async (req: any, res: any) => {
-  const intituleFormation = req.query.intituleFormation || null;
-  const cfd = req.query.cfd || null;
-  const idCertifInfo = req.query.idCertifinfo || null;
-  const slug = req.query.slug || null;
+export const getDatavisualisationFormation = tryCatch(async (req: Request, res: Response) => {
+  const intituleFormation = (req.query.intituleFormation as string) || null;
+  const cfd = (req.query.cfd as string) || null;
+  const idCertifInfo = (req.query.id_certifinfo as string) || null;
+  const slug = (req.query.slug as string) || null;
 
   const { success, body } = await temoignagesService.getDatavisualisationFormation(
     intituleFormation,
@@ -57,12 +60,11 @@ export const getDatavisualisationFormation = tryCatch(async (req: any, res: any)
   return res.status(200).json(body);
 });
 
-export const getDatavisualisationFormationExists = tryCatch(async (req: any, res: any) => {
-  const intituleFormation = req.query.intituleFormation || null;
-  const cfd = req.query.cfd || null;
-  const idCertifInfo = req.query.idCertifinfo || null;
-  const slug = req.query.slug || null;
-
+export const getDatavisualisationFormationExists = tryCatch(async (req: Request, res: Response) => {
+  const intituleFormation = (req.query.intituleFormation as string) || null;
+  const cfd = (req.query.cfd as string) || null;
+  const idCertifInfo = (req.query.id_certifinfo as string) || null;
+  const slug = (req.query.slug as string) || null;
   if (!intituleFormation && !cfd && !idCertifInfo && !slug)
     return res.status(400).json({ hasData: false, message: "Missing parameters" });
 
@@ -78,8 +80,8 @@ export const getDatavisualisationFormationExists = tryCatch(async (req: any, res
   return res.status(200).json(body);
 });
 
-export const getDatavisualisationEtablissement = tryCatch(async (req: any, res: any) => {
-  const uai = req.query.uai;
+export const getDatavisualisationEtablissement = tryCatch(async (req: Request, res: Response) => {
+  const uai = req.query.uai as string;
 
   const { success, body } = await temoignagesService.getDatavisualisationEtablissement(uai);
 
@@ -88,15 +90,16 @@ export const getDatavisualisationEtablissement = tryCatch(async (req: any, res: 
   return res.status(200).json(body);
 });
 
-export const getUncompliantTemoignages = tryCatch(async (req: any, res: any) => {
-  const type = req.query.type || UNCOMPLIANT_TEMOIGNAGE_TYPE.ALL;
+export const getUncompliantTemoignages = tryCatch(async (req: AuthedRequest, res: Response) => {
+  const type = ((req.query.type as string) ||
+    UNCOMPLIANT_TEMOIGNAGE_TYPE.ALL) as (typeof UNCOMPLIANT_TEMOIGNAGE_TYPE)[keyof typeof UNCOMPLIANT_TEMOIGNAGE_TYPE];
 
-  const duration = parseInt(req.query.duration) || 4;
-  const answeredQuestions = parseInt(req.query.answeredQuestions) || 12;
+  const duration = parseInt(req.query.duration as string) || 4;
+  const answeredQuestions = parseInt(req.query.answeredQuestions as string) || 12;
   const includeUnavailableDuration = req.query.includeUnavailableDuration === "true";
 
-  const page = req.query.page || 1;
-  const pageSize = req.query.pageSize || 50;
+  const page = parseInt(req.query.page as string) || 1;
+  const pageSize = parseInt(req.query.pageSize as string) || 50;
 
   const { success, body, count, pagination } = await temoignagesService.getUncompliantTemoignages({
     type,
@@ -112,7 +115,7 @@ export const getUncompliantTemoignages = tryCatch(async (req: any, res: any) => 
   return res.status(200).json({ body, count, pagination });
 });
 
-export const deleteMultipleTemoignages = tryCatch(async (req: any, res: any) => {
+export const deleteMultipleTemoignages = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { success, body } = await temoignagesService.deleteMultipleTemoignages(req.body);
 
   if (!success) throw new BasicError();
@@ -120,7 +123,7 @@ export const deleteMultipleTemoignages = tryCatch(async (req: any, res: any) => 
   return res.status(200).json(body);
 });
 
-export const getXlsExport = async (req: any, res: any) => {
+export const getXlsExport = async (req: Request, res: Response) => {
   try {
     const campagneIds = req.body;
 

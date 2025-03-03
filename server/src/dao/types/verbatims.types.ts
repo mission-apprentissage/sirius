@@ -6,7 +6,7 @@ import type { Campagne, Formation, Verbatim, VerbatimStatus } from "../../types"
 export type GetAllArgs = {
   temoignageIds: string[];
   status: VerbatimStatus[];
-  questionKey?: string;
+  questionKey?: string[];
 };
 
 export type GetAllResults = Promise<
