@@ -7,40 +7,38 @@ export type GetAllWithTemoignageCountAndTemplateNameArgs = {
   allowEmptyFilter?: boolean;
 };
 
-export type GetAllWithTemoignageCountAndTemplateNameResults = Promise<
-  Array<
-    Pick<Campagne, "id" | "nomCampagne" | "startDate" | "endDate" | "seats" | "createdAt" | "updatedAt"> & {
-      questionnaire: {
-        questionnaireId: string;
-        questionnaireTemplateName: string;
-      };
-    } & {
-      formation: Omit<
-        Formation,
-        | "catalogueData"
-        | "cfd"
-        | "onisepSlug"
-        | "intituleCourt"
-        | "etablissementId"
-        | "etablissementFormateurLocalite"
-        | "etablissementFormateurAdresse"
-        | "deletedAt"
-        | "createdAt"
-        | "updatedAt"
-      >;
-      etablissement: Omit<Etablissement, "catalogueData" | "onisepUrl" | "deletedAt" | "createdAt" | "updatedAt"> & {
-        numeroVoie: string;
-        typeVoie: string;
-        nomVoie: string;
-        codePostal: string;
-      };
-      temoignagesCount: number;
-      temoignages?: Array<{ id: string; lastQuestionAt: string; createdAt: string }>;
-    }
-  >
+export type GetAllWithTemoignageCountAndTemplateNameResults = Array<
+  Pick<Campagne, "id" | "nomCampagne" | "startDate" | "endDate" | "seats" | "createdAt" | "updatedAt"> & {
+    questionnaire: {
+      questionnaireId: string;
+      questionnaireTemplateName: string;
+    };
+  } & {
+    formation: Omit<
+      Formation,
+      | "catalogueData"
+      | "cfd"
+      | "onisepSlug"
+      | "intituleCourt"
+      | "etablissementId"
+      | "etablissementFormateurLocalite"
+      | "etablissementFormateurAdresse"
+      | "deletedAt"
+      | "createdAt"
+      | "updatedAt"
+    >;
+    etablissement: Omit<Etablissement, "catalogueData" | "onisepUrl" | "deletedAt" | "createdAt" | "updatedAt"> & {
+      numeroVoie: string;
+      typeVoie: string;
+      nomVoie: string;
+      codePostal: string;
+    };
+    temoignagesCount: number;
+    temoignages?: Array<{ id: string; lastQuestionAt: string; createdAt: string }>;
+  }
 >;
 
-export type GetOneWithTemoignagneCountAndTemplateNameResults = Promise<
+export type GetOneWithTemoignagneCountAndTemplateNameResults =
   | (Pick<Campagne, "id" | "nomCampagne" | "startDate" | "endDate" | "seats" | "createdAt" | "updatedAt"> & {
       questionnaire: {
         questionnaireId: string;
@@ -70,33 +68,30 @@ export type GetOneWithTemoignagneCountAndTemplateNameResults = Promise<
       };
       temoignagesCount: number;
     })
-  | null
->;
+  | null;
 
-export type GetAllWithTemoignageCountFormationEtablissementResults = Promise<
-  Array<
-    Pick<Campagne, "id" | "nomCampagne" | "startDate" | "endDate" | "seats" | "createdAt" | "updatedAt"> & {
-      formation: Omit<
-        Formation,
-        "catalogueData" | "onisepSlug" | "etablissementId" | "deletedAt" | "createdAt" | "updatedAt"
-      > & {
-        rncpCode: string;
-        idCertifinfo: string;
-        bcnMefs10: {
-          mef10: string;
-          modalite: {
-            annee: string;
-            duree: string;
-          };
-        }[];
-      };
-      etablissement: Omit<Etablissement, "catalogueData" | "deletedAt" | "createdAt" | "updatedAt"> & {
-        numeroVoie: string;
-        typeVoie: string;
-        nomVoie: string;
-        codePostal: string;
-      };
-      temoignagesCount: number;
-    }
-  >
+export type GetAllWithTemoignageCountFormationEtablissementResults = Array<
+  Pick<Campagne, "id" | "nomCampagne" | "startDate" | "endDate" | "seats" | "createdAt" | "updatedAt"> & {
+    formation: Omit<
+      Formation,
+      "catalogueData" | "onisepSlug" | "etablissementId" | "deletedAt" | "createdAt" | "updatedAt"
+    > & {
+      rncpCode: string;
+      idCertifinfo: string;
+      bcnMefs10: {
+        mef10: string;
+        modalite: {
+          annee: string;
+          duree: string;
+        };
+      }[];
+    };
+    etablissement: Omit<Etablissement, "catalogueData" | "deletedAt" | "createdAt" | "updatedAt"> & {
+      numeroVoie: string;
+      typeVoie: string;
+      nomVoie: string;
+      codePostal: string;
+    };
+    temoignagesCount: number;
+  }
 >;

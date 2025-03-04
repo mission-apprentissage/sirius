@@ -42,7 +42,7 @@ export const getCampagnes = tryCatch(async (req: AuthedRequest, res: Response) =
     query.campagneIds = campagneIds;
   }
 
-  const { success, body, ids, pagination } = await campagnesService.getCampagnes({
+  const result = await campagnesService.getCampagnes({
     isObserver,
     scope,
     page,
@@ -51,9 +51,9 @@ export const getCampagnes = tryCatch(async (req: AuthedRequest, res: Response) =
     search,
   });
 
-  if (!success) throw new BasicError();
+  if (!result.success) throw new BasicError();
 
-  return res.status(200).json({ body, ids, pagination });
+  return res.status(200).json({ body: result.body, ids: result.ids, pagination: result.pagination });
 });
 
 export const getCampagne = tryCatch(async (req: Request, res: Response) => {

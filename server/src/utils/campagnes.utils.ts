@@ -1,5 +1,3 @@
-// @ts-nocheck -- TODO
-
 import { getChampsLibreField } from "./verbatims.utils";
 
 const msToTime = (duration) => {
@@ -105,7 +103,17 @@ export const getMedianDuration = (campagnes) => {
   return msToTime(Math.round(sum / filteredCampagnes.length));
 };
 
-export const getStatistics = (campagnes, questionnaires, verbatimsCount) => ({
+export const getStatistics = (
+  campagnes,
+  questionnaires,
+  verbatimsCount
+): {
+  campagnesCount: number;
+  finishedCampagnesCount: number;
+  temoignagesCount: number;
+  champsLibreRate: string;
+  medianDuration: string;
+} => ({
   campagnesCount: campagnes?.length || 0,
   finishedCampagnesCount: campagnes?.length ? getFinishedCampagnes(campagnes).length : 0,
   temoignagesCount: campagnes?.length ? getTemoignagesCount(campagnes) : 0,

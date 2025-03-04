@@ -16,7 +16,7 @@ export const getAllWithTemoignageCountAndTemplateName = async ({
   query,
   scope,
   allowEmptyFilter = false,
-}: GetAllWithTemoignageCountAndTemplateNameArgs): GetAllWithTemoignageCountAndTemplateNameResults => {
+}: GetAllWithTemoignageCountAndTemplateNameArgs): Promise<GetAllWithTemoignageCountAndTemplateNameResults> => {
   let baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
@@ -268,7 +268,7 @@ export const countWithAtLeastOneTemoignages = async () => {
 
 export const getOneWithTemoignagneCountAndTemplateName = async (
   id: string
-): GetOneWithTemoignagneCountAndTemplateNameResults => {
+): Promise<GetOneWithTemoignagneCountAndTemplateNameResults> => {
   const baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([
@@ -338,7 +338,7 @@ export const getOneWithTemoignagneCountAndTemplateName = async (
 
 export const getAllWithTemoignageCountFormationEtablissement = async (
   campagneIds: string[]
-): GetAllWithTemoignageCountFormationEtablissementResults => {
+): Promise<GetAllWithTemoignageCountFormationEtablissementResults> => {
   let baseQuery = getKbdClient()
     .selectFrom("campagnes")
     .select([

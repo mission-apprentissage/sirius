@@ -7,7 +7,12 @@ import * as etablissementsDao from "../dao/etablissements.dao";
 import * as formationsDao from "../dao/formations.dao";
 import * as questionnairesDao from "../dao/questionnaires.dao";
 import * as temoignagesDao from "../dao/temoignages.dao";
+import type {
+  GetAllWithTemoignageCountAndTemplateNameResults,
+  GetOneWithTemoignagneCountAndTemplateNameResults,
+} from "../dao/types/campagnes.types";
 import * as verbatimsDao from "../dao/verbatims.dao";
+import { QuestionnaireNotFoundError } from "../errors";
 import * as catalogue from "../modules/catalogue";
 import * as pdfExport from "../modules/pdfExport";
 import * as xlsxExport from "../modules/xlsxExport";
@@ -29,7 +34,21 @@ export const getCampagnes = async ({
   pageSize: number;
   query: { diplome?: string[]; siret?: string[]; departement?: string; campagneIds?: string[] };
   search: string;
-}) => {
+}): Promise<
+  | {
+      success: true;
+      body: GetAllWithTemoignageCountAndTemplateNameResults;
+      ids: string[];
+      pagination: {
+        totalItems: number;
+        currentPage: number;
+        pageSize: number;
+        totalPages: number;
+        hasMore: boolean;
+      };
+    }
+  | { success: false; body: Error }
+> => {
   try {
     let campagnes = [];
 
@@ -87,7 +106,11 @@ export const getCampagnes = async ({
   }
 };
 
-export const getOneCampagne = async (campagneId: string) => {
+export const getOneCampagne = async (
+  campagneId: string
+): Promise<
+  { success: true; body: GetOneWithTemoignagneCountAndTemplateNameResults } | { success: false; body: Error }
+> => {
   try {
     const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(campagneId);
     return { success: true, body: campagne };
@@ -96,7 +119,9 @@ export const getOneCampagne = async (campagneId: string) => {
   }
 };
 
-export const deleteCampagnes = async (ids: string[]) => {
+export const deleteCampagnes = async (
+  ids: string[]
+): Promise<{ success: true; body: boolean } | { success: false; body: Error }> => {
   try {
     const deletedCampagnes = await campagnesDao.deleteMany(ids);
     const deletedVerbatims = await verbatimsDao.deleteManyByCampagneIds(ids);
@@ -111,7 +136,10 @@ export const deleteCampagnes = async (ids: string[]) => {
   }
 };
 
-export const updateCampagne = async (id: string, updatedCampagne: CampagneUpdate) => {
+export const updateCampagne = async (
+  id: string,
+  updatedCampagne: CampagneUpdate
+): Promise<{ success: true; body: boolean } | { success: false; body: Error }> => {
   try {
     const campagne = await campagnesDao.update(id, updatedCampagne);
     return { success: true, body: campagne };
@@ -123,7 +151,7 @@ export const updateCampagne = async (id: string, updatedCampagne: CampagneUpdate
 export const createCampagnes = async (
   campagnes: (CampagneCreation & { etablissementFormateurSiret: string; formation: CatalogueFormation })[],
   currentUserId: string
-) => {
+): Promise<{ success: true; body: { createdCount: number } } | { success: false; body: Error }> => {
   try {
     const createdCampagneIds = [];
 
@@ -206,7 +234,7 @@ export const createCampagnes = async (
 export const getPdfMultipleExport = async (
   campagneIds: string[] = [],
   displayedUser: { label: string; email: string }
-) => {
+): Promise<{ success: true; body: { data: string; fileName: string } } | { success: false; body: Error }> => {
   try {
     const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(campagneIds);
 
@@ -247,7 +275,9 @@ export const getPdfMultipleExport = async (
   }
 };
 
-export const getXlsxMultipleExport = async (campagneIds: string[] = []) => {
+export const getXlsxMultipleExport = async (
+  campagneIds: string[] = []
+): Promise<{ success: true; body: { data: string; fileName: string } } | { success: false; body: Error }> => {
   try {
     const campagnes = await campagnesDao.getAllWithTemoignageCountFormationEtablissement(campagneIds);
 
@@ -280,7 +310,22 @@ export const getXlsxMultipleExport = async (campagneIds: string[] = []) => {
   }
 };
 
-export const getCampagnesStatistics = async (campagneIds = []) => {
+export const getCampagnesStatistics = async (
+  campagneIds = []
+): Promise<
+  | {
+      success: true;
+      body: {
+        campagnesCount: number;
+        finishedCampagnesCount: number;
+        temoignagesCount: number;
+        champsLibreRate: string;
+        medianDuration: string;
+        verbatimsCount: number;
+      };
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const query = { campagneIds };
     const campagnes = await campagnesDao.getAllWithTemoignageCountAndTemplateName({ query, allowEmptyFilter: true });
@@ -288,7 +333,7 @@ export const getCampagnesStatistics = async (campagneIds = []) => {
     const questionnaires = await questionnairesDao.findAll();
 
     if (!questionnaires?.length) {
-      return { success: false, body: "No questionnaires found" };
+      return { success: false, body: new QuestionnaireNotFoundError() };
     }
 
     const temoignages = campagnes
