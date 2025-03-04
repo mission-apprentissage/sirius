@@ -13,7 +13,7 @@ import type {
   FindFormationByUaiResults,
 } from "./types/formations.types";
 
-export const findAll = async (query: FindAllArgs): FindAllResults => {
+export const findAll = async (query: FindAllArgs): Promise<FindAllResults> => {
   let baseQuery = getKbdClient()
     .selectFrom("formations")
     .select([
@@ -117,7 +117,7 @@ export const findFormationByIntituleCfdIdCertifInfoOrSlug = async (
   cfd: string | null,
   idCertifInfo: string | null,
   slug: string | null
-): FindFormationByIntituleCfdIdCertifInfoOrSlugResults => {
+): Promise<FindFormationByIntituleCfdIdCertifInfoOrSlugResults> => {
   let baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
@@ -163,7 +163,7 @@ export const findFormationByIntituleCfdIdCertifInfoOrSlug = async (
   return camelcaseKeys(result);
 };
 
-export const findFormationByUai = async (uai: string): FindFormationByUaiResults => {
+export const findFormationByUai = async (uai: string): Promise<FindFormationByUaiResults> => {
   const baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
@@ -199,7 +199,7 @@ export const findFormationByUai = async (uai: string): FindFormationByUaiResults
   return camelcaseKeys(result);
 };
 
-export const findAllWithTemoignageCount = async (): FindAllWithTemoignageCountResults => {
+export const findAllWithTemoignageCount = async (): Promise<FindAllWithTemoignageCountResults> => {
   const baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
@@ -242,7 +242,7 @@ export const findAllWithTemoignageCount = async (): FindAllWithTemoignageCountRe
 export const findAllWithCampagnesCount = async (
   siret?: string[],
   scope?: ObserverScope
-): FindAllWithCampagnesCountResults => {
+): Promise<FindAllWithCampagnesCountResults> => {
   let baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")

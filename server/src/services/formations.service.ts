@@ -2,7 +2,8 @@ import fs from "fs";
 
 import { OBSERVER_SCOPES } from "../constants";
 import * as formationsDao from "../dao/formations.dao";
-import type { FindAllArgs } from "../dao/types/formations.types";
+import type { FindAllArgs, FindAllResults, FindAllWithTemoignageCountResults } from "../dao/types/formations.types";
+import { FormationNotFound } from "../errors";
 import type { ObserverScope, Opco } from "../types";
 import { getStaticFilePath } from "../utils/getStaticFilePath";
 
@@ -12,7 +13,13 @@ export const getFormations = async ({
 }: {
   etablissementSiret?: string;
   search?: string;
-}) => {
+}): Promise<
+  | {
+      success: true;
+      body: FindAllResults;
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const query = {} as FindAllArgs;
 
@@ -32,12 +39,18 @@ export const getFormations = async ({
   }
 };
 
-export const getFormationsWithTemoignageCount = async () => {
+export const getFormationsWithTemoignageCount = async (): Promise<
+  | {
+      success: true;
+      body: FindAllWithTemoignageCountResults & { onisep_intitule: string }[];
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const formations = await formationsDao.findAllWithTemoignageCount();
 
     if (!formations?.length) {
-      return { success: false, body: "No formations found" };
+      return { success: false, body: new FormationNotFound() };
     }
 
     const reformatForExtension = formations.map((formation) => ({
@@ -57,7 +70,21 @@ export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({
 }: {
   userSiret?: string[];
   scope: ObserverScope | undefined;
-}) => {
+}): Promise<
+  | {
+      success: true;
+      body: {
+        diplomes: { intitule: string; campagnesCount: number }[];
+        etablissements: {
+          etablissementFormateurSiret: string;
+          etablissementFormateurEnseigne: string | null;
+          etablissementFormateurEntrepriseRaisonSociale: string | null;
+          campagnesCount: number;
+        }[];
+      };
+    }
+  | { success: false; body: Error }
+> => {
   try {
     // Nécessaire pour ne pas stocker la liste de code RNCP dans le scope d'un user et réconcilier les labels/valeurs
     if (scope?.field === OBSERVER_SCOPES.OPCO) {
@@ -71,7 +98,7 @@ export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({
     const formations = await formationsDao.findAllWithCampagnesCount(userSiret, scope);
 
     if (!formations?.length) {
-      return { success: false, body: "No formations found" };
+      return { success: false, body: new FormationNotFound() };
     }
 
     const formattedByDiplome = formations.reduce<Record<string, number>>((acc, formation) => {

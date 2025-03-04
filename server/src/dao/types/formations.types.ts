@@ -8,35 +8,31 @@ export type FindAllArgs = {
   catalogueId?: string;
 };
 
-export type FindAllResults = Promise<
-  Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt">[] | undefined
->;
+export type FindAllResults =
+  | Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt">[]
+  | undefined;
 
-export type FindFormationByIntituleCfdIdCertifInfoOrSlugResults = Promise<
+export type FindFormationByIntituleCfdIdCertifInfoOrSlugResults =
   | (Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt"> & {
       campagneId: string | null;
     })[]
-  | undefined
->;
+  | undefined;
 
-export type FindFormationByUaiResults = Promise<
+export type FindFormationByUaiResults =
   | (Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt"> & {
       campagneId: string | null;
     })[]
-  | undefined
->;
+  | undefined;
 
-export type FindAllWithTemoignageCountResults = Promise<
+export type FindAllWithTemoignageCountResults =
   | (Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt"> & {
       temoignagesCount: number;
       onisepIntitule: string;
     })[]
-  | undefined
->;
+  | undefined;
 
-export type FindAllWithCampagnesCountResults = Promise<
+export type FindAllWithCampagnesCountResults =
   | (Omit<Formation, "catalogueData" | "cfd" | "onisepSlug" | "createdAt" | "updatedAt" | "deletedAt"> & {
       campagnesCount: number;
     })[]
-  | undefined
->;
+  | undefined;
