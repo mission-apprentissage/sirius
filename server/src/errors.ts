@@ -28,6 +28,8 @@ export const ErrorMessage = {
   UserAlreadyExistsError: "Un utilisateur avec cet email existe déjà",
   UserNotFound: "Utilisateur inconnu",
   UnconfirmedEmail: "Email non confirmé",
+  FormationNotFoundError: "Formation inconnue",
+  JobNotFoundError: "Job inconnu",
 };
 
 export const CampagneNotFoundError = class NotFoundError extends BasicError {
@@ -137,5 +139,23 @@ export const UnconfirmedEmail = class NotFoundError extends BasicError {
 
   get status() {
     return 403;
+  }
+};
+export const FormationNotFound = class NotFoundError extends BasicError {
+  constructor(message?: any, extra?: any) {
+    super(message || ErrorMessage.FormationNotFoundError, extra);
+  }
+
+  get status() {
+    return 404;
+  }
+};
+export const JobNotFound = class NotFoundError extends BasicError {
+  constructor(message?: any, extra?: any) {
+    super(message || ErrorMessage.JobNotFoundError, extra);
+  }
+
+  get status() {
+    return 404;
   }
 };
