@@ -224,6 +224,7 @@ export type TemoignageUpdate = {
 export type VerbatimScore = {
   GEM: {
     avis: YesNoType;
+    score?: number;
     justification: string;
   };
   ALERT: number;
@@ -354,4 +355,9 @@ export type AuthedRequest = Request & {
 export type Opco = {
   label: string;
   value: string[];
+};
+
+export type VerbatimClassificationApiResponse = {
+  text: string;
+  scores: VerbatimScore;
 };
