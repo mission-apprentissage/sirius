@@ -4,7 +4,7 @@ import { sql } from "kysely";
 import { executeWithOffsetPagination } from "kysely-paginate";
 
 import { getKbdClient } from "../db/db";
-import type { Verbatim, VerbatimScore, VerbatimStatus, VerbatimThemes } from "../types";
+import type { Verbatim, VerbatimCreation, VerbatimScore, VerbatimStatus, VerbatimThemes } from "../types";
 import type {
   CountArgs,
   GetAllArgs,
@@ -254,9 +254,7 @@ export const updateMany = async (verbatims: Partial<Verbatim>[]): Promise<boolea
   return Promise.all(promises);
 };
 
-export const create = async (
-  verbatim: Omit<Verbatim, "id" | "createdAt" | "updatedAt" | "deletedAt">
-): Promise<{ id: string } | undefined> => {
+export const create = async (verbatim: VerbatimCreation): Promise<{ id: string } | undefined> => {
   return getKbdClient().insertInto("verbatims").values(decamelizeKeys(verbatim)).returning("id").executeTakeFirst();
 };
 

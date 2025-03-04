@@ -2,6 +2,7 @@ import type { Request } from "express";
 
 import type { USER_ROLES, USER_STATUS, VERBATIM_STATUS, VERBATIM_THEMES } from "./constants";
 import type { JsonValue } from "./db/schema";
+
 export type Campagne = {
   id: string;
   nomCampagne: string | null;
@@ -256,6 +257,13 @@ export type Verbatim = {
   createdAt: Date | null;
   deletedAt: Date | null;
   updatedAt: Date | null;
+};
+
+export type VerbatimCreation = {
+  temoignageId: string;
+  questionKey: string;
+  content: string | null;
+  status: string;
 };
 
 export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
