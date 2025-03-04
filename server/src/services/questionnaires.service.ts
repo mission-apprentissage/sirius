@@ -1,7 +1,18 @@
-import * as questionnairesDao from "../dao/questionnaires.dao";
-import type { QuestionnaireCreation, QuestionnaireUpdate } from "../types";
+import type { InsertResult, UpdateResult } from "kysely";
 
-export const createQuestionnaire = async (questionnaire: QuestionnaireCreation) => {
+import * as questionnairesDao from "../dao/questionnaires.dao";
+import { QuestionnaireNotFoundError } from "../errors";
+import type { Questionnaire, QuestionnaireCreation, QuestionnaireUpdate } from "../types";
+
+export const createQuestionnaire = async (
+  questionnaire: QuestionnaireCreation
+): Promise<
+  | {
+      success: true;
+      body: InsertResult;
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const createdQuestionnaire = await questionnairesDao.create(questionnaire);
 
@@ -11,7 +22,13 @@ export const createQuestionnaire = async (questionnaire: QuestionnaireCreation) 
   }
 };
 
-export const getQuestionnaires = async () => {
+export const getQuestionnaires = async (): Promise<
+  | {
+      success: true;
+      body: Questionnaire[] | undefined;
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const questionnaires = await questionnairesDao.findAll();
     return { success: true, body: questionnaires };
@@ -20,7 +37,15 @@ export const getQuestionnaires = async () => {
   }
 };
 
-export const getOneQuestionnaire = async (id: string) => {
+export const getOneQuestionnaire = async (
+  id: string
+): Promise<
+  | {
+      success: true;
+      body: Questionnaire | undefined;
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const questionnaire = await questionnairesDao.getOne(id);
     return { success: true, body: questionnaire };
@@ -29,7 +54,15 @@ export const getOneQuestionnaire = async (id: string) => {
   }
 };
 
-export const deleteQuestionnaire = async (id: string) => {
+export const deleteQuestionnaire = async (
+  id: string
+): Promise<
+  | {
+      success: true;
+      body: UpdateResult | undefined;
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const questionnaire = await questionnairesDao.deleteOne(id);
     return { success: true, body: questionnaire };
@@ -38,11 +71,20 @@ export const deleteQuestionnaire = async (id: string) => {
   }
 };
 
-export const updateQuestionnaire = async (id: string, updatedQuestionnaire: QuestionnaireUpdate) => {
+export const updateQuestionnaire = async (
+  id: string,
+  updatedQuestionnaire: QuestionnaireUpdate
+): Promise<
+  | {
+      success: true;
+      body: UpdateResult | undefined;
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const questionnaire = await questionnairesDao.update(id, updatedQuestionnaire);
 
-    if (!questionnaire) throw new Error("Questionnaire not found");
+    if (!questionnaire) throw new QuestionnaireNotFoundError();
 
     return { success: true, body: questionnaire };
   } catch (error) {

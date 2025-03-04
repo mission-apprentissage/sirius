@@ -34,7 +34,7 @@ export const deleteQuestionnaire = tryCatch(async (req: AuthedRequest, res: Resp
   const { success, body } = await questionnairesService.deleteQuestionnaire(req.params.id);
 
   if (!success) throw new BasicError();
-  if (!body.modifiedCount) throw new QuestionnaireNotFoundError();
+  if (!body?.numUpdatedRows) throw new QuestionnaireNotFoundError();
 
   return res.status(200).json(body);
 });
