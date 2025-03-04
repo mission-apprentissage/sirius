@@ -3,15 +3,20 @@ import * as campagnesDao from "../dao/campagnes.dao";
 import * as etablissementsDao from "../dao/etablissements.dao";
 import * as questionnairesDao from "../dao/questionnaires.dao";
 import * as temoignagesDao from "../dao/temoignages.dao";
+import type {
+  FindAllEtablissementWithCountsResults,
+  FindAllWithTemoignageCountResults,
+} from "../dao/types/etablissements.types";
 import * as verbatimsDao from "../dao/verbatims.dao";
 import * as catalogue from "../modules/catalogue";
 import * as referentiel from "../modules/referentiel";
+import type { Etablissement } from "../types";
 import { getChampsLibreField } from "../utils/verbatims.utils";
 
 export const createEtablissements = async (
   etablissementsArray: { id: string; siret: string; userId: string }[],
   relatedUserId: string
-) => {
+): Promise<{ success: true; body: string[] } | { success: false; body: Error }> => {
   try {
     const createdEtablissements = [];
 
@@ -35,10 +40,14 @@ export const createEtablissements = async (
           catalogueData: JSON.stringify(etablissementFromCatalogue),
         };
         const createdEtablissement = await etablissementsDao.create(formattedEtablissement, relatedUserId);
-        createdEtablissements.push(createdEtablissement);
+        if (createdEtablissement) {
+          createdEtablissements.push(createdEtablissement);
+        }
       } else {
         const createdRelation = await etablissementsDao.createUserRelation(existingEtablissement[0].id, relatedUserId);
-        createdEtablissements.push(createdRelation);
+        if (createdRelation) {
+          createdEtablissements.push(createdRelation.id);
+        }
       }
     }
 
@@ -48,7 +57,11 @@ export const createEtablissements = async (
   }
 };
 
-export const getEtablissements = async ({ search }: { search: string }) => {
+export const getEtablissements = async ({
+  search,
+}: {
+  search: string;
+}): Promise<{ success: true; body: Omit<Etablissement, "catalogueData">[] } | { success: false; body: Error }> => {
   try {
     const query = search ? { searchText: search } : {};
     const etablissements = await etablissementsDao.findAll(query);
@@ -59,7 +72,14 @@ export const getEtablissements = async ({ search }: { search: string }) => {
   }
 };
 
-export const getEtablissementsWithTemoignageCount = async () => {
+export const getEtablissementsWithTemoignageCount = async (): Promise<
+  | {
+      success: true;
+      body: FindAllWithTemoignageCountResults &
+        { onisep_url: string | null; onisep_nom: string | null; entreprise_raison_sociale: string | null }[];
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const etablissement = await etablissementsDao.findAllWithTemoignageCount();
     const reformatForExtension = etablissement.map((etablissement) => ({
@@ -74,7 +94,13 @@ export const getEtablissementsWithTemoignageCount = async () => {
   }
 };
 
-export const getEtablissementsSuivi = async () => {
+export const getEtablissementsSuivi = async (): Promise<
+  | {
+      success: true;
+      body: FindAllEtablissementWithCountsResults;
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const etablissements = await etablissementsDao.findAllEtablissementWithCounts();
 
@@ -84,7 +110,18 @@ export const getEtablissementsSuivi = async () => {
   }
 };
 
-export const getEtablissementsPublicStatistics = async () => {
+export const getEtablissementsPublicStatistics = async (): Promise<
+  | {
+      success: true;
+      body: {
+        etablissementsCount: number;
+        createdCampagnesCount: number;
+        temoignagesCount: number;
+        verbatimsCount: number;
+      };
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const allEtablissements = await etablissementsDao.findAll({});
     const allEtablissementCount = allEtablissements.length;

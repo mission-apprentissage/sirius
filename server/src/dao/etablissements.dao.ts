@@ -99,7 +99,7 @@ export const findAll = async (query: {
   return camelcaseKeys(result);
 };
 
-export const findAllEtablissementWithCounts = async (): FindAllEtablissementWithCountsResults => {
+export const findAllEtablissementWithCounts = async (): Promise<FindAllEtablissementWithCountsResults> => {
   const baseQuery = getKbdClient()
     .selectFrom("etablissements")
     .select([
@@ -142,7 +142,7 @@ export const count = async (): Promise<number> => {
   return result.count as number;
 };
 
-export const findAllWithTemoignageCount = async (): FindAllWithTemoignageCountResults => {
+export const findAllWithTemoignageCount = async (): Promise<FindAllWithTemoignageCountResults> => {
   const result = await getKbdClient()
     .selectFrom("etablissements")
     .select([
