@@ -1,3 +1,4 @@
+import Alert from "@codegouvfr/react-dsfr/Alert";
 import { Header } from "@codegouvfr/react-dsfr/Header";
 import { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -235,26 +236,65 @@ const DsfrNavbar = () => {
   };
 
   return (
-    <Header
-      brandTop={
-        <>
-          RÉPUBLIQUE
-          <br />
-          FRANÇAISE
-        </>
-      }
-      homeLinkProps={{
-        to: homeLink(),
-        title: "Accueil - Sirius",
-      }}
-      operatorLogo={{
-        alt: "Logo Sirius",
-        imgUrl: Logo,
-        orientation: "horizontal",
-      }}
-      quickAccessItems={quickAccessItems()}
-      navigation={navigation()}
-    />
+    <>
+      <Header
+        brandTop={
+          <>
+            RÉPUBLIQUE
+            <br />
+            FRANÇAISE
+          </>
+        }
+        homeLinkProps={{
+          to: homeLink(),
+          title: "Accueil - Sirius",
+        }}
+        operatorLogo={{
+          alt: "Logo Sirius",
+          imgUrl: Logo,
+          orientation: "horizontal",
+        }}
+        quickAccessItems={quickAccessItems()}
+        navigation={navigation()}
+      />
+      <Alert
+        title={
+          isLoggedIn ? "Sirius s’arrête le 31 mars – Pensez à téléchargez vos données" : "Sirius s’arrête le 31 mars"
+        }
+        severity="warning"
+        description={
+          isLoggedIn ? (
+            <>
+              <p>
+                C’est avec beaucoup de regret que nous vous annonçons l’arrêt du service Sirius à compter du 31 mars.
+                Cette décision résulte des fortes contraintes budgétaires actuelles qui ne permettent pas à la DGEFP de
+                poursuivre le financement du produit.
+              </p>
+              <p>
+                Nous savons que cette nouvelle sera décevante pour nombre d’entre vous et nous en sommes sincèrement
+                désolés.
+              </p>
+              <p>
+                <b>L’équipe Sirius</b>
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                C’est avec beaucoup de regret que nous vous annonçons l’arrêt du service Sirius à compter du 31 mars.{" "}
+              </p>
+              <p>
+                Cette décision résulte des fortes contraintes budgétaires actuelles qui ne permettent pas au ministère
+                du travail de poursuivre le financement du produit.
+              </p>
+              <p>
+                <b>L’équipe Sirius</b>
+              </p>
+            </>
+          )
+        }
+      />
+    </>
   );
 };
 
