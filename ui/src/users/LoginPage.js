@@ -187,9 +187,9 @@ const LoginPage = () => {
             )}
           </Button>
         </Form>
-        <p>
+        {/*<p>
           Pas d'identifiant ? <Link to="/inscription">M'inscrire en tant qu'établissement</Link>
-        </p>
+        </p>*/}
       </LoginAndSignupContainer>
       <NeedHelp />
       <ForgottenPasswordModal

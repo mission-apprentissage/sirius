@@ -3,7 +3,7 @@ import passport from "passport";
 
 import {
   confirmUser,
-  createUser,
+  //createUser,
   forgotPassword,
   getCurrentUser,
   getUsers,
@@ -26,7 +26,7 @@ import {
   forgotPasswordSchema,
   loginSchema,
   resetPasswordSchema,
-  subscribeSchema,
+  //subscribeSchema,
   supportPublicSchema,
   supportSchema,
   updateSchema,
@@ -35,9 +35,9 @@ import {
 export const users = () => {
   const router = express.Router();
 
-  router.post("/api/users/", rateLimiter, validator(subscribeSchema), async (req, res, next) =>
+  /*router.post("/api/users/", rateLimiter, validator(subscribeSchema), async (req, res, next) =>
     createUser(req, res, next)
-  );
+  );*/
 
   router.post(
     "/api/users/login/",

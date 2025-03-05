@@ -127,7 +127,7 @@ function App() {
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/statistiques" element={<StatisticsPage />} />
         <Route exact path="/connexion" element={<LoginPage />} />
-        <Route exact path="/inscription" element={<SignupPage />} />
+        {/*<Route exact path="/inscription" element={<SignupPage />} />*/}
         <Route exact path="/modification-mot-de-passe" element={<LoginPage />} />
         <Route exact path="/compte-desactive" element={<PendingAccountPage />} />
         <Route exact path="/cgu" element={<CguPage />} />

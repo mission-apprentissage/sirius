@@ -203,9 +203,9 @@ const DsfrNavbar = () => {
     if (isLandingRoute) {
       return quickAccessItemsLoggedOutAndOthersRoute;
     }
-    if (isLoginRoute) {
+    /*if (isLoginRoute) {
       return quickAccessItemsLoggedOutAndLoginRoute;
-    }
+    }*/
     if (isSignupRoute) {
       return quickAccessItemsLoggedOutAndSignupRoute;
     }
