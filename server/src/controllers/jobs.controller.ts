@@ -1,8 +1,10 @@
+import type { Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { Worker } from "worker_threads";
 
 import { JOB_STATUS, JOB_TYPES } from "../constants";
 import * as jobsService from "../services/jobs.service";
+import type { AuthedRequest } from "../types";
 import tryCatch from "../utils/tryCatch.utils";
 
 const getType = (
@@ -21,7 +23,7 @@ const getType = (
   }
 };
 
-export const startJob = tryCatch(async (req: any, res: any) => {
+export const startJob = tryCatch(async (req: AuthedRequest, res: Response) => {
   const jobId = uuidv4();
   const jobType = req.body.jobType;
   const jobOnlyAnonymized = req.body.onlyAnonymized;
@@ -79,7 +81,7 @@ export const startJob = tryCatch(async (req: any, res: any) => {
   return res.status(200).json({ success, jobId });
 });
 
-export const stopJob = tryCatch(async (req: any, res: any) => {
+export const stopJob = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { jobId } = req.params;
 
   const { success, body } = await jobsService.getJobById(jobId);
@@ -97,7 +99,7 @@ export const stopJob = tryCatch(async (req: any, res: any) => {
   return res.status(200).json({ success: true, jobId });
 });
 
-export const getJob = tryCatch(async (req: any, res: any) => {
+export const getJob = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { jobId } = req.params;
   const job = await jobsService.getJobById(jobId);
 
@@ -107,7 +109,7 @@ export const getJob = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(job);
 });
 
-export const getAllJobs = tryCatch(async (_req: any, res: any) => {
+export const getAllJobs = tryCatch(async (_req: AuthedRequest, res: Response) => {
   const jobs = await jobsService.getAllJobs();
   return res.status(200).json(jobs);
 });

@@ -62,6 +62,7 @@ export const ETABLISSEMENT_NATURE = {
 export const ETABLISSEMENT_RELATION_TYPE = {
   RESPONSABLE_FORMATEUR: "responsable->formateur",
   FORMATEUR_RESPONSABLE: "formateur->responsable",
+  ENTREPRISE: "entreprise",
 };
 
 export const VERBATIM_STATUS = {
@@ -163,16 +164,6 @@ export const NEW_ANSWER_LABELS_TO_FORMATION_VERBATIM_THEMES = {
   "<strong>Ce que tu apprends de ce métier</strong> dans ton entreprise": "L'apprentissage du métier",
   "<strong>Les horaires</strong> en entreprise": "Les horaires en entreprise",
   "D’avoir moins de <strong>vacances</strong>": "Avoir moins de vacances",
-};
-
-export const ANSWER_LABELS_TO_ETABLISSEMENT_VERBATIM_THEMES = {
-  "<strong>L'ambiance</strong>": VERBATIM_THEMES.AMBIANCE_ETABLISSEMENT,
-  "<strong>Le niveau de difficulté des cours</strong>": VERBATIM_THEMES.DIFFICULTES_COURS,
-  "<strong>L’enseignement</strong> proposé par le CFA": VERBATIM_THEMES.ENSEIGNEMENT_PROPOSE,
-  "<strong>Les équipements</strong> mis à ta disposition au CFA": VERBATIM_THEMES.EQUIPEMENTS,
-  "<strong>L’accessibilité du CFA</strong> pour les personnes en situation de handicap":
-    VERBATIM_THEMES.ACCESSIBILITE_HANDICAP,
-  "<strong>La charge de travail</strong>": VERBATIM_THEMES.CHARGE_TRAVAIL,
 };
 
 export const OBSERVER_SCOPES = {

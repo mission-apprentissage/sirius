@@ -1,10 +1,13 @@
 /* eslint-disable n/no-process-exit */
 /* eslint-disable no-process-exit */
 
+import camelcaseKeys from "camelcase-keys";
+import { sql } from "kysely";
+
 import { VERBATIM_THEMES, VERBATIM_THEMES_EMOJIS, VERBATIM_THEMES_LABELS } from "../constants";
 import logger from "../modules/logger";
 import { sendToSlack } from "../modules/slack";
-import type { ExpositionApiResponse, FetchOptions, Verbatim } from "../types";
+import type { ExpositionApiResponse, FetchOptions, Verbatim, VerbatimScore, VerbatimThemes } from "../types";
 import { sleep } from "../utils/asyncUtils";
 import { getKbdClient } from "./db";
 
@@ -153,12 +156,33 @@ const sendSummaryToSlack = async (totalVerbatims: number, themeCount: Record<str
 
 export default async () => {
   try {
-    const unthemedVerbatims = await getKbdClient()
+    const baseQuery = getKbdClient()
       .selectFrom("verbatims")
-      .selectAll()
+      .select([
+        "verbatims.id",
+        "verbatims.temoignage_id",
+        "verbatims.question_key",
+        "verbatims.content",
+        "verbatims.content_corrected",
+        "verbatims.correction_justification",
+        "verbatims.anonymization_justification",
+        "verbatims.content_corrected_anonymized",
+        "verbatims.status",
+        sql<VerbatimScore | null>`verbatims.scores`.as("scores"),
+        sql<VerbatimThemes | null>`verbatims.themes`.as("themes"),
+        "verbatims.feedback_count",
+        "verbatims.is_corrected",
+        "verbatims.is_anonymized",
+        "verbatims.created_at",
+        "verbatims.updated_at",
+        "verbatims.deleted_at",
+      ])
       .where("deleted_at", "is", null)
-      .where("themes", "is", null)
-      .execute();
+      .where("themes", "is", null);
+
+    const result = await baseQuery.execute();
+
+    const unthemedVerbatims = camelcaseKeys(result);
 
     const themeCount: Record<string, number> = Object.keys(VERBATIM_THEMES_LABELS).reduce(
       (acc: Record<string, number>, theme: string) => {

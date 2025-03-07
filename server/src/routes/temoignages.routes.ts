@@ -1,11 +1,8 @@
-// @ts-nocheck -- TODO
-
 import express from "express";
 
 import {
   createTemoignage,
   deleteMultipleTemoignages,
-  deleteTemoignage,
   getDatavisualisation,
   getDatavisualisationEtablissement,
   getDatavisualisationFormation,
@@ -28,10 +25,6 @@ export const temoignages = () => {
 
   router.post("/api/temoignages/", validator(createTemoignageSchema), (req, res, next) => {
     createTemoignage(req, res, next);
-  });
-
-  router.delete("/api/temoignages/:id", verifyUser, isAdmin, (req, res, next) => {
-    deleteTemoignage(req, res, next);
   });
 
   router.put("/api/temoignages/:id", validator(updateTemoignageSchema), (req, res, next) => {
@@ -58,8 +51,8 @@ export const temoignages = () => {
     getUncompliantTemoignages(req, res, next);
   });
 
-  router.post("/api/temoignages/xls-export", verifyUser, (req, res, next) => {
-    getXlsExport(req, res, next);
+  router.post("/api/temoignages/xls-export", verifyUser, (req, res) => {
+    getXlsExport(req, res);
   });
 
   return router;

@@ -1,20 +1,33 @@
 /* eslint-disable n/no-process-exit */
 /* eslint-disable no-process-exit */
-// @ts-nocheck -- TODO
+
+import camelcaseKeys from "camelcase-keys";
+import { sql } from "kysely";
 
 import { VERBATIM_STATUS, VERBATIM_STATUS_EMOJIS, VERBATIM_STATUS_LABELS } from "../constants";
 import logger from "../modules/logger";
 import { sendToSlack } from "../modules/slack";
+import type {
+  FetchOptions,
+  Verbatim,
+  VerbatimClassificationApiResponse,
+  VerbatimScore,
+  VerbatimThemes,
+} from "../types";
 import { sleep } from "../utils/asyncUtils";
 import { getKbdClient } from "./db";
 
 const CLASSIFICATION_API = "https://2b1d0760-a1f7-485d-8b69-2ecdf299615a.app.gra.ai.cloud.ovh.net/score";
 
-const classifyVerbatim = async (verbatim, classificationCount, gemVerbatims) => {
+const classifyVerbatim = async (
+  verbatim: Verbatim,
+  classificationCount: Record<string, number>,
+  gemVerbatims: string[]
+) => {
   const MAX_RETRIES = 5;
   const INITIAL_DELAY = 500;
 
-  const fetchWithRetry = async (url, options, retries = MAX_RETRIES, delay = INITIAL_DELAY) => {
+  const fetchWithRetry = async (url: string, options: FetchOptions, retries = MAX_RETRIES, delay = INITIAL_DELAY) => {
     try {
       const response = await fetch(url, options);
 
@@ -35,11 +48,11 @@ const classifyVerbatim = async (verbatim, classificationCount, gemVerbatims) => 
   };
 
   try {
-    const data = await fetchWithRetry(CLASSIFICATION_API, {
+    const data = (await fetchWithRetry(CLASSIFICATION_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: verbatim.content }),
-    });
+    })) as VerbatimClassificationApiResponse;
 
     console.log("Classification API response:", data);
 
@@ -50,7 +63,7 @@ const classifyVerbatim = async (verbatim, classificationCount, gemVerbatims) => 
     classificationCount[status]++;
     await updateVerbatimScores(verbatim, data.scores);
 
-    if (isGem) {
+    if (verbatim.content && isGem) {
       gemVerbatims.push(verbatim.content);
     }
 
@@ -61,13 +74,13 @@ const classifyVerbatim = async (verbatim, classificationCount, gemVerbatims) => 
   }
 };
 
-const getHighestScore = (scores) => {
+const getHighestScore = (scores: VerbatimScore) => {
   return Object.entries(scores)
     .filter(([key]) => key !== "NOT_VALIDATED")
-    .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)[0][0];
+    .sort(([, scoreA], [, scoreB]) => (scoreB as number) - (scoreA as number))[0][0];
 };
 
-const updateVerbatimScores = async (verbatim, scores) => {
+const updateVerbatimScores = async (verbatim: Verbatim, scores: VerbatimScore) => {
   const updateResult = await getKbdClient()
     .updateTable("verbatims")
     .set("scores", scores)
@@ -75,19 +88,19 @@ const updateVerbatimScores = async (verbatim, scores) => {
     .returning("id")
     .executeTakeFirst();
 
-  if (updateResult.id) {
+  if (updateResult?.id) {
     console.log("Verbatim updated successfully:", verbatim.id);
   } else {
     console.error("Failed to update verbatim:", verbatim.id);
   }
 };
 
-const sendSummaryToSlack = async (totalVerbatims, classificationCount, gemVerbatims) => {
-  const statusMessages = Object.entries(classificationCount).map(([status, count]) => ({
+const sendSummaryToSlack = async (totalClassifiedVerbatims: number, gemVerbatims: string[]) => {
+  const statusMessages = Object.entries(totalClassifiedVerbatims).map(([status, count]) => ({
     type: "section",
     text: {
       type: "mrkdwn",
-      text: `${VERBATIM_STATUS_EMOJIS[status]} *${VERBATIM_STATUS_LABELS[status]}:* ${count}`,
+      text: `${VERBATIM_STATUS_EMOJIS[status as keyof typeof VERBATIM_STATUS_EMOJIS]} *${VERBATIM_STATUS_LABELS[status as keyof typeof VERBATIM_STATUS_LABELS]}:* ${count}`,
     },
   }));
 
@@ -107,7 +120,7 @@ const sendSummaryToSlack = async (totalVerbatims, classificationCount, gemVerbat
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `:star2: *${totalVerbatims}* verbatims ont été classifiés!`,
+        text: `:star2: *${totalClassifiedVerbatims}* verbatims ont été classifiés!`,
       },
     },
     {
@@ -121,7 +134,7 @@ const sendSummaryToSlack = async (totalVerbatims, classificationCount, gemVerbat
 
   const summaryResponse = await sendToSlack(summaryMessage);
 
-  if (!summaryResponse.ok) {
+  if (!summaryResponse?.ok) {
     throw new Error("Failed to send the summary message");
   }
 
@@ -147,23 +160,47 @@ const sendSummaryToSlack = async (totalVerbatims, classificationCount, gemVerbat
 
 export default async () => {
   try {
-    const unclassifiedVerbatims = await getKbdClient()
+    const baseQuery = getKbdClient()
       .selectFrom("verbatims")
-      .selectAll()
+      .select([
+        "verbatims.id",
+        "verbatims.temoignage_id",
+        "verbatims.question_key",
+        "verbatims.content",
+        "verbatims.content_corrected",
+        "verbatims.correction_justification",
+        "verbatims.anonymization_justification",
+        "verbatims.content_corrected_anonymized",
+        "verbatims.status",
+        sql<VerbatimScore | null>`verbatims.scores`.as("scores"),
+        sql<VerbatimThemes | null>`verbatims.themes`.as("themes"),
+        "verbatims.feedback_count",
+        "verbatims.is_corrected",
+        "verbatims.is_anonymized",
+        "verbatims.created_at",
+        "verbatims.updated_at",
+        "verbatims.deleted_at",
+      ])
       .where("deleted_at", "is", null)
-      .where("scores", "is", null)
-      .execute();
+      .where("scores", "is", null);
 
-    const classificationCount = Object.keys(VERBATIM_STATUS).reduce((acc, status) => {
-      if (status !== VERBATIM_STATUS.PENDING) {
-        acc[status] = 0;
-      }
-      return acc;
-    }, {});
+    const result = await baseQuery.execute();
+
+    const unclassifiedVerbatims = camelcaseKeys(result);
+
+    const classificationCount = Object.keys(VERBATIM_STATUS).reduce(
+      (acc: Record<string, number>, status: (typeof VERBATIM_STATUS)[keyof typeof VERBATIM_STATUS]) => {
+        if (status !== VERBATIM_STATUS.PENDING) {
+          acc[status] = 0;
+        }
+        return acc;
+      },
+      {}
+    );
 
     logger.info(`Found ${unclassifiedVerbatims.length} unclassified verbatims`);
 
-    const gemVerbatims = [];
+    const gemVerbatims: string[] = [];
 
     for (const verbatim of unclassifiedVerbatims) {
       await classifyVerbatim(verbatim, classificationCount, gemVerbatims);
@@ -172,7 +209,7 @@ export default async () => {
     const totalClassifiedVerbatims = Object.values(classificationCount).reduce((acc, count) => acc + count, 0);
 
     if (totalClassifiedVerbatims) {
-      await sendSummaryToSlack(totalClassifiedVerbatims, totalClassifiedVerbatims, gemVerbatims);
+      await sendSummaryToSlack(totalClassifiedVerbatims, gemVerbatims);
     }
 
     logger.info("Classification completed successfully.");

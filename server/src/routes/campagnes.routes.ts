@@ -1,4 +1,3 @@
-// @ts-nocheck -- TODO
 import express from "express";
 
 import {
@@ -7,7 +6,6 @@ import {
   getCampagne,
   getCampagnes,
   getCampagnesStatistics,
-  getPdfExport,
   getPdfMultipleExport,
   getXlsxMultipleExport,
   updateCampagne,
@@ -64,15 +62,6 @@ export const campagnes = () => {
     async (req, _res, next) => isAdminOrAllowed(req, next, TYPES.CAMPAGNE_IDS),
     (req, res, next) => {
       getPdfMultipleExport(req, res, next);
-    }
-  );
-
-  router.get(
-    "/api/campagnes/export/pdf/:id",
-    verifyUser,
-    async (req, _res, next) => isAdminOrAllowed(req, next, TYPES.CAMPAGNE_ID),
-    (req, res, next) => {
-      getPdfExport(req, res, next);
     }
   );
 
