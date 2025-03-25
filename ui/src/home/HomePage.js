@@ -67,9 +67,9 @@ const HomePage = () => {
               </p>
             </div>
           </section>
-          <Button iconId="fr-icon-account-circle-fill" onClick={() => navigate("/inscription")}>
+          {/*<Button iconId="fr-icon-account-circle-fill" onClick={() => navigate("/inscription")}>
             S'inscrire
-          </Button>
+          </Button>*/}
         </GoalContainer>
         <CFAContainer>
           <p>Vous êtes un CFA ?</p>
@@ -126,9 +126,9 @@ const HomePage = () => {
             >
               Aperçu du questionnaire
             </Button>
-            <Button iconId="fr-icon-account-circle-fill" onClick={() => navigate("/inscription")}>
+            {/*<Button iconId="fr-icon-account-circle-fill" onClick={() => navigate("/inscription")}>
               S'inscrire
-            </Button>
+            </Button>*/}
           </CFAButtonContainer>
         </CFAContainer>
         <ExperimentationAndTestimonyContainer>
