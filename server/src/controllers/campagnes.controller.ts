@@ -69,7 +69,7 @@ export const getCampagne = tryCatch(async (req: Request, res: Response) => {
 export const createCampagnes = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { success, body } = await campagnesService.createCampagnes(req.body, req.user.id);
 
-  if (!success) throw new BasicError(body);
+  if (!success) throw new BasicError();
 
   return res.status(201).json(body);
 });

@@ -407,5 +407,5 @@ export const getAllWithTemoignageCountFormationEtablissement = async (
 
   const result = await baseQuery.execute();
 
-  return camelcaseKeys(result);
+  return camelcaseKeys(result, { deep: true });
 };

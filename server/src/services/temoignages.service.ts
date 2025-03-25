@@ -7,7 +7,7 @@ import * as questionnairesDao from "../dao/questionnaires.dao";
 import * as temoignagesDao from "../dao/temoignages.dao";
 import * as verbatimsDao from "../dao/verbatims.dao";
 import type { JsonValue } from "../db/schema";
-import { ErrorMessage } from "../errors";
+import { ErrorMessage, QuestionnaireNotFoundError, TemoignageCreationError } from "../errors";
 import * as xlsxExport from "../modules/xlsxExport";
 import type { Temoignage, TemoignageCreation, TemoignageUpdate } from "../types";
 import { intituleFormationFormatter } from "../utils/formations.utils";
@@ -23,10 +23,18 @@ import {
   getTrouverEntrepriseRating,
   matchCardTypeAndQuestions,
   matchIdAndQuestions,
-  verbatimsAnOrderedThemeAnswersMatcher,
+  verbatimsAndOrderedThemeAnswersMatcher,
 } from "../utils/temoignages.utils";
 
-export const createTemoignage = async (temoignage: TemoignageCreation) => {
+export const createTemoignage = async (
+  temoignage: TemoignageCreation
+): Promise<
+  | {
+      success: true;
+      body: { id: string };
+    }
+  | { success: false; body: string | Error }
+> => {
   try {
     const campagne = await campagnesDao.getOneWithTemoignagneCountAndTemplateName(temoignage.campagneId);
 
@@ -46,13 +54,24 @@ export const createTemoignage = async (temoignage: TemoignageCreation) => {
 
     const createdTemoignage = await temoignagesDao.create(temoignage);
 
+    if (!createdTemoignage) throw new TemoignageCreationError();
+
     return { success: true, body: createdTemoignage };
   } catch (error) {
     return { success: false, body: error };
   }
 };
 
-export const updateTemoignage = async (id: string, updatedTemoignage: TemoignageUpdate) => {
+export const updateTemoignage = async (
+  id: string,
+  updatedTemoignage: TemoignageUpdate
+): Promise<
+  | {
+      success: true;
+      body: boolean;
+    }
+  | { success: false; body: string | Error }
+> => {
   try {
     const temoignage = await temoignagesDao.update(id, updatedTemoignage);
 
@@ -62,7 +81,20 @@ export const updateTemoignage = async (id: string, updatedTemoignage: Temoignage
   }
 };
 
-export const getDatavisualisation = async (campagneIds: string[] = []) => {
+export const getDatavisualisation = async (
+  campagneIds: string[] = []
+): Promise<
+  | {
+      success: true;
+      body: {
+        questionnaireId: string;
+        questionnaireName: string;
+        categories: any[];
+        temoignageCount: number;
+      }[];
+    }
+  | { success: false; body: string | Error }
+> => {
   try {
     const query = { campagneIds };
     const temoignages = await temoignagesDao.findAllWithVerbatims(query);
@@ -123,10 +155,16 @@ export const getDatavisualisation = async (campagneIds: string[] = []) => {
       }
 
       const matchedIdAndQuestions = matchIdAndQuestions(questionnaireById.questionnaire);
+
       const matchedCardTypeAndQuestions = matchCardTypeAndQuestions(
         questionnaireById.questionnaire,
         questionnaireById.questionnaireUi
       );
+
+      if (!matchedIdAndQuestions || !matchedCardTypeAndQuestions) {
+        return null;
+      }
+
       const categories = getCategoriesWithEmojis(questionnaireById.questionnaire).map((category) => ({
         ...category,
         questionsList: Object.keys(questionnaireById.questionnaire.properties[category.id].properties).map(
@@ -144,7 +182,8 @@ export const getDatavisualisation = async (campagneIds: string[] = []) => {
               .flat()
               .filter(Boolean);
 
-            const formattedResponses = getFormattedResponses(responses, widget);
+            const filteredResponses = responses.filter((response) => response !== null);
+            const formattedResponses = getFormattedResponses(filteredResponses, widget);
 
             return {
               id: questionId,
@@ -164,7 +203,7 @@ export const getDatavisualisation = async (campagneIds: string[] = []) => {
       };
     });
 
-    return { success: true, body: result };
+    return { success: true, body: result.filter((item) => item !== null) };
   } catch (error) {
     return { success: false, body: error };
   }
@@ -175,7 +214,13 @@ export const getDatavisualisationFormation = async (
   cfd: string | null,
   idCertifinfo: string | null,
   slug: string | null
-) => {
+): Promise<
+  | {
+      success: true;
+      body: { temoignagesCount: number };
+    }
+  | { success: false; body: string | Error }
+> => {
   try {
     const formattedIntituleFormation = intituleFormation ? intituleFormationFormatter(intituleFormation) : null;
 
@@ -214,8 +259,7 @@ export const getDatavisualisationFormation = async (
         }
         return null;
       })
-      .filter(Boolean)
-      .filter(Boolean);
+      .filter(Boolean) as { label: string; value: string | number }[][];
 
     const cfaAideTrouverEntreprise = temoignages
       .map((temoignage) => {
@@ -280,7 +324,7 @@ export const getDatavisualisationFormation = async (
       };
     });
 
-    const matchedVerbatimAndThemes = verbatimsAnOrderedThemeAnswersMatcher(
+    const matchedVerbatimAndThemes = verbatimsAndOrderedThemeAnswersMatcher(
       verbatimsWithEtablissement,
       commentVisTonEntrepriseOrder
     );
@@ -320,7 +364,13 @@ export const getDatavisualisationFormationExists = async (
   cfd: string | null,
   idCertifinfo: string | null,
   slug: string | null
-) => {
+): Promise<
+  | {
+      success: true;
+      body: { hasData: boolean };
+    }
+  | { success: false; body: string | Error }
+> => {
   try {
     const formattedIntituleFormation = intituleFormation ? intituleFormationFormatter(intituleFormation) : null;
 
@@ -354,7 +404,41 @@ export const getDatavisualisationFormationExists = async (
   }
 };
 
-export const getDatavisualisationEtablissement = async (uai: string) => {
+export const getDatavisualisationEtablissement = async (
+  uai: string
+): Promise<
+  | {
+      success: true;
+      body: {
+        temoignagesCount: number;
+        commentCaSePasseCfaRates?: {
+          Mal: number;
+          Moyen: number;
+          Bien: number;
+        } | null;
+        commentVisTonCfa?: {
+          label: string;
+          verbatims: {
+            id: string;
+            content: string | null;
+            status: string;
+            createdAt: Date | null;
+            etablissementFormateurEntrepriseRaisonSociale: string | null | undefined;
+            etablissementFormateurEnseigne: string | null | undefined;
+            etablissementGestionnaireEnseigne: string | null | undefined;
+          }[];
+          total?: number | undefined;
+        }[];
+        displayedGems?: Record<string, any[]>;
+        accompagneCfaRates?: {
+          Mal: number;
+          Moyen: number;
+          Bien: number;
+        };
+      };
+    }
+  | { success: false; body: string | Error }
+> => {
   try {
     const formations = await formationsDao.findFormationByUai(uai);
 
@@ -385,7 +469,12 @@ export const getDatavisualisationEtablissement = async (uai: string) => {
       }
       return null;
     });
-    const commentCaSePasseCfaRates = getReponseRating(commentCaSePasseCfa);
+    const filteredCommentCaSePasseCfa = commentCaSePasseCfa.filter(
+      (response): response is JsonValue => response !== null && response !== undefined
+    );
+    const commentCaSePasseCfaRates = Array.isArray(filteredCommentCaSePasseCfa)
+      ? getReponseRating(filteredCommentCaSePasseCfa)
+      : null;
 
     const commentVisTonExperienceCfa = temoignages.map((temoignage) => {
       if (
@@ -398,14 +487,19 @@ export const getDatavisualisationEtablissement = async (uai: string) => {
       return null;
     });
 
-    const commentVisTonExperienceCfaOrder = getCommentVisTonExperienceEntrepriseOrder(commentVisTonExperienceCfa); // change name if working for CFA
+    const filteredCommentVisTonExperienceCfa = commentVisTonExperienceCfa.filter(
+      (response): response is { label: string; value: string | number }[] => response !== null && response !== undefined
+    );
+    const commentVisTonExperienceCfaOrder = getCommentVisTonExperienceEntrepriseOrder(
+      filteredCommentVisTonExperienceCfa
+    ); // change name if working for CFA
     const commentVisTonCfaVerbatimsQuery = {
       temoignageIds: temoignages.map((temoignage) => temoignage.id),
       status: [VERBATIM_STATUS.GEM, VERBATIM_STATUS.VALIDATED],
     };
     const commentVisTonCfaVerbatimsResults = await verbatimsDao.getAll(commentVisTonCfaVerbatimsQuery);
 
-    const matchedVerbatimAndcommentVisTonCfa = verbatimsAnOrderedThemeAnswersMatcher(
+    const matchedVerbatimAndcommentVisTonCfa = verbatimsAndOrderedThemeAnswersMatcher(
       commentVisTonCfaVerbatimsResults,
       commentVisTonExperienceCfaOrder
     );
@@ -550,18 +644,24 @@ export const deleteMultipleTemoignages = async (temoignagesIds: string[]) => {
 export const exportTemoignagesToXlsx = async (campagneIds: string[], res: Response) => {
   try {
     const questionnaires = await questionnairesDao.findAll();
+
+    if (!questionnaires?.length) {
+      throw new QuestionnaireNotFoundError();
+    }
+
     const temoignages = await temoignagesDao.getAllWithFormationAndQuestionnaire(campagneIds);
 
     const temoignagesIds = temoignages.map((temoignage) => temoignage.id);
     const moderatedVerbatimStatus = [VERBATIM_STATUS.VALIDATED, VERBATIM_STATUS.TO_FIX, VERBATIM_STATUS.GEM];
 
     const verbatims = await verbatimsDao.getAllWithFormationAndCampagne(temoignagesIds, moderatedVerbatimStatus);
-
+    console.log({ verbatims });
     const formattedTemoignages = getFormattedReponsesByTemoignages(temoignages, questionnaires);
     const formattedVerbatims = getFormattedReponsesByVerbatims(verbatims, questionnaires);
 
     await xlsxExport.generateTemoignagesXlsx(formattedTemoignages, formattedVerbatims, res);
   } catch (_error) {
+    console.log({ _error });
     throw new Error("Error fetching data or generating Excel");
   }
 };

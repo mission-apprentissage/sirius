@@ -1,5 +1,5 @@
 export class BasicError extends Error {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super();
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;
@@ -30,10 +30,11 @@ export const ErrorMessage = {
   UnconfirmedEmail: "Email non confirmé",
   FormationNotFoundError: "Formation inconnue",
   JobNotFoundError: "Job inconnu",
+  TemoignageCreationError: "Erreur lors de la création du témoignage",
 };
 
 export const CampagneNotFoundError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.CampagneNotFoundError, extra);
   }
 
@@ -42,7 +43,7 @@ export const CampagneNotFoundError = class NotFoundError extends BasicError {
   }
 };
 export const TemoignageNotFoundError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.TemoignageNotFoundError, extra);
   }
 
@@ -51,7 +52,7 @@ export const TemoignageNotFoundError = class NotFoundError extends BasicError {
   }
 };
 export const QuestionnaireNotFoundError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.QuestionnaireNotFoundError, extra);
   }
 
@@ -60,7 +61,7 @@ export const QuestionnaireNotFoundError = class NotFoundError extends BasicError
   }
 };
 export const UnauthorizedError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.UnauthorizedError, extra);
   }
 
@@ -69,7 +70,7 @@ export const UnauthorizedError = class NotFoundError extends BasicError {
   }
 };
 export const CampagneNotStarted = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.CampagneNotStarted, extra);
   }
 
@@ -78,7 +79,7 @@ export const CampagneNotStarted = class NotFoundError extends BasicError {
   }
 };
 export const CampagneEnded = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.CampagneEnded, extra);
   }
 
@@ -87,7 +88,7 @@ export const CampagneEnded = class NotFoundError extends BasicError {
   }
 };
 export const NoSeatsAvailable = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.NoSeatsAvailable, extra);
   }
 
@@ -96,7 +97,7 @@ export const NoSeatsAvailable = class NotFoundError extends BasicError {
   }
 };
 export const EtablissementNotFoundError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.EtablissementNotFoundError, extra);
   }
 
@@ -105,7 +106,7 @@ export const EtablissementNotFoundError = class NotFoundError extends BasicError
   }
 };
 export const EtablissementAlreadyExistingError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.EtablissementAlreadyExistingError, extra);
   }
 
@@ -115,7 +116,7 @@ export const EtablissementAlreadyExistingError = class NotFoundError extends Bas
 };
 
 export const UserAlreadyExistsError = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.UserAlreadyExistsError, extra);
   }
 
@@ -124,7 +125,7 @@ export const UserAlreadyExistsError = class NotFoundError extends BasicError {
   }
 };
 export const UserNotFound = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.UserNotFound, extra);
   }
 
@@ -133,7 +134,7 @@ export const UserNotFound = class NotFoundError extends BasicError {
   }
 };
 export const UnconfirmedEmail = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.UnconfirmedEmail, extra);
   }
 
@@ -142,7 +143,7 @@ export const UnconfirmedEmail = class NotFoundError extends BasicError {
   }
 };
 export const FormationNotFound = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.FormationNotFoundError, extra);
   }
 
@@ -151,11 +152,20 @@ export const FormationNotFound = class NotFoundError extends BasicError {
   }
 };
 export const JobNotFound = class NotFoundError extends BasicError {
-  constructor(message?: any, extra?: any) {
+  constructor(message?: string, extra?: unknown) {
     super(message || ErrorMessage.JobNotFoundError, extra);
   }
 
   get status() {
     return 404;
+  }
+};
+export const TemoignageCreationError = class NotFoundError extends BasicError {
+  constructor(message?: string, extra?: unknown) {
+    super(message || ErrorMessage.TemoignageCreationError, extra);
+  }
+
+  get status() {
+    return 403;
   }
 };

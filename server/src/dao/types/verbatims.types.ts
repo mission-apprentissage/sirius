@@ -51,15 +51,14 @@ export type GetAllWithFormationResults = Promise<
   >
 >;
 
-export type GetAllWithFormationAndCampagneResult = Promise<
-  (Pick<Verbatim, "id" | "questionKey" | "content" | "status"> &
-    Pick<Campagne, "nomCampagne" | "questionnaireId"> & {
-      formation: Pick<
-        Formation,
-        | "intituleLong"
-        | "etablissementFormateurEnseigne"
-        | "etablissementFormateurEntrepriseRaisonSociale"
-        | "etablissementFormateurSiret"
-      >;
-    })[]
->;
+export type GetAllWithFormationAndCampagneResult = (Pick<Verbatim, "id" | "questionKey" | "content" | "status"> &
+  Pick<Campagne, "nomCampagne" | "questionnaireId"> & {
+    formation: Pick<
+      Formation,
+      | "intituleLong"
+      | "etablissementFormateurEnseigne"
+      | "etablissementFormateurEntrepriseRaisonSociale"
+      | "etablissementFormateurSiret"
+      | "localite"
+    >;
+  })[];

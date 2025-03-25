@@ -1,9 +1,17 @@
-// @ts-nocheck -- TODO
 import Boom from "@hapi/boom";
+import type { Request, Response } from "express";
+
+type RawError = {
+  isBoom: boolean;
+  name: string;
+  status: number;
+  details: any;
+  message: string;
+};
 
 export default () => {
   // eslint-disable-next-line no-unused-vars
-  return (rawError, req, res, _next) => {
+  return (rawError: RawError, req: Request, res: Response) => {
     req.err = rawError;
 
     let error;

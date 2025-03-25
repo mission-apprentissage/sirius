@@ -40,16 +40,14 @@ export type GetAllTemoignagesWithFormationResults = Promise<
   >
 >;
 
-export type GetAllWithFormationAndQuestionnaireResults = Promise<
-  (Pick<Temoignage, "id" | "reponses"> &
-    Pick<Campagne, "nomCampagne" | "questionnaireId"> & {
-      formation: Pick<
-        Formation,
-        | "intituleLong"
-        | "localite"
-        | "etablissementFormateurEnseigne"
-        | "etablissementFormateurEntrepriseRaisonSociale"
-        | "etablissementFormateurSiret"
-      >;
-    })[]
->;
+export type GetAllWithFormationAndQuestionnaireResults = (Pick<Temoignage, "id" | "reponses"> &
+  Pick<Campagne, "nomCampagne" | "questionnaireId"> & {
+    formation: Pick<
+      Formation,
+      | "intituleLong"
+      | "localite"
+      | "etablissementFormateurEnseigne"
+      | "etablissementFormateurEntrepriseRaisonSociale"
+      | "etablissementFormateurSiret"
+    >;
+  })[];

@@ -200,7 +200,7 @@ export type JobUpdate = { progress?: number; total?: number; status?: string; er
 
 export type Temoignage = {
   id: string;
-  reponses: JsonValue | null;
+  reponses: JsonValue;
   isBot: boolean | null;
   lastQuestionAt: Date | null;
   deletedAt: Date | null;
@@ -361,3 +361,5 @@ export type VerbatimClassificationApiResponse = {
   text: string;
   scores: VerbatimScore;
 };
+
+export type RemoveArray<T> = T extends Array<infer U> ? U : T;

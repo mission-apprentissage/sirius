@@ -1,20 +1,22 @@
+import type { GetAllWithTemoignageCountAndTemplateNameResults } from "../dao/types/campagnes.types";
+import type { Formation, Questionnaire, RemoveArray } from "../types";
 import { getChampsLibreField } from "./verbatims.utils";
 
-const msToTime = (duration) => {
-  let seconds = Math.floor((duration / 1000) % 60);
-  let minutes = Math.floor((duration / (1000 * 60)) % 60);
-  let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+const msToTime = (duration: number) => {
+  let seconds: string | number = Math.floor((duration / 1000) % 60);
+  let minutes: string | number = Math.floor((duration / (1000 * 60)) % 60);
+  let hours: string | number = Math.floor((duration / (1000 * 60 * 60)) % 24);
 
-  hours = hours < 10 ? "0" + hours : hours;
-  minutes = minutes < 10 ? "0" + minutes : minutes;
-  seconds = seconds < 10 ? "0" + seconds : seconds;
+  hours = hours < 10 ? "0" + hours : hours.toString();
+  minutes = minutes < 10 ? "0" + minutes : minutes.toString();
+  seconds = seconds < 10 ? "0" + seconds : seconds.toString();
 
   if (minutes === "00") return seconds + " sec";
   if (hours === "00") return minutes + " min " + seconds;
   return hours + " h " + minutes + " min " + seconds;
 };
 
-export const appendDataWhenEmpty = (campagne) => {
+export const appendDataWhenEmpty = (campagne: { formation: Partial<Formation & { formationIds: string[] }> }) => {
   if (!campagne.formation.id) {
     campagne.formation = {
       id: "N/A",
@@ -32,26 +34,23 @@ export const appendDataWhenEmpty = (campagne) => {
       etablissementFormateurEnseigne: "N/A",
       etablissementFormateurEntrepriseRaisonSociale: "N/A",
       formationIds: [],
-      onisepNom: "N/A",
-      enseigne: "N/A",
-      entrepriseRaisonSociale: "N/A",
-      siret: "N/A",
-      numeroVoie: "N/A",
-      typeVoie: "N/A",
-      nomVoie: "N/A",
     };
   }
 };
 
-const getFinishedCampagnes = (campagnes) => {
+const getFinishedCampagnes = (campagnes: GetAllWithTemoignageCountAndTemplateNameResults) => {
   return campagnes.filter((campagne) => new Date(campagne.endDate) < new Date());
 };
 
-const getTemoignagesCount = (campagnes) => {
+const getTemoignagesCount = (campagnes: GetAllWithTemoignageCountAndTemplateNameResults) => {
   return campagnes.reduce((acc, campagne) => acc + campagne.temoignagesCount, 0);
 };
 
-const getChampsLibreRate = (campagnes, questionnaires, verbatimsCount) => {
+const getChampsLibreRate = (
+  campagnes: GetAllWithTemoignageCountAndTemplateNameResults,
+  questionnaires: Questionnaire[],
+  verbatimsCount: number
+) => {
   const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
   const filteredCampagnesWithPossibleChampsLibreCount = filteredCampagnes.map((campagne) => {
     const questionnaireUI = questionnaires.find(
@@ -80,7 +79,7 @@ const getChampsLibreRate = (campagnes, questionnaires, verbatimsCount) => {
   return Math.round((verbatimsCount * 100) / totalPossibleChampsLibreCount) + "%";
 };
 
-export const getMedianDuration = (campagnes) => {
+export const getMedianDuration = (campagnes: GetAllWithTemoignageCountAndTemplateNameResults) => {
   const filteredCampagnes = campagnes.filter((campagne) => campagne.temoignagesCount > 0);
 
   if (!filteredCampagnes.length) {
@@ -88,7 +87,10 @@ export const getMedianDuration = (campagnes) => {
   }
 
   filteredCampagnes.forEach((campagne) => {
-    campagne.medianDurationInMs =
+    if (!campagne.temoignages) return;
+    (
+      campagne as RemoveArray<GetAllWithTemoignageCountAndTemplateNameResults> & { medianDurationInMs: number }
+    ).medianDurationInMs =
       campagne.temoignages.reduce(
         (acc, answer) =>
           answer?.lastQuestionAt
@@ -98,15 +100,21 @@ export const getMedianDuration = (campagnes) => {
       ) / campagne.temoignages.length;
   });
 
-  const sum = filteredCampagnes.reduce((acc, campagne) => acc + campagne.medianDurationInMs, 0);
+  const sum = filteredCampagnes.reduce(
+    (acc, campagne) =>
+      acc +
+      (campagne as RemoveArray<GetAllWithTemoignageCountAndTemplateNameResults> & { medianDurationInMs: number })
+        .medianDurationInMs,
+    0
+  );
 
   return msToTime(Math.round(sum / filteredCampagnes.length));
 };
 
 export const getStatistics = (
-  campagnes,
-  questionnaires,
-  verbatimsCount
+  campagnes: GetAllWithTemoignageCountAndTemplateNameResults,
+  questionnaires: Questionnaire[],
+  verbatimsCount: number
 ): {
   campagnesCount: number;
   finishedCampagnesCount: number;
@@ -121,7 +129,7 @@ export const getStatistics = (
   medianDuration: campagnes?.length ? getMedianDuration(campagnes) : "N/A",
 });
 
-export const normalizeString = (str) => {
+export const normalizeString = (str: string) => {
   return str
     ? str
         .normalize("NFD")

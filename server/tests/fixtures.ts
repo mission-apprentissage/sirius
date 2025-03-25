@@ -37,7 +37,22 @@ export const newTemoignage = (custom = {}, _hasId = false) => {
   );
 };
 
-export const newUser = (custom = {}, _hasId = false) => {
+export const newUser = (
+  custom: {
+    password?: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    role?: string;
+    comment?: string;
+    etablissements?: string[];
+    authStrategy?: string;
+    refreshToken?: { id: string; refreshToken: string }[];
+    confirmationToken?: string;
+    acceptedCgu?: boolean;
+  } = {},
+  _hasId = false
+) => {
   return _.merge(
     {
       //...(hasId && { id: ObjectId(faker.database.mongodbObjectId()) }),
@@ -53,6 +68,7 @@ export const newUser = (custom = {}, _hasId = false) => {
       refreshToken: [{ id: faker.database.mongodbObjectId(), refreshToken: "refreshToken" }],
       confirmationToken: "token",
       acceptedCgu: false,
+      password: "password",
     },
     custom
   );

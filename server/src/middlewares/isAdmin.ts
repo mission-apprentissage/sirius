@@ -1,9 +1,12 @@
+import type { NextFunction, Request, Response } from "express";
+
 import { USER_ROLES, USER_STATUS } from "../constants";
 import { UnauthorizedError } from "../errors";
+import type { AuthedRequest } from "../types";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const isAdmin = async (req: any, res: any, next: any) => {
-  const { status, role } = req.user;
+export const isAdmin = async (req: Request, _res: Response, next: NextFunction) => {
+  const authReq = req as AuthedRequest;
+  const { status, role } = authReq.user;
 
   if (role === USER_ROLES.ADMIN && status === USER_STATUS.ACTIVE) {
     return next();

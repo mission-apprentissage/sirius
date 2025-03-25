@@ -1,3 +1,4 @@
+import camelcaseKeys from "camelcase-keys";
 import { sql } from "kysely";
 import { parentPort, workerData } from "worker_threads";
 
@@ -5,7 +6,7 @@ import config from "../config";
 import { JOB_STATUS, VERBATIM_STATUS, VERBATIM_THEMES, VERBATIM_THEMES_LABELS } from "../constants";
 import { connectToPgDb, getKbdClient } from "../db/db";
 import logger from "../modules/logger";
-import type { ExpositionApiResponse, FetchOptions, Verbatim } from "../types";
+import type { ExpositionApiResponse, FetchOptions, Verbatim, VerbatimScore, VerbatimThemes } from "../types";
 import { sleep } from "../utils/asyncUtils";
 
 const VERBATIMS_EXPOSITION_PREPARATION_API =
@@ -125,7 +126,27 @@ const cancellationMonitor = async (jobId: string) => {
 
     cancellationMonitor(jobId);
 
-    let verbatimsQuery = getKbdClient().selectFrom("verbatims").selectAll();
+    let verbatimsQuery = getKbdClient()
+      .selectFrom("verbatims")
+      .select([
+        "verbatims.id",
+        "verbatims.temoignage_id",
+        "verbatims.question_key",
+        "verbatims.content",
+        "verbatims.content_corrected",
+        "verbatims.correction_justification",
+        "verbatims.anonymization_justification",
+        "verbatims.content_corrected_anonymized",
+        "verbatims.status",
+        sql<VerbatimScore | null>`verbatims.scores`.as("scores"),
+        sql<VerbatimThemes | null>`verbatims.themes`.as("themes"),
+        "verbatims.feedback_count",
+        "verbatims.is_corrected",
+        "verbatims.is_anonymized",
+        "verbatims.created_at",
+        "verbatims.updated_at",
+        "verbatims.deleted_at",
+      ]);
 
     if (!processAll && !type) {
       verbatimsQuery = verbatimsQuery.where("deleted_at", "is", null).where("themes", "is", null);
@@ -141,7 +162,9 @@ const cancellationMonitor = async (jobId: string) => {
         .orderBy("status", "asc");
     }
 
-    const verbatims = await verbatimsQuery.execute();
+    const verbatimsResult = await verbatimsQuery.execute();
+    const verbatims = camelcaseKeys(verbatimsResult);
+
     const totalVerbatims = verbatims.length;
 
     console.info(`Found ${verbatims.length} unthemed verbatims`);

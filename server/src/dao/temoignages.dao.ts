@@ -49,6 +49,7 @@ export const findAll = async (query: { campagneIds: string[] }): FindAllResults 
     .select([
       "temoignages.id",
       "temoignages.reponses",
+      `temoignages.reponses`,
       "temoignages.is_bot",
       "temoignages.last_question_at",
       "temoignages.deleted_at",
@@ -289,7 +290,7 @@ export const getAllTemoignagesWithFormation = async (
 
 export const getAllWithFormationAndQuestionnaire = async (
   campagneIds: string[]
-): GetAllWithFormationAndQuestionnaireResults => {
+): Promise<GetAllWithFormationAndQuestionnaireResults> => {
   const baseQuery = getKbdClient()
     .selectFrom("temoignages")
     .leftJoin("temoignages_campagnes", "temoignages.id", "temoignages_campagnes.temoignage_id")
@@ -316,7 +317,7 @@ export const getAllWithFormationAndQuestionnaire = async (
 
   const result = await baseQuery.execute();
 
-  return camelcaseKeys(result);
+  return camelcaseKeys(result, { deep: true });
 };
 
 export const deleteMultiple = async (ids: string[]): Promise<boolean> => {

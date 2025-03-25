@@ -196,7 +196,7 @@ export const getAllWithFormation = async (
 export const getAllWithFormationAndCampagne = async (
   temoignagesIds: string[],
   status: VerbatimStatus[]
-): GetAllWithFormationAndCampagneResult => {
+): Promise<GetAllWithFormationAndCampagneResult> => {
   const baseQuery = getKbdClient()
     .selectFrom("verbatims")
     .leftJoin("temoignages", "verbatims.temoignage_id", "temoignages.id")
@@ -217,7 +217,8 @@ export const getAllWithFormationAndCampagne = async (
         'intitule_long', formations.intitule_long,
         'etablissement_formateur_enseigne', formations.etablissement_formateur_enseigne,
         'etablissement_formateur_entreprise_raison_sociale', formations.etablissement_formateur_entreprise_raison_sociale,
-        'etablissement_formateur_siret', formations.etablissement_formateur_siret
+        'etablissement_formateur_siret', formations.etablissement_formateur_siret,
+        'localite', formations.localite
       )`.as("formation"),
     ])
     .where("verbatims.temoignage_id", "in", temoignagesIds)
@@ -228,7 +229,7 @@ export const getAllWithFormationAndCampagne = async (
 
   const result = await baseQuery.execute();
 
-  return camelcaseKeys(result);
+  return camelcaseKeys(result, { deep: true });
 };
 
 export const updateOne = async (id: string, update: Partial<Verbatim>): Promise<{ id: string } | undefined> => {

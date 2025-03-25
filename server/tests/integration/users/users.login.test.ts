@@ -24,24 +24,22 @@ describe("Login routes", () => {
   });
 
   it("should return 200 and the user token", async () => {
-    const user = newUser({ password: "toto" });
+    const user = newUser();
     const { body: createdUser } = await createUser({
       email: user.email,
-      // @ts-expect-error
+      confirmationToken: user.confirmationToken,
       password: user.password,
       firstName: user.firstName,
       lastName: user.lastName,
       role: user.role,
       comment: user.comment,
-      // []
     });
 
     await usersDao.update(createdUser._id, {
-      email_confirmed: true,
+      emailConfirmed: true,
     });
     const login = {
       email: user.email.toLowerCase(),
-      // @ts-expect-error
       password: user.password,
     };
     const response = await app.post("/api/users/login").send(login);
