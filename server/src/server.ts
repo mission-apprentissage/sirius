@@ -50,7 +50,7 @@ export default async () => {
   app.use(formations());
   app.use(verbatims());
   app.use(jobs());
-  app.use(passport.initialize());
+  app.use(passport.initialize);
 
   app.disable("x-powered-by");
 
