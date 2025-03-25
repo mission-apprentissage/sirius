@@ -26044,7 +26044,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:4.26.1, type-fest@npm:^4.2.0":
+"type-fest@npm:4.26.1":
   version: 4.26.1
   resolution: "type-fest@npm:4.26.1"
   checksum: 7188db3bca82afa62c69a8043fb7c5eb74e63c45e7e28efb986da1629d844286f7181bc5a8185f38989fffff0d6c96be66fd13529b01932d1b6ebe725181d31a
@@ -26114,7 +26114,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^4.3.2":
+"type-fest@npm:^4.2.0, type-fest@npm:^4.3.2":
   version: 4.34.1
   resolution: "type-fest@npm:4.34.1"
   checksum: 6d553dabb9ca67bd774d26777bef8c91a8fb3dda772a64d051a06f5debaa16d5d3c6a676b5aa56bbfe0effde6acb7f2f08486b03ae918f3d77ab56a432b2c334
@@ -26192,7 +26192,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.6.3, typescript@npm:^4.6.4 || ^5.2.2, typescript@npm:^5.1.6":
+"typescript@npm:5.6.3":
   version: 5.6.3
   resolution: "typescript@npm:5.6.3"
   bin:
@@ -26202,7 +26202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.7.3":
+"typescript@npm:5.7.3, typescript@npm:^4.6.4 || ^5.2.2, typescript@npm:^5.1.6":
   version: 5.7.3
   resolution: "typescript@npm:5.7.3"
   bin:
@@ -26212,7 +26212,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.6.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4 || ^5.2.2#~builtin<compat/typescript>, typescript@patch:typescript@^5.1.6#~builtin<compat/typescript>":
+"typescript@patch:typescript@5.6.3#~builtin<compat/typescript>":
   version: 5.6.3
   resolution: "typescript@patch:typescript@npm%3A5.6.3#~builtin<compat/typescript>::version=5.6.3&hash=14eedb"
   bin:
@@ -26222,7 +26222,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.7.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@5.7.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4 || ^5.2.2#~builtin<compat/typescript>, typescript@patch:typescript@^5.1.6#~builtin<compat/typescript>":
   version: 5.7.3
   resolution: "typescript@patch:typescript@npm%3A5.7.3#~builtin<compat/typescript>::version=5.7.3&hash=14eedb"
   bin:
