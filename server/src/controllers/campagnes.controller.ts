@@ -1,14 +1,16 @@
-// @ts-nocheck -- TODO
+import type { Request, Response } from "express";
+
 import { USER_ROLES } from "../constants";
 import { BasicError, CampagneNotFoundError } from "../errors";
 import * as campagnesService from "../services/campagnes.service";
+import type { AuthedRequest, ObserverScope } from "../types";
 import tryCatch from "../utils/tryCatch.utils";
 
-export const getCampagnes = tryCatch(async (req: any, res: any) => {
-  const isObserver = req.user.role === USER_ROLES.OBSERVER;
-  const scope = isObserver ? req.user.scope : null;
+export const getCampagnes = tryCatch(async (req: AuthedRequest, res: Response) => {
+  const isObserver = !!(req.user.role === USER_ROLES.OBSERVER);
+  const scope: ObserverScope | null = isObserver ? req.user.scope : null;
 
-  const page = req.body.page || 1;
+  const page = parseInt(req.body.page) || 1;
   const pageSize = req.body.pageSize || 10;
 
   const campagneIds = req.body.campagneIds;
@@ -17,7 +19,12 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
   const search = req.body.search;
   const departement = req.body.departement;
 
-  const query = {};
+  const query: {
+    diplome?: string[];
+    siret?: string[];
+    departement?: string;
+    campagneIds?: string[];
+  } = {};
 
   if (diplome) {
     query.diplome = diplome;
@@ -35,7 +42,7 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
     query.campagneIds = campagneIds;
   }
 
-  const { success, body, ids, pagination } = await campagnesService.getCampagnes({
+  const result = await campagnesService.getCampagnes({
     isObserver,
     scope,
     page,
@@ -44,12 +51,12 @@ export const getCampagnes = tryCatch(async (req: any, res: any) => {
     search,
   });
 
-  if (!success) throw new BasicError();
+  if (!result.success) throw new BasicError();
 
-  return res.status(200).json({ body, ids, pagination });
+  return res.status(200).json({ body: result.body, ids: result.ids, pagination: result.pagination });
 });
 
-export const getCampagne = tryCatch(async (req: any, res: any) => {
+export const getCampagne = tryCatch(async (req: Request, res: Response) => {
   const campagneId = req.params.id;
   const { success, body } = await campagnesService.getOneCampagne(campagneId);
 
@@ -59,16 +66,17 @@ export const getCampagne = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const createCampagnes = tryCatch(async (req: any, res: any) => {
+export const createCampagnes = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { success, body } = await campagnesService.createCampagnes(req.body, req.user.id);
 
-  if (!success) throw new BasicError(body);
+  if (!success) throw new BasicError();
 
   return res.status(201).json(body);
 });
 
-export const deleteCampagnes = tryCatch(async (req: any, res: any) => {
-  const ids = req.query.ids.split(",");
+export const deleteCampagnes = tryCatch(async (req: AuthedRequest, res: Response) => {
+  const ids = typeof req.query.ids === "string" ? req.query.ids.split(",") : [];
+
   const { success, body } = await campagnesService.deleteCampagnes(ids);
 
   if (!success) throw new BasicError();
@@ -77,7 +85,7 @@ export const deleteCampagnes = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const updateCampagne = tryCatch(async (req: any, res: any) => {
+export const updateCampagne = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { success, body } = await campagnesService.updateCampagne(req.params.id, req.body);
 
   if (!success) throw new BasicError();
@@ -85,30 +93,23 @@ export const updateCampagne = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const getPdfExport = tryCatch(async (req: any, res: any) => {
-  const { success, body } = await campagnesService.getPdfExport(req.params.id);
+export const getPdfMultipleExport = tryCatch(async (req: AuthedRequest, res: Response) => {
+  const ids = typeof req.query.ids === "string" ? req.query.ids.split(",") : [];
 
-  if (!success) throw new BasicError();
-
-  return res.status(200).json(body);
-});
-
-export const getPdfMultipleExport = tryCatch(async (req: any, res: any) => {
-  const ids = req.query.ids.split(",");
-  const user = {
+  const displayedUser = {
     label: req.user.firstName + " " + req.user.lastName,
     email: req.user.email,
   };
 
-  const { success, body } = await campagnesService.getPdfMultipleExport(ids, user);
+  const { success, body } = await campagnesService.getPdfMultipleExport(ids, displayedUser);
 
   if (!success) throw new BasicError();
 
   return res.status(200).json(body);
 });
 
-export const getXlsxMultipleExport = tryCatch(async (req: any, res: any) => {
-  const ids = req.query.ids?.split(",");
+export const getXlsxMultipleExport = tryCatch(async (req: AuthedRequest, res: Response) => {
+  const ids = typeof req.query.ids === "string" ? req.query.ids.split(",") : [];
 
   const { success, body } = await campagnesService.getXlsxMultipleExport(ids);
 
@@ -117,7 +118,7 @@ export const getXlsxMultipleExport = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const getCampagnesStatistics = tryCatch(async (req: any, res: any) => {
+export const getCampagnesStatistics = tryCatch(async (req: AuthedRequest, res: Response) => {
   const campagneIds = req.body;
 
   const { success, body } = await campagnesService.getCampagnesStatistics(campagneIds);

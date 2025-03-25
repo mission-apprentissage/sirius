@@ -281,7 +281,8 @@ const DsfrNavbar = () => {
           ) : (
             <>
               <p>
-                C’est avec beaucoup de regret que nous vous annonçons l’arrêt du service Sirius à compter du 31 mars.{" "}
+                C’est avec beaucoup de regret que nous vous annonçons l’arrêt du service Sirius à compter du 31
+                mars.{" "}
               </p>
               <p>
                 Cette décision résulte des fortes contraintes budgétaires actuelles qui ne permettent pas au ministère

@@ -1,36 +1,26 @@
-import type { DeleteResult } from "kysely";
+import camelcaseKeys from "camelcase-keys";
 import { sql } from "kysely";
 
 import { OBSERVER_SCOPES } from "../constants";
 import { getKbdClient } from "../db/db";
-import type { Formation, ObserverScope } from "../types";
+import type { ObserverScope } from "../types";
+import type {
+  FindAllArgs,
+  FindAllResults,
+  FindAllWithCampagnesCountResults,
+  FindAllWithTemoignageCountResults,
+  FindFormationByIntituleCfdIdCertifInfoOrSlugResults,
+  FindFormationByUaiResults,
+} from "./types/formations.types";
 
-export const create = async (formation: Formation): Promise<{ id: string } | undefined> => {
-  return getKbdClient().insertInto("formations").values(formation).returning("id").executeTakeFirst();
-};
-
-export const findAll = async (query: {
-  formationIds?: string[];
-  campagne_id?: string;
-  searchText?: string;
-  etablissementSiret?: string;
-  catalogueId?: string;
-}): Promise<Partial<Formation>[] | undefined> => {
+export const findAll = async (query: FindAllArgs): Promise<FindAllResults> => {
   let baseQuery = getKbdClient()
     .selectFrom("formations")
     .select([
       "formations.id",
       "formations.catalogue_id",
-      "formations.region",
-      "formations.num_departement",
-      "formations.intitule_long",
-      "formations.intitule_court",
-      "formations.diplome",
-      "formations.localite",
-      "formations.tags",
-      "formations.lieu_formation_adresse",
-      "formations.lieu_formation_adresse_computed",
       "formations.code_postal",
+      "formations.diplome",
       "formations.duree",
       "formations.etablissement_formateur_adresse",
       "formations.etablissement_formateur_enseigne",
@@ -40,6 +30,14 @@ export const findAll = async (query: {
       "formations.etablissement_gestionnaire_enseigne",
       "formations.etablissement_gestionnaire_siret",
       "formations.etablissement_id",
+      "formations.intitule_court",
+      "formations.intitule_long",
+      "formations.lieu_formation_adresse",
+      "formations.lieu_formation_adresse_computed",
+      "formations.localite",
+      "formations.num_departement",
+      "formations.region",
+      sql<string[]>`formations.tags`.as("tags"),
     ])
     .where("formations.deleted_at", "is", null);
 
@@ -47,10 +45,10 @@ export const findAll = async (query: {
     baseQuery = baseQuery.where("formations.id", "in", query.formationIds);
   }
 
-  if ("campagne_id" in query && query.campagne_id) {
+  if ("campagne_id" in query && query.campagneId) {
     baseQuery = baseQuery
       .innerJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
-      .where("formations_campagnes.campagne_id", "=", query.campagne_id);
+      .where("formations_campagnes.campagne_id", "=", query.campagneId);
   }
 
   if ("searchText" in query && query.searchText) {
@@ -85,77 +83,9 @@ export const findAll = async (query: {
     baseQuery = baseQuery.where("formations.catalogue_id", "=", query.catalogueId);
   }
 
-  return baseQuery.execute();
-};
+  const result = await baseQuery.execute();
 
-export const findOne = async (id: string): Promise<Partial<Formation> | undefined> => {
-  return getKbdClient()
-    .selectFrom("formations")
-    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id") // Join with formations_campagnes table
-    .select([
-      "formations.id",
-      "formations.catalogue_id",
-      "formations.region",
-      "formations.num_departement",
-      "formations.intitule_long",
-      "formations.intitule_court",
-      "formations.diplome",
-      "formations.localite",
-      "formations.tags",
-      "formations.lieu_formation_adresse",
-      "formations.lieu_formation_adresse_computed",
-      "formations.code_postal",
-      "formations.duree",
-      "formations.etablissement_formateur_adresse",
-      "formations.etablissement_formateur_enseigne",
-      "formations.etablissement_formateur_entreprise_raison_sociale",
-      "formations.etablissement_formateur_localite",
-      "formations.etablissement_formateur_siret",
-      "formations.etablissement_gestionnaire_enseigne",
-      "formations.etablissement_gestionnaire_siret",
-      "formations.etablissement_id",
-      "formations_campagnes.campagne_id",
-    ])
-    .where("formations.id", "=", id)
-    .where("formations.deleted_at", "is", null)
-    .executeTakeFirst();
-};
-
-export const findOneByCatalogueId = async (catalogueId: string): Promise<Partial<Formation> | undefined> => {
-  return getKbdClient()
-    .selectFrom("formations")
-    .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
-    .select([
-      "formations.id",
-      "formations.catalogue_id",
-      "formations.region",
-      "formations.num_departement",
-      "formations.intitule_long",
-      "formations.intitule_court",
-      "formations.diplome",
-      "formations.localite",
-      "formations.tags",
-      "formations.lieu_formation_adresse",
-      "formations.lieu_formation_adresse_computed",
-      "formations.code_postal",
-      "formations.duree",
-      "formations.etablissement_formateur_adresse",
-      "formations.etablissement_formateur_enseigne",
-      "formations.etablissement_formateur_entreprise_raison_sociale",
-      "formations.etablissement_formateur_localite",
-      "formations.etablissement_formateur_siret",
-      "formations.etablissement_gestionnaire_enseigne",
-      "formations.etablissement_gestionnaire_siret",
-      "formations.etablissement_id",
-      "formations_campagnes.campagne_id",
-    ])
-    .where("formations.catalogue_id", "=", catalogueId)
-    .where("formations.deleted_at", "is", null)
-    .executeTakeFirst();
-};
-
-export const deleteOne = async (id: string): Promise<DeleteResult> => {
-  return getKbdClient().deleteFrom("formations").where("id", "=", id).executeTakeFirst();
+  return camelcaseKeys(result);
 };
 
 export const deleteManyByCampagneIdAndReturnsTheDeletedFormationId = async (
@@ -182,23 +112,12 @@ export const deleteManyByCampagneIdAndReturnsTheDeletedFormationId = async (
   return idsToDelete;
 };
 
-export const update = async (id: string, updatedFormation: Partial<Formation>): Promise<boolean> => {
-  const result = await getKbdClient()
-    .updateTable("formations")
-    .set(updatedFormation)
-    .where("id", "=", id)
-    .where("deleted_at", "is", null)
-    .executeTakeFirst();
-
-  return result.numUpdatedRows === BigInt(1);
-};
-
 export const findFormationByIntituleCfdIdCertifInfoOrSlug = async (
   intitule: string | null,
   cfd: string | null,
   idCertifInfo: string | null,
   slug: string | null
-): Promise<Partial<Formation>[] | undefined> => {
+): Promise<FindFormationByIntituleCfdIdCertifInfoOrSlugResults> => {
   let baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
@@ -211,7 +130,7 @@ export const findFormationByIntituleCfdIdCertifInfoOrSlug = async (
       "formations.intitule_court",
       "formations.diplome",
       "formations.localite",
-      "formations.tags",
+      sql<string[]>`formations.tags`.as("tags"),
       "formations.lieu_formation_adresse",
       "formations.lieu_formation_adresse_computed",
       "formations.code_postal",
@@ -239,11 +158,13 @@ export const findFormationByIntituleCfdIdCertifInfoOrSlug = async (
     baseQuery = baseQuery.where((qb) => qb.or(conditions as any));
   }
 
-  return baseQuery.execute();
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };
 
-export const findFormationByUai = async (uai: string): Promise<Partial<Formation>[] | undefined> => {
-  return getKbdClient()
+export const findFormationByUai = async (uai: string): Promise<FindFormationByUaiResults> => {
+  const baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
     .select([
@@ -255,7 +176,7 @@ export const findFormationByUai = async (uai: string): Promise<Partial<Formation
       "formations.intitule_court",
       "formations.diplome",
       "formations.localite",
-      "formations.tags",
+      sql<string[]>`formations.tags`.as("tags"),
       "formations.lieu_formation_adresse",
       "formations.lieu_formation_adresse_computed",
       "formations.code_postal",
@@ -271,12 +192,15 @@ export const findFormationByUai = async (uai: string): Promise<Partial<Formation
       "formations_campagnes.campagne_id",
     ])
     .where(sql<string>`catalogue_data->>'etablissement_formateur_uai'`, "ilike", `%${uai}%`)
-    .where("formations.deleted_at", "is", null)
-    .execute();
+    .where("formations.deleted_at", "is", null);
+
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };
 
-export const findAllWithTemoignageCount = async (): Promise<Partial<Formation>[] | undefined> => {
-  return getKbdClient()
+export const findAllWithTemoignageCount = async (): Promise<FindAllWithTemoignageCountResults> => {
+  const baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
     .leftJoin("temoignages_campagnes", "temoignages_campagnes.campagne_id", "formations_campagnes.campagne_id")
@@ -289,7 +213,7 @@ export const findAllWithTemoignageCount = async (): Promise<Partial<Formation>[]
       "formations.intitule_court",
       "formations.diplome",
       "formations.localite",
-      "formations.tags",
+      sql<string[]>`formations.tags`.as("tags"),
       "formations.lieu_formation_adresse",
       "formations.lieu_formation_adresse_computed",
       "formations.code_postal",
@@ -308,14 +232,17 @@ export const findAllWithTemoignageCount = async (): Promise<Partial<Formation>[]
       sql<string>`catalogue_data->>'onisep_intitule'`.as("onisep_intitule"),
     ])
     .groupBy("formations.id")
-    .orderBy("temoignagesCount", "desc")
-    .execute();
+    .orderBy("temoignagesCount", "desc");
+
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };
 
 export const findAllWithCampagnesCount = async (
-  siret: string[],
+  siret?: string[],
   scope?: ObserverScope
-): Promise<Partial<Formation>[] | undefined> => {
+): Promise<FindAllWithCampagnesCountResults> => {
   let baseQuery = getKbdClient()
     .selectFrom("formations")
     .leftJoin("formations_campagnes", "formations.id", "formations_campagnes.formation_id")
@@ -328,7 +255,7 @@ export const findAllWithCampagnesCount = async (
       "formations.intitule_court",
       "formations.diplome",
       "formations.localite",
-      "formations.tags",
+      sql<string[]>`formations.tags`.as("tags"),
       "formations.lieu_formation_adresse",
       "formations.lieu_formation_adresse_computed",
       "formations.code_postal",
@@ -347,7 +274,7 @@ export const findAllWithCampagnesCount = async (
     .orderBy("campagnesCount", "desc")
     .where("formations.deleted_at", "is", null);
 
-  if (siret?.length > 0) {
+  if (siret?.length) {
     baseQuery = baseQuery.where((qb) =>
       qb.or([
         qb("formations.etablissement_gestionnaire_siret", "in", siret),
@@ -368,5 +295,7 @@ export const findAllWithCampagnesCount = async (
     baseQuery = baseQuery.where(sql`formations.catalogue_data ->> 'rncp_code'`, "in", scope.value);
   }
 
-  return baseQuery.execute();
+  const result = await baseQuery.execute();
+
+  return camelcaseKeys(result);
 };

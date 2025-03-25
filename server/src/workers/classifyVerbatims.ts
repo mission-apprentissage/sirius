@@ -1,22 +1,29 @@
-// @ts-nocheck -- TODO
-
+import camelcaseKeys from "camelcase-keys";
+import { sql } from "kysely";
 import { parentPort, workerData } from "worker_threads";
 
 import config from "../config";
 import { JOB_STATUS } from "../constants";
 import { connectToPgDb, getKbdClient } from "../db/db";
 import logger from "../modules/logger";
+import type {
+  FetchOptions,
+  Verbatim,
+  VerbatimClassificationApiResponse,
+  VerbatimScore,
+  VerbatimThemes,
+} from "../types";
 import { sleep } from "../utils/asyncUtils";
 
 const CLASSIFICATION_API = "https://2b1d0760-a1f7-485d-8b69-2ecdf299615a.app.gra.ai.cloud.ovh.net/score";
 
 let isCancelled = false;
 
-const classifyVerbatim = async (verbatim) => {
+const classifyVerbatim = async (verbatim: Verbatim) => {
   const MAX_RETRIES = 5;
   const INITIAL_DELAY = 500;
 
-  const fetchWithRetry = async (url, options, retries = MAX_RETRIES, delay = INITIAL_DELAY) => {
+  const fetchWithRetry = async (url: string, options: FetchOptions, retries = MAX_RETRIES, delay = INITIAL_DELAY) => {
     try {
       const response = await fetch(url, options);
 
@@ -37,11 +44,11 @@ const classifyVerbatim = async (verbatim) => {
   };
 
   try {
-    const data = await fetchWithRetry(CLASSIFICATION_API, {
+    const data = (await fetchWithRetry(CLASSIFICATION_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: verbatim.content }),
-    });
+    })) as VerbatimClassificationApiResponse;
 
     console.log("Classification API response:", data);
 
@@ -53,7 +60,7 @@ const classifyVerbatim = async (verbatim) => {
   }
 };
 
-const updateVerbatimScores = async (verbatim, scores) => {
+const updateVerbatimScores = async (verbatim: Verbatim, scores: VerbatimScore) => {
   const updateResult = await getKbdClient()
     .updateTable("verbatims")
     .set("scores", scores)
@@ -61,14 +68,14 @@ const updateVerbatimScores = async (verbatim, scores) => {
     .returning("id")
     .executeTakeFirst();
 
-  if (updateResult.id) {
+  if (updateResult?.id) {
     console.log("Verbatim updated successfully:", verbatim.id);
   } else {
     console.error("Failed to update verbatim:", verbatim.id);
   }
 };
 
-const cancellationMonitor = async (jobId) => {
+const cancellationMonitor = async (jobId: string) => {
   while (!isCancelled) {
     const job = await getKbdClient().selectFrom("jobs").select("status").where("id", "=", jobId).executeTakeFirst();
 
@@ -96,25 +103,48 @@ const cancellationMonitor = async (jobId) => {
 
     cancellationMonitor(jobId);
 
-    const verbatimsQuery = getKbdClient().selectFrom("verbatims").selectAll();
+    const verbatimsQuery = getKbdClient()
+      .selectFrom("verbatims")
+      .select([
+        "verbatims.id",
+        "verbatims.temoignage_id",
+        "verbatims.question_key",
+        "verbatims.content",
+        "verbatims.content_corrected",
+        "verbatims.correction_justification",
+        "verbatims.anonymization_justification",
+        "verbatims.content_corrected_anonymized",
+        "verbatims.status",
+        sql<VerbatimScore | null>`verbatims.scores`.as("scores"),
+        sql<VerbatimThemes | null>`verbatims.themes`.as("themes"),
+        "verbatims.feedback_count",
+        "verbatims.is_corrected",
+        "verbatims.is_anonymized",
+        "verbatims.created_at",
+        "verbatims.updated_at",
+        "verbatims.deleted_at",
+      ]);
 
     if (!processAll) {
       verbatimsQuery.where("deleted_at", "is", null).where("scores", "is", null);
     }
 
-    const verbatims = await verbatimsQuery.execute();
+    const result = await verbatimsQuery.execute();
+
+    const verbatims = camelcaseKeys(result);
+
     const totalVerbatims = verbatims.length;
 
     logger.info(`Found ${totalVerbatims} verbatims to classify`);
 
     let processed = 0;
 
-    parentPort.postMessage({ type: "start", jobId, total: totalVerbatims });
+    parentPort?.postMessage({ type: "start", jobId, total: totalVerbatims });
 
     for (const verbatim of verbatims) {
       if (isCancelled) {
         console.log("Job cancelled. Exiting worker...");
-        parentPort.postMessage({
+        parentPort?.postMessage({
           type: "cancelled",
           jobId,
           progress: processed,
@@ -126,7 +156,7 @@ const cancellationMonitor = async (jobId) => {
       await classifyVerbatim(verbatim);
       processed++;
 
-      parentPort.postMessage({
+      parentPort?.postMessage({
         type: "progress",
         jobId,
         progress: processed,
@@ -140,9 +170,9 @@ const cancellationMonitor = async (jobId) => {
       logger.info(`[Job ${jobId}] Classification cancelled.`);
     }
 
-    parentPort.postMessage({ type: "done", jobId, status: JOB_STATUS.COMPLETED });
+    parentPort?.postMessage({ type: "done", jobId, status: JOB_STATUS.COMPLETED });
   } catch (err) {
     logger.error(`[Job ${jobId}] Classification failed: ${err}`);
-    parentPort.postMessage({ type: "error", jobId, error: err.message });
+    parentPort?.postMessage({ type: "error", jobId, error: err.message });
   }
 })();

@@ -1,32 +1,30 @@
-// @ts-nocheck -- TODO
-
 import fs from "fs";
 
 import { OBSERVER_SCOPES } from "../constants";
 import * as formationsDao from "../dao/formations.dao";
+import type { FindAllArgs, FindAllResults, FindAllWithTemoignageCountResults } from "../dao/types/formations.types";
+import { FormationNotFound } from "../errors";
+import type { ObserverScope, Opco } from "../types";
 import { getStaticFilePath } from "../utils/getStaticFilePath";
 
-export const createFormation = async (formation) => {
-  try {
-    const existingFormation = await formationsDao.findOneByCatalogueId(formation.data._id);
-    if (existingFormation.length) {
-      throw new Error("Formation déjà existante");
+export const getFormations = async ({
+  etablissementSiret,
+  search,
+}: {
+  etablissementSiret?: string;
+  search?: string;
+}): Promise<
+  | {
+      success: true;
+      body: FindAllResults;
     }
-
-    const createdFormation = await formationsDao.create(formation);
-
-    return { success: true, body: createdFormation };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const getFormations = async ({ formationIds, etablissementSiret, search }) => {
+  | { success: false; body: Error }
+> => {
   try {
-    const query = search ? { searchText: search } : {};
+    const query = {} as FindAllArgs;
 
-    if (formationIds?.length) {
-      query.formationIds = formationIds;
+    if (search) {
+      query.searchText = search;
     }
 
     if (etablissementSiret) {
@@ -41,9 +39,19 @@ export const getFormations = async ({ formationIds, etablissementSiret, search }
   }
 };
 
-export const getFormationsWithTemoignageCount = async () => {
+export const getFormationsWithTemoignageCount = async (): Promise<
+  | {
+      success: true;
+      body: FindAllWithTemoignageCountResults & { onisep_intitule: string }[];
+    }
+  | { success: false; body: Error }
+> => {
   try {
     const formations = await formationsDao.findAllWithTemoignageCount();
+
+    if (!formations?.length) {
+      return { success: false, body: new FormationNotFound() };
+    }
 
     const reformatForExtension = formations.map((formation) => ({
       ...formation,
@@ -56,50 +64,44 @@ export const getFormationsWithTemoignageCount = async () => {
   }
 };
 
-export const getFormation = async (id) => {
-  try {
-    const formation = await formationsDao.findOne(id);
-    return { success: true, body: formation };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const deleteFormation = async (id) => {
-  try {
-    const formation = await formationsDao.deleteOne(id);
-    return { success: true, body: formation };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const updateFormation = async (id, updatedFormation) => {
-  try {
-    const formation = await formationsDao.update(id, updatedFormation);
-
-    if (!formation) throw new Error("Formation not found");
-
-    return { success: true, body: formation };
-  } catch (error) {
-    return { success: false, body: error };
-  }
-};
-
-export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({ userSiret, scope }) => {
+export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({
+  userSiret,
+  scope,
+}: {
+  userSiret?: string[];
+  scope: ObserverScope | undefined;
+}): Promise<
+  | {
+      success: true;
+      body: {
+        diplomes: { intitule: string; campagnesCount: number }[];
+        etablissements: {
+          etablissementFormateurSiret: string;
+          etablissementFormateurEnseigne: string | null;
+          etablissementFormateurEntrepriseRaisonSociale: string | null;
+          campagnesCount: number;
+        }[];
+      };
+    }
+  | { success: false; body: Error }
+> => {
   try {
     // Nécessaire pour ne pas stocker la liste de code RNCP dans le scope d'un user et réconcilier les labels/valeurs
     if (scope?.field === OBSERVER_SCOPES.OPCO) {
       const SCOPE_LIST = getStaticFilePath("./opco.json");
       const opcos = JSON.parse(fs.readFileSync(SCOPE_LIST, "utf8"));
-      const rncpCodes = opcos.find((opco) => opco.label === scope.value).value;
+      const rncpCodes = opcos.find((opco: Opco) => opco.label === scope.value).value;
 
       scope.value = rncpCodes;
     }
 
     const formations = await formationsDao.findAllWithCampagnesCount(userSiret, scope);
 
-    const formattedByDiplome = formations.reduce((acc, formation) => {
+    if (!formations?.length) {
+      return { success: false, body: new FormationNotFound() };
+    }
+
+    const formattedByDiplome = formations.reduce<Record<string, number>>((acc, formation) => {
       const diplome = formation.diplome || "N/A";
 
       if (!acc[diplome]) {
@@ -111,7 +113,17 @@ export const getFormationsEtablissementsDiplomesWithCampagnesCount = async ({ us
       return acc;
     }, {});
 
-    const formattedByEtablissement = formations.reduce((acc, formation) => {
+    const formattedByEtablissement = formations.reduce<
+      Record<
+        string,
+        {
+          campagnesCount: number;
+          etablissementFormateurEnseigne: string | null;
+          etablissementFormateurEntrepriseRaisonSociale: string | null;
+          etablissementFormateurSiret: string;
+        }
+      >
+    >((acc, formation) => {
       const etablissementFormateurSiret = formation.etablissementFormateurSiret || "N/A";
 
       if (!acc[etablissementFormateurSiret]) {

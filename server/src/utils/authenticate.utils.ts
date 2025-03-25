@@ -11,7 +11,7 @@ export const COOKIE_OPTIONS = {
   secure: !isDev,
   signed: true,
   maxAge: refreshTokenExpiry * 1000,
-  sameSite: "strict",
+  sameSite: "strict" as const,
 };
 
 export const getToken = (user: any) => {

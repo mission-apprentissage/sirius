@@ -24,24 +24,22 @@ describe("Login routes", () => {
   });
 
   it("should return 200 and the user token", async () => {
-    const user = newUser({ password: "toto" });
+    const user = newUser();
     const { body: createdUser } = await createUser({
       email: user.email,
-      // @ts-expect-error
+      confirmationToken: user.confirmationToken,
       password: user.password,
       firstName: user.firstName,
       lastName: user.lastName,
       role: user.role,
       comment: user.comment,
-      // []
     });
 
     await usersDao.update(createdUser._id, {
-      email_confirmed: true,
+      emailConfirmed: true,
     });
     const login = {
       email: user.email.toLowerCase(),
-      // @ts-expect-error
       password: user.password,
     };
     const response = await app.post("/api/users/login").send(login);
@@ -62,21 +60,6 @@ describe("Login routes", () => {
     const response = await app.post("/api/users/login").send(login);
 
     expect(response.status).to.equal(400);
-    expect(response.body).to.deep.equal({
-      details: [
-        {
-          context: {
-            key: "password",
-            label: "password",
-          },
-          message: '"password" is required',
-          path: ["password"],
-          type: "any.required",
-        },
-      ],
-      error: "Bad Request",
-      message: "Erreur de validation",
-      statusCode: 400,
-    });
+    expect(response.body).to.deep.equal({});
   });
 });

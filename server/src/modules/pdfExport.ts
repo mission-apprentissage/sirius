@@ -1,7 +1,6 @@
-// @ts-nocheck -- TODO
-
 import fs from "node:fs";
 
+import type { PDFFont, PDFPage } from "pdf-lib";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import QRCode from "qrcode";
 
@@ -12,13 +11,25 @@ const pdfSummaryFilePath = getStaticFilePath(`./public/summary.pdf`);
 const pdfExplanationFilePath = getStaticFilePath(`./public/explanation.pdf`);
 const pdfFSharePath = getStaticFilePath(`./public/share.pdf`);
 
-const fillParagraph = (text, font, fontSize, maxWidth) => {
-  const paragraphs = text.split("\n");
+type PDFExportCampagne = {
+  campagneId: string;
+  campagneName: string | null;
+  localite: string;
+  adresse: string | null;
+  tags: string[];
+  duree: number;
+};
+
+const fillParagraph = (text: string | null, font: PDFFont, fontSize: number, maxWidth: number) => {
+  const paragraphs = text?.split("\n");
+  if (!paragraphs?.length) {
+    return "";
+  }
   for (let index = 0; index < paragraphs.length; index++) {
     const paragraph = paragraphs[index];
     if (font.widthOfTextAtSize(paragraph, fontSize) > maxWidth) {
       const words = paragraph.split(" ");
-      const newParagraph = [];
+      const newParagraph: string[][] = [];
       let i = 0;
       newParagraph[i] = [];
       for (let k = 0; k < words.length; k++) {
@@ -41,14 +52,14 @@ const getPdfDocument = async (pdfFilePath: string) => {
   return await PDFDocument.load(fs.readFileSync(pdfFilePath));
 };
 
-const embedFonts = async (pdfDoc) => {
+const embedFonts = async (pdfDoc: PDFDocument) => {
   return {
     regular: await pdfDoc.embedFont(StandardFonts.Helvetica),
     bold: await pdfDoc.embedFont(StandardFonts.HelveticaBold),
   };
 };
 
-const addDateTime = (page, font, dateTime) => {
+const addDateTime = (page: PDFPage, font: PDFFont, dateTime: string) => {
   const x = 328;
   const y = 13;
   const dateTimeFontSize = 8;
@@ -62,7 +73,12 @@ const addDateTime = (page, font, dateTime) => {
   });
 };
 
-const addSummaryEntries = (page, campagnes, fonts, diplome) => {
+const addSummaryEntries = (
+  page: PDFPage,
+  campagnes: PDFExportCampagne[],
+  fonts: { regular: PDFFont; bold: PDFFont },
+  diplome: string
+) => {
   let summaryCurrentY = 600;
   const pageWidth = 595;
   const pageNumberX = pageWidth - 40;
@@ -80,7 +96,7 @@ const addSummaryEntries = (page, campagnes, fonts, diplome) => {
 
 const maxWidth = (3 / 4) * 595;
 
-const drawDiplomeHeader = (page, diplome, font, y) => {
+const drawDiplomeHeader = (page: PDFPage, diplome: string, font: PDFFont, y: number) => {
   const headerFontSize = 14;
   const headerLeftMargin = 20;
 
@@ -95,7 +111,7 @@ const drawDiplomeHeader = (page, diplome, font, y) => {
   return y - headerFontSize - 20;
 };
 
-const drawCampagneTitle = (page, campagne, font, y) => {
+const drawCampagneTitle = (page: PDFPage, campagne: PDFExportCampagne, font: PDFFont, y: number) => {
   const summaryFontSize = 9;
   const summaryLeftMargin = 20;
 
@@ -121,7 +137,7 @@ const drawCampagneTitle = (page, campagne, font, y) => {
   return { y, initialY };
 };
 
-const drawPageNumber = (page, pageNumber, font, x, y) => {
+const drawPageNumber = (page: PDFPage, pageNumber: number, font: PDFFont, x: number, y: number) => {
   const summaryFontSize = 9;
   page.drawText(`p.${pageNumber}`, {
     x,
@@ -132,7 +148,12 @@ const drawPageNumber = (page, pageNumber, font, x, y) => {
   });
 };
 
-const addUserInfo = (page, etablissementLabel, user, font) => {
+const addUserInfo = (
+  page: PDFPage,
+  etablissementLabel: string,
+  displayedUser: { label: string; email: string },
+  font: PDFFont
+) => {
   page.drawText(etablissementLabel, {
     x: 285,
     y: 719,
@@ -141,7 +162,7 @@ const addUserInfo = (page, etablissementLabel, user, font) => {
     color: rgb(0, 0, 145 / 255),
   });
 
-  page.drawText(`${user.label} - ${user.email}`, {
+  page.drawText(`${displayedUser.label} - ${displayedUser.email}`, {
     x: 285,
     y: 694,
     size: 12,
@@ -150,7 +171,12 @@ const addUserInfo = (page, etablissementLabel, user, font) => {
   });
 };
 
-const addQRCodesAndLinks = async (finalPdfDoc, shareDoc, campagnes, font) => {
+const addQRCodesAndLinks = async (
+  finalPdfDoc: PDFDocument,
+  shareDoc: PDFDocument,
+  campagnes: PDFExportCampagne[],
+  font: PDFFont
+) => {
   const pageWidth = 595;
   const fontSize = 24;
   const lineHeight = fontSize * 1.15;
@@ -198,7 +224,12 @@ const addQRCodesAndLinks = async (finalPdfDoc, shareDoc, campagnes, font) => {
   }
 };
 
-export const generateMultiplePdf = async (campagnes, diplome, etablissementLabel, user) => {
+export const generateMultiplePdf = async (
+  campagnes: PDFExportCampagne[],
+  diplome: string,
+  etablissementLabel: string,
+  displayedUser: { label: string; email: string }
+) => {
   if (campagnes.length === 0) {
     throw new Error("No campagnes provided");
   }
@@ -219,28 +250,9 @@ export const generateMultiplePdf = async (campagnes, diplome, etablissementLabel
   const currentDateTime = new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" }).replace(/\u202F/g, " ");
 
   addDateTime(importedSummaryPage, fonts.regular, currentDateTime);
-  addUserInfo(importedSummaryPage, etablissementLabel, user, fonts.regular);
+  addUserInfo(importedSummaryPage, etablissementLabel, displayedUser, fonts.regular);
   addSummaryEntries(importedSummaryPage, campagnes, fonts, diplome);
   await addQRCodesAndLinks(finalPdfDoc, shareDoc, campagnes, fonts.regular);
-
-  return await finalPdfDoc.saveAsBase64();
-};
-
-export const generatePdf = async (campagneId, campagneName) => {
-  const campagne = [{ campagneId, campagneName }];
-
-  const shareDoc = await getPdfDocument(pdfFSharePath);
-
-  const explanationPdfDoc = await getPdfDocument(pdfExplanationFilePath);
-
-  const finalPdfDoc = await PDFDocument.create();
-  const fonts = await embedFonts(finalPdfDoc);
-
-  const [importedExplanationPdfDoc] = await finalPdfDoc.copyPages(explanationPdfDoc, [0]);
-
-  finalPdfDoc.addPage(importedExplanationPdfDoc);
-
-  await addQRCodesAndLinks(finalPdfDoc, shareDoc, campagne, fonts.regular);
 
   return await finalPdfDoc.saveAsBase64();
 };

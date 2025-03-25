@@ -5,6 +5,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 import { LoaderContainer } from "../campagnes/styles/shared.style";
 import useFetchDatavisualisationEtablissement from "../hooks/useFetchDatavisualisationEtablissement";
+import useSetAndTrackPageTitle from "../hooks/useSetAndTrackPageTitle";
 import ExperienceEntrepriseRating from "./Components/ExperienceRating";
 import ExperienceEntrepriseVerbatims from "./Components/ExperienceVerbatims";
 import SearchEntrepriseRating from "./Components/FeelingRating";

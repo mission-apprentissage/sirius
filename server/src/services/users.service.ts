@@ -1,14 +1,13 @@
-// @ts-nocheck -- TODO
-
 import jwt from "jsonwebtoken";
 
 import config from "../config";
 import * as usersDao from "../dao/users.dao";
 import { ErrorMessage } from "../errors";
 import { generateSalt, hashPassword } from "../modules/authStrategies/auth.helpers";
+import type { User, UserCreation } from "../types";
 import { getRefreshToken, getToken } from "../utils/authenticate.utils";
 
-export const createUser = async (user) => {
+export const createUser = async (user: UserCreation) => {
   try {
     const salt = generateSalt();
     const hash = hashPassword(user.password, salt);
@@ -21,9 +20,13 @@ export const createUser = async (user) => {
   }
 };
 
-export const loginUser = async (id) => {
+export const loginUser = async (id: string) => {
   try {
     const user = await usersDao.findOneById(id);
+
+    if (!user) {
+      return { success: false, body: ErrorMessage.UserNotFound };
+    }
 
     const token = getToken({
       user: {
@@ -48,7 +51,7 @@ export const loginUser = async (id) => {
       },
     });
 
-    if (user.refreshToken.length) {
+    if (Array.isArray(user.refreshToken) && user.refreshToken.length) {
       user.refreshToken.push({ refreshToken: refreshToken });
       user.refreshToken = JSON.stringify(user.refreshToken);
     } else {
@@ -63,9 +66,13 @@ export const loginUser = async (id) => {
   }
 };
 
-export const sudo = async (id) => {
+export const sudo = async (id: string) => {
   try {
     const user = await usersDao.findOneById(id);
+
+    if (!user) {
+      return { success: false, body: ErrorMessage.UserNotFound };
+    }
 
     const token = getToken({
       user: {
@@ -92,7 +99,7 @@ export const sudo = async (id) => {
       },
     });
 
-    if (user.refreshToken.length) {
+    if (Array.isArray(user.refreshToken) && user.refreshToken.length) {
       user.refreshToken.push({ refreshToken: refreshToken });
       user.refreshToken = JSON.stringify(user.refreshToken);
     } else {
@@ -107,14 +114,25 @@ export const sudo = async (id) => {
   }
 };
 
-export const refreshTokenUser = async (refreshToken) => {
+export const refreshTokenUser = async (refreshToken: string) => {
   try {
     const payload = jwt.verify(refreshToken, config.auth.refreshTokenSecret);
+
+    if (typeof payload === "string") {
+      throw new Error("Invalid token payload");
+    }
+
     const userId = payload.user.id;
 
     const user = await usersDao.findOneById(userId);
 
-    const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
+    if (!user) {
+      return { success: false, body: ErrorMessage.UserNotFound };
+    }
+
+    const tokenIndex = Array.isArray(user.refreshToken)
+      ? user.refreshToken?.findIndex((item) => item === refreshToken)
+      : -1;
 
     const token = getToken({
       user: {
@@ -138,7 +156,7 @@ export const refreshTokenUser = async (refreshToken) => {
         acceptedCgu: user?.acceptedCgu,
       },
     });
-    user.refreshToken[tokenIndex] = { refreshToken: newRefreshToken };
+    (user.refreshToken as { _id?: string; refreshToken: string }[])[tokenIndex] = { refreshToken: newRefreshToken };
     user.refreshToken = JSON.stringify(user.refreshToken);
 
     await usersDao.update(user.id, user);
@@ -149,13 +167,20 @@ export const refreshTokenUser = async (refreshToken) => {
   }
 };
 
-export const logoutUser = async (id, refreshToken) => {
+export const logoutUser = async (id: string, refreshToken: string) => {
   try {
     const user = await usersDao.findOneById(id);
-    const tokenIndex = user.refreshToken.findIndex((item) => item.refreshToken === refreshToken);
+
+    if (!user) {
+      return { success: false, body: ErrorMessage.UserNotFound };
+    }
+
+    const tokenIndex = (user.refreshToken as { _id?: string; refreshToken: string }[])?.findIndex(
+      (item) => item.refreshToken === refreshToken
+    );
 
     if (tokenIndex !== -1) {
-      user.refreshToken.splice(tokenIndex, 1);
+      (user.refreshToken as { _id?: string; refreshToken: string }[]).splice(tokenIndex, 1);
     }
 
     user.refreshToken = JSON.stringify(user.refreshToken);
@@ -177,7 +202,7 @@ export const getUsers = async () => {
   }
 };
 
-export const updateUser = async (id, user) => {
+export const updateUser = async (id: string, user: Partial<Omit<User, "id" | "email" | "createdAt">>) => {
   try {
     const updatedUser = await usersDao.update(id, user);
     return { success: true, body: updatedUser };
@@ -186,7 +211,7 @@ export const updateUser = async (id, user) => {
   }
 };
 
-export const forgotPassword = async (email) => {
+export const forgotPassword = async (email: string) => {
   try {
     const user = await usersDao.findOneByEmail(email);
 
@@ -199,9 +224,13 @@ export const forgotPassword = async (email) => {
   }
 };
 
-export const resetPassword = async (token, password) => {
+export const resetPassword = async (token: string, password: string) => {
   try {
     const decryptedToken = jwt.verify(token, config.auth.jwtSecret);
+
+    if (typeof decryptedToken === "string") {
+      throw new Error("Invalid token payload");
+    }
 
     const user = await usersDao.findOneByEmail(decryptedToken.email);
 
@@ -219,11 +248,19 @@ export const resetPassword = async (token, password) => {
   }
 };
 
-export const confirmUser = async (token) => {
+export const confirmUser = async (token: string) => {
   try {
     const decryptedToken = jwt.verify(token, config.auth.jwtSecret);
 
+    if (typeof decryptedToken === "string") {
+      throw new Error("Invalid token payload");
+    }
+
     const user = await usersDao.findOneByEmail(decryptedToken.email);
+
+    if (!user) {
+      return { success: false, body: ErrorMessage.UserNotFound };
+    }
 
     user.refreshToken = JSON.stringify(user.refreshToken);
     user.emailConfirmed = true;
@@ -236,7 +273,7 @@ export const confirmUser = async (token) => {
   }
 };
 
-export const getUserById = async (id) => {
+export const getUserById = async (id: string) => {
   try {
     const user = await usersDao.findOneById(id);
     return { success: true, body: user };

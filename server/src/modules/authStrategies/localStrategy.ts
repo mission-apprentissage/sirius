@@ -13,7 +13,11 @@ export const localStrategy = () => {
       async (
         email: string,
         password: string,
-        done: (error: unknown | null, user?: User | false, options?: { message: string }) => void
+        done: (
+          error: unknown | null,
+          user?: Omit<User, "refreshToken" | "notificationsEmail"> | false,
+          options?: { message: string }
+        ) => void
       ) => {
         try {
           const user = await findOneByEmailWithEtablissement(email);

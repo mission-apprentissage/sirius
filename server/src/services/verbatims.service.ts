@@ -1,10 +1,28 @@
-// @ts-nocheck -- TODO
-
+import type { VERBATIM_STATUS } from "../constants";
 import * as verbatimsDao from "../dao/verbatims.dao";
+import type { VerbatimCreation } from "../types";
 
-export const getVerbatims = async ({ etablissementSiret, formationId, status, onlyDiscrepancies, page, pageSize }) => {
+export const getVerbatims = async ({
+  etablissementSiret,
+  formationId,
+  status,
+  onlyDiscrepancies,
+  page,
+  pageSize,
+}: {
+  etablissementSiret: string | null;
+  formationId: string | null;
+  status: string | null;
+  onlyDiscrepancies: boolean;
+  page: number;
+  pageSize: number;
+}) => {
   try {
-    const query = {};
+    const query: {
+      etablissementSiret?: string;
+      formationId?: string;
+      status?: string;
+    } = {};
 
     if (etablissementSiret) {
       query.etablissementSiret = etablissementSiret;
@@ -19,16 +37,6 @@ export const getVerbatims = async ({ etablissementSiret, formationId, status, on
     }
 
     const result = await verbatimsDao.getAllWithFormation(query, onlyDiscrepancies, page, pageSize);
-
-    // needed because of camelCase to snake_case conversion from kysely plugin
-    result.rows.forEach((verbatim) => {
-      if (verbatim?.scores) {
-        verbatim.scores.TO_FIX = verbatim.scores?.TOFIX;
-        verbatim.scores.NOT_VALIDATED = verbatim.scores?.NOTVALIDATED;
-        delete verbatim.scores.TOFIX;
-        delete verbatim.scores.NOTVALIDATED;
-      }
-    });
 
     const count = await verbatimsDao.count(query);
     const totalItemsByStatus = count.filter((c) => c.status === status)[0]?.count;
@@ -49,9 +57,18 @@ export const getVerbatims = async ({ etablissementSiret, formationId, status, on
   }
 };
 
-export const getVerbatimsCount = async ({ etablissementSiret, formationId }) => {
+export const getVerbatimsCount = async ({
+  etablissementSiret,
+  formationId,
+}: {
+  etablissementSiret: string | null;
+  formationId: string | null;
+}) => {
   try {
-    const query = {};
+    const query: {
+      etablissementSiret?: string;
+      formationId?: string;
+    } = {};
 
     if (etablissementSiret) {
       query.etablissementSiret = etablissementSiret;
@@ -69,7 +86,12 @@ export const getVerbatimsCount = async ({ etablissementSiret, formationId }) => 
   }
 };
 
-export const patchVerbatims = async (verbatims) => {
+export const patchVerbatims = async (
+  verbatims: {
+    id: string;
+    status: (typeof VERBATIM_STATUS)[keyof typeof VERBATIM_STATUS];
+  }[]
+) => {
   try {
     const result = await verbatimsDao.updateMany(verbatims);
     return { success: true, body: result };
@@ -78,7 +100,7 @@ export const patchVerbatims = async (verbatims) => {
   }
 };
 
-export const createVerbatim = async (verbatim) => {
+export const createVerbatim = async (verbatim: VerbatimCreation) => {
   try {
     const existingVerbatim = await verbatimsDao.getOneByTemoignageIdAndQuestionKey({
       temoignageId: verbatim.temoignageId,
@@ -99,7 +121,7 @@ export const createVerbatim = async (verbatim) => {
   }
 };
 
-export const feedbackVerbatim = async (id, isUseful) => {
+export const feedbackVerbatim = async (id: string, isUseful: boolean) => {
   try {
     const currentVerbatim = await verbatimsDao.getOneById(id);
 
@@ -107,9 +129,13 @@ export const feedbackVerbatim = async (id, isUseful) => {
       return { success: false, body: "Verbatim not found" };
     }
 
+    if (!currentVerbatim.feedbackCount) {
+      currentVerbatim.feedbackCount = 0;
+    }
+
     const newFeedbackValue = isUseful ? currentVerbatim.feedbackCount + 1 : currentVerbatim.feedbackCount - 1;
 
-    const result = await verbatimsDao.updateOne(id, { feedback_count: newFeedbackValue });
+    const result = await verbatimsDao.updateOne(id, { feedbackCount: newFeedbackValue });
 
     return { success: true, body: result };
   } catch (error) {

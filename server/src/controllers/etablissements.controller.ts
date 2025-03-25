@@ -1,9 +1,11 @@
-// @ts-nocheck -- TODO
-import { BasicError, ErrorMessage, EtablissementAlreadyExistingError, EtablissementNotFoundError } from "../errors";
+import type { Request, Response } from "express";
+
+import { BasicError, ErrorMessage, EtablissementAlreadyExistingError } from "../errors";
 import * as etablissementsService from "../services/etablissements.service";
+import type { AuthedRequest } from "../types";
 import tryCatch from "../utils/tryCatch.utils";
 
-export const createEtablissement = tryCatch(async (req: any, res: any) => {
+export const createEtablissement = tryCatch(async (req: AuthedRequest, res: Response) => {
   const { success, body } = await etablissementsService.createEtablissements(req.body, req.body[0].userId);
 
   if (!success && body?.message === ErrorMessage.EtablissementAlreadyExistingError)
@@ -13,8 +15,8 @@ export const createEtablissement = tryCatch(async (req: any, res: any) => {
   return res.status(201).json(body);
 });
 
-export const getEtablissements = tryCatch(async (req: any, res: any) => {
-  const search = req.query.search;
+export const getEtablissements = tryCatch(async (req: AuthedRequest, res: Response) => {
+  const search = req.query.search === "string" ? req.query.search : "";
   const { success, body } = await etablissementsService.getEtablissements({ search });
 
   if (!success) throw new BasicError();
@@ -22,7 +24,7 @@ export const getEtablissements = tryCatch(async (req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const getEtablissementsWithTemoignageCount = tryCatch(async (_req: any, res: any) => {
+export const getEtablissementsWithTemoignageCount = tryCatch(async (_req: Request, res: Response) => {
   const { success, body } = await etablissementsService.getEtablissementsWithTemoignageCount();
 
   if (!success) throw new BasicError();
@@ -30,34 +32,7 @@ export const getEtablissementsWithTemoignageCount = tryCatch(async (_req: any, r
   return res.status(200).json(body);
 });
 
-export const getEtablissement = tryCatch(async (req: any, res: any) => {
-  const id = req.params.id;
-  const { success, body } = await etablissementsService.getEtablissement(id);
-
-  if (!success) throw new BasicError();
-
-  return res.status(200).json(body);
-});
-
-export const deleteEtablissement = tryCatch(async (req: any, res: any) => {
-  const { success, body } = await etablissementsService.deleteEtablissement(req.params.id);
-
-  if (!success) throw new BasicError();
-  if (!body) throw new EtablissementNotFoundError();
-
-  return res.status(200).json(body);
-});
-
-export const updateEtablissement = tryCatch(async (req: any, res: any) => {
-  const { success, body } = await etablissementsService.updateEtablissement(req.params.id, req.body);
-
-  if (!success) throw new BasicError();
-  if (!body) throw new EtablissementNotFoundError();
-
-  return res.status(200).json(body);
-});
-
-export const getEtablissementsSuivi = tryCatch(async (_req: any, res: any) => {
+export const getEtablissementsSuivi = tryCatch(async (_req: AuthedRequest, res: Response) => {
   const { success, body } = await etablissementsService.getEtablissementsSuivi();
 
   if (!success) throw new BasicError();
@@ -65,7 +40,7 @@ export const getEtablissementsSuivi = tryCatch(async (_req: any, res: any) => {
   return res.status(200).json(body);
 });
 
-export const getEtablissementsPublicStatistics = tryCatch(async (_req: any, res: any) => {
+export const getEtablissementsPublicStatistics = tryCatch(async (_req: Request, res: Response) => {
   const { success, body } = await etablissementsService.getEtablissementsPublicStatistics();
 
   if (!success) throw new BasicError();

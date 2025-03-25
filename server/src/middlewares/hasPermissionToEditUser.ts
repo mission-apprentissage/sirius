@@ -1,12 +1,15 @@
+import type { NextFunction, Request, Response } from "express";
+
 import { USER_ROLES, USER_STATUS } from "../constants";
 import { UnauthorizedError } from "../errors";
+import type { AuthedRequest } from "../types";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const hasPermissionToEditUser = (req: any, res: any, next: any) => {
-  const userIdToEdit = req.params.id;
-  const currentUserId = req.user.id;
-  const currentUserStatus = req.user.status;
-  const currentUserRole = req.user.role;
+export const hasPermissionToEditUser = (req: Request, _res: Response, next: NextFunction) => {
+  const authReq = req as AuthedRequest;
+  const userIdToEdit = authReq.params.id;
+  const currentUserId = authReq.user.id;
+  const currentUserStatus = authReq.user.status;
+  const currentUserRole = authReq.user.role;
 
   if (currentUserRole === USER_ROLES.ADMIN && currentUserStatus === USER_STATUS.ACTIVE) {
     return next();
@@ -15,8 +18,8 @@ export const hasPermissionToEditUser = (req: any, res: any, next: any) => {
   if (
     currentUserStatus === USER_STATUS.ACTIVE &&
     userIdToEdit === currentUserId.toString() &&
-    !req.body.status &&
-    !req.body.role
+    !authReq.body.status &&
+    !authReq.body.role
   ) {
     return next();
   }

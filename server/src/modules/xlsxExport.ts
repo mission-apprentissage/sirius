@@ -1,10 +1,57 @@
-// @ts-nocheck -- TODO
-
 import Excel from "exceljs";
+import type { Response } from "express";
 
 import { VERBATIM_STATUS_LABELS } from "../constants";
 
-export const generateMultipleCampagnes = async (campagnes) => {
+type XlsxExportCampagne = {
+  campagneName: string | null;
+  formation: string | null;
+  etablissementFormateurSiret: string;
+  etablissementResponsableSiret: string;
+  etablissementFormateurLabel: string | null;
+  etablissementResponsableLabel: string | null;
+  seats: string | number;
+  temoignagesCount: number;
+  onisepUrl: string | null;
+  rncpCode: string;
+  certifInfo: string;
+  cfd: string;
+  mef: string;
+};
+
+type Formation = {
+  intituleLong: string | null;
+  localite: string;
+  etablissementFormateurSiret: string;
+  etablissementFormateurEntrepriseRaisonSociale: string | null;
+  etablissementFormateurEnseigne: string | null;
+};
+
+type XlsxExportTemoignage = {
+  theme: string;
+  formation: Formation;
+  question: string;
+  value: string | number;
+  nomCampagne: string | null;
+};
+
+type XlsxExportVerbatim = {
+  value: string | null;
+  formation: Pick<
+    Formation,
+    | "etablissementFormateurSiret"
+    | "intituleLong"
+    | "etablissementFormateurEnseigne"
+    | "etablissementFormateurEntrepriseRaisonSociale"
+    | "localite"
+  >;
+  question: string;
+  theme: string;
+  status: string;
+  nomCampagne: string | null;
+} | null;
+
+export const generateMultipleCampagnes = async (campagnes: XlsxExportCampagne[]) => {
   const workbook = new Excel.Workbook();
 
   const worksheet = workbook.addWorksheet("Campagnes");
@@ -43,7 +90,7 @@ export const generateMultipleCampagnes = async (campagnes) => {
     });
   }
 
-  const setColumnWrapText = (columnName) => {
+  const setColumnWrapText = (columnName: string) => {
     worksheet.getColumn(columnName).eachCell({ includeEmpty: true }, (cell) => {
       cell.alignment = { wrapText: true };
     });
@@ -55,11 +102,15 @@ export const generateMultipleCampagnes = async (campagnes) => {
   setColumnWrapText("campagneName");
 
   const buffer = await workbook.xlsx.writeBuffer();
-  const base64 = buffer.toString("base64");
+  const base64 = Buffer.from(buffer).toString("base64");
   return base64;
 };
 
-export const generateTemoignagesXlsx = async (temoignages, verbatims, res) => {
+export const generateTemoignagesXlsx = async (
+  temoignages: XlsxExportTemoignage[],
+  verbatims: XlsxExportVerbatim[],
+  res: Response
+) => {
   const workbook = new Excel.stream.xlsx.WorkbookWriter({
     stream: res,
   });
@@ -111,17 +162,17 @@ export const generateTemoignagesXlsx = async (temoignages, verbatims, res) => {
   for (const verbatim of verbatims) {
     verbatimsWorksheet
       .addRow({
-        theme: verbatim.theme,
-        siret: verbatim.formation.etablissementFormateurSiret,
+        theme: verbatim?.theme,
+        siret: verbatim?.formation.etablissementFormateurSiret,
         etablissement:
-          verbatim.formation.etablissementFormateurEntrepriseRaisonSociale ||
-          verbatim.formation.etablissementFormateurEnseigne,
-        campagne: verbatim.nomCampagne,
-        formation: verbatim.formation.intituleLong,
-        localite: verbatim.formation.localite,
-        question: verbatim.question,
-        reponse: verbatim.value,
-        status: VERBATIM_STATUS_LABELS[verbatim.status],
+          verbatim?.formation.etablissementFormateurEntrepriseRaisonSociale ||
+          verbatim?.formation.etablissementFormateurEnseigne,
+        campagne: verbatim?.nomCampagne,
+        formation: verbatim?.formation.intituleLong,
+        localite: verbatim?.formation.localite,
+        question: verbatim?.question,
+        reponse: verbatim?.value,
+        status: verbatim?.status ? VERBATIM_STATUS_LABELS[verbatim.status] : verbatim?.status,
       })
       .commit();
   }

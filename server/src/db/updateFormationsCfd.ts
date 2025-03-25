@@ -1,13 +1,18 @@
 /* eslint-disable no-process-exit */
 /* eslint-disable n/no-process-exit */
 
+import camelcaseKeys from "camelcase-keys";
+
 import { getFormation } from "../modules/catalogue";
 import { getKbdClient } from "./db";
 
 const sleep = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const updateFormationsCfd = async () => {
-  const formations = (await getKbdClient().selectFrom("formations").selectAll().execute()) as any[];
+  const baseQuery = getKbdClient().selectFrom("formations").selectAll();
+  const result = await baseQuery.execute();
+  const formations = camelcaseKeys(result);
+
   let addedCfd = 0;
   let progression = 0;
 
