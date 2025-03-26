@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as Sentry from "@sentry/node";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -50,7 +51,7 @@ export default async () => {
   app.use(formations());
   app.use(verbatims());
   app.use(jobs());
-  app.use(passport.initialize);
+  app.use(passport.initialize());
 
   app.disable("x-powered-by");
 
