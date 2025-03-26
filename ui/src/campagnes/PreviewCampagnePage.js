@@ -1,6 +1,5 @@
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Spinner, useBreakpoint } from "@chakra-ui/react";
-// eslint-disable-next-line import/no-named-as-default
 import Form from "@rjsf/chakra-ui";
 import validator from "@rjsf/validator-ajv8";
 import { useEffect, useState } from "react";

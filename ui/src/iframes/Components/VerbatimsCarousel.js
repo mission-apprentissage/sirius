@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-/* eslint-disable import/no-unresolved */
 import "swiper/css";
 
 import { fr } from "@codegouvfr/react-dsfr";
