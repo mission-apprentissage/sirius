@@ -2,7 +2,6 @@ import "../assets/fonts/Marianne-Bold-encoded";
 import "../assets/fonts/Marianne-Regular-encoded";
 
 import * as htmlToImage from "html-to-image";
-// eslint-disable-next-line import/no-named-as-default
 import jsPDF from "jspdf";
 
 import shareSummaryTemplate from "../assets/images/share_summary_template.jpg";
